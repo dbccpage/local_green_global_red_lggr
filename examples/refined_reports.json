@@ -1,0 +1,21 @@
+{
+  "scope_id": "two-budget-histories/signed-deltas",
+  "rows": [
+    {
+      "state_id": "good:0,1,0",
+      "report": [
+        1,
+        -1
+      ],
+      "query": true
+    },
+    {
+      "state_id": "bad:0,1,2",
+      "report": [
+        1,
+        1
+      ],
+      "query": false
+    }
+  ]
+}

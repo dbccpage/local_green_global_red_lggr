@@ -1,0 +1,45 @@
+{
+  "authority_effect": "None",
+  "carrier_size": 2,
+  "collision": {
+    "left": {
+      "query": false,
+      "report": [
+        [
+          1,
+          true,
+          true
+        ],
+        [
+          1,
+          true,
+          true
+        ]
+      ],
+      "state_id": "bad:0,1,2"
+    },
+    "right": {
+      "query": true,
+      "report": [
+        [
+          1,
+          true,
+          true
+        ],
+        [
+          1,
+          true,
+          true
+        ]
+      ],
+      "state_id": "good:0,1,0"
+    }
+  },
+  "coverage": "supplied finite table only",
+  "meaning": "These reports cannot determine this query on the supplied carrier.",
+  "realized_history_violation": null,
+  "schema": "lggr.descent.v1",
+  "scope_id": "two-budget-histories/restricted-reports",
+  "status": "REPORT_INSUFFICIENT",
+  "table_sha256": "c531a9d2181c3a4c07c6711dbf915f66ccd2347f5ead8a077da68290d7624d08"
+}

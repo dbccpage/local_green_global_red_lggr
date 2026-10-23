@@ -1,0 +1,18 @@
+{
+  "authority_effect": "None",
+  "implementation": "lggr-witness-audit 0.1.0",
+  "basis": "User-supplied research response; no external sources fetched",
+  "source": {
+    "file": "source/research_response.txt",
+    "sha256": "edd16bd95779b4d0f1ce17f55bb96c3ac8ae6645a1251b21775afeb158799f39"
+  },
+  "reported_repository_pins": {
+    "the_symbol_game": "e7420ae75737df9dbb0785cc102e8179fa6feb8c",
+    "theory_of_finite_quantum_mechanics": "5b22322289839eaa308c91b01500225aa31ddaba"
+  },
+  "repository_pins_independently_checked": false,
+  "native_repo_integration": false,
+  "lean_replayed": false,
+  "runtime_dependencies": [],
+  "python_test_environment": "3.13.5"
+}

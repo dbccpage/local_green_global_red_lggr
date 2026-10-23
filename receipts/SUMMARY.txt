@@ -1,0 +1,18 @@
+Validation summary
+==================
+AuthorityEffect: None
+
+Python: 3.13.5 (Linux)
+Unit tests: 90 passed, standard mode
+Unit tests: 90 passed, optimized (-O) mode
+Finite report/query combinations: 216 (126 decoders, 90 collisions)
+Boolean verdict triples: 8
+Budget histories independently checked: 363 (lengths 1 through 5)
+Exact triangle certificate: lower = upper = Phi = 1
+Standalone .pyz: passed with -I -S (isolated; no site-packages)
+Standalone / module demo outputs: identical
+Repeated standalone demo outputs: byte-identical
+Python 3.10 syntax: parsed; older runtime not executed
+
+No native Omega Engine/QM integration or Lean build was run.
+Finite tests are not a formal proof of the Python implementation.

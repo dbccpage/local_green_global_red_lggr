@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lggr-witness-audit"
+version = "0.1.0"
+description = "Finite LGGR witness composition, decoder/collision, and exact obstruction certificates"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+lggr-audit = "lggr.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["lggr*"]

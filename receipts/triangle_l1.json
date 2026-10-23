@@ -1,0 +1,25 @@
+{
+  "D_transpose_dual": [
+    "0",
+    "0",
+    "0"
+  ],
+  "authority_effect": "None",
+  "dual_annihilates": true,
+  "dual_bounded": true,
+  "duality_gap": "0",
+  "input_sha256": "09e03a7b8f857ba2c706d5dc892da072418b1b2abd29b99816a54502f7168599",
+  "lower_bound": "1",
+  "optimum": "1",
+  "repair_impossible": true,
+  "residual": [
+    "0",
+    "0",
+    "-1"
+  ],
+  "schema": "lggr.l1.v1",
+  "scope": "The supplied finite rational repair problem only; not an embedding of arbitrary software drift.",
+  "status": "OPTIMALITY_VERIFIED",
+  "supplied_potential_repairs": false,
+  "upper_bound": "1"
+}

@@ -1,0 +1,370 @@
+# Local Green, Global Red: cumulative drift under protected local evaluation
+
+**AuthorityEffect: None.** Research synthesis and proposed experiment; no operational authorization or claim of universal AI safety. Prepared 23 October 2026.
+
+The requested F004_papers sources are included throughout, especially the six-volume LGGR series, Witnessed Difference Programme, Projection/Retraction work, the quantum observer-presheaf paper, authority firewall, and RSI/self-certification papers. Their definitions and proof sources—not publication titles—determine the claims below.
+
+**Source custody.** Omega Engine is pinned to GitHub main as observed at commit e7420ae75737df9dbb0785cc102e8179fa6feb8c. Finite-QM is pinned to the locally verified origin/main snapshot 5b22322289839eaa308c91b01500225aa31ddaba. The local Omega checkout was at another revision and changed during discovery, so cited/evaluated material was retrieved with git show from the pinned objects. No claim is made about newer commits. Exact file hashes are in lggr-evidence-map.json. Public source links at the end use these immutable commits.
+
+**Finding.** The useful result is the decoder-or-collision criterion and explicit witness-transport conditions. The minimal drift example is already solved by a conventional fixed-baseline check. An improvement in certificate reuse, diagnosis or obligation retention remains a proposed engineering hypothesis.
+
+## A. Mathematical answer
+
+The useful contribution is a criterion for what a local certificate retains, plus conditions for transporting and composing that evidence. It is not a general theorem that self-modifying systems drift, and it does not outperform a complete fixed-invariant verifier on the example below.
+
+If every accepted transition preserves the same predicate \(I\), then \(I(S_0)\) and \(\forall i,\ I(S_i)\Rightarrow I(S_{i+1})\) imply \(I(S_n)\) by induction. Reading the evaluator from accepted main helps protect this premise from candidate tampering; it does not establish that the evaluator proves it. A test suite can remain immutable while its coverage is incomplete. Likewise, a bound on each incremental change need not bound their cumulative effect.
+
+**The strongest directly applicable result is** \( \texttt{WitnessedDifference.ComponentReports.decoder_xor_collision}\), at lines 94–101 of the WDP paper's ComponentReports.lean [E1]. For arbitrary types \(X,A,B\), declare a report \(p:X\to A\), a protected query \(q:X\to B\), and the realized report image \(p(X)\). Exactly one of these holds:
+
+\[
+\exists D:p(X)\to B,\quad D(p(x))=q(x)\ \text{for every }x;
+\qquad
+\exists x,y,\quad p(x)=p(y),\ q(x)\ne q(y).
+\]
+
+The proof establishes decoder existence iff fiber constancy; failure gives a collision. A decoder is unique on the realized image. There is no finiteness, linearity, topology, quantum structure, or independent-model assumption. This is standard factorization mathematics, packaged with explicit countermodels and related gluing results. I independently checked the original source with Lean 4.35.0; the audited declaration uses only propext, Classical.choice and Quot.sound. Its classical existential proof is not an algorithm for finding a decoder or collision in an arbitrary infinite system.
+
+For this application, let \(X\) be complete modification histories in a declared model, \(p\) the retained evaluation reports, and \(q\) the global requirement. A collision is a checkable certificate that those reports cannot determine the requirement. It does **not** identify which history occurred, unless history evidence is also supplied. It proves insufficiency of the report, not failure of every state producing that report. When one recorded history is independently shown to violate the requirement, the violation and information deficit become two separate certified facts.
+
+LGGR I supplies the corresponding evaluator result, PaperAE004.verdict_ceiling: every evaluator depending only on a colliding report must disagree with the Boolean target on at least one member of the pair [E2]. Further processing of the same report cannot separate that pair. Additional models therefore help only insofar as they add relevant distinctions, or improve use of information already retained. This is a deterministic statement about shared information, not a statistical claim about model independence. An injective source representation has no such information-loss obstruction; reasoning about it may still be computationally difficult. We must not pretend that a reviewer seeing full code receives only pass bits.
+
+A transition witness must say what it witnesses. In the experiment it contains endpoints, evaluator version, observed change, and the local acceptance result. That verifies a bounded step, not a bounded history. A mathematical composition witness instead connects those endpoint facts to the requested global proposition. Hoare-style certificates compose when the first postcondition entails the second precondition and both interpretations refer to the same protected semantics. Across representations, this requires explicit interpretation maps and commuting compatibility equations. WDP's composed_square proves how supplied commuting squares paste [E6]; it does not derive their premises from successful tests.
+
+There are two distinct notions of descent. A query descends through a report when it is fiber-constant. Local functions descend across a cover when their restrictions agree on overlaps: ComponentReports.glue_exists_unique constructs the unique function on the union under exactly that hypothesis [E1]. Arbitrary presheaves need not satisfy existence or uniqueness; the same module contains finite countermodels. Moreover, gluing compatible data does not establish that the resulting function satisfies a separate safety constraint. In our budget example the endpoint data compose perfectly; the composed value is simply outside the permitted bound.
+
+LGGR I's kernel-composition theorem assumes pointwise factorization of the evaluated contribution, as well as the declared path decomposition [E3]. This assumption is substantive: it cannot be cited as a derivation of global acceptance from local acceptance. The Boolean defect \(\Delta_E=E_g-E_1E_2\) records disagreement once \(E_g\) has been obtained. Computing that defect does not supply the missing global evaluator.
+
+The linear obstruction machinery applies only after specifying an actual repair problem. Given a rational matrix \(D\), defect \(h\), and positive weights, define \(\Phi(h)=\min_x\sum_e w_e|h_e-(Dx)_e|\), where attainment must be justified or certified. A dual vector \(z\) satisfying \(D^\mathsf{T}z=0\) and \(|z_e|\le w_e\) gives a lower bound \(z^\mathsf{T}h\le\Phi(h)\); a matching primal residual certifies optimality [E5]. This can produce a reusable finite incompatibility certificate. It is not merely a failed search.
+
+Cohomology requires more: specified differentials with \(d_1d_0=0\), a closed cochain, and quotienting by exact repairs. A nonclosed cochain has a closure failure, not an \(H^1\) class. A closed cochain may still be nonexact. Conversely, the cumulative-budget counterexample has exact endpoint differences and zero cycle defect. Calling its violation “nonzero cohomology” would be wrong. The simplest adequate checker is arithmetic on a retained baseline.
+
+A representation change preserves repair equivalence when its maps commute with the repair operator. Preserving **nonrepairability** needs an additional reflection property: the WDP retraction_reflects_repair theorem supplies one, while Finite-QM's ChainRetraction.Hmap_injective proves the analogous homology result for linear chain retractions [E6, E12]. A lossy map can erase a visible obstruction. A zero target residual then says nothing about repair of the original source unless the relevant query or class is faithfully reflected. The Finite-QM growth theorem likewise needs compatible restrictions, extending cochains and nondecreased weights [E18].
+
+The two engineering witnesses establish different propositions: the old evaluator reports acceptance; the running system reports behavior on the smoke-test observations. Both can be correct while a longer-history property fails. The missing evidence may be a baseline comparison, an interface-compatibility proof, a transport certificate, or an explicitly unresolved obligation. Neither independent identities nor agreement alone proves completeness of their combined observations. The authority model separates residuals from grants by type; it does not prove grantor legitimacy or prevent correlated reasoning errors [E14, E16].
+
+Finite quantum work contributes useful examples of why compatible observations need not extend to an admitted global model, particularly when positivity is required. It does not establish equivalence between quantum contextuality and software drift. The observer-presheaf paper itself distinguishes no-signalling, global support, positive extension and cover-relative gluing failure [E10]. The freshly checked Finite-QM parity theorem proves nonexistence for one declared finite constraint system, not an AI no-go theorem [E11]. Hilbert, scalar and transition-probability laws retain explicit admission boundaries [E22].
+
+The practical proposal is therefore modest: retain the proposition, representation, source identity, scope, and unresolved obligations with each witness; demand a composition or transport check before reusing it for a larger claim. Compared with a complete immutable reference verifier, no stronger detection guarantee has been demonstrated. Possible advantages are smaller replayable certificates, better localization of missing information, and fewer silently lost obligations. These are testable engineering benefits, presently **PROPOSED**, rather than established superiority. An equal-information comparison against ordinary regression and contract checking could falsify them.
+
+## B. Minimal worked example and exact experiment
+
+This is a finite model of incomplete verification, not a diagnosis of the engineer's implementation. The full available source might already make the missing check easy.
+
+Let the configuration value be \(x\in\{0,1,2\}\). Keep the evaluator code, specification, and probes fixed in accepted main. Its implemented rule is
+\[
+A(x,y)\iff x,y\in\{0,1,2\}\ \land\ |y-x|\le1.
+\]
+The human-declared cumulative requirement is \(G(x_0,\ldots,x_n)\iff |x_n-x_0|\le1\). The local gate has not proved that requirement. Workers change only the configuration. Smoke tests check the legal configuration domain. Protected adversarial probes continue to reject the direct jump \(0\to2\) and the out-of-domain jump \(0\to3\).
+
+| Transition | Previous evaluator's observations | Local witness and decision | Running-system observation | Cumulative requirement |
+|---|---|---|---|---|
+| Baseline \(S_0=0\) | Legal domain, baseline recorded | Initial accepted state | Legal domain | \(0\le1\) |
+| \(0\to1\) | Domain valid; change magnitude 1 | Endpoints and rule version prove \(A(0,1)\) | Domain valid | \(1\le1\), passes |
+| \(1\to2\) | Domain valid; change magnitude 1 | Endpoints and rule version prove \(A(1,2)\) | Domain valid | \(2\le1\), fails |
+
+Nothing edits or bypasses a protected test. Both local witnesses are true. They cannot prove \(A(0,2)\), which is false. If an actual protected gate already verifies \(G\) after every change, it rejects the second step and this example does not apply.
+
+The good history \((0,1,0)\) has exactly the same sequence of observed magnitudes, local verdicts and smoke verdicts as the bad history \((0,1,2)\), but opposite global verdicts. For **that restricted report**, these histories constitute the decoder theorem's collision. Retained full endpoints distinguish them; adding the signed increments \(+1,+1\) is one sufficient refinement. A cryptographic digest used as a unique identifier is not mathematically identical to a pass-bit report, and this example makes no hash-collision claim.
+
+| Method | Result on the second step | Required information |
+|---|---|---|
+| A: previous-state acceptance and the stated smoke tests | Accepts | Previous and proposed states; local rule |
+| B: fixed-baseline/end-to-end check | Rejects | Baseline 0, final state 2, global bound 1 |
+| C: proposed composition adapter, with signed endpoint witnesses | Rejects; emits proposed OBSTRUCTION_DETECTED | The same baseline, signed changes and bound |
+| C with only the two local pass reports | WITNESS_INCOMPLETE | It cannot honestly infer the realized global result |
+
+There is **no additional detection capability over B** in this example. C makes the missing proof obligation and the lossy report explicit.
+
+The adapter outcome names are proposed for this demonstration. The existing EPK names are DefectKind.NGD, ZDR and PGD [E19]. The executed bad trace has \((E_1,E_2,E_g)=(1,1,0)\), hence \(\Delta_E=-1\) and NGD. Existing WDP routing also has separate NoDescentYet, SearchIncomplete, PolicyUnderspecified and other terminals [E13]. These are not interchangeable with proved violation. AUTHORITY_REQUIRED in the demonstration flags a changed authority regime; the program does not verify a real grant.
+
+A separate linear compatibility example shows what a genuine repair certificate looks like:
+\[
+D=\begin{pmatrix}-1&1&0\\0&-1&1\\-1&0&1\end{pmatrix},
+\quad h=(1,1,1),\quad z=(1,1,-1).
+\]
+Here \(D^\mathsf{T}z=0\), \(\|z\|_\infty=1\), and \(z^\mathsf{T}h=1\). Thus every unit-weight L1 repair has residual at least 1. The potential \((0,1,2)\) has residual \((0,0,-1)\), attaining 1. This certifies \(\Phi=1\), rather than merely failing to find a repair. On an unfilled triangle it is a nonexact 1-cochain with vacuous degree-two closure; on the filled triangle its circulation is nonzero, so it is not an \(H^1\) class. It is a separate incompatibility model, not a claimed encoding of the budget violation. The budget history's differences \((1,1,2)\) are exact.
+
+**Fresh execution:** the pinned EPK implementation returned NGD; all 8 Boolean verdict triples and all 216 combinations of a three-state/three-report map and Boolean query passed the stated checks. The exact linear certificate above passed. The existing section_i_census returned its colliding pair, negative defect −1 and pass-count gap 1. These finite checks support the examples; they do not replace the general Lean proof.
+
+The following reproduction is the exact executed harness. It reads one source file from the pinned local Git object database, imports NumPy through the existing environment, and writes no repository files. The four uppercase audit outcomes are demonstration vocabulary, not newly established Omega Engine contract constructors.
+
+```python
+import hashlib, itertools, json, subprocess, sys, types
+REPO = r"C:/Users/a343o/source/repos/the_symbol_game"
+PIN = "e7420ae75737df9dbb0785cc102e8179fa6feb8c"
+PATH = ("omega_engine_atlas/coda_atlas/F004_papers/"
+        "001_finite_obstruction_calculus/"
+        "001_local_green_global_red_foundational_series/"
+        "lggr_i_evaluated_path_kernels/code/epk_core.py")
+raw = subprocess.check_output(["git", "-C", REPO, "show", PIN + ":" + PATH])
+epk = types.ModuleType("pinned_epk")
+sys.modules[epk.__name__] = epk
+exec(compile(raw, PATH, "exec"), epk.__dict__)
+
+states = (0, 1, 2)
+def accepted(old, new):
+    return old in states and new in states and abs(new - old) <= 1
+
+def smoke(state):
+    return state in states
+
+def target(history):
+    return abs(history[-1] - history[0]) <= 1
+
+def reports(history):
+    return tuple((abs(b-a), accepted(a, b), smoke(b))
+                 for a, b in zip(history, history[1:]))
+
+def audit(history, retain_signed_witness=True, authority_changed=False):
+    if authority_changed:
+        return "AUTHORITY_REQUIRED"
+    if not retain_signed_witness:
+        return "WITNESS_INCOMPLETE"
+    total = sum(b-a for a, b in zip(history, history[1:]))
+    assert total == history[-1]-history[0]
+    return "COMPOSITION_VERIFIED" if abs(total) <= 1 else "OBSTRUCTION_DETECTED"
+
+bad, good = (0, 1, 2), (0, 1, 0)
+assert all(accepted(a,b) and smoke(b) for a,b in zip(bad,bad[1:]))
+assert not accepted(0,2) and not accepted(0,3)  # protected negative probes
+assert reports(bad) == reports(good)
+assert not target(bad) and target(good)
+triple = epk.EvaluatorVerdictTriple(1, 1, int(target(bad)))
+assert triple.delta_eval == -1 and triple.defect_kind is epk.DefectKind.NGD
+
+verdict_cases = 0
+for a,b,g in itertools.product((0,1), repeat=3):
+    t = epk.EvaluatorVerdictTriple(a,b,g)
+    assert t.delta_eval == g-a*b
+    assert epk.calculate_evaluator_defect(a,b,g) == g-a*b
+    verdict_cases += 1
+
+# Exhaustively test the report/query factorization criterion on a 3-state carrier.
+factor_cases = 0
+for report in itertools.product(range(3), repeat=3):
+    for query in itertools.product((0,1), repeat=3):
+        constant = all(report[x] != report[y] or query[x] == query[y]
+                       for x,y in itertools.product(range(3),repeat=2))
+        decodes = any(all(d[report[x]] == query[x] for x in range(3))
+                      for d in itertools.product((0,1),repeat=3))
+        assert constant == decodes
+        factor_cases += 1
+
+# A separate exact cochain certificate; not an encoding of the budget violation.
+D0 = ((-1,1,0),(0,-1,1),(-1,0,1))
+h, z = (1,1,1), (1,1,-1)
+assert all(sum(z[e]*D0[e][v] for e in range(3)) == 0 for v in range(3))
+assert sum(z[e]*h[e] for e in range(3)) == 1
+assert max(abs(v) for v in z) == 1
+potential = (0,1,2)
+residual = tuple(h[e]-sum(D0[e][v]*potential[v] for v in range(3))
+                 for e in range(3))
+assert sum(map(abs,residual)) == 1  # matches dual lower bound, so Phi=1
+print(json.dumps({
+ "authority_effect":"None", "source_commit":PIN,
+ "epk_sha256":hashlib.sha256(raw).hexdigest(),
+ "bad_history":bad, "good_history":good, "same_reports":reports(bad),
+ "local_verdicts":[1,1], "global_verdict":0,
+ "existing_defect_kind":triple.defect_kind.name, "delta":triple.delta_eval,
+ "proposed_outcomes":[audit(bad),audit(good),audit(bad,False),audit(bad,True,True)],
+ "all_eight_boolean_triples":verdict_cases, "finite_factorization_cases":factor_cases,
+ "cochain_example":{"h":h,"dual":z,"repair":potential,"residual":residual,"Phi":1},
+ "limitation":"Proposed audit labels are adapter vocabulary; no general AI safety or cohomology claim."
+},indent=2))
+
+```
+
+## C. Cross-repository evidence map
+
+Status vocabulary: **PROVED** means an argument establishes the stated mathematics under its assumptions; **FORMALIZED (fresh)** means the identified source was accepted in the scoped Lean replay here; **TESTED** means the specified finite execution ran; **PROPOSED** means an unvalidated application or extension; **UNRESOLVED** means the missing obligation remains open. A repository's claimed status or passing unrelated build does not substitute for these distinctions.
+
+The strongest result's exact custody is [E1]: repository the_symbol_game, the WDP paper's lean4/WitnessedDifference/ComponentReports.lean, lines 94–101. Its types \(X,A,B\), report \(p\), query \(q\), realized-image decoder and collision are at lines 37–55. No application-specific semantics are assumed into existence. It is PROVED and FORMALIZED (fresh); the experiment tests its three-state specialization. Its limitation is that the engineer must supply the right report, target and history carrier, and a finite audit does not establish universal adequacy for software.
+
+| Topic | Concrete source and declaration | What is established; limitation |
+|---|---|---|
+| Report sufficiency and LGGR | [E1], decoder_xor_collision; [E2], verdict_ceiling | **FORMALIZED (fresh):** decoder-or-collision dichotomy; report-only judges cannot separate a collision. No efficient arbitrary-system decision procedure. |
+| Local functions and gluing | [E1], glue_exists_unique, lines 184–235; presheaf countermodels, lines 247–335 | **FORMALIZED (fresh):** compatible total functions glue uniquely on their union. General presheaf gluing and safety of the glued function do not follow. |
+| Evaluated path composition | [E3], raw_kernel_composition_under_G1_G2_G3 | Proof source inspected, **not replayed** here. The integer/list identity takes evaluated-contribution factorization as a hypothesis; it cannot establish that hypothesis from local passes. |
+| Linear observer adequacy | [E4], soundness criterion and recovery proposition | **PROVED in the inspected written argument:** \(\operatorname{im}D\cap\ker Q=\{0\}\) characterizes zero-score soundness; finite-dimensional recovery additionally uses compactness. The cited quantitative proposition is explicitly not Lean-mechanized in that deposit. |
+| Projection/retraction | [E9], leftover_with_still_picture; [E29], product-retraction discussion | [E9]'s proof source is a finite Boolean fixture, not the Banach/quantum dynamics theorem. [E29] uses a nonlinear marginal-product retraction. Neither identifies arbitrary software evaluation with a linear projection. Not freshly replayed. |
+| Cochain obstruction and DDA-style certificates | [E5], dual_certificate_lower_bound and matching_certificate_is_optimal | **FORMALIZED (fresh):** supplied bounded dual annihilator gives a lower bound; matching primal evidence proves optimality. Exact integer example **TESTED**. No general infimum construction or automatic embedding of drift is inferred. |
+| Transport and persistence | [E6]; [E12], cannot_kill and Hmap_injective | [E6] **FORMALIZED (fresh)**. [E12]'s module/chain-retraction proof inspected, **not rebuilt**. Commuting transport alone need not preserve nonzero classes; reflection/retraction supplies a stronger condition. |
+| Growth of repair problems | [E18], phi_growth_not_lower | Proof source inspected, **not rebuilt**. Finite rational weighted repair minima supplied as IsPhi; compatible restriction, cochain agreement and weight inequalities required. Changing these can invalidate persistence. |
+| Histories and local moves | [E7], total_append and moves_preserve_total | **FORMALIZED (fresh):** additive values compose; declared backtracks/faces preserve totals under antisymmetry/closedness. Does not assert all agent schedules commute. |
+| Observer completion | [E8], decoder_iff | **FORMALIZED (fresh):** with a selected default state and symmetric/transitive relation, recovery up to that relation iff observation fibers lie within it. Does not construct missing observations for a real system. |
+| Finite-QM descent | [E21], presentation_descent_signature | **FORMALIZED (fresh):** surjective-presentation descent, factor uniqueness and section-independence. This is imported WDP mathematics, not independent evidence of a quantum/nonquantum equivalence. |
+| Finite-QM contextuality | [E11], x1_has_no_global_section | **FORMALIZED (fresh):** no global Boolean assignment satisfies the declared 18-variable/9-context parity system. It does not construct physical measurement vectors or map software changes to that system. |
+| Quantum observer presheaf | [E10], B1–B10 ledger and named tests | Ledger inspected; its Rust tests **not rerun**. Positivity, support and chosen cover matter. B6–B8 explicitly rule out identifying every NoGlobalExtension with contextuality. |
+| Typed residuals | [E13], DiagClass, Routing, TermStatus and scope header | Existing explicit distinctions include NoDescentYet, ReplayMismatch, SearchIncomplete and PolicyUnderspecified. Hand transcription and constructed policy maps are disclosed. Module **not rebuilt**; five requested demo labels are not represented as native enums. |
+| Authority and two witnesses | [E14], residual_not_auth; [E16], verify model | [E14] **FORMALIZED (fresh)**: sum constructors are disjoint. [E16] checks role IDs under a policy; the source explicitly cannot detect aliases for one real agent. No statistical independence or truthfulness theorem. |
+| CODA, GTLA and old GTOC/GTTC/GTTA labels | [E17], [E24], [E26], [E27] | Inspected source synthesis supplies repair, quotient, report, gluing and grant boundaries. GTTC identifiers are explicitly superseded. GTTA_GLOBAL_RESIDUAL is a historical protocol label; universal representation-persistence is not established by naming it. |
+| Anomalon Councils and governance | [E16], [E24], [E25], [E28] | Distinct governance roles and grant records are policy structures. LGGR III's six mathematical roles are not planner/worker seats. The YAML's six-role and anti-collusion fields do not establish an anti-collusion theorem or executable enforcement. |
+| RSI and self-certification | [E15], obstruction_relational_finitude; [E16] | Proof source inspected, **not rebuilt**. No infinite strictly increasing rank in a fixed finite carrier; proxy threshold is a model definition. Neither is a theorem that every realistic self-improvement process fails. |
+| Hilbert/continuum admission | [E22]; [E17] lines 62–67 | Pinned DAG labels Hilbert and complex selection CONDITIONAL, transition-probability law IMPORTED_ASSUMPTION. Metric completion/query extension require their own hypotheses. No derivation of quantum structure from difference alone is claimed. |
+| Executable diagnostic | [E19]; [E20], section_i_census | **TESTED:** pinned EPK defect, existing census, 8 verdict triples, 216 finite factorization cases, and exact primal/dual example. The full existing pytest suite did not run: pytest was absent from the selected bundled runtime. |
+| Excluded evidence | [E23], imported LGGR.lean warning | Explicitly says it does not elaborate owing to absent imports. It was not counted as a formal proof. Original LGGR I sources were checked separately. |
+
+**Fresh-check scope.** Nine scoped Lean invocations passed: original LGGR I carrier proof plus its two dependencies; WDP ComponentReports; CochainTransport; LocalObservationCompletion; GuardedHistoryCoherence; ResidualNonCreation; WDP Core+Obstruction; Finite-QM imported Core+Descent; and ContextualityObstruction. Sources were read from pinned Git objects and sent to Lean 4.35.0 via stdin. For dependent sets, import lines for the listed local dependencies were replaced by those original sources in dependency order; audit commands were appended. This is source elaboration of those assemblies, not a native Lake build or full-project replay. Named axiom audits reported only the standard permitted axioms, or none. The carrier and observer modules emitted a deprecation warning for dif_pos.
+
+The accompanying JSON stores exact hashes, scopes and outputs for the recorded checks. The first LGGR I invocation is summarized from this session's successful tool output; the subsequent eight have captured compiler output. The report retains the failed pytest import as a limitation. No production architecture, repository branch, DAG status or public service was changed.
+
+
+## D. Response to the engineer
+
+Drafts only; nothing has been posted. Character counts are Python len counts of the exact post text, excluding the labels and quote marker. All use plain ASCII.
+
+**Version 1 — one post (417 characters)**
+
+> Pinning review to main is a strong boundary. Local Green, Global Red asks whether two passing witnesses retain enough information to certify their composition. Our descent criterion is exact: equal reports must imply equal global verdicts. Otherwise a colliding pair certifies a blind spot. This adds an audit target, not a stronger guarantee than fixed-invariant checking. Want to test it on two interacting changes?
+
+**Version 2 — post 1 (313 characters)**
+
+> Your protected gates address candidate self-grading. For (3), Local Green, Global Red separates step acceptance from a history-level claim. If each step preserves one fixed invariant, induction suffices. Otherwise we ask whether the local witnesses can compose: do their scopes, boundary facts and meanings agree?
+
+**Version 2 — post 2 (401 characters)**
+
+> Our descent criterion: a global answer is recoverable from reports iff it is constant on each report fiber. Same reports with different global answers certify a blind spot. Changed representations also need witness-transport checks. This may improve certificates and obligation tracking; it adds no detection power over a complete fixed-invariant check. Shall we compare both on a small drift example?
+
+## Adversarial review and smallest remaining experiment
+
+| Challenge | Assessment |
+|---|---|
+| Is this invariant checking with new terminology? | The three-state detector is. The separate factorization theorem audits whether a chosen report is sufficient for a query. Both are conventional mathematics; the repository contributes explicit structures, certificates and formal sources. |
+| Failure or uncertainty? | The endpoint calculation proves a violation. A collision proves report insufficiency. Missing transport, failed search, or absent witness proves neither the realized violation nor impossibility. |
+| Are composition hypotheses substantive? | Boundary matching, common target semantics, commuting transport and contract entailment are checkable obligations. A supplied Boolean “compatible” field without its interpretation is only a wrapper. |
+| Does quantum mathematics contribute? | It supplies disciplined examples distinguishing overlap agreement from positive global extension. It is unnecessary for the minimal example and supplies no quantum advantage. |
+| Is an obstruction representation-independent? | Only relative to stated maps and preserved queries/repair quotients. Faithful reflection can preserve nonrepairability; arbitrary projections can erase it. |
+| Could the existing architecture solve the example? | Yes. A baseline check or an existing interaction regression rejects it. We have no evidence the engineer omits such checks. |
+| Do the Lean theorems match the claims? | The listed fresh checks validate decoder, transport, function-gluing, finite parity and typed-separation statements. They do not formalize a hosted model, complete software verifier, or universal self-modification safety. |
+| What if the acceptance rule changes? | Index witnesses by evaluator and specification version. “Accepted” may change meaning. Checking the new evaluator with the old one does not alone prove semantic preservation. |
+| Can a simpler method do the same? | Yes: baseline arithmetic, contracts, regression tests, constraint solving and conventional certificate replay. |
+| What would falsify the advantage? | With equal inputs and scope, no reduction in missed obligations, replay cost or diagnosis effort against ordinary contract checking. More detections solely from giving C extra observations are not an advantage of the mathematics. |
+
+The smallest useful extension is a **proposed**, scoped witness adapter and comparative experiment. Give both a conventional checker and the adapter identical finite histories, evaluator versions, protected queries and available observations. Include representation changes with supplied commuting maps, failed maps, and deliberate information loss. Require any claimed violation to include a falsifying state or exact inconsistency certificate; require missing evidence to remain unresolved. Measure false acceptance, false refusal, retained obligations, certificate size, replay cost and diagnosis effort. The mathematical target is a query-preservation/Hoare-composition theorem for this explicitly modeled adapter, not a universal claim about AI systems.
+
+A candidate certificate could record source and target identities, predicate/specification identity, representation maps, the local proof's scope, unresolved obligations, and any grant scope. Hashes bind supplied artifacts; they do not prove those artifacts truthful or the evaluator sound. Runtime/model changes outside the declared transition system need to be modeled as additional transitions or retained as an uncovered environmental assumption.
+
+The requested literature was investigated by topic across both repositories and the named F004 paper families. This is a targeted evidence audit, not an exhaustive verification of every paper, source module, historical package or theorem in either repository.
+
+
+## Source index
+
+Every link below is pinned. Line ranges identify the inspected statement or scope; adjacent relevant ranges are noted where needed. The evidence-map JSON records the complete repository-relative path, commit, SHA-256 and file length.
+
+- **E1** — decoder_xor_collision; realized-image factorization. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/ComponentReports.lean (lines 37-116 ).
+
+[E1]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/ComponentReports.lean#L37-L116
+
+- **E2** — carrier_bounded_iff_invariant; verdict_ceiling; also lines 361-388 post-processing. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/lean4/21_carrier_kernel_quotient.lean (lines 106-178 ).
+
+[E2]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/lean4/21_carrier_kernel_quotient.lean#L106-L178
+
+- **E3** — raw_kernel_composition_under_G1_G2_G3. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/lean4/03c_g1_set_isomorphism.lean (lines 147-165 ).
+
+[E3]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/lean4/03c_g1_set_isomorphism.lean#L147-L165
+
+- **E4** — finite linear observation; raw versus repair defect. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_v_local_green_global_red/lggr_v_local_green_global_red.md (lines 29-130 ).
+
+[E4]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_v_local_green_global_red/lggr_v_local_green_global_red.md#L29-L130
+
+- **E5** — dual_certificate_lower_bound; matching_certificate_is_optimal. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/Obstruction.lean (lines 247-280 ).
+
+[E5]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/Obstruction.lean#L247-L280
+
+- **E6** — repair_transport; composed_square; retraction_reflects_repair. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/CochainTransport.lean (lines 7-38 ).
+
+[E6]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/CochainTransport.lean#L7-L38
+
+- **E7** — additive history; moves_preserve_total. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/GuardedHistoryCoherence.lean (lines 110-160 ).
+
+[E7]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/GuardedHistoryCoherence.lean#L110-L160
+
+- **E8** — decoder_iff; observer completion. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/LocalObservationCompletion.lean (lines 8-39 ).
+
+[E8]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/lean4/WitnessedDifference/LocalObservationCompletion.lean#L8-L39
+
+- **E9** — finite Boolean retraction model. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/002_projection_obstruction/000_projection_obstruction/lean4/po000_projection_factor.lean (lines 1-45 ).
+
+[E9]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/002_projection_obstruction/000_projection_obstruction/lean4/po000_projection_factor.lean#L1-L45
+
+- **E10** — cover and positivity distinctions; limited formal scopes. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/035_lggr_quantum_observer_presheaf/claim_ledger.md (lines 19-28 ).
+
+[E10]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/035_lggr_quantum_observer_presheaf/claim_ledger.md#L19-L28
+
+- **E11** — x1_has_no_global_section; see also lines 34-50 definitions. theory_of_finite_quantum_mechanics / lean4/ContextualityObstruction.lean (lines 163-198 ).
+
+[E11]: https://github.com/dbccpage/theory_of_finite_quantum_mechanics/blob/5b22322289839eaa308c91b01500225aa31ddaba/lean4/ContextualityObstruction.lean#L163-L198
+
+- **E12** — cannot_kill; Hmap_injective. theory_of_finite_quantum_mechanics / lean4/ChainRetraction.lean (lines 49-99 ).
+
+[E12]: https://github.com/dbccpage/theory_of_finite_quantum_mechanics/blob/5b22322289839eaa308c91b01500225aa31ddaba/lean4/ChainRetraction.lean#L49-L99
+
+- **E13** — distinct diagnostic, routing and authority types. theory_of_finite_quantum_mechanics / lean4/WdpDiagnosticRouting.lean (lines 9-63 ).
+
+[E13]: https://github.com/dbccpage/theory_of_finite_quantum_mechanics/blob/5b22322289839eaa308c91b01500225aa31ddaba/lean4/WdpDiagnosticRouting.lean#L9-L63
+
+- **E14** — residual_not_auth; evidence construction. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/027_the_authority_firewall_a_machine_checked_separation_of_evidence_from_authority_in_finite_systems/lean4/ResidualNonCreation.lean (lines 37-85 ).
+
+[E14]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/027_the_authority_firewall_a_machine_checked_separation_of_evidence_from_authority_in_finite_systems/lean4/ResidualNonCreation.lean#L37-L85
+
+- **E15** — finite strict-growth no-go. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/012_rsi/000_relational_reasoning_and_rsi_impossibility/lean4/RsiImpossible.lean (lines 133-155 ).
+
+[E15]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/012_rsi/000_relational_reasoning_and_rsi_impossibility/lean4/RsiImpossible.lean#L133-L155
+
+- **E16** — identity and independent-role gate limitations. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/012_rsi/001_contextual_prediction_and_self_certification/lean4/ResultIV.lean (lines 4-17 ).
+
+[E16]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/012_rsi/001_contextual_prediction_and_self_certification/lean4/ResultIV.lean#L4-L17
+
+- **E17** — six constructions and their admitted inputs. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/coda_mathematical_decomposition.md (lines 18-68 ).
+
+[E17]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/coda_mathematical_decomposition.md#L18-L68
+
+- **E18** — phi_growth_not_lower; fixed compatibility and weights. theory_of_finite_quantum_mechanics / lean4/WdpGrowthNoRepair.lean (lines 77-93 ).
+
+[E18]: https://github.com/dbccpage/theory_of_finite_quantum_mechanics/blob/5b22322289839eaa308c91b01500225aa31ddaba/lean4/WdpGrowthNoRepair.lean#L77-L93
+
+- **E19** — exact Boolean evaluator defect; NGD/ZDR/PGD. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/code/epk_core.py (lines 259-350 ).
+
+[E19]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/code/epk_core.py#L259-L350
+
+- **E20** — existing executable carrier census. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/code/carrier_kernel_census.py (lines 229-229 ).
+
+[E20]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_i_evaluated_path_kernels/code/carrier_kernel_census.py#L229
+
+- **E21** — function_descends_iff_fiber_constant; obstruction and uniqueness. theory_of_finite_quantum_mechanics / lean4/Imported/WitnessedDifference/WitnessedDifference/Descent.lean (lines 43-103 ).
+
+[E21]: https://github.com/dbccpage/theory_of_finite_quantum_mechanics/blob/5b22322289839eaa308c91b01500225aa31ddaba/lean4/Imported/WitnessedDifference/WitnessedDifference/Descent.lean#L43-L103
+
+- **E22** — three named L1 admission nodes. theory_of_finite_quantum_mechanics / dag/derivation_dag.json (named DAG nodes ).
+
+[E22]: https://github.com/dbccpage/theory_of_finite_quantum_mechanics/blob/5b22322289839eaa308c91b01500225aa31ddaba/dag/derivation_dag.json
+
+- **E23** — explicit non-elaboration warning. theory_of_finite_quantum_mechanics / lean4/Imported/SymbolGameLoose/LGGR.lean (lines 12-23 ).
+
+[E23]: https://github.com/dbccpage/theory_of_finite_quantum_mechanics/blob/5b22322289839eaa308c91b01500225aa31ddaba/lean4/Imported/SymbolGameLoose/LGGR.lean#L12-L23
+
+- **E24** — CODA component organization is not a necessity theorem. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/coda/coda.md (lines 553-575 ).
+
+[E24]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/coda/coda.md#L553-L575
+
+- **E25** — packet specification; six-role fields. the_symbol_game / omega_engine_pfp/infrastructure/yaml/schemas/lggr_defect_packet_schema.yaml (lines 1-38 ).
+
+[E25]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_pfp/infrastructure/yaml/schemas/lggr_defect_packet_schema.yaml#L1-L38
+
+- **E26** — superseded GTTC identifiers. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/cs/coda_cs_claim_ledger.md.txt (lines 41-55 ).
+
+[E26]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/cs/coda_cs_claim_ledger.md.txt#L41-L55
+
+- **E27** — historical GTOC-style pipeline and GTTA terminal prose. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/prime_algorithm_package/oe_prime_algorithms.md (lines 238-264 ).
+
+[E27]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/prime_algorithm_package/oe_prime_algorithms.md#L238-L264
+
+- **E28** — six role boundary; completion-relative limits. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/local_green_global_red_monograph_index.md (lines 71-110 ).
+
+[E28]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/local_green_global_red_monograph_index.md#L71-L110
+
+- **E29** — nonlinear quantum product retraction; requires its actual model. the_symbol_game / omega_engine_atlas/coda_atlas/F004_papers/002_projection_obstruction/000_projection_obstruction/projection_obstruction.md (lines 29-38 ).
+
+[E29]: https://github.com/dbccpage/the_symbol_game/blob/e7420ae75737df9dbb0785cc102e8179fa6feb8c/omega_engine_atlas/coda_atlas/F004_papers/002_projection_obstruction/000_projection_obstruction/projection_obstruction.md#L29-L38
+
+

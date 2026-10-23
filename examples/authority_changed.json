@@ -1,0 +1,64 @@
+{
+  "policy": {
+    "policy_id": "budget-policy/v1",
+    "spec_id": "cumulative-budget/v1",
+    "evaluator_id": "bounded-step/v1",
+    "representation_id": "integer-state/v1",
+    "authority_id": "external-owner/v1",
+    "allowed_states": [
+      0,
+      1,
+      2
+    ],
+    "max_step": 1,
+    "max_total": 1,
+    "query_scope": "endpoint"
+  },
+  "baseline": {
+    "state_id": "s0",
+    "value": 0
+  },
+  "witnesses": [
+    {
+      "witness_id": "w001",
+      "source": {
+        "state_id": "s0",
+        "value": 0
+      },
+      "target": {
+        "state_id": "s1",
+        "value": 1
+      },
+      "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+      "evaluator_id": "bounded-step/v1",
+      "spec_id": "cumulative-budget/v1",
+      "representation_id": "integer-state/v1",
+      "authority_id": "external-owner/v1",
+      "observed_magnitude": 1,
+      "local_accepted": true,
+      "smoke_passed": true,
+      "obligations": []
+    },
+    {
+      "witness_id": "w002",
+      "source": {
+        "state_id": "s1",
+        "value": 1
+      },
+      "target": {
+        "state_id": "s2",
+        "value": 0
+      },
+      "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+      "evaluator_id": "bounded-step/v1",
+      "spec_id": "cumulative-budget/v1",
+      "representation_id": "integer-state/v1",
+      "authority_id": "different-owner/v2",
+      "observed_magnitude": 1,
+      "local_accepted": true,
+      "smoke_passed": true,
+      "obligations": []
+    }
+  ],
+  "prior_obligations": []
+}

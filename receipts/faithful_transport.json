@@ -1,0 +1,78 @@
+{
+  "authority_effect": "None",
+  "backward_defect": [
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "forward_commutes": true,
+  "forward_defect": [
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "input_sha256": "b20ad5d942757a1ebb73612c875518dc4952f0e25ef17580fe0b35d93851600b",
+  "left_inverse_C0_defect": [
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "left_inverse_C1_defect": [
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "nonrepairability_reflection_verified": true,
+  "repair_preservation_verified": true,
+  "schema": "lggr.transport.v1",
+  "scope": "Supplied finite rational maps only. No unprovided runtime interpretation is inferred.",
+  "status": "RETRACTION_VERIFIED"
+}

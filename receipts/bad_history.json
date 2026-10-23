@@ -1,0 +1,76 @@
+{
+  "arithmetic": {
+    "baseline": 0,
+    "bound": 1,
+    "endpoint_verdict": false,
+    "every_prefix_verdict": false,
+    "final": 2,
+    "global_verdict": false,
+    "prefix_checks": [
+      {
+        "signed_total": 1,
+        "within_bound": true,
+        "witness_id": "w001"
+      },
+      {
+        "signed_total": 2,
+        "within_bound": false,
+        "witness_id": "w002"
+      }
+    ],
+    "query_scope": "endpoint",
+    "signed_deltas": [
+      1,
+      1
+    ],
+    "signed_total": 2
+  },
+  "authority_effect": "None",
+  "composition_certified": false,
+  "findings": [
+    {
+      "code": "PROTECTED_QUERY_FALSE",
+      "evidence": {
+        "bound": 1,
+        "query_scope": "endpoint",
+        "signed_total": 2,
+        "violated_prefixes": [
+          {
+            "signed_total": 2,
+            "within_bound": false,
+            "witness_id": "w002"
+          }
+        ]
+      },
+      "kind": "OBSTRUCTION_DETECTED",
+      "message": "The supplied endpoint evidence falsifies the declared cumulative requirement.",
+      "witness_id": null
+    }
+  ],
+  "input_sha256": "f780a827d689a08750583b29045a6377c5b0ac17c32dfc208cb9237b1651f124",
+  "local_checks": [
+    {
+      "claimed_local_acceptance": true,
+      "claimed_smoke_pass": true,
+      "protected_policy_acceptance": true,
+      "protected_smoke_pass": true,
+      "signed_delta": 1,
+      "witness_id": "w001"
+    },
+    {
+      "claimed_local_acceptance": true,
+      "claimed_smoke_pass": true,
+      "protected_policy_acceptance": true,
+      "protected_smoke_pass": true,
+      "signed_delta": 1,
+      "witness_id": "w002"
+    }
+  ],
+  "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+  "query_scope": "endpoint",
+  "receipt_sha256": "e19b9595d1f3dea13a1cf03f720d1f037787d5de0714ba1dd7e76e3c28dc86fb",
+  "schema": "lggr.audit.v1",
+  "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+  "status": "OBSTRUCTION_DETECTED",
+  "unresolved_obligations": []
+}

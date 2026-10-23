@@ -1,0 +1,26 @@
+{
+  "authority_effect": "None",
+  "carrier_size": 2,
+  "coverage": "supplied finite table only",
+  "decoder": [
+    {
+      "query": true,
+      "report": [
+        1,
+        -1
+      ]
+    },
+    {
+      "query": false,
+      "report": [
+        1,
+        1
+      ]
+    }
+  ],
+  "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+  "schema": "lggr.descent.v1",
+  "scope_id": "two-budget-histories/signed-deltas",
+  "status": "DECODER_VERIFIED",
+  "table_sha256": "81784f31da9b4103d6537ac4380bad3b9f6cbb81433eba8e75b1ca9b2d8542f9"
+}

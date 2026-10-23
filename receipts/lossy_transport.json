@@ -1,0 +1,20 @@
+{
+  "authority_effect": "None",
+  "backward_defect": null,
+  "forward_commutes": true,
+  "forward_defect": [
+    [
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "input_sha256": "a7a44ebd534aa56ac6bbe2c10d20718721ddf2a32f4d8225733e6353eb2c4e68",
+  "left_inverse_C0_defect": null,
+  "left_inverse_C1_defect": null,
+  "nonrepairability_reflection_verified": false,
+  "repair_preservation_verified": true,
+  "schema": "lggr.transport.v1",
+  "scope": "Supplied finite rational maps only. No unprovided runtime interpretation is inferred.",
+  "status": "COMMUTING_TRANSPORT_VERIFIED"
+}

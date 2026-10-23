@@ -1,0 +1,57 @@
+{
+  "arithmetic": {
+    "baseline": 0,
+    "bound": 1,
+    "endpoint_verdict": true,
+    "every_prefix_verdict": true,
+    "final": 0,
+    "global_verdict": true,
+    "prefix_checks": [
+      {
+        "signed_total": 1,
+        "within_bound": true,
+        "witness_id": "w001"
+      },
+      {
+        "signed_total": 0,
+        "within_bound": true,
+        "witness_id": "w002"
+      }
+    ],
+    "query_scope": "endpoint",
+    "signed_deltas": [
+      1,
+      -1
+    ],
+    "signed_total": 0
+  },
+  "authority_effect": "None",
+  "composition_certified": true,
+  "findings": [],
+  "input_sha256": "f06c88de351d300be059564b91a4b6f2ea87726431d61e32598d3826a42e568a",
+  "local_checks": [
+    {
+      "claimed_local_acceptance": true,
+      "claimed_smoke_pass": true,
+      "protected_policy_acceptance": true,
+      "protected_smoke_pass": true,
+      "signed_delta": 1,
+      "witness_id": "w001"
+    },
+    {
+      "claimed_local_acceptance": true,
+      "claimed_smoke_pass": true,
+      "protected_policy_acceptance": true,
+      "protected_smoke_pass": true,
+      "signed_delta": -1,
+      "witness_id": "w002"
+    }
+  ],
+  "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+  "query_scope": "endpoint",
+  "receipt_sha256": "6df1cf2759a30603ca0b8059aacc39ec4056ba02f9f4cfd9bde505d9bb0f4f68",
+  "schema": "lggr.audit.v1",
+  "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+  "status": "COMPOSITION_VERIFIED",
+  "unresolved_obligations": []
+}

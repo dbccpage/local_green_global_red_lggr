@@ -1,0 +1,10 @@
+{
+  "authority_effect": "None",
+  "closure": [],
+  "input_sha256": "8455b4bfb398a5648588eb3adfca3f8f3ee1810b471342e0e505c6e18c6cfb2e",
+  "potential": null,
+  "repair_exists": false,
+  "represents_nonzero_H1": true,
+  "schema": "lggr.cochain.v1",
+  "status": "CLOSED_NONEXACT"
+}

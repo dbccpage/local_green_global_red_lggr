@@ -1,0 +1,45 @@
+{
+  "arithmetic": null,
+  "authority_effect": "None",
+  "composition_certified": false,
+  "findings": [
+    {
+      "code": "MISSING_ENDPOINT",
+      "evidence": {},
+      "kind": "WITNESS_INCOMPLETE",
+      "message": "Pass reports do not establish signed endpoint changes.",
+      "witness_id": "w001"
+    },
+    {
+      "code": "MISSING_ENDPOINT",
+      "evidence": {},
+      "kind": "WITNESS_INCOMPLETE",
+      "message": "Pass reports do not establish signed endpoint changes.",
+      "witness_id": "w002"
+    }
+  ],
+  "input_sha256": "cb1b6f2c3fb0ced545335c53d16d3d4f0daa9b30af06a554c55d2e6f011e4478",
+  "local_checks": [
+    {
+      "claimed_local_acceptance": true,
+      "claimed_smoke_pass": true,
+      "protected_policy_acceptance": null,
+      "signed_delta": null,
+      "witness_id": "w001"
+    },
+    {
+      "claimed_local_acceptance": true,
+      "claimed_smoke_pass": true,
+      "protected_policy_acceptance": null,
+      "signed_delta": null,
+      "witness_id": "w002"
+    }
+  ],
+  "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+  "query_scope": "endpoint",
+  "receipt_sha256": "736e93cc917619e52f452113adb67ae14d68cb3ed81678ed68d5df24ba0d2f8b",
+  "schema": "lggr.audit.v1",
+  "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+  "status": "WITNESS_INCOMPLETE",
+  "unresolved_obligations": []
+}

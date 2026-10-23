@@ -1,0 +1,58 @@
+{
+  "authority_effect": "None",
+  "python": "3.13.5",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "unit_test_runs": [
+    {
+      "mode": "standard",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "returncode": 0,
+      "test_count": 90,
+      "elapsed_seconds": 15.468,
+      "output": "receipts/tests.txt"
+    },
+    {
+      "mode": "optimized",
+      "command": [
+        "python",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "returncode": 0,
+      "test_count": 90,
+      "elapsed_seconds": 14.964,
+      "output": "receipts/tests-optimized.txt"
+    }
+  ],
+  "exhaustive_checks": {
+    "three_state_report_query_pairs": 216,
+    "boolean_verdict_triples": 8,
+    "finite_budget_histories_length_one_to_five": 363
+  },
+  "lean_replayed": false,
+  "native_repository_integration_tested": false,
+  "coverage_statement": "Finite implementation tests; not a formal proof of the Python checker or real-system safety.",
+  "minimum_version_syntax_check": "Python 3.10 grammar parsed; only Python 3.13.5 was executed",
+  "standalone_zipapp": {
+    "tested": true,
+    "isolated_mode": true,
+    "site_packages_disabled": true,
+    "sha256": "6ca14fda7645692fd519b7a9567f1862dcaa9b4f84d1684282e8da47fb7a564f",
+    "same_results_as_module": true,
+    "repeated_demo_byte_identical": true
+  },
+  "schema_scope": "Finite supplied-data reference implementation; AuthorityEffect None"
+}
