@@ -1,8 +1,63 @@
 # LGGR Witness Audit
 
-**AuthorityEffect: None.** Working Python reference implementation of the finite mechanisms in the supplied report, *Local Green, Global Red: cumulative drift under protected local evaluation*.
+**AuthorityEffect: None.** Working Python reference implementation of the finite mechanisms in the supplied report, *Local Green, Global Red: cumulative drift under protected local evaluation*, connecting the **Local Green, Global Red (LGGR) Foundational Series (Volumes I–VI)** with **Bell's Theorem as a Positive-Extension Obstruction: Projection residuals, uncertainty, and embedded knowledge**.
 
-This is a standalone, tested adapter. It does **not** modify the Omega Engine or finite-QM repositories, execute a hosted model, authenticate an owner, or authorize a merge. The source report supplies the mathematics; this package implements scoped checks on explicit finite data.
+**Description:** Finite witness-composition, report-fiber decoder/collision certification, exact rational $\ell^1$ repair and cochain classification, chain-retraction transport verification, and observer-sufficiency models for evaluating when locally passing reports fail to determine or satisfy a declared global requirement.
+
+**Keywords:** `local-green-global-red`, `finite-obstruction-calculus`, `evaluated-path-kernels`, `organizational-gluing`, `observer-sufficiency`, `decoder-or-collision`, `witness-composition`, `cochain-obstruction`, `l1-duality`, `projection-residuals`, `positive-extensions`, `bell-inequalities`, `contextual-fraction`, `embedded-knowledge`, `recursive-self-improvement`
+
+This is a standalone, tested adapter. It does **not** modify the Omega Engine or finite-QM repositories, execute a hosted model, authenticate an owner, or authorize a merge. The source report and companion papers supply the mathematical formulations; this package implements scoped checks on explicit finite data.
+
+## Foundational Context: LGGR Series & Positive-Extension / Projection Residuals
+
+This repository synthesizes executable finite verification rules from two related lines of work:
+
+### 1. The Local Green, Global Red Foundational Series (Volumes I–VI) & Witnessed Difference Programme
+
+The six-volume LGGR series (`001_local_green_global_red_foundational_series`) and the Witnessed Difference Programme (WDP) examine when local observations, step verdicts, or restricted reports fail to determine a declared global proposition:
+
+| Volume / Source | Core Mathematical Mechanism | Role in This Repository |
+|---|---|---|
+| **WDP (`ComponentReports`)** | **Decoder-or-collision dichotomy (`decoder_xor_collision`):** For a report map $p: X \to A$ and protected query $q: X \to B$, a unique decoder $D: p(X) \to B$ with $D \circ p = q$ exists if and only if $q$ is constant on every realized fiber $p^{-1}(a)$; otherwise an explicit colliding pair $(x, y)$ with $p(x) = p(y)$ and $q(x) \ne q(y)$ witnesses report insufficiency. | Implemented in `lggr/descent.py` (`analyze_descent`, `verify_descent_certificate`, `decode`). |
+| **LGGR I (*Evaluated Path Kernels*)** | **Boolean evaluator defect:** $\Delta_E = E_g - \prod_i E_i \in \{-1, 0, 1\}$, classifying triples into `NGD` ($-1$, local green / global red), `ZDR` ($0$, agreement including joint rejection), and `PGD` ($+1$, local red / global green). **Verdict ceiling (`verdict_ceiling`):** Any evaluator factoring solely through a colliding report disagrees with the target on at least one member of the colliding pair. | Implemented in `lggr/descent.py` (`evaluator_defect`) and exhausted across all 8 Boolean triples and 216 three-state report/query maps. |
+| **LGGR II (*Organizational Evaluator Gluing*)** | **Boundary sufficiency vs. quotient factorization:** A boundary report can determine $E_g$ without making $E_g$ equal to the product of local verdicts; mixed carrier fibers block quotient factorization. Representation, ownership, temporal, and agreement requirements are declared closure conditions rather than automatic operational authority. | Reflected in `lggr/witnesses.py` via explicit boundary matching, policy-manifest digests, representation/evaluator/authority identity checks, and retained obligations. |
+| **LGGR III (*Six-Role Evaluator Overlay*)** | **Role-indexed evaluation:** The same finite evaluator calculus recorded across six mathematical role profiles (*finite obstruction, foundations, representation, observer, continuum shadow, and action alignment*). These are accounting profiles rather than game-theoretic seats or anti-collusion theorems. | Preserved in the scope boundary: identity and role tags track declared provenance without asserting statistical independence or payoff dominance. |
+| **LGGR IV (*Completion-Relative Obstruction*)** | **Stage-wise vs. completed solutions:** Compatible finite-stage solutions (such as $3x + 1 \equiv 0 \pmod{2^n}$) need not admit a single uncompleted witness; descent from a completion back to the original carrier requires membership in the reflection image (`reflection_descent_criterion`). | Reflected in explicit scope separation between finite-table certification, prefix vs. endpoint history queries, and uncertified extrapolation refusal. |
+| **LGGR V (*Finite No-Recovery & Repair Distance*)** | **Realizable soundness and $\ell^1$ repair duality:** For linear section-defect map $D$ and observation map $Q$, soundness on realizable defects is $\operatorname{im} D \cap \ker Q = \{0\}$. Raw defect mass $\|Ds\|_1$ (distance $0$ to $\operatorname{im} D$) is kept distinct from weighted $\ell^1$ repair distance $\Phi(h) = \min_x \sum_e w_e |h_e - (Dx)_e|$, certified by a dual annihilator $D^\top z = 0$, $|z_e| \le w_e$, and matching primal residual. | Implemented in `lggr/linear.py` (`verify_l1_certificate`, `classify_cochain`), separating exact coboundaries, closure failures ($d_1 h \ne 0$), and closed nonexact 1-cochains. |
+| **LGGR VI (*Nonlinear Aggregation & Adjoint Probing*)** | **Postprocessing invariance and Gram radical:** Deterministic postprocessing cannot separate states sharing an observation ($O(x) = O(y) \Rightarrow f(O(x)) = f(O(y))$). Over the rationals, $\ker(Q^\top Q) = \ker Q$; centered two-query and full sign-cube probes recover $Q^\top Q x$ but remain blind on $\ker Q$. | Motivates `lggr/transport.py` (`verify_transport`): forward commutation ($F_1 D_{\text{src}} = D_{\text{tgt}} F_0$) transports repairs, whereas preserving nonrepairability requires a verified left-inverse chain retraction ($G_k F_k = I$). |
+
+### 2. Bell Positive Extensions, Projection Residuals, and Embedded Task Sufficiency
+
+The companion study *Bell's Theorem as a Positive-Extension Obstruction* (`036_bell_positive_extensions_and_projection_residuals`) connects finite obstruction certificates and projection residuals to empirical behavior tables, nonlocality measures, and recursive self-improvement (RSI) under fixed evidence:
+
+1. **Four Distinct Obstruction Questions:**
+   - *Product-state retraction residual:* $F_\rho = \rho - \rho_A \otimes \rho_B$ and $D_{\text{prod}}(\rho) = \|F_\rho\|_1$ measure departure from a single tensor product. A classically correlated separable state such as $\rho_{\text{cl}} = \frac{1}{2}|00\rangle\langle 00| + \frac{1}{2}|11\rangle\langle 11|$ has $D_{\text{prod}}(\rho_{\text{cl}}) = 1$ yet admits a local hidden-variable model for every local measurement choice.
+   - *Overlap consistency:* Agreement of context distributions on restricted marginals (no-signalling). Quantum Bell violations satisfy overlap consistency, so linear overlap defects vanish even when global positive extension fails.
+   - *Positive global extension:* Existence of a nonnegative distribution $q \ge 0$, $\mathbf{1}^\top q = 1$ over the finite deterministic response space $\Omega = A^X \times B^Y$ such that $Tq = p$ (defining the Bell-local polytope $\mathcal{L} = T\Delta(\Omega)$). In the CHSH no-signalling affine space, signed extensions $Tq = p$ with $\mathbf{1}^\top q = 1$ exist, whereas positive extensions fail above the classical threshold ($|S(p)| > 2$).
+   - *Cochain / cohomology classes:* At the deterministic PR-box support endpoint ($v = 1$), parity equations $u_x + v_y = xy \pmod 2$ define a nonzero class in $H^1(K_{2,2}; \mathbb{F}_2)$. For full-support probabilistic quantum violations ($1/2 < v < 1$, including the Tsirelson point $v = 1/\sqrt{2}$), every deterministic assignment remains in the support; the obstruction is carried by probability weights and certified by separating linear dual witnesses rather than support cohomology.
+
+2. **Projection Residuals, Signed Negative Mass, and Contextual Fraction:**
+   - **Total-variation repair cost:** $R_\pi(p) = \min_{\ell \in \mathcal{L}} \|p - \ell\|_\pi$, certified via dual Bell functionals satisfying vertex bounds on $\Omega$.
+   - **Signed-extension negative mass ($N_{\min}$) vs. contextual fraction ($CF$):** For a behavior $p$, $N_{\min}(p)$ minimizes $\sum_\lambda q_\lambda^-$ over normalized signed extensions $T(q^+ - q^-) = p$, whereas $CF(p) = 1 - \max\{\mathbf{1}^\top \gamma : \gamma \ge 0,\, T\gamma \le p\}$ measures the deficiency of the largest dominated local subdistribution.
+   - **Symmetric equality vs. general three-party separation:** Along the real-parameter isotropic CHSH and eight-context Mermin families ($0 \le v \le 1$), both measures satisfy $N_{\min} = \max(0, v - \frac{1}{2})$ and $CF = \max(0, 2v - 1) = 2 N_{\min}$. On general three-party, two-setting, two-outcome no-signalling tables, exact rational primal/dual simplex certificates show that $CF \le 2 N_{\min}$ is not invariant: an explicit no-signalling mixture $p_*$ satisfies $CF(p_*) = \frac{19}{64}$ and $N_{\min}(p_*) = \frac{25}{256}$ ($CF - 2N_{\min} = \frac{13}{128} > 0$), reversing the relative ordering against $Q_{5/8}$ ($CF(Q_{5/8}) = \frac{1}{4} < CF(p_*)$ while $N_{\min}(Q_{5/8}) = \frac{1}{8} > N_{\min}(p_*)$). Across any finite scenario where every deterministic column has constant positive context weight $m$, a constructive packing bound gives $CF(p) \le (m - 1) N_{\min}(p)$.
+
+3. **Observer-Fiber Minimax Floor and Evidence-Preserving RSI:**
+   - Given a finite history carrier $\mathcal{H}$, presentation map $O: \mathcal{H} \to Y$ with fibers $\mathcal{H}_y = O^{-1}(y)$, and a scalar target $f: \mathcal{H} \to \mathbb{R}$ with fiber spread $W_f(y) = \max_{h \in \mathcal{H}_y} f(h) - \min_{h \in \mathcal{H}_y} f(h)$, exact prediction $f = g \circ O$ holds if and only if $W_f(y) = 0$ on every realized fiber. More generally, the worst-case scalar prediction error satisfies the minimax identity
+     $$\inf_g \max_{h \in \mathcal{H}} |f(h) - g(O(h))| = \frac{1}{2} \max_{y \in O(\mathcal{H})} W_f(y),$$
+     attained by the fiber midpoint predictor.
+   - **Evidence-preserving recursion bound:** If a system updates its internal state, code, or predictor through any finite number of recursive steps using only fixed initial evidence $y = O(h)$ and randomness whose conditional law depends only on $y$, its output distribution is identical across all $h \in \mathcal{H}_y$, yielding
+     $$\max_{h \in \mathcal{H}_y} \mathbb{E}|Z_n - f(h)| \ge \frac{1}{2} W_f(y).$$
+     Internal self-modification or postprocessing on fixed evidence cannot shrink a nonzero fiber width; reducing the floor requires informative new observations that refine $O^{-1}(y)$ or a justified domain restriction on $\mathcal{H}$.
+
+4. **Comparison of Failure Modes and Certificates:**
+
+| Question | Mathematical Test | Failure Witness | Package Analog |
+|---|---|---|---|
+| **Bell-local positive extension** | Does $T^{-1}(p) \cap \Delta(\Omega)$ contain a point? | Separating Bell / LP dual functional | `lggr/linear.py` (`verify_l1_certificate`) |
+| **Exact task/query recovery from report** | Is $q$ (or $f$) constant on every fiber $O^{-1}(y)$? | Colliding pair $h_0, h_1$ with $O(h_0) = O(h_1)$ and $q(h_0) \ne q(h_1)$ | `lggr/descent.py` (`analyze_descent`) |
+| **Cumulative step-history budget** | Does $\sum_i (x_i - x_{i-1})$ stay within $[-B, B]$ from baseline $x_0$? | Signed endpoint witness exceeding $B$ (or `WITNESS_INCOMPLETE` if only unsigned local passes are retained) | `lggr/witnesses.py` (`audit_history`) |
+| **Linear cochain repairability** | Does $h \in \operatorname{im} D_0$, and if not, is $D_1 h = 0$? | Dual annihilator $D_0^\top z = 0$ with $z^\top h > 0$; closure check $D_1 h$ | `lggr/linear.py` (`classify_cochain`) |
+| **Representation transport** | Do chain maps $(F_0, F_1)$ commute with $D$, and do $(G_0, G_1)$ retract $(F_0, F_1)$? | Nonzero commutation defect or missing left inverse $G_k F_k \ne I$ | `lggr/transport.py` (`verify_transport`) |
 
 ## Run without installing anything
 
@@ -37,7 +92,7 @@ Installation requires a compatible local setuptools installation. It is unnecess
 
 | Mechanism | Executable behavior | Boundary |
 |---|---|---|
-| Decoder-or-collision | Groups finite observations by report, constructs a decoder on the realized image or exhibits a colliding pair, and replays either certificate. | A decoder is certified only on the supplied table. A collision proves report insufficiency, not which history occurred. |
+| Decoder-or-collision | Groups finite observations by report, constructs a decoder on the realized image or exhibits a colliding pair, and replays either certificate. | A decoder is certified only on the supplied table. A collision certifies report insufficiency in this model, not which history occurred. |
 | Witness composition | Checks endpoint identity, signed differences, local verdicts, smoke observations, baseline, policy manifest, evaluator/spec/representation/authority identity, and open obligations. | Its global query is the declared integer budget requirement, not arbitrary software semantics. |
 | Evaluator defect | Computes `Eg - E1*E2` and labels NGD/ZDR/PGD. | Requires an independently supplied global verdict. It does not manufacture one from local passes. |
 | Exact L1 certificate | Checks `D.T z = 0`, `abs(z) <= w`, the primal residual and equality of bounds. | Verifies supplied rational certificates; does not optimize an arbitrary repair problem for you. |
@@ -110,7 +165,7 @@ print(receipt["authority_effect"])               # None (the string)
 
 `make_witness` evaluates the supplied finite model. It does not turn arbitrary code, an LLM's approval, or a commit hash into behavioral evidence.
 
-`policy.sha256` binds the actual policy contents, not just its name. Each witness records this manifest digest and the evaluator, specification, representation and authority identities. These are **supplied identities**, not authentication or a guarantee that a hosted provider has remained unchanged.
+`policy.sha256` binds the actual policy contents, not just its name. Each witness records this manifest digest and the evaluator, specification, representation and authority identities. These are **supplied identities**, not authentication or a certification that a hosted provider has remained unchanged.
 
 The audit recomputes local verdicts instead of trusting the recorded flags. It rejects disconnected boundaries and conflicting observations for one state identity. All findings remain in the receipt even when a more conservative primary status takes precedence.
 
@@ -180,7 +235,7 @@ G0 F0 = identity on source C0     left inverse
 G1 F1 = identity on source C1     left inverse
 ```
 
-The full verified chain retraction is a sufficient repair-reflection certificate. Failure to provide one does not prove that every conceivable reflection method fails. It means this checker has not certified reflection by this route.
+The full verified chain retraction is a sufficient repair-reflection certificate. Failure to provide one does not show in this model that every conceivable reflection method fails. It means this checker has not certified reflection by this route.
 
 This finite rational check is **not automatically connected to runtime representation migration** in the budget adapter. That connection needs an independently admitted interpretation of the maps and states. The adapter refuses unprovided transport instead of assuming it.
 
@@ -224,4 +279,20 @@ The current package deliberately has no `approve=True`, owner-signature bypass, 
 
 `SOURCE_NOTES.md` separates the uploaded report from this new implementation. `source/research_response.txt` preserves the supplied input. `provenance.json` records its SHA-256 and the repository pins **reported by that input**. Those repositories and Lean proofs were not independently fetched or rerun for this implementation.
 
-The produced status names are adapter vocabulary. NGD/ZDR/PGD reproduce the report's mathematical sign convention; the original `epk_core.py` was not imported. There is no claim of native integration, universal self-modification safety, quantum advantage, or stronger detection than a complete fixed-invariant checker.
+The produced status names are adapter vocabulary. NGD/ZDR/PGD reproduce the report's mathematical sign convention; the original `epk_core.py` was not imported. There is no claim of native integration, general self-modification safety, quantum advantage, or stronger detection than a complete fixed-invariant checker.
+
+## Claim Hygiene Summary
+
+1. **What this repository supports:**
+   - Exact finite verification of report-fiber sufficiency (`DECODER_VERIFIED` vs. `REPORT_INSUFFICIENT`) via realized-image decoder construction or explicit colliding-pair certificates on supplied tables.
+   - Exact endpoint and prefix composition checks for witnessed integer-budget transitions under declared policy manifests, evaluator/specification/representation/authority identities, and retained obligations.
+   - Exact rational verification of weighted $\ell^1$ primal/dual repair certificates (`verify_l1_certificate`), 1-cochain repair/closure/nonexactness classification (`classify_cochain`), and commuting chain-map / left-inverse chain-retraction transport (`verify_transport`).
+2. **What this repository does not support:**
+   - Automatic extraction of mathematical transition models from arbitrary source code, LLM outputs, or commit hashes.
+   - Stronger detection power on the cumulative budget-drift example than an ordinary fixed-baseline invariant check given the same endpoint inputs.
+   - Any identification of software evaluation drift with physical Bell nonlocality or quantum contextuality, or any claim that the cumulative budget violation is a nonzero cohomology class.
+   - Cryptographic authentication of identities, prevention of out-of-band ledger deletion, or operational merge authorization (`AuthorityEffect: None`).
+3. **Narrowest defensible claim:**
+   - For an explicitly supplied finite carrier, report map, and target query (or rational repair matrix and cochain), this reference package checks whether the retained reports determine the target on the realized image, whether supplied step witnesses compose under a declared integer budget policy, and whether supplied rational primal/dual and chain-retraction certificates satisfy the algebraic conditions required to bound or reflect repair residuals.
+4. **Next test needed:**
+   - Controlled equal-information comparative evaluation against a conventional contract/baseline regression checker across multi-step histories that include representation migrations (with commuting and lossy maps) and deferred obligations, measuring false acceptance, false refusal, retained obligations, certificate replay cost, and fault-localization effort.

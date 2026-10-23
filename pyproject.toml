@@ -5,9 +5,28 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lggr-witness-audit"
 version = "0.1.0"
-description = "Finite LGGR witness composition, decoder/collision, and exact obstruction certificates"
+description = "Finite LGGR witness composition, report-fiber decoder/collision certificates, exact rational L1/cochain obstruction checks, and projection-residual audit models"
+readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = []
+keywords = [
+    "local-green-global-red",
+    "finite-obstruction-calculus",
+    "evaluated-path-kernels",
+    "organizational-gluing",
+    "observer-sufficiency",
+    "decoder-or-collision",
+    "witness-composition",
+    "cochain-obstruction",
+    "l1-duality",
+    "projection-residuals",
+    "positive-extensions",
+    "bell-inequalities",
+    "contextual-fraction",
+    "embedded-knowledge",
+    "recursive-self-improvement",
+]
 
 [project.scripts]
 lggr-audit = "lggr.__main__:main"
