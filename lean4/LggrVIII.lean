@@ -348,4 +348,33 @@ theorem streaming_transport_projection_vs_retraction :
   refine ⟨G0 y, ?_⟩
   rw [← h_comm y, hy, h_left h]
 
+/-- Theorem 15 (`non_injective_projection_blocks_retraction`):
+    1. (Kernel Collision Blocks Left Inverse): For any projection `F1 : α → β`, if two distinct
+       source cochains `ha ≠ hb` collide under `F1` (`F1 ha = F1 hb`), then no left-inverse
+       retraction `G1 : β → α` can satisfy `∀ h, G1 (F1 h) = h`.
+    2. (Chord-Dropping Instantiation): Because the exact 3-cycle cochain `(1, 1, 2)` and the
+       frustrated 3-cycle cochain `(1, 1, 1)` collide under `lossyChordDrop`, no left inverse
+       exists for `lossyChordDrop`. -/
+theorem non_injective_projection_blocks_retraction :
+    (∀ {α β : Type} (F1 : α → β) (ha hb : α),
+      ha ≠ hb → F1 ha = F1 hb → ¬ (∃ G1 : β → α, ∀ h : α, G1 (F1 h) = h)) ∧
+    ¬ (∃ G1 : (Int × Int) → (Int × Int × Int),
+      ∀ h : Int × Int × Int, G1 (lossyChordDrop h.1 h.2.1 h.2.2) = h) := by
+  refine ⟨?_, ?_⟩
+  · intro α β F1 ha hb h_neq h_coll ⟨G1, h_left⟩
+    apply h_neq
+    calc
+      ha = G1 (F1 ha) := (h_left ha).symm
+      _ = G1 (F1 hb) := by rw [h_coll]
+      _ = hb := h_left hb
+  · rintro ⟨G1, h_left⟩
+    have h1 : G1 (lossyChordDrop 1 1 2) = ((1 : Int), (1 : Int), (2 : Int)) :=
+      h_left ((1 : Int), (1 : Int), (2 : Int))
+    have h2 : G1 (lossyChordDrop 1 1 1) = ((1 : Int), (1 : Int), (1 : Int)) :=
+      h_left ((1 : Int), (1 : Int), (1 : Int))
+    have h_eq : lossyChordDrop 1 1 2 = lossyChordDrop 1 1 1 := rfl
+    rw [h_eq] at h1
+    rw [h1] at h2
+    nomatch h2
+
 end LggrVIII
