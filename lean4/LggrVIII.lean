@@ -580,4 +580,32 @@ theorem six_role_sample_defect_and_cancellation_masking
   · have hmul : w2 * R < w1 * R := Int.mul_lt_mul_of_pos_right hgt hR
     omega
 
+/-- Finite-stage witnesses `x1 = -1, x2 = 1, x3 = -3, x4 = 5` for `3 * x + 1 ≡ 0 (mod 2^n)`. -/
+def dyadicWitness1 : Int := -1
+def dyadicWitness2 : Int := 1
+def dyadicWitness3 : Int := -3
+def dyadicWitness4 : Int := 5
+
+/-- Theorem 25 (`completion_relative_obstruction_on_carrier_extension`):
+    Formalizes the LGGR IV Completion-Relative Obstruction (Finite-Stage Green +
+    Projective Thread Compatibility + Original-Carrier Integer Obstruction):
+    1. (Finite-Stage Solvability): For stages `n = 1, 2, 3, 4` with moduli `2, 4, 8, 16`,
+       the witnesses `x1 = -1, x2 = 1, x3 = -3, x4 = 5` satisfy `(3 * xn + 1) % 2^n = 0`.
+    2. (Projective Thread Compatibility): Adjacent stage witnesses agree modulo the
+       coarser stage modulus: `(x2 - x1) % 2 = 0`, `(x3 - x2) % 4 = 0`, `(x4 - x3) % 8 = 0`.
+    3. (Original-Carrier Integer Obstruction): No integer `x : Int` in the original carrier
+       satisfies the completed equation `3 * x + 1 = 0`. -/
+theorem completion_relative_obstruction_on_carrier_extension :
+    ((3 * dyadicWitness1 + 1) % 2 = 0 ∧
+     (3 * dyadicWitness2 + 1) % 4 = 0 ∧
+     (3 * dyadicWitness3 + 1) % 8 = 0 ∧
+     (3 * dyadicWitness4 + 1) % 16 = 0) ∧
+    ((dyadicWitness2 - dyadicWitness1) % 2 = 0 ∧
+     (dyadicWitness3 - dyadicWitness2) % 4 = 0 ∧
+     (dyadicWitness4 - dyadicWitness3) % 8 = 0) ∧
+    (∀ x : Int, 3 * x + 1 ≠ 0) := by
+  refine ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩, ?_⟩
+  intro x
+  omega
+
 end LggrVIII
