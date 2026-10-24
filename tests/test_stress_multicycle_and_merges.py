@@ -2254,6 +2254,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_ok["r1_lim_coset_residual_mod_z"], "0")
         self.assertEqual(r_ok["evaluator_defect"], 0)
 
+    def test_skew_repair_norm_attainment_divergence_and_l1_budget_breach(self) -> None:
+        """Verify LGGR V Remark LGR-R4 skew repair monitor separates l^infty attainment from l^1 budget."""
+        from lggr import StreamingSkewRepairMonitor
+
+        mon = StreamingSkewRepairMonitor(scope_id="skew-repair-audit")
+
+        # 1. Non-exact probe omega = (1, -1) with 2a - b = 3 != 0:
+        #    alpha_1 = 1/2 (Phi_1 = 3/2), alpha_2 = 1/5 (Phi_2^2 = 9/5), alpha_inf = 0 (Phi_inf = 1).
+        #    Selecting candidate_alpha = alpha_inf = 0 passes coordinatewise l^infty bounds <= 1 (L = 1),
+        #    but incurs ||r(0)||_1 = 2 > 3/2 = Phi_1 (Eg = 0, Delta_E = -1).
+        p_div = mon.record_probe("omega_1_minus_1_linf_selected", 1, -1)
+        self.assertEqual(p_div["skew_discrepancy_2a_minus_b"], "3")
+        self.assertEqual(p_div["alpha_1"], "1/2")
+        self.assertEqual(p_div["alpha_2"], "1/5")
+        self.assertEqual(p_div["alpha_inf"], "0")
+        self.assertEqual(p_div["phi_1"], "3/2")
+        self.assertEqual(p_div["phi_2_squared"], "9/5")
+        self.assertEqual(p_div["phi_inf"], "1")
+        self.assertTrue(p_div["closed_form_identities_hold"])
+        self.assertTrue(p_div["minimizers_strictly_diverge"])
+        self.assertEqual(p_div["candidate_l1_cost"], "2")
+        self.assertEqual(p_div["local_product_aggregator"], 1)
+        self.assertEqual(p_div["global_l1_budget_evaluator"], 0)
+        self.assertEqual(p_div["evaluator_defect"], -1)
+        self.assertEqual(p_div["probe_status"], "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR")
+
+        # 2. Exact probe omega = (1, 2) with 2a - b = 0:
+        #    alpha_1 = alpha_2 = alpha_inf = -1, Phi_1 = Phi_2^2 = Phi_inf = 0 -> L = 1, Eg = 1, Delta_E = 0
+        p_exact = mon.record_probe("omega_1_2_exact", 1, 2)
+        self.assertEqual(p_exact["skew_discrepancy_2a_minus_b"], "0")
+        self.assertEqual(p_exact["alpha_1"], "-1")
+        self.assertEqual(p_exact["alpha_2"], "-1")
+        self.assertEqual(p_exact["alpha_inf"], "-1")
+        self.assertFalse(p_exact["minimizers_strictly_diverge"])
+        self.assertEqual(p_exact["evaluator_defect"], 0)
+        self.assertEqual(p_exact["probe_status"], "SKEW_REPAIR_BUDGET_COHERENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_skew_repair.v1")
+        self.assertEqual(receipt["status"], "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(receipt["all_closed_form_identities_verified"])
+        self.assertEqual(receipt["skew_norm_divergence_probe_ids"], ["omega_1_minus_1_linf_selected"])
+
 
 if __name__ == "__main__":
     unittest.main()

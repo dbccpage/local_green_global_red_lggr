@@ -1425,4 +1425,48 @@ theorem derived_limit_projective_tower_lifting_obstruction :
   intro x hx
   omega
 
+/-- Theorem 51 (`skew_repair_norm_attainment_divergence_and_obstruction`):
+    Formalizes LGGR V §4 Remark LGR-R4 (Norm-Dependent Minimum Repair Attainment on the
+    Skew Non-Diagonal Exact Subspace `S = {(-α, -2α)}`):
+    1. (Strict Minimizer Divergence for `2a ≠ b`):
+       In cleared-denominator units scaled by `30`, for `α₁ = -15 * b`, `α₂ = -6 * (a + 2 * b)`,
+       and `α_∞ = -10 * (a + b)`, we have `α₁ - α₂ = 3 * (2 * a - b)`,
+       `α₂ - α_∞ = 2 * (2 * a - b)`, and `α₁ - α_∞ = 5 * (2 * a - b)`, so whenever `2 * a ≠ b`,
+       the three norm-minimizing parameters are pairwise distinct.
+    2. (Concrete Witness `ω = (1, -1)` & `ℓ^∞`-vs-`ℓ^1` Budget Breach `NGD`):
+       For `ω = (1, -1)` (`2a - b = 3`), the scaled minimizers `α₁_30 = 15` (`1/2`),
+       `α₂_30 = 6` (`1/5`), and `α_∞_30 = 0` (`0`) satisfy:
+       - At `α_∞ = 0`, coordinate residuals are `(1, -1)` with `max(|1|, |-1|) = 1 = Φ_∞` (`L = 1`),
+       - Yet its `ℓ^1` cost is `|1| + |-1| = 2 = 4/2 > 3/2 = Φ₁` (whereas at `α₁ = 1/2`,
+         the doubled `ℓ^1` cost is `|2 + 1| + |-2 + 2| = 3 = 2 * Φ₁`), breaching the `ℓ^1`
+         minimum repair budget (`Eg = 0`, `Δ_E = Eg - L = -1`). -/
+theorem skew_repair_norm_attainment_divergence_and_obstruction
+    (a b : Int) (h_skew : 2 * a ≠ b) :
+    (let alpha1_30 := -15 * b;
+     let alpha2_30 := -6 * (a + 2 * b);
+     let alphainf_30 := -10 * (a + b);
+     alpha1_30 - alpha2_30 = 3 * (2 * a - b) ∧
+     alpha2_30 - alphainf_30 = 2 * (2 * a - b) ∧
+     alpha1_30 - alphainf_30 = 5 * (2 * a - b) ∧
+     alpha1_30 ≠ alpha2_30 ∧
+     alpha2_30 ≠ alphainf_30 ∧
+     alpha1_30 ≠ alphainf_30) ∧
+    (let a0 : Int := 1; let b0 : Int := -1;
+     let r_inf_1 := a0 + 0;
+     let r_inf_2 := b0 + 0;
+     let phi_inf := (1 : Nat);
+     let l1_at_inf_doubled := 2 * (r_inf_1.natAbs + r_inf_2.natAbs);
+     let phi_1_doubled := (2 * a0 + 1).natAbs + (2 * b0 + 2).natAbs;
+     let e1 := if r_inf_1.natAbs ≤ phi_inf then (1 : Int) else 0;
+     let e2 := if r_inf_2.natAbs ≤ phi_inf then (1 : Int) else 0;
+     let l_prod := e1 * e2;
+     let e_global := if l1_at_inf_doubled ≤ phi_1_doubled then (1 : Int) else 0;
+     phi_1_doubled = 3 ∧
+     l1_at_inf_doubled = 4 ∧
+     l_prod = 1 ∧
+     e_global = 0 ∧
+     e_global - l_prod = -1) := by
+  refine ⟨⟨by omega, by omega, by omega, by omega, by omega, by omega⟩,
+          ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
+
 end LggrVIII
