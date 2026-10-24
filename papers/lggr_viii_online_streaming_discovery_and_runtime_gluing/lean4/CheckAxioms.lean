@@ -15,3 +15,5 @@ import LggrVIII
 #print axioms LggrVIII.streaming_closed_nonexact_cohomology
 #print axioms LggrVIII.streaming_transport_projection_vs_retraction
 #print axioms LggrVIII.non_injective_projection_blocks_retraction
+#print axioms LggrVIII.streaming_observer_fiber_minimax_monotonicity
+#print axioms LggrVIII.cross_branch_audit_splice_budget_breach

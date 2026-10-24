@@ -489,6 +489,51 @@ class StreamingAuditMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+    def merge(self, other: "StreamingAuditMonitor") -> dict[str, Any]:
+        """Splice step witnesses from a downstream stage audit monitor into this monitor under G1-G4."""
+        if not isinstance(other, StreamingAuditMonitor):
+            raise ValidationError("other must be a StreamingAuditMonitor instance")
+
+        target_was_obstructed = self.get_receipt()["contract_status"] == "OBSTRUCTED_LGGR"
+        source_was_obstructed = other.get_receipt()["contract_status"] == "OBSTRUCTED_LGGR"
+        prior_alerts = len(self.alerts)
+        merged_steps = 0
+
+        for w in other.steps:
+            self.step(w)
+            merged_steps += 1
+
+        post_receipt = self.get_receipt()
+        post_obstructed = post_receipt["contract_status"] == "OBSTRUCTED_LGGR"
+        new_alerts = len(self.alerts) - prior_alerts
+        cross_branch_lggr = (
+            not target_was_obstructed
+            and not source_was_obstructed
+            and post_obstructed
+        )
+
+        body = {
+            "schema": "lggr.online_audit_merge.v1",
+            "authority_effect": "None",
+            "target_was_obstructed": target_was_obstructed,
+            "source_was_obstructed": source_was_obstructed,
+            "merged_steps_count": merged_steps,
+            "new_alerts_count": new_alerts,
+            "cross_branch_lggr_discovered": cross_branch_lggr,
+            "cumulative_delta": self.cumulative_delta,
+            "bound": self.policy.max_total,
+            "status": post_receipt["status"],
+            "contract_status": post_receipt["contract_status"],
+            "meaning": (
+                "Individually green stage traces breached G1-G4 composition upon splice."
+                if cross_branch_lggr
+                else "Spliced stage trace remains obstructed LGGR."
+                if post_obstructed
+                else "Spliced stage trace satisfies G1-G4 conditional gluing (COMPOSABLE_LGGG)."
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 class StreamingCochainMonitor:
     """Incremental 1-cochain cycle and exact rational L1 repair monitor.
@@ -1457,5 +1502,189 @@ class StreamingTransportMonitor:
             "G0": g0_mat,
             "G1": g1_mat,
             "audit": verified_audit,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingPositiveExtensionMonitor:
+    """Online observer-fiber minimax error floor and positive-extension order-reversal monitor.
+
+    Tracks:
+      1. Incremental two-point observer-fiber minimax lower bounds
+         epsilon_min(m) = (max_{s in F(m)} q(s) - min_{s in F(m)} q(s)) / 2
+         and midpoint estimators g_hat(m) = (max_{s in F(m)} q(s) + min_{s in F(m)} q(s)) / 2
+         as rational target observations (state_id, report, target_value) arrive.
+      2. Exact rational m-context signed-extension audits checking
+         U = 1 + N, R = m * N, U - R = 1 - (m - 1) * N, CF <= (m - 1) * N,
+         whether CF > 2 * N, and pairwise order reversal between CF and N_min.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-positive-extension-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.observed_targets: dict[str, dict[str, Any]] = {}
+        self.fiber_bounds: dict[str, dict[str, Any]] = {}
+        self.global_minimax_floor: Fraction = Fraction(0)
+        self.worst_fiber_key: str | None = None
+        self.audited_models: dict[str, dict[str, Any]] = {}
+
+    def observe_target(
+        self,
+        state_id: str,
+        report: Any,
+        target_value: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Ingest (state_id, report, rational target_value) and update fiber minimax lower bound."""
+        sid = text(state_id, "state_id")
+        rep_clean = json.loads(canonical(report))
+        q_val = rational(target_value)
+        rep_key = canonical(rep_clean)
+
+        prev = self.observed_targets.get(sid)
+        if prev is not None:
+            if canonical(prev["report"]) != rep_key or prev["target_value"] != q_val:
+                raise ValidationError(f"Conflicting target observation for state_id: {sid}")
+        else:
+            self.observed_targets[sid] = {
+                "state_id": sid,
+                "report": rep_clean,
+                "target_value": q_val,
+            }
+
+        fb = self.fiber_bounds.get(rep_key)
+        if fb is None:
+            fb = {
+                "report": rep_clean,
+                "min_state_id": sid,
+                "min_target": q_val,
+                "max_state_id": sid,
+                "max_target": q_val,
+                "minimax_error_floor": Fraction(0),
+                "midpoint_estimator": q_val,
+            }
+            self.fiber_bounds[rep_key] = fb
+        else:
+            if q_val < fb["min_target"]:
+                fb["min_target"] = q_val
+                fb["min_state_id"] = sid
+            if q_val > fb["max_target"]:
+                fb["max_target"] = q_val
+                fb["max_state_id"] = sid
+            fb["minimax_error_floor"] = (fb["max_target"] - fb["min_target"]) / Fraction(2)
+            fb["midpoint_estimator"] = (fb["max_target"] + fb["min_target"]) / Fraction(2)
+
+        if fb["minimax_error_floor"] > self.global_minimax_floor or self.worst_fiber_key is None:
+            self.global_minimax_floor = fb["minimax_error_floor"]
+            self.worst_fiber_key = rep_key
+
+        status = "NONZERO_MINIMAX_FLOOR" if self.global_minimax_floor > 0 else "EXACT_FIBER_DECODER"
+        contract_status = "OBSTRUCTED_LGGR" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG"
+        body = {
+            "schema": "lggr.online_minimax_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "state_id": sid,
+            "report": rep_clean,
+            "target_value": q_val,
+            "fiber_minimax_error_floor": fb["minimax_error_floor"],
+            "fiber_midpoint_estimator": fb["midpoint_estimator"],
+            "global_minimax_error_floor": self.global_minimax_floor,
+            "status": status,
+            "contract_status": contract_status,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def audit_signed_extension(
+        self,
+        model_id: str,
+        num_contexts: int,
+        local_packing_mass: Fraction | int | str,
+        negative_mass: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Audit an m-context empirical model's contextual fraction CF vs signed negative mass N."""
+        mid = text(model_id, "model_id")
+        m_ctx = exact_int(num_contexts, "num_contexts", minimum=2)
+        gamma = rational(local_packing_mass)
+        n_mass = rational(negative_mass)
+        if gamma < 0 or gamma > 1:
+            raise ValidationError("local_packing_mass must lie in [0, 1]")
+        if n_mass < 0:
+            raise ValidationError("negative_mass must be non-negative")
+
+        cf = Fraction(1) - gamma
+        u_mass = Fraction(1) + n_mass
+        r_mass = Fraction(m_ctx) * n_mass
+        excess_mass = u_mass - r_mass
+        expected_excess = Fraction(1) - Fraction(m_ctx - 1) * n_mass
+        packing_bound_holds = gamma >= excess_mass and cf <= Fraction(m_ctx - 1) * n_mass
+        exceeds_two_neg_mass = cf > Fraction(2) * n_mass
+
+        record = {
+            "model_id": mid,
+            "num_contexts": m_ctx,
+            "local_packing_mass": gamma,
+            "contextual_fraction": cf,
+            "negative_mass": n_mass,
+            "positive_part_mass": u_mass,
+            "negative_context_marginal_mass": r_mass,
+            "excess_mass": excess_mass,
+            "excess_identity_verified": excess_mass == expected_excess,
+            "m_context_bound_verified": packing_bound_holds,
+            "exceeds_two_negative_mass": exceeds_two_neg_mass,
+        }
+        self.audited_models[mid] = record
+        status = (
+            "INVALID_PACKING_BOUND"
+            if not packing_bound_holds
+            else "CF_EXCEEDS_TWO_NEG_MASS"
+            if exceeds_two_neg_mass
+            else "EXTENSION_BOUND_VERIFIED"
+        )
+        body = {
+            "schema": "lggr.online_signed_extension.v1",
+            "authority_effect": "None",
+            "status": status,
+            **record,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def compare_extension_order(self, left_id: str, right_id: str) -> dict[str, Any]:
+        """Compare two audited models and detect order reversal between CF and N_min."""
+        lid = text(left_id, "left_id")
+        rid = text(right_id, "right_id")
+        if lid not in self.audited_models or rid not in self.audited_models:
+            raise ValidationError("Both left_id and right_id must be audited before comparison")
+        left = self.audited_models[lid]
+        right = self.audited_models[rid]
+
+        cf_l, cf_r = left["contextual_fraction"], right["contextual_fraction"]
+        n_l, n_r = left["negative_mass"], right["negative_mass"]
+        order_reversed = (cf_l < cf_r and n_l > n_r) or (cf_l > cf_r and n_l < n_r)
+        status = "ORDER_REVERSAL_DETECTED" if order_reversed else "COMONOTONE_ORDER"
+        body = {
+            "schema": "lggr.online_extension_comparison.v1",
+            "authority_effect": "None",
+            "status": status,
+            "left_id": lid,
+            "right_id": rid,
+            "left_contextual_fraction": cf_l,
+            "right_contextual_fraction": cf_r,
+            "left_negative_mass": n_l,
+            "right_negative_mass": n_r,
+            "order_reversal_detected": order_reversed,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit comprehensive summary receipt for observer-fiber minimax and extension audits."""
+        body = {
+            "schema": "lggr.online_positive_extension_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "observed_states_count": len(self.observed_targets),
+            "fibers_count": len(self.fiber_bounds),
+            "global_minimax_error_floor": self.global_minimax_floor,
+            "audited_models_count": len(self.audited_models),
+            "status": "NONZERO_MINIMAX_FLOOR" if self.global_minimax_floor > 0 else "EXACT_FIBER_DECODER",
+            "contract_status": "OBSTRUCTED_LGGR" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG",
         }
         return json_value({**body, "receipt_sha256": digest(body)})
