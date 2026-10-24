@@ -51,3 +51,4 @@ import LggrVIII
 #print axioms LggrVIII.chsh_local_polytope_bound_and_negative_mass
 #print axioms LggrVIII.product_retraction_residual_vs_local_extension
 #print axioms LggrVIII.evidence_preserving_rsi_invariance_bound
+#print axioms LggrVIII.two_player_shapley_efficiency_and_symmetry

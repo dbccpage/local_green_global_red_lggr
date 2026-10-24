@@ -916,4 +916,39 @@ theorem evidence_preserving_rsi_invariance_bound {X A A' : Type}
     dsimp [absInt]
     constructor <;> omega
 
+/-- Twice-scaled 2-player Shapley value for player 1: `2 * φ_1(v) = (v1 - v0) + (v12 - v2)`. -/
+def shapley2P1 (v0 v1 v2 v12 : Int) : Int :=
+  (v1 - v0) + (v12 - v2)
+
+/-- Twice-scaled 2-player Shapley value for player 2: `2 * φ_2(v) = (v2 - v0) + (v12 - v1)`. -/
+def shapley2P2 (v0 v1 v2 v12 : Int) : Int :=
+  (v2 - v0) + (v12 - v1)
+
+/-- Theorem 35 (`two_player_shapley_efficiency_and_symmetry`):
+    Formalizes the LGGR II Coalitional Shapley Attribution Laws and Separation from
+    Non-Additive Raw Evaluator Defects:
+    1. (Efficiency — Scaled by 2): For any coalitional characteristic values `v0, v1, v2, v12`,
+       `shapley2P1 v0 v1 v2 v12 + shapley2P2 v0 v1 v2 v12 = 2 * (v12 - v0)`.
+    2. (Symmetry): Whenever `v1 = v2`, `shapley2P1 v0 v1 v2 v12 = shapley2P2 v0 v1 v2 v12`.
+    3. (Dummy Player Axiom): Whenever `v1 = v0 ∧ v12 = v2`, `shapley2P1 v0 v1 v2 v12 = 0`.
+    4. (Non-Additive Evaluator Defect Witness): On the canonical `NGD` trace `(e1, e2, eg) = (1, 1, 0)`
+       with `v0 = 0, v1 = -1, v2 = -1, v12 = -1`, `shapley2P1 0 (-1) (-1) (-1) = -1` and
+       `shapley2P2 0 (-1) (-1) (-1) = -1` (summing to `2 * (-1) = -2`), whereas the twice-scaled
+       naive singleton sum `2 * (v1 + v2) = -4 ≠ -2`. -/
+theorem two_player_shapley_efficiency_and_symmetry
+    (v0 v1 v2 v12 : Int) :
+    shapley2P1 v0 v1 v2 v12 + shapley2P2 v0 v1 v2 v12 = 2 * (v12 - v0) ∧
+    (v1 = v2 → shapley2P1 v0 v1 v2 v12 = shapley2P2 v0 v1 v2 v12) ∧
+    ((v1 = v0 ∧ v12 = v2) → shapley2P1 v0 v1 v2 v12 = 0) ∧
+    (shapley2P1 0 (-1) (-1) (-1) = -1 ∧
+     shapley2P2 0 (-1) (-1) (-1) = -1 ∧
+     shapley2P1 0 (-1) (-1) (-1) + shapley2P2 0 (-1) (-1) (-1) = -2 ∧
+     2 * ((-1 : Int) + (-1 : Int)) = -4) := by
+  dsimp [shapley2P1, shapley2P2]
+  refine ⟨by omega, ?_, ?_, ⟨by decide, by decide, by decide, by decide⟩⟩
+  · intro hsym
+    omega
+  · intro hdum
+    omega
+
 end LggrVIII

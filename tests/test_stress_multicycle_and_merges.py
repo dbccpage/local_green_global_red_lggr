@@ -27,6 +27,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingBellPolytopeMonitor,
+    StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDefectSoundnessMonitor,
@@ -1472,6 +1473,63 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["refined_generations_count"], 1)
         self.assertTrue(summary["all_invariance_lower_bounds_verified"])
         self.assertTrue(summary["refinement_resolved"])
+
+    def test_coalitional_shapley_attribution_and_nonadditive_defect(self) -> None:
+        """Verify LGGR II exact rational Shapley attribution axioms and non-additive evaluator defect separation."""
+        cmon = StreamingCoalitionalAttributionMonitor(scope_id="shapley-test")
+
+        # 1. Canonical 2-evaluator NGD trace: E1=1, E2=1, Eg=0 -> Delta_E = -1
+        #    v({}) = 0, v({E1}) = -1, v({E2}) = -1, v({E1, E2}) = -1
+        #    Shapley attributions: phi_1 = -1/2, phi_2 = -1/2 (sum = -1), whereas naive singleton sum = -2 != -1
+        g_ngd = cmon.audit_evaluator_defect_game("ngd_trace_110", 1, 1, 0)
+        self.assertEqual(g_ngd["status"], "NONADDITIVE_COALITIONAL_DEFECT_LGGR")
+        self.assertEqual(g_ngd["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(g_ngd["shapley_attributions"]["E1"], "-1/2")
+        self.assertEqual(g_ngd["shapley_attributions"]["E2"], "-1/2")
+        self.assertEqual(g_ngd["shapley_sum"], "-1")
+        self.assertEqual(g_ngd["naive_singleton_marginal_sum"], "-2")
+        self.assertEqual(g_ngd["synergy_interaction_term"], "1")
+        self.assertFalse(g_ngd["raw_singleton_sum_equals_grand_value"])
+        self.assertEqual(g_ngd["symmetric_player_pairs"], [["E1", "E2"]])
+        self.assertTrue(g_ngd["efficiency_verified"])
+        self.assertTrue(g_ngd["symmetry_verified"])
+        self.assertTrue(g_ngd["dummy_player_axiom_verified"])
+
+        # 2. 3-player game with two symmetric active players (P1, P2) and one dummy player (P3):
+        #    v(S) = 3 if {P1, P2} <= S, 1 if exactly one of {P1, P2} in S, 0 otherwise.
+        #    P3 has 0 marginal contribution everywhere -> phi(P3) = 0, phi(P1) = phi(P2) = 3/2
+        g_3p = cmon.observe_coalition_game(
+            "three_player_with_dummy",
+            ["P1", "P2", "P3"],
+            {
+                "": 0,
+                "P1": 1,
+                "P2": 1,
+                "P3": 0,
+                "P1,P2": 3,
+                "P1,P3": 1,
+                "P2,P3": 1,
+                "P1,P2,P3": 3,
+            },
+        )
+        self.assertEqual(g_3p["status"], "NONADDITIVE_SYNERGY_ATTRIBUTION")
+        self.assertEqual(g_3p["shapley_attributions"]["P1"], "3/2")
+        self.assertEqual(g_3p["shapley_attributions"]["P2"], "3/2")
+        self.assertEqual(g_3p["shapley_attributions"]["P3"], "0")
+        self.assertEqual(g_3p["shapley_sum"], "3")
+        self.assertEqual(g_3p["dummy_players"], ["P3"])
+        self.assertEqual(g_3p["symmetric_player_pairs"], [["P1", "P2"]])
+        self.assertTrue(g_3p["efficiency_verified"])
+        self.assertTrue(g_3p["symmetry_verified"])
+        self.assertTrue(g_3p["dummy_player_axiom_verified"])
+
+        summary = cmon.get_receipt()
+        self.assertEqual(summary["status"], "NONADDITIVE_COALITIONAL_DEFECT_LGGR")
+        self.assertEqual(summary["audited_games_count"], 2)
+        self.assertEqual(summary["nonadditive_defect_games"], ["ngd_trace_110"])
+        self.assertTrue(summary["all_efficiency_verified"])
+        self.assertTrue(summary["all_symmetry_verified"])
+        self.assertTrue(summary["all_dummy_player_axioms_verified"])
 
 
 if __name__ == "__main__":
