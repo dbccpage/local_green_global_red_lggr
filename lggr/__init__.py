@@ -22,6 +22,7 @@ from .streaming import (
     StreamingProductRetractionMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingReplayOrderMonitor,
+    StreamingSimplicialCupMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
@@ -39,5 +40,5 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingDashboardAdequacyMonitor", "StreamingDefectSoundnessMonitor", "StreamingFiberMonitor",
            "StreamingGramProbeMonitor", "StreamingOrganizationalGluingMonitor", "StreamingPathKernelMonitor",
            "StreamingPositiveExtensionMonitor", "StreamingProductRetractionMonitor", "StreamingRSIFiberCeilingMonitor",
-           "StreamingReplayOrderMonitor", "StreamingSixRoleOverlayMonitor", "StreamingThresholdGovernanceMonitor",
-           "StreamingTransportMonitor", "StreamingWindowedDriftMonitor"]
+           "StreamingReplayOrderMonitor", "StreamingSimplicialCupMonitor", "StreamingSixRoleOverlayMonitor",
+           "StreamingThresholdGovernanceMonitor", "StreamingTransportMonitor", "StreamingWindowedDriftMonitor"]
