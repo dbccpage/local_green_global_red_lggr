@@ -259,31 +259,45 @@ This finite rational check is **not automatically connected to runtime represent
 
 ### 5. Online Streaming Monitors (`lggr.streaming`)
 
-The package provides three streaming monitors for real-time verification during live agent execution:
+The package provides five streaming monitors for real-time verification during live agent execution:
 
 ```python
-from lggr.streaming import StreamingAuditMonitor, StreamingCochainMonitor, StreamingFiberMonitor
+from lggr.streaming import (
+    StreamingAuditMonitor,
+    StreamingCochainMonitor,
+    StreamingFiberMonitor,
+    StreamingPositiveExtensionMonitor,
+    StreamingTransportMonitor,
+)
 from lggr.witnesses import BudgetPolicy, StateRef, make_witness
 
-# 1. Incremental fiber collision detection across agent handoffs
+# 1. Incremental fiber collision detection and concurrent branch merging
 fiber_mon = StreamingFiberMonitor(scope_id="pipeline-scope")
 fiber_mon.observe("state_1", report={"role": "worker"}, query={"tier": 1})
 collision_receipt = fiber_mon.observe("state_2", report={"role": "worker"}, query={"tier": 2})
 # Detects collision on-the-fly and transitions contract_status to "OBSTRUCTED_LGGR"
 
-# 2. Prefix budget and evaluator defect tracking
+# 2. Prefix budget, evaluator defect tracking, and cross-stage witness splicing (.merge)
 policy = BudgetPolicy(max_step=1, max_total=2, query_scope="every_prefix")
 s0 = StateRef("s0", 0)
 audit_mon = StreamingAuditMonitor(policy, s0)
 w1 = make_witness(policy, s0, StateRef("s1", 1), witness_id="w1")
 audit_mon.step(w1, global_evaluator_sample=1)
 
-# 3. Incremental 1-cochain cycle closure and exact rational L1 repair
+# 3. Incremental 1-cochain cycle closure, 2-cell cohomology, and global Edmonds-Karp L1 repair
 cochain_mon = StreamingCochainMonitor()
 cochain_mon.add_edge("Agent_A", "Agent_B", value=1, weight=1)
 cochain_mon.add_edge("Agent_B", "Agent_C", value=1, weight=1)
 cycle_receipt = cochain_mon.add_edge("Agent_C", "Agent_A", value=1, weight=1)
-# Computes cycle closure defect (D_1 h)_C and exact rational L1 dual witness
+global_l1 = cochain_mon.solve_global_l1_repair()
+
+# 4. Online chain-retraction synthesis vs. lossy coarse-graining projection audit
+# StreamingTransportMonitor(src_mon, tgt_mon).synthesize_chain_retraction(F0, F1)
+
+# 5. Online observer-fiber minimax error floor and CF vs. N_min order-reversal audit
+minimax_mon = StreamingPositiveExtensionMonitor()
+minimax_mon.observe_target("s1", report={"tag": "ok"}, target_value=2)
+minimax_mon.observe_target("s2", report={"tag": "ok"}, target_value=6)
 ```
 
 ## Practitioner Cookbooks (`cookbooks/`)
@@ -363,3 +377,20 @@ The produced status names are adapter vocabulary. NGD/ZDR/PGD reproduce the repo
    - For an explicitly supplied finite carrier, report map, and target query (or rational repair matrix and cochain), this reference package checks whether the retained reports determine the target on the realized image, whether supplied step witnesses compose under a declared integer budget policy, and whether supplied rational primal/dual and chain-retraction certificates satisfy the algebraic conditions required to bound or reflect repair residuals.
 4. **Next test needed:**
    - Controlled equal-information comparative evaluation against a conventional contract/baseline regression checker across multi-step histories that include representation migrations (with commuting and lossy maps) and deferred obligations, measuring false acceptance, false refusal, retained obligations, certificate replay cost, and fault-localization effort.
+
+Support this research: [Buy Me a Coffee](https://buymeacoffee.com/ooutwire).
+
+## License
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
