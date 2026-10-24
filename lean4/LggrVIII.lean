@@ -985,4 +985,34 @@ theorem quorum_threshold_vs_product_defect_separation
   rcases h3 with rfl | rfl <;>
   decide
 
+/-- Diagonal 2x2 Kraus trace-preservation residual `R_TP = (s0 - 1, s1 - 1)`. -/
+def tpResDiag (s0 s1 : Int) : Int × Int :=
+  (s0 - 1, s1 - 1)
+
+/-- Diagonal 2x2 trace discrepancy `tr(ρ R_TP) = rho0 * r0 + rho1 * r1`. -/
+def tpStateDisc (r0 r1 rho0 rho1 : Int) : Int :=
+  rho0 * r0 + rho1 * r1
+
+/-- Theorem 37 (`kraus_trace_preservation_and_blindspot_residual`):
+    Formalizes the LGGR Kraus Channel Trace-Preservation Residual, State-Blindspot,
+    and Two-Channel Composition Identity:
+    1. (Two-Channel Composition Residual Telescoping): For any diagonal channel sums
+       `(s0, s1)` and composed diagonal entries `(st0, st1)` where `E_1^†(R_TP(E_2)) = (st0 - s0, st1 - s1)`,
+       `(s0 - 1) + (st0 - s0) = st0 - 1` and `(s1 - 1) + (st1 - s1) = st1 - 1`.
+    2. (State Blindspot vs. Operator Non-TP Residual): For the non-trace-preserving
+       diagonal Kraus sum `(s0, s1) = (2, 0)`, the operator residual is
+       `tpResDiag 2 0 = (1, -1) ≠ (0, 0)`, yet on the equal-weight state `(rho0, rho1) = (1, 1)`
+       the state trace discrepancy vanishes (`(2 * 1 + 0 * 1) - (1 + 1) = 0` and
+       `tpStateDisc 1 (-1) 1 1 = 0`), while on `(rho0, rho1) = (1, 0)` it equals `1 ≠ 0`. -/
+theorem kraus_trace_preservation_and_blindspot_residual
+    (s0 s1 st0 st1 : Int) :
+    ((s0 - 1) + (st0 - s0) = st0 - 1 ∧
+     (s1 - 1) + (st1 - s1) = st1 - 1) ∧
+    (tpResDiag 2 0 = (1, -1) ∧
+     (2 * 1 + 0 * 1) - (1 + 1) = 0 ∧
+     tpStateDisc 1 (-1) 1 1 = 0 ∧
+     (2 * 1 + 0 * 0) - (1 + 0) = 1 ∧
+     tpStateDisc 1 (-1) 1 0 = 1) := by
+  refine ⟨⟨by omega, by omega⟩, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
+
 end LggrVIII

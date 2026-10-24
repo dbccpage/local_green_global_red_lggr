@@ -27,6 +27,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingBellPolytopeMonitor,
+    StreamingCPTPTraceMonitor,
     StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
     StreamingDashboardAdequacyMonitor,
@@ -1568,6 +1569,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_ungd["coherent_count"], 1)
         self.assertTrue(r_ungd["all_monotonicity_verified"])
         self.assertTrue(r_ungd["all_defect_difference_identities_verified"])
+
+    def test_cptp_trace_preservation_blindspot_and_composition(self) -> None:
+        """Verify Kraus channel R_TP = sum K_r^T K_r - I_d, state-blindspot masking, and composition identity."""
+        # 1. Exact rational CPTP channel: K1 = [[3/5, 0], [0, 1]], K2 = [[0, 0], [4/5, 0]]
+        #    K1^T K1 + K2^T K2 = [[9/25 + 16/25, 0], [0, 1]] = I_2 -> R_TP = 0
+        k1_tp = [[Fraction(3, 5), 0], [0, 1]]
+        k2_tp = [[0, 0], [Fraction(4, 5), 0]]
+        mon_tp = StreamingCPTPTraceMonitor([k1_tp, k2_tp], scope_id="cptp-tp")
+        p_tp = mon_tp.probe_state("rho_mixed", [[Fraction(1, 2), 0], [0, Fraction(1, 2)]])
+        self.assertEqual(p_tp["status"], "OPERATOR_TP_VERIFIED_LGGG")
+        self.assertEqual(p_tp["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(p_tp["operator_trace_preserving"])
+        self.assertEqual(p_tp["trace_discrepancy"], "0")
+        self.assertTrue(p_tp["trace_discrepancy_identity_verified"])
+
+        # 2. Non-TP channel with state blindspot: K_bad1 = [[1, 0], [0, 0]], K_bad2 = [[1, 0], [0, 0]]
+        #    sum K^T K = [[2, 0], [0, 0]], so R_TP = [[1, 0], [0, -1]] != 0 (L1 norm = 2)
+        k_bad = [[[1, 0], [0, 0]], [[1, 0], [0, 0]]]
+        mon_bad = StreamingCPTPTraceMonitor(k_bad, scope_id="cptp-non-tp")
+        # Probing maximally mixed state [[1/2, 0], [0, 1/2]] gives tr(rho * R_TP) = 1/2 - 1/2 = 0 (blindspot!)
+        p_blind = mon_bad.probe_state("rho_half_id", [[Fraction(1, 2), 0], [0, Fraction(1, 2)]])
+        self.assertEqual(p_blind["status"], "STATE_BLINDSPOT_NON_TP_LGGR")
+        self.assertEqual(p_blind["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(p_blind["state_blindspot_masked"])
+        self.assertEqual(p_blind["trace_discrepancy"], "0")
+        self.assertEqual(p_blind["residual_l1_norm"], "2")
+        self.assertTrue(p_blind["trace_discrepancy_identity_verified"])
+
+        # Probing |0><0| = [[1, 0], [0, 0]] exposes overt trace violation: tr(E(rho)) - tr(rho) = 1
+        p_viol = mon_bad.probe_state("rho_ket0", [[1, 0], [0, 0]])
+        self.assertEqual(p_viol["status"], "STATE_TRACE_VIOLATION_LGGR")
+        self.assertEqual(p_viol["trace_discrepancy"], "1")
+        self.assertTrue(p_viol["trace_discrepancy_identity_verified"])
+
+        # 3. Two-channel composition identity: R_TP(E2 o E1) == R_TP(E1) + E1^dagger(R_TP(E2))
+        comp = mon_bad.audit_composition("bad_then_tp", [k1_tp, k2_tp])
+        self.assertEqual(comp["status"], "COMPOSED_NON_TP_DEFECT_LGGR")
+        self.assertTrue(comp["composition_residual_identity_verified"])
+
+        summary = mon_bad.get_receipt()
+        self.assertEqual(summary["status"], "STATE_BLINDSPOT_NON_TP_LGGR")
+        self.assertEqual(summary["blindspot_state_ids"], ["rho_half_id"])
+        self.assertTrue(summary["all_state_discrepancy_identities_verified"])
+        self.assertTrue(summary["all_composition_identities_verified"])
 
 
 if __name__ == "__main__":
