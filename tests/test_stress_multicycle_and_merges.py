@@ -2345,6 +2345,62 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
         self.assertEqual(receipt["parity_obstructed_grid_ids"], ["mermin_peres_canonical"])
 
+    def test_side_information_channel_capacity_and_fiber_error_floor(self) -> None:
+        """Verify 012_rsi/002 IK-04/IK-05 side-information capacity monitor enforces K - S error floor."""
+        from lggr import StreamingSideInformationCapacityMonitor
+
+        mon = StreamingSideInformationCapacityMonitor(scope_id="side-info-capacity-audit")
+
+        # 1. Capacity-deficient 1-bit channel (S = 2) on a 4-value report fiber (K = 4):
+        #    Every state emits a valid symbol in {0, 1} (L = 1), yet K - S = 4 - 2 = 2
+        #    forces at least 2 distinct-target collisions (Eg = 0, Delta_E = -1).
+        f_bad = mon.record_fiber_channel(
+            "fiber_k4_s2_deficit",
+            [
+                {"state_id": "x0", "query_value": 10, "side_symbol": 0},
+                {"state_id": "x1", "query_value": 20, "side_symbol": 0},
+                {"state_id": "x2", "query_value": 30, "side_symbol": 1},
+                {"state_id": "x3", "query_value": 40, "side_symbol": 1},
+            ],
+            channel_capacity_s=2,
+            error_budget=0,
+        )
+        self.assertEqual(f_bad["distinct_query_values_k"], 4)
+        self.assertEqual(f_bad["channel_capacity_s"], 2)
+        self.assertEqual(f_bad["capacity_error_floor_k_minus_s"], 2)
+        self.assertEqual(f_bad["realized_subfiber_error_floor"], 2)
+        self.assertEqual(f_bad["realized_sample_error_floor"], 2)
+        self.assertTrue(f_bad["pigeonhole_bound_verified"])
+        self.assertEqual(f_bad["local_product_aggregator"], 1)
+        self.assertEqual(f_bad["global_decodability_evaluator"], 0)
+        self.assertEqual(f_bad["evaluator_defect"], -1)
+        self.assertEqual(f_bad["fiber_status"], "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR")
+
+        # 2. Positive control: 2-bit channel (S = 4 >= K = 4) with injective side symbols:
+        #    Each sub-fiber has 1 distinct query value -> error floor = 0, L = 1, Eg = 1, Delta_E = 0
+        f_ok = mon.record_fiber_channel(
+            "fiber_k4_s4_sufficient",
+            [
+                {"state_id": "x0", "query_value": 10, "side_symbol": 0},
+                {"state_id": "x1", "query_value": 20, "side_symbol": 1},
+                {"state_id": "x2", "query_value": 30, "side_symbol": 2},
+                {"state_id": "x3", "query_value": 40, "side_symbol": 3},
+            ],
+            channel_capacity_s=4,
+            error_budget=0,
+        )
+        self.assertEqual(f_ok["capacity_error_floor_k_minus_s"], 0)
+        self.assertEqual(f_ok["realized_subfiber_error_floor"], 0)
+        self.assertEqual(f_ok["evaluator_defect"], 0)
+        self.assertEqual(f_ok["fiber_status"], "SIDE_INFORMATION_SUFFICIENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_side_information_capacity.v1")
+        self.assertEqual(receipt["status"], "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(receipt["all_pigeonhole_bounds_verified"])
+        self.assertEqual(receipt["capacity_deficit_fiber_ids"], ["fiber_k4_s2_deficit"])
+
 
 if __name__ == "__main__":
     unittest.main()

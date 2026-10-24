@@ -7320,6 +7320,164 @@ class StreamingMerminPeresParityMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingSideInformationCapacityMonitor:
+    """Online side-information channel capacity and report-fiber error floor monitor (012_rsi/002 IK-04/IK-05 & LGGR I §5).
+
+    Audits finite report fibers X_a = p^{-1}(a) equipped with an auxiliary side-information
+    channel s: X_a -> {0, ..., S - 1} of finite alphabet capacity S >= 1:
+      - Evaluates each state x in X_a locally for side-channel alphabet compliance:
+          E_chan(x) = 1[0 <= s(x) < S],   L = prod_{x in X_a} E_chan(x) in {0, 1}.
+      - Computes the number of distinct query values K = |q(X_a)| on the fiber,
+        the active side-channel alphabet size S_used = |s(X_a)| <= S, and the
+        capacity-induced distinct-value error floor:
+          E_cap_floor(K, S) = max(0, K - S).
+      - Partitions X_a into side-information sub-fibers X_{a, sigma} = {x in X_a : s(x) == sigma}
+        with k_sigma = |q(X_{a, sigma})| distinct query values and computes:
+          * realized_subfiber_error_floor = sum_{sigma in s(X_a)} (k_sigma - 1) >= max(0, K - S),
+          * realized_sample_error_floor = sum_{sigma in s(X_a)} (|X_{a, sigma}| - max_y count(sigma, y)).
+      - Evaluates global decodability E_g = 1[L == 1 and realized_subfiber_error_floor <= error_budget]
+        and separates:
+          * SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            every state emits a valid side-channel symbol in {0, ..., S - 1}, yet S < K
+            forces at least K - S distinct query values on the fiber to collide under s),
+          * SIDE_INFORMATION_SUFFICIENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-side-information-capacity-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.fibers: list[dict[str, Any]] = []
+
+    def record_fiber_channel(
+        self,
+        fiber_id: str,
+        states: Sequence[dict[str, Any]],
+        *,
+        channel_capacity_s: int,
+        error_budget: int = 0,
+    ) -> dict[str, Any]:
+        """Record a report fiber X_a with side-channel symbols s(x) and audit capacity vs K = |q(X_a)|."""
+        fid = text(fiber_id, "fiber_id")
+        cap_s = exact_int(channel_capacity_s, "channel_capacity_s", minimum=1)
+        budget = exact_int(error_budget, "error_budget", minimum=0)
+        if not states:
+            raise ValidationError("states must be a non-empty sequence of fiber state records")
+
+        parsed_states: list[dict[str, Any]] = []
+        distinct_queries: set[str] = set()
+        subfiber_queries: dict[int, set[str]] = {}
+        subfiber_counts: dict[int, dict[str, int]] = {}
+        local_product = 1
+
+        for idx, st in enumerate(states):
+            if not isinstance(st, Mapping):
+                raise ValidationError(f"states[{idx}] must be a mapping")
+            sid = text(st.get("state_id", f"state_{idx}"), f"states[{idx}].state_id")
+            q_val = canonical(st.get("query_value"))
+            sym = exact_int(st.get("side_symbol"), f"states[{idx}].side_symbol")
+
+            in_range = 1 if (0 <= sym < cap_s) else 0
+            local_product *= in_range
+            distinct_queries.add(q_val)
+
+            if in_range == 1:
+                subfiber_queries.setdefault(sym, set()).add(q_val)
+                counts = subfiber_counts.setdefault(sym, {})
+                counts[q_val] = counts.get(q_val, 0) + 1
+
+            parsed_states.append(
+                {
+                    "state_id": sid,
+                    "query_value": st.get("query_value"),
+                    "side_symbol": sym,
+                    "local_channel_evaluator": in_range,
+                }
+            )
+
+        k_distinct = len(distinct_queries)
+        used_symbols = len(subfiber_queries)
+        capacity_floor = max(0, k_distinct - cap_s)
+
+        subfiber_error_floor = sum(max(0, len(qs) - 1) for qs in subfiber_queries.values())
+        sample_error_floor = sum(
+            sum(cnts.values()) - max(cnts.values())
+            for cnts in subfiber_counts.values()
+        )
+        pigeonhole_bound_verified = (local_product == 0) or (subfiber_error_floor >= capacity_floor)
+
+        global_eval = 1 if (local_product == 1 and subfiber_error_floor <= budget) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            fiber_status = "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            fiber_status = "SIDE_INFORMATION_SUFFICIENT_LGGG"
+        else:
+            fiber_status = "LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE"
+
+        rec = {
+            "fiber_id": fid,
+            "state_count": len(parsed_states),
+            "distinct_query_values_k": k_distinct,
+            "channel_capacity_s": cap_s,
+            "used_symbols_count": used_symbols,
+            "error_budget": budget,
+            "capacity_error_floor_k_minus_s": capacity_floor,
+            "realized_subfiber_error_floor": subfiber_error_floor,
+            "realized_sample_error_floor": sample_error_floor,
+            "pigeonhole_bound_verified": pigeonhole_bound_verified,
+            "local_product_aggregator": local_product,
+            "global_decodability_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "fiber_status": fiber_status,
+            "states": parsed_states,
+        }
+        self.fibers.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed side-information channel capacity audit receipt."""
+        if not self.fibers:
+            raise ValidationError("At least one fiber channel must be recorded before emitting a receipt")
+
+        deficit_ids = [
+            f["fiber_id"]
+            for f in self.fibers
+            if f["fiber_status"] == "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR"
+        ]
+        rejected_ids = [
+            f["fiber_id"]
+            for f in self.fibers
+            if f["fiber_status"] == "LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE"
+        ]
+        all_bounds_ok = all(f["pigeonhole_bound_verified"] for f in self.fibers)
+
+        if deficit_ids:
+            status = "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SIDE_INFORMATION_SUFFICIENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_side_information_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "fiber_count": len(self.fibers),
+            "all_pigeonhole_bounds_verified": all_bounds_ok,
+            "capacity_deficit_fiber_ids": deficit_ids,
+            "rejected_fiber_ids": rejected_ids,
+            "fibers": self.fibers,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
