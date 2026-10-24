@@ -5580,6 +5580,170 @@ class StreamingHodgeDecompositionMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDFAGrammarGluingMonitor:
+    """Online finite-state automaton (DFA) tape grammar and trace concatenation monitor.
+
+    Audits a deterministic finite automaton A = (Q, Sigma, delta, q0, F) across
+    multi-segment tape traces w = w_1 w_2 ... w_k:
+      - Evaluates each segment w_i locally from the initial state q0:
+          E_local(w_i) = 1[delta*(q0, w_i) in F],   L = prod_i E_local(w_i).
+      - Evaluates the concatenated trajectory globally from q0:
+          q_i = delta*(q_{i-1}, w_i),   E_global(w_1...w_k) = 1[q_k in F].
+      - Verifies the transition monoid homomorphism identity:
+          delta*(q_{i-1}, w_i) == delta*(q0, w_1...w_i) for all prefixes.
+      - Separates:
+          * DFA_CONCATENATION_COHERENT_LGGG (L == 1 and E_global == 1),
+          * DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR (L == 1 and E_global == 0, Delta_E = -1),
+            occurring when a locally accepting segment terminates at a non-reset accepting
+            state q_1 in F \\ {q0} from which the next locally accepted segment is rejected,
+          * DFA_COMPENSATING_RECOVERY_PGD_LGGR (L == 0 and E_global == 1, Delta_E = +1),
+          * DFA_LOCAL_AND_GLOBAL_REJECTED (L == 0 and E_global == 0, Delta_E = 0).
+    """
+
+    def __init__(
+        self,
+        states: Iterable[str],
+        alphabet: Iterable[str],
+        transitions: Mapping[str, Mapping[str, str]],
+        initial_state: str,
+        accepting_states: Iterable[str],
+        *,
+        scope_id: str = "streaming-dfa-grammar-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        raw_states = [text(s, "state") for s in sequence(states, "states")]
+        if not raw_states:
+            raise ValidationError("states must be non-empty")
+        self.states = set(raw_states)
+
+        raw_alpha = [text(a, "symbol") for a in sequence(alphabet, "alphabet")]
+        if not raw_alpha:
+            raise ValidationError("alphabet must be non-empty")
+        self.alphabet = set(raw_alpha)
+
+        q0 = text(initial_state, "initial_state")
+        if q0 not in self.states:
+            raise ValidationError("initial_state must belong to states")
+        self.initial_state = q0
+
+        raw_acc = [text(s, "accepting_state") for s in sequence(accepting_states, "accepting_states")]
+        for s in raw_acc:
+            if s not in self.states:
+                raise ValidationError(f"accepting_state {s!r} not in states")
+        self.accepting_states = set(raw_acc)
+
+        if not isinstance(transitions, Mapping):
+            raise ValidationError("transitions must be a mapping")
+        self.transitions: dict[str, dict[str, str]] = {}
+        for s in sorted(self.states):
+            if s not in transitions or not isinstance(transitions[s], Mapping):
+                raise ValidationError(f"Missing transition table for state {s!r}")
+            self.transitions[s] = {}
+            for sym in sorted(self.alphabet):
+                if sym not in transitions[s]:
+                    raise ValidationError(f"Missing transition from state {s!r} on symbol {sym!r}")
+                nxt = text(transitions[s][sym], "target_state")
+                if nxt not in self.states:
+                    raise ValidationError(f"Transition target {nxt!r} not in states")
+                self.transitions[s][sym] = nxt
+
+        self.current_state = self.initial_state
+        self.concatenated_tokens: list[str] = []
+        self.segments: list[dict[str, Any]] = []
+
+    def _run_from(self, start_state: str, tokens: list[str]) -> str:
+        curr = start_state
+        for tok in tokens:
+            curr = self.transitions[curr][tok]
+        return curr
+
+    def record_segment(self, segment_id: str, tokens: Iterable[str]) -> dict[str, Any]:
+        """Record a tape segment, evaluating local acceptance from q0 vs global chained state."""
+        sid = text(segment_id, "segment_id")
+        tok_list = [text(t, "token") for t in sequence(tokens, "tokens")]
+        for t in tok_list:
+            if t not in self.alphabet:
+                raise ValidationError(f"Token {t!r} is outside declared alphabet")
+
+        local_end = self._run_from(self.initial_state, tok_list)
+        local_pass = 1 if local_end in self.accepting_states else 0
+
+        entry_state = self.current_state
+        chained_end = self._run_from(entry_state, tok_list)
+        self.current_state = chained_end
+        self.concatenated_tokens.extend(tok_list)
+
+        direct_prefix_end = self._run_from(self.initial_state, self.concatenated_tokens)
+        homomorphism_ok = chained_end == direct_prefix_end
+
+        rec = {
+            "segment_index": len(self.segments),
+            "segment_id": sid,
+            "tokens": tok_list,
+            "entry_state": entry_state,
+            "local_end_state_from_q0": local_end,
+            "local_pass_from_q0": local_pass,
+            "is_reset_idempotent_on_q0": local_end == self.initial_state,
+            "chained_end_state": chained_end,
+            "chained_prefix_accepted": 1 if chained_end in self.accepting_states else 0,
+            "monoid_homomorphism_verified": homomorphism_ok,
+        }
+        self.segments.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed DFA tape grammar gluing audit receipt."""
+        if not self.segments:
+            raise ValidationError("At least one tape segment must be recorded before emitting a receipt")
+
+        local_product = 1
+        for seg in self.segments:
+            local_product *= seg["local_pass_from_q0"]
+
+        global_eval = 1 if self.current_state in self.accepting_states else 0
+        defect = global_eval - local_product
+        all_homomorphism = all(seg["monoid_homomorphism_verified"] for seg in self.segments)
+        non_reset_accepting_segments = [
+            seg["segment_id"]
+            for seg in self.segments
+            if seg["local_pass_from_q0"] == 1 and not seg["is_reset_idempotent_on_q0"]
+        ]
+
+        if local_product == 1 and global_eval == 1:
+            status = "DFA_CONCATENATION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            status = "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_product == 0 and global_eval == 1:
+            status = "DFA_COMPENSATING_RECOVERY_PGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "DFA_LOCAL_AND_GLOBAL_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_dfa_grammar_gluing.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "initial_state": self.initial_state,
+            "accepting_states": sorted(self.accepting_states),
+            "segment_count": len(self.segments),
+            "total_tokens": len(self.concatenated_tokens),
+            "terminal_state": self.current_state,
+            "local_product_aggregator": local_product,
+            "global_concatenated_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "non_reset_accepting_segment_ids": non_reset_accepting_segments,
+            "all_monoid_homomorphisms_verified": all_homomorphism,
+            "segments": self.segments,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

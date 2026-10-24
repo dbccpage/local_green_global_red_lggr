@@ -1150,4 +1150,46 @@ theorem discrete_hodge_harmonic_orthogonality_and_decomposition :
      (h0 * h0 + h1 * h1 + h2 * h2 = (g0 * g0 + g1 * g1 + g2 * g2) + 3 * m * m)) := by
   refine ⟨by decide, ⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩, by decide, by decide⟩
 
+/-- Transition step of the 3-state bounded-token DFA `Q = {0, 1, 2}` with initial state `0`,
+    accepting state `1`, and sink state `2` on token `1` (and identity on token `0`). -/
+def dfaStep (q tok : Nat) : Nat :=
+  if tok = 0 then q
+  else if q = 0 then 1
+  else 2
+
+/-- Iterated transition function `δ*(q, w)` via left fold over the token list `w`. -/
+def dfaRun (q : Nat) (w : List Nat) : Nat :=
+  w.foldl dfaStep q
+
+/-- Boolean acceptance indicator `1[δ*(q, w) == 1]`. -/
+def dfaAccepts (q : Nat) (w : List Nat) : Int :=
+  if dfaRun q w = 1 then 1 else 0
+
+/-- Theorem 43 (`dfa_concatenation_state_mismatch_obstruction`):
+    Formalizes the Finite-State Automaton (DFA) Tape Grammar Concatenation
+    Homomorphism and Non-Reset Accepting State Obstruction (`NGD`):
+    1. (Transition Monoid Homomorphism): For any start state `q` and segments `w₁, w₂`,
+       `dfaRun q (w₁ ++ w₂) = dfaRun (dfaRun q w₁) w₂`.
+    2. (Reset-State Gluing Sufficiency): If `dfaRun q₀ w₁ = q₀`, then
+       `dfaAccepts q₀ (w₁ ++ w₂) = dfaAccepts q₀ w₂`.
+    3. (Non-Reset Boundary State Mismatch `NGD`): For `w₁ = [1]` and `w₂ = [1]`,
+       both segments are locally accepted from `q₀ = 0` (`dfaAccepts 0 [1] = 1`),
+       so the local product aggregator is `L = 1 * 1 = 1`, yet `dfaRun 0 [1] = 1 ≠ 0`
+       shifts the boundary state so that `dfaRun 0 ([1] ++ [1]) = 2 ≠ 1` and
+       `dfaAccepts 0 ([1] ++ [1]) = 0` (`Δ_E = 0 - 1 = -1`). -/
+theorem dfa_concatenation_state_mismatch_obstruction
+    (q q₀ : Nat) (w₁ w₂ : List Nat) (h_reset : dfaRun q₀ w₁ = q₀) :
+    (dfaRun q (w₁ ++ w₂) = dfaRun (dfaRun q w₁) w₂ ∧
+     dfaAccepts q₀ (w₁ ++ w₂) = dfaAccepts q₀ w₂) ∧
+    (let e1 := dfaAccepts 0 [1];
+     let e2 := dfaAccepts 0 [1];
+     let eg := dfaAccepts 0 ([1] ++ [1]);
+     e1 = 1 ∧ e2 = 1 ∧ eg = 0 ∧ eg - e1 * e2 = -1) := by
+  refine ⟨⟨?_, ?_⟩, ⟨by decide, by decide, by decide, by decide⟩⟩
+  · simp [dfaRun, List.foldl_append]
+  · have h_comp : dfaRun q₀ (w₁ ++ w₂) = dfaRun (dfaRun q₀ w₁) w₂ := by
+      simp [dfaRun, List.foldl_append]
+    unfold dfaAccepts
+    rw [h_comp, h_reset]
+
 end LggrVIII
