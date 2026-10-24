@@ -39,6 +39,7 @@ from lggr.streaming import (
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
     StreamingRSIFiberCeilingMonitor,
+    StreamingReplayOrderMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
@@ -1648,6 +1649,40 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r5["status"], "LOCAL_WINDOW_BUDGET_BREACH")
         self.assertFalse(r5["all_windows_within_budget"])
         self.assertTrue(r5["block_partition_bound_verified"])
+
+    def test_replay_order_endpoint_invariance_and_prefix_divergence(self) -> None:
+        """Verify LGGR VIII commutative endpoint invariance vs. arrival-masked causal prefix breach."""
+        # 1. Arrival-masked causal breach: causal sequence is (e_debit: +3 at causal_index=1, e_credit: -2 at causal_index=2)
+        #    Under prefix budget B_prefix = 2, if e_credit (-2) arrives first and e_debit (+3) arrives second:
+        #    - Arrival prefixes: [-2, 1] -> max = 1 <= 2 (arrival order looks green!)
+        #    - Causal prefixes: [3, 1] -> max = 3 > 2 (causal order breaches B_prefix = 2!)
+        #    - Endpoint sum in both orders: 1
+        rmon = StreamingReplayOrderMonitor(2, scope_id="replay-order-test")
+        rmon.register_event("e_credit", -2, causal_index=2)
+        r_masked = rmon.register_event("e_debit", 3, causal_index=1)
+
+        self.assertEqual(r_masked["status"], "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR")
+        self.assertEqual(r_masked["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_masked["common_endpoint_sum"], "1")
+        self.assertEqual(r_masked["arrival_max_prefix"], "1")
+        self.assertEqual(r_masked["causal_max_prefix"], "3")
+        self.assertEqual(r_masked["worst_permutation_max_prefix"], "3")
+        self.assertEqual(r_masked["positive_delta_mass"], "3")
+        self.assertTrue(r_masked["arrival_within_budget"])
+        self.assertFalse(r_masked["causal_within_budget"])
+        self.assertTrue(r_masked["arrival_masked_causal_breach"])
+        self.assertTrue(r_masked["prefix_order_diverged"])
+        self.assertTrue(r_masked["endpoint_permutation_invariance_verified"])
+        self.assertTrue(r_masked["positive_sum_equals_worst_permutation_max_verified"])
+
+        # 2. Permutation-robust prefix stream: positive delta mass <= B_prefix = 3
+        rmon_ok = StreamingReplayOrderMonitor(3, scope_id="replay-robust-test")
+        rmon_ok.register_event("p1", 1, causal_index=1)
+        r_ok = rmon_ok.register_event("p2", 2, causal_index=2)
+        self.assertEqual(r_ok["status"], "PERMUTATION_ROBUST_PREFIX_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(r_ok["endpoint_permutation_invariance_verified"])
+        self.assertTrue(r_ok["positive_sum_equals_worst_permutation_max_verified"])
 
 
 if __name__ == "__main__":
