@@ -6638,7 +6638,7 @@ class StreamingPullbackSquareMonitor:
 
 
 class StreamingMartingaleOptionalStoppingMonitor:
-    """Online bounded-horizon martingale optional stopping and tail-drawdown monitor over Q.
+    """Online two-step martingale optional stopping and terminal-loss monitor over Q.
 
     Audits 2-step rational binary trees with root X_0, step-1 states (X_u, X_d)
     under probabilities (p_1, 1 - p_1), and step-2 states (X_uu, X_ud) under
@@ -6650,16 +6650,17 @@ class StreamingMartingaleOptionalStoppingMonitor:
           L = E_mart,1 * E_mart,u * E_mart,d.
       - For an adapted stopping rule tau in {1, 2} (stop_on_step1_up, stop_on_step1_down):
           * Computes the stopped expectation E[X_tau] and full-horizon expectation E[X_2],
-          * Verifies Doob's optional stopping conservation:
-              L == 1  =>  E[X_tau] == E[X_2] == X_0,
-          * Computes the stopped win probability P(X_tau > X_0) and worst-case
-            tail drawdown Delta_tail = max(0, X_0 - min_omega X_tau(omega))
-            against max_tail_drawdown_budget.
+          * Checks the actual equality E[X_tau] == E[X_2] == X_0, separately
+            from applicability of bounded optional stopping (L == 1).
+          * Computes the stopped win probability P(X_tau > X_0) and worst
+            stopped terminal loss Delta_tail = max(0, X_0 - min_omega X_tau(omega))
+            against max_tail_drawdown_budget. This is not peak-to-trough drawdown.
+          * Evaluates the loss budget independently: E_g = 1[Delta_tail <= budget].
+            Joint admission additionally requires L == 1.
       - Separates:
           * MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG (L == 1 and Delta_tail <= budget),
           * MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR (L == 1 and E[X_tau] == X_0,
-            yet asymmetric stopping inflates P(X_tau > X_0) while breaching
-            Delta_tail > max_tail_drawdown_budget, so E_g = 0, Delta_E = -1),
+            yet Delta_tail > max_tail_drawdown_budget, so E_g = 0, Delta_E = -1),
           * NON_MARTINGALE_DRIFT_REJECTED (L == 0).
     """
 
@@ -6746,11 +6747,14 @@ class StreamingMartingaleOptionalStoppingMonitor:
         tail_drawdown = max(Fraction(0), v0 - min_stopped_val)
         within_drawdown_budget = tail_drawdown <= self.max_tail_drawdown_budget
 
-        optional_stopping_conserved = (local_product == 0) or (
-            exp_stopped == v0 and exp_horizon2 == v0
-        )
+        # Verify the equality itself; a false martingale premise is not evidence
+        # of conservation. Accidental equality on a non-martingale is possible,
+        # so theorem applicability is a separate fact.
+        optional_stopping_applicable = local_product == 1
+        optional_stopping_conserved = exp_stopped == v0 and exp_horizon2 == v0
 
-        global_eval = 1 if (local_product == 1 and within_drawdown_budget) else 0
+        global_eval = 1 if within_drawdown_budget else 0
+        joint_admission = local_product * global_eval
         defect = global_eval - local_product
 
         if local_product == 1 and global_eval == 1:
@@ -6775,7 +6779,9 @@ class StreamingMartingaleOptionalStoppingMonitor:
             "max_tail_drawdown_budget": self.max_tail_drawdown_budget,
             "local_martingale_product": local_product,
             "global_drawdown_evaluator": global_eval,
+            "joint_admission_evaluator": joint_admission,
             "evaluator_defect": defect,
+            "optional_stopping_theorem_applicable": optional_stopping_applicable,
             "optional_stopping_conservation_verified": optional_stopping_conserved,
             "classification": classification,
             "contract_status": contract_status,
@@ -6784,7 +6790,7 @@ class StreamingMartingaleOptionalStoppingMonitor:
         return json_value(rec)
 
     def get_receipt(self) -> dict[str, Any]:
-        """Emit a signed bounded-horizon martingale optional stopping audit receipt."""
+        """Emit a hash-bound two-step martingale optional stopping audit receipt."""
         if not self.trees:
             raise ValidationError("At least one stopped tree must be recorded before emitting a receipt")
 
@@ -6817,6 +6823,7 @@ class StreamingMartingaleOptionalStoppingMonitor:
             "tree_count": len(self.trees),
             "tail_drawdown_ngd_tree_ids": sorted(ngd_tree_ids),
             "non_martingale_tree_ids": sorted(non_martingale_ids),
+            "all_optional_stopping_theorems_applicable": not non_martingale_ids,
             "all_optional_stopping_conservations_verified": all_ost_ok,
             "trees": self.trees,
         }

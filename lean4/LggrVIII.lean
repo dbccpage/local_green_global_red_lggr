@@ -1365,20 +1365,19 @@ theorem fibered_pullback_compatibility_and_mediator_uniqueness {W A B C : Type}
     rw [hu1, hu2]
 
 /-- Theorem 49 (`optional_stopping_expectation_conservation_vs_skew`):
-    Formalizes Doob's Bounded-Horizon Optional Stopping Expectation Conservation
-    vs. Asymmetric Stopping Win-Rate Skew & Tail Drawdown `NGD` (scaled by 4 over `ℤ`
-    for two fair binary steps):
-    1. (Optional Stopping Expectation Conservation): For root `x0`, step-1 states
-       `xu, xd` satisfying `xu + xd = 2 * x0`, and step-2 states `(xuu, xud)` and
-       `(xdu, xdd)` satisfying `xuu + xud = 2 * xu` and `xdu + xdd = 2 * xd`, both the
-       full-horizon `t = 2` sum `xuu + xud + xdu + xdd` and the asymmetric stopped
-       sum `2 * xu + xdu + xdd` (stopping at `t = 1` on `xu`, continuing to `t = 2` on `xd`)
-       equal `4 * x0`.
-    2. (Asymmetric Stopping Skew & Tail Drawdown `NGD`): For `x0 = 0, xu = 1, xd = -1,
-       xuu = 2, xud = 0, xdu = 1, xdd = -3` and tail drawdown budget `B_tail = 1`:
-       every step is a zero-drift martingale (`L = 1`) and `2 * xu + xdu + xdd = 0 = 4 * x0`
-       with 3 of 4 equiprobable paths positive (`+1`), yet the worst-case tail drawdown
-       `x0 - xdd = 3 > 1 = B_tail` breaches the drawdown bound (`Eg = 0`, `Δ_E = -1`). -/
+    Two fair-tree sum identities and a fixed terminal-loss budget example, in
+    units scaled by 4 over `Int`:
+    1. For root `x0`, step-1 states `xu, xd` satisfying `xu + xd = 2 * x0`, and
+       step-2 states satisfying `xuu + xud = 2 * xu` and `xdu + xdd = 2 * xd`,
+       both the full-horizon sum `xuu + xud + xdu + xdd` and the asymmetric
+       stopped sum `2 * xu + xdu + xdd` equal `4 * x0`.
+    2. The fixed stopped values `xu_w = 1, xdu_w = 1, xdd_w = -3` conserve
+       the scaled expectation at `x0_w = 0`, while terminal loss `3` exceeds
+       budget `1`. The local product is assigned `1` in this example.
+    These are finite optional-stopping arithmetic identities. The proposition
+    does not count a `3/4` win probability, quantify arbitrary rational branch
+    probabilities, or cover all four stopping rules in the Python interface.
+    Terminal loss from the initial value is not peak-to-trough drawdown. -/
 theorem optional_stopping_expectation_conservation_vs_skew
     (x0 xu xd xuu xud xdu xdd : Int)
     (hm1 : xu + xd = 2 * x0)
