@@ -193,6 +193,11 @@ The source report's query is `abs(final - baseline) <= bound`. That is the defau
 
 Under this query, `0 -> 1 -> 2 -> 1` has a valid final endpoint despite an earlier violation. The receipt exposes both the endpoint and every-prefix answers; it does not pretend they are the same proposition.
 
+`StreamingAuditMonitor.step()` records these excursions in `g4_prefix_ok` without
+raising an endpoint-budget alert. `get_receipt()` evaluates the supplied trace's
+final endpoint and rejects any breach still present there. An empty audit stream
+without an observed baseline remains `WITNESS_INCOMPLETE` (CLI exit code 1).
+
 For a requirement that must hold after **every** accepted update, explicitly use:
 
 ```python

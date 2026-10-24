@@ -785,8 +785,9 @@ class StreamingAuditMonitor:
                 "bound": self.policy.max_total
             })
 
-        if self.policy.query_scope == "endpoint" and not prefix_within_bound:
-            alert_reasons.append("ENDPOINT_BUDGET_EXCEEDED")
+        # Endpoint scope is evaluated by get_receipt() on the supplied trace.
+        # A temporary excursion may recover before its final endpoint, so it
+        # must not create a persistent early-stopping alert here.
         has_alert = len(alert_reasons) > 0
         if has_alert:
             self.status = "OBSTRUCTED_LGGR"

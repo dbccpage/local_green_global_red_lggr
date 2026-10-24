@@ -133,6 +133,11 @@ class TestStreamingAuditMonitor(unittest.TestCase):
         self.assertEqual(r1_p["status"], "ALERT")
         self.assertIn("PREFIX_BUDGET_EXCEEDED", r1_p["alert_reasons"])
         self.assertEqual(monitor_prefix.status, "OBSTRUCTED_LGGR")
+        monitor_prefix.step(w2_p)
+        prefix_receipt = monitor_prefix.get_receipt()
+        self.assertEqual(prefix_receipt["status"], "OBSTRUCTION_DETECTED")
+        self.assertFalse(prefix_receipt["composition_certified"])
+        self.assertEqual(prefix_receipt["alerts_count"], 1)
 
         # Under endpoint policy, intermediate spike does not trigger early alert
         w1_e = make_witness(policy_endpoint, self.s0, self.s2, witness_id="w1")
@@ -141,9 +146,44 @@ class TestStreamingAuditMonitor(unittest.TestCase):
         monitor_endpoint = StreamingAuditMonitor(policy_endpoint, self.s0)
         r1_e = monitor_endpoint.step(w1_e)
         self.assertEqual(r1_e["status"], "OK")
+        self.assertFalse(r1_e["g4_prefix_ok"])
         r2_e = monitor_endpoint.step(w2_e)
         self.assertEqual(r2_e["status"], "OK")
-        self.assertEqual(monitor_endpoint.get_receipt()["status"], "COMPOSITION_VERIFIED")
+        endpoint_receipt = monitor_endpoint.get_receipt()
+        self.assertEqual(endpoint_receipt["status"], "COMPOSITION_VERIFIED")
+        self.assertTrue(endpoint_receipt["composition_certified"])
+        self.assertEqual(endpoint_receipt["alerts_count"], 0)
+
+    def test_endpoint_receipt_rejects_unrecovered_excursion(self):
+        policy = BudgetPolicy(allowed_states=(-2, 0, 2), max_step=2, max_total=1, query_scope="endpoint")
+        for value in (-2, 2):
+            with self.subTest(value=value):
+                monitor = StreamingAuditMonitor(policy, self.s0)
+                witness = make_witness(policy, self.s0, StateRef("end", value), witness_id="w1")
+                step = monitor.step(witness)
+                self.assertEqual(step["status"], "OK")
+                self.assertFalse(step["g4_prefix_ok"])
+                receipt = monitor.get_receipt()
+                self.assertEqual(receipt["status"], "OBSTRUCTION_DETECTED")
+                self.assertFalse(receipt["composition_certified"])
+                self.assertEqual(receipt["alerts_count"], 0)
+                self.assertIn("PROTECTED_QUERY_FALSE", {f["code"] for f in receipt["findings"]})
+
+    def test_endpoint_recovery_retains_other_obstructions(self):
+        policy = BudgetPolicy(allowed_states=(0, 1, 2), max_step=2, max_total=1, query_scope="endpoint")
+        for fault in ("boundary", "global_sample"):
+            with self.subTest(fault=fault):
+                monitor = StreamingAuditMonitor(policy, self.s0)
+                first = make_witness(policy, self.s0, self.s2, witness_id="w1")
+                monitor.step(first, global_evaluator_sample=0 if fault == "global_sample" else None)
+                source = StateRef("wrong_boundary", 2) if fault == "boundary" else self.s2
+                monitor.step(make_witness(policy, source, self.s1, witness_id="w2"))
+                receipt = monitor.get_receipt()
+                self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+                self.assertFalse(receipt["composition_certified"])
+                self.assertEqual(receipt["alerts_count"], 1)
+                code = "BOUNDARY_MISMATCH" if fault == "boundary" else "NGD_DEFECT_DETECTED"
+                self.assertIn(code, {f["code"] for f in receipt["findings"]})
 
     def test_g1_boundary_mismatch_alert(self):
         monitor = StreamingAuditMonitor(self.policy, self.s0)
