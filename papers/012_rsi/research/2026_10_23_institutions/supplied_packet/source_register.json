@@ -1,0 +1,109 @@
+{
+  "inspection_date": "2026-10-23",
+  "review_type": "targeted, not systematic",
+  "sources": [
+    {
+      "key": "AbramskyBrandenburger2011",
+      "title": "The sheaf-theoretic structure of non-locality and contextuality",
+      "url": "https://arxiv.org/abs/1102.0264",
+      "doi": "10.1088/1367-2630/13/11/113036",
+      "inspection": "Primary paper abstract; cited for the local-to-global problem, not a claim about politics."
+    },
+    {
+      "key": "Barzun2000",
+      "title": "From Dawn to Decadence: 500 Years of Western Cultural Life, 1500 to the Present",
+      "inspection": "Bibliographic and descriptive material; historical motivation only; no full-book or page-specific quotation claimed."
+    },
+    {
+      "key": "BradyEtAl2021",
+      "title": "How social learning amplifies moral outrage expression in online social networks",
+      "doi": "10.1126/sciadv.abe5641",
+      "inspection": "Primary study abstract through PubMed. Findings scoped to the study, not psychological diagnosis of an interlocutor."
+    },
+    {
+      "key": "Carroll2026a",
+      "title": "GTMUR — Certified Representation Transport / General Theory of Meta and Universal Representation",
+      "files": [
+        "002_gtmur.md",
+        "general_theory_of_meta_and_universal_representation_v001(4).md"
+      ],
+      "inspection": "Author-supplied Library source passages, including section 1.1 on meta, universal, and omniversal representation. Project lineage, not independent validation."
+    },
+    {
+      "key": "Carroll2026b",
+      "title": "Anomalon Councils Operational Integration Plan & Architecture Spec",
+      "url": "https://github.com/dbccpage/the_symbol_game/blob/e15a9d4ac6298524ce370cae679314aa0fef7585/omega_engine_product_planning_office/plans/epics/plan_anomalon_councils_engine_integration.md",
+      "inspection": "Full text of the repository design document at the stated commit. Four roles, deliberation sequence, authority/execution separation; not an implementation audit."
+    },
+    {
+      "key": "Carroll2026c",
+      "title": "Council Model Reconciliation",
+      "url": "https://github.com/dbccpage/the_symbol_game/blob/e15a9d4ac6298524ce370cae679314aa0fef7585/omega_engine_governance/anomalon_councils/documentation/council_model_reconciliation.md",
+      "inspection": "Full text of repository problem statement at the stated commit. Tests reported inside the document were not independently rerun."
+    },
+    {
+      "key": "Douglas1986",
+      "title": "How Institutions Think",
+      "url": "https://press.syr.edu/supressbooks/1814/how-institutions-think/",
+      "inspection": "Publisher description; broad intellectual positioning only."
+    },
+    {
+      "key": "DuEtAl2023",
+      "title": "Improving Factuality and Reasoning in Language Models through Multiagent Debate",
+      "url": "https://arxiv.org/abs/2305.14325",
+      "inspection": "Primary preprint abstract and authors project description; benefits restricted to evaluated settings."
+    },
+    {
+      "key": "Hutchins1995",
+      "title": "Cognition in the Wild",
+      "url": "https://mitpress.mit.edu/9780262581462/cognition-in-the-wild/",
+      "inspection": "Publisher description; broad positioning of distributed cognition."
+    },
+    {
+      "key": "Longino2002",
+      "title": "The Fate of Knowledge",
+      "url": "https://www.jstor.org/stable/j.ctv2tvzv0",
+      "inspection": "Book description; no uninspected page-specific claim or quotation."
+    },
+    {
+      "key": "LorenzEtAl2011",
+      "title": "How social influence can undermine the wisdom of crowd effect",
+      "doi": "10.1073/pnas.1008636108",
+      "inspection": "Primary-study abstract via publisher and PubMed; experimental scope preserved."
+    },
+    {
+      "key": "NiZou2026",
+      "title": "Silent Dissent: LLM Agents That Yield to the Majority Still Represent Their Original Premise",
+      "url": "https://arxiv.org/abs/2610.02702",
+      "version": "v2, October 5, 2026",
+      "inspection": "Primary preprint abstract; no claim of subjective experience or universality."
+    },
+    {
+      "key": "Ostrom2010",
+      "title": "Beyond markets and states: Polycentric governance of complex economic systems",
+      "doi": "10.1257/aer.100.3.641",
+      "url": "https://web.pdx.edu/~nwallace/EHP/OstromPolyGov.pdf",
+      "inspection": "Primary paper text and PDF page images, including opening and concluding discussion."
+    },
+    {
+      "key": "Rissanen1978",
+      "title": "Modeling by shortest data description",
+      "doi": "10.1016/0005-1098(78)90005-5",
+      "inspection": "Primary research abstract through IBM Research and publisher metadata."
+    },
+    {
+      "key": "StarGriesemer1989",
+      "title": "Institutional ecology, translations and boundary objects",
+      "doi": "10.1177/030631289019003001",
+      "url": "https://www.ics.uci.edu/~corps/phaseii/StarGriesemer-BoundaryObjects-SSS.pdf",
+      "inspection": "Primary PDF page images, including abstract and discussion of standardization and boundary objects."
+    },
+    {
+      "key": "WynnEtAl2025",
+      "title": "Talk Isn't Always Cheap: Understanding Failure Modes in Multi-Agent Debate",
+      "url": "https://arxiv.org/abs/2509.05396",
+      "version": "v2, October 13, 2025",
+      "inspection": "Primary preprint abstract; negative results restricted to studied settings."
+    }
+  ]
+}

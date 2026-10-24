@@ -1,0 +1,46 @@
+--- before/omega_engine/crates_rs/omega_quantum_physics/src/quantum_hamiltonian.rs
++++ after/omega_engine/crates_rs/omega_quantum_physics/src/quantum_hamiltonian.rs
+@@ -47,7 +47,7 @@
+ use crate::observable::{ExactObservable, ExactObservableError, Observable, ObservableError};
+ use crate::pauli::Pauli;
+ use crate::quantum_state::{QuantumState, QuantumStateError, RayError, RayVector};
+-use crate::unitary_operator::{UnitaryError, UnitaryOperator};
++use crate::unitary_operator::{NumericalUnitaryOperator, UnitaryError};
+ use linear_algebra::linear_algebra::density::NumericalDensityMatrix as LinAlgDensityMatrix;
+ 
+ /// Fence string (proposal).
+@@ -380,13 +380,14 @@
+         Ok(self.observable.expectation_value_state(psi)?)
+     }
+ 
+-    /// Time evolution operator \(U(t) = \exp(-i H t)\) (natural units \(\hbar = 1\)):
++    /// Numerical time evolution operator \(U(t) = \exp(-i H t)\) (natural units \(\hbar = 1\)):
+     /// \(U(t) = V \operatorname{diag}(e^{-i E_0 t}, \dots, e^{-i E_{d-1} t}) V^\dagger\).
++    /// Returns a numerical diagnostic with its unitarity defect; no exact admission.
+     pub fn time_evolution_operator(
+         &self,
+         t: f64,
+         label: impl Into<String>,
+-    ) -> Result<UnitaryOperator, HamiltonianError> {
++    ) -> Result<NumericalUnitaryOperator, HamiltonianError> {
+         let dim = self.dim();
+         let mut exp_d = CMatrix::zeros(dim, dim);
+         for k in 0..dim {
+@@ -394,7 +395,7 @@
+             exp_d[(k, k)] = C64::new(phase.cos(), phase.sin());
+         }
+         let u_mat = &self.eigenvectors * &exp_d * self.eigenvectors.adjoint();
+-        Ok(UnitaryOperator::try_new(
++        Ok(NumericalUnitaryOperator::try_new(
+             dim,
+             u_mat,
+             label,
+@@ -489,7 +490,7 @@
+         for r in 0..2 {
+             for col in 0..2 {
+                 assert!(
+-                    (u.matrix[(r, col)] - expect[r][col]).norm() < 1e-12,
++                    (u.matrix()[(r, col)] - expect[r][col]).norm() < 1e-12,
+                     "({r}, {col})"
+                 );
+             }

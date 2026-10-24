@@ -1,0 +1,83 @@
+Processing c:\users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\rsi_review_20261023\clean_v1.2.3\000_relational_reasoning_and_rsi_impossibility
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: relational-reasoning-and-rsi-impossibility
+  Building wheel for relational-reasoning-and-rsi-impossibility (pyproject.toml): started
+  Building wheel for relational-reasoning-and-rsi-impossibility (pyproject.toml): finished with status 'done'
+  Created wheel for relational-reasoning-and-rsi-impossibility: filename=relational_reasoning_and_rsi_impossibility-1.2.3-py3-none-any.whl size=74724 sha256=497ecc52d549c4686b987f545d0eb8a64abb324543f68fdf50fc9eafe36dd13b
+  Stored in directory: C:\Users\a343o\AppData\Local\Temp\pip-ephem-wheel-cache-5hs8tzue\wheels\60\ab\b3\93dfb82c8f149a9e52cc23f96cbd74e989bdbeb8d6bd9a0359
+Successfully built relational-reasoning-and-rsi-impossibility
+Processing c:\users\a343o\appdata\local\temp\rsi_wheel_jci6medz\wheels\relational_reasoning_and_rsi_impossibility-1.2.3-py3-none-any.whl
+Collecting numpy>=1.24 (from relational-reasoning-and-rsi-impossibility==1.2.3)
+  Using cached numpy-2.5.4-cp312-cp312-win_amd64.whl.metadata (6.6 kB)
+Collecting scipy>=1.10 (from relational-reasoning-and-rsi-impossibility==1.2.3)
+  Using cached scipy-1.18.1-cp312-cp312-win_amd64.whl.metadata (61 kB)
+Using cached numpy-2.5.4-cp312-cp312-win_amd64.whl (12.6 MB)
+Using cached scipy-1.18.1-cp312-cp312-win_amd64.whl (36.7 MB)
+Installing collected packages: numpy, scipy, relational-reasoning-and-rsi-impossibility
+Successfully installed numpy-2.5.4 relational-reasoning-and-rsi-impossibility-1.2.3 scipy-1.18.1
+{
+  "installed_modules": 15,
+  "parity": {
+    "metadata_record_count": 1,
+    "rust_companion_executed": true,
+    "scope": "EIS_METADATA_ONLY",
+    "obstruction_predicates_checked": false,
+    "identity_contract": "ascii-identifiers-v2",
+    "eis_fixture_vectors": 55,
+    "eis_digest_vectors": 7
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "relational-reasoning-and-rsi-impossibility": "1.2.3"
+  }
+}
+{
+  "status": "PASS",
+  "wheel_sha256": "497ecc52d549c4686b987f545d0eb8a64abb324543f68fdf50fc9eafe36dd13b",
+  "wheel_name": "relational_reasoning_and_rsi_impossibility-1.2.3-py3-none-any.whl",
+  "isolated_interpreter": true,
+  "system_site_packages": false,
+  "smoke": {
+    "installed_modules": 15,
+    "parity": {
+      "metadata_record_count": 1,
+      "rust_companion_executed": true,
+      "scope": "EIS_METADATA_ONLY",
+      "obstruction_predicates_checked": false,
+      "identity_contract": "ascii-identifiers-v2",
+      "eis_fixture_vectors": 55,
+      "eis_digest_vectors": 7
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "relational-reasoning-and-rsi-impossibility": "1.2.3"
+    }
+  },
+  "cli_executed": true,
+  "wheel_payload_sha256": {
+    "communication_channels.py": "3e3b9016a1e50d2a66c7ba2fbb3045bfc3b6b8647c1173fbfd60cc82d08bb0f4",
+    "deposit_paths.py": "ee2b39902a4123a0de021c48256d1b29f30589c2769d99e55758cc47d3df1ac4",
+    "eis_verifier.py": "9643e5b06cba52075b9b89855d760fa7b381d5c55d757021f9cb6239dd5fcdd2",
+    "exact_dual_witness_solver.py": "c2e3545489c5236a5e94b170f0b93457af721c9ca4fcfa948371662497134c24",
+    "finite_limits.py": "fe215a8a941fd04f18807efec5a8b629acfac78d3400646d2f1a01d4241906b6",
+    "higher_cell_async_hypergraph.py": "ec54edc7afd2c19c54321a72be4e7019e7a9c0f7a6bec70c77f8037c7a75544f",
+    "memory_cli.py": "1e6abf77782cf4fe2a2f4edfae8b5694b5be2a0a47e79fe0afc8a06ef4f78365",
+    "memory_machine.py": "363c1634163866ed939daca1ee9e2de2c16a2000dab767a4b53764bc1292f65e",
+    "multi_agent_hypergraph.py": "f9652e86611c69893810615eb809f9d1eed659ed9da2f2a8c4e18f89d236c8c4",
+    "residual_memory.py": "be997d8c28570e925738c2e0176c25ee962d57c013555779c1d25cd17802734b",
+    "rsi_transition_harness.py": "425c527f3d9d7df690c7964ff6f6696ec64e76e1ac7a67d5bbf091012ca9f161",
+    "simplicial_complex.py": "fd9f8fda64da77dc47111bd1bca0bd9052e55e149c3a81158f5553b15ad68337",
+    "simplicial_rewiring.py": "fbd5edf7bea1096e273d6c7ba4ec92aff3ec0ccdb9ebe351b32764ddcfb401ad",
+    "single_agent_graph.py": "33e25cd09a1df1af957bb78cbba2d1d541e62ad3dfefabf14693eecb261923e3",
+    "rsi_eis_resources/__init__.py": "874a9de830821c32c98f02b1c07f8f972e109d28dfc9f457cc38ac3581cb8f83",
+    "rsi_eis_resources/eis_independence_vectors_v2.json": "c619e8ce4e1da899e4923c4139907d2f0917d5d94e1f041107d17e2287c1bc8a",
+    "rsi_eis_resources/rust_eis_companion.rs": "2e499aa6b249082e6d28fc835a1f9ad00c6930249224177000033852f616d210"
+  }
+}

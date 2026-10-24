@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-23",
+  "paper": "PO-036",
+  "version": "0.2.0",
+  "result": "PASS",
+  "archive": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals\\dist\\bell_positive_extensions_v0.2.0.zip",
+  "archive_sha256": "f104d95f7fef9ca9738e567568cd50032fd46ca6e26da01c7fe6a67ea1f9c7c2",
+  "archive_bytes": 301812739,
+  "lean_theorems": 48,
+  "custom_axioms": [],
+  "proof_compilation": "fresh Bell sources in a fresh build directory; packaged pinned dependency closure",
+  "clean_extraction": {
+    "archive": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals\\dist\\bell_positive_extensions_v0.2.0.zip",
+    "sha256": "f104d95f7fef9ca9738e567568cd50032fd46ca6e26da01c7fe6a67ea1f9c7c2",
+    "extracted_root": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_formalization\\clean_release_v0.2.0\\036_bell_positive_extensions_and_projection_residuals",
+    "no_proof_cache": true,
+    "members": 42
+  },
+  "exact_python_tests": 21,
+  "notebook": "direct Python-cell execution",
+  "finite_reproduction": {
+    "status": "passed",
+    "exact_CHSH_parameters": [
+      "0",
+      "1/4",
+      "1/2",
+      "3/4",
+      "1"
+    ],
+    "floating_LP_parameters": 7,
+    "max_LP_absolute_error": 1.1102230246251565e-16,
+    "two_qubit_times_checked": 5,
+    "max_state_absolute_error": 8.881784197001252e-16,
+    "Mermin_assignments_checked": 64,
+    "phase_fiber_and_finite_inference_checks": "passed"
+  },
+  "steps": {
+    "lean_record": {
+      "label": "lean_record",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_lean.py",
+        "--record"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T15:24:09.276272+00:00",
+      "seconds": 141.5744960308075,
+      "exit_code": 0,
+      "log": "lean_record.txt"
+    },
+    "numeric_reproduction": {
+      "label": "numeric_reproduction",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "code/reproduce_examples.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T15:22:55.021596+00:00",
+      "seconds": 7.452717065811157,
+      "exit_code": 0,
+      "log": "numeric_reproduction.txt"
+    },
+    "pdf_final": {
+      "label": "pdf_final",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "scripts/build_paper_artifacts.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T15:25:58.824768+00:00",
+      "seconds": 9.042217493057251,
+      "exit_code": 0,
+      "log": "pdf_final.txt"
+    },
+    "package_build": {
+      "label": "package_build",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/package.py",
+        "--build"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T15:26:45.817001+00:00",
+      "seconds": 5.825168609619141,
+      "exit_code": 0,
+      "log": "package_build.txt"
+    },
+    "clean_release_verify": {
+      "label": "clean_release_verify",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "verify_deposit.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_formalization\\clean_release_v0.2.0\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T15:31:11.200245+00:00",
+      "seconds": 233.82289218902588,
+      "exit_code": 0,
+      "log": "clean_release_verify.txt"
+    }
+  },
+  "scope": "Finite stochastic locality iff positive deterministic extension; arbitrary latent carriers under explicit positive normalized linear averaging on a function algebra; CHSH local, total-variation and uncertainty bounds; exact finite scalar observer minimax, evidence-preserving recursion and finite randomized error floors. Measure-theoretic integration instantiation, quantum operator bounds, general LP duality and tangent-cone results are not claimed by this census."
+}

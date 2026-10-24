@@ -1,0 +1,65 @@
+PASS Bell payload and source custody 135 files
+Fresh Bell proof build; using packaged offline dependencies
+Traceback (most recent call last):
+  File "C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\verify_deposit.py", line 9, in <module>
+    replay()
+  File "C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\tools\replay_lean.py", line 104, in replay
+    raise ValueError(logs[-1])
+ValueError: ✔ [2/58] Built Bell.Extension (45s)
+✔ [3/58] Built Bell.ConvexDistance (46s)
+✔ [4/58] Built Bell.Averaging (44s)
+✔ [5/58] Built Bell.Observer (44s)
+✔ [6/58] Built Bell.CHSH (44s)
+✔ [7/58] Built Bell.LinearProgramming (45s)
+✔ [8/58] Built Bell.TangentCone (45s)
+✔ [9/58] Built Bell.Polyhedral (46s)
+✔ [10/58] Built Bell.PolyhedralProjection (37s)
+✔ [11/58] Built Bell.Quantum (43s)
+✔ [12/58] Built Bell.Integral (44s)
+✔ [13/58] Built Bell.QuantumState (99s)
+✔ [14/58] Built Bell.QuantumExample (101s)
+✔ [15/58] Built Bell.QuantumMeasurement (59s)
+✔ [16/58] Built Bell.PlanarQuantum (68s)
+✔ [17/58] Built Bell.QuantumTrace (23s)
+✔ [18/58] Built Bell.Dynamics (24s)
+✔ [19/58] Built Bell.Clifford (36s)
+✔ [20/58] Built Bell.ChainAnalysis (37s)
+✔ [21/58] Built Bell.Separable (26s)
+✔ [22/58] Built Bell.MaximallyEntangled (26s)
+✔ [23/58] Built Bell.CliffordObservables (26s)
+✔ [24/58] Built Bell.Repair (25s)
+✔ [25/58] Built Bell.SignedDuality (20s)
+✔ [26/58] Built Bell.RepairGeometry (20s)
+✔ [27/58] Built Bell.FullChainBounds (20s)
+✔ [28/58] Built Bell.ContextualFraction (21s)
+✔ [29/58] Built Bell.SparseCertificates (31s)
+✔ [30/58] Built Bell.ChainWitness (31s)
+✔ [31/58] Built Bell.NegativeMassFamilies (32s)
+✔ [32/58] Built Bell.ChainAsymptotic (33s)
+✖ [33/58] Building Bell.BinaryScenarios (6.5s)
+trace: .> LEAN_PATH=\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib;C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean c:\Users\a343o\source\repos\.elan\toolchains\leanprover--lean4---v4.35.0\bin\lean.exe -DwarningAsError=true C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\Bell\BinaryScenarios.lean -o C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\BinaryScenarios.olean -i C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\BinaryScenarios.ilean -c C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\BinaryScenarios.c --setup C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\BinaryScenarios.setup.json --json
+error: Bell/BinaryScenarios.lean:1:0: failed to read file '\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib\Mathlib\RingTheory\Localization\BaseChange.olean.private'
+✖ [42/58] Building Bell.FiveData (6.9s)
+trace: .> LEAN_PATH=\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib;C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean c:\Users\a343o\source\repos\.elan\toolchains\leanprover--lean4---v4.35.0\bin\lean.exe -DwarningAsError=true C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\Bell\FiveData.lean -o C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\FiveData.olean -i C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\FiveData.ilean -c C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\FiveData.c --setup C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\FiveData.setup.json --json
+error: Bell/FiveData.lean:1:0: failed to read file '\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib\Mathlib\Algebra\Polynomial\FieldDivision.olean.private'
+✖ [45/58] Building Bell.CycleParity (6.9s)
+trace: .> LEAN_PATH=\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib;C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean c:\Users\a343o\source\repos\.elan\toolchains\leanprover--lean4---v4.35.0\bin\lean.exe -DwarningAsError=true C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\Bell\CycleParity.lean -o C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\CycleParity.olean -i C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\CycleParity.ilean -c C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\CycleParity.c --setup C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\CycleParity.setup.json --json
+error: Bell/CycleParity.lean:1:0: failed to read file '\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib\Mathlib\RingTheory\IntegralClosure\IsIntegralClosure\Basic.olean.private'
+✖ [48/58] Building Bell.SmoothedComparison (5.4s)
+trace: .> LEAN_PATH=\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib;C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean c:\Users\a343o\source\repos\.elan\toolchains\leanprover--lean4---v4.35.0\bin\lean.exe -DwarningAsError=true C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\Bell\SmoothedComparison.lean -o C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\SmoothedComparison.olean -i C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\SmoothedComparison.ilean -c C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\SmoothedComparison.c --setup C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\SmoothedComparison.setup.json --json
+error: Bell/SmoothedComparison.lean:1:0: failed to read file '\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib\Mathlib\LinearAlgebra\Matrix\Charpoly\LinearMap.olean'
+✖ [51/58] Building Bell.ScenarioRestriction (6.9s)
+trace: .> LEAN_PATH=\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib;C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean c:\Users\a343o\source\repos\.elan\toolchains\leanprover--lean4---v4.35.0\bin\lean.exe -DwarningAsError=true C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\Bell\ScenarioRestriction.lean -o C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\ScenarioRestriction.olean -i C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\lib\lean\Bell\ScenarioRestriction.ilean -c C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\ScenarioRestriction.c --setup C:\Users\a343o\AppData\Local\Temp\bell-lean-5sjz8w4b\.lake\build\ir\Bell\ScenarioRestriction.setup.json --json
+error: Bell/ScenarioRestriction.lean:1:0: failed to read file '\\?\c:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\.lake\vendor\lib\Mathlib\Algebra\Module\LocalizedModule\Basic.olean.private'
+Some required targets logged failures:
+- Bell.BinaryScenarios
+- Bell.FiveData
+- Bell.CycleParity
+- Bell.SmoothedComparison
+- Bell.ScenarioRestriction
+info: bell_positive_extensions: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+warning: rsi_mathlib_vendor: ignoring missing manifest:
+  C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell0130-clean-860e5unj\036_bell_positive_extensions_and_projection_residuals\lean4\vendor\lake-manifest.json
+error: build failed
+

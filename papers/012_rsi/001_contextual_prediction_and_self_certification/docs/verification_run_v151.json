@@ -1,0 +1,120 @@
+{
+  "version": "1.5.1",
+  "status": "PASS",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "checks": [
+    {
+      "command": [
+        "lean",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "Lean (version 4.33.1, x86_64-w64-windows-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_review_corrections.py",
+        "--write"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"PASS\", \"review_math_groups\": 3, \"raw_defect\": \"1/50\", \"radius\": \"1/50\", \"adjusted_margin\": \"0\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/generate_lp_certificates.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: five exact solver fixtures and their Lean certificate source agree\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_simplex_implementation.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 71 complete simplex execution cases bound to current sources\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_lean_axiom_census.py",
+        "--write"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 98 named theorems, complete source coverage, approved axioms only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_full_axiom_census.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 660 package-local declarations; 11 modules; approved axioms only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_simplex_implementation.py",
+        "--replay"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 71 complete simplex execution cases agree in Lean and Python\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "-m",
+        "pytest",
+        "code/tests",
+        "-q",
+        "--junitxml=C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\contextual_v151_pytest.xml"
+      ],
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 64%]\n........................................                                 [100%]\n",
+      "stderr": ""
+    }
+  ],
+  "initial_worktree_test": {
+    "passed": 111,
+    "failed": 1,
+    "receipt": "docs/initial_worktree_pytest_v151.xml",
+    "reason": "The working dependency tarball was absent. Restored its exact bytes from the preserved v1.5.0 release, with original archive-manifest hash verified. No mathematical assertion failed."
+  },
+  "pytest": {
+    "tests": "112",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "1.756"
+  },
+  "actual_lean_version": "Lean (version 4.33.1, x86_64-w64-windows-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)",
+  "named_theorems": 98,
+  "full_declarations": 660,
+  "execution_comparisons": 71
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "-p",
+    "omega_symbol_game",
+    "--bin",
+    "omega_symbol_game"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+  "exit_code": 0,
+  "seconds": 384.5391774177551
+}

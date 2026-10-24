@@ -1,0 +1,28 @@
+PASS unchanged proof/census/code/replay payload: 39 files
+PASS exact requested coverage, all 12 claims, and five rejected invalid-map mutations
+PDF page 1 changed
+PDF page 5 unchanged
+PDF page 6 unchanged
+PDF page 10 unchanged
+PDF page 18 changed
+PDF page 20 unchanged
+PDF page 21 unchanged
+Subject:         manuscript-sha256:f33fb4e808d4e3c2a7aa95f3455f457cc091b21e117dfb21418a5424270c06d4
+Creator:         LaTeX via pandoc
+Producer:        MiKTeX-dvipdfmx (20250413)
+CreationDate:    Thu Oct 22 20:00:00 2026 Eastern Daylight Time
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           21
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       171314 bytes
+Optimized:       no
+PDF version:     1.7
+

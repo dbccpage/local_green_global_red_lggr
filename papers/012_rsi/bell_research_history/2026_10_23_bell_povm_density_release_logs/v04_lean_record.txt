@@ -1,0 +1,3 @@
+Fresh Bell proof build; using packaged offline dependencies
+Proofs compiled; checking every extracted dependency file
+PASS fresh Bell census: 119 theorems; no custom axioms

@@ -1,0 +1,2 @@
+PASS clean extraction: C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell_integral_quantum\clean_release_v0.5.0_final\036_bell_positive_extensions_and_projection_residuals
+Verified input archive sha256: 31dde3edb65ee9b56346aa505836dde9b03fa80493ef66cabd20aa97d012e45f

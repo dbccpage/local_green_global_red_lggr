@@ -1,0 +1,14 @@
+{"version": "1.3.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"type": "path",
+   "scope": "",
+   "name": "rsi_mathlib_vendor",
+   "manifestFile": "lake-manifest.json",
+   "inherited": false,
+   "dir": "vendor",
+   "copy": false,
+   "configFile": "lakefile.lean"}],
+ "name": "bell_positive_extensions",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

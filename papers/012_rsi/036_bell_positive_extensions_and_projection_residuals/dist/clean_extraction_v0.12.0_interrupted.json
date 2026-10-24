@@ -1,0 +1,12 @@
+{
+  "version": "0.12.0",
+  "result": "interrupted_by_timeout",
+  "archive": "bell_positive_extensions_v0.12.0.zip",
+  "archive_sha256": "41d8805ec943d2f6ad5df5df49effef155aed6c0a88975f921dc691d8e4b06d7",
+  "log": "clean_extraction_v0.12.0_interrupted.log",
+  "log_sha256": "a6fbed81663c7e23003bf1ab276a38ffaa465685b9cd540ccbd17bcb0103cefd",
+  "phase": "fresh Lean build in extracted package",
+  "error": "subprocess.TimeoutExpired after prolonged wait; reported remaining timeout was negative",
+  "proof_failure_reported": false,
+  "disposition": "Preserved failed attempt; retry uses unchanged archive"
+}

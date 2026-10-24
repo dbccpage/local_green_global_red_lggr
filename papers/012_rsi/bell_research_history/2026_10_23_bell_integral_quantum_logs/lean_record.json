@@ -1,0 +1,15 @@
+{
+  "label": "lean_record",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "tools/replay_lean.py",
+    "--record"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+  "timestamp_utc": "2026-10-23T16:15:31.132007+00:00",
+  "seconds": 190.46262550354004,
+  "exit_code": 0,
+  "log": "lean_record.txt"
+}

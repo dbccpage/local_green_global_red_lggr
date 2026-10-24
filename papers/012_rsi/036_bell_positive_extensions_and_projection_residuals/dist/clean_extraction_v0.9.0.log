@@ -1,0 +1,162 @@
+PASS Bell payload and source custody 91 files
+Fresh Bell proof build; using packaged offline dependencies
+Proofs compiled; checking every extracted dependency file
+Checked 2000/20672 dependency files
+Checked 4000/20672 dependency files
+Checked 6000/20672 dependency files
+Checked 8000/20672 dependency files
+Checked 10000/20672 dependency files
+Checked 12000/20672 dependency files
+Checked 14000/20672 dependency files
+Checked 16000/20672 dependency files
+Checked 18000/20672 dependency files
+Checked 20000/20672 dependency files
+Checked 20672/20672 dependency files
+PASS fresh Bell census: 356 theorems; no custom axioms
+.........................................                                [100%]
+41 passed in 10.02s
+{
+  "status": "passed",
+  "exact_CHSH_parameters": [
+    "0",
+    "1/4",
+    "1/2",
+    "3/4",
+    "1"
+  ],
+  "floating_LP_parameters": 7,
+  "max_LP_absolute_error": 1.1102230246251565e-16,
+  "two_qubit_times_checked": 5,
+  "max_state_absolute_error": 8.881784197001252e-16,
+  "Mermin_assignments_checked": 64,
+  "Mermin_Q1_Born_cells_checked": 64,
+  "Mermin_Q1_max_absolute_error": 5.551115123125783e-17,
+  "Mermin_repair_parameters_checked": 6,
+  "Mermin_repair_max_absolute_error": 1.3877787807814457e-17,
+  "phase_fiber_and_finite_inference_checks": "passed"
+}
+Exact-arithmetic verification: obstruction calculus for the
+CHSH scenario and the observer module (fractions only).
+
+========================================================================
+C0  simplex self-tests
+========================================================================
+  [PASS] selftest eq+ge   value = 4
+  [PASS] selftest min -x, x<=3   value = -3
+  [PASS] selftest infeasible
+  [PASS] selftest unbounded
+  [PASS] selftest maximize   value = 5
+  [PASS] selftest Beale (anti-cycling)   value = -1/20
+
+========================================================================
+C1  CHSH local bound at the deterministic vertices
+========================================================================
+  [PASS] K(lambda) in {+2,-2} and S(vertex) = K(lambda) for all 16   values: [Fraction(-2, 1), Fraction(2, 1)]
+  [PASS] column sums = 4 and T(uniform) = uniform behavior
+
+========================================================================
+C2  im(T) is contained in the no-signalling subspace
+========================================================================
+  [PASS] N @ (T e_lambda) = 0 for all 16 vertices
+
+========================================================================
+C3  Lemma L1: T({q : sum q = 1}) = normalized NS tables
+========================================================================
+  [PASS] rank(T) = 9 (linear span of the 16 vertices)   rank = 9
+  [PASS] ambient rank of the NS functionals = 7   rank = 7
+  [PASS] dim V_NS = 9 (constructive basis)   dim = 9
+  [PASS] context sums coincide across contexts on V_NS
+  [PASS] dim aff(L) = rank(T restricted to {sum q = 0}) = 8   rank = 8
+  [PASS] PR box admits an exact normalized signed preimage
+
+========================================================================
+C4  Positive extension at v = 3/8 (interior) and v = 1/2 (boundary)
+========================================================================
+  [PASS] explicit positive extension for v = 3/8   T q* = p_v exactly, sum q* = 1
+  [PASS] explicit positive extension for v = 1/2   T q* = p_v exactly, sum q* = 1
+
+========================================================================
+C5  No positive extension at v = 51/100
+========================================================================
+  [PASS] LP detects infeasibility exactly   (v = 51/100 > 1/2: outside the local polytope)
+
+========================================================================
+C6  LP (29): R(v) = max(0, (2v-1)/4) on the isotropic line
+========================================================================
+  [PASS] R(3/8) = 0   LP value = 0  (=0.000000)
+  [PASS] R(5/8) = 1/16   LP value = 1/16  (=0.062500)
+  [PASS] R(70/99) = 41/396   LP value = 41/396  (=0.103535)
+  [PASS] R(1) = 1/4   LP value = 1/4  (=0.250000)
+
+========================================================================
+C7  Exact LP duality for (29) + CHSH witness attainment
+========================================================================
+  [PASS] strong duality at v = 3/8   primal = 0, dual = 0, ||B*||_inf <= 1/8, witness s/8 gives -1/16
+  [PASS] strong duality at v = 5/8   primal = 1/16, dual = 1/16, ||B*||_inf <= 1/8, witness s/8 gives 1/16
+  [PASS] strong duality at v = 70/99   primal = 41/396, dual = 41/396, ||B*||_inf <= 1/8, witness s/8 gives 41/396
+  [PASS] strong duality at v = 1   primal = 1/4, dual = 1/4, ||B*||_inf <= 1/8, witness s/8 gives 1/4
+
+========================================================================
+C8  Negative-mass LP: primal = dual exactly
+========================================================================
+  [PASS] N(local box v = 3/8) = 0   value = 0
+  [PASS] N(v = 5/8): primal = dual   N = 1/8
+  [PASS] N(v = 1): primal = dual   N = 1/2
+
+========================================================================
+C9  Signalling table has no normalized signed preimage
+========================================================================
+  [PASS] negative-mass LP infeasible for signalling p   (max NS residual = 1/4 != 0, consistent with Lemma L1)
+
+========================================================================
+C10  Stability: the 8-epsilon bound at a perturbed isotropic box
+========================================================================
+  [PASS] ||p~ - p||_pi = 1/400   eps = 1/400
+  [PASS] R(p~) >= (|S(p~)| - 2 - 8 eps)/8 = 1/16 exactly   bound = 1/16, R(p~) = 13/200
+
+========================================================================
+C11  Observer module: fiber determinacy theorems
+========================================================================
+  [PASS] minimax floor = half the fiber task-diameter   floor = 1/2
+  [PASS] midpoint predictor attains the floor   error = 1/2
+  [PASS] no predictor beats the floor on the nontrivial fiber   grid optimum on fiber {0,1} = 1/2
+  [PASS] refinement monotonicity: floor(O') <= floor(O)   floor' = 0
+  [PASS] report-preserving update leaves the floor unchanged   floor = 1/2
+  [PASS] evidence-gain criterion: z separates the extremal pair   gain = 1/2
+  [PASS] constant z carries no evidence: gain = 0
+
+========================================================================
+SUMMARY
+========================================================================
+39/39 checks passed.
+
+Exact certificates for the notes (printed, not asserted):
+  v = 5/8: R = 1/16; primal optimizer q* (16 weights):
+    [Fraction(3, 32), Fraction(3, 32), Fraction(0, 1), Fraction(0, 1), Fraction(3, 32), Fraction(0, 1), Fraction(7, 32), Fraction(0, 1), Fraction(0, 1), Fraction(7, 32), Fraction(0, 1), Fraction(3, 32), Fraction(0, 1), Fraction(0, 1), Fraction(3, 32), Fraction(3, 32)]
+  v = 5/8: nearest local behavior ell* = T q*:
+    [Fraction(9, 32), Fraction(7, 32), Fraction(7, 32), Fraction(9, 32), Fraction(13, 32), Fraction(3, 32), Fraction(3, 32), Fraction(13, 32), Fraction(13, 32), Fraction(3, 32), Fraction(3, 32), Fraction(13, 32), Fraction(3, 32), Fraction(13, 32), Fraction(13, 32), Fraction(3, 32)]
+  v = 5/8: dual optimizer B* = [Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8)]
+           beta* = 1/4  (max_lambda B*.l_lambda)
+  v = 1  : dual optimizer B* = [Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8)]
+  v = 1  : N(PR) = 1/2; sum q+ = 3/2, sum q- = 1/2
+PASS independent exact checks: 8 repair and 7 negative-mass certificates; actual-table uncertainty floor
+PASS 78 exact CF/N certificate cases: {'equal': 74, 'less': 3, 'greater': 1}
+PASS exact Lean/Python comparison fixture binding
+{
+  "times": 18,
+  "born_cells": 1152,
+  "LP_solves": 36,
+  "noisy_boundary_checks": 15,
+  "max_born_error": 2.7755575615628914e-17,
+  "max_optimum_error": 8.881784197001252e-16,
+  "max_unitary_error": 2.220446049250313e-16,
+  "CHSH_CF_cap": 0.41421356237309515,
+  "CHSH_N_cap": 0.20710678118654757,
+  "Mermin_CF_endpoint": 1,
+  "Mermin_N_endpoint": 0.5,
+  "scope": "Numerical consistency of explicit matrix evolution and independent LP solves; not an experimental result"
+}
+Rejected invalid witness: dual norm exceeds one
+PASS 78 exact CF/N certificate cases: {'equal': 74, 'less': 3, 'greater': 1}
+PASS Bell payload and source custody 91 files
+PASS fresh Bell Lean census, exact tests, numerical examples, review certificates, and direct notebook-cell replay

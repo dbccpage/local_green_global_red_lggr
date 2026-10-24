@@ -1,0 +1,127 @@
+{
+  "version": "1.6.0",
+  "status": "PASS",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "checks": [
+    {
+      "command": [
+        "lean",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "Lean (version 4.33.1, x86_64-w64-windows-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_review_corrections.py"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"PASS\", \"review_math_groups\": 3, \"raw_defect\": \"1/50\", \"radius\": \"1/50\", \"adjusted_margin\": \"0\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_mind_expansion.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: six source-pinned illustration groups, 19 assertions (standard library only)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/generate_lp_certificates.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: five exact solver fixtures and their Lean certificate source agree\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_simplex_implementation.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 95 complete simplex execution cases bound to current sources\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_lean_axiom_census.py",
+        "--write"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 113 named theorems, complete source coverage, approved axioms only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_full_axiom_census.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 800 package-local declarations; 13 modules; approved axioms only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_simplex_implementation.py",
+        "--replay"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 95 complete simplex execution cases agree in Lean and Python\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-X",
+        "utf8",
+        "-m",
+        "pytest",
+        "code/tests",
+        "-q",
+        "--basetemp=C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\contextual_v160_pytest_temp",
+        "--junitxml=C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\contextual_v160_pytest.xml"
+      ],
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 50%]\n.......................................................................  [100%]\n",
+      "stderr": ""
+    }
+  ],
+  "pytest": {
+    "tests": "143",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "2.238"
+  },
+  "actual_lean_version": "Lean (version 4.33.1, x86_64-w64-windows-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)",
+  "named_theorems": 113,
+  "named_axiom_free": 25,
+  "full_declarations": 800,
+  "execution_comparisons": 95,
+  "mind_illustration_groups": 6,
+  "mind_illustration_assertions": 19
+}

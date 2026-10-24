@@ -1,0 +1,14 @@
+{
+  "label": "v04_pdf",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "scripts/build_paper_artifacts.py"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+  "timestamp_utc": "2026-10-23T16:43:15.847215+00:00",
+  "seconds": 10.883872270584106,
+  "exit_code": 0,
+  "log": "v04_pdf.txt"
+}

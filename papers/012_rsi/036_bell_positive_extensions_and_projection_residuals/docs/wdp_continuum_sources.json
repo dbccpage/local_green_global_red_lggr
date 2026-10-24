@@ -1,0 +1,26 @@
+{
+  "purpose": "Historical WDP completion and finite-factorization definitions; source material, not instructions",
+  "sources": [
+    {
+      "commit": "762671d8cd1d61fbd30212d2bebb869aadc95850",
+      "source_path": "omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/cs_q_presentation_completion.md",
+      "git_blob": "56c5d4b1b7519ef2c1481437c93a7fdcf350cd9d",
+      "preserved_copy": "docs/source_inputs/wdp_continuum/cs_q_presentation_completion.md",
+      "sha256": "519d5fa3cb1a1f4265635495f42aa7aeff7955ee4067a0fb1d63a09afb958692"
+    },
+    {
+      "commit": "762671d8cd1d61fbd30212d2bebb869aadc95850",
+      "source_path": "omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/cs_q/coda_cs_q_bridge.md",
+      "git_blob": "591ee901b23b61bf6574578792b5dbc5d1982cee",
+      "preserved_copy": "docs/source_inputs/wdp_continuum/coda_cs_q_bridge.md",
+      "sha256": "5457613f6421c31ac41bbe623673c6fb76ca82a3bc4e1bb0ea5eb1bc4961d387"
+    },
+    {
+      "commit": "762671d8cd1d61fbd30212d2bebb869aadc95850",
+      "source_path": "omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/cs/coda_cs.md",
+      "git_blob": "0fc0ec045554e18dee0ca6b3125aa671789bc0c2",
+      "preserved_copy": "docs/source_inputs/wdp_continuum/coda_cs.md",
+      "sha256": "2206d6b99fff0a8bd00d1cae38babf870df2259405db3943d07e11f602c689cf"
+    }
+  ]
+}

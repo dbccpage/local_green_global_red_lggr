@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "arithmetic": "exact rational",
+  "Lean_compilation": false,
+  "fixture_source_bindings": {
+    "classical": {
+      "defect": "0",
+      "pivot_count": 21,
+      "six_numeric_fields_match_Lean_source": true
+    },
+    "pr": {
+      "defect": "2",
+      "pivot_count": 19,
+      "six_numeric_fields_match_Lean_source": true
+    },
+    "near": {
+      "defect": "4/5",
+      "pivot_count": 19,
+      "six_numeric_fields_match_Lean_source": true
+    },
+    "boundary": {
+      "defect": "1/25000000",
+      "pivot_count": 19,
+      "six_numeric_fields_match_Lean_source": true
+    },
+    "triangle": {
+      "defect": "2",
+      "pivot_count": 15,
+      "six_numeric_fields_match_Lean_source": true
+    }
+  },
+  "noisy_observation_boundary": {
+    "public_evaluate": "SIGNALLING",
+    "raw_LP_defect": "1/50",
+    "known_l1_noise_radius": "1/50",
+    "certified_positive_margin": "0"
+  },
+  "degenerate_cycling_fixture": {
+    "value": "-1",
+    "pivots": 5,
+    "one_short_budget": "BUDGET_EXHAUSTED",
+    "Lean_execution": false
+  },
+  "deposit_paths": {
+    "rejected_bad_paths": 17,
+    "accepted_good_paths": 3,
+    "symlink_rejected": true
+  }
+}

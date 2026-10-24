@@ -1,0 +1,257 @@
+{
+  "date_utc": "2026-10-23T20:38:21.797085+00:00",
+  "version": "0.7.1",
+  "repository_head": "bf6b87751e254c7aeac5ebf1b26f51bdcabaaa67",
+  "scope": "Documentation and packaging patch; no mathematical or computational changes. Reviewer reports concern v0.6 and do not assert an independent review of v0.7 proofs.",
+  "correction": {
+    "claim": "Theorem 8",
+    "coverage": "Lean qualitative factorization and exact finite scalar minimax.",
+    "already_present": [
+      "Section 9.3 finitely specified matrix qualification",
+      "Proposition 9 explicit linear maps"
+    ]
+  },
+  "package": {
+    "path": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals\\dist\\bell_positive_extensions_v0.7.1.zip",
+    "sha256": "8253c95ab7aaa8b12bcb47578eee58961c570ae0ebbdf37e5c0fcc1490357073",
+    "bytes": 707758864,
+    "payload_files": 68,
+    "manifest_control_files": 2,
+    "manifest_sha256": "f1585408fb52c94482e744cab46874eb3b34050f1bd1312d136c858d63beed80",
+    "deterministic_second_build": "byte-identical"
+  },
+  "lean": {
+    "theorems": 256,
+    "modules": 20,
+    "new_theorems": 0,
+    "custom_axioms": [],
+    "census_sha256": "b9cec3731a348a94e248919aaeb2509bc692a0545c2487ff2ce13bde39fdf6c9",
+    "all_proofs_and_census_byte_identical_to": "0.7.0",
+    "fresh_clean_extraction_build": "passed"
+  },
+  "checks": {
+    "v071_audit": {
+      "label": "v071_audit",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\audit_v071.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:21:45.462754+00:00",
+      "seconds": 8.870020866394043,
+      "exit_code": 0,
+      "log": "v071_audit.txt"
+    },
+    "v071_pdf": {
+      "label": "v071_pdf",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "scripts/build_paper_artifacts.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:21:13.723611+00:00",
+      "seconds": 8.006478786468506,
+      "exit_code": 0,
+      "log": "v071_pdf.txt"
+    },
+    "v071_package": {
+      "label": "v071_package",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/package.py",
+        "--build"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:22:31.415067+00:00",
+      "seconds": 25.04221773147583,
+      "exit_code": 0,
+      "log": "v071_package.txt"
+    },
+    "v071_repro": {
+      "label": "v071_repro",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\repro_v071.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:23:09.267157+00:00",
+      "seconds": 21.395198583602905,
+      "exit_code": 0,
+      "log": "v071_repro.txt"
+    },
+    "v071_extract": {
+      "label": "v071_extract",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\extract_v071.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:25:54.751955+00:00",
+      "seconds": 2.6754310131073,
+      "exit_code": 0,
+      "log": "v071_extract.txt"
+    },
+    "v071_clean_verify": {
+      "label": "v071_clean_verify",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "verify_deposit.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:38:01.985659+00:00",
+      "seconds": 719.9400420188904,
+      "exit_code": 0,
+      "log": "v071_clean_verify.txt"
+    }
+  },
+  "initial_clean_attempt": {
+    "label": "v071_clean_verify",
+    "command": [
+      "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+      "-X",
+      "utf8",
+      "verify_deposit.py"
+    ],
+    "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals",
+    "timestamp_utc": "2026-10-23T20:24:35.510918+00:00",
+    "seconds": 66.39398169517517,
+    "exit_code": 1,
+    "log": "v071_clean_verify.txt"
+  },
+  "initial_attempt_resolution": "Disk filled while unpacking dependencies. Preserved the failed log, removed only verified v0.7.0 and failed v0.7.1 scratch extractions plus a duplicate candidate bundle, retained all release archives and receipts, then restarted from a new extraction.",
+  "clean_extraction": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals",
+  "environment": "Python 3.12; Lean 4.35.0; PYTHONPATH and CARGO_TARGET_DIR cleared; fresh bundled dependency extraction; no sibling repository imports",
+  "python": {
+    "exact_tests": 26,
+    "supplied_checks": 39,
+    "repair_certificates": 8,
+    "negative_mass_certificates": 7,
+    "numerical_LP_solves": 14,
+    "notebook": "direct Python-cell replay passed"
+  },
+  "claim_map": {
+    "numbered_claims": 12,
+    "rejected_invalid_map_mutations": 5
+  },
+  "pdf": {
+    "date": "2026-10-23",
+    "version": "0.7.1",
+    "pages": 21,
+    "visually_reviewed_pages": [
+      1,
+      18
+    ],
+    "pixel_identical_to_previously_reviewed_v0_7_0_pages": [
+      5,
+      6,
+      10,
+      20,
+      21
+    ],
+    "overfull_boxes": 0,
+    "missing_glyphs": 0,
+    "bindings": {
+      "036_bell_positive_extensions_and_projection_residuals.md": "f33fb4e808d4e3c2a7aa95f3455f457cc091b21e117dfb21418a5424270c06d4",
+      "036_bell_positive_extensions_and_projection_residuals.tex": "c81ebd5991de21aec4aec0f58ffa1d643545f8b77c1ce07e8bf11f7d3a1f4105",
+      "036_bell_positive_extensions_and_projection_residuals.pdf": "70ca8ebe2c9d37d69d3b7849580751f638c9ec22e481a2894af5c56674805d5a",
+      "036_bell_positive_extensions_and_projection_residuals.log": "6eeafc0d3c63efdb915ee3905203f6dd0cff90a27f7c56ae0bd96faba3b533d2",
+      "036_bell_positive_extensions_and_projection_residuals.aux": "151899362e74a863b3d49b816dd406e26f241554e990d18cd055853a25af1613",
+      "docs/pdf_build.log": "874e63602efa3f3aef9b09e2c6fb71d3630d0751358728b82e30154ff18ab61c"
+    },
+    "scope": "Source association, zero missing glyphs/overfull boxes, sampled visual layout and pixel comparison; proof validation is recorded separately. No table of contents is generated by this manuscript."
+  },
+  "source_custody": {
+    "date": "2026-10-23",
+    "input_path": "C:\\Users\\a343o\\Downloads\\bell_rsi_asi_projection_residuals.md",
+    "input_sha256": "acbaddeb548a61c9f17f4ed99960aa926c92ccec3a014b758d010530e5ce8615",
+    "preserved_copy": "docs/source_inputs/bell_rsi_asi_projection_residuals.md",
+    "changes": [
+      "Separate Bell paper; focus on positive-extension obstruction and embedded task sufficiency",
+      "Removed speculative experience discussion from edited manuscript; retained exact source",
+      "Corrected dual max and parity variable typographical errors",
+      "Updated companion references; unprovided dialogue not treated as independent evidence",
+      "Added independent exact certificate checker and near-miss controls",
+      "Version 0.3.0: actual probability-integral equivalence, complex Hilbert-space Tsirelson bounds and exact two-qubit Born-table formalization; original input preserved",
+      "Version 0.4.0: finite-dimensional binary POVM and density-operator conversions, explicit spectral decomposition, actual Born tables, CHSH score identity and local tensor lifts; original input preserved",
+      "Version 0.5.0: finite Hermitian trace-norm contraction and conditional dynamical witnesses; supplied review preserved and independently audited, not treated as instructions or proof authority",
+      "Version 0.6.0: explicit finite separable mixtures, constructed local models, actual partial traces and product-marginal retraction, and the full state-to-behavior bound; preserved original review inputs unchanged",
+      "Version 0.7.0: attained Bell repair/signed LP duality, finite polyhedral projection and intrinsic tangent-cone bounds; complete-version review treated as source material, with wording, provenance and checker-independence corrections.",
+      "Version 0.7.1: corrected the Theorem 8 coverage string to qualitative factorization and exact finite scalar minimax; preserved the v0.6 follow-up review and distinguished its reported checks from current release verification. Mathematical sources and the complete axiom census are unchanged."
+    ],
+    "primary_sources_checked": [
+      "https://arxiv.org/abs/1102.0264",
+      "https://arxiv.org/abs/1709.04260",
+      "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.48.291",
+      "https://link.springer.com/article/10.1007/BF00417500",
+      "https://arxiv.org/html/1404.3831v2",
+      "https://arxiv.org/html/2312.02588v2",
+      "https://isa-afp.org/entries/TsirelsonBound.html"
+    ],
+    "review_inputs": [
+      {
+        "input_path": "C:\\Users\\a343o\\Downloads\\math_notes.md",
+        "preserved_copy": "docs/source_inputs/projection_retraction_obstruction_notes.md",
+        "sha256": "adcbd226314f815bce95d737f97972f291186a11bcc6cc592d2c02cce665e32c",
+        "bytes": 70426
+      },
+      {
+        "input_path": "C:\\Users\\a343o\\Downloads\\verify_obstruction.py",
+        "preserved_copy": "docs/source_inputs/verify_obstruction.py",
+        "sha256": "b6a14e68dea635d6a80b2bf329e12d073973dcc9208c24edcf8c7df929beaa4f",
+        "bytes": 30351
+      },
+      {
+        "input_path": "C:\\Users\\a343o\\.codex\\attachments\\23a59da4-5252-44f5-bce3-0bf1c845d0db\\Pasted text.txt",
+        "preserved_copy": "docs/source_inputs/projection_retraction_obstruction_pasted.txt",
+        "sha256": "03a323d7d80f08d9541a53b741542988e1e70b0d66a0bf3558edea7258c32f53",
+        "bytes": 70861
+      },
+      {
+        "input_path": "C:\\Users\\a343o\\.codex\\attachments\\5224a769-e977-4d89-bd64-ce2e4f72cb51\\Pasted text.txt",
+        "preserved_copy": "docs/source_inputs/complete_v0_6_review.txt",
+        "sha256": "86ec57bf7030ea0a98a2038e669f24312b82ee49004c1fa5e36f3a15b3e716b4",
+        "bytes": 28299
+      },
+      {
+        "input_path": "C:\\Users\\a343o\\.codex\\attachments\\24deb8cb-76f9-4a99-92f9-f3a1f308833d\\Pasted text.txt",
+        "preserved_copy": "docs/source_inputs/v0_6_followup_replay_review.txt",
+        "sha256": "c4a4fab5e40e92a0f76b6c403a50affca61fe9e7ff46f3e7f4716e3425b39123",
+        "bytes": 9722
+      }
+    ]
+  },
+  "publication": "No commit or publication performed; v0.7.0 archive and receipt retained.",
+  "logs": {
+    "audit_v071.py": "6e5648929bff3b9466b82653ec7bd0ca16cc6180210b26cd0a3cbeab78409883",
+    "extract_v071.py": "0eea85d9009673285f016e4cbb04d84bdd586b85cc2e9049e1caab69b3825604",
+    "report_v071.py": "ec68e0394d753b539d4d1b66155844974567736bf55ca2458df9cb925e74c7fb",
+    "repro_v071.py": "e485b88bcdf17b3afab8ce110dc808f67d5880f6aa92ba93bbc19305ebd4aca5",
+    "run_live_v071.py": "0941b8dce567d0b05369b2e8da27d3f3d098cb898472a42f32dcd105ce4ad148",
+    "v071_audit.json": "1b9bf5eacb41faf7fab6ba9e65f013e9175bc607430aa94a02fa8a637b6e37a2",
+    "v071_audit.txt": "460c279b68d7cb54081bb6eb5bcb60f7eda218f74c0a56a385eed43a3556dfac",
+    "v071_clean_verify.json": "549c2c587160374e35d9cd51832c820dc55a47d3a50b0e3245ed667c342f5b68",
+    "v071_clean_verify.txt": "a5dd4a6104206b2cd514e66609c7a1e98b1af76b4ef667f36aeec0a24f666091",
+    "v071_clean_verify_disk_failure.json": "c410b4bf0595a77a9cd2bb6d48f75fcee853ce698e0eb39ead0448470c0ac23f",
+    "v071_clean_verify_disk_failure.txt": "51c2921fc4f9ea637586f8894d69845a0998d527a7ad0a72d3cdbc8a80c1645f",
+    "v071_extract.json": "aa4095c1d961d9c8b2da4341ad7588480a275682e7f569a955140cf4db5f019c",
+    "v071_extract.txt": "f9de9cf291bb57624ac0b0cd0a96ff8cd4f101cd8d05728759e00d3fc3f5c588",
+    "v071_package.json": "79726bd4d0f20b5424bac58e0f3cbefa8359cc3390dd102c92979ad575533c3f",
+    "v071_package.txt": "d6c389373968bdf50731b1139c04c672b824bd6cb7025f4832267bfd4c5ab29e",
+    "v071_pdf.json": "2c1bdc2d2a4963004d77d9b1d846f5199caa0a63bc414d5e559a732f2296efcc",
+    "v071_pdf.txt": "509bbe266d7971fa479b1e0887a7a644ede1c6c101f03622726fb30ccd6f0041",
+    "v071_repro.json": "4195f3bf823f7235a5b93900353e76ce1bf5447c1f4287baf49beafe96f8579f",
+    "v071_repro.txt": "695958e0b9ad88943ffa99ed7b9c1158d30922cffde2b755cc42260f9b17e83a"
+  }
+}

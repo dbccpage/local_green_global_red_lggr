@@ -1,0 +1,949 @@
+Full package-local Lean axiom census
+Verification date: 2026-10-23
+Scope: all environment declarations defined in the listed package-local modules, including private and generated declarations.
+Modules: Bridge, CertifiedOutcomes, ContextualDuality, Core, EmbeddedLimits, EmbeddedQuantitative, ErrorBudget, LiveMemory, MindContracts, QueryBudget, RationalCertificates, ResultI, ResultII, ResultIII, ResultIV, Simplex, SimplexDriver
+Declarations listed: 941
+Approved axioms: propext, Quot.sound, Classical.choice
+Execution: lake env lean FullCensus.lean exited 0.
+
+'EmbeddedLimits.Determined' does not depend on any axioms
+'EmbeddedLimits.FiberConstant' does not depend on any axioms
+'EmbeddedLimits.FutureEq' does not depend on any axioms
+'EmbeddedLimits.added_task_requires_refinement' does not depend on any axioms
+'EmbeddedLimits.anti_prediction_not_universal' does not depend on any axioms
+'EmbeddedLimits.bool_cannot_equal_its_negation' does not depend on any axioms
+'EmbeddedLimits.collision_excludes_exact_decoder' does not depend on any axioms
+'EmbeddedLimits.collision_excludes_exact_decoder.match_1_1' does not depend on any axioms
+'EmbeddedLimits.decoder_implies_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.determined_is_true' does not depend on any axioms
+'EmbeddedLimits.fiber_soundness_is_maximal' does not depend on any axioms
+'EmbeddedLimits.future_eq_preserves_readout' does not depend on any axioms
+'EmbeddedLimits.future_eq_refl' does not depend on any axioms
+'EmbeddedLimits.future_eq_stable' does not depend on any axioms
+'EmbeddedLimits.future_eq_symm' does not depend on any axioms
+'EmbeddedLimits.future_eq_trans' does not depend on any axioms
+'EmbeddedLimits.implemented_memory_preserves_future' does not depend on any axioms
+'EmbeddedLimits.own_record_is_determined' does not depend on any axioms
+'EmbeddedLimits.positive_introspection' does not depend on any axioms
+'EmbeddedLimits.postprocessing_cannot_separate' does not depend on any axioms
+'EmbeddedLimits.recoverable_iff_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.recoverable_iff_fiber_constant.match_1_1' does not depend on any axioms
+'EmbeddedLimits.refinement_preserves_determination' does not depend on any axioms
+'EmbeddedLimits.runWord' does not depend on any axioms
+'EmbeddedLimits.runWord._f' does not depend on any axioms
+'EmbeddedLimits.runWord._sunfold' does not depend on any axioms
+'EmbeddedLimits.runWord._unsafe_rec' does not depend on any axioms
+'EmbeddedLimits.runWord.match_1' does not depend on any axioms
+'EmbeddedLimits.section_constructs_decoder' does not depend on any axioms
+'EmbeddedLimits.stable_relation_refines_future_eq' does not depend on any axioms
+'EpistemicNoGo.Bridge.PreservesFibers' does not depend on any axioms
+'EpistemicNoGo.Bridge.actionSafe' does not depend on any axioms
+'EpistemicNoGo.Bridge.fibers_preserved_iff_all_words' does not depend on any axioms
+'EpistemicNoGo.Bridge.future_task_collision_blocks_prediction' does not depend on any axioms
+'EpistemicNoGo.Bridge.intertwining_preserves_fibers' does not depend on any axioms
+'EpistemicNoGo.Bridge.pinned_tip_can_collide' depends on axioms: [propext]
+'EpistemicNoGo.Bridge.provenance_pass_can_be_unsafe' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Bridge.report_eq_after_word' does not depend on any axioms
+'EpistemicNoGo.Bridge.runWord' does not depend on any axioms
+'EpistemicNoGo.Bridge.runWord._f' does not depend on any axioms
+'EpistemicNoGo.Bridge.runWord._sunfold' does not depend on any axioms
+'EpistemicNoGo.Bridge.runWord._unsafe_rec' does not depend on any axioms
+'EpistemicNoGo.Bridge.runWord.match_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.casesOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.mk' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.mk.inj' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.pivots' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.rec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.recOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.InfeasibilityCertificate.y' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.casesOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.ctorElim' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.ctorElimType' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.infeasible' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.infeasible.elim' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.infeasible.inj' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.infeasible.injEq' depends on axioms: [propext]
+'EpistemicNoGo.CertifiedOutcomes.Outcome.infeasible.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.infeasible.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.optimal' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.optimal.elim' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.optimal.inj' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.optimal.injEq' depends on axioms: [propext]
+'EpistemicNoGo.CertifiedOutcomes.Outcome.optimal.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.optimal.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.rec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.recOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.unbounded' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.unbounded.elim' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.unbounded.inj' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.unbounded.injEq' depends on axioms: [propext]
+'EpistemicNoGo.CertifiedOutcomes.Outcome.unbounded.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Outcome.unbounded.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.casesOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.mk' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.mk.inj' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.CertifiedOutcomes.Stop.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.ray' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.rec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.recOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.Stop.run' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.casesOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.d' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.mk' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.mk.inj' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.noConfusion' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.pivots' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.rec' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.recOn' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.UnboundednessCertificate.x' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.accept' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.accept_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.candidate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.infeasibleValid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.infeasible_excludes_real' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.instDecidableInfeasibleValid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.instDecidableInfeasibleValid._proof_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.instDecidableOutcomeValid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.instDecidableOutcomeValid._proof_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.instDecidableOutcomeValid._proof_2' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.instDecidableOutcomeValid._proof_3' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.instDecidableOutcomeValid._proof_4' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.instDecidableUnboundedValid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.instDecidableUnboundedValid._proof_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.outcomeValid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.outcomeValid.match_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.ray_real_feasible' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.ray_real_feasible._simp_1_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.ray_real_objective' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.ray_real_objective._simp_1_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search._f' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search._sunfold' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search._unsafe_rec' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search.eq_def' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search.match_1' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.search.match_3' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.search.match_5' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.search.match_7' does not depend on any axioms
+'EpistemicNoGo.CertifiedOutcomes.search_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search_budget_exact._proof_1_4' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solveCertified' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_certified_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_infeasible_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_optimal_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_unbounded_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.unboundedValid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.unbounded_below_real' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.Vec' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.canonical_dual_attainment' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.compact_convex_distance_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.contextuality_standard_form_strong_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.contextuality_strong_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.cost' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.cost.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.cost_eq_norm' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.cost_zero_iff' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.dual_coordinates_bounded' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.dual_offset_is_negative_max' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.dual_solution_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.exact_slacks_exist' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.joint_or_positive_dual' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.linear_form_coordinates' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mix' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mix.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_10' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_11' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_12' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_2' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_3' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_4' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_5' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_6' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_7' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_8' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap._proof_9' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap_apply' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.pairing' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.pairing.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.positive_dual_excludes_joint' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.rational_certificate_real_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.rational_simplex_cast' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.separating_ball_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.slacks_l1_lower_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.weak_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.weak_duality._simp_1_3' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.weak_duality._simp_1_5' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.weak_duality._simp_1_6' does not depend on any axioms
+'EpistemicNoGo.ContextualDuality.zero_gap_certificate_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.attained_fiber_minimax' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.bounded_loss_tv' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.bounded_loss_tv._simp_1_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.fiber_pair_lower_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.future_classes_require_memory' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.midpoint_decoder_attains' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.midpoint_error' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.simulate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.simulation_loss_transfer' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.stochastic_simulation_mass' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.stochastic_simulation_nonnegative' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.tv' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.tv._proof_1' depends on axioms: [propext]
+'EpistemicNoGo.ErrorBudget.constant_residual_envelope' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.correction_capacity_lower_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.correction_window' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.duhamel_waiting_window' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope._f' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope._sunfold' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope._unsafe_rec' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope.eq_2' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope.eq_def' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.envelope.match_1' does not depend on any axioms
+'EpistemicNoGo.ErrorBudget.nearest_distance_lipschitz' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.nonexpansive_envelope' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.observation_radius' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.threshold_missed' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.trajectory_error_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.uncertainty_adjusted_witness' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.MindContracts.score_gap_unique' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.MindContracts.score_regret' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.MindContracts.upper_bound_does_not_force_failure' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.MindContracts.wholeFiber' does not depend on any axioms
+'EpistemicNoGo.MindContracts.whole_fiber_maximal' does not depend on any axioms
+'EpistemicNoGo.MindContracts.whole_fiber_sound' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ask' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ask.elim' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ask.inj' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ask.injEq' depends on axioms: [propext]
+'EpistemicNoGo.QueryBudget.Plan.ask.noConfusion' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ask.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.below' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.brecOn' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.brecOn.eq' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.brecOn.go' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.casesOn' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ctorElim' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ctorElimType' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.leaf' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.leaf.elim' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.leaf.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.noConfusion' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.rec' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.Plan.recOn' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.actual_world_retained' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.branch' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.branch.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.checked_leaf_error' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.depth' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.depth._f' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.depth._sunfold' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.depth._unsafe_rec' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.depth.eq_1' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.depth.eq_2' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.depth.eq_def' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.depth.match_1' does not depend on any axioms
+'EpistemicNoGo.QueryBudget.fixtureDone' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixtureObserve' depends on axioms: [propext]
+'EpistemicNoGo.QueryBudget.fixtureObserve._proof_1' depends on axioms: [propext]
+'EpistemicNoGo.QueryBudget.fixture_every_fixed_pair_collides' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixture_fixed_three_identify' depends on axioms: [propext]
+'EpistemicNoGo.QueryBudget.fixture_no_allowed_query_refuses' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixture_one_query_insufficient' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixture_two_queries_suffice' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.informative_branch_card_lt' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.leafBelief' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.leafBelief._f' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.leafBelief._sunfold' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.leafBelief._unsafe_rec' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.leafBelief.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.leafBelief.eq_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.leafBelief.eq_def' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible._f' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible._sunfold' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible._unsafe_rec' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible.congr_simp' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible.eq_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible.eq_def' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible.match_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan._proof_1_11' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan._proof_1_14' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan._proof_1_15' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan._simp_1_9' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan.match_1_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan.match_1_12' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.rejected_budget_excludes_plan' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid._f' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid._sunfold' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid._unsafe_rec' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid.congr_simp' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid.match_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid_reaches_checked_leaf' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryA' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryA.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryD' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryD.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryE' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryE.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryP' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryP.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryY' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryY.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryZ' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundaryZ.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundary_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundary_certificate._simp_1_7' depends on axioms: [propext]
+'EpistemicNoGo.RationalCertificates.boundary_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalA' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalA.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalD' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalD.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalE' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalE.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalP' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalP.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalY' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalY.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalZ' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classicalZ.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classical_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classical_certificate._simp_1_7' depends on axioms: [propext]
+'EpistemicNoGo.RationalCertificates.classical_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearA' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearA.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearD' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearD.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearE' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearE.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearP' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearP.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearY' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearY.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearZ' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.nearZ.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.near_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.near_certificate._simp_1_7' depends on axioms: [propext]
+'EpistemicNoGo.RationalCertificates.near_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prA' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prA.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prD' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prD.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prE' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prE.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prP' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prP.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prY' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prY.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prZ' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.prZ.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.pr_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.pr_certificate._simp_1_7' depends on axioms: [propext]
+'EpistemicNoGo.RationalCertificates.pr_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleA' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleA.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleD' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleD.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleE' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleE.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleP' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleP.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleY' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleY.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleZ' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangleZ.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangle_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangle_certificate._simp_1_7' depends on axioms: [propext]
+'EpistemicNoGo.RationalCertificates.triangle_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultI.Assign' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.a' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.b' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.mk' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.mk.inj' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.ResultI.Assign.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.rec' does not depend on any axioms
+'EpistemicNoGo.ResultI.Assign.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultI.Joint' does not depend on any axioms
+'EpistemicNoGo.ResultI.MarginalisesIntoPR' does not depend on any axioms
+'EpistemicNoGo.ResultI.classicalJoint' does not depend on any axioms
+'EpistemicNoGo.ResultI.classicalTable' does not depend on any axioms
+'EpistemicNoGo.ResultI.classical_joint_is_global_section' does not depend on any axioms
+'EpistemicNoGo.ResultI.foldl_add_zero' depends on axioms: [propext]
+'EpistemicNoGo.ResultI.gFalse' does not depend on any axioms
+'EpistemicNoGo.ResultI.gTrue' does not depend on any axioms
+'EpistemicNoGo.ResultI.inSupport' does not depend on any axioms
+'EpistemicNoGo.ResultI.margWeight' does not depend on any axioms
+'EpistemicNoGo.ResultI.mass_zero_into_pr' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.ResultI.mass_zero_into_pr._simp_1_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.ResultI.no_positive_joint_into_pr' does not depend on any axioms
+'EpistemicNoGo.ResultI.no_positive_joint_into_pr.match_1_1' does not depend on any axioms
+'EpistemicNoGo.ResultI.prSupport' does not depend on any axioms
+'EpistemicNoGo.ResultI.pr_box_no_global_assignment' does not depend on any axioms
+'EpistemicNoGo.ResultI.pr_box_no_supported_assignment' does not depend on any axioms
+'EpistemicNoGo.ResultI.pr_box_no_supported_assignment.match_1_1' does not depend on any axioms
+'EpistemicNoGo.ResultI.totalMass' does not depend on any axioms
+'EpistemicNoGo.ResultII.HasPrivateFiber' does not depend on any axioms
+'EpistemicNoGo.ResultII.K2' does not depend on any axioms
+'EpistemicNoGo.ResultII.fiber_lemma' does not depend on any axioms
+'EpistemicNoGo.ResultII.fiber_lemma.match_1_1' does not depend on any axioms
+'EpistemicNoGo.ResultII.hidden_at_zero_is_report_at_one' does not depend on any axioms
+'EpistemicNoGo.ResultII.kernel_does_not_give_privacy_over_time' does not depend on any axioms
+'EpistemicNoGo.ResultII.no_perfect_peer_prediction' does not depend on any axioms
+'EpistemicNoGo.ResultII.private_fiber_blocks_prediction' does not depend on any axioms
+'EpistemicNoGo.ResultII.proj' does not depend on any axioms
+'EpistemicNoGo.ResultII.proj.eq_1' does not depend on any axioms
+'EpistemicNoGo.ResultII.proj_has_private_fiber' does not depend on any axioms
+'EpistemicNoGo.ResultII.proj_no_perfect_prediction' does not depend on any axioms
+'EpistemicNoGo.ResultII.swap' does not depend on any axioms
+'EpistemicNoGo.ResultII.swap.eq_1' does not depend on any axioms
+'EpistemicNoGo.ResultII.swap_not_intertwined' does not depend on any axioms
+'EpistemicNoGo.ResultII.swap_not_intertwined.match_1_1' does not depend on any axioms
+'EpistemicNoGo.ResultIII.Entry' does not depend on any axioms
+'EpistemicNoGo.ResultIII.completeAgainst' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.firstIsZero' does not depend on any axioms
+'EpistemicNoGo.ResultIII.hh' does not depend on any axioms
+'EpistemicNoGo.ResultIII.internal_verification_is_not_completeness' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.invariant_export_blind' does not depend on any axioms
+'EpistemicNoGo.ResultIII.invariant_verdict_blind' does not depend on any axioms
+'EpistemicNoGo.ResultIII.ledger' does not depend on any axioms
+'EpistemicNoGo.ResultIII.ledger_verifies' does not depend on any axioms
+'EpistemicNoGo.ResultIII.noninvariant_verdict_separates' does not depend on any axioms
+'EpistemicNoGo.ResultIII.pinned_tip_separates' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.prefix_verifies' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.relabel01' does not depend on any axioms
+'EpistemicNoGo.ResultIII.relabelCarrier' does not depend on any axioms
+'EpistemicNoGo.ResultIII.tamper_detected' does not depend on any axioms
+'EpistemicNoGo.ResultIII.tip' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.tip._sparseCasesOn_1' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.tip.match_1' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.truncation_is_invisible' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom._f' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom._sunfold' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom._unsafe_rec' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom.eq_1' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom.eq_2' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom.eq_def' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom.match_1' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom_append_left' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.Basis' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.certificate' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.certificate.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.certificate.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.ctorElim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.ctorElimType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.ofNat' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.ofNat_ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.prose' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.prose.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.prose.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.rec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Basis.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.none' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.none.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.rec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Effect.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.IsRefusal' does not depend on any axioms
+'EpistemicNoGo.ResultIV.IsRefusal.eq_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.IsRefusal.eq_2' does not depend on any axioms
+'EpistemicNoGo.ResultIV.IsRefusal.match_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.attemptId' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.authorizer' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.basis' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.evaluator' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.mk' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.mk.inj' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.Packet.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.proposer' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.rec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Packet.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.admittedRoots' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.allowSelfAuthorization' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.allowSelfEvaluation' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.mk' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.mk.inj' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.Policy.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.rec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.strict' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Policy.strict.eq_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.id' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.mk' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.mk.inj' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.Principal.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.rec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Principal.trustRoot' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.attemptId' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.effect' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.mk' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.mk.inj' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.Receipt.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.rec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Receipt.root' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.casesOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.ctorElim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.ctorElimType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.malformed' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.malformed.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.malformed.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.noConfusion' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.noExternalRoot' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.noExternalRoot.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.noExternalRoot.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.proseAuthority' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.proseAuthority.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.proseAuthority.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.rec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.recOn' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfAuthorizationEvaluator' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfAuthorizationEvaluator.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfAuthorizationEvaluator.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfAuthorizationProposer' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfAuthorizationProposer.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfAuthorizationProposer.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfEvaluation' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfEvaluation.elim' does not depend on any axioms
+'EpistemicNoGo.ResultIV.Refusal.selfEvaluation.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.ResultIV.blank' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts._f' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts._sunfold' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts._unsafe_rec' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts.eq_2' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts.eq_def' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.composeAttempts.match_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.composeAttempts.match_3' does not depend on any axioms
+'EpistemicNoGo.ResultIV.composeAttempts.match_5' does not depend on any axioms
+'EpistemicNoGo.ResultIV.compose_refused_link' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.delegated_standing_admitted' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.distinctStringsPacket' does not depend on any axioms
+'EpistemicNoGo.ResultIV.distinct_strings_pass' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.evaluator_cannot_authorize' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.instDecidableEqBasis' does not depend on any axioms
+'EpistemicNoGo.ResultIV.instDecidableEqBasis._proof_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.instDecidableEqBasis._proof_2' does not depend on any axioms
+'EpistemicNoGo.ResultIV.pass_implies_policy' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.pass_implies_policy._simp_1_1' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.pass_implies_policy._simp_1_2' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.pass_implies_policy._simp_1_3' depends on axioms: [propext]
+'EpistemicNoGo.ResultIV.proposer_cannot_authorize' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.prose_standing_refused' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.receipt_carries_no_authority' does not depend on any axioms
+'EpistemicNoGo.ResultIV.verify' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.verify.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.verify.match_1' does not depend on any axioms
+'EpistemicNoGo.ResultIV.wellFormed' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.Certificate' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.casesOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.mk' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.mk.inj' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.Simplex.Certificate.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.pivots' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.rec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.recOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.value' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.x' does not depend on any axioms
+'EpistemicNoGo.Simplex.Certificate.y' does not depend on any axioms
+'EpistemicNoGo.Simplex.Col' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.A' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.b' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.c' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.casesOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.mk' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.mk.inj' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.Simplex.Problem.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.rec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Problem.recOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.budget' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.budget.elim' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.budget.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.casesOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.certificate' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.certificate.elim' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.certificate.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.ctorElim' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.ctorElimType' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.infeasible' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.infeasible.elim' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.infeasible.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.ofNat' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.ofNat_ctorIdx' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.rec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.recOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.unbounded' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.unbounded.elim' does not depend on any axioms
+'EpistemicNoGo.Simplex.Refusal.unbounded.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.casesOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.mk' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.mk.inj' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.Simplex.Run.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.rec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.recOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.remaining' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.table' does not depend on any axioms
+'EpistemicNoGo.Simplex.Run.trace' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.active' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.basis' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.casesOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.mk' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.mk.inj' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.Simplex.Tableau.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.noConfusion' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.obj' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.rec' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.recOn' does not depend on any axioms
+'EpistemicNoGo.Simplex.Tableau.row' does not depend on any axioms
+'EpistemicNoGo.Simplex.accepted_pivots_match_trace' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.accepted_pivots_match_trace._proof_1_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.art' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.art._proof_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.art._proof_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup._f' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup._sunfold' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup._unsafe_rec' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup.eq_2' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup.eq_def' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup.match_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.cleanup_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup_budget_exact._proof_1_4' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.entering' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.entering.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.entering_negative' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.entering_none_iff' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.entering_none_iff._simp_1_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.execute' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.execute_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.execute_budget_exact._proof_1_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.extract' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.extract.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.initial' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.initial.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.initial_rhs_nonnegative' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.initial_rhs_nonnegative._proof_1_3' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.instDecidableEqRefusal' does not depend on any axioms
+'EpistemicNoGo.Simplex.instDecidableEqRefusal._proof_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.instDecidableEqRefusal._proof_2' does not depend on any axioms
+'EpistemicNoGo.Simplex.instDecidableValid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.instDecidableValid._proof_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.instReprRefusal' does not depend on any axioms
+'EpistemicNoGo.Simplex.instReprRefusal.repr' does not depend on any axioms
+'EpistemicNoGo.Simplex.instReprRefusal.repr.match_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.leaving' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.leaving.match_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.memo' depends on axioms: [propext]
+'EpistemicNoGo.Simplex.memo.eq_1' depends on axioms: [propext]
+'EpistemicNoGo.Simplex.memo_apply' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.orig' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.orig._proof_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.orig._proof_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.phaseTwo' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.phaseTwo._proof_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.phaseTwo._proof_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot._proof_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot._proof_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot._proof_3' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_column' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_preserves_equations' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_preserves_objective' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_preserves_rhs' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_row_eval' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.rhsCol' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.rhsCol._proof_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.rhsCol._proof_2' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.rhsCol.eq_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.rowEval' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.rowEval.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.sign' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex._f' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex._sunfold' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex._unsafe_rec' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex.eq_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex.eq_def' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex.match_1' does not depend on any axioms
+'EpistemicNoGo.Simplex.simplex.match_3' does not depend on any axioms
+'EpistemicNoGo.Simplex.simplex.match_5' does not depend on any axioms
+'EpistemicNoGo.Simplex.simplex.match_7' does not depend on any axioms
+'EpistemicNoGo.Simplex.simplex_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex_budget_exact._proof_1_4' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.solve' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.solve_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.solve_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.solve_pivot_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.standard_weak_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.valid' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.valid_is_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.valid_is_real_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.vector_get_ofFn' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.vector_get_ofFn._proof_1' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.SimplexDriver.Input' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input._sizeOf_1' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input._sizeOf_inst' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.budget' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.casesOn' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.costs' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.ctorIdx' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.matrix' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.mk' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.mk._flat_ctor' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.mk.inj' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.mk.injEq' depends on axioms: [propext]
+'EpistemicNoGo.SimplexDriver.Input.mk.noConfusion' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.mk.sizeOf_spec' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.noConfusion' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.noConfusionType' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.rec' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.recOn' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.Input.rhs' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.evaluate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.SimplexDriver.evaluate.match_1' does not depend on any axioms
+'EpistemicNoGo.SimplexDriver.instFromJsonInput' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.SimplexDriver.instFromJsonInput.fromJson' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.SimplexDriver.rational' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.SimplexDriver.rational._sparseCasesOn_1' depends on axioms: [propext]
+'EpistemicNoGo.SimplexDriver.rational._sparseCasesOn_6' depends on axioms: [propext]
+'EpistemicNoGo.SimplexDriver.rational._sparseCasesOn_7' depends on axioms: [propext]
+'EpistemicNoGo.SimplexDriver.rational.match_1' depends on axioms: [propext]
+'EpistemicNoGo.SimplexDriver.rational.match_4' depends on axioms: [propext]
+'EpistemicNoGo.SimplexDriver.rational.match_6' depends on axioms: [propext]
+'LiveMemory.changed_binding_refuses' depends on axioms: [propext]
+'LiveMemory.checkedRecall' depends on axioms: [propext]
+'LiveMemory.checkedRecall._proof_1' depends on axioms: [propext]
+'LiveMemory.checkedRecall.eq_1' depends on axioms: [propext]
+'LiveMemory.commit' does not depend on any axioms
+'LiveMemory.conflict_refused' does not depend on any axioms
+'LiveMemory.consistent' does not depend on any axioms
+'LiveMemory.exact_reload_preserves_recall' depends on axioms: [propext]
+'LiveMemory.instDecidableConsistentOfDecidableEq' does not depend on any axioms
+'LiveMemory.instDecidableSupportedOfDecidablePredProd' does not depend on any axioms
+'LiveMemory.missing_support_refuses' depends on axioms: [propext]
+'LiveMemory.recall_sound' depends on axioms: [propext]
+'LiveMemory.refused_update_preserves' does not depend on any axioms
+'LiveMemory.supported' does not depend on any axioms
+'LiveMemory.update' does not depend on any axioms
+'LiveMemory.update_retains' does not depend on any axioms
+'LiveMemory.update_sound' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_1.eq_1' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_1.eq_2' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_1.splitter' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_3.eq_1' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_3.eq_2' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_3.splitter' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_5.eq_1' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_5.eq_2' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_5.splitter' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_7.eq_1' does not depend on any axioms
+'_private.CertifiedOutcomes.0.EpistemicNoGo.CertifiedOutcomes.search.match_7.splitter' does not depend on any axioms
+'_private.CertifiedOutcomes.0.Except.map.match_1.eq_1' does not depend on any axioms
+'_private.CertifiedOutcomes.0.Except.map.match_1.eq_2' does not depend on any axioms
+'_private.CertifiedOutcomes.0.Except.map.match_1.splitter' does not depend on any axioms
+'_private.ErrorBudget.0.EpistemicNoGo.ErrorBudget.envelope.match_1.eq_1' does not depend on any axioms
+'_private.ErrorBudget.0.EpistemicNoGo.ErrorBudget.envelope.match_1.eq_2' does not depend on any axioms
+'_private.ErrorBudget.0.EpistemicNoGo.ErrorBudget.envelope.match_1.splitter' does not depend on any axioms
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.depth.match_1.eq_1' does not depend on any axioms
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.depth.match_1.eq_2' does not depend on any axioms
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.depth.match_1.splitter' does not depend on any axioms
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.possible.match_1.eq_1' depends on axioms: [Quot.sound, propext]
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.possible.match_1.eq_2' depends on axioms: [Quot.sound, propext]
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.possible.match_1.splitter' depends on axioms: [Quot.sound, propext]
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.valid.match_1.eq_1' depends on axioms: [Quot.sound, propext]
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.valid.match_1.eq_2' depends on axioms: [Quot.sound, propext]
+'_private.QueryBudget.0.EpistemicNoGo.QueryBudget.valid.match_1.splitter' depends on axioms: [Quot.sound, propext]
+'_private.ResultIII.0.EpistemicNoGo.ResultIII.verifyFrom.match_1.eq_1' does not depend on any axioms
+'_private.ResultIII.0.EpistemicNoGo.ResultIII.verifyFrom.match_1.eq_2' does not depend on any axioms
+'_private.ResultIII.0.EpistemicNoGo.ResultIII.verifyFrom.match_1.splitter' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.IsRefusal.match_1.eq_1' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.IsRefusal.match_1.eq_2' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.IsRefusal.match_1.splitter' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_1.eq_1' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_1.eq_2' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_1.eq_3' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_1.splitter' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_3.eq_1' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_3.eq_2' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_3.splitter' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_5.eq_1' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_5.eq_2' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.composeAttempts.match_5.splitter' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.verify.match_1.eq_1' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.verify.match_1.eq_2' does not depend on any axioms
+'_private.ResultIV.0.EpistemicNoGo.ResultIV.verify.match_1.splitter' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.cleanup.match_1.eq_1' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.cleanup.match_1.eq_2' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.cleanup.match_1.splitter' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_1.eq_1' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_1.eq_2' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_1.splitter' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_3.eq_1' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_3.eq_2' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_3.splitter' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_5.eq_1' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_5.eq_2' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_5.splitter' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_7.eq_1' does not depend on any axioms
+'_private.Simplex.0.EpistemicNoGo.Simplex.simplex.match_7.splitter' does not depend on any axioms
+'_private.Simplex.0.Except.map.match_1.eq_1' does not depend on any axioms
+'_private.Simplex.0.Except.map.match_1.eq_2' does not depend on any axioms
+'_private.Simplex.0.Except.map.match_1.splitter' does not depend on any axioms
+'main' depends on axioms: [Classical.choice, Quot.sound, propext]
+'main.match_1' depends on axioms: [propext]

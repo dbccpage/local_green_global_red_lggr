@@ -1,0 +1,148 @@
+{
+  "scope": "Existing checks replayed locally for Lean 4.35.0; no new development gate.",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "runs": [
+    {
+      "command": [
+        "lake",
+        "--version"
+      ],
+      "cwd": "lean4",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11,
+      "stdout": "Lake version 5.0.0-src+eb6cafb (Lean version 4.35.0)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "lake",
+        "build"
+      ],
+      "cwd": "lean4",
+      "exit_code": 0,
+      "elapsed_seconds": 142.094,
+      "stdout": "\u2714 [3/16] Built ResultI (49s)\n\u2714 [4/16] Built ResultII (49s)\n\u2714 [5/16] Built ResultIII (49s)\n\u2714 [6/16] Built ResultIV (49s)\n\u26a0 [7/16] Built ContextualDuality (50s)\nwarning: ContextualDuality.lean:184:16: `stdSimplex` has been deprecated: Use `Convexity.StdSimplex` instead\n\nNote: The updated constant has a different type:\n  (R : Type u) \u2192 [LE R] \u2192 [AddCommMonoid R] \u2192 [One R] \u2192 Type v \u2192 Type (max u v)\ninstead of\n  (\ud835\udd5c : Type u_2) \u2192 (\u03b9 : Type u_1) \u2192 [Semiring \ud835\udd5c] \u2192 [PartialOrder \ud835\udd5c] \u2192 [Fintype \u03b9] \u2192 Set (\u03b9 \u2192 \ud835\udd5c)\nwarning: ContextualDuality.lean:185:28: `isCompact_stdSimplex` has been deprecated: Use `Convexity.StdSimplex.compactSpace` instead\n\nNote: The updated constant has a different type:\n  \u2200 (R : Type u_1) (M : Type u_2) [inst : Ring R] [inst_1 : TopologicalSpace R] [IsTopologicalRing R]\n    [inst_3 : PartialOrder R] [inst_4 : IsStrictOrderedRing R] [CompactIccSpace R] [OrderClosedTopology R] [Finite M],\n    CompactSpace (Convexity.StdSimplex R M)\ninstead of\n  \u2200 (\ud835\udd5c : Type u_1) (\u03b9 : Type u_2) [inst : Fintype \u03b9] [inst_1 : TopologicalSpace \ud835\udd5c] [inst_2 : Semiring \ud835\udd5c]\n    [inst_3 : PartialOrder \ud835\udd5c] [OrderClosedTopology \ud835\udd5c] [ContinuousAdd \ud835\udd5c] [CompactIccSpace \ud835\udd5c] [IsOrderedAddMonoid \ud835\udd5c],\n    IsCompact (stdSimplex \ud835\udd5c \u03b9)\nwarning: ContextualDuality.lean:186:27: `convex_stdSimplex` has been deprecated: Use `Convexity.StdSimplex.instConvexSpace` instead\n\nNote: The updated constant has a different type:\n  {R : Type u_1} \u2192\n    {I : Type u_5} \u2192\n      [inst : PartialOrder R] \u2192\n        [inst_1 : Semiring R] \u2192 [inst_2 : IsStrictOrderedRing R] \u2192 Convexity.ConvexSpace R (Convexity.StdSimplex R I)\ninstead of\n  \u2200 (\ud835\udd5c : Type u_2) (\u03b9 : Type u_1) [inst : Semiring \ud835\udd5c] [inst_1 : PartialOrder \ud835\udd5c] [inst_2 : Fintype \u03b9] [IsOrderedRing \ud835\udd5c],\n    Convex \ud835\udd5c (stdSimplex \ud835\udd5c \u03b9)\nwarning: ContextualDuality.lean:188:8: `single_mem_stdSimplex` has been deprecated: Use `Convexity.StdSimplex.single` instead\n\nNote: The updated constant has a different type:\n  {X : Type u_2} \u2192\n    {R : Type u} \u2192\n      [inst : PartialOrder R] \u2192 [inst_1 : Semiring R] \u2192 [IsStrictOrderedRing R] \u2192 X \u2192 Convexity.StdSimplex R X\ninstead of\n  \u2200 (\ud835\udd5c : Type u_2) {\u03b9 : Type u_1} [inst : Semiring \ud835\udd5c] [inst_1 : PartialOrder \ud835\udd5c] [inst_2 : Fintype \u03b9]\n    [inst_3 : DecidableEq \u03b9] [ZeroLEOneClass \ud835\udd5c] (i : \u03b9), Pi.single i 1 \u2208 stdSimplex \ud835\udd5c \u03b9\nwarning: ContextualDuality.lean:196:48: `single_mem_stdSimplex` has been deprecated: Use `Convexity.StdSimplex.single` instead\n\nNote: The updated constant has a different type:\n  {X : Type u_2} \u2192\n    {R : Type u} \u2192\n      [inst : PartialOrder R] \u2192 [inst_1 : Semiring R] \u2192 [IsStrictOrderedRing R] \u2192 X \u2192 Convexity.StdSimplex R X\ninstead of\n  \u2200 (\ud835\udd5c : Type u_2) {\u03b9 : Type u_1} [inst : Semiring \ud835\udd5c] [inst_1 : PartialOrder \ud835\udd5c] [inst_2 : Fintype \u03b9]\n    [inst_3 : DecidableEq \u03b9] [ZeroLEOneClass \ud835\udd5c] (i : \u03b9), Pi.single i 1 \u2208 stdSimplex \ud835\udd5c \u03b9\n\u2714 [8/16] Built Bridge (1.5s)\n\u26a0 [9/16] Built Simplex (58s)\nwarning: Simplex.lean:104:48: `if_neg` has been deprecated: Use `ite_eq_right` instead\n\nHint: Replace the deprecated name:\n  i\u0335f\u0335_\u0335n\u0335e\u0335g\u0335i\u0332t\u0332e\u0332_\u0332e\u0332q\u0332_\u0332r\u0332i\u0332g\u0332h\u0332t\u0332\nwarning: Simplex.lean:116:26: `if_pos` has been deprecated: Use `ite_eq_left` instead\n\nHint: Replace the deprecated name:\n  i\u0335f\u0335_\u0335p\u0335o\u0335s\u0335i\u0332t\u0332e\u0332_\u0332e\u0332q\u0332_\u0332l\u0332e\u0332f\u0332t\u0332\nwarning: Simplex.lean:265:21: Unused tactic linter: `<;>` should be replaced with `;` or be removed.\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\nwarning: Simplex.lean:265:21: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice\n\nNote: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`\n\u2714 [10/16] Built ErrorBudget (58s)\n\u2714 [11/16] Built RationalCertificates (59s)\n\u2714 [12/16] Built MindContracts (12s)\n\u2714 [13/16] Built CertifiedOutcomes (13s)\n\u2714 [14/16] Built Core (17s)\n\u2714 [15/16] Built SimplexDriver (17s)\nBuild completed successfully (16 jobs).\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "tools/generate_lp_certificates.py",
+        "--check"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.203,
+      "stdout": "PASS: five exact solver fixtures and their Lean certificate source agree\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "tools/replay_lean_axiom_census.py",
+        "--write"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 11.547,
+      "stdout": "PASS: 113 named theorems, complete source coverage, approved axioms only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "tools/replay_full_axiom_census.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 54.938,
+      "stdout": "PASS: 796 package-local declarations; 13 modules; approved axioms only\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "tools/replay_simplex_implementation.py",
+        "--replay"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 13.421,
+      "stdout": "PASS: 95 complete simplex execution cases agree in Lean and Python\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "-m",
+        "pytest",
+        "code/tests/test_contextuality_lp.py",
+        "code/tests/test_epistemic_kernel.py",
+        "code/tests/test_companion_bridge.py",
+        "-o",
+        "addopts=",
+        "-q",
+        "--tb=short",
+        "--basetemp=C:/Users/a343o/AppData/Local/Temp/contextual435-final-core-20261021"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 1.079,
+      "stdout": "........................................................................ [ 80%]\n..................                                                       [100%]\n90 passed in 0.63s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "-m",
+        "pytest",
+        "code/tests/test_certified_outcomes.py",
+        "code/tests/test_uncertain_observations.py",
+        "-o",
+        "addopts=",
+        "-q",
+        "--tb=short",
+        "--basetemp=C:/Users/a343o/AppData/Local/Temp/contextual435-final-certificates-20261021"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 1.359,
+      "stdout": ".....................................................                    [100%]\n53 passed in 1.09s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "tools/replay_review_corrections.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.609,
+      "stdout": "{\"status\": \"PASS\", \"review_math_groups\": 3, \"raw_defect\": \"1/50\", \"radius\": \"1/50\", \"adjusted_margin\": \"0\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "tools/replay_mind_expansion.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11,
+      "stdout": "PASS: six source-pinned illustration groups, 19 assertions (standard library only)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\\python.exe",
+        "scripts/build_pdf.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 16.765,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "runner_note": "Resumed after a console cp1252 display error; the completed lake build exited 0 and its full UTF-8 output was already preserved."
+}

@@ -1,0 +1,33 @@
+
+running 3 tests
+test completely_positive_map::tests::transpose_map_choi_is_refused ... FAILED
+test quantum_hamiltonian::tests::a_hamiltonian_with_plus_minus_eigenvalues_has_the_right_spectrum_and_propagator ... FAILED
+test quantum_hamiltonian::tests::rabi_oscillation_follows_the_closed_form ... FAILED
+
+failures:
+
+---- completely_positive_map::tests::transpose_map_choi_is_refused stdout ----
+
+thread 'completely_positive_map::tests::transpose_map_choi_is_refused' (31044) panicked at omega_quantum_physics\src\completely_positive_map.rs:411:9:
+assertion failed: CompletelyPositiveMap::try_from_choi_matrix(2, 2, identity_choi, "id",
+        1e-9).is_ok()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- quantum_hamiltonian::tests::a_hamiltonian_with_plus_minus_eigenvalues_has_the_right_spectrum_and_propagator stdout ----
+
+thread 'quantum_hamiltonian::tests::a_hamiltonian_with_plus_minus_eigenvalues_has_the_right_spectrum_and_propagator' (23808) panicked at omega_quantum_physics\src\quantum_hamiltonian.rs:486:53:
+called `Result::unwrap()` on an `Err` value: Unitary(NonUnitary { defect: 3.1401849173675503e-16 })
+
+---- quantum_hamiltonian::tests::rabi_oscillation_follows_the_closed_form stdout ----
+
+thread 'quantum_hamiltonian::tests::rabi_oscillation_follows_the_closed_form' (42948) panicked at omega_quantum_physics\src\quantum_hamiltonian.rs:514:54:
+called `Result::unwrap()` on an `Err` value: Unitary(NonUnitary { defect: 3.1401849173675503e-16 })
+
+
+failures:
+    completely_positive_map::tests::transpose_map_choi_is_refused
+    quantum_hamiltonian::tests::a_hamiltonian_with_plus_minus_eigenvalues_has_the_right_spectrum_and_propagator
+    quantum_hamiltonian::tests::rabi_oscillation_follows_the_closed_form
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 706 filtered out; finished in 0.00s
+

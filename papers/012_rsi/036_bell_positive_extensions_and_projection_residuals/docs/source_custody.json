@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-24",
+  "input_path": "C:\\Users\\a343o\\Downloads\\bell_rsi_asi_projection_residuals.md",
+  "input_sha256": "acbaddeb548a61c9f17f4ed99960aa926c92ccec3a014b758d010530e5ce8615",
+  "preserved_copy": "docs/source_inputs/bell_rsi_asi_projection_residuals.md",
+  "changes": [
+    "Separate Bell paper; focus on positive-extension obstruction and embedded task sufficiency",
+    "Removed speculative experience discussion from edited manuscript; retained exact source",
+    "Corrected dual max and parity variable typographical errors",
+    "Updated companion references; unprovided dialogue not treated as independent evidence",
+    "Added independent exact certificate checker and near-miss controls",
+    "Version 0.3.0: actual probability-integral equivalence, complex Hilbert-space Tsirelson bounds and exact two-qubit Born-table formalization; original input preserved",
+    "Version 0.4.0: finite-dimensional binary POVM and density-operator conversions, explicit spectral decomposition, actual Born tables, CHSH score identity and local tensor lifts; original input preserved",
+    "Version 0.5.0: finite Hermitian trace-norm contraction and conditional dynamical witnesses; supplied review preserved and independently audited, not treated as instructions or proof authority",
+    "Version 0.6.0: explicit finite separable mixtures, constructed local models, actual partial traces and product-marginal retraction, and the full state-to-behavior bound; preserved original review inputs unchanged",
+    "Version 0.7.0: attained Bell repair/signed LP duality, finite polyhedral projection and intrinsic tangent-cone bounds; complete-version review treated as source material, with wording, provenance and checker-independence corrections.",
+    "Version 0.7.1: corrected the Theorem 8 coverage string to qualitative factorization and exact finite scalar minimax; preserved the v0.6 follow-up review and distinguished its reported checks from current release verification. Mathematical sources and the complete axiom census are unchanged.",
+    "Version 0.8.0: integrated independently checked GLM family/counterexample results, corrected quantum endpoint and overgeneralizations, extended rational-grid negative-mass proofs to real parameters and arbitrary real competitors, and constructed a finite-context comparison bound.",
+    "Version 0.9.0: quantum-restricted family comparisons, constructed GHZ Born behavior, explicit unitary evolution and exact/noisy exit windows, contextuality literature side note; original review inputs preserved.",
+    "Version 0.10.0: derived full nine-context chained quantum counterexample, preserved earlier three-party quantum-status boundary, added real optimization/Born proofs and independent exact radical certificates.",
+    "Version 0.11.0: full rational quantum factor-four counterexample, arbitrary-size cycle parity optima, quantum edge realization and continuous complete-chain bounds; explicit cover and formalization boundaries.",
+    "Version 0.12.0: complete quantum unbounded CF/N_min family with explicit smoothed Gram construction; Lean cycle reconstruction and LP lifting, local/signed model construction, exact ramp sums and comparison envelopes. Cited Clifford realization and cyclic assembly remain written. Existing 41 proof modules and supplied input bytes preserved.",
+    "Version 0.13.0: closed the cyclic-profile and general Clifford/Born construction in Lean; actual attained minimum and full quantum unboundedness; selected Archimedean scalar shadow cutoffs. Centered title details with version last. All 46 prior proof module bytes and supplied review inputs preserved."
+  ],
+  "primary_sources_checked": [
+    "https://arxiv.org/abs/1102.0264",
+    "https://arxiv.org/abs/1709.04260",
+    "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.48.291",
+    "https://link.springer.com/article/10.1007/BF00417500",
+    "https://arxiv.org/html/1404.3831v2",
+    "https://arxiv.org/html/2312.02588v2",
+    "https://isa-afp.org/entries/TsirelsonBound.html",
+    "https://arxiv.org/abs/1705.07918",
+    "https://arxiv.org/abs/2505.24010",
+    "https://arxiv.org/abs/2604.03884",
+    "https://arxiv.org/abs/2110.07113",
+    "https://arxiv.org/abs/2305.16574",
+    "https://arxiv.org/abs/2102.13036",
+    "https://www-users.york.ac.uk/~sb54/papers/90/bcB90.pdf",
+    "https://arxiv.org/abs/quant-ph/0605182",
+    "https://arxiv.org/html/1702.06305v2"
+  ],
+  "review_inputs": [
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\math_notes.md",
+      "preserved_copy": "docs/source_inputs/projection_retraction_obstruction_notes.md",
+      "sha256": "adcbd226314f815bce95d737f97972f291186a11bcc6cc592d2c02cce665e32c",
+      "bytes": 70426
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\verify_obstruction.py",
+      "preserved_copy": "docs/source_inputs/verify_obstruction.py",
+      "sha256": "b6a14e68dea635d6a80b2bf329e12d073973dcc9208c24edcf8c7df929beaa4f",
+      "bytes": 30351
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\.codex\\attachments\\23a59da4-5252-44f5-bce3-0bf1c845d0db\\Pasted text.txt",
+      "preserved_copy": "docs/source_inputs/projection_retraction_obstruction_pasted.txt",
+      "sha256": "03a323d7d80f08d9541a53b741542988e1e70b0d66a0bf3558edea7258c32f53",
+      "bytes": 70861
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\.codex\\attachments\\5224a769-e977-4d89-bd64-ce2e4f72cb51\\Pasted text.txt",
+      "preserved_copy": "docs/source_inputs/complete_v0_6_review.txt",
+      "sha256": "86ec57bf7030ea0a98a2038e669f24312b82ee49004c1fa5e36f3a15b3e716b4",
+      "bytes": 28299
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\.codex\\attachments\\24deb8cb-76f9-4a99-92f9-f3a1f308833d\\Pasted text.txt",
+      "preserved_copy": "docs/source_inputs/v0_6_followup_replay_review.txt",
+      "sha256": "c4a4fab5e40e92a0f76b6c403a50affca61fe9e7ff46f3e7f4716e3425b39123",
+      "bytes": 9722
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\audit_rnd2.log",
+      "preserved_copy": "docs/source_inputs/glm_2026_10_23/audit_rnd2.log",
+      "sha256": "6077dfae38cc110c2a84742373216e8e446969d26bfd9f8fec9d83e38733a366",
+      "bytes": 1085
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\audit_rnd2.py",
+      "preserved_copy": "docs/source_inputs/glm_2026_10_23/audit_rnd2.py",
+      "sha256": "0a6f90577365d172a2d413ca12afe0c700cc41ded3f29360325578e85bdec22e",
+      "bytes": 8355
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\BellNegMass.lean",
+      "preserved_copy": "docs/source_inputs/glm_2026_10_23/BellNegMass.lean",
+      "sha256": "aa6f88de1acbbb791d426e9e7e3a1e1182d447c23fdac25a251d5e6e94e4ea45",
+      "bytes": 20581
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\cf2n_run.log",
+      "preserved_copy": "docs/source_inputs/glm_2026_10_23/cf2n_run.log",
+      "sha256": "5395dba80cd162a83565d994186f6abdb0f7abe0844e623a8943e8c1ad562ae7",
+      "bytes": 15979
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\math_notes.md",
+      "preserved_copy": "docs/source_inputs/glm_2026_10_23/math_notes.md",
+      "sha256": "bac6a11d0a75c2804fed4654ec16a9e265c13b6ba80180f80b12c3b5b28db471",
+      "bytes": 107211
+    },
+    {
+      "input_path": "C:\\Users\\a343o\\Downloads\\verify_cf2n.py",
+      "preserved_copy": "docs/source_inputs/glm_2026_10_23/verify_cf2n.py",
+      "sha256": "7f15708ceaa69fa8a8e857dfb1f1d0db071f415fc4934982409c95b149ab657d",
+      "bytes": 45350
+    },
+    {
+      "input_path": "git:762671d8cd1d61fbd30212d2bebb869aadc95850:omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/cs_q_presentation_completion.md",
+      "preserved_copy": "docs/source_inputs/wdp_continuum/cs_q_presentation_completion.md",
+      "sha256": "519d5fa3cb1a1f4265635495f42aa7aeff7955ee4067a0fb1d63a09afb958692",
+      "bytes": 23920
+    },
+    {
+      "input_path": "git:762671d8cd1d61fbd30212d2bebb869aadc95850:omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/cs_q/coda_cs_q_bridge.md",
+      "preserved_copy": "docs/source_inputs/wdp_continuum/coda_cs_q_bridge.md",
+      "sha256": "5457613f6421c31ac41bbe623673c6fb76ca82a3bc4e1bb0ea5eb1bc4961d387",
+      "bytes": 19495
+    },
+    {
+      "input_path": "git:762671d8cd1d61fbd30212d2bebb869aadc95850:omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/000_witnessed_difference_programme/docs/source_archive/coda_component_packages/cs/coda_cs.md",
+      "preserved_copy": "docs/source_inputs/wdp_continuum/coda_cs.md",
+      "sha256": "2206d6b99fff0a8bd00d1cae38babf870df2259405db3943d07e11f602c689cf",
+      "bytes": 15869
+    }
+  ]
+}

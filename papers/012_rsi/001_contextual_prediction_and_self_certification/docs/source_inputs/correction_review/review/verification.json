@@ -1,0 +1,282 @@
+{
+  "scope": "Fresh exact Python checks; no Lean compilation",
+  "random_seed": 20261021,
+  "lean_available": null,
+  "lake_available": null,
+  "fixtures": {
+    "classical": {
+      "defect": "0",
+      "pivots": 21,
+      "result": "GlobalSection"
+    },
+    "pr": {
+      "defect": "2",
+      "pivots": 19,
+      "result": "Obstructed"
+    },
+    "near": {
+      "defect": "4/5",
+      "pivots": 19,
+      "result": "Obstructed"
+    },
+    "triangle": {
+      "defect": "2",
+      "pivots": 15,
+      "result": "Obstructed"
+    },
+    "boundary": {
+      "defect": "1/25000000",
+      "pivots": 19,
+      "result": "Obstructed"
+    }
+  },
+  "rejected_certificate_mutations": 30,
+  "independent_exact_dual_vertex_comparisons": 130,
+  "input_boundaries": {
+    "mixed_context_types": {
+      "original": "TypeError:'<' not supported between instances of 'str' and 'int'",
+      "proposed": "Refusal:SHAPE"
+    },
+    "list_context": {
+      "original": "TypeError:unhashable type: 'list'",
+      "proposed": "GlobalSection"
+    },
+    "noncontainer_context": {
+      "original": "TypeError:'NoneType' object is not iterable",
+      "proposed": "Refusal:SHAPE"
+    },
+    "noncontainer_table": {
+      "original": "TypeError:object of type 'NoneType' has no len()",
+      "proposed": "Refusal:SHAPE"
+    },
+    "duplicate_context": {
+      "original": "Refusal:SHAPE",
+      "proposed": "Refusal:SHAPE"
+    },
+    "bool_index": {
+      "original": "Refusal:SHAPE",
+      "proposed": "Refusal:SHAPE"
+    },
+    "out_of_range": {
+      "original": "Refusal:SHAPE",
+      "proposed": "Refusal:SHAPE"
+    },
+    "float_probability": {
+      "original": "Refusal:NONEXACT_INPUT",
+      "proposed": "Refusal:NONEXACT_INPUT"
+    },
+    "negative_probability": {
+      "original": "Refusal:NOT_A_DISTRIBUTION",
+      "proposed": "Refusal:NOT_A_DISTRIBUTION"
+    }
+  },
+  "legacy_helper_scope": {
+    "empty_table_passes_is_distribution": true,
+    "signed_PR_joint_passes_marginalises": true,
+    "signed_joint_minimum": "-1/16",
+    "strict_PR_verdict": "Obstructed",
+    "interpretation": "Legacy row/marginal predicates are not complete probability-model validators."
+  },
+  "deterministic_bridge_cases": 256,
+  "exact_uncertainty_ball_comparisons": 30,
+  "rejected_hull_certificate_mutations": 30,
+  "near_boundary_robustness": {
+    "0": "1/25000000",
+    "1/50000000": "1/50000000",
+    "1/25000000": "0",
+    "1/1000000": "0"
+  },
+  "adaptive_stochastic_pair_horizon_checks": 360,
+  "sharp_reveal_examples": [
+    {
+      "delta": "0",
+      "steps": 0,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "0",
+      "steps": 1,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "0",
+      "steps": 2,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "0",
+      "steps": 3,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "0",
+      "steps": 4,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "0",
+      "steps": 5,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "0",
+      "steps": 6,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "1/10",
+      "steps": 0,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "1/10",
+      "steps": 1,
+      "TV": "1/10",
+      "minimax_error": "9/20"
+    },
+    {
+      "delta": "1/10",
+      "steps": 2,
+      "TV": "19/100",
+      "minimax_error": "81/200"
+    },
+    {
+      "delta": "1/10",
+      "steps": 3,
+      "TV": "271/1000",
+      "minimax_error": "729/2000"
+    },
+    {
+      "delta": "1/10",
+      "steps": 4,
+      "TV": "3439/10000",
+      "minimax_error": "6561/20000"
+    },
+    {
+      "delta": "1/10",
+      "steps": 5,
+      "TV": "40951/100000",
+      "minimax_error": "59049/200000"
+    },
+    {
+      "delta": "1/10",
+      "steps": 6,
+      "TV": "468559/1000000",
+      "minimax_error": "531441/2000000"
+    },
+    {
+      "delta": "1/2",
+      "steps": 0,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "1/2",
+      "steps": 1,
+      "TV": "1/2",
+      "minimax_error": "1/4"
+    },
+    {
+      "delta": "1/2",
+      "steps": 2,
+      "TV": "3/4",
+      "minimax_error": "1/8"
+    },
+    {
+      "delta": "1/2",
+      "steps": 3,
+      "TV": "7/8",
+      "minimax_error": "1/16"
+    },
+    {
+      "delta": "1/2",
+      "steps": 4,
+      "TV": "15/16",
+      "minimax_error": "1/32"
+    },
+    {
+      "delta": "1/2",
+      "steps": 5,
+      "TV": "31/32",
+      "minimax_error": "1/64"
+    },
+    {
+      "delta": "1/2",
+      "steps": 6,
+      "TV": "63/64",
+      "minimax_error": "1/128"
+    },
+    {
+      "delta": "1",
+      "steps": 0,
+      "TV": "0",
+      "minimax_error": "1/2"
+    },
+    {
+      "delta": "1",
+      "steps": 1,
+      "TV": "1",
+      "minimax_error": "0"
+    },
+    {
+      "delta": "1",
+      "steps": 2,
+      "TV": "1",
+      "minimax_error": "0"
+    },
+    {
+      "delta": "1",
+      "steps": 3,
+      "TV": "1",
+      "minimax_error": "0"
+    },
+    {
+      "delta": "1",
+      "steps": 4,
+      "TV": "1",
+      "minimax_error": "0"
+    },
+    {
+      "delta": "1",
+      "steps": 5,
+      "TV": "1",
+      "minimax_error": "0"
+    },
+    {
+      "delta": "1",
+      "steps": 6,
+      "TV": "1",
+      "minimax_error": "0"
+    }
+  ],
+  "source_hashes": {
+    "Bridge.lean": "8cfe2598ae5d3e1ca26071cd72a5b63713a62a3a2fea98824e5c9e3e429c640b",
+    "Census(7).lean": "ea851884b6c496252444d91645dd6070c5168810f5bfe8bc998ea4b45ed1605d",
+    "ContextualDuality.lean": "b7f1c89e83ded9794d921e5ed7e5a64523e5af59092839ad1f9e255a314f0f4a",
+    "FullCensus(1).lean": "5d42c9a02b5dbd58ce48a90c4625417535237572856c40a630f2647e29df25eb",
+    "RationalCertificates.lean": "4cca82f3f9ddf27d5064ff78886078b7c97abf3ec07d31c062f815bdf316297f",
+    "ResultI.lean": "56a8821a5ffccd1324b5ffa72a2fa51257345e9d50da1aedb6ac2bff77e3e7be",
+    "ResultII.lean": "e2582a0396d5e83b836d4a49c7026dd0f94518d5ea73e6157283eaa6cd924801",
+    "ResultIII.lean": "b3307cde62179f8d2147b7edd16b34a78559da4301dcb5d5d3b10d05b1a2ece2",
+    "ResultIV.lean": "61fbc497a019bf9a8565e6bbcc18560f270a45ac6d41b229a2ddd0607ebe5614",
+    "contextual_prediction_change_log.md": "fda21cce4ac9d99288e5095e5e9275d0d438db41faeadb2a79d2cc10caf2aee2",
+    "contextual_prediction_math_spine.json": "e984b7ee8d8d55709c504a1b8a3c429a549d2d53d684ef1cc8ce6c5eb3946805",
+    "contextual_prediction_math_spine.md": "3755b41a03214a1bd2f721bce4d29cb6fb5a470470e100bd68ec3c7331f0dabd",
+    "contextual_prediction_monograph.md": "f98d8424a4862594518a36d044b0b12afe0fa45b026a2de6368a7f372f235908",
+    "contextual_prediction_monograph.pdf": "96677afe88482af2f98038d0c3b8f13cd5213a5f913ce83e279388f2c22fe02f",
+    "contextual_prediction_monograph.tex": "7b4d3d99c6f8074b42d061a1422e7b24d0d33c144b3040c5bb16661c6c5a4fcd",
+    "contextual_prediction_monograph.txt": "1675211c04dd468934335417fa2f689e8a436c882b4e34438a34f1b8c102903f",
+    "contextuality_lp.py": "e3c01a96f6fd06d842e267900eff2ac65a793d5250fa91298dbd08278db5b9cc",
+    "epistemic_kernel.py": "0c8aaa013dbecc2590256024c8b5bd1480b9937db4661d13d25098bc58809bfd",
+    "future_observation.py": "4480b0240d68b229f61ca94c356dcfc370623f0de04d6528f69e4f13d5b0a872"
+  },
+  "all_checks_passed": true
+}

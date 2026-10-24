@@ -1,0 +1,124 @@
+Named theorem axiom census
+Declarations listed: 118
+Declarations with no axioms: 90
+Declarations with axiom dependencies: 28
+Approved axioms: propext, Quot.sound, Classical.choice
+
+'EmbeddedLimits.determined_is_true' does not depend on any axioms
+'EmbeddedLimits.positive_introspection' does not depend on any axioms
+'EmbeddedLimits.own_record_is_determined' does not depend on any axioms
+'EmbeddedLimits.refinement_preserves_determination' does not depend on any axioms
+'EmbeddedLimits.decoder_implies_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.section_constructs_decoder' does not depend on any axioms
+'EmbeddedLimits.recoverable_iff_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.postprocessing_cannot_separate' does not depend on any axioms
+'EmbeddedLimits.collision_excludes_exact_decoder' does not depend on any axioms
+'EmbeddedLimits.added_task_requires_refinement' does not depend on any axioms
+'EmbeddedLimits.future_eq_refl' does not depend on any axioms
+'EmbeddedLimits.future_eq_symm' does not depend on any axioms
+'EmbeddedLimits.future_eq_trans' does not depend on any axioms
+'EmbeddedLimits.future_eq_preserves_readout' does not depend on any axioms
+'EmbeddedLimits.future_eq_stable' does not depend on any axioms
+'EmbeddedLimits.stable_relation_refines_future_eq' does not depend on any axioms
+'EmbeddedLimits.implemented_memory_preserves_future' does not depend on any axioms
+'EmbeddedLimits.bool_cannot_equal_its_negation' does not depend on any axioms
+'EmbeddedLimits.anti_prediction_not_universal' does not depend on any axioms
+'EmbeddedLimits.fiber_soundness_is_maximal' does not depend on any axioms
+'LiveMemory.update_sound' does not depend on any axioms
+'LiveMemory.update_retains' does not depend on any axioms
+'LiveMemory.refused_update_preserves' does not depend on any axioms
+'LiveMemory.recall_sound' depends on axioms: [propext]
+'LiveMemory.changed_binding_refuses' depends on axioms: [propext]
+'LiveMemory.missing_support_refuses' depends on axioms: [propext]
+'LiveMemory.exact_reload_preserves_recall' depends on axioms: [propext]
+'LiveMemory.conflict_refused' does not depend on any axioms
+'MemoryImplementation.accepted_append_compatible' does not depend on any axioms
+'MemoryImplementation.accepted_append_retains' does not depend on any axioms
+'MemoryImplementation.accepted_recall_sound' depends on axioms: [propext]
+'MemoryImplementation.conflicting_append_refused' does not depend on any axioms
+'MemoryImplementation.stale_recall_refused' depends on axioms: [propext]
+'MemoryImplementation.run_updates_commute' does not depend on any axioms
+'MemoryImplementation.pair_memory_commutes' does not depend on any axioms
+'MemoryImplementation.pair_memory_preserves_all_words' does not depend on any axioms
+'MemoryImplementation.first_bit_memory_fails_after_swap' does not depend on any axioms
+'MemoryImplementation.gated_preserves' does not depend on any axioms
+'MemoryImplementation.gated_run_preserves' does not depend on any axioms
+'MemoryImplementation.unsafe_overwrite_is_blocked' does not depend on any axioms
+'MemoryImplementation.concrete_gate_preserves_every_word' does not depend on any axioms
+'PrefixBounds.spending_prefix_invariant' depends on axioms: [Quot.sound, propext]
+'PrefixBounds.unit_spending' depends on axioms: [propext]
+'PrefixBounds.refinement_prefix_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'PrefixBounds.lift_prefix_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'PrefixBounds.interleaved_lift_event_bound' depends on axioms: [Quot.sound, propext]
+'OmegaRelationalRsi.panelEquiv_refl' does not depend on any axioms
+'OmegaRelationalRsi.panelEquiv_symm' does not depend on any axioms
+'OmegaRelationalRsi.panelEquiv_trans' does not depend on any axioms
+'OmegaRelationalRsi.witness_holonomy_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory' does not depend on any axioms
+'OmegaRelationalRsi.lemma1a_self_critique_non_verification' does not depend on any axioms
+'OmegaRelationalRsi.lemma1b_godel_diagonal_self_reference_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.lemma1c_goodhart_metric_collapse_on_collision' does not depend on any axioms
+'OmegaRelationalRsi.length_eraseOne_of_mem' does not depend on any axioms
+'OmegaRelationalRsi.mem_eraseOne_of_ne' does not depend on any axioms
+'OmegaRelationalRsi.lemma2a_nodup_length_le' does not depend on any axioms
+'OmegaRelationalRsi.length_prefixList' does not depend on any axioms
+'OmegaRelationalRsi.exists_lt_of_mem_prefixList' does not depend on any axioms
+'OmegaRelationalRsi.nodup_prefixList_of_pairwise_ne' does not depend on any axioms
+'OmegaRelationalRsi.lemma2b_epistemic_horizon_refinement_bound' does not depend on any axioms
+'OmegaRelationalRsi.lemma2c_licensed_lift_budget_bound' does not depend on any axioms
+'OmegaRelationalRsi.lemma3a_private_fiber_channel_invisibility' does not depend on any axioms
+'OmegaRelationalRsi.lemma3a_no_intersubjective_improvement_in_private_fiber' does not depend on any axioms
+'OmegaRelationalRsi.lemma3b_overlap_conflict_refuses_sheaf_descent' does not depend on any axioms
+'OmegaRelationalRsi.admissible_rsi_pairwise_report_ne' does not depend on any axioms
+'OmegaRelationalRsi.rsi_impossible' does not depend on any axioms
+'OmegaRelationalRsi.rsi_trilemma_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_left_of_mem' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_right_of_mem' does not depend on any axioms
+'OmegaRelationalRsi.mem_pairWithAll' does not depend on any axioms
+'OmegaRelationalRsi.mem_cartesianProductList' does not depend on any axioms
+'OmegaRelationalRsi.length_append_eq' does not depend on any axioms
+'OmegaRelationalRsi.length_pairWithAll' does not depend on any axioms
+'OmegaRelationalRsi.length_cartesianProductList' does not depend on any axioms
+'OmegaRelationalRsi.coupled_product_carrier_capacity' does not depend on any axioms
+'OmegaRelationalRsi.coupled_coadaptation_joint_horizon_bound' does not depend on any axioms
+'OmegaRelationalRsi.coupled_rsi_impossible' does not depend on any axioms
+'OmegaRelationalRsi.higher_cochain_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.asynchronous_delayed_joint_horizon_bound' does not depend on any axioms
+'OmegaRelationalRsi.dynamic_rewiring_higher_cochain_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.non_monotonic_rewired_joint_horizon_bound' does not depend on any axioms
+'ReviewCountermodels.succ_is_structurally_aligned' depends on axioms: [propext]
+'ReviewCountermodels.growing_trajectory_is_not_report_grounded' does not depend on any axioms
+'ReviewCountermodels.no_total_budget_satisfies_drop' does not depend on any axioms
+'ReviewCountermodels.no_total_refinement_satisfies_drop' does not depend on any axioms
+'RelationalRSI.nat_strict_chain_growth' does not depend on any axioms
+'RelationalRSI.fin_strict_chain_bounded' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.obstruction_relational_finitude' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.obstruction_metric_collapse' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.obstruction_goodhart_decoherence' does not depend on any axioms
+'RelationalRSI.obstruction_intersubjective_decoherence' does not depend on any axioms
+'RelationalRSI.obstruction_refusal_terminal' does not depend on any axioms
+'RelationalRSI.counterexample_agent_cannot_be_aligned' does not depend on any axioms
+'RelationalRSI.rsi_decouples_within_carrier_bound' does not depend on any axioms
+'RelationalRSI.rsi_alignment_lost_within_carrier_bound' does not depend on any axioms
+'RelationalRSI.zero_budget_carrier_lift_impossible' does not depend on any axioms
+'RelationalRSI.partial_lift_requires_budget_drop' does not depend on any axioms
+'RelationalRSI.unbounded_budgeted_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.nat_weak_descent_diff' does not depend on any axioms
+'RelationalRSI.nat_weak_descent_le' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.interleaved_budgeted_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.unbounded_carrier_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.interleaved_carrier_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_internal_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_carrier_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.stepTrajectory_isTrajectory' does not depend on any axioms
+'RelationalRSI.rsi_step_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.admittedGroundModel_aligned' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_alignment_step_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_carrier_step_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.coupled_rsi_decouples_within_product_bound' does not depend on any axioms
+'RelationalRSI.coupled_rsi_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.asynchronous_coupled_rsi_decouples_within_product_bound' does not depend on any axioms
+'RelationalRSI.asynchronous_coupled_rsi_impossible' does not depend on any axioms
+'RelationalRSI.non_monotonic_rewired_rsi_decouples_within_product_bound' does not depend on any axioms
+'RelationalRSI.non_monotonic_rewired_rsi_impossible' does not depend on any axioms

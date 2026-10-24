@@ -1,0 +1,175 @@
+"""Exact finite extensions for contextual prediction. Research reference code.
+
+The general arguments are in the accompanying review, not mechanized in Lean.
+All probabilities are integers or Fraction; no floating tolerances are used.
+"""
+from collections import defaultdict
+from dataclasses import dataclass
+from fractions import Fraction as Q
+
+from proposed.contextuality_lp import Refusal, rational, dot, solve_l1, verify_defect
+
+
+def robust_ball_lower_bound(generators, center, certificate, radius):
+    """A replayed dual witness gives a uniform bound on an l1 uncertainty ball."""
+    radius = rational(radius)
+    if radius < 0:
+        raise Refusal("NEGATIVE_RADIUS")
+    if not verify_defect(generators, center, certificate):
+        raise Refusal("CERTIFICATE_MISMATCH")
+    norm = max(map(abs, certificate.witness), default=Q(0))
+    return max(Q(0), certificate.defect - radius * norm)
+
+
+@dataclass(frozen=True)
+class HullDistanceCertificate:
+    left_weights: tuple
+    right_weights: tuple
+    witness: tuple
+    distance: Q
+    pair_certificate: object
+
+
+def hull_distance(left, right, *, max_pivots=10000, max_entries=2000000):
+    """Distance between two rational convex hulls by a pair-difference LP.
+
+    left = classical generators; right = uncertainty vertices.
+    The returned y satisfies min_right y.e - max_left y.g = distance.
+    """
+    if not left or not right:
+        raise Refusal("SHAPE")
+    m, k = len(left[0]), len(left) * len(right)
+    if any(len(v) != m for v in (*left, *right)):
+        raise Refusal("SHAPE")
+    if type(max_entries) is not int or (m + 2) * (k + 3 * m + 2) > max_entries:
+        raise Refusal("SIZE_LIMIT")
+    left = tuple(tuple(map(rational, v)) for v in left)
+    right = tuple(tuple(map(rational, v)) for v in right)
+    pairs = tuple(tuple(a - b for a, b in zip(g, e)) for g in left for e in right)
+    cert = solve_l1(pairs, (Q(0),) * m, max_pivots=max_pivots, max_entries=max_entries)
+    p = tuple(sum(cert.coefficients[i * len(right):(i + 1) * len(right)], Q(0))
+              for i in range(len(left)))
+    q = tuple(sum((cert.coefficients[i * len(right) + j] for i in range(len(left))), Q(0))
+              for j in range(len(right)))
+    result = HullDistanceCertificate(p, q, cert.witness, cert.defect, cert)
+    if not verify_hull_distance(left, right, result):
+        raise Refusal("CERTIFICATE_MISMATCH")
+    return result
+
+
+def verify_hull_distance(left, right, cert):
+    """Independent primal/dual inequalities, without rerunning the optimizer."""
+    if not left or not right:
+        return False
+    m = len(left[0])
+    if (any(len(v) != m for v in (*left, *right))
+            or len(cert.left_weights) != len(left)
+            or len(cert.right_weights) != len(right) or len(cert.witness) != m):
+        return False
+    values = (*cert.left_weights, *cert.right_weights, *cert.witness, cert.distance,
+              *(x for v in (*left, *right) for x in v))
+    if any(type(x) not in (int, Q) for x in values):
+        return False
+    if (any(x < 0 for x in (*cert.left_weights, *cert.right_weights))
+            or sum(cert.left_weights) != 1 or sum(cert.right_weights) != 1
+            or any(abs(x) > 1 for x in cert.witness)):
+        return False
+    residual = tuple(sum((g[i] * w for g, w in zip(left, cert.left_weights)), Q(0))
+                     - sum((e[i] * w for e, w in zip(right, cert.right_weights)), Q(0))
+                     for i in range(m))
+    dual = min(dot(cert.witness, e) for e in right) - max(dot(cert.witness, g) for g in left)
+    return cert.distance == sum(map(abs, residual)) == dual
+
+
+def total_variation(p, q):
+    """Finite TV; callers supply probability maps."""
+    return sum((abs(p.get(x, Q(0)) - q.get(x, Q(0))) for x in p.keys() | q.keys()), Q(0)) / 2
+
+
+def validate_kernel(report, kernels):
+    if not report or not kernels:
+        raise Refusal("SHAPE")
+    states = set(report)
+    for kernel in kernels.values():
+        if set(kernel) != states:
+            raise Refusal("SHAPE")
+        for row in kernel.values():
+            if not set(row) <= states:
+                raise Refusal("SHAPE")
+            weights = tuple(map(rational, row.values()))
+            if any(w < 0 for w in weights) or sum(weights) != 1:
+                raise Refusal("NOT_A_DISTRIBUTION")
+
+
+def report_row(report, row):
+    result = defaultdict(Q)
+    for state, weight in row.items():
+        result[report[state]] += weight
+    return dict(result)
+
+
+def leakage_bound(report, kernels):
+    """Max next-report TV across every action and same-report state pair."""
+    validate_kernel(report, kernels)
+    return max(total_variation(report_row(report, kernel[s]), report_row(report, kernel[t]))
+               for kernel in kernels.values() for s in report for t in report
+               if report[s] == report[t])
+
+
+def trace_bound(deltas):
+    overlap = Q(1)
+    for delta in deltas:
+        delta = rational(delta)
+        if not 0 <= delta <= 1:
+            raise Refusal("INVALID_DELTA")
+        overlap *= 1 - delta
+    return 1 - overlap
+
+
+def transcript_law(report, kernels, initial, policy, steps, *, max_terms=100000):
+    """Enumerate report/action transcripts for a finite behavioral policy.
+
+    policy(history) returns a distribution over actions; history is
+    (initial_report, (action, next_report), ...). The policy must be a pure
+    function of this history. Enumeration is a finite check, not a proof.
+    """
+    validate_kernel(report, kernels)
+    if initial not in report or type(steps) is not int or steps < 0:
+        raise Refusal("SHAPE")
+    if type(max_terms) is not int or max_terms < 1:
+        raise Refusal("INVALID_BUDGET")
+    current = {(initial, (report[initial],)): Q(1)}
+    for _ in range(steps):
+        following = defaultdict(Q)
+        actions_for_history = {}
+        for (state, history), weight in current.items():
+            if history not in actions_for_history:
+                actions = policy(history)
+                if not set(actions) <= set(kernels):
+                    raise Refusal("UNKNOWN_ACTION")
+                actions = {a: rational(p) for a, p in actions.items()}
+                if any(p < 0 for p in actions.values()) or sum(actions.values()) != 1:
+                    raise Refusal("NOT_A_DISTRIBUTION")
+                actions_for_history[history] = actions
+            for action, pa in actions_for_history[history].items():
+                for target, pt in kernels[action][state].items():
+                    if weight * pa * pt:
+                        key = (target, history + ((action, report[target]),))
+                        if key not in following and len(following) >= max_terms:
+                            raise Refusal("ENUMERATION_LIMIT")
+                        following[key] += weight * pa * pt
+        current = following
+    result = defaultdict(Q)
+    for (_, history), weight in current.items():
+        result[history] += weight
+    return dict(result)
+
+
+def reveal_model(delta):
+    delta = rational(delta)
+    if not 0 <= delta <= 1:
+        raise Refusal("INVALID_DELTA")
+    report = {0: '?', 1: '?', 2: '0', 3: '1'}
+    kernels = {'observe': {0: {0: 1 - delta, 2: delta}, 1: {1: 1 - delta, 3: delta},
+                           2: {2: Q(1)}, 3: {3: Q(1)}}}
+    return report, kernels

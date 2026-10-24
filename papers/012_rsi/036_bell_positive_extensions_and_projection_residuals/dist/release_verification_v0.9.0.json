@@ -1,0 +1,14 @@
+{
+  "version": "0.9.0",
+  "archive_sha256": "63944bdf236a72ce57bfbfc36b56a071898b805d1361518b5f1603d817f87fe0",
+  "source_Lean_theorems": 356,
+  "new_Lean_theorems": 40,
+  "custom_axioms": [],
+  "pytest_passed": 41,
+  "cold_cache_replay": "clean_extraction_v0.9.0.json",
+  "ordinary_full_copy": "full_copy_extraction_v0.9.0.json",
+  "deterministic_stream_reconstruction": "deterministic_rebuild_v0.9.0.json",
+  "byte_identical_physical_rebuild": true,
+  "source_dependency_cache_restored_and_verified": 20672,
+  "scope": "Fresh source and standalone cold-cache proof/test replays; ordinary full-copy ZIP extraction and byte/hash bindings checked separately. Storage optimizations and failed disk-pressure attempts are recorded in the linked receipts."
+}

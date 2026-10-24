@@ -1,0 +1,22 @@
+{
+  "contextuality_lp(1).py": "code/contextuality_lp.py",
+  "epistemic_kernel(1).py": "code/epistemic_kernel.py",
+  "future_observation(1).py": "code/future_observation.py",
+  "deposit_paths(10).py": "deposit_paths.py",
+  "test_companion_bridge.py": "code/tests/test_companion_bridge.py",
+  "test_contextuality_lp.py": "code/tests/test_contextuality_lp.py",
+  "test_epistemic_kernel.py": "code/tests/test_epistemic_kernel.py",
+  "Simplex.lean": "lean4/Simplex.lean",
+  "SimplexDriver.lean": "lean4/SimplexDriver.lean",
+  "ErrorBudget.lean": "lean4/ErrorBudget.lean",
+  "Core(10).lean": "lean4/Core.lean",
+  "ContextualDuality(1).lean": "lean4/ContextualDuality.lean",
+  "RationalCertificates(1).lean": "lean4/RationalCertificates.lean",
+  "Census(8).lean": "lean4/Census.lean",
+  "FullCensus(2).lean": "lean4/FullCensus.lean",
+  "ResultI.lean": "lean4/ResultI.lean",
+  "ResultII.lean": "lean4/ResultII.lean",
+  "ResultIII.lean": "lean4/ResultIII.lean",
+  "ResultIV.lean": "lean4/ResultIV.lean",
+  "Bridge.lean": "lean4/Bridge.lean"
+}

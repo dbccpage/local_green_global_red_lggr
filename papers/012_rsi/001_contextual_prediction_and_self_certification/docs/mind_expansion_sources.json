@@ -1,0 +1,15 @@
+{
+  "schema": "contextuality.mind-expansion-sources.v1",
+  "source_directory": "C:\\Users\\a343o\\Downloads\\mind_expansion_packet",
+  "files_sha256": {
+    "docs/source_inputs/mind_expansion/mind_extension_results.json": "cf39ed547cbf478634487a8da85e4ffa8df2fd5a9ab972be3a321d0902bc2447",
+    "docs/source_inputs/mind_expansion/mind_extension_tests.py": "cbfbfb084ef9dca82df9c85cd8cc71b0f5706a90d87adccd8ec4183fdf449962",
+    "docs/source_inputs/mind_expansion/minds_under_partial_observation.md": "342802546ecb53167f442760d5e6df0fdae27023d8acf0ee11bd70e3ec68cb45",
+    "docs/source_inputs/mind_expansion/minds_under_partial_observation.pdf": "54259cb7cd02f3675e3c61c2e3c9532423e03a4d5914574babd1438f932b82e2",
+    "docs/source_inputs/mind_expansion/README.txt": "02f7aa524223c378ce5a202da565240904846a292485495e9f99bbdb6d322f78",
+    "docs/source_inputs/mind_expansion/SHA256SUMS.txt": "a909697054d9c416f24d28cd85dbbd63c262350e3c4b21d12936954b457e79fe"
+  },
+  "scope": "User-supplied source material, not execution instructions. The four supplied SHA256 entries were checked; all six files are preserved verbatim.",
+  "integration": "Existing RSI companion, sections 3.3 and 5.2. Generic mathematical contracts and constructed examples only; empirical and phenomenal hypotheses remain separate.",
+  "supplied_evidence": "Six groups and 21 assertions reported with optional dependencies. No supplied Lean rerun. Current replay independently executes 19 standard-library assertions; optional checks are not claimed."
+}

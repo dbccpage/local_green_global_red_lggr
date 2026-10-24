@@ -1,0 +1,298 @@
+% manuscript-sha256: a9730b3945faee80ce744194689e942075eb843755a8ce252e7ecaa60cb7b817
+% spine-sha256: c7c2d0695f05e18f23262a9058df1d63c34a497d1ae9de3e6b8a1c065b60dd97
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  10pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Academic LaTeX preamble for representation abundance is not physical authority.
+%
+% Typesetting is not evidence for any claim.
+% Uses XeLaTeX for comprehensive Unicode and math font support.
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Latin Modern Roman}
+\setmonofont{Latin Modern Mono}[Scale=0.85]
+\setmathfont{Latin Modern Math}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.4em}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,
+            citecolor=RoyalBlue,breaklinks=true]{hyperref}
+\usepackage{fvextra}
+\usepackage{framed}
+\fvset{breaklines=true,breakanywhere=true,fontsize=\small}
+
+\AtBeginEnvironment{longtable}{\small}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\definecolor{quoterule}{gray}{0.75}
+\renewenvironment{quote}
+  {\begin{leftbar}\small}
+  {\end{leftbar}}
+
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\emergencystretch=3em
+\sloppy
+\hfuzz=0pt
+\vfuzz=0pt
+\hbadness=10000
+\vbadness=10000
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries Relational Reasoning, Memory, and Embedded Knowledge\par}
+Jeremy H. Carroll\par
+Task-relative recovery and bounded recursive improvement\par
+2026-10-23\par
+Version 1.2.3\par
+\end{center}
+
+\subsection{Abstract}\label{abstract}
+
+Agents, records, instruments and evaluators are parts of the world they describe. Within an explicitly declared model, we characterize what a record determines, which tasks a memory can recover, and which distinctions an updater must preserve for future use. Exact recovery is equivalent to constancy on observation fibers when representatives are supplied. Future equivalence is the greatest update-stable relation preserving the declared readout. Constructive Lean proofs establish factivity, positive introspection, knowledge of one's own record, and preservation under every finite action sequence. Executable checked append and recall operations reject conflicting data, and a guarded transition preserves a declared invariant through arbitrary finite executions. These positive results accompany the earlier finite-carrier obstruction: indefinitely many distinct improvements cannot be represented by a fixed finite carrier. That result does not limit expanding histories or all forms of learning. Exact finite experiments exhibit a memory enlargement from one to two bits when a new action is admitted, a sharp recovery-error witness, and the advantage of adaptive observation. The companion paper supplies quantitative recovery, experiment-simulation and query-budget formalizations. Every result identifies its observation model, task and resource assumptions; no viewpoint outside the world is required. A source-checked persistent memory now enters the repository agent context before dispatch. Separate-process live trials demonstrate exact reuse of a learned observation and retain an arithmetic failure after correct recall. These finite results distinguish reliable memory access from reliable reasoning.
+
+\subsection{1. The world-internal starting point}\label{the-world-internal-starting-point}
+
+\textbf{The world is what it is. There is no outside or observer from nowhere.} This is the organizing methodological rule. A state variable models part of the world; a record models something stored within it; an instrument and an evaluator are further interacting parts. A mathematical quantifier over candidate states does not posit a physically detached observer. The adequacy of the candidate model remains an empirical question.
+
+We distinguish truth at a state, determination by a record, an effective procedure for computing an answer, and permission to act. The legacy code's \texttt{authorized} output is a policy value. It is not a definition of knowledge or truth. Different names for generator and verifier do not establish statistical independence or an accurate observation model.
+
+Let a record map and a task be given by
+
+\protect\hypertarget{math-E0001-0001}{}{\[
+r:X\to O,\qquad f:X\to Y.
+\]}
+
+The compatibility fiber contains the model states agreeing with the actual record. A proposition is determined by the record when it holds throughout that fiber:
+
+\protect\hypertarget{math-E0002-0002}{}{\[
+C_r(x)=\{y:r(y)=r(x)\},\qquad
+K_r p(x)\ \Longleftrightarrow\ \forall y\in C_r(x),\ p(y).
+\]}
+
+This semantics does not by itself describe an agent's awareness, confidence, algorithm or physical ability to enumerate the fiber. False or omitted world models can make an otherwise valid calculation inapplicable. Observation noise requires an enlarged compatibility relation or a stated probabilistic model.
+
+\subsubsection{1.1 Constructive self-knowledge}\label{constructive-self-knowledge}
+
+\textbf{Theorem 1 (Lean).} Record-relative determination is factive, positively introspective, and includes the record's own value:
+
+\protect\hypertarget{math-E0003-0003}{}{\[
+K_r p(x)\Rightarrow p(x),\qquad
+K_r p(x)\Rightarrow K_r(K_r p)(x),\qquad
+K_r(r=r(x))(x).
+\]}
+
+Factivity uses the actual state in its own fiber. Positive introspection uses transitivity of record equality. Own-record determination uses the definition of the fiber. \texttt{determined\_is\_true}, \texttt{positive\_introspection} and \texttt{own\_record\_is\_determined} are constructive proofs with no axiom dependencies. A more discriminating record preserves previously determined propositions (\texttt{refinement\_preserves\_determination}). These statements refute any reading of self-reference as a blanket impossibility of self-knowledge.
+
+An anti-announced-bit task is different. No Boolean equals its own negation; an adversary defined to negate the announced answer prevents universal correctness for that protocol. \texttt{anti\_prediction\_not\_universal} states exactly this obstruction. It says nothing against remembering one's previous outputs or correctly predicting a restricted transition system. Wolpert's inference-device restrictions require their setup-distinguishability hypotheses {[}1{]}. Logical induction and reflective-oracle constructions give qualified positive self-reference results under different formal models {[}2,3{]}.
+
+\subsection{2. Recovery depends on the task}\label{recovery-depends-on-the-task}
+
+\textbf{Theorem 2 (Lean).} A decoder recovering the task from the record makes the task constant on every record fiber. Conversely, supplying a representative of each realized record constructs a decoder whenever the task is constant on fibers:
+
+\protect\hypertarget{math-E0004-0004}{}{\[
+\exists d:O\to Y\;\forall x,\ d(r(x))=f(x)
+\quad\Longleftrightarrow\quad
+\forall x,y,\ r(x)=r(y)\Rightarrow f(x)=f(y).
+\]}
+
+The reverse direction explicitly assumes a representative function whose record agrees with each realized record. Its values on unrealized records are immaterial. This avoids silently invoking a choice principle or an algorithm for arbitrary equivalence classes. \texttt{recoverable\_iff\_fiber\_constant} proves the equivalence at that type. A witnessed collision with different task values excludes every exact decoder. Deterministic postprocessing cannot separate equal records. Finite records can nevertheless be sufficient for a finite task, and many states may share a record without losing any answer that task requests.
+
+For finite scalar tasks, the optimal uniform error is half the largest within-fiber diameter. The midpoint of each fiber's extrema attains it. The exact code reports both the midpoint and an extremal collision witness; the companion's \texttt{attained\_fiber\_minimax} proves the real-valued certificate principle. The two values 112 and 143 under one record force error at least 31/2; midpoint 255/2 attains it. Separating their records reduces the error to zero. This is a restriction on recovery from that record, not a restriction on obtaining an additional observation.
+
+\subsection{3. What a memory transformation is}\label{what-a-memory-transformation-is}
+
+A memory transformation is a concrete change to stored representation: appending an observation, summarizing a transcript, replacing a table with a smaller one, or updating a model after an action. Its correctness is relative to what the memory must still answer. A transformation can discard distinctions irrelevant to a declared task and preserve every answer to that task. Adding another task or action can make the same discarded distinction relevant.
+
+An experiment declares the model identity, readouts, permitted actions, decoder, updater version, comparison class, error allowance, source bindings and storage budget. A changed task or action family is a changed contract. A checksum binds bytes; it does not establish that those bytes describe the world correctly.
+
+Let an action word apply the declared transitions in order. Two states are future-equivalent when every such word yields the same readout:
+
+\protect\hypertarget{math-E0005-0005}{}{\[
+x\sim_F y\quad\Longleftrightarrow\quad
+\forall w\in A^*,\ q(F_w(x))=q(F_w(y)).
+\]}
+
+\textbf{Theorem 3 (Lean).} Future equivalence is an equivalence relation, preserves the current readout, is stable under each action, and contains every other stable readout-preserving relation. The proof uses the empty word for current agreement and a prefixed word for stability; induction proves maximality. \texttt{stable\_relation\_refines\_future\_eq} supplies the last direction. Thus the quotient by this relation is the coarsest exact memory for the specified future tasks, at the level of existence of representations. Computing that quotient requires additional effective or finite structure.
+
+This deterministic construction is related to minimal predictive states in computational mechanics and predictive state representations {[}4,5{]}. Those literatures have their own stochastic, stationarity and almost-sure qualifications. Information bottleneck objectives instead trade information retention against a chosen relevance distribution {[}6{]}; they do not automatically preserve every future action-conditioned task.
+
+\subsubsection{3.1 A sufficient implementation contract}\label{a-sufficient-implementation-contract}
+
+For a memory encoder, decoder and updater, the two commuting conditions are
+
+\protect\hypertarget{math-E0006-0006}{}{\[
+d(m(x))=q(x),\qquad m(F_a(x))=U_a(m(x)).
+\]}
+
+\textbf{Theorem 4 (Lean).} These conditions imply agreement of every future readout whenever the initial memories agree (\texttt{implemented\_memory\_preserves\_future}). They also imply that updating encoded memory along any finite word gives the encoding of the corresponding world state (\texttt{run\_updates\_commute}). This second statement establishes correspondence of actual updates, not only indistinguishability of equal memories.
+
+The executable witness uses a pair of Boolean values, an encoder storing them in reversed order, a decoder reading the second stored component, and identity/swap actions. \texttt{pair\_memory\_commutes} proves the updater equation; \texttt{pair\_memory\_preserves\_all\_words} proves exact readout preservation after any finite word. Remembering only the first world bit fails after swap: two initially identical records then expose different second bits. The Python example follows the same finite definitions; finite execution checks accompany the Lean proofs, without asserting universal Python-to-Lean refinement.
+
+\subsubsection{3.2 Capacity and constructive refinement}\label{capacity-and-constructive-refinement}
+
+If a finite system has a given number of future-equivalence classes, any exact memory with the stated updater must have at least that many distinguishable states. The companion proves this by injectivity on representatives (\texttt{future\_classes\_require\_memory}). Fixed-length binary storage then needs enough bit strings; variable-length expected coding requires a separate probability and coding model.
+
+The reference algorithm refines a finite partition until every action preserves every class. Independently searching pairs of states produces distinguishing action words. For four states with readout \texttt{(0,0,1,1)}, identity alone yields two classes; adding the permutation \texttt{(0,2,1,3)} yields four. One bit suffices for the first contract and two for the second. This is a constructive reason to enlarge memory, rather than to conclude that remembering is impossible. Exhaustive four-state checks compare partition refinement against pair-state search on 65,536 state-pair cases.
+
+\subsection{4. Enforced updates, recall and safety}\label{enforced-updates-recall-and-safety}
+
+\texttt{MemoryImplementation.lean} defines a finite archive of record/answer pairs as compatible when equal records have equal answers. Its executable \texttt{appendChecked} returns the concatenated archive only if the entire result is compatible. \texttt{accepted\_append\_compatible} proves that a successful result satisfies the condition; \texttt{accepted\_append\_retains} proves that every old entry remains. A conflicting append is refused, leaving the caller's immutable old value available.
+
+The executable \texttt{recallChecked} requires a matching entry and agreement of all stored entries with that record. \texttt{accepted\_recall\_sound} proves both coverage and agreement for every returned answer. A changed archive containing conflicting answers refuses a formerly acceptable recall. These checks concern the complete declared archive, not unstored states. The exact-rational \texttt{checked\_extension} additionally supports a nonnegative scalar error allowance and independently replays its complete enlarged archive.
+
+\textbf{Theorem 5 (Lean, enforced transition invariant).} Given a decidable invariant, a guarded transition executes a proposed next state only when it satisfies that invariant; otherwise it retains the current state. Starting from an invariant-satisfying state, every finite guarded execution preserves the invariant. \texttt{gated\_run\_preserves} proves this for arbitrary types. The concrete pair-state gate rejects an overwrite to \texttt{(true,true)}, with \texttt{concrete\_gate\_preserves\_every\_word} proving the declared invariant for every finite sequence of overwrite requests.
+
+The guard is part of the Lean transition function, so the theorem applies to enforced transitions in that implementation. It does not infer a physical safety predicate from a provenance label. A runtime bypass, unchecked recall entry point, incomplete archive, inaccurate predicate or unsafe initial state falls outside its premise. The included Python functions are a finite reference experiment. This abstract theorem alone does not establish persistence, agent-request injection or actual model use; section 8 supplies separate finite evidence for those implementation questions.
+
+\subsection{5. What the earlier finite RSI theorem actually bounds}\label{what-the-earlier-finite-rsi-theorem-actually-bounds}
+
+The original \texttt{RsiImpossible.lean} and \texttt{RelationalRsiNoGo.lean} retain their definitions and theorem statements. A duplicate-free list contained in a carrier of size N has length at most N. \texttt{OmegaRelationalRsi.rsi\_impossible} rules out an infinite strictly improving trajectory whose transitive, irreflexive dominance is invariant under report equality in both arguments and whose report image lies in that fixed finite carrier. It derives distinct reports from those hypotheses using \texttt{lemma1c\_goodhart\_metric\_collapse\_on\_collision}, then applies the finite-list bound. The underlying state space can be infinite. Neither a particular self-modification mechanism nor statistical independence, primitive difference or a sheaf premise occurs in this theorem's signature.
+
+N reports allow at most N−1 report-grounded strict transitions. An arbitrary sequence of N+1 observations repeats by transition index N; this says nothing about the magnitude of a jump or elapsed time. Transcripts, verifier state, timestamps and rolling context must be included in the declared report interface whenever dominance uses them.
+
+Structural \texttt{RelationallyAligned} transformations and the numeric-rank \texttt{RelationalAlignment} predicate are different definitions, not equivalent encodings. The latter explicitly uses an internal score below N. Relabeling scores can change that policy. The compiled \texttt{ReviewCountermodels} exhibit a structurally aligned successor and an infinite increasing trajectory with one constant report; the dominance is not report-grounded. This is a scope control consistent with the finite-report theorem.
+
+\texttt{RelationalRSI.rsi\_decouples\_within\_carrier\_bound} proves a horizon for its defined increasing internal counter and bounded carrier alignment. Licensed lifts consume a declared finite budget. Coupled-carrier results use a fixed finite product carrier. The overlap and higher-cochain theorems concern declared compatibility equations; failure to glue those data is a different obstruction. None of these results makes every self-modifying process halt or proves that all useful improvements cease.
+
+\texttt{PrefixBounds.spending\_prefix\_invariant} bounds cumulative natural-valued charges plus remaining budget by initial budget, assuming the budget inequality only at indices below a declared finite horizon L. \texttt{refinement\_prefix\_bound} and \texttt{lift\_prefix\_bound} give the corresponding finite-prefix bounds. \texttt{interleaved\_lift\_event\_bound} counts actual charged lift events and permits uncharged intervening ticks. The older total strictly decreasing sequences are impossible infinite-descent hypotheses, not certificates of existing finite executions. The retained asynchronous and rewiring corollaries are cardinality statements on fixed report products; they do not formalize buffers, evolving incidence or terminal-reason distributions.
+
+A finite alphabet does not bound the number of complete histories. A binary alphabet has 127 words of length at most six, and arbitrarily many finite words without a length cap. A resource bound must therefore cover total stored configurations, duration, precision, history length or an explicitly fixed quotient. Finite physical dimension alone supplies no unlimited-repetition bound. Repeated measurements, expanding memory and new interventions change the model. Conversely, computation can improve an algorithm even while its evidence is unchanged; observational identifiability and computational difficulty are separate limits.
+
+The earlier policy, quantum and campaign discussion is retained verbatim under \texttt{docs/pre\_integration\_*} as historical source. Its extrapolations are superseded by the explicit scopes here. Evaluator selection does not alone imply zero mutual information; self-report is not automatically a destructive quantum pinching; Bell/contextuality does not establish that reality has no facts. The companion's contextuality results concern specified jointly representable distributions. Quantum statistical comparison requires completely positive and, where used, ancillary-system conditions {[}7{]}. No new quantum recovery theorem is claimed here.
+
+\subsection{6. Learning and intelligence as resource-dependent capabilities}\label{learning-and-intelligence-as-resource-dependent-capabilities}
+
+A useful capability description specifies the environment family, task, observations, actions, working and persistent memory, computation, and accepted error. Lower bounds then identify an intervention that can remove the obstruction: acquire a new observation, retain a distinction, change an action family, take another data pass, or improve computation. These are different changes, with different costs.
+
+The finite query experiment demonstrates the distinction. Three binary queries on four worlds admit a worst-case adaptive depth of two, while every fixed identifying panel requires all three. The companion proves the bounded binary-query recurrence equivalent to existence of a valid plan within that depth and proves error preservation at checked leaves. The finite Python solver returns a plan or a witnessed unresolved search outcome and independently checks optimality. Destructive measurements, forbidden actions and elapsed physical time require additional models.
+
+Fano bounds require a distribution and information assumptions {[}8{]}. Continual-learning memory lower bounds apply to specified classes, sample regimes and pass constraints; extra passes can change them {[}9,10{]}. Universal-intelligence quantities depend on their environment coding and prior {[}11,12{]}. Gödel machines make conditional claims relative to a coded objective and proof system {[}13{]}. None supplies an assumption-free ceiling on all intelligence or learning.
+
+Statistical improvement claims also need valid evidence after adaptive selection. Confidence sequences and adaptive-data-analysis results address specified sampling and stopping models {[}14,15{]}. The inspected September 2026 revision of Statistical Gödel Machines accounts for every opened confirmation, including failed ones, with conditionally valid tests and predictable summable error allocations {[}16{]}. Non-improvement under an objective is different from unsafe behavior. These statistical theorems are imported literature, not Lean results in this package.
+
+\subsection{7. Mechanization and reproducibility}\label{mechanization-and-reproducibility}
+
+\texttt{EmbeddedLimits.lean} is copied byte for byte from the October 22 research dossier; its twenty named theorems use no axioms. \texttt{MemoryImplementation.lean} supplies the executable append, recall, updater and gate proofs. The original finite-carrier modules retain their historical definitions and statements. The generated named census covers every explicit theorem in these modules, and the full census enumerates package-local declarations including generated helpers. Dependencies are restricted to the standard Lean foundations; no unfinished proofs or domain-specific axioms are admitted.
+
+The package contains exact scalar, memory-partition and query experiments plus independent certificate checkers. The transition CLI imports the tested modular implementation. The Rust companion checks EIS metadata, role-label separation, digests and reported horizon arithmetic; it neither replays obstruction predicates nor authenticates host identities. Distinct labels alone do not establish statistical independence or evidential soundness. The ASCII identifier contract is checked in both languages. The asynchronous fixtures deliberately inject residuals from lag/skew/rewiring flags, including a positive age penalty when report contents agree. Their distribution shift is a property of that synthetic policy, not a derived transport law.
+
+The cochain repair kernel minimizes an L1 residual over unrestricted potentials. Every successful certificate must reconstruct the repaired cochain from its potential, reproduce the residual/cost, annihilate the transposed incidence with a dual vector of infinity norm at most one, and close the exact rational duality gap. Closedness alone is insufficient: the review's closed annulus has optimal repair cost 9. HiGHS supplies a numerical candidate; the exact checker can refuse it. Active repair replays the certificate and admits only an exact integer price, strictly positive for a nonzero repair, even with Python assertions disabled.
+
+This cochain LP is separate from the companion's probability-marginal LP, which requires nonnegative normalized global distributions. There is no declared reduction and no general identification of contextual fraction with half the unweighted concatenated-context L1 distance. Two disjoint PR scenarios give contextual fraction 1 but distance 4. A support-gluing test ranges over families of supported local sections; restrictions of a single preselected global assignment already agree. Strong contextuality implies logical contextuality, which implies probabilistic contextuality. The review response links the original contextual-fraction definition. Source hashes and current censuses are supplied under \texttt{lean4/}; the review corrections are detailed in \texttt{docs/review\_response\_2026\_10\_23.md}. The live-memory and numerical verification files retain their earlier experiment dates and scopes. The paper and companion are independently buildable; neither imports its sibling's files. See the README for commands and \texttt{docs/embedded\_research.md} for the claim-to-source map.
+
+The pre-integration paper-000 source was version 1.0.0 with unreleased campaign additions. This edition is its explicit successor. A historical companion attribution to a separate version 1.4.0 recovery package is retained as historical custody, not treated as a source of the current proof estate. The current paired editions are this paper 1.2.3 and \emph{Contextual Prediction and Self-Certification} 1.8.2.
+
+\subsection{8. Persistent memory in the live agent}\label{persistent-memory-in-the-live-agent}
+
+The persistent experiment binds a declared task, model, action set, exact key/value encoding and update rule. Its categorical residual is zero exactly when all recorded observations sharing a key agree. Every recall and proposed update rechecks that residual, source hashes, exact source membership and the contract. Accepted facts enter the repository agent's user context before prompt binding. Rejected updates retain the previous archive; failed recalls prevent dispatch. SQLite transactions and a persisted database carry observations between processes.
+
+The captured exact-use trial used four separate processes: an uninformed baseline returned UNKNOWN, the agent extracted a supplied synthetic observation, and two later processes used the stored value with different requested suffixes. An earlier arithmetic trial failed after correct recall. Thus persistent access and correct downstream reasoning remain different properties. Both outcomes and raw replies are retained, with independent offline replay of prompt bindings and source pins. This is bounded evidence from one model, not a general learning or intelligence benchmark. The connection is to the repository agent facade; it does not modify Codex's global context or model parameters.
+
+The eight Lean statements in \texttt{LiveMemory} prove source-supported, consistent updates and recalls, preservation of old entries, refusal behavior and recall after an explicitly exact reload. SQLite crash recovery and the live model's use of context are tested operationally, not proved by these abstract statements. Source adequacy remains a premise. Implementation, commands and full limitations are in \texttt{docs/live\_memory.md}; captured-trial replay uses \texttt{tools/replay\_live\_memory\_evidence.py}.
+
+The preceding numerical verification recorded all 712 quantum-library tests passing in release mode, with no failures, ignored cases or filtered cases. This includes the three prior numerical failures, all ten previously unfinished MUB tests, and three new admission-boundary regressions. Exact PSD of the supplied binary Choi matrix replaces a rounded eigenvalue-sign decision. Floating-point Hamiltonian evolution uses a separate tolerance-checked numerical propagator; exact admission remains strict, and numerical evolution retains norm drift. The rebuilt native budget host passes all 24 gateway-and-memory tests, including both previously blocked cases; five quantum integration binaries pass 57 tests. These are scoped checks of the earlier recorded source snapshot, not fresh native reruns in this edition. The earlier multi-crate audit remains historical, and these synthetic gateway tests add no new live model trial or universal implementation-refinement proof. The current source-bound build and test records are in \texttt{docs/numerical\_verification.json}; \texttt{docs/native\_gateway\_verification.json} preserves the preceding partial run.
+
+The companion Projection Obstruction extensions separate a measured residual from an error enclosure. PO-000 section 5.18 transfers uncertainty into onset and correction-window bounds; PO-033 section 3.5 accounts for integration defects and finite correction jumps; PO-034 section 4.3 gives density-state product-defect uncertainty at most (k+1) times the trace-norm state error. The preceding numerical-release report records their exact scalar witnesses and then-written continuous bounds. Later projection-paper mechanization is a separate release; these transferred observations do not supply automatic error certificates for recalled memories.
+
+\subsection{References}\label{references}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Wolpert, D. H. (2008). \href{https://arxiv.org/abs/0708.1362v2}{Physical limits of inference}. Setup-distinguishability is essential.
+\item
+  Garrabrant et al.~(2016). \href{https://arxiv.org/abs/1609.03543v5}{Logical induction}.
+\item
+  Fallenstein, Taylor and Christiano (2015). \href{https://arxiv.org/abs/1508.04145v1}{Reflective oracles}.
+\item
+  Shalizi and Crutchfield (2001). \href{https://arxiv.org/abs/cond-mat/9907176v2}{Computational mechanics}.
+\item
+  Littman, Sutton and Singh (2001). Predictive representations of state. NeurIPS 14. Primary paper and locators in \texttt{docs/embedded\_literature.json}.
+\item
+  Tishby, Pereira and Bialek (1999). \href{https://arxiv.org/abs/physics/0004057v1}{The information bottleneck method}.
+\item
+  Buscemi (2012). \href{https://arxiv.org/abs/1004.3794v4}{Comparison of quantum statistical models}.
+\item
+  Scarlett and Cevher (2019). \href{https://arxiv.org/abs/1901.00555}{An introductory guide to Fano's inequality}.
+\item
+  Chen, Papadimitriou and Peng (2022). \href{https://arxiv.org/abs/2204.10830}{The memory complexity of continual learning}.
+\item
+  Brown, Bun and Smith (2022). Strong memory lower bounds for learning natural models. PMLR 178. Primary source recorded in the source catalog.
+\item
+  Legg and Hutter (2007). \href{https://arxiv.org/abs/0712.3329}{Universal intelligence}.
+\item
+  Leike and Hutter (2015). \href{https://arxiv.org/abs/1510.04931}{Bad universal priors and notions of optimality}.
+\item
+  Schmidhuber (2003/2005). \href{https://arxiv.org/abs/cs/0309048v5}{Gödel machines}.
+\item
+  Howard, Ramdas, McAuliffe and Sekhon (2021). \href{https://arxiv.org/abs/1810.08240}{Time-uniform confidence sequences}.
+\item
+  Dwork et al.~(2015). \href{https://arxiv.org/abs/1506.02629}{The reusable holdout}.
+\item
+  Wu et al.~(2026 revision). \href{https://arxiv.org/abs/2510.10232v2}{Statistical Gödel machines}. Inspected version 2, September 17, 2026.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,21 @@
+{
+  "title": "Bell's Theorem as a Positive-Extension Obstruction",
+  "version": "0.13.0",
+  "publication_date": "2026-10-24",
+  "upload_type": "publication",
+  "publication_type": "article",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "Research draft on positive local extensions, quantitative Bell residuals and embedded task sufficiency. Includes 656 Lean theorems: probability-integral equivalence, classical and quantum CHSH bounds, finite-dimensional POVM/density conversions and actual Born tables, exact complex two-qubit saturation, finite Hermitian trace-norm measurement contraction, finite separable-state and partial-trace constructions, the full state-to-behavior bound, conditional dynamical witnesses, attained repair and signed-extension LP duality, finite polyhedral elimination and intrinsic tangent-cone bounds, and finite observer limits, with a fresh axiom census and offline dependencies. Not deposited. Version 0.8.0 added real-parameter CHSH/Mermin negative-mass and contextual-fraction formulas, an explicit separation and reversed ranking, and a constructive finite-context comparison; 78 exact primal/dual certificate cases. Version 0.9.0 adds quantum-restricted family comparisons, explicit GHZ Born realization, exact and uncertainty-delayed exit windows, and a contextuality reader note. Version 0.10.0 adds an explicit full three-setting two-qubit counterexample to universal quantum CF <= 2N, with CF=4N, exact radical certificates and a Lean Born realization. Version 0.11.0 adds a full rational quantum counterexample to CF <= 4N and separates unbounded restricted-cycle comparisons from the bounded tail of complete regular chains. Version 0.12.0 proves unbounded CF/N_min across complete quantum Bell scenarios by a smoothed Gram construction. Lean covers constructive local/signed certificates, ramp sums, restriction, comparison envelopes and cycle lifting; the general Clifford bridge and modular-profile assembly are written and explicitly scoped. Version 0.13.0 completes the end-to-end Lean quantum unboundedness theorem with constructed cyclic profiles, general finite Clifford matrices, density/POVM Born tables and an attained signed optimum, and proves explicit selected-continuum scalar error cutoffs. No physical continuum or fixed-dimension claim.",
+  "license": "cc-by-4.0",
+  "keywords": [
+    "Bell theorem",
+    "CHSH",
+    "projection residuals",
+    "embedded knowledge",
+    "recursive self-improvement"
+  ]
+}

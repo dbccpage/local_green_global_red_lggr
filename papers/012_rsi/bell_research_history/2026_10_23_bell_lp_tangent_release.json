@@ -1,0 +1,338 @@
+{
+  "date_utc": "2026-10-23T20:18:43.203324+00:00",
+  "version": "0.7.0",
+  "repository_head": "bf6b87751e254c7aeac5ebf1b26f51bdcabaaa67",
+  "working_tree_scope": "Bell package remains in the existing checkout; no commit or publication performed",
+  "package": {
+    "path": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals\\dist\\bell_positive_extensions_v0.7.0.zip",
+    "bytes": 707663004,
+    "sha256": "2aaf41b188c78bfe7a9474eae7cef8552f166f6b405eda8174b9b0317edf4314",
+    "payload_files": 65,
+    "manifest_control_files": 2,
+    "payload_manifest_sha256": "46f669e4ca4b116846c3ba95862e6f387c424e8d74896a25587b192b83d23e40"
+  },
+  "lean": {
+    "theorems": 256,
+    "modules": 20,
+    "new_modules": [
+      "ConvexDistance",
+      "LinearProgramming",
+      "Polyhedral",
+      "PolyhedralProjection",
+      "Repair",
+      "RepairGeometry",
+      "SignedDuality",
+      "TangentCone"
+    ],
+    "new_theorems": [
+      "Bell.ConvexDistance.attained_duality",
+      "Bell.ConvexDistance.attained_duality_closed",
+      "Bell.ConvexDistance.attained_duality_of_nearest",
+      "Bell.ConvexDistance.weak_duality",
+      "Bell.LinearProgramming.contextuality_strong_duality",
+      "Bell.LinearProgramming.cost_eq_norm",
+      "Bell.LinearProgramming.dual_coordinates_bounded",
+      "Bell.LinearProgramming.linear_form_coordinates",
+      "Bell.LinearProgramming.mixtureMap_apply",
+      "Bell.LinearProgramming.simplex_compact",
+      "Bell.LinearProgramming.simplex_convex",
+      "Bell.LinearProgramming.simplex_single",
+      "Bell.LinearProgramming.weak_duality",
+      "Bell.LinearProgramming.zero_gap_certificate_optimal",
+      "Bell.Polyhedral.exists_scalar_iff",
+      "Bell.Polyhedral.of_finite_system",
+      "Bell.Polyhedral.preimage",
+      "Bell.Polyhedral.projection_one",
+      "Bell.PolyhedralProjection.equalities",
+      "Bell.PolyhedralProjection.intersection",
+      "Bell.PolyhedralProjection.linear_image",
+      "Bell.PolyhedralProjection.projection_fin",
+      "Bell.PolyhedralProjection.projection_finite",
+      "Bell.PolyhedralProjection.simplex_polyhedral",
+      "Bell.Repair.bell_slack_primal",
+      "Bell.Repair.bell_strong_duality",
+      "Bell.Repair.bell_support_duality",
+      "Bell.Repair.bell_witness_bound",
+      "Bell.Repair.marginal_eq_mix",
+      "Bell.Repair.scaled_cost",
+      "Bell.Repair.scaled_mix",
+      "Bell.Repair.scaled_pairing",
+      "Bell.Repair.vertex_le_support",
+      "Bell.Repair.weighted_cost_eq_tv",
+      "Bell.Repair.weighted_slack_bound",
+      "Bell.Repair.weighted_strong_duality",
+      "Bell.Repair.weighted_weak_duality",
+      "Bell.RepairGeometry.bell_explicit_ray_window",
+      "Bell.RepairGeometry.bell_quadratic_remainder",
+      "Bell.RepairGeometry.bell_ray_distance",
+      "Bell.RepairGeometry.dist_embed",
+      "Bell.RepairGeometry.embed_apply",
+      "Bell.RepairGeometry.embed_injective",
+      "Bell.RepairGeometry.localSet_eq",
+      "Bell.RepairGeometry.localTangent_intrinsic",
+      "Bell.RepairGeometry.local_compact",
+      "Bell.RepairGeometry.local_nonempty",
+      "Bell.RepairGeometry.local_polyhedral",
+      "Bell.RepairGeometry.mixture_embed",
+      "Bell.RepairGeometry.presentation_exists",
+      "Bell.RepairGeometry.repair_eq_distance",
+      "Bell.RepairGeometry.repair_lipschitz",
+      "Bell.RepairGeometry.repair_zero_iff",
+      "Bell.SignedDuality.affine_norm_duality",
+      "Bell.SignedDuality.augmentedMap_apply",
+      "Bell.SignedDuality.bell_negative_mass_duality",
+      "Bell.SignedDuality.bell_signed_spread_duality",
+      "Bell.SignedDuality.factor_functional",
+      "Bell.SignedDuality.negative_mass_dual_optimal",
+      "Bell.SignedDuality.negative_mass_duality",
+      "Bell.SignedDuality.negative_mass_weak_duality",
+      "Bell.SignedDuality.signed_norm_identity",
+      "Bell.TangentCone.displacement_mem_tangent",
+      "Bell.TangentCone.explicit_ray_window",
+      "Bell.TangentCone.positive_window",
+      "Bell.TangentCone.quadratic_remainder",
+      "Bell.TangentCone.ray_distance",
+      "Bell.TangentCone.ray_lower",
+      "Bell.TangentCone.remainder_bound",
+      "Bell.TangentCone.tangent_closed",
+      "Bell.TangentCone.tangent_eq_closed_radial",
+      "Bell.TangentCone.tangent_eq_radial",
+      "Bell.TangentCone.tangent_ray_feasible",
+      "Bell.TangentCone.tangent_smul",
+      "Bell.TangentCone.tangent_zero"
+    ],
+    "previous_modules_preserved_byte_for_byte": 12,
+    "previous_axiom_entries_preserved": 181,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "custom_axioms": [],
+    "census_sha256": "b9cec3731a348a94e248919aaeb2509bc692a0545c2487ff2ce13bde39fdf6c9",
+    "dependency_modules": 2948,
+    "dependency_files": 20672,
+    "dependency_archive_sha256": "4ba752aeb082b6997cf88ea316d7d6603c6b876b6973b01a38b8e363625cc6b3",
+    "dependency_closure": "Independently recomputed from all twenty Bell module imports; module list and every file digest equal the retained pinned v0.4 bundle"
+  },
+  "checks": {
+    "v07_root_lean": {
+      "label": "v07_root_lean",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_lean.py",
+        "--record"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:04:38.763109+00:00",
+      "seconds": 354.85455989837646,
+      "exit_code": 0,
+      "log": "v07_root_lean.txt"
+    },
+    "v07_audit": {
+      "label": "v07_audit",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\audit_v07.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:05:22.658499+00:00",
+      "seconds": 1.4317600727081299,
+      "exit_code": 0,
+      "log": "v07_audit.txt"
+    },
+    "v07_pdf_final": {
+      "label": "v07_pdf_final",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "scripts/build_paper_artifacts.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:05:08.531129+00:00",
+      "seconds": 13.082631587982178,
+      "exit_code": 0,
+      "log": "v07_pdf_final.txt"
+    },
+    "v07_package": {
+      "label": "v07_package",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/package.py",
+        "--build"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:06:17.098991+00:00",
+      "seconds": 23.956470251083374,
+      "exit_code": 0,
+      "log": "v07_package.txt"
+    },
+    "v07_extract": {
+      "label": "v07_extract",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\extract_v07.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:06:47.898192+00:00",
+      "seconds": 3.560868978500366,
+      "exit_code": 0,
+      "log": "v07_extract.txt"
+    },
+    "v07_clean_verify": {
+      "label": "v07_clean_verify",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "verify_deposit.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.0\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:18:34.608790+00:00",
+      "seconds": 697.6670429706573,
+      "exit_code": 0,
+      "log": "v07_clean_verify.txt"
+    },
+    "v07_final_package_check": {
+      "label": "v07_final_package_check",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/package.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T20:08:41.152718+00:00",
+      "seconds": 19.283196449279785,
+      "exit_code": 0,
+      "log": "v07_final_package_check.txt"
+    }
+  },
+  "clean_extraction": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.0\\036_bell_positive_extensions_and_projection_residuals",
+  "dependency_cache_provenance": "Freshly unpacked from the v0.7 standalone dependency archive; no seeded cache; all files revalidated",
+  "python": {
+    "exact_tests": 26,
+    "supplied_review_checks": 39,
+    "separately_checked_certificates": {
+      "repair": 8,
+      "negative_mass": 7
+    },
+    "LP_solves_numerical": 14,
+    "two_qubit_times": 5,
+    "Mermin_assignments": 64,
+    "notebook": "direct Python-cell replay passed",
+    "model_independence": "review_certificates checks returned answers using shared model helpers; bell_certificates independently enumerates the deterministic model"
+  },
+  "claim_map": {
+    "numbered_claims": 12,
+    "invalid_mapping_mutations_rejected": 5
+  },
+  "pdf": {
+    "date": "2026-10-23",
+    "version": "0.7.0",
+    "pages": 21,
+    "visually_reviewed_pages": [
+      1,
+      5,
+      6,
+      10,
+      18,
+      20,
+      21
+    ],
+    "overfull_boxes": 0,
+    "bindings": {
+      "036_bell_positive_extensions_and_projection_residuals.md": "51cc517fa85c5250b34c2f8093de28402efb4ed1fe249558768cd2f5a1f6357b",
+      "036_bell_positive_extensions_and_projection_residuals.tex": "6eff3d5388958d695648967f1db67d09fd8c9221abe2ffd076b1bd279ec05bdc",
+      "036_bell_positive_extensions_and_projection_residuals.pdf": "a1873d85306b99ec162b83c031e7ca9887eb0395b7a0fe2477f52570df62501d",
+      "docs/pdf_build.log": "874e63602efa3f3aef9b09e2c6fb71d3630d0751358728b82e30154ff18ab61c"
+    },
+    "scope": "Source association, zero overfull boxes and sampled visual layout; proof validation is recorded separately"
+  },
+  "source_custody": {
+    "date": "2026-10-23",
+    "input_path": "C:\\Users\\a343o\\Downloads\\bell_rsi_asi_projection_residuals.md",
+    "input_sha256": "acbaddeb548a61c9f17f4ed99960aa926c92ccec3a014b758d010530e5ce8615",
+    "preserved_copy": "docs/source_inputs/bell_rsi_asi_projection_residuals.md",
+    "changes": [
+      "Separate Bell paper; focus on positive-extension obstruction and embedded task sufficiency",
+      "Removed speculative experience discussion from edited manuscript; retained exact source",
+      "Corrected dual max and parity variable typographical errors",
+      "Updated companion references; unprovided dialogue not treated as independent evidence",
+      "Added independent exact certificate checker and near-miss controls",
+      "Version 0.3.0: actual probability-integral equivalence, complex Hilbert-space Tsirelson bounds and exact two-qubit Born-table formalization; original input preserved",
+      "Version 0.4.0: finite-dimensional binary POVM and density-operator conversions, explicit spectral decomposition, actual Born tables, CHSH score identity and local tensor lifts; original input preserved",
+      "Version 0.5.0: finite Hermitian trace-norm contraction and conditional dynamical witnesses; supplied review preserved and independently audited, not treated as instructions or proof authority",
+      "Version 0.6.0: explicit finite separable mixtures, constructed local models, actual partial traces and product-marginal retraction, and the full state-to-behavior bound; preserved original review inputs unchanged",
+      "Version 0.7.0: attained Bell repair/signed LP duality, finite polyhedral projection and intrinsic tangent-cone bounds; complete-version review treated as source material, with wording, provenance and checker-independence corrections."
+    ],
+    "primary_sources_checked": [
+      "https://arxiv.org/abs/1102.0264",
+      "https://arxiv.org/abs/1709.04260",
+      "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.48.291",
+      "https://link.springer.com/article/10.1007/BF00417500",
+      "https://arxiv.org/html/1404.3831v2",
+      "https://arxiv.org/html/2312.02588v2",
+      "https://isa-afp.org/entries/TsirelsonBound.html"
+    ],
+    "review_inputs": [
+      {
+        "input_path": "C:\\Users\\a343o\\Downloads\\math_notes.md",
+        "preserved_copy": "docs/source_inputs/projection_retraction_obstruction_notes.md",
+        "sha256": "adcbd226314f815bce95d737f97972f291186a11bcc6cc592d2c02cce665e32c",
+        "bytes": 70426
+      },
+      {
+        "input_path": "C:\\Users\\a343o\\Downloads\\verify_obstruction.py",
+        "preserved_copy": "docs/source_inputs/verify_obstruction.py",
+        "sha256": "b6a14e68dea635d6a80b2bf329e12d073973dcc9208c24edcf8c7df929beaa4f",
+        "bytes": 30351
+      },
+      {
+        "input_path": "C:\\Users\\a343o\\.codex\\attachments\\23a59da4-5252-44f5-bce3-0bf1c845d0db\\Pasted text.txt",
+        "preserved_copy": "docs/source_inputs/projection_retraction_obstruction_pasted.txt",
+        "sha256": "03a323d7d80f08d9541a53b741542988e1e70b0d66a0bf3558edea7258c32f53",
+        "bytes": 70861
+      },
+      {
+        "input_path": "C:\\Users\\a343o\\.codex\\attachments\\5224a769-e977-4d89-bd64-ce2e4f72cb51\\Pasted text.txt",
+        "preserved_copy": "docs/source_inputs/complete_v0_6_review.txt",
+        "sha256": "86ec57bf7030ea0a98a2038e669f24312b82ee49004c1fa5e36f3a15b3e716b4",
+        "bytes": 28299
+      }
+    ]
+  },
+  "scope": "Attained weighted Bell repair and normalized signed-negative-mass LP duality; witness and explicit slack-variable optima. Finite elimination proves the actual Bell simplex image polyhedral. Its active cone equals the intrinsic closed radial cone, with exact short-ray repair and a quadratic trajectory remainder estimate. Primal and dual optimizers and finite presentations are constructed. Signed duality assumes an inhabited normalized signed fiber; zero-repair characterization assumes positive context weights; the trajectory remainder is a premise. The positive time window is existential, not an executable duration bound. No Python simplex implementation correctness or general dynamical remainder derivation is asserted.",
+  "cleanup": "Removed only the prior verified v0.6 clean-extraction scratch directory for disk space, after checking its retained archive and successful replay. Historical archives, source bundles and receipts remain.",
+  "logs": {
+    "audit_v07.py": "5c1ed6fc2b9efa1d54f198e02b7bb8df5379a7df6fa4052e38703f8bda7ed4c7",
+    "axiom_report.txt": "c7113e4c7abe3663103e8492190cb0df197132e8a4f05e9748a60883bf014c45",
+    "build_report.txt": "47b277384ff5498cf6e127a750cfb8dc59d346afb1bac53c0b922327692e1a4c",
+    "extract_v07.py": "38e456461f099cf3db779a1655a97d9cee371e2b80fc8dcf3a5fbb771a955ba2",
+    "report_v07.py": "9acefc9d95316bcbcaee66a663e48f2b340726b71a910a04a5b56b75a1a8b005",
+    "run_live.py": "5cb07d4377ff40acb22c970af2667874237bba5e31d6ac343649f09e1a2ef278",
+    "v07_audit.json": "116204784a9ff3e4f09bdd29fd91a6f4104474aacb6885ab44a5eac657ca048f",
+    "v07_audit.txt": "988de2514b387c92cdaae3489b5800ac162805abc87a98d0429dfff31fe3bfe8",
+    "v07_clean_verify.json": "5cd8a9baf1afe7c315635a1b2c0008b365de8b95e95610cc4b78be1df13c0f6b",
+    "v07_clean_verify.txt": "9634975aace2a05d6d7cbbf96b78167bdd1bf5ff460e234d03c7b24ebf571197",
+    "v07_extract.json": "fad07a12dd3adec2dfea3683879091770e1857d80bdbfadd38179aeb03dbbb44",
+    "v07_extract.txt": "7bd4e9244ddbbaa9d3a7ce4808ff2f287a3390f941ff22a98511254cb65b649e",
+    "v07_final_package_check.json": "4e43ac3b5dcd8bfa104883f9090c60f688eab91e675768809ca4681b172a70a6",
+    "v07_final_package_check.txt": "0429941785c7100e5eab2ba0e0a45750cf2bbad247c8ce0428e620ddc6705ad9",
+    "v07_package.json": "0a8aef35d64510ef3790dcf94312f644031566dc41ee689cc7b07e55d61026c2",
+    "v07_package.txt": "079fa479539dbe53a0af119ca9c04168a69964c1190c95a34f1b9a6e23b8d358",
+    "v07_pdf_final.json": "1cf9149be6f459fa62abcd63f8b286515c64f9cf5026809b258a819e1b12aa56",
+    "v07_pdf_final.txt": "509bbe266d7971fa479b1e0887a7a644ede1c6c101f03622726fb30ccd6f0041",
+    "v07_root_lean.json": "100427609d365c0ea7bd2527386b87954b77dd8253dcbe4c69e135668c0bcd29",
+    "v07_root_lean.txt": "f2ad6b7aaa3366d17e59dc1403768b721c5913e218e9960be2b10beb12dc9feb"
+  }
+}

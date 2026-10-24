@@ -1,0 +1,101 @@
+{
+  "source": "Supplied v1.4.0 revision attachments",
+  "file_count": 19,
+  "files": [
+    {
+      "file": "contextual_prediction_change_log.md",
+      "bytes": 2659,
+      "sha256": "fda21cce4ac9d99288e5095e5e9275d0d438db41faeadb2a79d2cc10caf2aee2"
+    },
+    {
+      "file": "contextual_prediction_math_spine.json",
+      "bytes": 2085,
+      "sha256": "e984b7ee8d8d55709c504a1b8a3c429a549d2d53d684ef1cc8ce6c5eb3946805"
+    },
+    {
+      "file": "contextual_prediction_math_spine.md",
+      "bytes": 2671,
+      "sha256": "3755b41a03214a1bd2f721bce4d29cb6fb5a470470e100bd68ec3c7331f0dabd"
+    },
+    {
+      "file": "contextual_prediction_monograph.md",
+      "bytes": 24458,
+      "sha256": "f98d8424a4862594518a36d044b0b12afe0fa45b026a2de6368a7f372f235908"
+    },
+    {
+      "file": "contextual_prediction_monograph.pdf",
+      "bytes": 69806,
+      "sha256": "96677afe88482af2f98038d0c3b8f13cd5213a5f913ce83e279388f2c22fe02f"
+    },
+    {
+      "file": "contextual_prediction_monograph.tex",
+      "bytes": 32425,
+      "sha256": "7b4d3d99c6f8074b42d061a1422e7b24d0d33c144b3040c5bb16661c6c5a4fcd"
+    },
+    {
+      "file": "contextual_prediction_monograph.txt",
+      "bytes": 24294,
+      "sha256": "1675211c04dd468934335417fa2f689e8a436c882b4e34438a34f1b8c102903f"
+    },
+    {
+      "file": "contextuality_lp.py",
+      "bytes": 10982,
+      "sha256": "e3c01a96f6fd06d842e267900eff2ac65a793d5250fa91298dbd08278db5b9cc"
+    },
+    {
+      "file": "epistemic_kernel.py",
+      "bytes": 9729,
+      "sha256": "0c8aaa013dbecc2590256024c8b5bd1480b9937db4661d13d25098bc58809bfd"
+    },
+    {
+      "file": "future_observation.py",
+      "bytes": 1268,
+      "sha256": "4480b0240d68b229f61ca94c356dcfc370623f0de04d6528f69e4f13d5b0a872"
+    },
+    {
+      "file": "Census(7).lean",
+      "bytes": 4632,
+      "sha256": "ea851884b6c496252444d91645dd6070c5168810f5bfe8bc998ea4b45ed1605d"
+    },
+    {
+      "file": "FullCensus(1).lean",
+      "bytes": 813,
+      "sha256": "5d42c9a02b5dbd58ce48a90c4625417535237572856c40a630f2647e29df25eb"
+    },
+    {
+      "file": "ContextualDuality.lean",
+      "bytes": 18054,
+      "sha256": "b7f1c89e83ded9794d921e5ed7e5a64523e5af59092839ad1f9e255a314f0f4a"
+    },
+    {
+      "file": "RationalCertificates.lean",
+      "bytes": 11137,
+      "sha256": "4cca82f3f9ddf27d5064ff78886078b7c97abf3ec07d31c062f815bdf316297f"
+    },
+    {
+      "file": "Bridge.lean",
+      "bytes": 2884,
+      "sha256": "8cfe2598ae5d3e1ca26071cd72a5b63713a62a3a2fea98824e5c9e3e429c640b"
+    },
+    {
+      "file": "ResultI.lean",
+      "bytes": 4795,
+      "sha256": "56a8821a5ffccd1324b5ffa72a2fa51257345e9d50da1aedb6ac2bff77e3e7be"
+    },
+    {
+      "file": "ResultII.lean",
+      "bytes": 3157,
+      "sha256": "e2582a0396d5e83b836d4a49c7026dd0f94518d5ea73e6157283eaa6cd924801"
+    },
+    {
+      "file": "ResultIII.lean",
+      "bytes": 4881,
+      "sha256": "b3307cde62179f8d2147b7edd16b34a78559da4301dcb5d5d3b10d05b1a2ece2"
+    },
+    {
+      "file": "ResultIV.lean",
+      "bytes": 8504,
+      "sha256": "61fbc497a019bf9a8565e6bbcc18560f270a45ac6d41b229a2ddd0607ebe5614"
+    }
+  ]
+}

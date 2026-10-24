@@ -1,0 +1,3 @@
+[console_scripts]
+rsi-memory = memory_cli:main
+rsi-transitions = rsi_transition_harness:main

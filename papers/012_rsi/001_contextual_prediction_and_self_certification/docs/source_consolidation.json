@@ -1,0 +1,292 @@
+{
+  "schema": "rsi.precursor-consolidation.v1",
+  "date": "2026-10-22",
+  "retired_package": "001_finite_obstruction_calculus/002_asi_no_go_theorem_epistemic_contextuality",
+  "successor_package": "012_rsi/001_contextual_prediction_and_self_certification",
+  "successor_version": "1.6.1",
+  "repository_head_at_capture": "28a98c069133de6165f4461b19af943d3e32e1f4",
+  "source_files": [
+    {
+      "source": "002_asi_no_go_theorem_epistemic_contextuality_2026-10-17.zip",
+      "sha256_at_retirement": "bf4ac47710a9f651bc25e5e45defc7a13b9bb4a9ddf5ac631ebb683fbe2dd8c6",
+      "sha256_at_original_adaptation": "bf4ac47710a9f651bc25e5e45defc7a13b9bb4a9ddf5ac631ebb683fbe2dd8c6",
+      "disposition": "retired_release_archive",
+      "successor_path": null
+    },
+    {
+      "source": "code/deposit_paths.py",
+      "sha256_at_retirement": "37c4f3b5da608d38bffd5315ef73a79e066d2fd96b219325e818941e1b3dac62",
+      "sha256_at_original_adaptation": "37c4f3b5da608d38bffd5315ef73a79e066d2fd96b219325e818941e1b3dac62",
+      "disposition": "superseded_by_successor",
+      "successor_path": "code/deposit_paths.py",
+      "successor_sha256_before_consolidation": "5787aa7752dddaf56b3342d482b04692fe8ef94b2c4e7e649f07c1903745a1ef"
+    },
+    {
+      "source": "code/epistemic_kernel.py",
+      "sha256_at_retirement": "2e8a1afaf2ba0ffcd6c27f354c02e4cf7c6d26994b652ab6728e7476ba6ac078",
+      "sha256_at_original_adaptation": "2e8a1afaf2ba0ffcd6c27f354c02e4cf7c6d26994b652ab6728e7476ba6ac078",
+      "disposition": "superseded_by_successor",
+      "successor_path": "code/epistemic_kernel.py",
+      "successor_sha256_before_consolidation": "8211a3d7e61688c21de6a4a4d1e1e2e3a4501ccdb67aaef21024744be8a1fa5e"
+    },
+    {
+      "source": "code/tests/test_epistemic_kernel.py",
+      "sha256_at_retirement": "6aab085ac21421db3996fe56874debf2eaaaf1ee5a1a53eaceae38f868baabd9",
+      "sha256_at_original_adaptation": "6aab085ac21421db3996fe56874debf2eaaaf1ee5a1a53eaceae38f868baabd9",
+      "disposition": "retained_verbatim",
+      "successor_path": "code/tests/test_epistemic_kernel.py",
+      "successor_sha256_before_consolidation": "6aab085ac21421db3996fe56874debf2eaaaf1ee5a1a53eaceae38f868baabd9"
+    },
+    {
+      "source": "docs/descriptions.md",
+      "sha256_at_retirement": "7aa67997f80391baea8a5c36731b885dc7c1c2cf4fd7ee78183896617201892b",
+      "sha256_at_original_adaptation": "7aa67997f80391baea8a5c36731b885dc7c1c2cf4fd7ee78183896617201892b",
+      "disposition": "superseded_by_successor",
+      "successor_path": "docs/descriptions.md",
+      "successor_sha256_before_consolidation": "23ba4ae9175e607c56bf84ce06125798f126e2e93651e7dc46f99902dc29fd69"
+    },
+    {
+      "source": "docs/keywords.md",
+      "sha256_at_retirement": "055c270d5f69d1bc4c63641c66bfd5233dcca61370721d241672ed64cabc77e7",
+      "sha256_at_original_adaptation": "055c270d5f69d1bc4c63641c66bfd5233dcca61370721d241672ed64cabc77e7",
+      "disposition": "superseded_by_successor",
+      "successor_path": "docs/keywords.md",
+      "successor_sha256_before_consolidation": "0fdb83da401db4d344af2af75b6f0121d4c4db08dea625d2f78322edf1ed9062"
+    },
+    {
+      "source": "docs/legacy_float_kernel_listings.md",
+      "sha256_at_retirement": "94fff4a8e362dca37092758b06aacf1a1a373ab2e7277e593f60a6fbba33085c",
+      "sha256_at_original_adaptation": "94fff4a8e362dca37092758b06aacf1a1a373ab2e7277e593f60a6fbba33085c",
+      "disposition": "retained_verbatim",
+      "successor_path": "docs/precursor_legacy_float_kernel_listings.md",
+      "successor_sha256_before_consolidation": "94fff4a8e362dca37092758b06aacf1a1a373ab2e7277e593f60a6fbba33085c"
+    },
+    {
+      "source": "docs/mechanization_map.md",
+      "sha256_at_retirement": "4cab91a7203c35fea05ffee0f7bf5039938ed34d68edb2498f9f5a068e32b670",
+      "sha256_at_original_adaptation": "4cab91a7203c35fea05ffee0f7bf5039938ed34d68edb2498f9f5a068e32b670",
+      "disposition": "retained_verbatim",
+      "successor_path": "docs/precursor_mechanization_map.md",
+      "successor_sha256_before_consolidation": "4cab91a7203c35fea05ffee0f7bf5039938ed34d68edb2498f9f5a068e32b670"
+    },
+    {
+      "source": "docs/quick_start.md",
+      "sha256_at_retirement": "8ec1800fbd149f306662d86ba7bbf5cd3d1892568c565969abb249a34ebd3e39",
+      "sha256_at_original_adaptation": "8ec1800fbd149f306662d86ba7bbf5cd3d1892568c565969abb249a34ebd3e39",
+      "disposition": "superseded_by_successor",
+      "successor_path": "docs/quick_start.md",
+      "successor_sha256_before_consolidation": "d0bb066b9de313beb7f008454e2da197a5dfc8d791c81a51294346d7ded00294"
+    },
+    {
+      "source": "docs/references.md",
+      "sha256_at_retirement": "6964a020ed8e9d6deeac5ff7b287ae1fde888681bebfa0fa8d1ee4a87d5da845",
+      "sha256_at_original_adaptation": "6964a020ed8e9d6deeac5ff7b287ae1fde888681bebfa0fa8d1ee4a87d5da845",
+      "disposition": "retained_verbatim",
+      "successor_path": "docs/precursor_references.md",
+      "successor_sha256_before_consolidation": "6964a020ed8e9d6deeac5ff7b287ae1fde888681bebfa0fa8d1ee4a87d5da845"
+    },
+    {
+      "source": "epistemic_no_go_change_log.md",
+      "sha256_at_retirement": "feee65e812f9e150d77cc0d5c8b0f6dcfe3868038f53de578e08205d159c383f",
+      "sha256_at_original_adaptation": "feee65e812f9e150d77cc0d5c8b0f6dcfe3868038f53de578e08205d159c383f",
+      "disposition": "retained_verbatim",
+      "successor_path": "docs/precursor_change_log.md",
+      "successor_sha256_before_consolidation": "feee65e812f9e150d77cc0d5c8b0f6dcfe3868038f53de578e08205d159c383f"
+    },
+    {
+      "source": "epistemic_no_go_monograph.md",
+      "sha256_at_retirement": "ca49d82f9afc0dec2e9a8f3e0569295150218f269b61666e1e5d0296271faef1",
+      "sha256_at_original_adaptation": "ca49d82f9afc0dec2e9a8f3e0569295150218f269b61666e1e5d0296271faef1",
+      "disposition": "retained_verbatim",
+      "successor_path": "docs/precursor_monograph.md",
+      "successor_sha256_before_consolidation": "ca49d82f9afc0dec2e9a8f3e0569295150218f269b61666e1e5d0296271faef1"
+    },
+    {
+      "source": "lean4/axiom_report.txt",
+      "sha256_at_retirement": "69b94ca2fe95ef8862419b00581d212a8d3445392c20ff0acba19266c7661d4e",
+      "sha256_at_original_adaptation": "69b94ca2fe95ef8862419b00581d212a8d3445392c20ff0acba19266c7661d4e",
+      "disposition": "superseded_by_successor",
+      "successor_path": "lean4/axiom_report.txt",
+      "successor_sha256_before_consolidation": "be8d0903508a7960b75077188dde6b84544c055fedc3a4bca00901aa71ad666c"
+    },
+    {
+      "source": "lean4/Census.lean",
+      "sha256_at_retirement": "31ddd2e5dd129a383467188e329edd13eaccb78e052f483828d3a063b6d2b757",
+      "sha256_at_original_adaptation": "31ddd2e5dd129a383467188e329edd13eaccb78e052f483828d3a063b6d2b757",
+      "disposition": "superseded_by_successor",
+      "successor_path": "lean4/Census.lean",
+      "successor_sha256_before_consolidation": "ab583432cd1fbd51cac370c695b64375c1b2cde669bc0533d8d228beb05dcc9b"
+    },
+    {
+      "source": "lean4/Core.lean",
+      "sha256_at_retirement": "5d98e8dd3cb4a780c4b70c24cae1aec3238edb802651743d7bef948230d346df",
+      "sha256_at_original_adaptation": "5d98e8dd3cb4a780c4b70c24cae1aec3238edb802651743d7bef948230d346df",
+      "disposition": "superseded_by_successor",
+      "successor_path": "lean4/Core.lean",
+      "successor_sha256_before_consolidation": "925aa7ffa60c6ee81c20563846bebd221addb4fccf9e0079dc5415dcb04bdae9"
+    },
+    {
+      "source": "lean4/lake-manifest.json",
+      "sha256_at_retirement": "8a7c879547da26af01335c4624773af7060f946b05833ba0c7a535437c991824",
+      "sha256_at_original_adaptation": "8a7c879547da26af01335c4624773af7060f946b05833ba0c7a535437c991824",
+      "disposition": "superseded_by_successor",
+      "successor_path": "lean4/lake-manifest.json",
+      "successor_sha256_before_consolidation": "9f15b442d800f27b0f68336d1e0651555313100bdd4c415313b80b69452c5725"
+    },
+    {
+      "source": "lean4/lakefile.lean",
+      "sha256_at_retirement": "678455679625170e738126d7d39b3c4ea064a10f3e480d14d402e9bde74c733b",
+      "sha256_at_original_adaptation": "678455679625170e738126d7d39b3c4ea064a10f3e480d14d402e9bde74c733b",
+      "disposition": "superseded_by_successor",
+      "successor_path": "lean4/lakefile.lean",
+      "successor_sha256_before_consolidation": "2dfa456b68334ec48db32d17d5fc099b4dca1d304230d62fbba974ad4f966ea6"
+    },
+    {
+      "source": "lean4/lean-toolchain",
+      "sha256_at_retirement": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+      "sha256_at_original_adaptation": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+      "disposition": "retained_verbatim",
+      "successor_path": "lean4/lean-toolchain",
+      "successor_sha256_before_consolidation": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c"
+    },
+    {
+      "source": "lean4/ResultI.lean",
+      "sha256_at_retirement": "56a8821a5ffccd1324b5ffa72a2fa51257345e9d50da1aedb6ac2bff77e3e7be",
+      "sha256_at_original_adaptation": "56a8821a5ffccd1324b5ffa72a2fa51257345e9d50da1aedb6ac2bff77e3e7be",
+      "disposition": "retained_verbatim",
+      "successor_path": "lean4/ResultI.lean",
+      "successor_sha256_before_consolidation": "56a8821a5ffccd1324b5ffa72a2fa51257345e9d50da1aedb6ac2bff77e3e7be"
+    },
+    {
+      "source": "lean4/ResultII.lean",
+      "sha256_at_retirement": "e2582a0396d5e83b836d4a49c7026dd0f94518d5ea73e6157283eaa6cd924801",
+      "sha256_at_original_adaptation": "e2582a0396d5e83b836d4a49c7026dd0f94518d5ea73e6157283eaa6cd924801",
+      "disposition": "retained_verbatim",
+      "successor_path": "lean4/ResultII.lean",
+      "successor_sha256_before_consolidation": "e2582a0396d5e83b836d4a49c7026dd0f94518d5ea73e6157283eaa6cd924801"
+    },
+    {
+      "source": "lean4/ResultIII.lean",
+      "sha256_at_retirement": "b3307cde62179f8d2147b7edd16b34a78559da4301dcb5d5d3b10d05b1a2ece2",
+      "sha256_at_original_adaptation": "b3307cde62179f8d2147b7edd16b34a78559da4301dcb5d5d3b10d05b1a2ece2",
+      "disposition": "retained_verbatim",
+      "successor_path": "lean4/ResultIII.lean",
+      "successor_sha256_before_consolidation": "b3307cde62179f8d2147b7edd16b34a78559da4301dcb5d5d3b10d05b1a2ece2"
+    },
+    {
+      "source": "lean4/ResultIV.lean",
+      "sha256_at_retirement": "61fbc497a019bf9a8565e6bbcc18560f270a45ac6d41b229a2ddd0607ebe5614",
+      "sha256_at_original_adaptation": "61fbc497a019bf9a8565e6bbcc18560f270a45ac6d41b229a2ddd0607ebe5614",
+      "disposition": "retained_verbatim",
+      "successor_path": "lean4/ResultIV.lean",
+      "successor_sha256_before_consolidation": "61fbc497a019bf9a8565e6bbcc18560f270a45ac6d41b229a2ddd0607ebe5614"
+    },
+    {
+      "source": "LICENSE",
+      "sha256_at_retirement": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+      "sha256_at_original_adaptation": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+      "disposition": "retained_verbatim",
+      "successor_path": "LICENSE",
+      "successor_sha256_before_consolidation": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94"
+    },
+    {
+      "source": "LICENSE-CODE",
+      "sha256_at_retirement": "fdc1b580085fb2812b93559cd3d5568149dc027d2616b6c636eaee6126a82bb4",
+      "sha256_at_original_adaptation": "fdc1b580085fb2812b93559cd3d5568149dc027d2616b6c636eaee6126a82bb4",
+      "disposition": "retained_verbatim",
+      "successor_path": "LICENSE-CODE",
+      "successor_sha256_before_consolidation": "fdc1b580085fb2812b93559cd3d5568149dc027d2616b6c636eaee6126a82bb4"
+    },
+    {
+      "source": "MANIFEST.sha256",
+      "sha256_at_retirement": "6094216425d62de289413d253c13b37cc33d820392c3511ad9e789eacd2b4d60",
+      "sha256_at_original_adaptation": "6094216425d62de289413d253c13b37cc33d820392c3511ad9e789eacd2b4d60",
+      "disposition": "superseded_by_successor",
+      "successor_path": "MANIFEST.sha256",
+      "successor_sha256_before_consolidation": "a48a1976b753d4031d805ecbfa68775211c2e43e09c1c0bb25a03ef5b160876c"
+    },
+    {
+      "source": "pyproject.toml",
+      "sha256_at_retirement": "ecf49fb091d02e5acd1e77b4c6a88f0b06454b104ef38e98824c3d2c4b4f9c22",
+      "sha256_at_original_adaptation": "ecf49fb091d02e5acd1e77b4c6a88f0b06454b104ef38e98824c3d2c4b4f9c22",
+      "disposition": "superseded_by_successor",
+      "successor_path": "pyproject.toml",
+      "successor_sha256_before_consolidation": "652e800025f8b8ee16355ac925917467e6fc49221404f4530b4f0c2c582d36d4"
+    },
+    {
+      "source": "README.md",
+      "sha256_at_retirement": "7398be73c4d7c0093384ea1281cf33e3d0b674f6f3a72c50c8709606d612492c",
+      "sha256_at_original_adaptation": "7398be73c4d7c0093384ea1281cf33e3d0b674f6f3a72c50c8709606d612492c",
+      "disposition": "retained_verbatim",
+      "successor_path": "docs/precursor_readme.md",
+      "successor_sha256_before_consolidation": "7398be73c4d7c0093384ea1281cf33e3d0b674f6f3a72c50c8709606d612492c"
+    },
+    {
+      "source": "scripts/build_deposit_zip.py",
+      "sha256_at_retirement": "fc21f6119be966f4c3acfce58164e4d5b22360c0603081727cf5c6639a604675",
+      "sha256_at_original_adaptation": "fc21f6119be966f4c3acfce58164e4d5b22360c0603081727cf5c6639a604675",
+      "disposition": "retained_verbatim",
+      "successor_path": "scripts/build_deposit_zip.py",
+      "successor_sha256_before_consolidation": "fc21f6119be966f4c3acfce58164e4d5b22360c0603081727cf5c6639a604675"
+    },
+    {
+      "source": "scripts/regen_sha256sums.py",
+      "sha256_at_retirement": "2ec060492be0f7af01f4bf2b719da5076af7e3a0858182282c274fbaefb0731f",
+      "sha256_at_original_adaptation": "2ec060492be0f7af01f4bf2b719da5076af7e3a0858182282c274fbaefb0731f",
+      "disposition": "retained_verbatim",
+      "successor_path": "scripts/regen_sha256sums.py",
+      "successor_sha256_before_consolidation": "2ec060492be0f7af01f4bf2b719da5076af7e3a0858182282c274fbaefb0731f"
+    },
+    {
+      "source": "SHA256SUMS",
+      "sha256_at_retirement": "83eddaf9cc2e44eee7e2c494a3b3c7fd59ce8aa29b7149b901262f069af94ee2",
+      "sha256_at_original_adaptation": "83eddaf9cc2e44eee7e2c494a3b3c7fd59ce8aa29b7149b901262f069af94ee2",
+      "disposition": "superseded_by_successor",
+      "successor_path": "SHA256SUMS",
+      "successor_sha256_before_consolidation": "cf1b78490a0e189b3f2723c5241ec62bfa15e6798a559264f5da95c121230775"
+    },
+    {
+      "source": "tools/rebuild_release.py",
+      "sha256_at_retirement": "e30952640a1dc507e1c8ebeebfd6cd3b003e99191903ace3856db7d484260df7",
+      "sha256_at_original_adaptation": "e30952640a1dc507e1c8ebeebfd6cd3b003e99191903ace3856db7d484260df7",
+      "disposition": "retained_verbatim",
+      "successor_path": "tools/rebuild_release.py",
+      "successor_sha256_before_consolidation": "e30952640a1dc507e1c8ebeebfd6cd3b003e99191903ace3856db7d484260df7"
+    },
+    {
+      "source": "tools/replay_full_axiom_census.py",
+      "sha256_at_retirement": "10e67d6e6e33f51deb60466da1d5172b31c2613b18d01c8276eaa701282c69a1",
+      "sha256_at_original_adaptation": "10e67d6e6e33f51deb60466da1d5172b31c2613b18d01c8276eaa701282c69a1",
+      "disposition": "superseded_by_successor",
+      "successor_path": "tools/replay_full_axiom_census.py",
+      "successor_sha256_before_consolidation": "19147e46d7ece3479d61fd43032adc6e876304d12ba93caa9b5b93d3eb40e990"
+    },
+    {
+      "source": "tools/replay_lean_axiom_census.py",
+      "sha256_at_retirement": "c73bf94a0b15a3c7017578f4983a9044f3896609325bda2a7e7ddfba6c44f00d",
+      "sha256_at_original_adaptation": "c73bf94a0b15a3c7017578f4983a9044f3896609325bda2a7e7ddfba6c44f00d",
+      "disposition": "superseded_by_successor",
+      "successor_path": "tools/replay_lean_axiom_census.py",
+      "successor_sha256_before_consolidation": "56fda7686302bd45fbc4c9fcccc7ea7115216b04fb1de3b92fa660d93bd51594"
+    },
+    {
+      "source": "verify_deposit.py",
+      "sha256_at_retirement": "1c5807bbc9ed9e717739bee6538430c6e5693255586ebcb1981232648565c79a",
+      "sha256_at_original_adaptation": "1c5807bbc9ed9e717739bee6538430c6e5693255586ebcb1981232648565c79a",
+      "disposition": "superseded_by_successor",
+      "successor_path": "verify_deposit.py",
+      "successor_sha256_before_consolidation": "09ee017e4b59cac102d2e122fd8a43dc57abbe46bf12bc640d38ba02392b700f"
+    },
+    {
+      "source": "zenodo_metadata.json",
+      "sha256_at_retirement": "765530bc64ebf469482203566cc94870c9c385a26d02276a8bbdbf662aff31b9",
+      "sha256_at_original_adaptation": "765530bc64ebf469482203566cc94870c9c385a26d02276a8bbdbf662aff31b9",
+      "disposition": "superseded_by_successor",
+      "successor_path": "zenodo_metadata.json",
+      "successor_sha256_before_consolidation": "54462db6bce4b3c8d881f95eeaa9661aa1051f21d09b287f1a1de5635e2791a6"
+    }
+  ],
+  "note": "All 35 source files accounted for before removal. Retained source bytes and earlier capture hashes remain distinct. Historical build metadata and archives are superseded, not asserted current.",
+  "toolchain_reconciliation": "The loose precursor lean-toolchain had already changed to Lean 4.35.0 after the original capture. Its original capture hash is preserved; no proof-source drift was found.",
+  "scope": "Editorial retirement and source custody; no new mathematical result, runtime-memory integration, or independent publication review."
+}

@@ -1,0 +1,315 @@
+COMMAND ['-m', 'pytest', '-q', 'code\\tests\\test_bell_certificates.py', 'code\\tests\\test_chain_comparisons.py', 'code\\tests\\test_chained_quantum.py']
+................................                                         [100%]
+32 passed in 9.22s
+
+COMMAND ['-m', 'pytest', '-q', 'code\\tests\\test_contextual_fraction.py', 'code\\tests\\test_quantum_evolution.py', 'code\\tests\\test_review_certificates.py']
+....................                                                     [100%]
+20 passed in 2.54s
+
+COMMAND ['-m', 'pytest', '-q', 'code\\tests\\test_smoothed_gram.py']
+........                                                                 [100%]
+8 passed in 0.07s
+
+COMMAND ['code/reproduce_examples.py']
+{
+  "status": "passed",
+  "exact_CHSH_parameters": [
+    "0",
+    "1/4",
+    "1/2",
+    "3/4",
+    "1"
+  ],
+  "floating_LP_parameters": 7,
+  "max_LP_absolute_error": 1.1102230246251565e-16,
+  "two_qubit_times_checked": 5,
+  "max_state_absolute_error": 8.881784197001252e-16,
+  "Mermin_assignments_checked": 64,
+  "Mermin_Q1_Born_cells_checked": 64,
+  "Mermin_Q1_max_absolute_error": 5.551115123125783e-17,
+  "Mermin_repair_parameters_checked": 6,
+  "Mermin_repair_max_absolute_error": 1.3877787807814457e-17,
+  "phase_fiber_and_finite_inference_checks": "passed"
+}
+
+COMMAND ['docs/source_inputs/verify_obstruction.py']
+Exact-arithmetic verification: obstruction calculus for the
+CHSH scenario and the observer module (fractions only).
+
+========================================================================
+C0  simplex self-tests
+========================================================================
+  [PASS] selftest eq+ge   value = 4
+  [PASS] selftest min -x, x<=3   value = -3
+  [PASS] selftest infeasible
+  [PASS] selftest unbounded
+  [PASS] selftest maximize   value = 5
+  [PASS] selftest Beale (anti-cycling)   value = -1/20
+
+========================================================================
+C1  CHSH local bound at the deterministic vertices
+========================================================================
+  [PASS] K(lambda) in {+2,-2} and S(vertex) = K(lambda) for all 16   values: [Fraction(-2, 1), Fraction(2, 1)]
+  [PASS] column sums = 4 and T(uniform) = uniform behavior
+
+========================================================================
+C2  im(T) is contained in the no-signalling subspace
+========================================================================
+  [PASS] N @ (T e_lambda) = 0 for all 16 vertices
+
+========================================================================
+C3  Lemma L1: T({q : sum q = 1}) = normalized NS tables
+========================================================================
+  [PASS] rank(T) = 9 (linear span of the 16 vertices)   rank = 9
+  [PASS] ambient rank of the NS functionals = 7   rank = 7
+  [PASS] dim V_NS = 9 (constructive basis)   dim = 9
+  [PASS] context sums coincide across contexts on V_NS
+  [PASS] dim aff(L) = rank(T restricted to {sum q = 0}) = 8   rank = 8
+  [PASS] PR box admits an exact normalized signed preimage
+
+========================================================================
+C4  Positive extension at v = 3/8 (interior) and v = 1/2 (boundary)
+========================================================================
+  [PASS] explicit positive extension for v = 3/8   T q* = p_v exactly, sum q* = 1
+  [PASS] explicit positive extension for v = 1/2   T q* = p_v exactly, sum q* = 1
+
+========================================================================
+C5  No positive extension at v = 51/100
+========================================================================
+  [PASS] LP detects infeasibility exactly   (v = 51/100 > 1/2: outside the local polytope)
+
+========================================================================
+C6  LP (29): R(v) = max(0, (2v-1)/4) on the isotropic line
+========================================================================
+  [PASS] R(3/8) = 0   LP value = 0  (=0.000000)
+  [PASS] R(5/8) = 1/16   LP value = 1/16  (=0.062500)
+  [PASS] R(70/99) = 41/396   LP value = 41/396  (=0.103535)
+  [PASS] R(1) = 1/4   LP value = 1/4  (=0.250000)
+
+========================================================================
+C7  Exact LP duality for (29) + CHSH witness attainment
+========================================================================
+  [PASS] strong duality at v = 3/8   primal = 0, dual = 0, ||B*||_inf <= 1/8, witness s/8 gives -1/16
+  [PASS] strong duality at v = 5/8   primal = 1/16, dual = 1/16, ||B*||_inf <= 1/8, witness s/8 gives 1/16
+  [PASS] strong duality at v = 70/99   primal = 41/396, dual = 41/396, ||B*||_inf <= 1/8, witness s/8 gives 41/396
+  [PASS] strong duality at v = 1   primal = 1/4, dual = 1/4, ||B*||_inf <= 1/8, witness s/8 gives 1/4
+
+========================================================================
+C8  Negative-mass LP: primal = dual exactly
+========================================================================
+  [PASS] N(local box v = 3/8) = 0   value = 0
+  [PASS] N(v = 5/8): primal = dual   N = 1/8
+  [PASS] N(v = 1): primal = dual   N = 1/2
+
+========================================================================
+C9  Signalling table has no normalized signed preimage
+========================================================================
+  [PASS] negative-mass LP infeasible for signalling p   (max NS residual = 1/4 != 0, consistent with Lemma L1)
+
+========================================================================
+C10  Stability: the 8-epsilon bound at a perturbed isotropic box
+========================================================================
+  [PASS] ||p~ - p||_pi = 1/400   eps = 1/400
+  [PASS] R(p~) >= (|S(p~)| - 2 - 8 eps)/8 = 1/16 exactly   bound = 1/16, R(p~) = 13/200
+
+========================================================================
+C11  Observer module: fiber determinacy theorems
+========================================================================
+  [PASS] minimax floor = half the fiber task-diameter   floor = 1/2
+  [PASS] midpoint predictor attains the floor   error = 1/2
+  [PASS] no predictor beats the floor on the nontrivial fiber   grid optimum on fiber {0,1} = 1/2
+  [PASS] refinement monotonicity: floor(O') <= floor(O)   floor' = 0
+  [PASS] report-preserving update leaves the floor unchanged   floor = 1/2
+  [PASS] evidence-gain criterion: z separates the extremal pair   gain = 1/2
+  [PASS] constant z carries no evidence: gain = 0
+
+========================================================================
+SUMMARY
+========================================================================
+39/39 checks passed.
+
+Exact certificates for the notes (printed, not asserted):
+  v = 5/8: R = 1/16; primal optimizer q* (16 weights):
+    [Fraction(3, 32), Fraction(3, 32), Fraction(0, 1), Fraction(0, 1), Fraction(3, 32), Fraction(0, 1), Fraction(7, 32), Fraction(0, 1), Fraction(0, 1), Fraction(7, 32), Fraction(0, 1), Fraction(3, 32), Fraction(0, 1), Fraction(0, 1), Fraction(3, 32), Fraction(3, 32)]
+  v = 5/8: nearest local behavior ell* = T q*:
+    [Fraction(9, 32), Fraction(7, 32), Fraction(7, 32), Fraction(9, 32), Fraction(13, 32), Fraction(3, 32), Fraction(3, 32), Fraction(13, 32), Fraction(13, 32), Fraction(3, 32), Fraction(3, 32), Fraction(13, 32), Fraction(3, 32), Fraction(13, 32), Fraction(13, 32), Fraction(3, 32)]
+  v = 5/8: dual optimizer B* = [Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8)]
+           beta* = 1/4  (max_lambda B*.l_lambda)
+  v = 1  : dual optimizer B* = [Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(-1, 8), Fraction(1, 8), Fraction(1, 8), Fraction(-1, 8)]
+  v = 1  : N(PR) = 1/2; sum q+ = 3/2, sum q- = 1/2
+
+COMMAND ['code/review_certificates.py']
+PASS independent exact checks: 8 repair and 7 negative-mass certificates; actual-table uncertainty floor
+
+COMMAND ['code/contextual_fraction.py']
+PASS 78 exact CF/N certificate cases: {'equal': 74, 'less': 3, 'greater': 1}
+
+COMMAND ['tools/generate_comparison_fixture.py']
+PASS exact Lean/Python comparison fixture binding
+
+COMMAND ['code/quantum_evolution.py']
+{
+  "times": 18,
+  "born_cells": 1152,
+  "LP_solves": 36,
+  "noisy_boundary_checks": 15,
+  "max_born_error": 2.7755575615628914e-17,
+  "max_optimum_error": 8.881784197001252e-16,
+  "max_unitary_error": 2.220446049250313e-16,
+  "CHSH_CF_cap": 0.41421356237309515,
+  "CHSH_N_cap": 0.20710678118654757,
+  "Mermin_CF_endpoint": 1,
+  "Mermin_N_endpoint": 0.5,
+  "scope": "Numerical consistency of explicit matrix evolution and independent LP solves; not an experimental result"
+}
+
+COMMAND ['code/chained_quantum.py']
+{
+  "exact_parameter_cases": 6,
+  "quantum_Born_cells": 36,
+  "deterministic_assignments": 64,
+  "exact_field": "Q(sqrt(3))",
+  "CF": "-2 + (3/2)*sqrt(3)",
+  "N_min": "-1/2 + (3/8)*sqrt(3)",
+  "CF_minus_2N": "-1 + (3/4)*sqrt(3)",
+  "ratio": 4,
+  "numerical_LP_error": 2.220446049250313e-16,
+  "scope": "Full nine-context two-party, three-setting quantum counterexample; no universal coefficient-four upper bound claimed"
+}
+
+COMMAND ['code/chain_comparisons.py']
+{
+  "contexts": 25,
+  "born_cells": 100,
+  "assignments": 1024,
+  "CF": "698/925",
+  "N_min": "167/925",
+  "ratio": "698/167",
+  "margin": "6/185",
+  "cycle_replays": [
+    {
+      "settings_per_party": 2,
+      "cycle_contexts": 4,
+      "exact_visibility": "3/4",
+      "ratio": 2,
+      "quantum_CF": 0.41421356237309515,
+      "quantum_N": 0.20710678118654757
+    },
+    {
+      "settings_per_party": 3,
+      "cycle_contexts": 6,
+      "exact_visibility": "5/6",
+      "ratio": 4,
+      "quantum_CF": 0.598076211353316,
+      "quantum_N": 0.149519052838329
+    },
+    {
+      "settings_per_party": 4,
+      "cycle_contexts": 8,
+      "exact_visibility": "7/8",
+      "ratio": 6,
+      "quantum_CF": 0.695518130045147,
+      "quantum_N": 0.11591968834085782
+    },
+    {
+      "settings_per_party": 5,
+      "cycle_contexts": 10,
+      "exact_visibility": "9/10",
+      "ratio": 8,
+      "quantum_CF": 0.7552825814757673,
+      "quantum_N": 0.09441032268447092
+    },
+    {
+      "settings_per_party": 6,
+      "cycle_contexts": 12,
+      "exact_visibility": "11/12",
+      "ratio": 10,
+      "quantum_CF": 0.7955549577344101,
+      "quantum_N": 0.07955549577344101
+    },
+    {
+      "settings_per_party": 7,
+      "cycle_contexts": 14,
+      "exact_visibility": "13/14",
+      "ratio": 12,
+      "quantum_CF": 0.8244953852727654,
+      "quantum_N": 0.06870794877273045
+    }
+  ],
+  "grid_checks": 128,
+  "scope": "Exact complete 5x5 counterexample; exact finite cycle replays; floating consistency for analytic all-size bounds. The cycle parity quotient and a full Bell table are distinct models."
+}
+
+COMMAND ['tools/verify_five_fixture.py']
+PASS exact Lean/Python binding: 10 directions and four certificate vectors
+
+COMMAND ['code/smoothed_gram.py']
+{
+  "schema": 1,
+  "scope": "exact finite replay; analytic family proof in manuscript",
+  "families": [
+    {
+      "k": "2",
+      "settings": "4",
+      "contexts": "16",
+      "cf_lower": "3/7",
+      "negative_mass_upper": "1/7",
+      "ratio_lower": "3"
+    },
+    {
+      "k": "3",
+      "settings": "9",
+      "contexts": "81",
+      "cf_lower": "46/73",
+      "negative_mass_upper": "8/73",
+      "ratio_lower": "23/4"
+    },
+    {
+      "k": "4",
+      "settings": "16",
+      "contexts": "256",
+      "cf_lower": "43/59",
+      "negative_mass_upper": "5/59",
+      "ratio_lower": "43/5"
+    },
+    {
+      "k": "5",
+      "settings": "25",
+      "contexts": "625",
+      "cf_lower": "92/117",
+      "negative_mass_upper": "8/117",
+      "ratio_lower": "23/2"
+    },
+    {
+      "k": "8",
+      "settings": "64",
+      "contexts": "4096",
+      "cf_lower": "427/491",
+      "negative_mass_upper": "21/491",
+      "ratio_lower": "61/3"
+    },
+    {
+      "k": "12",
+      "settings": "144",
+      "contexts": "20736",
+      "cf_lower": "4609/5041",
+      "negative_mass_upper": "143/5041",
+      "ratio_lower": "419/13"
+    }
+  ],
+  "complete_contexts_checked": 25810,
+  "exhaustive_assignments": 256,
+  "actual_small_signed_mass": "15/112"
+}
+
+COMMAND ['code/smoothed_quantum.py']
+{
+  "scope": "numerical Clifford/Born replay; not an all-size formal proof",
+  "k": 2,
+  "settings_per_party": 4,
+  "complete_contexts": 16,
+  "local_hilbert_dimension": 256,
+  "born_cells": 64,
+  "maximum_absolute_error": 2.498001995989008e-15,
+  "tolerance": 5e-13
+}

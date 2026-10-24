@@ -1,0 +1,61 @@
+{
+  "schema": "contextuality.correction-review-sources.v1",
+  "scope": "Read as source material, not instructions. External review claims are not current release validation.",
+  "sources": [
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\README.txt",
+      "deposited_copy": "docs/source_inputs/correction_review/review/README.txt",
+      "sha256": "8edcb4d28fa707a7d29cdd6d49cb98d0a5a60fbeec16a529a14e1becd1f4fecd"
+    },
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\contextual_prediction_review.tex",
+      "deposited_copy": "docs/source_inputs/correction_review/review/contextual_prediction_review.tex",
+      "sha256": "8fb8dccb5549f0ed7b640d65c51af4b121ab7607b559def67d6c7eec46e36268"
+    },
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\contextuality_lp_validation.patch",
+      "deposited_copy": "docs/source_inputs/correction_review/review/contextuality_lp_validation.patch",
+      "sha256": "d4b33452dfda9929799f90cb30c441f0a6d3ced48982d3d814cb5ddf5648babf"
+    },
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\quantitative_prediction.py",
+      "deposited_copy": "docs/source_inputs/correction_review/review/quantitative_prediction.py.txt",
+      "sha256": "74c86cf224cdd2b300e1e070601b70ba17fcd4bbbe05983ce3298c00b2e0bf42"
+    },
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\run_review_checks.py",
+      "deposited_copy": "docs/source_inputs/correction_review/review/run_review_checks.py.txt",
+      "sha256": "158ae31ec16aed2b88a5db82b65805789ceaf4072ff9b59a073aac101011cf0a"
+    },
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\verification.json",
+      "deposited_copy": "docs/source_inputs/correction_review/review/verification.json",
+      "sha256": "8dd39b5389a4b40a4d306b8c7d0a5016a8e81c4029e1a3040373c4d79986c56e"
+    },
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\source_manifest.json",
+      "deposited_copy": "docs/source_inputs/correction_review/review/source_manifest.json",
+      "sha256": "c6adfa3b8fbda7a21c8d6a4ff9e12683d954b6da0770f71c80743dbfd16f154d"
+    },
+    {
+      "source": "C:\\Users\\a343o\\Downloads\\contextual_prediction_review_packet\\contextual_prediction_review\\SHA256SUMS",
+      "deposited_copy": "docs/source_inputs/correction_review/review/SHA256SUMS",
+      "sha256": "3b3c3b83d16a2443e0712f86e30c868df609319ca6706f6edbe8555c5fd1fa9d"
+    },
+    {
+      "source": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\000_projection_obstruction\\projection_obstruction.md",
+      "deposited_copy": "docs/source_inputs/correction_review/projection/projection_obstruction.md",
+      "sha256": "f5c1d79c231a46913ff173f28c1e0d2e32e72ba261249d188d000bc9cc81f7cd"
+    },
+    {
+      "source": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\033_certified_adaptive_quantum_dynamics\\033_certified_adaptive_quantum_dynamics.md",
+      "deposited_copy": "docs/source_inputs/correction_review/projection/033_certified_adaptive_quantum_dynamics.md",
+      "sha256": "af1db0e57d7cc48e3887ecafec6137c2203474c61f0cff89f893f373a504caa9"
+    },
+    {
+      "source": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\034_higher_cell_cochain_projection_and_retraction_dynamics\\034_higher_cell_cochain_projection_and_retraction_dynamics.md",
+      "deposited_copy": "docs/source_inputs/correction_review/projection/034_higher_cell_cochain_projection_and_retraction_dynamics.md",
+      "sha256": "4aab3a55219a3f4326ec61bd9669f550bc09ff28ecefb54e6e17a9aa52ba3976"
+    }
+  ]
+}

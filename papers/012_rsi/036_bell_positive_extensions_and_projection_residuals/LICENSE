@@ -1,0 +1,26 @@
+PO-033 — Certified Adaptive Quantum Dynamics from Projection Residuals
+Dual license. Copyright (c) 2026 Jeremy H. Carroll & CODA Research Consortium.
+
+Text and figures: Creative Commons Attribution 4.0 International (CC-BY-4.0).
+
+  Covers 033_certified_adaptive_quantum_dynamics.md
+  and its rendered .tex and .pdf, the claim ledger and change log, and the prose in README.md.
+  You may share and adapt for any purpose provided appropriate credit is given,
+  a link to the license is supplied, and changes are indicated. No additional restrictions
+  may be applied.
+
+  Summary:    https://creativecommons.org/licenses/by/4.0/
+  Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Code and notebooks: Apache License 2.0.
+
+  Covers code/, jupyter_notebooks/ and lean4/.
+  Licensed under the Apache License, Version 2.0. You may not use these files except in compliance
+  with the License. Unless required by applicable law or agreed to in writing, software distributed
+  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+  either express or implied.
+
+  Legal code: https://www.apache.org/licenses/LICENSE-2.0
+
+This package authorizes nothing.
+A license grants reuse rights. It is not a warranty that any mathematical claim in this package holds.

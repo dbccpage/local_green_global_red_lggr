@@ -1,0 +1,59 @@
+FAIL: ℹ [2/10] Replayed RsiImpossible
+info: RsiImpossible.lean:686:0: 'RelationalRSI.rsi_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:687:0: 'RelationalRSI.rsi_internal_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:688:0: 'RelationalRSI.rsi_carrier_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:689:0: 'RelationalRSI.rsi_step_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:690:0: 'RelationalRSI.rsi_alignment_step_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:691:0: 'RelationalRSI.rsi_carrier_step_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:692:0: 'RelationalRSI.admittedGroundModel_aligned' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:693:0: 'RelationalRSI.counterexample_agent_cannot_be_aligned' does not depend on any axioms
+info: RsiImpossible.lean:694:0: 'RelationalRSI.rsi_decouples_within_carrier_bound' does not depend on any axioms
+info: RsiImpossible.lean:695:0: 'RelationalRSI.rsi_alignment_lost_within_carrier_bound' does not depend on any axioms
+info: RsiImpossible.lean:696:0: 'RelationalRSI.unbounded_budgeted_lifting_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:697:0: 'RelationalRSI.zero_budget_carrier_lift_impossible' does not depend on any axioms
+info: RsiImpossible.lean:698:0: 'RelationalRSI.interleaved_budgeted_lifting_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:699:0: 'RelationalRSI.unbounded_carrier_lifting_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:700:0: 'RelationalRSI.interleaved_carrier_lifting_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:701:0: 'RelationalRSI.coupled_rsi_decouples_within_product_bound' does not depend on any axioms
+info: RsiImpossible.lean:702:0: 'RelationalRSI.coupled_rsi_impossible' depends on axioms: [propext, Quot.sound]
+info: RsiImpossible.lean:703:0: 'RelationalRSI.asynchronous_coupled_rsi_decouples_within_product_bound' does not depend on any axioms
+info: RsiImpossible.lean:704:0: 'RelationalRSI.asynchronous_coupled_rsi_impossible' does not depend on any axioms
+info: RsiImpossible.lean:705:0: 'RelationalRSI.non_monotonic_rewired_rsi_decouples_within_product_bound' does not depend on any axioms
+info: RsiImpossible.lean:706:0: 'RelationalRSI.non_monotonic_rewired_rsi_impossible' does not depend on any axioms
+ℹ [3/10] Replayed RelationalRsiNoGo
+info: RelationalRsiNoGo.lean:739:0: 'OmegaRelationalRsi.witness_holonomy_obstruction' does not depend on any axioms
+info: RelationalRsiNoGo.lean:740:0: 'OmegaRelationalRsi.lemma1a_self_critique_non_verification' does not depend on any axioms
+info: RelationalRsiNoGo.lean:741:0: 'OmegaRelationalRsi.lemma1b_godel_diagonal_self_reference_obstruction' does not depend on any axioms
+info: RelationalRsiNoGo.lean:742:0: 'OmegaRelationalRsi.lemma1c_goodhart_metric_collapse_on_collision' does not depend on any axioms
+info: RelationalRsiNoGo.lean:743:0: 'OmegaRelationalRsi.lemma2a_nodup_length_le' does not depend on any axioms
+info: RelationalRsiNoGo.lean:744:0: 'OmegaRelationalRsi.lemma2b_epistemic_horizon_refinement_bound' does not depend on any axioms
+info: RelationalRsiNoGo.lean:745:0: 'OmegaRelationalRsi.lemma2c_licensed_lift_budget_bound' does not depend on any axioms
+info: RelationalRsiNoGo.lean:746:0: 'OmegaRelationalRsi.lemma3a_private_fiber_channel_invisibility' does not depend on any axioms
+info: RelationalRsiNoGo.lean:747:0: 'OmegaRelationalRsi.lemma3a_no_intersubjective_improvement_in_private_fiber' does not depend on any axioms
+info: RelationalRsiNoGo.lean:748:0: 'OmegaRelationalRsi.lemma3b_overlap_conflict_refuses_sheaf_descent' does not depend on any axioms
+info: RelationalRsiNoGo.lean:749:0: 'OmegaRelationalRsi.rsi_impossible' does not depend on any axioms
+info: RelationalRsiNoGo.lean:750:0: 'OmegaRelationalRsi.rsi_trilemma_obstruction' does not depend on any axioms
+info: RelationalRsiNoGo.lean:751:0: 'OmegaRelationalRsi.coupled_product_carrier_capacity' does not depend on any axioms
+info: RelationalRsiNoGo.lean:752:0: 'OmegaRelationalRsi.coupled_coadaptation_joint_horizon_bound' does not depend on any axioms
+info: RelationalRsiNoGo.lean:753:0: 'OmegaRelationalRsi.coupled_rsi_impossible' does not depend on any axioms
+info: RelationalRsiNoGo.lean:754:0: 'OmegaRelationalRsi.higher_cochain_obstruction' does not depend on any axioms
+info: RelationalRsiNoGo.lean:755:0: 'OmegaRelationalRsi.asynchronous_delayed_joint_horizon_bound' does not depend on any axioms
+info: RelationalRsiNoGo.lean:756:0: 'OmegaRelationalRsi.dynamic_rewiring_higher_cochain_obstruction' does not depend on any axioms
+info: RelationalRsiNoGo.lean:757:0: 'OmegaRelationalRsi.non_monotonic_rewired_joint_horizon_bound' does not depend on any axioms
+ℹ [7/10] Built ReviewCountermodels (2.2s)
+info: ReviewCountermodels.lean:68:0: 'ReviewCountermodels.succ_is_structurally_aligned' depends on axioms: [propext]
+info: ReviewCountermodels.lean:69:0: 'ReviewCountermodels.growing_trajectory_is_not_report_grounded' does not depend on any axioms
+info: ReviewCountermodels.lean:70:0: 'ReviewCountermodels.no_total_budget_satisfies_drop' does not depend on any axioms
+info: ReviewCountermodels.lean:71:0: 'ReviewCountermodels.no_total_refinement_satisfies_drop' does not depend on any axioms
+✖ [8/10] Building PrefixBounds (2.3s)
+trace: .> LEAN_PATH=C:\Users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\F004_papers\012_rsi\000_relational_reasoning_and_rsi_impossibility\lean4\.lake\build\lib\lean c:\Users\a343o\source\repos\.elan\toolchains\leanprover--lean4---v4.35.0\bin\lean.exe -j 1 C:\Users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\F004_papers\012_rsi\000_relational_reasoning_and_rsi_impossibility\lean4\PrefixBounds.lean -o C:\Users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\F004_papers\012_rsi\000_relational_reasoning_and_rsi_impossibility\lean4\.lake\build\lib\lean\PrefixBounds.olean -i C:\Users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\F004_papers\012_rsi\000_relational_reasoning_and_rsi_impossibility\lean4\.lake\build\lib\lean\PrefixBounds.ilean -c C:\Users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\F004_papers\012_rsi\000_relational_reasoning_and_rsi_impossibility\lean4\.lake\build\ir\PrefixBounds.c --setup C:\Users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\F004_papers\012_rsi\000_relational_reasoning_and_rsi_impossibility\lean4\.lake\build\ir\PrefixBounds.setup.json --json
+error: PrefixBounds.lean:56:12: Type mismatch: After simplification, term
+  hdrop k hk hl
+ has type
+  budget (k + 1) < budget k
+but is expected to have type
+  budget (k + 1) + 1 ≤ budget k
+Some required targets logged failures:
+- PrefixBounds
+error: build failed
+

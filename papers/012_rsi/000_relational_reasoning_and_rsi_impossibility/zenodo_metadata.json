@@ -1,0 +1,28 @@
+{
+  "title": "Relational Reasoning, Memory, and Embedded Knowledge",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-23",
+  "version": "1.2.3",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "Task-relative knowledge, exact recovery, future-preserving memory, checked append and recall, and enforced invariant-preserving transitions. Constructive Lean proofs accompany scoped finite-carrier RSI results and exact finite experiments. No universal intelligence ceiling is asserted. Includes source-checked persistent agent memory and captured live restart trials, retaining a failed arithmetic control.",
+  "keywords": [
+    "recursive self-improvement",
+    "relational reasoning",
+    "container-free ontology",
+    "goodhart decoupling",
+    "witness holonomy",
+    "sheaf descent",
+    "two-signal danger gate",
+    "lean 4",
+    "exact rational arithmetic"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python and Rust reference implementations and tests: PolyForm Noncommercial 1.0.0. To verify the deposit locally, run 'python -m pip install \".[dev]\"' followed by 'python -X utf8 -m pytest code/tests/test_rsi_impossible_lean_verification.py' and 'python -X utf8 verify_deposit.py --test --lean'."
+}

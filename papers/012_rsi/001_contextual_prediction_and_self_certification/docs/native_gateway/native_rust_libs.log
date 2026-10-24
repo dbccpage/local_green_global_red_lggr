@@ -1,0 +1,2335 @@
+warning: struct `SimplexCertificate` is never constructed
+  --> omega_functional\src\wire.rs:34:12
+   |
+34 | pub struct SimplexCertificate {
+   |            ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: enum `SimplexError` is never used
+  --> omega_functional\src\wire.rs:41:10
+   |
+41 | pub enum SimplexError {
+   |          ^^^^^^^^^^^^
+
+warning: function `zero` is never used
+  --> omega_functional\src\wire.rs:62:4
+   |
+62 | fn zero() -> BigRational {
+   |    ^^^^
+
+warning: function `one` is never used
+  --> omega_functional\src\wire.rs:66:4
+   |
+66 | fn one() -> BigRational {
+   |    ^^^
+
+warning: function `try_simplex` is never used
+  --> omega_functional\src\wire.rs:70:8
+   |
+70 | pub fn try_simplex(values: &[String]) -> Result<SimplexCertificate, SimplexError> {
+   |        ^^^^^^^^^^^
+
+warning: methods `mass_count`, `even_mass`, and `odd_mass` are never used
+   --> omega_functional\src\wire.rs:103:12
+    |
+102 | impl SimplexCertificate {
+    | ----------------------- methods in this implementation
+103 |     pub fn mass_count(&self) -> usize {
+    |            ^^^^^^^^^^
+...
+107 |     pub fn even_mass(&self) -> &BigRational {
+    |            ^^^^^^^^^
+...
+111 |     pub fn odd_mass(&self) -> &BigRational {
+    |            ^^^^^^^^
+
+warning: `omega_functional` (lib) generated 6 warnings
+warning: enum `GateLimitError` is never used
+  --> omega_policy\src\jcs.rs:12:17
+   |
+12 | pub(crate) enum GateLimitError {
+   |                 ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `certify_gate_limits` is never used
+  --> omega_policy\src\jcs.rs:33:15
+   |
+33 | pub(crate) fn certify_gate_limits(limits: Limits) -> Result<(), GateLimitError> {
+   |               ^^^^^^^^^^^^^^^^^^^
+
+warning: `omega_policy` (lib) generated 2 warnings
+warning: enum `CaseTableError` is never used
+    --> omega_types\src\python_case_v1.rs:3565:17
+     |
+3565 | pub(crate) enum CaseTableError {
+     |                 ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `mapping_strictly_increasing` is never used
+    --> omega_types\src\python_case_v1.rs:3589:4
+     |
+3589 | fn mapping_strictly_increasing(
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `ranges_strictly_separated` is never used
+    --> omega_types\src\python_case_v1.rs:3612:4
+     |
+3612 | fn ranges_strictly_separated(table: &[(u32, u32)], name: &'static str) -> Result<(), CaseTableError> {
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `certify_case_tables` is never used
+    --> omega_types\src\python_case_v1.rs:3639:15
+     |
+3639 | pub(crate) fn certify_case_tables() -> Result<(), CaseTableError> {
+     |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `upper_of` is never used
+    --> omega_types\src\python_case_v1.rs:3646:15
+     |
+3646 | pub(crate) fn upper_of(code: u32) -> Option<&'static str> {
+     |               ^^^^^^^^
+
+warning: enum `UnicodeTableError` is never used
+    --> omega_types\src\python_unicode_v1.rs:2252:10
+     |
+2252 | pub enum UnicodeTableError {
+     |          ^^^^^^^^^^^^^^^^^
+
+warning: function `certify_unicode_tables` is never used
+    --> omega_types\src\python_unicode_v1.rs:2274:8
+     |
+2274 | pub fn certify_unicode_tables() -> Result<(usize, usize), UnicodeTableError> {
+     |        ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: methods `rank` and `max` are never used
+   --> omega_types\src\q_continuum.rs:105:8
+    |
+104 | impl AuthorityStrength {
+    | ---------------------- methods in this implementation
+105 |     fn rank(self) -> u8 {
+    |        ^^^^
+...
+116 |     fn max(self, other: Self) -> Self {
+    |        ^^^
+
+warning: `omega_types` (lib) generated 8 warnings
+warning: `omega_functional` (lib) generated 6 warnings (6 duplicates)
+warning: `omega_policy` (lib) generated 2 warnings (2 duplicates)
+warning: `omega_types` (lib) generated 8 warnings (8 duplicates)
+   Compiling omega_contracts v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_contracts)
+warning: struct `Lex4Census` is never constructed
+  --> omega_general_relativity\src\exact_regge\permute.rs:43:19
+   |
+43 | pub(super) struct Lex4Census {
+   |                   ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: enum `Lex4Error` is never used
+  --> omega_general_relativity\src\exact_regge\permute.rs:49:17
+   |
+49 | pub(super) enum Lex4Error {
+   |                 ^^^^^^^^^
+
+warning: function `factorial_u32` is never used
+  --> omega_general_relativity\src\exact_regge\permute.rs:68:4
+   |
+68 | fn factorial_u32(n: u32) -> Result<u32, Lex4Error> {
+   |    ^^^^^^^^^^^^^
+
+warning: function `certify_lex4` is never used
+  --> omega_general_relativity\src\exact_regge\permute.rs:77:15
+   |
+77 | pub(super) fn certify_lex4(items: [usize; 4]) -> Result<Lex4Census, Lex4Error> {
+   |               ^^^^^^^^^^^^
+
+warning: `omega_general_relativity` (lib) generated 4 warnings
+warning: omega_symbol_game_runtime@0.1.0: packet contracts enforced at compile time: 43
+warning: omega_symbol_game@0.1.0: packet contracts enforced at compile time: 57
+warning: struct `RefusalCensusError` is never constructed
+  --> omega_intelligence\src\refusal.rs:22:12
+   |
+22 | pub struct RefusalCensusError { kind: &'static str, left: u128, right: u128 }
+   |            ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated items `new` and `kind` are never used
+  --> omega_intelligence\src\refusal.rs:24:14
+   |
+23 | impl RefusalCensusError {
+   | ----------------------- associated items in this implementation
+24 |     const fn new(kind: &'static str, left: u128, right: u128) -> Self { Self { kind, left, right } }
+   |              ^^^
+25 |     pub const fn kind(&self) -> &'static str { self.kind }
+   |                  ^^^^
+
+warning: struct `RefusalAuthorityCensus` is never constructed
+  --> omega_intelligence\src\refusal.rs:29:12
+   |
+29 | pub struct RefusalAuthorityCensus { records: u64 }
+   |            ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated items `try_from_refusals` and `records` are never used
+  --> omega_intelligence\src\refusal.rs:31:12
+   |
+30 | impl RefusalAuthorityCensus {
+   | --------------------------- associated items in this implementation
+31 |     pub fn try_from_refusals(refusals: &[Refusal]) -> Result<Self, RefusalCensusError> {
+   |            ^^^^^^^^^^^^^^^^^
+...
+47 |     pub const fn records(&self) -> u64 { self.records }
+   |                  ^^^^^^^
+
+warning: `omega_intelligence` (lib) generated 4 warnings
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: auto_p: 0/35 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: constants: 0/2 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_atlas_reconciliation: 0/22 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_biology: 0/47 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_category_theory: 16/171 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_certifiers: 1/11 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_chemistry: 0/51 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_combinatorics: 1/8 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_contracts: 1/85 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_economics: 0/63 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_engines: 1/36 compiled source files named by a contract; 1 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_epistemic_immune_system: 0/17 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_finite_probability: 7/15 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_functional: 18/37 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_fusion_categories: 7/11 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_general_relativity: 4/47 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_higher_category_theory: 15/19 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_holonomy: 3/12 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_homology: 17/123 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_homotopy_type_theory: 1/23 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_id_run: 2/5 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_intelligence: 0/6 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_kernel: 6/12 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_lie_theory: 11/19 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_lifts: 0/7 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_linear_algebra: 24/79 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_local_green_global_red_lggr: 0/20 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_machine_learning: 0/40 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_majorana: 1/19 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_measurement: 0/8 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_mub: 0/122 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_number_theory: 23/36 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_ooutwire_primitives: 0/68 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_operad_theory: 0/34 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_operads: 0/10 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_pipelines: 5/10 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_policy: 3/11 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_prompt_civilization: 0/31 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_quantum_physics: 121/201 compiled source files named by a contract; 1 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_replay: 9/15 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_sandbox: 0/4 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_search: 0/26 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_sheaf_theory: 0/22 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_solvers: 9/46 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_state: 0/23 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_symbol_game: 1/85 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_symbol_game_runtime: 1/41 compiled source files named by a contract; 1 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_task_harness: 0/5 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_terminalizers: 0/2 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_types: 5/94 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_wdp: 0/158 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_woland: 0/97 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: tests: 0/0 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_BINDING_AUDIT: 401 bindings declared, 0 unresolved, 0 resolve to uncompiled files, 0 malformed, 0 retired skipped; 313/2191 compiled source files named by a contract; report: C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\target\debug\build\omega_contracts-3429a5bebc58c59a\out\contract_binding_audit.txt
+warning: omega_contracts@0.1.0: PROJECTION_RECONCILIATION_INCOMPLETE: 83 reviewed, 262 unreconciled; no operational-validation credit
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\authority_minting.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:authority_minting:v1.2.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\certificate_boundary.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:certificate_boundary:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\certifiers_lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:lib:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\checked_packet.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:checked_packet:v1.2.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\closure_certificate.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:closure_certificate:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\closure_defect.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:closure_defect:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\closure_regime.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:closure_regime:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\contract_descriptors.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:contract_descriptors:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\contract_property_witnesses.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:contract_property_witnesses:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\counterfeit_detection.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:counterfeit_detection:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\deposit.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:deposit:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\diagnostic_vector.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:diagnostic_vector:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\dual_witness.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:dual_witness:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\complex_quantum_density_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:complex_quantum_density_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\cycle_aware_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:cycle_aware_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\cycle_space_projector.contract.yaml [omega.file_contract.v1] urn:omega:qm:cycle_space_projector:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\density_from_h1.contract.yaml [omega.file_contract.v1] urn:omega:qm:density_from_h1:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\multipath_iterator_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:multipath_iterator_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\obstruction_branch_search_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:obstruction_branch_search_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\obstruction_runtime_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:obstruction_runtime_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\operator_algebra_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:operator_algebra_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\process_matrix_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:process_matrix_engine:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\prompt_intake_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:prompt_intake_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\quantum_channel.contract.yaml [omega.file_contract.v1] urn:omega:qm:quantum_channel:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\quantum_density_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:quantum_density_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\quantum_information_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:quantum_information_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\reasoning_density_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:reasoning_density_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\evaluation_hierarchy.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:evaluation_hierarchy:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\exact_repair.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:exact_repair:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\finite_qm_contract_v1.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:finite_qm_types:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\functional_lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:lib:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\gamma2.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:gamma2:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\hashes.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:hashes:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:lib:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\observer.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:observer:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\observer_family.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:observer_family:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\observer_quotient.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:observer_quotient:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\obstruction_mass.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:obstruction_mass:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_discrete_deformation_algebra\discrete_deformation_algebra.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_discrete_deformation_algebra:discrete_deformation_algebra:v1.13.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_discrete_deformation_algebra\mub_cochain.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_discrete_deformation_algebra:mub_cochain:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_id_run.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:omega_id_run:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\digest.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:digest:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\exact.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:exact:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\obligation.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:obligation:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\observer.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:observer:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\residual.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:residual:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_admission.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:admission:v0.2.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_descent.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:descent:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_ledger.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:ledger:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:lib:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_packet.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:packet:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\cdcl_sat_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:cdcl_sat_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\l1_obstruction_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:l1_obstruction_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\mcts_obstruction_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:mcts_obstruction_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\network_simplex_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:network_simplex_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\omega_solvers.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:crate:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\sheaf_cohomology_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:sheaf_cohomology_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\yang_mills_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:yang_mills_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_types\packet.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_types:packet:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_types\terminal_status.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_types:terminal_status:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_types\tolerant_float.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_types:tolerant_float:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\phi1.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:phi1:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\quotient_mass.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:quotient_mass:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\run.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:run:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\seed.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:seed:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\trichotomy.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:trichotomy:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\xi_diagnostic.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:xi_diagnostic:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\xi_tiebreak.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:xi_tiebreak:v1.1.0
+warning: type `ImageStatusRow<'_>` is more private than the item `ContractImageCensus::try_from_rows`
+  --> omega_contracts\src\contract_images.rs:67:5
+   |
+67 |     pub fn try_from_rows(rows: &[ImageStatusRow<'_>]) -> Result<Self, ContractImageCensusError> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ associated function `ContractImageCensus::try_from_rows` is reachable at visibility `pub`
+   |
+note: but type `ImageStatusRow<'_>` is only usable at visibility `pub(self)`
+  --> omega_contracts\src\contract_images.rs:48:1
+   |
+48 | struct ImageStatusRow<'a> {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^
+   = note: `#[warn(private_interfaces)]` on by default
+
+   Compiling omega_certifiers v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_certifiers)
+   Compiling omega_quantum_physics v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_quantum_physics)
+warning: `omega_contracts` (lib) generated 1 warning
+   Compiling omega_homology v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_homology)
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\cech_gate.rs:307:9
+    |
+307 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\chain.rs:211:9
+    |
+211 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\cochain.rs:211:9
+    |
+211 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\cochain_primitive_difference.rs:204:9
+    |
+204 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\cohomology.rs:241:9
+    |
+241 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\homology.rs:254:9
+    |
+254 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\matrix.rs:183:9
+    |
+183 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\trichotomy_witness.rs:196:9
+    |
+196 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `num_rational::Rational64`
+   --> omega_homology\src\tests\mod.rs:110:9
+    |
+110 |     use num_rational::Rational64;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `exact_operator::ExactOperator`
+   --> omega_quantum_physics\src\bipartite_operator.rs:764:57
+    |
+764 |         use crate::{density_matrix::ExactDensityMatrix, exact_operator::ExactOperator};
+    |                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Rational`
+  --> omega_quantum_physics\src\quantum_correlation.rs:32:45
+   |
+32 | use omega_number_theory::rational::{ri, rq, Rational};
+   |                                             ^^^^^^^^
+
+warning: `omega_quantum_physics` (lib) generated 2 warnings (run `cargo fix --lib -p omega_quantum_physics` to apply 2 suggestions)
+   Compiling omega_wdp v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_wdp)
+   Compiling omega_symbol_game_runtime v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_symbol_game_runtime)
+   Compiling omega_woland v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_woland)
+warning: `omega_homology` (lib test) generated 9 warnings (run `cargo fix --lib -p omega_homology --tests` to apply 9 suggestions)
+   Compiling omega_pipelines v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_pipelines)
+warning: unused import: `AuthorityTerminal`
+  --> omega_pipelines\src\coda_gtla.rs:13:5
+   |
+13 |     AuthorityTerminal, ObstructionDiagnosticClass, Outcome, RefusalSource, ResidualTerminal,
+   |     ^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `total`
+   --> omega_woland\src\stage\ddc_tape_evaluator.rs:211:9
+    |
+211 |         total: usize,
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_total`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `candidate_ids_repr_len` is never used
+  --> omega_woland\src\act_capture.rs:47:15
+   |
+47 | pub(crate) fn candidate_ids_repr_len(candidates: &[CandidateProposal]) -> Result<usize, Refusal> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `DialecticLimitError` is never constructed
+  --> omega_woland\src\jcs.rs:12:12
+   |
+12 | pub struct DialecticLimitError { kind: &'static str, left: u128, right: u128 }
+   |            ^^^^^^^^^^^^^^^^^^^
+
+warning: associated items `new` and `kind` are never used
+  --> omega_woland\src\jcs.rs:14:14
+   |
+13 | impl DialecticLimitError {
+   | ------------------------ associated items in this implementation
+14 |     const fn new(kind: &'static str, left: u128, right: u128) -> Self { Self { kind, left, right } }
+   |              ^^^
+15 |     pub const fn kind(&self) -> &'static str { self.kind }
+   |                  ^^^^
+
+warning: struct `DialecticLimitEnvelope` is never constructed
+  --> omega_woland\src\jcs.rs:19:12
+   |
+19 | pub struct DialecticLimitEnvelope { max_bytes: usize }
+   |            ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated items `to_u128_bounded`, `validate_twice_depth`, `try_admit`, and `max_bytes` are never used
+  --> omega_woland\src\jcs.rs:21:8
+   |
+20 | impl DialecticLimitEnvelope {
+   | --------------------------- associated items in this implementation
+21 |     fn to_u128_bounded(val: usize) -> u128 {
+   |        ^^^^^^^^^^^^^^^
+...
+25 |     fn validate_twice_depth(limits: Limits) -> Result<(), DialecticLimitError> {
+   |        ^^^^^^^^^^^^^^^^^^^^
+...
+34 |     pub fn try_admit(limits: Limits) -> Result<Self, DialecticLimitError> {
+   |            ^^^^^^^^^
+...
+46 |     pub const fn max_bytes(&self) -> usize { self.max_bytes }
+   |                  ^^^^^^^^^
+
+warning: struct `KiCensusError` is never constructed
+   --> omega_woland\src\stage\numpy_ziggurat.rs:780:19
+    |
+780 | pub(super) struct KiCensusError {
+    |                   ^^^^^^^^^^^^^
+
+warning: associated items `new` and `kind` are never used
+   --> omega_woland\src\stage\numpy_ziggurat.rs:786:14
+    |
+785 | impl KiCensusError {
+    | ------------------ associated items in this implementation
+786 |     const fn new(kind: &'static str, left: u128, right: u128) -> Self {
+    |              ^^^
+...
+789 |     pub const fn kind(&self) -> &'static str {
+    |                  ^^^^
+
+warning: struct `KiCensus` is never constructed
+   --> omega_woland\src\stage\numpy_ziggurat.rs:795:19
+    |
+795 | pub(super) struct KiCensus {
+    |                   ^^^^^^^^
+
+warning: function `try_ki_census` is never used
+   --> omega_woland\src\stage\numpy_ziggurat.rs:799:15
+    |
+799 | pub(super) fn try_ki_census() -> Result<KiCensus, KiCensusError> {
+    |               ^^^^^^^^^^^^^
+
+warning: function `read_ki_key` is never used
+   --> omega_woland\src\stage\numpy_ziggurat.rs:826:4
+    |
+826 | fn read_ki_key(keys: &[u64; 256], index: usize) -> Result<u64, KiCensusError> {
+    |    ^^^^^^^^^^^
+
+warning: function `check_ki_distinct` is never used
+   --> omega_woland\src\stage\numpy_ziggurat.rs:836:4
+    |
+836 | fn check_ki_distinct(
+    |    ^^^^^^^^^^^^^^^^^
+
+warning: function `bump_u16` is never used
+   --> omega_woland\src\stage\numpy_ziggurat.rs:851:4
+    |
+851 | fn bump_u16(val: u16, err_msg: &'static str) -> Result<u16, KiCensusError> {
+    |    ^^^^^^^^
+
+warning: function `bump_ki_index` is never used
+   --> omega_woland\src\stage\numpy_ziggurat.rs:856:4
+    |
+856 | fn bump_ki_index(index: usize) -> Result<usize, KiCensusError> {
+    |    ^^^^^^^^^^^^^
+
+warning: `omega_pipelines` (lib) generated 1 warning (run `cargo fix --lib -p omega_pipelines` to apply 1 suggestion)
+   Compiling omega_engines v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_engines)
+warning: unused import: `incidence_matrix`
+ --> omega_engines\src\quantum\cycle_space_projector.rs:2:5
+  |
+2 |     incidence_matrix, incidence_matrix_dmatrix,
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: use of deprecated constant `std::f64::INFINITY`: replaced by the `INFINITY` associated constant on `f64`
+  --> omega_engines\src\quantum\density_diagnostics.rs:85:24
+   |
+85 |             .fold(f64::INFINITY, f64::min);
+   |                        ^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: field `tolerance` is never read
+  --> omega_engines\src\quantum\quantum_information_engine.rs:71:5
+   |
+68 | pub struct Povm {
+   |            ---- field in this struct
+...
+71 |     tolerance: f64,
+   |     ^^^^^^^^^
+   |
+   = note: `Povm` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `omega_engines` (lib) generated 3 warnings (run `cargo fix --lib -p omega_engines` to apply 1 suggestion)
+warning: `omega_woland` (lib) generated 14 warnings (run `cargo fix --lib -p omega_woland` to apply 1 suggestion)
+   Compiling omega_symbol_game v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_symbol_game)
+warning: unused import: `Signed`
+ --> omega_symbol_game\src\graph.rs:7:23
+  |
+7 | use num_traits::{One, Signed, Zero};
+  |                       ^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `live_scheduler` is never read
+    --> omega_symbol_game\src\woland_host.rs:1625:62
+     |
+1625 |     let mut live_scheduler: Option<DeterministicScheduler> = None;
+     |                                                              ^^^^ this value is reassigned later and never used
+...
+1633 |         live_scheduler = Some(ctx.assembly.scheduler()?);
+     |         -------------- `live_scheduler` is overwritten here before the previous value is read
+     |
+     = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `preflight_scheduler` is never read
+    --> omega_symbol_game\src\woland_host.rs:1626:35
+     |
+1626 |     let mut preflight_scheduler = None;
+     |                                   ^^^^ this value is reassigned later and never used
+1627 |     let scheduler: &mut dyn SchedulerPort = if ctx.preflight_state.is_some() {
+1628 |         preflight_scheduler = Some(PreflightBoundScheduler);
+     |         --------------------------------------------------- `preflight_scheduler` is overwritten here before the previous value is read
+
+warning: method `kind` is never used
+   --> omega_woland\src\stage\numpy_ziggurat.rs:789:18
+    |
+785 | impl KiCensusError {
+    | ------------------ method in this implementation
+...
+789 |     pub const fn kind(&self) -> &'static str {
+    |                  ^^^^
+
+warning: `omega_symbol_game` (lib test) generated 3 warnings (run `cargo fix --lib -p omega_symbol_game --tests` to apply 1 suggestion)
+warning: `omega_woland` (lib test) generated 3 warnings (2 duplicates)
+warning: `omega_pipelines` (lib test) generated 1 warning (1 duplicate)
+warning: variable does not need to be mutable
+  --> omega_wdp\src\..\..\tests\omega_wdp\derivation_controls\doc_msl_g4.rs:89:13
+   |
+89 |         let mut index = 0usize;
+   |             ----^^^^^
+   |             |
+   |             help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `index`
+  --> omega_wdp\src\..\..\tests\omega_wdp\derivation_controls\doc_msl_g4.rs:89:13
+   |
+89 |         let mut index = 0usize;
+   |             ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_index`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `omega_quantum_physics` (lib test) generated 2 warnings (2 duplicates)
+warning: `omega_wdp` (lib test) generated 2 warnings (run `cargo fix --lib -p omega_wdp --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 00s
+     Running unittests src\lib.rs (target\debug\deps\omega_certifiers-81de2e6496adbf99.exe)
+
+running 110 tests
+test certificate_boundary::l4_boundary_tests_856d8bb1::admits_within_capacity_and_refuses_overflow ... ok
+test authority_minting::tests::certified_is_refused ... ok
+test authority_minting::tests::a_full_guard_record_sums_to_seven ... ok
+test certificate_boundary::tests::authority_verdict_none_record_leaves_evidence_fields_empty ... ok
+test closure_certificate::tests::exact_zero_interval_is_closed ... ok
+test closure_certificate::tests::interval_straddling_zero_is_not_accepted_as_nonnegative ... ok
+test claim_code_tests::a_repeated_code_is_refused ... ok
+test claim_code_tests::distinct_codes_replay_to_the_same_state ... ok
+test closure_certificate::tests::interval_touching_zero_is_indeterminate_whatever_its_width ... ok
+test closure_certificate::tests::inverted_interval_is_refused ... ok
+test closure_certificate::tests::contains_zero_is_exact_on_endpoints ... ok
+test closure_certificate::tests::zero_denominator_endpoint_is_non_finite ... ok
+test checked_packet::tests::checked_packet_refuses_missing_phi1_certificate_ref ... ok
+test checked_packet::tests::checked_packet_refuses_missing_closure_certificate_ref ... ok
+test checked_packet::tests::checked_packet_binds_verified_phi1_value_and_status ... ok
+test counterfeit_detection::l4_boundary_tests_a0d4c84b::admits_within_capacity_and_refuses_overflow ... ok
+test checked_packet::tests::certify_evidence_refuses_open_not_certificate_eligible ... ok
+test checked_packet::tests::certify_evidence_refuses_survivor_not_certificate_eligible ... ok
+test counterfeit_detection::tests::detect_approx_closed_with_nonzero_interval_is_inconsistent ... ok
+test checked_packet::tests::certify_evidence_refuses_cross_packet_witness ... ok
+test counterfeit_detection::tests::detect_approx_exact_zero_interval_passes ... ok
+test counterfeit_detection::tests::detect_approx_passes_genuinely_zero_gamma2 ... ok
+test counterfeit_detection::tests::detect_approx_refuses_straddling_interval_as_nonnegative ... ok
+test checked_packet::tests::certify_evidence_refuses_terminal_mismatch ... ok
+test closure_certificate::tests::strictly_positive_interval_is_open_even_below_f64_floor ... ok
+test checked_packet::tests::certify_evidence_seals_bound_exact_witness_without_authority ... ok
+test certificate_boundary::tests::certify_checked_packet_seals_none_effect_evidence ... ok
+test counterfeit_detection::tests::detect_approx_zero_denominator_is_non_finite_without_panic ... ok
+test certificate_boundary::tests::authority_verdict_transcribes_certificate_without_promoting ... ok
+test counterfeit_detection::tests::test_counterfeit_closure_status_inconsistency ... ok
+test counterfeit_detection::tests::detect_approx_catches_subfloor_gamma2_fraud_via_exact_zero_test ... ok
+test counterfeit_detection::tests::test_counterfeit_exact_gamma2_fraud ... ok
+test counterfeit_detection::tests::test_counterfeit_rejects_negative_closure_defect ... ok
+test counterfeit_detection::tests::test_counterfeit_rejects_zero_closure_replay_hash_in_production_mode ... ok
+test mathematical_claim::l4_boundary_tests_bde07af8::admits_within_capacity_and_refuses_overflow ... ok
+test counterfeit_detection::tests::test_counterfeit_reports_multiple_reasons ... ok
+test meron_certificate::tests::exact_cancellation_is_finite_verdict_not_certified_authority ... ok
+test meron_certificate::tests::fixture_is_lf_only ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::non_invariant_observable_is_refuted ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_broken_involution_symmetry ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_hidden_observer_quotient_across_signs ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_incomplete_involution_coverage ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_malformed_non_meron_move ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_missing_non_meron_moves ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_same_sign_pair ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_unequal_pair_weights ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::rejects_zero_multi_sector_overlap ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::symmetric_observable_is_compatible ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::test_meron_certificate_hash_matches_manifest ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::stale_artifact_firebreak_accepts_current_exact_cancellation_artifact ... ok
+test meron_certificate::tests::test_meron_certificate_verification ... ignored, needs meron_certificate.json, which is not in this repository; see CERT_PATH
+test meron_certificate::tests::stale_artifact_firebreak_rejects_v01_exact_repair_and_known_hash_prefix ... ok
+test meron_hamiltonian_bridge::tests::derived_orientation_signs_reject_bond_parity_mismatch ... ok
+test meron_hamiltonian_bridge::tests::derived_orientation_signs_reject_closure_parity_mismatch ... ok
+test meron_hamiltonian_bridge::tests::derived_orientation_signs_license_loop_extraction ... ok
+test meron_hamiltonian_bridge::tests::global_site_transport_rejects_hu_site_outside_local_pair ... ok
+test meron_hamiltonian_bridge::tests::global_site_transport_rejects_shared_site_state_mismatch ... ok
+test meron_hamiltonian_bridge::tests::global_site_transport_shared_vertex_hj_hu_packet_licenses_theorem ... ok
+test meron_hamiltonian_bridge::tests::derived_orientation_signs_reject_missing_evidence ... ok
+test meron_hamiltonian_bridge::tests::derived_orientation_signs_reject_temporal_parity_mismatch ... ok
+test meron_hamiltonian_bridge::tests::global_site_shuttle_family_rejects_zero_path_length ... ok
+test meron_hamiltonian_bridge::tests::hu_decorated_loop_family_rejects_mask_outside_loop_count ... ok
+test meron_hamiltonian_bridge::tests::lck_single_spin_bond_matrix_matches_declared_formula ... ok
+test meron_hamiltonian_bridge::tests::loop_extraction_rejects_non_bipartite_lattice_declaration ... ok
+test meron_hamiltonian_bridge::tests::loop_extraction_rejects_orientation_dependent_weight ... ok
+test meron_hamiltonian_bridge::tests::hu_decorated_meron_cycle_family_verifies_for_multiple_decoration_counts ... ok
+test meron_hamiltonian_bridge::tests::lck_loop_sign_formula_classifies_merons ... ok
+test meron_hamiltonian_bridge::tests::loop_extraction_rejects_sign_factorization_mismatch ... ok
+test meron_hamiltonian_bridge::tests::loop_extraction_rejects_unlicensed_hamiltonian_family ... ok
+test meron_hamiltonian_bridge::tests::global_site_shuttle_family_verifies_path_lengths_and_hu_insertions ... ok
+test meron_hamiltonian_bridge::tests::loop_graph_auto_derives_orientation_sign_evidence_and_licenses_theorem ... ok
+test meron_hamiltonian_bridge::tests::loop_graph_extraction_rejects_target_out_of_bounds ... ok
+test meron_hamiltonian_bridge::tests::loop_graph_with_derived_orientation_signs_licenses_theorem ... ok
+test meron_hamiltonian_bridge::tests::loop_graph_extraction_derives_descriptors_and_licenses_theorem ... ok
+test meron_hamiltonian_bridge::tests::loop_graph_extraction_rejects_non_permutation_successor_graph ... ok
+test meron_hamiltonian_bridge::tests::malformed_loop_with_odd_bond_count_is_refused ... ok
+test meron_hamiltonian_bridge::tests::one_loop_orientation_sign_evidence_matches_eta_formula ... ok
+test meron_hamiltonian_bridge::tests::observable_must_be_invariant_on_candidate_flip_orbits ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_auto_derives_orientation_signs_and_licenses_theorem ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_derives_successor_graph_and_licenses_theorem ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_rejects_duplicate_source ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_rejects_missing_source ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_rejects_nonpositive_local_weight ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_rejects_matrix_sign_mismatch ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_rejects_target_out_of_bounds ... ok
+test meron_hamiltonian_bridge::tests::operator_packet_with_derived_orientation_signs_licenses_theorem ... ok
+test meron_hamiltonian_bridge::tests::operator_projection_collides_for_distinct_spin_resolved_hj_transport ... ok
+test meron_hamiltonian_bridge::tests::physical_graph_transport_rejects_odd_spatial_bond_cycle ... ok
+test meron_hamiltonian_bridge::tests::parameterized_family_characterizes_surviving_observables_as_orbit_invariant ... ok
+test meron_hamiltonian_bridge::tests::physical_graph_transport_rejects_offdiagonal_hu_transport ... ok
+test meron_hamiltonian_bridge::tests::parameterized_family_verifies_n_2_3_4 ... ok
+test meron_hamiltonian_bridge::tests::physical_graph_transport_rejects_state_mismatch ... ok
+test meron_hamiltonian_bridge::tests::physical_graph_transport_valid_mixed_hj_hu_rows_license_theorem ... ok
+test meron_hamiltonian_bridge::tests::physical_graph_transport_valid_symbolic_hj_rows_license_theorem ... ok
+test meron_hamiltonian_bridge::tests::symbolic_hj_rows_auto_derive_orientation_signs_and_license_theorem ... ok
+test meron_hamiltonian_bridge::tests::symbolic_hj_rows_derive_operator_packet_and_license_theorem ... ok
+test meron_hamiltonian_bridge::tests::symbolic_hj_rows_reject_zero_local_matrix_element ... ok
+test meron_hamiltonian_bridge::tests::symbolic_hj_rows_with_derived_orientation_signs_license_theorem ... ok
+test meron_hamiltonian_bridge::tests::symbolic_hu_onsite_support_is_diagonal_and_positive_in_doubled_units ... ok
+test meron_hamiltonian_bridge::tests::primitive_non_meron_moves_preserve_weight_and_sign_and_derive_zero_rel ... ok
+test meron_hamiltonian_bridge::tests::symbolic_local_rows_reject_invalid_spin_state ... ok
+test meron_hamiltonian_bridge::tests::valid_lck_loop_extraction_packet_licenses_independent_loop_theorem ... ok
+test meron_hamiltonian_bridge::tests::zero_meron_skeleton_is_positive ... ok
+test operator_closure_certifier::l4_boundary_tests_d03bed8f::admits_within_capacity_and_refuses_overflow ... ok
+test phi1_certifier::phi1_form_tests::test_perturbed_dual_refused ... ok
+test phi1_certifier::phi1_form_tests::test_valid_phi1_certificate ... ok
+test phi1_certifier::phi1_form_tests::verify_generators_uses_the_supplied_coboundaries ... ok
+test meron_hamiltonian_bridge::tests::hu_decorated_loop_family_verifies_all_masks_for_small_multi_loop_instances ... ok
+test meron_hamiltonian_bridge::tests::independent_loop_bridge_cancels_every_nonzero_meron_skeleton ... ok
+test mathematical_claim::mechanized_locus_tests::mechanized_requires_an_existing_declaration ... ok
+
+test result: ok. 97 passed; 0 failed; 13 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running unittests src\lib.rs (target\debug\deps\omega_epistemic_immune_system-6a1a19bc94cdaac5.exe)
+
+running 24 tests
+test activation::l4_boundary_tests_1d6ee6e8::admits_within_capacity_and_refuses_overflow ... ok
+test activation_use_case::l4_boundary_tests_29c5f29c::admits_within_capacity_and_refuses_overflow ... ok
+test allostery::l4_boundary_tests_fe140cb4::admits_within_capacity_and_refuses_overflow ... ok
+test activation_ports::quorum_tests::a_tie_at_the_threshold_is_a_split ... ok
+test activation_ports::quorum_tests::two_matching_digests_meet_a_threshold_of_two ... ok
+test admission::l4_mutation_checks_a9c5a60f::rejects_invalid_boundary_mutant ... ok
+test admission::l4_boundary_tests_a9c5a60f::admits_within_capacity_and_refuses_overflow ... ok
+test anti_skill::l4_boundary_tests_4b860c08::admits_within_capacity_and_refuses_overflow ... ok
+test authenticated::l4_boundary_tests_e577743e::admits_within_capacity_and_refuses_overflow ... ok
+test danger_gate::l4_boundary_tests_49050461::admits_within_capacity_and_refuses_overflow ... ok
+test formulary::l4_boundary_tests_f54af0a7::admits_within_capacity_and_refuses_overflow ... ok
+test host_checks::l4_boundary_tests_2ab35c36::admits_within_capacity_and_refuses_overflow ... ok
+test pharmacy_search::l4_boundary_tests_9e4ed1b5::admits_within_capacity_and_refuses_overflow ... ok
+test clonal_selection::l4_boundary_tests_6ecc3c19::admits_within_capacity_and_refuses_overflow ... ok
+test independence::l4_boundary_tests_f5bcf2bf::admits_within_capacity_and_refuses_overflow ... ok
+test l4_boundary_tests_427bb0b3::admits_within_capacity_and_refuses_overflow ... ok
+test signal_gate::l4_boundary_tests_e5c0ab9e::admits_within_capacity_and_refuses_overflow ... ok
+test regulation::l4_boundary_tests_b92abae4::admits_within_capacity_and_refuses_overflow ... ok
+test tests::anti_skill_cannot_self_admit ... ok
+test thymus::l4_boundary_tests_c9185ee7::admits_within_capacity_and_refuses_overflow ... ok
+test tests::treg_supervisor_suspends_elevated_false_positives ... ok
+test tests::thymus_kills_self_reactive_patterns ... ok
+test tests::two_signal_conjunction_rejects_unadmitted_and_uncorroborated ... ok
+test tests::thymus_promotes_healthy_detector_to_candidate ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src\lib.rs (target\debug\deps\omega_functional-8423af09dc2d7303.exe)
+
+running 246 tests
+test aggregation::tests::block_sizes_leftovers_grid_shapes_and_overflow_are_distinct_refusals ... ok
+test aggregation::tests::missing_extra_and_invalid_rational_values_cannot_enter_even_edgeless_results ... ok
+test binary_degree::tests::binary_quotient_and_closure_have_distinct_values ... ok
+test binary_degree::tests::integer_face_gamma2_detects_arithmetic_overflow ... ok
+test binary_degree::tests::composite_weight_is_shape_checked_and_separate_from_phi1 ... ok
+test aggregation::tests::empty_axis_refusal_and_grid_origin_do_not_disappear_in_zero_evidence ... ok
+test aggregation::tests::empty_graph_and_singleton_periodic_loops_are_explicit_degenerate_data ... ok
+test aggregation::tests::collapsed_edges_preserve_fine_evidence_and_do_not_invent_a_chain ... ok
+test aggregation::tests::arbitrary_averaging_has_a_decisive_monotonicity_counterexample ... ok
+test born_probabilities::tests::common_nonzero_scale_and_phase_preserve_distribution ... ok
+test aggregation::tests::parallel_reversed_and_self_loop_edges_retain_their_actual_multiplicity ... ok
+test aggregation::tests::noncontiguous_unequal_blocks_use_the_declared_partition_and_exact_averages ... ok
+test aggregation::tests::grid_open_and_periodic_boundaries_are_explicit_not_inferred ... ok
+test aggregation::tests::grid_block_projection_keeps_crossing_parallel_edges_and_collapsed_edge_ledger ... ok
+test aggregation::tests::signed_unreduced_input_is_canonical_immutable_and_has_no_terminal_claim ... ok
+test aggregation::tests::invalid_labels_and_edge_endpoints_are_typed_refusals_before_indexing ... ok
+test born_probabilities::tests::empty_and_all_zero_inputs_have_distinct_refusals ... ok
+test born_probabilities::tests::complex_squared_modulus_uses_both_components ... ok
+test born_probabilities::tests::exact_nonnegative_weights_normalize_without_rounding ... ok
+test born_probabilities::tests::extreme_exact_weights_neither_overflow_nor_disappear ... ok
+test born_probabilities::tests::invalid_rationals_are_refused_before_weight_or_amplitude_arithmetic ... ok
+test born_probabilities::tests::negative_weight_is_refused_after_sign_canonicalization ... ok
+test circle_piecewise_linear::l4_mutation_checks_1a65fa59::rejects_invalid_boundary_mutant ... ok
+test decoherence::l4_mutation_checks_3e9c2499::rejects_invalid_boundary_mutant ... ok
+test distinguishability::tests::all_pure_vector_components_are_checked_before_norm_arithmetic ... ok
+test distinguishability::tests::approximate_admission_retains_negativity_and_does_not_clamp_distance ... ok
+test distinguishability::tests::a_nonzero_half_eigenvalue_cannot_be_reported_as_zero_distance ... ok
+test distinguishability::tests::exhausted_native_spectral_budget_cannot_become_state_admission ... ok
+test distinguishability::tests::finite_overflowing_vector_norm_is_a_typed_arithmetic_refusal ... ok
+test distinguishability::tests::admitted_inputs_do_not_authorize_exceeding_the_difference_solver_budget ... ok
+test distinguishability::tests::finite_spectrum_does_not_authorize_an_overflowed_trace ... ok
+test distinguishability::tests::both_admissions_must_match_the_selected_numerical_policy ... ok
+test distinguishability::tests::compensated_half_sum_preserves_a_three_quarter_ulp_tail ... ok
+test distinguishability::tests::arithmetic_accumulator_refuses_finite_overflow_and_nonfinite_input ... ok
+test distinguishability::tests::matrix_shape_empty_and_dimension_refusals_preserve_the_native_mechanism ... ok
+test distinguishability::tests::mismatched_dimensions_refuse_instead_of_truncating_or_panicking ... ok
+test distinguishability::tests::every_input_triangle_and_imaginary_component_remains_checked ... ok
+test distinguishability::tests::near_unit_vector_slack_is_recorded_without_renormalizing ... ok
+test distinguishability::tests::nonzero_outer_products_cannot_disappear_under_floating_underflow ... ok
+test distinguishability::tests::independent_rational_fixtures_cover_mixed_complex_and_degenerate_states ... ok
+test distinguishability::tests::positive_diagonal_does_not_hide_a_negative_eigenvalue ... ok
+test distinguishability::tests::result_retains_all_contributions_and_owns_its_original_inputs ... ok
+test distinguishability::tests::original_pure_vectors_norms_and_complex_phases_are_retained ... ok
+test distinguishability::tests::selected_policy_rejects_nonfinite_or_vacuous_state_tolerances ... ok
+test distinguishability::tests::vector_dimension_limits_precede_dense_allocation_and_nonfinite_admission ... ok
+test distinguishability::tests::trace_mismatch_is_not_normalized_into_an_admitted_state ... ok
+test distinguishability::tests::zero_and_unnormalized_vectors_are_not_silently_repaired ... ok
+test dual_verification::tests::a_dual_outside_the_unit_bound_is_refused ... ok
+test dual_verification::tests::a_strict_lower_bound_is_valid_without_claiming_primal_optimality ... ok
+test dual_verification::tests::a_dual_that_does_not_annihilate_the_boundary_is_refused ... ok
+test dual_verification::tests::empty_mismatched_and_ragged_inputs_have_named_refusals ... ok
+test dual_verification::tests::exact_large_pairings_and_modified_input_replay_do_not_round_or_reuse_trust ... ok
+test dual_verification::tests::negative_claims_and_incorrect_pairings_are_distinct_refusals ... ok
+test dual_verification::tests::signed_unreduced_inputs_are_canonicalized_before_checks ... ok
+test dual_verification::tests::zero_denominators_are_refused_in_every_input_family ... ok
+test factory::tests::gamma2_admission_refuses_length_and_zero_denominators_before_hashing ... ok
+test factory::tests::full_configuration_binds_even_when_distinct_maps_have_the_same_zero_value ... ok
+test factory::tests::emitted_references_are_actual_evidence_not_fabricated_solver_or_authority ... ok
+test factory::tests::domain_separation_and_self_hash_exclusion_are_explicit ... ok
+test factory::tests::names_configuration_and_input_kinds_have_distinct_refusals ... ok
+test factory::tests::phi1_presentation_and_admission_failures_are_not_erased_by_dispatch ... ok
+test factory::tests::phi1_dispatch_verifies_an_optimum_instead_of_raw_representative_mass ... ok
+test factory::tests::hashes_bind_typed_input_encoding_while_valid_configuration_is_canonical ... ok
+test factory::tests::untrusted_record_zero_denominator_is_refused_without_rational_comparison ... ok
+test factory::tests::stateless_dispatch_is_immutable_and_uses_real_finite_arithmetic ... ok
+test finite_family_bound::tests::arbitrary_precision_preserves_a_tiny_exact_time_window ... ok
+test finite_family_bound::tests::failed_premises_do_not_carry_conclusion_data ... ok
+test factory::tests::wire_shape_rejects_unknown_duplicate_and_forged_authority_fields ... ok
+test finite_family_bound::tests::replay_binds_premises_members_and_bound_rows ... ok
+test finite_family_bound::tests::value_errors_and_nonpositive_constants_are_distinct ... ok
+test gamma2::seal_tests::explicit_complex2_wire_cannot_ignore_unsupported_structure_claims ... ok
+test gamma2::seal_tests::unknown_or_duplicate_wire_fields_cannot_be_silently_ignored ... ok
+test factory::tests::independent_python_vectors_bind_every_serialized_record_field ... ok
+test finite_family_bound::tests::supplied_family_reproduces_the_uniform_and_member_floors ... ok
+test gamma2::seal_tests::untrusted_payload_violating_the_chain_law_fails_to_deserialize ... ok
+test gamma2::seal_tests::wire_denominator_refusal_is_not_mistaken_for_chain_law_evidence ... ok
+test gamma2::seal_tests::valid_payload_still_round_trips_through_the_seal ... ok
+test gamma2::tests::distinct_closure_maps_do_not_collapse_to_identical_zero_evidence ... ok
+test gamma2::tests::empty_middle_space_does_not_expand_unstored_outer_coordinates ... ok
+test gamma2::tests::every_declared_matrix_dimension_has_a_decisive_shape_refusal ... ok
+test gamma2::tests::l20a1_gamma2_vanishes_on_a_nonzero_coboundary ... ok
+test gamma2::tests::l20a2_survivor_winding_cochain_is_closed ... ok
+test gamma2::tests::l20a3_gamma2_is_positive_on_a_non_closed_residual ... ok
+test gamma2::tests::l20a_gamma2_descends_to_the_quotient ... ok
+test gamma2::tests::l20a_p0_dependency_gamma2_refuses_non_exact_complex ... ok
+test gamma2::tests::rejects_missing_complex2 ... ok
+test gamma2::tests::raw_closure_is_not_quotient_evidence_and_ragged_maps_are_refused ... ok
+test gamma2::tests::short_residual_refuses_instead_of_truncating_to_zero ... ok
+test gamma2::tests::struct_literal_complex_cannot_bypass_the_chain_law ... ok
+test gamma2::tests::signed_unreduced_inputs_are_canonicalized_and_bind_the_complete_complex ... ok
+test gamma2::tests::test_exact_gamma2_checks_cochain_identity_and_value ... ok
+test gamma2::tests::test_exact_gamma2_rejects_nonzero_d1_d0 ... ok
+test gamma2::tests::zero_denominators_are_refused_before_even_vacuous_arithmetic ... ok
+test gamma2::tests::untrusted_artifact_claim_cannot_replace_exact_gamma2_recomputation ... ok
+test gamma_reconciliation::tests::farkas_certificate_for_failed_vertex_builds_the_gap ... ok
+test gamma_reconciliation::tests::refusals_are_typed ... ok
+test gamma_reconciliation::tests::raw_two_quotient_one_with_dual_certificate ... ok
+test gamma_reconciliation::tests::weighted_variant_raw_five_quotient_three ... ok
+test gamma_reconciliation::tests::opposite_repair_has_complete_vertex_table ... ok
+test gamma_reconciliation::tests::zero_test_gap_and_descent_conditions ... ok
+test l1_seminorm::tests::a_valid_certificate_for_another_boundary_is_not_rebound ... ok
+test l1_seminorm::tests::boundary_vectors_have_zero_seminorm_with_nonzero_representative ... ok
+test l1_seminorm::tests::dependent_boundary_columns_do_not_require_an_invented_full_rank_condition ... ok
+test l1_seminorm::tests::invalid_dimensions_raggedness_and_weights_are_shared_typed_refusals ... ok
+test l1_seminorm::tests::a_valid_certificate_for_other_weights_is_not_rebound ... ok
+test l1_seminorm::tests::false_optima_and_mutated_primal_data_do_not_become_measurements ... ok
+test l1_seminorm::tests::quotient_value_is_not_raw_mass_and_is_invariant_under_exact_shifts ... ok
+test l1_seminorm::tests::zero_image_has_the_weighted_raw_norm_and_zero_dimension_is_explicit ... ok
+test l1_seminorm::tests::raw_zero_denominators_cannot_enter_configuration_or_submitted_evidence ... ok
+test l1_seminorm::tests::signed_unreduced_representations_bind_by_exact_rational_value ... ok
+test l4_mutation_checks_36b5a1d6::rejects_invalid_boundary_mutant ... ok
+test loss_curvature::l4_mutation_checks_7482608b::rejects_invalid_boundary_mutant ... ok
+test factory::tests::every_record_field_is_checked_on_replay_even_with_a_rehashed_claim ... ok
+test mub_feasibility_wall::tests::builds_diagnostic_interval_attempt_without_exact_or_global_authority ... ok
+test mub_feasibility_wall::tests::compares_targets_with_f64_diagnostic_boundary ... ok
+test mub_feasibility_wall::tests::evaluates_normalized_squared_mub_wall ... ok
+test mub_feasibility_wall::tests::rejects_empty_probabilities ... ok
+test mub_feasibility_wall::tests::rejects_invalid_comparison_tolerance ... ok
+test mub_feasibility_wall::tests::rejects_non_finite_probability ... ok
+test mub_feasibility_wall::tests::rejects_non_finite_target_probability ... ok
+test mub_feasibility_wall::tests::rejects_overflowed_wall_aggregate ... ok
+test mub_feasibility_wall::tests::rejects_target_probability_outside_unit_interval ... ok
+test normal_projection::tests::rejects_a_false_projector_and_wrong_shapes ... ok
+test normal_projection::tests::separates_retained_cochain_and_discarded_rate_exactly ... ok
+test norms::tests::invalid_orders_are_refused_even_when_the_vector_is_empty ... ok
+test norms::tests::known_lp_values_preserve_sign_symmetry_order_and_empty_convention ... ok
+test norms::tests::log_domain_preserves_representable_roots_small_terms_and_scale_floor ... ok
+test norms::tests::nonfinite_coordinates_are_refused_including_the_infinity_order ... ok
+test norms::tests::positive_rescaling_and_coordinate_permutation_preserve_the_diagnostic ... ok
+test norms::tests::quasi_norms_do_not_acquire_triangle_inequality_status ... ok
+test norms::tests::single_nonzero_and_zero_vectors_do_not_roundtrip_through_logs ... ok
+test norms::tests::unrepresentable_results_are_refusals_not_infinities_or_zero ... ok
+test norms::tests::scaling_avoids_spurious_overflow_and_underflow_at_order_two ... ok
+test operator_trace_closure::l4_mutation_checks_b68ff41e::rejects_invalid_boundary_mutant ... ok
+test observer_gauge::tests::exact_on_rational_squares_and_rounded_otherwise ... ok
+test path_error::l4_mutation_checks_69b2d5c8::rejects_invalid_boundary_mutant ... ok
+test phi1::arithmetic_tests::integer_mass_rejects_overflow_and_mismatched_carriers ... ok
+test phi1::arithmetic_tests::form_replay_checks_dual_gap ... ok
+test phi1::ownership_replay_tests::binary_projection_matches_independent_exhaustion_and_reports_caps ... ok
+test phi1::ownership_replay_tests::floating_replay_refuses_shapes_nonfinite_inputs_and_overflow ... ok
+test phi1::ownership_replay_tests::canonical_evaluation_builds_and_replays_the_complete_witness ... ok
+test phi1::tests::certificate_export_is_read_only_and_modified_copies_need_reverification ... ok
+test phi1::tests::certificate_rejects_missing_d0_c0_c1_data ... ok
+test phi1::tests::certificate_rejects_negative_reported_value ... ok
+test phi1::tests::certificate_requires_dual_annihilator ... ok
+test phi1::tests::certificate_requires_dual_norm_bound ... ok
+test phi1::tests::certificate_requires_matching_dual_value ... ok
+test phi1::tests::certificate_requires_matching_primal_residual ... ok
+test phi1::tests::exact_certificate_proves_quotient_distance ... ok
+test phi1::tests::zero_denominators_are_refused_in_every_certificate_field ... ok
+test phi2::tests::test_tetrahedron_chain_law_and_valid_b2_certificate ... ok
+test phi3::tests::orphan_d0_without_d1_is_not_sealed ... ok
+test phi3::tests::test_bianchi_defect_rejects_non_positive_weights ... ok
+test phi2::tests::test_tetrahedron_rejects_dual_norm_violation ... ok
+test phi2::tests::test_tetrahedron_rejects_duality_gap ... ok
+test phi2::tests::test_tetrahedron_rejects_non_closed_2_chain ... ok
+test phi4::tests::test_evaluators_refuse_invalid_dimensions_and_weights ... ok
+test phi4::tests::test_rejects_malformed_matrices_without_panicking ... ok
+test phi3::tests::test_bianchi_identity_exact_flux_has_zero_defect ... ok
+test phi4::tests::test_rejects_non_positive_weights_even_for_zero_flux ... ok
+test phi4::tests::zero_denominator_is_refused_before_arithmetic ... ok
+test product_distance::tests::correlated_separable_bit_reports_have_positive_product_distance ... ok
+test product_distance::tests::nonuniform_separable_reports_use_the_quotient_after_repair ... ok
+test projection_leakage::l4_mutation_checks_f0dbcb43::rejects_invalid_boundary_mutant ... ok
+test product_distance::tests::incorrect_dual_or_repair_cannot_produce_a_value ... ok
+test product_distance::tests::product_reports_and_large_uncertainty_have_zero_lower_bound ... ok
+test projection_transfer::tests::failed_premise_with_true_conclusion_is_still_refused ... ok
+test phi3::tests::test_simplex4_rejects_non_closed_3_chain ... ok
+test phi3::tests::test_simplex4_chain_laws_and_valid_b3_certificate ... ok
+test projection_transfer::tests::replay_binds_original_vectors_and_every_reported_value ... ok
+test projection_transfer::tests::malformed_raw_rationals_refuse_before_arithmetic_and_large_values_stay_exact ... ok
+test projection_transfer::tests::supplied_pair_reproduces_the_exact_paper_bound ... ok
+test quantum_gaps::l4_boundary_tests_c8adcb95::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_gaps::tests::genuinely_complex_off_diagonals_determine_the_spectrum ... ok
+test quantum_gaps::tests::diagonal_levels_are_sorted_without_dropping_degeneracy ... ok
+test protected_linear_quotient::l4_mutation_checks_c32a95f1::rejects_invalid_boundary_mutant ... ok
+test quantum_gaps::tests::finite_input_does_not_authorize_overflowed_levels_or_spacings ... ok
+test phi4::tests::test_exact_phi4_zero_gap_certification ... ok
+test quantum_gaps::tests::serialized_gaps_keep_none_authority_and_no_verdict ... ok
+test quantum_gaps::tests::singleton_zero_and_subnormal_spectra_do_not_invent_missing_spacings ... ok
+test quantum_gaps::tests::independent_integer_fixtures_match_every_level_and_spacing ... ok
+test residual::tests::a_float_norm_is_refused_on_the_wire ... ok
+test residual::tests::a_tiny_nonzero_residual_is_not_zero ... ok
+test residual::tests::a_forged_norm_is_refused_on_deserialize ... ok
+test residual::tests::an_empty_residual_is_zero ... ok
+test residual::tests::an_honest_norm_round_trips ... ok
+test residual::tests::cancelling_entries_do_not_cancel_in_the_l1_norm ... ok
+test residual::tests::exact_arithmetic_survives_where_a_float_sum_would_drift ... ok
+test residual::tests::the_vector_survives_alongside_its_norm ... ok
+test residual_splitting::tests::extreme_images ... ok
+test simplicial_defect::tests::missing_faces_and_repeated_vertices_are_refusals ... ok
+test residual_splitting::tests::weighted_norm_and_transport ... ok
+test residual_splitting::tests::tampered_certificates_name_the_failed_identity ... ok
+test simplicial_defect::tests::oriented_triangle_has_one_closure_value_and_orientation_invariant_mass ... ok
+test trace_diagnostics::tests::adjacent_variation_preserves_trace_length_normalization ... ok
+test trace_diagnostics::tests::interior_magnitude_excludes_only_declared_boundary ... ok
+test trace_diagnostics::tests::shift_pairing_preserves_signed_trace_behavior ... ok
+test trace_diagnostics::transition_tests::constant_trace_has_zero_mc_residual ... ok
+test residual_splitting::tests::two_dimensional_splittings_are_contractive ... ok
+test trace_diagnostics::transition_tests::entropy_very_different_is_high ... ok
+test trace_diagnostics::transition_tests::entropy_identical_is_low ... ok
+test trace_diagnostics::transition_tests::numeric_no_numbers_is_zero ... ok
+test trace_diagnostics::transition_tests::gamma2_normalized_constant_is_zero ... ok
+test trace_diagnostics::transition_tests::contradiction_trace_has_high_scores ... ok
+test trace_diagnostics::transition_tests::gamma2_normalized_is_length_invariant ... ok
+test trace_diagnostics::transition_tests::sem_contradiction_detected ... ok
+test trace_diagnostics::transition_tests::numeric_inconsistent_is_high ... ok
+test trace_diagnostics::transition_tests::numeric_is_symmetric ... ok
+test trace_diagnostics::transition_tests::numeric_consistent_is_low ... ok
+test trace_diagnostics::transition_tests::sem_no_contradiction_is_zero ... ok
+test trace_diagnostics::transition_tests::signed_phi_centers_around_half ... ok
+test trace_diagnostics::transition_tests::signed_phi_high_is_positive ... ok
+test trace_diagnostics::transition_tests::signed_phi_low_is_negative ... ok
+test trace_diagnostics::transition_tests::smooth_trace_has_low_scores ... ok
+test trace_diagnostics::transition_tests::struct_disjoint_steps_one ... ok
+test trace_diagnostics::transition_tests::struct_identical_steps_zero ... ok
+test trace_diagnostics::transition_tests::varied_trace_has_nonzero_variation ... ok
+test transport_amplitude::tests::invalid_inputs_are_typed_refusals ... ok
+test transport_amplitude::tests::cyclic_shift_wraps_instead_of_nilpotently_ending ... ok
+test transport_amplitude::tests::unreachable_endpoint_is_exact_zero ... ok
+test transport_amplitude::tests::unreduced_rationals_are_canonicalized_before_arithmetic ... ok
+test transport_amplitude::tests::weighted_cycle_multiplies_exact_edges ... ok
+test transport_amplitude::tests::weighted_shift_operator_matches_path_amplitude ... ok
+test transport_amplitude::tests::zero_steps_is_identity ... ok
+test weighted_l1_norm::tests::rejects_dimension_mismatch ... ok
+test weighted_l1_norm::tests::rejects_non_positive_weight ... ok
+test weighted_l1_norm::tests::rejects_non_finite_weight ... ok
+test wire::simplex_tests::refuses_a_negative_mass_and_a_short_sum ... ok
+test weighted_l1_norm::tests::uniform_norm_evaluates_correctly ... ok
+test weighted_l1_norm::tests::weighted_norm_evaluates_correctly ... ok
+test wire::simplex_tests::a_two_point_simplex_sums_to_one ... ok
+test xi::tests::a_sub_tolerance_phi1_is_not_an_exact_repair ... ok
+test xi::tests::bad_tolerance_and_overflowed_mass_do_not_return_a_nan_lift ... ok
+test xi::tests::compute_rejects_primal_dual_length_mismatch ... ok
+test xi::tests::test_density_lift_changes_sign_for_negative_scale_or_doc_clarifies_phase_equivalence ... ok
+test xi::tests::test_density_lift_is_scale_invariant_for_positive_scale ... ok
+test xi::tests::test_density_lift_rejects_nan_entries ... ok
+test xi::tests::test_density_lift_rejects_zero_mass ... ok
+test xi::tests::test_density_lift_state_norm_is_one ... ok
+test xi::tests::test_identical_density_lifts_have_zero_distance ... ok
+test xi::tests::test_orthogonal_density_lifts_have_distance_one_half_normalized ... ok
+test xi::tests::test_saturation_failure_blocks_xi_admission ... ok
+test xi::tests::test_trace_distance_uses_pure_state_formula_not_entrywise_l1 ... ok
+test xi::tests::test_xi_bounded_by_one_half_normalized ... ok
+test xi::tests::test_xi_bounded_by_two_unhalved ... ok
+test projection_transfer::tests::exact_l1_inequalities_hold_on_a_signed_exhaustive_finite_sample ... ok
+
+test result: ok. 246 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running unittests src\lib.rs (target\debug\deps\omega_holonomy-6b71bdfc7f91c097.exe)
+
+running 16 tests
+test closed_walk_checks::a_single_step_of_one_is_not_closed ... ok
+test gauge_fixing::l4_boundary_tests_0974255a::admits_within_capacity_and_refuses_overflow ... ok
+test curvature::l4_boundary_tests_9ad12448::admits_within_capacity_and_refuses_overflow ... ok
+test error::tests::a_later_higher_precedence_does_not_pass ... ok
+test connection::l4_boundary_tests_ea357a0a::admits_within_capacity_and_refuses_overflow ... ok
+test holonomy::l4_boundary_tests_941e3d7d::admits_within_capacity_and_refuses_overflow ... ok
+test functional_graph::bounded_orbit_tests::enormous_orbit_indices_are_reduced_to_the_cycle ... ok
+test error::tests::documented_order_is_a_complete_unit_step_chain ... ok
+test gauge_quotient::l4_mutation_checks_2ac3dcc0::rejects_invalid_boundary_mutant ... ok
+test graph::l4_boundary_tests_6d075a2c::admits_within_capacity_and_refuses_overflow ... ok
+test closed_walk_checks::opposite_steps_close_in_order_five ... ok
+test l4_boundary_tests_e6957c81::admits_within_capacity_and_refuses_overflow ... ok
+test matrix::l4_boundary_tests_21078cc5::admits_within_capacity_and_refuses_overflow ... ok
+test signed_transport::l4_mutation_checks_4870e456::rejects_invalid_boundary_mutant ... ok
+test laplacian::l4_boundary_tests_3583925a::admits_within_capacity_and_refuses_overflow ... ok
+test graph::checked_cochain_tests::malformed_public_cell_complex_fields_are_refused_before_indexing ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\omega_homology-63f3d3e58c6bfaab.exe)
+
+running 510 tests
+test block_embedding::l4_mutation_checks_0517bde8::rejects_invalid_boundary_mutant ... ok
+test a_infinity_algebra::stasheff_checks::a_ternary_operation_has_degree_minus_one ... ok
+test a_infinity_algebra::stasheff_checks::the_wrong_degree_is_refused ... ok
+test alpha_complex::incircle_tests::the_unit_square_is_cocircular_and_an_off_point_is_not ... ok
+test alpha_complex::tests::shell_validate_rejects_empty_label ... ok
+test a_infinity_algebra::tests::shell_validate_rejects_empty_label ... ok
+test bockstein_homomorphism::tests::shell_validate_rejects_empty_label ... ok
+test bockstein_homomorphism::tests::shell_validate_ok ... ok
+test alpha_complex::tests::shell_validate_ok ... ok
+test a_infinity_algebra::tests::shell_validate_ok ... ok
+test bottleneck_distance::l4_boundary_tests_550ff737::admits_within_capacity_and_refuses_overflow ... ok
+test barcode::tests::barcode_from_empty_diagram ... ok
+test bockstein_homomorphism::bockstein_tests::a_non_cocycle_is_refused ... ok
+test bockstein_homomorphism::bockstein_tests::a_multiple_of_three_has_bockstein_one ... ok
+test boundary_map::l4_boundary_tests_eabd9fea::admits_within_capacity_and_refuses_overflow ... ok
+test boundary::l4_boundary_tests_3361ce43::admits_within_capacity_and_refuses_overflow ... ok
+test barcode::tests::barcode_preserves_dim ... ok
+test barcode::tests::finite_bar_persistence_is_positive ... ok
+test cap_product::tests::shell_validate_rejects_empty_label ... ok
+test bottleneck_distance::tests::empty_zero ... ok
+test cap_product::tests::shell_validate_ok ... ok
+test bottleneck_distance::tests::identical_diagrams_zero ... ok
+test bottleneck_distance::tests::far_points_of_equal_cardinality_match_the_diagonal ... ok
+test boundary_trace::boundary_witness_tests::accepts_gap_free_steps_and_a_partition ... ok
+test carrier::l4_boundary_tests_7e47bd8b::admits_within_capacity_and_refuses_overflow ... ok
+test boundary_trace::boundary_witness_tests::refuses_a_gap_and_a_short_partition ... ok
+test cap_product::exact_cap_tests::a_triangle_capped_by_an_edge_cochain_leaves_the_opposite_edge ... ok
+test cech_gate::tests::dimension_mismatch_is_refused ... ok
+test cech_gate::l4_boundary_tests_d2a1789b::admits_within_capacity_and_refuses_overflow ... ok
+test cech_gate::tests::failed_replay_is_also_local_invalid ... ok
+test cech_gate::tests::local_invalidity_preempts_a_would_be_obstruction ... ok
+test cech_gate::tests::non_cocycle_is_refused_not_an_obstruction ... ok
+test cech_gate::tests::non_exact_complex_is_refused ... ok
+test cell_grammar::l4_boundary_tests_33273047::admits_within_capacity_and_refuses_overflow ... ok
+test cech_gate::tests::coboundary_discrepancy_is_contextually_glueable ... ok
+test cech_gate::tests::faithful_comparison_licenses_phi1_claim ... ok
+test cech_gate::tests::winding_cochain_is_a_genuine_contextual_obstruction ... ok
+test certificates::bound_tests::a_different_subject_hash_is_refused ... ok
+test carrier_manifest::adr001_manifest_tests::domain_and_representation_are_distinct_fields ... ok
+test carrier_manifest::adr001_manifest_tests::manifest_declares_the_representation_actually_in_use ... ok
+test certificates::bound_tests::matching_hashes_bind_the_evidence ... ok
+test certificates::tests::test_computation_evidence ... ok
+test certificates::tests::test_verification_evidence ... ok
+test carrier_manifest::adr001_manifest_tests::current_version_round_trips ... ok
+test carrier_manifest::adr001_manifest_tests::edited_component_hash_is_caught_by_the_hash_recomputation ... ok
+test certificates::tests::test_witness_ref ... ok
+test carrier_manifest::adr001_manifest_tests::relabelled_representation_is_refused ... ok
+test carrier_manifest::adr001_manifest_tests::edited_dimension_is_caught_by_the_hash_recomputation ... ok
+test carrier_manifest::adr001_manifest_tests::unknown_future_version_is_refused ... ok
+test carrier_manifest::adr001_manifest_tests::relabelled_domain_is_refused ... ok
+test chain::l4_boundary_tests_a397ed01::admits_within_capacity_and_refuses_overflow ... ok
+test carrier_manifest::adr001_manifest_tests::v1_manifest_is_refused_as_ambiguous_not_migrated ... ok
+test carrier_manifest::adr001_manifest_tests::version_is_checked_before_the_field_labels ... ok
+test chain::tests::test_chain_add_degree_mismatch ... ok
+test carrier_manifest::adr001_manifest_tests::forged_carrier_hash_is_refused ... ok
+test chain::tests::test_chain_add ... ok
+test chain::tests::test_chain_add_dimension_mismatch ... ok
+test chain::tests::test_chain_hash_deterministic ... ok
+test chain::tests::test_chain_hash_different_for_different_chains ... ok
+test chain::tests::test_chain_is_zero ... ok
+test chain::tests::test_chain_new ... ok
+test chain::tests::test_chain_scalar_mul ... ok
+test chain::tests::test_chain_scalar_mul_by_fraction ... ok
+test chain::tests::test_chain_scalar_mul_by_zero ... ok
+test chain::tests::test_chain_sub ... ok
+test chain::tests::test_chain_sub_self_is_zero ... ok
+test chain::tests::test_chain_zero ... ok
+test carrier_manifest::adr001_manifest_tests::wire_form_covers_every_serialized_field ... ok
+test chain_complex::tests::dim_rejects_degree_outside_finite_support ... ok
+test chain_complex::l4_boundary_tests_686366c2::admits_within_capacity_and_refuses_overflow ... ok
+test chain_complex::tests::test_boundary_law_verified ... ok
+test chain_complex::tests::test_boundary_law_violation_rejected ... ok
+test chain_complex::tests::test_trivial_chain_complex ... ok
+test chain_map::l4_boundary_tests_fe549805::admits_within_capacity_and_refuses_overflow ... ok
+test chain_complex::tests::test_dimension_mismatch_d1 ... ok
+test chain_complex::tests::test_dimension_mismatch_d2 ... ok
+test clearing_optimization::cleared_column_tests::refuses_a_non_unit_pivot ... ok
+test clearing_optimization::cleared_column_tests::unit_pivot_clears_the_other_column ... ok
+test clearing_optimization::tests::shell_validate_rejects_empty_label ... ok
+test clearing_optimization::tests::shell_validate_ok ... ok
+test clique_complex::tests::shell_validate_ok ... ok
+test clique_complex::exact_clique_tests::one_triangle_and_a_path_of_length_two ... ok
+test clique_complex::tests::shell_validate_rejects_empty_label ... ok
+test coboundary::l4_boundary_tests_c13da2cf::admits_within_capacity_and_refuses_overflow ... ok
+test coboundary::tests::apply_rejects_coefficient_length_mismatch ... ok
+test coboundary_matrix::exact_coboundary_tests::a_triangle_boundary_of_a_boundary_is_zero ... ok
+test cochain::l4_boundary_tests_058dae4c::admits_within_capacity_and_refuses_overflow ... ok
+test cochain::tests::test_cochain_add_dimension_mismatch ... ok
+test cochain::tests::test_cochain_add_degree_mismatch ... ok
+test cochain::tests::test_cochain_add ... ok
+test cochain::tests::test_cochain_hash_different_for_different_cochains ... ok
+test cochain::tests::test_cochain_hash_deterministic ... ok
+test cochain::tests::test_cochain_is_zero ... ok
+test cochain::tests::test_cochain_new ... ok
+test cochain::tests::test_cochain_scalar_mul ... ok
+test cochain::tests::test_cochain_scalar_mul_by_fraction ... ok
+test cochain::tests::test_cochain_scalar_mul_by_zero ... ok
+test cochain::tests::test_cochain_sub ... ok
+test cochain::tests::test_cochain_sub_self_is_zero ... ok
+test cochain::tests::test_cochain_zero ... ok
+test cochain_complex::contract_conformance::cochain_complex_binds_and_audits_its_contract ... ok
+test cochain_complex::l4_boundary_tests_a837dbef::admits_within_capacity_and_refuses_overflow ... ok
+test cochain_complex::tests::dim_rejects_degree_outside_finite_support ... ok
+test cochain_complex::tests::test_coboundary_law_verified ... ok
+test cochain_complex::tests::test_coboundary_law_violation_rejected ... ok
+test cochain_complex::tests::test_dimension_mismatch_d0 ... ok
+test cochain_complex::tests::test_dimension_mismatch_d1 ... ok
+test cochain_complex::tests::test_trivial_cochain_complex ... ok
+test cochain_primitive_difference::l4_boundary_tests_773742b6::admits_within_capacity_and_refuses_overflow ... ok
+test cochain_complex::tests::test_empty_provenance_rejected ... ok
+test cochain_primitive_difference::tests::cochain_primitive_difference_matches_lean_orientation ... ok
+test cochain_primitive_difference::tests::cochain_zero_accepts_exact_boundary ... ok
+test cochain_primitive_difference::tests::cochain_zero_rejects_non_boundary ... ok
+test cocycle::l4_boundary_tests_ee99a8ff::admits_within_capacity_and_refuses_overflow ... ok
+test cocycle::tests::try_cocycle_rejects_coefficient_length_mismatch ... ok
+test cocycle::tests::try_cocycle_rejects_degree_mismatch ... ok
+test cochain_primitive_difference::tests::cochain_zero_rel_equivalence_on_validated_domain ... ok
+test cocycle::tests::try_cocycle_rejects_nonzero_coboundary ... ok
+test cochain_realization::canonical_hash_tests::canonical_sha256_sorts_nested_maps_without_reordering_arrays ... ok
+test coefficient_domain::characteristic_checks::a_composite_field_order_and_the_real_variant_are_refused ... ok
+test coefficient_domain::characteristic_checks::a_prime_field_keeps_its_characteristic ... ok
+test coefficient_domain::l4_boundary_tests_bdcf7b89::admits_within_capacity_and_refuses_overflow ... ok
+test cohomology::l4_boundary_tests_dbb58784::admits_within_capacity_and_refuses_overflow ... ok
+test cohomology::tests::dim_cohomology_rejects_invalid_degree ... ok
+test cohomology::tests::h1_dim_excludes_nonclosed_residuals ... ok
+test cohomology::tests::dim_cohomology_rejects_image_exceeding_kernel ... ok
+test cohomology::tests::test_simple_graph_cohomology ... ok
+test cohomology::tests::test_cycle_graph_cohomology ... ok
+test cohomology::tests::test_de_rham_style_cohomology ... ok
+test cohomology::tests::test_trivial_complex_cohomology ... ok
+test cohomology::tests::test_two_components_cohomology ... ok
+test cohomology_algebra::exact_cup_tests::edge_cochains_cup_to_the_triangle_with_coefficient_eight ... ok
+test cohomology_algebra::tests::shell_validate_ok ... ok
+test cohomology_algebra::tests::shell_validate_rejects_empty_label ... ok
+test contract_property_witnesses::__omega_homology_property_witnesses::bound_homological_symbols_have_compiled_witnesses ... ok
+test contract_property_witnesses::euler_chain_witness::an_oversized_rank_is_refused ... ok
+test contract_property_witnesses::euler_chain_witness::short_complex_euler_is_one ... ok
+test contract_property_witnesses::l4_boundary_tests_a4accca1::admits_within_capacity_and_refuses_overflow ... ok
+test cup_product::tests::cup_degree_adds ... ok
+test cycle::l4_boundary_tests_9adb5e6a::admits_within_capacity_and_refuses_overflow ... ok
+test cycle::tests::try_cycle_rejects_coefficient_length_mismatch ... ok
+test cycle::tests::try_cycle_rejects_degree_mismatch ... ok
+test cycle::tests::try_cycle_rejects_nonzero_boundary ... ok
+test cycle_aware::tests::gradient_step_nudges_toward_harmonic ... ok
+test cycle_aware::tests::harmonic_snap_replaces_values ... ok
+test cycle_aware::tests::try_from_distortions_rejects_invalid_xi ... ok
+test cycle_aware::tests::try_compute_xi_witness_matches_element_wise ... ok
+test cycle_aware::tests::try_from_distortions_rejects_nan ... ok
+test cycle_aware::tests::witness_coherent_when_all_below_tol ... ok
+test cycle_aware::tests::witness_identifies_worst_edges ... ok
+test cycle_aware::tests::xi_witness_rejects_dimension_mismatch ... ok
+test cycle_basis::l4_boundary_tests_00496660::admits_within_capacity_and_refuses_overflow ... ok
+test cycle_space_projector::l4_boundary_tests_25618e05::admits_within_capacity_and_refuses_overflow ... ok
+test cycle_space_projector::tests::nonzero_or_missing_singular_value_is_not_a_harmonic_member ... ok
+test cycle_basis::tests::test_k4_witness_round_5 ... ok
+test cycle_basis::tests::test_designated_tree_potentials_match_witness ... ok
+test cyclic_phase::tests::cyclic_cochains_replay_potentials_holonomy_mutation_and_full_word_moduli ... ok
+test cyclomatic_tests::a_forest_claim_with_too_few_components_is_negative ... ok
+test cyclomatic_tests::a_triangle_has_betti_number_one ... ok
+test declared_incidence::l4_mutation_checks_e4e8fd6e::rejects_invalid_boundary_mutant ... ok
+test deformation_complex::square_zero_tests::a_single_nilpotent_block_squares_to_zero ... ok
+test deformation_complex::square_zero_tests::refuses_the_identity ... ok
+test deformation_complex::tests::shell_validate_ok ... ok
+test deformation_complex::tests::shell_validate_rejects_empty_label ... ok
+test diagram_plotting::diagram_grid_checks::a_two_by_three_grid_has_six_cells ... ok
+test diagram_plotting::diagram_grid_checks::too_many_horizontal_arrows_are_refused ... ok
+test diagram_plotting::tests::shell_validate_ok ... ok
+test diagram_plotting::tests::shell_validate_rejects_empty_label ... ok
+test dipha_io::dipha_header_tests::a_persistence_preamble_parses ... ok
+test cycle_space_projector::tests::test_harmonic_basis_is_orthonormal ... ok
+test cycle_space_projector::tests::test_harmonic_basis_is_orthogonal_to_incidence ... ok
+test dipha_io::dipha_header_tests::a_short_buffer_is_refused ... ok
+test directed_multigraph::dynamics_laws::directed_cycles_and_invalid_vertices_are_refusals ... ok
+test dipha_io::tests::shell_validate_ok ... ok
+test dipha_io::tests::shell_validate_rejects_empty_label ... ok
+test discrete_morse_function::tests::shell_validate_ok ... ok
+test discrete_morse_function::tests::shell_validate_rejects_empty_label ... ok
+test dowker_complex::tests::shell_validate_ok ... ok
+test e_infinity_operad::tests::exact_witness_holds ... ok
+test discrete_morse_complex::tests::shell_validate_rejects_empty_label ... ok
+test discrete_morse_complex::tests::shell_validate_ok ... ok
+test directed_multigraph::dynamics_laws::parallel_paths_have_distinct_edges_and_composition_is_complete ... ok
+test discrete_morse_complex::morse_matching_witness::refuses_overmatching ... ok
+test discrete_morse_function::morse_law_tests::a_vertex_paired_with_the_empty_face_is_admitted ... ok
+test discrete_morse_function::morse_law_tests::an_edge_with_two_higher_faces_is_not_morse ... ok
+test dowker_complex::tests::shell_validate_rejects_empty_label ... ok
+test discrete_morse_complex::morse_matching_witness::critical_cells_are_unpaired ... ok
+test e_infinity_operad::tests::shell_validate_ok ... ok
+test e_infinity_operad::tests::shell_validate_rejects_empty_label ... ok
+test error::boundary_square_checks::a_positive_defect_becomes_the_boundary_square_error ... ok
+test errors::l4_boundary_tests_2482aea9::admits_within_capacity_and_refuses_overflow ... ok
+test errors::tests::test_boundary_law_violation_display ... ok
+test errors::tests::test_error_display ... ok
+test errors::tests::test_matrix_error_conversion ... ok
+test exact_betti::l4_boundary_tests_1aad1716::admits_within_capacity_and_refuses_overflow ... ok
+test exact_betti::tests::betti_rank_inconsistency_names_both_numbers ... ok
+test exact_betti::tests::carrier_new_rejects_a_noncomposing_pair ... ok
+test exact_betti::tests::disjoint_edges_have_b0_two ... ok
+test exact_betti::tests::dim_homology_still_refuses_degree_two_so_no_consumer_gained_b2 ... ok
+test exact_betti::tests::euler_identity_holds_but_cannot_detect_a_wrong_rank ... ok
+test exact_betti::tests::integrality_and_snf_failures_are_different_variants ... ok
+test exact_betti::tests::invariant_factors_carry_the_lattice_they_are_relative_to ... ok
+test exact_betti::tests::nonintegral_boundary_map_is_refused_by_cell ... ok
+test exact_betti::tests::snf_diagonals_are_reported_and_these_carriers_are_torsion_free ... ok
+test exact_betti::tests::torsion_in_h1_is_invisible_to_betti_numbers_but_visible_in_the_factors ... ok
+test exact_betti::tests::torsion_in_the_terminal_quotient_is_reported ... ok
+test exact_betti::tests::triangle_with_face_has_b1_zero ... ok
+test exact_betti::tests::tetrahedral_boundary_is_a_sphere_with_b_1_0_1 ... ok
+test exact_carrier::tests::cochain_relation_enforced ... ok
+test exact_betti::tests::triangle_without_face_has_b1_one ... ok
+test exact_carrier::tests::carrier_manifest_deterministic ... ok
+test exact_carrier::tests::maps_with_non_composable_shapes_must_be_rejected ... ok
+test exact_carrier::tests::different_carriers_different_hashes ... ok
+test exact_carrier::tests::non_positive_weight_rejected ... ok
+test exact_carrier::tests::matrix_kernel_basis ... ok
+test exact_carrier::tests::single_edge_tree ... ok
+test exact_carrier::tests::path_graph_no_survivor ... ok
+test exact_carrier::tests::triangle_cycle ... ok
+test exact_carrier::tests::zero_complex ... ok
+test exact_carrier::tests::triangle_cycle_no_filling ... ok
+test f2_cohomology::l4_mutation_checks_a294cdef::rejects_invalid_boundary_mutant ... ok
+test filtered_complex::tests::filtration_times_are_nondecreasing ... ok
+test filtered_complex::tests::shell_validate_ok ... ok
+test filtered_complex::tests::shell_validate_rejects_empty_label ... ok
+test filtration::certified_filtration_witness::dimension_must_be_one_less_than_the_vertex_count ... ok
+test filtration::certified_filtration_witness::empty_and_ordered_edge_certify ... ok
+test filtration::tests::empty_filtration ... ok
+test finite_directed_graph::tests::anonymous_builder_assigns_nodes ... ok
+test finite_cliques::tests::finite_cliques_agree_with_exhaustive_subsets_and_handle128_vertices ... ok
+test finite_directed_graph::tests::new_rejects_edge_endpoint_outside_vertex_set ... ok
+test finite_poset::l4_mutation_checks_09753983::rejects_invalid_boundary_mutant ... ok
+test finite_rational_homology::l4_mutation_checks_5e132b66::rejects_invalid_boundary_mutant ... ok
+test gradient_path::morse_path_tests::alternates_dimension_by_one ... ok
+test gradient_path::morse_path_tests::refuses_a_repeated_cell_and_a_jump ... ok
+test gradient_path::tests::shell_validate_ok ... ok
+test gradient_path::tests::shell_validate_rejects_empty_label ... ok
+test graph_carrier::l4_boundary_tests_958237cf::admits_within_capacity_and_refuses_overflow ... ok
+test graph_coloring::tests::bipartition_includes_isolates_and_component_count ... ok
+test graph_coloring::transferred_regressions::a_pentagon_with_a_tail_gives_the_five_cycle ... ok
+test graph_coloring::tests::every_separator_replays_and_invalid_edges_refuse ... ok
+test graph_coloring::transferred_regressions::a_self_loop_is_a_one_vertex_odd_cycle ... ok
+test graph_coloring::transferred_regressions::a_triangle_gives_itself_as_the_witness ... ok
+test graph_coloring::transferred_regressions::bipartite_graphs_have_no_witness_and_a_proper_colouring ... ok
+test graph_coloring::tests::colouring_admission_precedes_allocation_and_preserves_empty_graphs ... ok
+test graph_coloring::transferred_regressions::the_witness_is_the_odd_cycle_even_when_it_does_not_pass_through_the_search_root ... ok
+test gudhi_io::tests::gudhi_simplex_dimension_is_vertices_minus_one ... ok
+test gudhi_io::tests::shell_validate_ok ... ok
+test gudhi_io::tests::shell_validate_rejects_empty_label ... ok
+test graph_f2::graph_f2_tests::graphs_beyond_mask_width_have_replayable_cycle_obstructions ... ok
+test hash::domain_separation_witness::distinct_domains_do_not_collide ... ok
+test hash::domain_separation_witness::the_same_domain_is_refused ... ok
+test hashing::tests::test_hash256_to_hex ... ok
+test hashing::l4_boundary_tests_3250c14f::admits_within_capacity_and_refuses_overflow ... ok
+test hashing::tests::test_hash256_display ... ok
+test hashing::tests::test_hash_provenance_deterministic ... ok
+test hashing::tests::test_hash_provenance_different_sources ... ok
+test hashing::tests::test_hash_vector_deterministic ... ok
+test hashing::tests::test_hash_vector_different_values ... ok
+test hashing::tests::test_hash_weights_deterministic ... ok
+test homological_contract_alignment::tests::test_all_homological_bindings_valid ... ok
+test homological_perturbation::l4_mutation_checks_d5381c69::rejects_invalid_boundary_mutant ... ok
+test homology::l4_boundary_tests_30bec09d::admits_within_capacity_and_refuses_overflow ... ok
+test homology::tests::test_trivial_complex_homology ... ok
+test homology::tests::test_simple_graph_homology ... ok
+test homology::tests::test_cycle_graph_homology ... ok
+test homology::tests::test_two_components_homology ... ok
+test homology_class::tests::test_cohomology_class_complex_mismatch_rejected ... ok
+test homology_class::tests::test_homology_class_complex_mismatch_rejected ... ok
+test graph_coloring::transferred_regressions::detection_agrees_with_exhaustive_two_colouring_and_every_witness_is_valid ... ok
+test homology_class::tests::test_homology_class_domain_mismatch_rejected ... ok
+test homology_class::tests::test_homology_class_matching_complex_and_domain_accepted ... ok
+test homology_computer::l4_boundary_tests_bd4073ba::admits_within_capacity_and_refuses_overflow ... ok
+test homology_computer::tests::empty_request ... ok
+test homology_computer::tests::rational_coefficients_never_fall_back_to_f2 ... ok
+test ids::tests::a_basis_roster_refuses_an_empty_or_duplicate_id ... ok
+test ids::tests::test_degree_ordering ... ok
+test ids::tests::test_id_display ... ok
+test ids::tests::test_id_equality ... ok
+test join_complex::tests::shell_validate_ok ... ok
+test integral_chain_complex::l4_boundary_tests_51013581::admits_within_capacity_and_refuses_overflow ... ok
+test join_complex::tests::shell_validate_rejects_empty_label ... ok
+test lambda_graph::exact_witness_tests::exact_witness_holds ... ok
+test link_star::tests::shell_validate_ok ... ok
+test link_star::exact_link_tests::an_edge_stars_to_a_point_and_the_empty_face ... ok
+test interleaving_distance::integer_interleaving_witness::endpoints_within_epsilon ... ok
+test interleaving_distance::tests::shell_validate_rejects_empty_label ... ok
+test interleaving_distance::integer_interleaving_witness::refuses_unordered_and_wide_gap ... ok
+test interleaving_distance::tests::shell_validate_ok ... ok
+test join_complex::join_law_tests::overlapping_vertices_are_refused ... ok
+test mapping_cone::cone_dim_checks::cone_total_is_the_sum_of_the_two_complexes ... ok
+test integral_chain_equivalence::l4_mutation_checks_f6c182fb::rejects_invalid_boundary_mutant ... ok
+test link_star::tests::shell_validate_rejects_empty_label ... ok
+test join_complex::join_law_tests::disjoint_edges_join_in_four_simplices ... ok
+test mapping_cone::cone_dim_checks::unequal_lengths_are_refused ... ok
+test mapping_cone::tests::shell_validate_ok ... ok
+test mapping_cone::tests::shell_validate_rejects_empty_label ... ok
+test mapping_cylinder::cone_tests::the_cone_on_a_triangle_boundary_is_a_disk ... ok
+test mapping_cylinder::tests::shell_validate_ok ... ok
+test mapping_cylinder::tests::shell_validate_rejects_empty_label ... ok
+test matrix::l4_boundary_tests_a1e3fb1f::admits_within_capacity_and_refuses_overflow ... ok
+test matrix::tests::test_check_mat_vec_dims_mismatch ... ok
+test matrix::tests::test_check_mat_vec_dims_ok ... ok
+test matrix::tests::test_in_column_space_rejects_dimension_mismatch ... ok
+test matrix::tests::test_image_dim ... ok
+test matrix::tests::test_is_zero_matrix_false ... ok
+test matrix::tests::test_is_zero_matrix_true ... ok
+test matrix::tests::test_kernel_dim_full_rank ... ok
+test matrix::tests::test_in_column_space_decides_membership_exactly ... ok
+test matrix::tests::test_kernel_dim_rank_deficient ... ok
+test matrix::tests::test_mat_mul ... ok
+test matrix::tests::test_mat_vec_mul ... ok
+test matrix::tests::test_mat_vec_mul_dimension_mismatch ... ok
+test matrix::tests::test_matrix_rank_full ... ok
+test cup_product::exact_f2_laws::alexander_whitney_product_obeys_the_cochain_leibniz_rule_over_f2 ... ok
+test matrix::tests::test_matrix_rank_zero ... ok
+test matrix::tests::test_zero_matrix ... ok
+test matrix_reduction::tests::shell_validate_ok ... ok
+test matrix_reduction::tests::shell_validate_rejects_empty_label ... ok
+test matrix_reduction::tests::z2_operations_refuse_ragged_or_incompatible_shapes ... ok
+test matrix_reduction::tests::z2_product_and_zero_check_share_mod_two_semantics ... ok
+test matrix_reduction::tests::z2_rank_uses_the_declared_field ... ok
+test maurer_cartan::diagnostic_adapter_tests::float_import_refuses_ragged_and_nonfinite_tables ... ok
+test maurer_cartan::exact_tests::non_antisymmetric_and_non_cubic_tables_are_refused ... ok
+test maurer_cartan::exact_tests::antisymmetry_alone_does_not_establish_jacobi ... ok
+test maurer_cartan::tests::abelian_constant_is_zero ... ok
+test maurer_cartan::tests::abelian_spike_detected ... ok
+test maurer_cartan::tests::accept_requires_descent ... ok
+test maurer_cartan::tests::decomposition_separates ... ok
+test maurer_cartan::tests::dimension_mismatch_error ... ok
+test maurer_cartan::exact_tests::exact_heisenberg_bracket_is_accepted_and_evaluated ... ok
+test maurer_cartan::tests::reject_stagnation ... ok
+test maurer_cartan::diagnostic_adapter_tests::float_import_cannot_hide_jacobi_violation_by_underflow ... ok
+test maurer_cartan::tests::mc_rejects_da_bracket_dimension_mismatch ... ok
+test maurer_cartan::diagnostic_adapter_tests::diagnostic_projection_preserves_cross_terms_and_refuses_bad_inputs ... ok
+test maurer_cartan::tests::smooth_trace_low_gamma2 ... ok
+test maurer_cartan::tests::too_few_edges_error ... ok
+test maurer_cartan::tests::structure_constants_antisymmetric_gives_zero_self ... ok
+test maurer_cartan::tests::trace_interaction_detects_cross_terms ... ok
+test maurer_cartan::tests::trace_interaction_is_antisymmetric ... ok
+test maurer_cartan::tests::trace_interaction_self_bracket_is_zero ... ok
+test maurer_cartan::tests::trace_pipeline_end_to_end ... ok
+test maurer_cartan::tests::try_new_rejects_non_antisymmetric_table ... ok
+test mayervietoris_ss::tests::shell_validate_ok ... ok
+test maurer_cartan::tests::zero_is_flat ... ok
+test mayervietoris_ss::tests::shell_validate_rejects_empty_label ... ok
+test maurer_cartan::tests::try_new_rejects_jacobi_violation ... ok
+test morse_smale::tests::exact_witness_holds ... ok
+test morse_smale::tests::shell_validate_ok ... ok
+test morse_smale::tests::shell_validate_rejects_empty_label ... ok
+test numerical_dual_witness::tests::accepts_stationarity_equal_to_tolerance ... ok
+test numerical_dual_witness::tests::candidate_allows_violations_but_not_nan ... ok
+test numerical_dual_witness::tests::constructs_valid_witness ... ok
+test maurer_cartan::tests::try_new_accepts_valid_lie_algebra ... ok
+test numerical_dual_witness::tests::display_strings_are_ascii_and_readable ... ok
+test numerical_dual_witness::tests::rejects_bound_violation ... ok
+test numerical_dual_witness::tests::rejects_infinite_stationarity ... ok
+test numerical_dual_witness::tests::rejects_nan_bound ... ok
+test numerical_dual_witness::tests::rejects_nan_stationarity ... ok
+test numerical_dual_witness::tests::rejects_nan_tolerance ... ok
+test numerical_dual_witness::tests::rejects_negative_bound ... ok
+test numerical_dual_witness::tests::rejects_negative_tolerance ... ok
+test numerical_dual_witness::tests::rejects_stationarity_violation ... ok
+test observed_2category::l4_mutation_checks_072a0096::rejects_invalid_boundary_mutant ... ok
+test permutohedral::l4_mutation_checks_dcdbce1f::rejects_invalid_boundary_mutant ... ok
+test perseus_io::filtration_checks::a_later_face_birth_is_refused ... ok
+test perseus_io::filtration_checks::an_edge_coface_of_a_vertex_is_dimension_one ... ok
+test perseus_io::tests::shell_validate_ok ... ok
+test persistence_diagram::l4_boundary_tests_1c5285a5::admits_within_capacity_and_refuses_overflow ... ok
+test perseus_io::tests::shell_validate_rejects_empty_label ... ok
+test persistence_diagram::tests::persistence_of_finite_bar ... ok
+test persistence_pairing::tests::admitted_pairs_are_injective_and_ordered ... ok
+test persistent_homology::tests::exact_tenth_and_essential_component_are_preserved ... ok
+test persistence_pairing::tests::pair_roundtrip ... ok
+test persistent_homology::tests::malformed_boundary_is_refused_before_mutation ... ok
+test persistent_homology::tests::mismatched_size_and_unordered_values_are_refused ... ok
+test persistent_homology::tests::trivial_empty_ph ... ok
+test ph_matrix_reduction::l4_boundary_tests_1020388e::admits_within_capacity_and_refuses_overflow ... ok
+test ph_matrix_reduction::tests::empty_matrix_pairs_none ... ok
+test phat_io::tests::shell_validate_ok ... ok
+test phat_io::tests::shell_validate_rejects_empty_label ... ok
+test poset_census::l4_boundary_tests_321c9962::admits_within_capacity_and_refuses_overflow ... ok
+test primal_residual::exact_dot_tests::dot_product_matches_both_splits ... ok
+test presentation_symmetry::tests::directed_cycle_rotation_and_duplicate_near_miss ... ok
+test presentation_symmetry::tests::signed_cochain_maps_preserve_laws_but_arbitrary_maps_do_not ... ok
+test primal_residual::exact_dot_tests::refuses_the_wrong_obstruction ... ok
+test primitive_decomposition::split_tests::a_partition_keeps_each_image_inside_its_block ... ok
+test quotient::l4_boundary_tests_7547e743::admits_within_capacity_and_refuses_overflow ... ok
+test relative_chain_map::quotient_tests::a_larger_subcomplex_is_refused ... ok
+test relative_chain_map::quotient_tests::quotient_euler_is_the_difference ... ok
+test relative_chain_map::tests::shell_validate_ok ... ok
+test relative_chain_map::tests::shell_validate_rejects_empty_label ... ok
+test relative_complex::tests::relative_cells_are_the_complement ... ok
+test relative_complex::tests::shell_validate_ok ... ok
+test relative_complex::tests::shell_validate_rejects_empty_label ... ok
+test relative_homology::relative_chain_witness::refuses_larger_subspace ... ok
+test relative_homology::relative_chain_witness::relative_rank_is_difference ... ok
+test relative_homology::tests::shell_validate_ok ... ok
+test representative_cycle::gf2_cycle_tests::the_boundary_of_a_triangle_is_a_cycle ... ok
+test relative_homology::tests::shell_validate_rejects_empty_label ... ok
+test representative_cycle::gf2_cycle_tests::two_edges_leave_a_nonzero_boundary ... ok
+test representative_cycle::tests::empty_cycle_is_zero ... ok
+test restriction_dga::l4_mutation_checks_794d3773::rejects_invalid_boundary_mutant ... ok
+test scalar::tests::adr001_coefficients_beyond_i64_are_exact ... ok
+test scalar::tests::adr001_injection_from_rational64_is_exact ... ok
+test scalar::tests::adr001_hash_separates_values_beyond_i64 ... ok
+test scalar::tests::adr001_intermediate_overflow_stays_exact ... ok
+test scalar::tests::adr001_narrowing_round_trips_when_in_range ... ok
+test scalar::tests::adr001_narrowing_out_of_range_is_refused ... ok
+test scalar::tests::test_hash_deterministic ... ok
+test scalar::tests::adr001_prehash_encoding_separates_variable_width_limbs ... ok
+test scalar::tests::test_hash_vec_deterministic ... ok
+test scalar::tests::test_q_from_integer ... ok
+test scalar::tests::test_qr_rational ... ok
+test scalar::tests::test_qr_reduces ... ok
+test serialization::chain_byte_checks::an_empty_chain_is_refused ... ok
+test serialization::chain_byte_checks::three_coefficients_occupy_twenty_four_bytes ... ok
+test serialization::l4_boundary_tests_4cb24f90::admits_within_capacity_and_refuses_overflow ... ok
+test serre_spectral_sequence::serre_bidegree_tests::page_two_shifts_bidegree ... ok
+test serre_spectral_sequence::serre_bidegree_tests::refuses_a_wrong_target ... ok
+test serre_spectral_sequence::tests::shell_validate_ok ... ok
+test serre_spectral_sequence::tests::shell_validate_rejects_empty_label ... ok
+test simplicial::l4_boundary_tests_e28da532::admits_within_capacity_and_refuses_overflow ... ok
+test simplicial::tests::boundary_composition_invalid_degree ... ok
+test simplicial::tests::boundary_matrix_1_for_edge ... ok
+test simplicial::tests::boundary_matrix_2_for_triangle ... ok
+test simplicial::tests::oriented_simplex_tracks_parity ... ok
+test simplicial::tests::closes_under_faces_for_tetrahedron ... ok
+test simplicial::tests::rejects_degenerate_simplex ... ok
+test simplicial::tests::standard_n_simplex_has_all_dimensions ... ok
+test smith_normal_form::tests::a_free_complex_reports_no_torsion ... ok
+test smith_normal_form::tests::a_non_integer_boundary_is_refused_not_rounded ... ok
+test smith_normal_form::tests::h0_torsion_is_z_mod_two_for_degree_two_boundary ... ok
+test smith_normal_form::tests::snf_all_units_stay_units ... ok
+test smith_normal_form::tests::invalid_degree_is_typed ... ok
+test smith_normal_form::tests::snf_diag_two_three_collapses_to_one_and_six ... ok
+test smith_normal_form::tests::snf_empty_matrix_has_no_factors ... ok
+test smith_normal_form::tests::snf_of_a_single_two_is_two ... ok
+test smith_normal_form::tests::snf_rank_deficient_drops_the_zero_factor ... ok
+test simplicial::tests::boundary_squared_is_zero_for_4_simplex ... ok
+test smith_normal_form::tests::snf_two_four_six_eight_is_two_four ... ok
+test sparse_filtration::filtration_tests::a_late_vertex_is_refused ... ok
+test sparse_filtration::filtration_tests::an_edge_may_follow_its_vertex ... ok
+test sparse_filtration::tests::shell_validate_ok ... ok
+test sparse_filtration::tests::shell_validate_rejects_empty_label ... ok
+test spectral_sequence::tests::page_differential_drops_total_degree_by_one ... ok
+test spectral_sequence::tests::shell_validate_ok ... ok
+test spectral_sequence::tests::shell_validate_rejects_empty_label ... ok
+test square_lattice::l4_mutation_checks_e3f8395a::rejects_invalid_boundary_mutant ... ok
+test subdivision::subdivision_law_tests::an_empty_vertex_set_is_refused ... ok
+test subdivision::subdivision_law_tests::a_triangle_has_six_maximal_ordered_simplices ... ok
+test subdivision::tests::shell_validate_ok ... ok
+test suspension::tests::shell_validate_ok ... ok
+test subdivision::tests::shell_validate_rejects_empty_label ... ok
+test suspension::tests::shell_validate_rejects_empty_label ... ok
+test tests::integration_tests::bad_coboundary_relation_rejected ... ok
+test tests::integration_tests::cycle_checker_accepts_zero_chain ... ok
+test tests::integration_tests::cycle_checker_rejects_non_cycle ... ok
+test tests::integration_tests::carrier_manifest_deterministic ... ok
+test tests::integration_tests::different_carriers_different_hashes ... ok
+test tests::integration_tests::dimension_mismatch_rejected ... ok
+test simplicial::tests::rational_betti_numbers_of_circle_disk_and_sphere ... ok
+test tests::integration_tests::manifest_records_provenance_hash ... ok
+test tests::integration_tests::manifest_records_weights_hash ... ok
+test tests::integration_tests::non_positive_weights_rejected ... ok
+test tests::integration_tests::proof_pod1_direct_matrix_construction ... ok
+test tests::integration_tests::proof_pod1_filled_triangle ... ok
+test tests::integration_tests::proof_pod1_linear_path_3_nodes ... ok
+test tests::integration_tests::proof_pod1_path_graph ... ok
+test tests::integration_tests::simplicial_triangle_face_closure ... ok
+test tests::integration_tests::proof_pod1_unfilled_triangle ... ok
+test tests::integration_tests::proof_pod1_square_graph ... ok
+test tests::integration_tests::proof_pod1_k4_graph ... ok
+test tests::integration_tests::single_edge_tree_homology ... ok
+test tests::integration_tests::snf_filled_triangle_d1_rank_1 ... ok
+test tests::integration_tests::snf_single_edge_d0_rank_1 ... ok
+test tests::integration_tests::snf_triangle_d0_rank_2 ... ok
+test tests::integration_tests::triangle_missing_edge_rejected ... ok
+test tests::integration_tests::snf_k4_d0_rank_3 ... ok
+test tests::integration_tests::triangle_with_filling_h1_zero ... ok
+test tests::integration_tests::test_triangle_subdivision_preserves_homology ... ok
+test tests::integration_tests::zero_complex_works ... ok
+test tests::integration_tests::triangle_without_filling_h1_one ... ok
+test tests::l4_boundary_tests_53f08f90::admits_within_capacity_and_refuses_overflow ... ok
+test trichotomy_witness::l4_boundary_tests_12abb90a::admits_within_capacity_and_refuses_overflow ... ok
+test trichotomy_witness::tests::dimension_mismatch_is_rejected ... ok
+test trichotomy_witness::tests::cohomologous_iff_differ_by_a_coboundary ... ok
+test trichotomy_witness::tests::cohomologous_survivors_share_the_class ... ok
+test trichotomy_witness::tests::non_closed_residual_is_open_obstruction ... ok
+test twist_algorithm::exact_twist_tests::a_rank_two_boundary_has_nullity_one ... ok
+test trichotomy_witness::tests::winding_residual_is_a_genuine_h1_survivor ... ok
+test twist_algorithm::tests::shell_validate_ok ... ok
+test trichotomy_witness::tests::zero_and_coboundary_residuals_are_exact_repair ... ok
+test twist_algorithm::tests::shell_validate_rejects_empty_label ... ok
+test upper_triangular_pairs::pair_census_checks::a_descending_pair_is_refused ... ok
+test upper_triangular_pairs::pair_census_checks::the_complete_triple_has_three_pairs ... ok
+test vietoris_rips::l4_boundary_tests_7a50a8d8::admits_within_capacity_and_refuses_overflow ... ok
+test vietoris_rips::tests::vr_excludes_edge_below_radius ... ok
+test vietoris_rips::tests::vr_includes_edge_at_radius_one ... ok
+test wasserstein_distance::l4_boundary_tests_4c3374fe::admits_within_capacity_and_refuses_overflow ... ok
+test witness::tests::test_cochain_complex_witness_accessors ... ok
+test witness::tests::test_cohomology_witness_fields ... ok
+test wasserstein_distance::tests::far_points_of_equal_cardinality_match_the_diagonal ... ok
+test wasserstein_distance::tests::identical_zero ... ok
+test witness::l4_boundary_tests_a67b14b8::admits_within_capacity_and_refuses_overflow ... ok
+test witness::tests::test_homology_witness_fields ... ok
+test witness_complex::tests::shell_validate_ok ... ok
+test witness_complex::tests::shell_validate_rejects_empty_label ... ok
+test witness_complex::witness_law_tests::a_far_edge_has_no_weak_witness ... ok
+test witness_complex::witness_law_tests::landmark_zero_witnesses_the_edge ... ok
+test simplicial::tests::boundary_and_coboundary_composition_multi_dimension ... ok
+
+test result: ok. 510 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running unittests src\lib.rs (target\debug\deps\omega_operads-152e518d8d3c4ce1.exe)
+
+running 13 tests
+test policy::l4_boundary_tests_9c3b69b9::admits_within_capacity_and_refuses_overflow ... ok
+test immune_ports::l4_boundary_tests_59b4a9f0::admits_within_capacity_and_refuses_overflow ... ok
+test immune_guards::l4_boundary_tests_ea7c2de5::admits_within_capacity_and_refuses_overflow ... ok
+test estate::l4_boundary_tests_5629e2fe::admits_within_capacity_and_refuses_overflow ... ok
+test planar::l4_boundary_tests_d82282cd::admits_within_capacity_and_refuses_overflow ... ok
+test operad_runtime::l4_boundary_tests_776740b9::admits_within_capacity_and_refuses_overflow ... ok
+test skill_garden::l4_boundary_tests_2b075627::admits_within_capacity_and_refuses_overflow ... ok
+test graph::l4_boundary_tests_e763b6e2::admits_within_capacity_and_refuses_overflow ... ok
+test workflow::l4_boundary_tests_f76a9e66::admits_within_capacity_and_refuses_overflow ... ok
+test tests::admitted_refusal_length_is_code_colon_body ... ok
+test operad_runtime::tests::malformed_input_orders_refuse_before_native_evaluation ... ok
+test operad_runtime::tests::explicit_order_routes_values_and_plan_references ... ok
+test operad_runtime::tests::nested_reindexing_disjoint_interchange_and_units ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src\lib.rs (target\debug\deps\omega_pipelines-59f741e0f472b6a9.exe)
+
+running 43 tests
+test coda_gtlanf::__coda_gtlanf_property_witnesses::finite_normalizer_witness_is_fixed_and_preserves_terminal ... ok
+test finite_lambda_adapter::l4_mutation_checks_bb7f58c7::rejects_invalid_boundary_mutant ... ok
+test bounded_rewrite::l4_boundary_tests_961ff733::admits_within_capacity_and_refuses_overflow ... ok
+test coda_gtla::l4_boundary_tests_817a569e::admits_within_capacity_and_refuses_overflow ... ok
+test coda_gtlanf::l4_boundary_tests_cdbc26ca::admits_within_capacity_and_refuses_overflow ... ok
+test kleisli::__kleisli_property_witnesses::test_witness_placeholder ... ok
+test kleisli::l4_boundary_tests_1cfabd70::admits_within_capacity_and_refuses_overflow ... ok
+test kleisli::tests::left_identity_law ... ok
+test kleisli::tests::associativity_law ... ok
+test coda_gtla::tests::test_observation_collision_countermodel_fda_04 ... ok
+test coda_gtla::tests::test_lean_table_driven_pipeline_cases ... ok
+test kleisli::tests::refusal_short_circuits_downstream_arrow ... ok
+test kleisli::tests::right_identity_law ... ok
+test kleisli::tests::then_is_forward_order_and_threads_values ... ok
+test coda_gtlanf::tests::frozen_nine_cell_fixture_t_images_are_fixed ... ok
+test coda_gtlanf::tests::t_mints_no_authority_and_preserves_terminal_class ... ok
+test coda_gtlanf::tests::frozen_nine_cell_fixture_fixed_point_checks_agree ... ok
+test coda_gtlanf::tests::frozen_nine_cell_fixture_t_is_idempotent ... ok
+test coda_gtlanf::tests::frozen_nine_cell_fixture_normalize_include_is_identity ... ok
+test kleisli_payload_checks::a_refused_composition_stays_refused_and_an_admitted_one_keeps_its_payload ... ok
+test loop_step::l4_boundary_tests_f47cf323::admits_within_capacity_and_refuses_overflow ... ok
+test loop_step::tests::firewall::cannot_attach_non_none_authority_effect ... ok
+test loop_step::tests::firewall::firewall_pin_catches_a_non_none_authority_effect ... ok
+test loop_step::tests::scaffold::packet_link_is_recorded ... ok
+test rewrite_scheduler::l4_mutation_checks_c2c99a59::rejects_invalid_boundary_mutant ... ok
+test report_route::l4_boundary_tests_34573632::admits_within_capacity_and_refuses_overflow ... ok
+test loop_step::tests::types::types_compile_and_construct_with_real_apis ... ok
+test loop_step::tests::accept::positive_control_returns_value_not_refused ... ok
+test loop_step::tests::witnesses::obstructed_row_accepts_strict_decrease_delta ... ok
+test loop_step::tests::witnesses::obstructed_row_accepts_zero_delta_and_preserves_phi1 ... ok
+test loop_step::tests::reject::non_destructive_candidate_is_accepted_with_sealed_ndec ... ok
+test loop_step::tests::accept::accept_returns_value_with_authority_effect_none ... ok
+test loop_step::tests::witnesses::witnesses_attached_and_replay_hash_preserved_and_certificate_sealed ... ok
+test loop_step::tests::reject::reject_branch_refuses_on_phi1_increase_and_terminalizer_bypass_and_face_mismatch ... ok
+test loop_step::tests::reject::require_non_destructive_fails_on_destructive_candidate ... ok
+test loop_step::tests::phi1_nonincrease_and_replay_hash_preserved::sanity_at_least_one_value_branch_observed ... ok
+test loop_step::tests::compose::kleisli_laws_hold_at_loop_step_seam ... ok
+test runtime::contract_negative_tests::bounded_repair_exhaustion_preserves_complete_residual_history ... ok
+test loop_step::tests::phi1_nonincrease_and_replay_hash_preserved::value_branch_observed_at_least_16_times ... ok
+test loop_step::tests::compose::seal_preserved_under_composition ... ok
+test runtime::contract_negative_tests::plain_evaluator_acceptance_stays_open_without_descent_replay_or_host_independence ... ok
+test runtime::contract_negative_tests::omega_result_wire_refuses_completion_evidence_and_independence_forgery ... ok
+test loop_step::tests::phi1_nonincrease_and_replay_hash_preserved::phi1_nonincrease_and_replay_hash_preserved ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src\lib.rs (target\debug\deps\omega_quantum_physics-9f49709e79a44cd6.exe)
+
+running 709 tests
+test adaptive_integrator::l4_mutation_checks_1af48d93::rejects_invalid_boundary_mutant ... ok
+test algebraic_qft::l4_boundary_tests_051830be::admits_within_capacity_and_refuses_overflow ... ok
+test anyon::l4_boundary_tests_bf194bf9::admits_within_capacity_and_refuses_overflow ... ok
+test anyon_model::l4_boundary_tests_593f4168::admits_within_capacity_and_refuses_overflow ... ok
+test ancilla_capacity::l4_mutation_checks_78ba42a8::rejects_invalid_boundary_mutant ... ok
+test bell_state::tests::new_and_fence ... ok
+test bipartite_operator::l4_mutation_checks_fcc90531::rejects_invalid_boundary_mutant ... ok
+test branch_finegraining::tests::test_compute_lcm ... ok
+test bell_state::tests::bell_states_orthonormal ... ok
+test branch_finegraining::tests::test_finegrain_state_rationals ... ok
+test branch_finegraining::tests::test_minimal_finegraining_chsh ... ok
+test classical_storage::l4_mutation_checks_2c1b9c90::rejects_invalid_boundary_mutant ... ok
+test busch_effects::l4_boundary_tests_5d7585e5::admits_within_capacity_and_refuses_overflow ... ok
+test cancellation_certificates::l4_mutation_checks_38be69b0::rejects_invalid_boundary_mutant ... ok
+test chain_histories::l4_boundary_tests_5b4a260b::admits_within_capacity_and_refuses_overflow ... ok
+test branch_finegraining::tests::test_search_smallest_irrational_conductor ... ok
+test busch_effects::tests::test_exact_hermitian_round_trip ... ok
+test coherent_interference::l4_mutation_checks_6067f5b6::rejects_invalid_boundary_mutant ... ok
+test commutator::l4_boundary_tests_4e726d84::admits_within_capacity_and_refuses_overflow ... ok
+test commutator::tests::a_generator_of_the_wrong_shape_is_refused ... ok
+test cochain_repair_code::lattice_budget_tests::cochain_lattice_constructors_refuse_unbounded_allocation ... ok
+test anyon::tests::signed_spherical_dimension_does_not_change_charge_invertibility ... ok
+test commutator::tests::the_commutant_of_no_generators_or_of_the_identity_is_every_matrix ... ok
+test commutator::tests::test_trace_cyclicity_arbitrary_matrices ... ok
+test atomic_dirac_lamb_hartree_fock::tests::qm224_dirac_coulomb_fine_structure_and_lamb_shift_hold_over_q ... ok
+test commutator::tests::the_commutant_of_a_diagonal_matrix_follows_its_eigenvalue_multiplicities ... ok
+test commutator::tests::test_audit_commutator_obstruction ... ok
+test commutator::tests::the_scalar_commutator_relation_does_hold_with_c_zero_exactly_for_commuting_pairs ... ok
+test classical_structure::tests::complex_rational_unbiased_basis_is_complementary ... ok
+test commuting_observables::l4_mutation_checks_2b650d03::rejects_invalid_boundary_mutant ... ok
+test commutator::tests::the_trace_of_a_scalar_matrix_is_three_times_the_scalar ... ok
+test commutator::tests::test_heisenberg_center ... ok
+test completely_positive_map::tests::kraus_extraction_round_trip ... ok
+test completely_positive_map::tests::identity_channel_choi_matrix ... ok
+test completely_positive_map::tests::new_and_fence ... ok
+test complex_realification::l4_boundary_tests_5bcf9bd6::admits_within_capacity_and_refuses_overflow ... ok
+test complex_structure_selector::l4_boundary_tests_7b16815d::admits_within_capacity_and_refuses_overflow ... ok
+test completely_positive_map::tests::transpose_map_choi_is_refused ... FAILED
+test composition_quantum_bound::l4_mutation_checks_f6d284ff::rejects_invalid_boundary_mutant ... ok
+test commutator::tests::the_shift_and_the_clock_alone_have_three_dimensional_commutants ... ok
+test commutator::tests::the_shift_and_clock_pair_has_only_scalars_in_its_commutant ... ok
+test composition_tensor_mub::l4_mutation_checks_3d53a0ff::rejects_invalid_boundary_mutant ... ok
+test composition_tomography::tests::composition_authority_none ... ok
+test anyon::tests::ising_charge_has_nonabelian_dimension_and_exact_twist ... ok
+test composition_tomography::tests::composition_tensor_dims ... ok
+test composition_tomography::tests::composition_rebit_tensor_stays_real ... ok
+test composition_tomography::tests::w614_cartesian_and_tensor_laws_differ ... ok
+test composition_tomography::tests::w614_functor_is_associative_on_morphisms ... ok
+test composition_tomography::tests::composition_complex_local_tomography ... ok
+test composition_tomography::tests::composition_real_rebit_countermodel ... ok
+test composition_tomography::tests::w614_functor_preserves_identities ... ok
+test composition_tomography::tests::w614_interchange_fixtures_are_non_commuting ... ok
+test composition_tomography::tests::w614_functor_satisfies_interchange_law ... ok
+test composition_tomography::tests::w614_real_rebit_products_do_not_span ... ok
+test composition_tomography::tests::w614op_1_delta_is_a_traceless_symmetric_involution ... ok
+test composition_tomography::tests::w614_witness_is_the_yy_correlation ... ok
+test composition_tomography::tests::w614_real_rebit_witness_is_invisible_to_all_product_effects ... ok
+test composition_tomography::tests::w614_witness_is_visible_to_some_joint_effect ... ok
+test composition_tomography::tests::w614op_23_states_are_symmetric_with_unit_trace ... ok
+test composition_tomography::tests::w614op_5_states_are_distinct ... ok
+test composition_tomography::tests::w614_real_spanning_fails_for_2x3_as_well ... ok
+test composition_tomography::tests::w614op_4_states_are_positive_definite_with_exact_min_eigenvalue_one_eighth ... ok
+test composition_tomography::tests::w614op_7_a_joint_projector_separates_them_by_exactly_one_half ... ok
+test atomic_dirac_lamb_hartree_fock::tests::qm225_helium_variational_hylleraas_and_exchange_hold_over_q ... ok
+test composition_tomography::w614_complex_tests::complex_hermitian_basis_elements_are_hermitian ... ok
+test classical_structure::tests::rational_rotated_basis_is_a_classical_structure_with_only_basis_points_copyable ... ok
+test composition_tomography::w614_complex_tests::complex_hermitian_basis_has_d_squared_elements ... ok
+test composition_tomography::tests::w614op_6_all_product_effects_assign_equal_probability ... ok
+test composition_tomography::w614_complex_tests::complex_local_tomography_spans_at_2x2 ... ok
+test composition_tomography::w614_complex_tests::encode_real_vector_is_re_then_im ... ok
+test continuous_time_locality_limit::tests::intermediate_products_do_not_overflow_i64 ... ok
+test composition_tomography::w614_complex_tests::real_through_complex_pipeline_still_fails ... ok
+test contextuality_obstruction::l4_mutation_checks_af39457e::rejects_invalid_boundary_mutant ... ok
+test continuous_time_locality_limit::tests::negative_norm_is_rejected ... ok
+test composition_tomography::w614_complex_tests::kron_gaussian_multiplies_complex_entries_correctly ... ok
+test continuous_time_locality_limit::tests::test_trotter_first_order_bound ... ok
+test anyon_model::tests::ising_fusion_spaces_and_monodromy_are_computed ... ok
+test continuous_time_locality_limit::tests::test_trotter_second_order_bound ... ok
+test continuum::l4_boundary_tests_39087c45::admits_within_capacity_and_refuses_overflow ... ok
+test cptp_channels_stinespring::l4_boundary_tests_1bc6a326::admits_within_capacity_and_refuses_overflow ... ok
+test composition_tomography::tests::w614op_deficiency_equals_skew_skew_dimension ... ok
+test cptp_trajectory_verifier::l4_boundary_tests_9525e5aa::admits_within_capacity_and_refuses_overflow ... ok
+test cptp_trajectory_verifier::tests::dephasing_fixes_diag_3_5_2_5 ... ok
+test cptp_trajectory_verifier::tests::qubit_m2_modal_collision_at_3 ... ok
+test cptp_trajectory_verifier::tests::test_bell_panel_povm_workpad_json_roundtrip ... ok
+test cptp_trajectory_verifier::tests::entropy_diag_3_5_2_5_enclosure ... ok
+test cptp_trajectory_verifier::tests::bell_panel_m4_collision_at_5 ... ok
+test cptp_trajectory_verifier::tests::prop_matrix_dagger_involution_and_trace_linearity ... ok
+test cptp_trajectory_verifier::tests::test_qubit_povm_workpad_json_roundtrip ... ok
+test cptp_trajectory_verifier::tests::test_purity_budget_workpad_json_roundtrip ... ok
+test composition_tomography::w614_complex_tests::gaussian_pipeline_reproduces_the_original_real_answer ... ok
+test cptp_trajectory_verifier::tests::test_rational_interval_workpad_json_roundtrip ... ok
+test cptp_trajectory_verifier::tests::test_rational_json_syntax_validation ... ok
+test cptp_trajectory_verifier::tests::two_node_tau1_refusal_at_2 ... ok
+test composition_tomography::w614_complex_tests::real_deficiency_matches_skew_skew_across_dims ... ok
+test dagger_category::tests::rectangular_dagger_respects_composition_tensor_and_biproduct ... ok
+test decoherence_functional::history_family_shape_checks::a_zero_dimension_fails_the_history_budget ... ok
+test decoherence_functional::history_family_shape_checks::an_empty_family_is_refused ... ok
+test cptp_trajectory_verifier::tests::werner_amplitude_damping_budget_2 ... ok
+test dagger_category::tests::fdhilb_cups_and_caps_satisfy_the_zigzag_and_trace_equals_dimension ... ok
+test decoherence_functional::history_family_shape_checks::histories_must_share_a_label_length ... ok
+test decoherence_functional::history_family_shape_checks::one_square_history_has_one_decoherence_entry ... ok
+test density_matrix::tests::a_matrix_with_coherences_is_refused_or_reported_not_silently_truncated ... ok
+test density_matrix::tests::an_exact_density_matrix_is_hermitian_psd_and_of_trace_one_and_nothing_else ... ok
+test density_matrix::tests::authority_fence_is_none ... ok
+test cptp_trajectory_verifier::tests::prop_povm_carrier_pigeonhole_collision ... ok
+test density_matrix::tests::conjugation_needs_an_exact_unitary_and_expectations_a_hermitian_observable ... ok
+test density_matrix::tests::maximally_mixed_purity_one_over_n ... ok
+test density_matrix::tests::mixtures_tensor_products_and_partial_traces_are_exact_and_validated ... ok
+test density_matrix::tests::pure_populations_from_state ... ok
+test density_matrix::tests::pure_state_purity_one ... ok
+test density_matrix::tests::purity_rank_and_population_shadow_of_the_plus_state_and_the_mixture_differ_only_in_coherence ... ok
+test density_matrix::tests::rejects_bad_trace ... ok
+test density_matrix::tests::rejects_dimension_mismatch ... ok
+test density_matrix::tests::rejects_empty ... ok
+test density_matrix::tests::rejects_negative_prob ... ok
+test density_matrix::tests::rejects_non_finite_entry ... ok
+test density_matrix::tests::test_bures_metrics_and_supertrace ... ok
+test density_matrix::tests::test_linear_algebra_cmatrix_bridge_and_fidelity ... ok
+test density_matrix::tests::test_rational_l1_discrete_density ... ok
+test density_matrix::tests::test_rejects_non_normalized_rational_density ... ok
+test density_matrix::tests::the_shadow_is_stored_as_given_and_not_renormalised ... ok
+test density_matrix::tests::the_action_of_an_exact_channel_agrees_with_the_direct_computation ... ok
+test density_matrix::tests::the_spectrum_of_the_maximally_mixed_state_is_exact ... ok
+test density_matrix::tests::unnormalised_positive_operators_are_normalised_with_their_trace_reported ... ok
+test derivation_dag_witnesses::l4_boundary_tests_409a7eb9::admits_within_capacity_and_refuses_overflow ... ok
+test derivation_dag_witnesses::tests::tranche23_pfp_35_dag_prompt_operad_certificates_witness_passes ... ok
+test derivation_dag_witnesses::tests::tranche24_pfp_142_remaining_dag_nodes_and_m3_ablation_witness_passes ... ok
+test dirac_gamma_admission::l4_mutation_checks_de1b0452::rejects_invalid_boundary_mutant ... ok
+test dynamics::l4_boundary_tests_b9a16a78::admits_within_capacity_and_refuses_overflow ... ok
+test derivation_dag_witnesses::tests::master_derivation_dag_witness_receipt_passes_all_33_families ... ok
+test dynamics::tests::test_cayley_toggle_unitarity_and_pythagorean_triples ... ok
+test dynamics::tests::test_toggle_square_root_properties ... ok
+test difference_transport_channel::transport_tests::transport_exposes_the_optimal_helstrom_effect_and_replays_the_difference ... ok
+test dynamics_dichotomy::l4_mutation_checks_3cbffc3c::rejects_invalid_boundary_mutant ... ok
+test dynamics::tests::test_cayley_composition_group_law ... ok
+test cptp_trajectory_verifier::tests::prop_ancilla_budget_decrement_and_exhaustion ... ok
+test embedding_relativity::l4_mutation_checks_578c0e6e::rejects_invalid_boundary_mutant ... ok
+test engine_bridge::tests::diagnostic_lens_refuses_overflow_underflow_and_malformed_storage ... ok
+test entanglement::tests::a_relative_phase_decides_entanglement_which_populations_cannot_see ... ok
+test entanglement::tests::a_bell_state_has_two_equal_schmidt_probabilities_and_entropy_ln_2 ... ok
+test entanglement::tests::a_wrong_bipartition_is_refused ... ok
+test entanglement::tests::bell_state_entanglement_entropy ... ok
+test entanglement::tests::new_and_fence ... ok
+test entropy::exact_entropy_tests::an_irrational_spectrum_is_refused ... ok
+test entanglement::tests::product_state_zero_entanglement ... ok
+test entanglement::tests::the_schmidt_spectrum_of_the_ray_3_0_0_1_is_nine_tenths_one_tenth ... ok
+test entanglement::tests::the_exact_rank_agrees_with_the_number_of_nonzero_schmidt_probabilities ... ok
+test entanglement::tests::the_uniform_product_state_plus_plus_is_separable ... ok
+test composition_tomography::w614_complex_tests::complex_local_tomography_spans_at_2x3_and_3x3 ... ok
+test entropy::exact_entropy_tests::a_diagonal_mixture_has_the_shannon_entropy_of_its_weights ... ok
+test entropy::exact_entropy_tests::a_pure_state_has_zero_entropy_and_the_maximally_mixed_state_has_ln_d ... ok
+test entropy::tests::new_and_fence ... ok
+test entropy::tests::relative_entropy_properties ... ok
+test entropy::tests::von_neumann_entropy_values ... ok
+test everett::tests::test_nonuniform_pythagorean_measure_decoupling ... ok
+test everett::tests::test_sorkin_3slit_exact_vanishing ... ok
+test entropy::exact_entropy_tests::coherences_make_the_von_neumann_entropy_smaller_than_the_population_entropy ... ok
+test everett::tests::test_uniform_measure_agreement ... ok
+test exact_channel::dp8_controls::realification_doubles_the_carrier_and_scales_the_trace ... ok
+test exact_channel::dp8_controls::singular_leading_minor_control_is_decided_by_congruence ... ok
+test exact_channel::tests::authority_fence_is_none ... ok
+test exact_channel::tests::budgeted_channel_input_limits_precede_physical_normalization ... ok
+test exact_channel::tests::budgeted_channel_application_keeps_spent_fuel_and_accepts_benign_input ... ok
+test exact_channel::tests::budgeted_channel_shape_refusal_preserves_fuel ... ok
+test exact_channel::dp8_controls::transpose_choi_is_refused_with_a_negative_vector ... ok
+test exact_channel::tests::choi_refusals ... ok
+test exact_channel::tests::choi_and_kraus_forms_agree ... ok
+test exact_channel::tests::construction_refusals ... ok
+test exact_channel::tests::depolarizing_is_exact_and_the_float_path_is_its_diagnostic ... ok
+test exact_channel::tests::depolarizing_oversized_request_refuses_before_allocation ... ok
+test exact_channel::dp8_controls::rank_one_channel_has_no_single_unit_operator_and_two_suffice_over_gaussian_rationals ... ok
+test exact_channel::tests::identity_channel_is_exactly_trace_preserving ... ok
+test exact_channel::tests::pythagorean_amplitude_damping_matches_the_float_diagnostic ... ok
+test exact_channel::tests::composition_of_depolarizing_channels ... ok
+test exact_channel::tests::trace_channel_is_rectangular ... ok
+test exact_channel::tests::transpose_map_is_refused_as_not_completely_positive ... ok
+test exact_channel::tests::trace_preservation_defect_is_refused_exactly ... ok
+test exact_hermitian::tests::authority_fence_is_none ... ok
+test exact_entropy::tests::raw_nonpositive_denominators_are_refused_before_spectrum_arithmetic ... ok
+test exact_hermitian::tests::eigen_residual_vanishes_on_eigenpairs ... ok
+test exact_hermitian::tests::hermitian_check_reports_first_defect_in_row_order ... ok
+test exact_hermitian::tests::irrational_spectrum_is_refused_not_approximated ... ok
+test exact_hermitian::tests::psd_is_exact_on_the_boundary ... ok
+test exact_hermitian::tests::real_embedding_is_symmetric_for_hermitian_input ... ok
+test exact_channel::tests::trace_distance_contracts_under_depolarizing ... ok
+test exact_channel::tests::stinespring_isometry_needs_rational_square_weights ... ok
+test exact_hermitian::tests::spectral_resolution_counts_multiplicity ... ok
+test exact_entropy::tests::malformed_spectra_and_budget_exhaustion_are_refusals ... ok
+test exact_entropy::tests::multiplicities_log_reductions_and_purity_are_bound_to_the_spectrum ... ok
+test exact_instrument::l4_mutation_checks_9eef3ed4::rejects_invalid_boundary_mutant ... ok
+test exact_hermitian::tests::spectral_resolution_of_pauli_y ... ok
+test exact_operator::tests::construction_refuses_empty_and_malformed_matrices ... ok
+test exact_operator::tests::an_irrational_spectrum_is_isolated_not_approximated ... ok
+test exact_hermitian::tests::spectral_resolution_refuses_wrong_declarations ... ok
+test exact_operator::tests::pauli_y_is_hermitian_unitary_and_squares_to_the_identity ... ok
+test exact_operator::tests::the_spectrum_of_a_non_hermitian_operator_is_refused ... ok
+test feynman_diagram::tests::wick_pairings_count_is_the_double_factorial ... ok
+test fidelity::tests::identical_states_yield_unit_fidelity_and_zero_bures ... ok
+test fidelity::tests::mixed_state_fidelity_matches_analytic_value ... ok
+test fidelity::tests::orthogonal_states_yield_zero_fidelity_and_max_bures ... ok
+test exact_operator::tests::a_hermitian_spectrum_is_found_exactly_with_multiplicities ... ok
+test exact_operator::tests::characteristic_polynomial_of_known_matrices ... ok
+test exact_operator::tests::arithmetic_refuses_incompatible_shapes_instead_of_panicking ... ok
+test finite_bell_extension::l4_mutation_checks_711d17f6::rejects_invalid_boundary_mutant ... ok
+test fidelity::tests::supertrace_computes_correctly ... ok
+test exact_operator::tests::commutator_and_kronecker_follow_the_declared_index_order ... ok
+test commutator::tests::no_pair_of_three_by_three_matrices_has_a_nonzero_scalar_commutator ... ok
+test finite_bell_preparation::l4_mutation_checks_8d002f43::rejects_invalid_boundary_mutant ... ok
+test finite_chsh_correlations::commuting_bell_tests::raw_nonpositive_denominators_are_refused_before_box_arithmetic ... ok
+test finite_chsh_correlations::commuting_bell_tests::original_single_carrier_control_vanishes_and_corrected_one_is_refused ... ok
+test finite_report_dynamics::l4_mutation_checks_45f4d525::rejects_invalid_boundary_mutant ... ok
+test exact_entropy::tests::entropy_enclosures_have_declared_width_and_intersect_density_enclosures ... ok
+test finite_schrodinger_step::l4_mutation_checks_a590ed80::rejects_invalid_boundary_mutant ... ok
+test finite_chsh_correlations::commuting_bell_tests::rational_product_strategy_is_admitted_and_not_extreme ... ok
+test finite_geometry::tests::finite_configurations ... ok
+test finite_spinfoam::tests::nonclaims_have_counterexamples ... ok
+test finite_spinfoam::tests::real_values_of_q_zeta_12_are_read_exactly ... ok
+test finite_chsh_correlations::commuting_bell_tests::gaussian_rationals_carry_no_square_root_of_two ... ok
+test cptp_trajectory_verifier::tests::prop_unital_cptp_trace_preservation_and_purity_decay ... ok
+test gauge_cochain_complex::l4_mutation_checks_a80b1074::rejects_invalid_boundary_mutant ... ok
+test frame_function_polytope::l4_mutation_checks_8d333ab8::rejects_invalid_boundary_mutant ... ok
+test gaussian_frame_readout::l4_mutation_checks_dc6f6d83::rejects_invalid_boundary_mutant ... ok
+test ghz_state::l4_boundary_tests_da4a1bd3::admits_within_capacity_and_refuses_overflow ... ok
+test ghz_state::tests::new_and_fence ... ok
+test finite_spinfoam::tests::finite_lean_models ... ok
+test ghz_state::tests::standard_three_qubit_ghz ... ok
+test grover::tests::test_grover_n2_exact_q_extension ... ok
+test grover::tests::test_grover_n4_exact_chebyshev_period6 ... ok
+test growth_refinement::l4_mutation_checks_f2c0a4c6::rejects_invalid_boundary_mutant ... ok
+test heisenberg_picture::l4_mutation_checks_ba6cae7f::rejects_invalid_boundary_mutant ... ok
+test grover::tests::test_grover_n4_exact_householder_reflections ... ok
+test heisenberg_representation_uniqueness::l4_boundary_tests_dca61187::admits_within_capacity_and_refuses_overflow ... ok
+test hermitian_spectral::tests::authority_fence_is_none ... ok
+test hermitian_spectral::tests::certify_trace_norm_inherits_the_spectral_refusals ... ok
+test graded_path_sum::l4_mutation_checks_996aa144::rejects_invalid_boundary_mutant ... ok
+test hermitian_spectral::tests::float64_demo_marked_non_exact_and_refused_for_theorem ... ok
+test hermitian_spectral::tests::diagonal_n3_spectral ... ok
+test frobenius_algebra::tests::copy_structure_is_special_commutative_dagger_frobenius ... ok
+test hermitian_spectral::tests::certify_trace_norm_uses_the_paid_spectrum ... ok
+test hermitian_spectral::tests::general_n_pair_splits_on_the_discriminant_square_class ... ok
+test hermitian_spectral::tests::general_n_padding_is_non_degenerate ... ok
+test hermitian_spectral::tests::hypotheses_gate_refuses_unpaid ... ok
+test hermitian_spectral::tests::leading_block_structure_rejects_dimensions_below_two ... ok
+test hermitian_spectral::tests::non_hermitian_complex_refused ... ok
+test hermitian_spectral::tests::non_hermitian_refused ... ok
+test hermitian_spectral::tests::perfect_isqrt_smoke ... ok
+test hermitian_spectral::tests::general_n_obstruction_tracks_discriminant_not_dimension ... ok
+test hermitian_spectral::tests::general_n_refusal_is_not_a_size_limitation ... ok
+test hermitian_spectral::tests::rational_carrier_rejects_complex_entry ... ok
+test hermitian_spectral::tests::test_perfect_isqrt_exact ... ok
+test hermitian_spectral::tests::declared_rational_spectrum_is_certified_beyond_the_paid_cases ... ok
+test hermitian_spectral::tests::general_n_nondiagonal_open_residual ... ok
+test hermitian_spectral::tests::two_by_two_charpoly_does_not_split ... ok
+test hermitian_spectral::tests::two_by_two_gaussian_pauli_y ... ok
+test hermitian_spectral::tests::two_by_two_rational_split ... ok
+test hermitian_spectral::tests::two_by_two_beyond_the_i64_ceiling ... ok
+test hermitian_spectral::tests::w610_a17_classical_observables_always_commute ... ok
+test hermitian_spectral::tests::w610_a17_classical_spectral_is_level_set_arithmetic ... ok
+test hermitian_spectral::tests::w610_block_diagonal_pays_general_n ... ok
+test hermitian_spectral::tests::w610_block_diagonal_refuses_when_any_block_refuses ... ok
+test hermitian_spectral::tests::w610_rational_hermitian_can_have_irrational_spectrum ... ok
+test hermitian_spectral::tests::w610_rational_root_test_is_not_constant ... ok
+test hermitian_spectral::tests::w610_splitting_two_by_two_still_decomposes ... ok
+test higher_dim::l4_boundary_tests_be0a8848::admits_within_capacity_and_refuses_overflow ... ok
+test hilbert_power_checks::two_qubits_have_dimension_four ... ok
+test hilbert_power_checks::zero_qubits_are_refused ... ok
+test hermitian_spectral::tests::w610_block_detection_rejects_off_block_mass ... ok
+test hermitian_spectral::tests::w610_a17_noncommutativity_is_a_priced_import ... ok
+test hilbert_space::tests::accepts_qubit ... ok
+test hilbert_space::tests::flat_and_unflat_are_mutually_inverse_on_every_index ... ok
+test cptp_trajectory_verifier::tests::test_contextuality_holonomy_workpad_json_roundtrip ... ok
+test hilbert_space::tests::index_maps_refuse_bad_arguments ... ok
+test hilbert_space::tests::oversized_and_overflowing_requests_are_typed_refusals ... ok
+test holonomy_interference::l4_mutation_checks_ba96f045::rejects_invalid_boundary_mutant ... ok
+test instrument_repeatability::l4_mutation_checks_140bbe6f::rejects_invalid_boundary_mutant ... ok
+test instruments::tests::instruments_authority_none ... ok
+test instruments::tests::instruments_channel_compose_tp ... ok
+test instruments::tests::instruments_computational_basis_povm ... ok
+test instruments::tests::instruments_luders_on_pure_basis ... ok
+test instruments::tests::instruments_require_spectral_evidence ... ok
+test kochen_specker::l4_mutation_checks_4bfef0a1::rejects_invalid_boundary_mutant ... ok
+test hilbert_space::tests::rejects_zero_dim ... ok
+test hilbert_space::tests::qubit_tensor_qutrit_has_dimension_six_and_the_declared_index_order ... ok
+test hilbert_space::tests::the_flat_index_is_associative_across_a_bipartition ... ok
+test hilbert_space::tests::the_legacy_constructor_still_clamps_and_is_not_the_checked_path ... ok
+test kraus_operators::tests::cmatrix_kraus_tp ... ok
+test kraus_operators::tests::identity_is_tp ... ok
+test kraus_operators::tests::new_and_fence ... ok
+test kraus_operators::tests::scaled_identity_not_tp ... ok
+test lattice_dirac_doubling::l4_mutation_checks_b3dd064c::rejects_invalid_boundary_mutant ... ok
+test lattice_gauge_manybody_benchmark::l4_mutation_checks_cdef2467::rejects_invalid_boundary_mutant ... ok
+test kraus_operators::tests::rejects_empty ... ok
+test kraus_operators::tests::rejects_dimension_mismatch ... ok
+test kraus_operators::tests::rejects_non_finite_entry ... ok
+test kraus_operators::tests::rejects_not_square ... ok
+test local_operator_algebra::tests::oversized_algebra_constraint_packets_refuse_before_dense_materialization ... ok
+test kraus_operators::tests::rejects_zero_dim ... ok
+test majorization::tests::incomparable_spectra_and_order_invariance_use_every_partial_sum ... ok
+test cptp_trajectory_verifier::tests::cabello_phi_glue_is_1_parity_nonzero ... ok
+test majorization::tests::thermal_order_and_entropy_schur_concavity_have_exact_witnesses ... ok
+test mass_phase_embedding::l4_mutation_checks_e07e2104::rejects_invalid_boundary_mutant ... ok
+test measurement::tests::computational_measurement_probabilities ... ok
+test measurement::tests::new_and_fence ... ok
+test measurement_update::l4_boundary_tests_c87dc55e::admits_within_capacity_and_refuses_overflow ... ok
+test measurement_update::tests::new_and_fence ... ok
+test meron_time_refinement::l4_mutation_checks_e03487b0::rejects_invalid_boundary_mutant ... ok
+test modular_tensor_category::l4_boundary_tests_63a3a28d::admits_within_capacity_and_refuses_overflow ... ok
+test cptp_trajectory_verifier::tests::test_emit_canonical_workpad_json_payloads ... ok
+test mub::algebra::l4_boundary_tests_249c910d::admits_within_capacity_and_refuses_overflow ... ok
+test mub::carrier::l4_boundary_tests_c387fd9b::admits_within_capacity_and_refuses_overflow ... ok
+test mub::carrier::tests::clean_room_carrier_declarations_do_not_point_at_export_paths ... ok
+test mub::carrier::tests::full_mub6_carrier_records_missing_cover_and_gluing_obligations ... ok
+test mub::carrier::tests::pinned_t0_carrier_is_declared_but_not_full_mub6 ... ok
+test meron_source_field::l4_mutation_checks_f6f39860::rejects_invalid_boundary_mutant ... ok
+test measurement_update::tests::state_collapse_on_superposition ... ok
+test meron_spatial_source::l4_mutation_checks_e191015e::rejects_invalid_boundary_mutant ... ok
+test mub::char_two::l4_boundary_tests_2214473c::admits_within_capacity_and_refuses_overflow ... ok
+test finite_chsh_correlations::commuting_bell_tests::embedded_optimal_strategy_has_positive_sign_and_negated_bob_has_negative_sign ... ok
+test mub::char_two_weyl_board::l4_boundary_tests_37d0a5a3::admits_within_capacity_and_refuses_overflow ... ok
+test mub::char_two_weyl_board::tests::char_two_weyl_board_schema_rejects_degenerate_exponents ... ok
+test mub::char_two_weyl_board::tests::char_two_weyl_board_schema_rejects_oversized_exponents_before_allocation ... ok
+test mub::composite::l4_boundary_tests_53b7fcc5::admits_within_capacity_and_refuses_overflow ... ok
+test mub::char_two::tests::test_char_two_d2_algebra ... ok
+test mub::composite_completion_gate::l4_boundary_tests_241662e2::admits_within_capacity_and_refuses_overflow ... ok
+test mub::composite_completion_gate::tests::composite_completion_gate_accepts_only_witness_or_no_go_certificate ... ok
+test mub::composite_completion_gate::tests::composite_completion_gate_rejects_lower_control_promotion ... ok
+test mub::composite_controls::l4_boundary_tests_f38f0124::admits_within_capacity_and_refuses_overflow ... ok
+test mub::char_two_weyl_board::tests::char_two_weyl_board_schemas_verify_for_sample_fields ... ok
+test frobenius_algebra::tests::matrix_and_cyclic_group_algebras_have_computed_special_scalars ... ok
+test feynman_diagram::tests::vacuum_symmetry_factors_and_connected_sums_match_phi4_coefficients ... ok
+test mub::composite_tensor_family_gate::l4_boundary_tests_5298b1ba::admits_within_capacity_and_refuses_overflow ... ok
+test mub::d10_controls::l4_boundary_tests_9e7b7d18::admits_within_capacity_and_refuses_overflow ... ok
+test anyon_model::tests::declared_models_satisfy_pentagon_and_both_hexagons ... ok
+test modular_tensor_category::tests::modular_data_reproduce_toric_and_ising_ground_state_counts ... ok
+test mub::dimension_stratification::l4_boundary_tests_e86642d9::admits_within_capacity_and_refuses_overflow ... ok
+test mub::char_two::tests::test_char_two_d4_algebra ... ok
+test mub::dimension_stratification::tests::a_control_that_stops_verifying_stops_granting_authority ... ok
+test mub::composite_controls::tests::d6_control_is_not_complete ... ok
+test mub::dimension_stratification::tests::d6_and_d10_get_tensor_lower_bounds_not_complete_authority ... ok
+test mub::composite_controls::tests::d6_tensor_product_three_mubs_verify_exactly ... ok
+test mub::dimension_stratification::tests::prime_power_controls_are_complete_only_for_supported_dimensions ... ok
+test mub::dimension_stratification::tests::unsupported_composite_factor_blocks_tensor_replay ... ok
+test mub::dimension_stratification::tests::unsupported_prime_power_remains_missing_local_control ... ok
+test mub::finite_projector_control::l4_boundary_tests_0f2735c5::admits_within_capacity_and_refuses_overflow ... ok
+test local_operator_algebra::tests::even_fermion_algebra_has_dimension_eight_and_two_dimensional_center ... ok
+test mub::gtmur_projector_ledger::l4_boundary_tests_c47069e6::admits_within_capacity_and_refuses_overflow ... ok
+test mub::gtmur_projector_ledger::tests::gtmur_projector_ledger_rejects_missing_stage ... ok
+test mub::composite::tests::test_composite_d6_algebra ... ok
+test mub::hilbert_transport::l4_boundary_tests_a6b5b733::admits_within_capacity_and_refuses_overflow ... ok
+test mub::hilbert_transport::tests::hilbert_transport_rejects_missing_board_schema ... ok
+test algebraic_qft::tests::finite_tensor_net_obeys_isotony_locality_and_complement_duality ... ok
+test mub::non_cyclic_falser::l4_boundary_tests_ed505ba5::admits_within_capacity_and_refuses_overflow ... ok
+test mub::non_cyclic_falser::tests::rejects_mixed_effects_even_when_all_108_overlaps_pass ... ok
+test mub::non_cyclic_falser::tests::scaled_unitary_is_not_necessarily_hadamard ... ok
+test mub::non_cyclic_falser::tests::search_conclusion_depends_on_observed_verdicts ... ok
+test mub::d10_controls::tests::d5_complete_mub_verifies_exactly ... ok
+test mub::non_cyclic_falser::tests::test_petrescu_points_chm_property ... ok
+test mub::non_cyclic_falser::tests::test_tao_s6_chm_property ... ok
+test mub::non_cyclic_falser::tests::test_tao_s6_falsification_against_weyl_triad ... ok
+test mub::odd_prime::l4_boundary_tests_05eb2260::admits_within_capacity_and_refuses_overflow ... ok
+test mub::odd_prime::tests::test_odd_prime_d3_algebra ... ok
+test mub::odd_prime::tests::test_odd_prime_d5_algebra ... ok
+test mub::odd_prime_gauss_certificate_gate::l4_boundary_tests_37d01d61::admits_within_capacity_and_refuses_overflow ... ok
+test cptp_trajectory_verifier::tests::prop_rational_entropy_taylor_enclosure_consistency ... ok
+test local_operator_algebra::tests::pauli_local_algebra_commutant_is_the_complement_region ... ok
+test mub::odd_prime_power_controls::l4_boundary_tests_c6816a00::admits_within_capacity_and_refuses_overflow ... ok
+test mub::odd_prime_power_controls::tests::d25_complete_mub_verifies_by_trace_character_certificate ... ok
+test mub::odd_prime_power_controls::tests::d27_complete_mub_verifies_by_trace_character_certificate ... ok
+test mub::odd_prime_gauss_certificate_gate::tests::current_odd_prime_gauss_certificate_gate_verifies_declared_controls ... ok
+test mub::odd_prime_gauss_certificate_gate::tests::missing_required_prime_is_reported_without_promotion ... ok
+test mub::odd_prime_power_controls::tests::gf9_trace_lands_in_f3_and_detects_real_part ... ok
+test mub::odd_prime_power_field_theorem_gate::l4_boundary_tests_90c8e307::admits_within_capacity_and_refuses_overflow ... ok
+test mub::odd_prime_power_field_theorem_gate::tests::odd_prime_power_field_theorem_gate_accepts_current_lean_field_theorems ... ok
+test mub::odd_prime_power_field_theorem_gate::tests::odd_prime_power_field_theorem_gate_accepts_only_complete_field_theorems ... ok
+test mub::odd_prime_power_field_theorem_gate::tests::odd_prime_power_field_theorem_gate_still_rejects_without_gauss_theorem ... ok
+test mub::odd_prime_power_parametric_gate::l4_boundary_tests_f3a1744e::admits_within_capacity_and_refuses_overflow ... ok
+test finite_geometry::tests::full_e8_enumeration ... ok
+test mub::d10_controls::tests::d10_tensor_product_three_mubs_verify_exactly ... ok
+test mub::odd_prime_power_weyl::l4_boundary_tests_afbbabff::admits_within_capacity_and_refuses_overflow ... ok
+test mub::odd_prime_power_weyl::tests::odd_prime_power_schema_rejects_oversized_fields_before_allocation ... ok
+test mub::odd_prime_power_weyl::tests::odd_prime_power_schema_rejects_unsupported_dimensions ... ok
+test mub::odd_prime_power_weyl::tests::odd_prime_power_schemas_verify_for_sample_fields ... ok
+test mub::odd_prime_weyl::l4_boundary_tests_f33fc677::admits_within_capacity_and_refuses_overflow ... ok
+test mub::odd_prime_weyl::tests::odd_prime_schema_rejects_non_odd_primes ... ok
+test mub::odd_prime_weyl::tests::odd_prime_schemas_verify_for_sample_primes ... ok
+test mub::prime_controls::l4_boundary_tests_2f903bb3::admits_within_capacity_and_refuses_overflow ... ok
+test mub::d10_controls::tests::d10_control_is_not_complete ... ok
+test mub::prime_controls::tests::d11_complete_mub_verifies_exactly ... ok
+test mub::prime_controls::tests::d2_complete_mub_verifies_exactly ... ok
+test mub::prime_controls::tests::d3_complete_mub_verifies_exactly ... ok
+test mub::prime_controls::tests::d4_complete_mub_verifies_exactly ... ok
+test mub::prime_controls::tests::d13_complete_mub_verifies_exactly ... ok
+test mub::prime_controls::tests::prime_controls_do_not_claim_composite_dimensions ... ok
+test mub::prime_controls::tests::prime_power_controls_do_not_claim_non_prime_power_dimensions ... ok
+test mub::prime_power_gtmur_boundary::l4_boundary_tests_8daa2482::admits_within_capacity_and_refuses_overflow ... ok
+test mub::odd_prime_power_controls::tests::d9_complete_mub_verifies_exactly ... ok
+test mub::projector_algebra::l4_boundary_tests_3bcaa4ff::admits_within_capacity_and_refuses_overflow ... ok
+test mub::projector_algebra::tests::projector_algebra_rejects_missing_board_schema ... ok
+test mub::projector_algebra::tests::projector_algebra_verifies_for_char_two_boards ... ok
+test mub::spectral_lift::l4_boundary_tests_5d18f8c8::admits_within_capacity_and_refuses_overflow ... ok
+test mub::spectral_lift::tests::spectral_lift_schema_rejects_missing_board_schema ... ok
+test mub::spectral_lift::tests::spectral_lift_schema_verifies_for_char_two_boards ... ok
+test mub::tests::test_mub_d3_all_projector_laws ... ok
+test mub::tests::test_mub_d4_all_projector_laws ... ok
+test mub::tests::test_mub_d6_completeness_and_reconstruction_rejection ... ok
+test mub::tests::test_mub_d6_rational_reconstruction_refuses_incomplete_system ... ok
+test mub::tests::test_mub_d6_reconstruction_refuses_incomplete_system ... ok
+test mub::tests::test_mub_system_d2_verification ... ok
+test mub::tests::test_mub_system_d3_verification ... ok
+test mub::tests::test_mub_system_d4_verification ... ok
+test mub::tests::test_mub_system_d6_composite_verification ... ok
+test no_cloning::tests::buzek_hillery_bound_enforcement ... ok
+test no_cloning::tests::identical_states_zero_obstruction ... ok
+test no_cloning::tests::new_and_fence ... ok
+test no_cloning::tests::non_orthogonal_states_nonzero_obstruction ... ok
+test no_cloning::tests::orthogonal_states_zero_obstruction ... ok
+test no_signalling::l4_mutation_checks_dd5cfaa7::rejects_invalid_boundary_mutant ... ok
+test norm_approximation_frontier::l4_mutation_checks_2a8ad828::rejects_invalid_boundary_mutant ... ok
+test observable::tests::a_declared_spectrum_is_verified_and_the_found_spectrum_agrees ... ok
+test observable::tests::an_expectation_with_an_imaginary_part_is_refused_not_truncated ... ok
+test observable::tests::commutators_and_anticommutators_of_the_pauli_observables ... ok
+test observable::tests::exact_observables_refuse_non_hermitian_and_mismatched_operands ... ok
+test observable::tests::expectation_and_variance_of_pauli_observables_are_exact ... ok
+test observable::tests::pauli_expectation_values ... ok
+test observable::tests::pauli_observables_hermitian ... ok
+test observable::tests::rejects_non_hermitian ... ok
+test observable::tests::the_robertson_schroedinger_relation_is_decided_exactly ... ok
+test operational_axiom_selection::l4_mutation_checks_9a70c425::rejects_invalid_boundary_mutant ... ok
+test packed_hermitian::l4_mutation_checks_b0fd8ed6::rejects_invalid_boundary_mutant ... ok
+test pair_exchange_characters::l4_mutation_checks_393ef620::rejects_invalid_boundary_mutant ... ok
+test pairing_audit::l4_mutation_checks_7d507385::rejects_invalid_boundary_mutant ... ok
+test parity_context_packet::l4_mutation_checks_967b9f62::rejects_invalid_boundary_mutant ... ok
+test path_integral::tests::finite_chain_partition_is_the_trace_of_the_transfer_product ... ok
+test path_integral::tests::gaussian_moments_and_phi4_integrals_match_exact_wick_coefficients ... ok
+test pauli::tests::checked_functions_refuse_what_the_legacy_ones_panic_on ... ok
+test pauli::tests::letters_are_read_and_other_characters_refused ... ok
+test pauli::tests::string_multiplication_tracks_the_phase_exactly ... ok
+test pauli::tests::test_multi_qubit_commutation ... ok
+test pauli::tests::test_single_qubit_pauli_algebra ... ok
+test pauli::tests::the_float_matrices_are_the_exact_ones ... ok
+test pauli::tests::the_letter_product_table_matches_the_exact_matrices ... ok
+test pauli::tests::the_pauli_group_has_order_four_times_four_to_the_n ... ok
+test pauli::tests::the_symplectic_form_decides_commutation_on_every_two_qubit_pair ... ok
+test pauli::tests::weight_counts_non_identity_letters ... ok
+test pauli_context_table::l4_mutation_checks_94f91cd4::rejects_invalid_boundary_mutant ... ok
+test pauli_spin_statistics_graph::tests::conf2_graph_topologies_separate_1d_2d_and_3connected ... ok
+test pauli_spin_statistics_graph::tests::slater_pauli_exclusion_and_jordan_wigner_car_hold_over_q ... ok
+test pauli_spin_statistics_graph::tests::three_particle_slater_vanishes_on_duplicate_row_and_flips_on_swap ... ok
+test perturbation_theory::tests::three_level_series_matches_the_independent_determinant_and_degenerate_block ... ok
+test perturbation_theory::tests::two_level_energy_series_is_the_signed_catalan_sequence ... ok
+test phase_averaged_shadow::l4_mutation_checks_64a94f59::rejects_invalid_boundary_mutant ... ok
+test phase_blind_quotient::l4_mutation_checks_9bb9f80c::rejects_invalid_boundary_mutant ... ok
+test phase_estimation::tests::dyadic_roots_are_periodic_across_signed_exponents ... ok
+test phase_estimation::tests::dyadic_roots_match_wide_reference_at_integer_boundaries ... ok
+test phase_estimation::tests::test_phase_estimation_m1_all_phases ... ok
+test phase_estimation::tests::test_phase_estimation_m2_all_phases ... ok
+test mub::odd_prime_power_controls::tests::d49_complete_mub_verifies_by_trace_character_certificate ... ok
+test phase_estimation::tests::test_unitary_qft_matrices ... ok
+test phase_readout::l4_mutation_checks_46db4745::rejects_invalid_boundary_mutant ... ok
+test population_shadow::l4_mutation_checks_42e94e85::rejects_invalid_boundary_mutant ... ok
+test power_rule_outcomes::l4_mutation_checks_7c255f4c::rejects_invalid_boundary_mutant ... ok
+test process_matrix::tests::causal_mixture_interpolates_properly ... ok
+test process_matrix::tests::causal_witness_detects_sign ... ok
+test process_matrix::tests::choi_matrix_from_identity_has_unit_trace_scaling ... ok
+test process_matrix::tests::valid_causal_process_constructs_cleanly ... ok
+test product_defect_bound::tests::correlated_initial_state_is_refused ... ok
+test product_defect_bound::tests::half_trace_control_shows_raw_value_cannot_bound_trace_distance ... ok
+test product_defect_bound::tests::host_admission_refusals ... ok
+test product_defect_bound::tests::inert_spectator_gives_the_three_site_fixture ... ok
+test product_defect_bound::tests::local_tangent_has_zero_normal_rate_despite_a_nonzero_raw_derivative ... ok
+test product_defect_bound::tests::two_site_model_certifies_nu_two_and_replays_the_report_values ... ok
+test product_defect_bound::tests::understated_field_norm_is_refused_and_the_full_g_is_admitted ... ok
+test product_defect_bound::tests::weak_relaxation_holds_exactly_for_k_at_least_two ... ok
+test product_defect_bound::tests::witness_and_parameter_mutations_are_refused ... ok
+test projective_preservers::l4_mutation_checks_27498659::rejects_invalid_boundary_mutant ... ok
+test purification::tests::new_and_fence ... ok
+test purification::tests::test_purify_cmatrix_non_diagonal ... ok
+test purification::tests::test_purify_diagonal ... ok
+test purification::tests::test_purify_maximally_mixed_yields_bell_state ... ok
+test qddc::l4_mutation_checks_20e10c4c::rejects_invalid_boundary_mutant ... ok
+test qed_weak_hadronic_finite_maps::l4_boundary_tests_611cbe47::admits_within_capacity_and_refuses_overflow ... ok
+test phase_estimation::tests::test_phase_estimation_m3_all_phases ... ok
+test qed_weak_hadronic_finite_maps::tests::test_qm227_ckm_unitarity_triangle_and_jarlskog ... ok
+test qed_weak_hadronic_finite_maps::tests::test_qm226_klein_nishina_thomson_and_crossing ... ok
+test qed_weak_hadronic_finite_maps::tests::test_qm227_weyl_gammas_and_chiral_projectors ... ok
+test qed_weak_hadronic_finite_maps::tests::test_qm227_fermi_constant_and_interval_helpers ... ok
+test quantum_channel::tests::defect_below_1e_6_is_refused ... ok
+test quantum_channel::tests::dim_mismatch_on_apply ... ok
+test quantum_channel::tests::exact_rational_kraus_channel_is_admitted_only_by_exact_kraus ... ok
+test quantum_channel::tests::new_and_fence ... ok
+test quantum_channel::tests::rejects_non_tp_kraus ... ok
+test quantum_channel::tests::tolerance_does_not_admit_damping ... ok
+test quantum_channel::tests::tolerance_does_not_admit_depolarizing ... ok
+test quantum_channel::tests::tolerance_does_not_admit_identity ... ok
+test quantum_channel::tests::validate_and_cptp_refuse_tolerance ... ok
+test quantum_correlation::l4_mutation_checks_b4c322cc::rejects_invalid_boundary_mutant ... ok
+test quantum_entropy_cone::tests::bell_and_product_entropy_vectors_are_exact ... ok
+test quantum_entropy_cone::tests::ghz_four_obeys_quantum_inequalities_but_violates_monogamy ... ok
+test qed_weak_hadronic_finite_maps::tests::test_qm228_abj_and_gell_mann_okubo ... ok
+test quantum_hamiltonian::tests::a_hamiltonian_with_plus_minus_eigenvalues_has_the_right_spectrum_and_propagator ... FAILED
+test quantum_hamiltonian::tests::a_matrix_that_is_only_nearly_hermitian_is_refused_by_the_eigensolver ... ok
+test quantum_hamiltonian::tests::an_irrational_spectrum_has_no_exact_spectral_propagator ... ok
+test quantum_hamiltonian::tests::authority_fence_is_none ... ok
+test quantum_hamiltonian::tests::non_hermitian_operators_are_not_hamiltonians ... ok
+test quantum_hamiltonian::tests::rabi_oscillation_follows_the_closed_form ... FAILED
+test quantum_hamiltonian::tests::the_cayley_propagator_agrees_with_its_spectral_form ... ok
+test quantum_entropy_cone::tests::six_qubit_perfect_tensor_has_maximal_entropy_through_three_parties ... ok
+test quantum_hamiltonian::tests::the_liouville_commutator_is_the_right_one_and_conserves_energy ... ok
+test quantum_hamiltonian::tests::the_cayley_propagator_is_exactly_unitary_and_conserves_energy_and_inverts_by_negation ... ok
+test quantum_hamiltonian::tests::the_rabi_quarter_turn_propagator_is_exact ... ok
+test quantum_hamiltonian::tests::the_solver_keeps_degenerate_subspaces_and_reports_checked_residuals ... ok
+test quantum_hamiltonian::tests::zeeman_hamiltonian_evolution ... ok
+test quantum_import_finite_maps::algebraic_bound_state_spectra::l4_boundary_tests_4db8dd3e::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::electroweak_dfm_weinberg_control::l4_boundary_tests_d7c59771::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::electroweak_dfm_weinberg_control::tests::test_qm220_electroweak_dfm_weinberg_control ... ok
+test quantum_import_finite_maps::finite_qm_expressibility_and_measurement::l4_boundary_tests_5db621e5::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::finite_qm_expressibility_and_measurement::tests::test_finite_qm_expressibility_and_measurement_control ... ok
+test quantum_import_finite_maps::algebraic_bound_state_spectra::tests::test_qm217_algebraic_bound_state_spectra_control ... ok
+test quantum_import_finite_maps::foundational_derivation_closure::l4_boundary_tests_54e6c05d::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::l4_boundary_tests_b90405c2::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::foundational_derivation_closure::tests::test_qm219_foundational_derivation_closure_control ... ok
+test quantum_import_finite_maps::page_wootters_tsirelson_wigner::cyclotomic_rings::l4_boundary_tests_61ffdb60::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::page_wootters_tsirelson_wigner::l4_boundary_tests_64f2717f::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::qcd_beta0_wilson_confinement_control::l4_boundary_tests_ae7c557d::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::page_wootters_tsirelson_wigner::tests::test_qm218_page_wootters_tsirelson_wigner_control ... ok
+test quantum_import_finite_maps::ravera_dfm_finite_to_continuum::l4_boundary_tests_b1b5f748::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::ravera_dfm_finite_to_continuum::tests::test_cartan_regge_lorentz_tetrad_dfm_control ... ok
+test quantum_import_finite_maps::ravera_dfm_finite_to_continuum::tests::test_ckm_jarlskog_bipartite_dfm_control ... ok
+test quantum_import_finite_maps::ravera_dfm_finite_to_continuum::tests::test_su3_spanning_tree_vs_landau_gribov_control ... ok
+test quantum_import_finite_maps::tests::test_qm207_holonomy_bridge_control ... ok
+test quantum_import_finite_maps::tests::test_qm208_quadratic_readout_control ... ok
+test quantum_import_finite_maps::tests::test_qm209_context_parity_control ... ok
+test quantum_import_finite_maps::tests::test_qm210_frame_function_control ... ok
+test quantum_import_finite_maps::tests::test_qm211_clock_tower_control ... ok
+test quantum_import_finite_maps::tests::test_qm212_dressed_qed_g2_control ... ok
+test quantum_import_finite_maps::tests::test_qm213_nonabelian_dfm_control ... ok
+test quantum_import_finite_maps::tests::test_qm214_symanzik_two_forest_bphz_control ... ok
+test quantum_import_finite_maps::tests::test_qm215_dirac_ward_takahashi_control ... ok
+test quantum_import_finite_maps::vacuum_polarization_lamb_shift::l4_boundary_tests_aa3b0f73::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_import_finite_maps::vacuum_polarization_lamb_shift::tests::test_qm216_vacuum_polarization_lamb_shift_control ... ok
+test quantum_mutual_information::tests::bell_state_population_mutual_information ... ok
+test quantum_mutual_information::tests::bell_state_pure_quantum_mutual_information ... ok
+test quantum_mutual_information::tests::new_and_fence ... ok
+test quantum_mutual_information::tests::product_state_zero_mutual_information ... ok
+test quantum_regge_bridge::l4_boundary_tests_279e9ca5::admits_within_capacity_and_refuses_overflow ... ok
+test quantum_regge_bridge::tests::test_anisotropic_bianchi_directional_decoherence_and_differential_rates ... ok
+test quantum_regge_bridge::tests::test_anisotropic_bianchi_wheeler_dewitt_potential_and_action ... ok
+test quantum_regge_bridge::tests::test_discrete_wheeler_dewitt_potential_and_action ... ok
+test quantum_regge_bridge::tests::test_simplicial_dirac_matrix_hermiticity_and_spectrum ... ok
+test quantum_regge_bridge::tests::test_simplicial_dirac_thermal_state_and_channels ... ok
+test quantum_regge_bridge::tests::test_spin_network_area_spectrum_exactness ... ok
+test quantum_regge_bridge::tests::test_wheeler_dewitt_density_matrix_and_decoherence ... ok
+test quantum_relative_entropy::tests::diagonal_relative_entropy_self_is_zero ... ok
+test quantum_relative_entropy::tests::diagonal_support_mismatch ... ok
+test quantum_relative_entropy::tests::general_matrices_relative_entropy ... ok
+test quantum_relative_entropy::tests::new_and_fence ... ok
+test quantum_state::tests::a_non_hermitian_operator_has_no_real_expectation ... ok
+test quantum_state::tests::a_ray_is_nonzero_and_nonempty ... ok
+test quantum_state::tests::authority_fence_is_none ... ok
+test quantum_state::tests::born_probabilities_go_through_the_functional_crate ... ok
+test quantum_state::tests::computational_basis_normalized ... ok
+test quantum_state::tests::exact_ket_bra_sesquilinear_positive_norm_and_typed_refusals ... ok
+test quantum_state::tests::inner_product_and_projector ... ok
+test quantum_state::tests::normalisation_reports_the_norm_it_divided_by_and_survives_extreme_scales ... ok
+test quantum_state::tests::rejects_wrong_dim ... ok
+test quantum_state::tests::rejects_zero_vector ... ok
+test quantum_state::tests::tensor_product_states_use_the_declared_index_order_and_label ... ok
+test quantum_state::tests::the_bloch_vector_of_a_qubit_ray_is_rational_and_of_length_one_for_a_pure_state ... ok
+test quantum_state::tests::the_f64_face_is_a_diagnostic_of_the_exact_ray ... ok
+test quantum_state::tests::the_kronecker_product_orders_the_left_factor_first ... ok
+test quantum_state::tests::the_projector_is_a_hermitian_idempotent_of_trace_one ... ok
+test quantum_state::tests::transition_probability_is_scale_and_phase_invariant_and_one_exactly_on_a_ray ... ok
+test quantum_state::tests::try_unit_checks_the_norm_and_does_not_rescale ... ok
+test quantum_walk::tests::an_unsupported_group_or_degree_is_a_typed_refusal ... ok
+test quantum_walk::tests::test_cayley_graph_s3_invariants ... ok
+test quantum_walk::tests::test_cayley_graph_s4_invariants ... ok
+test quantum_walk::tests::test_exact_ballistic_walk_s3 ... ok
+test quantum_walk::tests::test_exact_ballistic_walk_s4 ... ok
+test quantum_walk::tests::the_ballistic_flag_holds_only_inside_the_light_cone_window ... ok
+test quantum_import_finite_maps::qcd_beta0_wilson_confinement_control::tests::test_qm221_qcd_beta0_wilson_confinement_control ... ok
+test quantum_walk::tests::the_walk_is_unitary_and_stays_inside_its_light_cone_at_every_step ... ok
+test quaternion_gauge_shadow::l4_mutation_checks_f3893259::rejects_invalid_boundary_mutant ... ok
+test qubit_bloch_map::l4_mutation_checks_8d1e7511::rejects_invalid_boundary_mutant ... ok
+test r_matrix::l4_boundary_tests_0587a9f1::admits_within_capacity_and_refuses_overflow ... ok
+test r_matrix::tests::exchange_admission_refuses_oversized_inverse_work ... ok
+test r_matrix::tests::hecke_r_matrix_satisfies_braid_and_quadratic_relations ... ok
+test r_matrix::tests::ising_exchange_has_both_exact_channel_phases ... ok
+test refinement_subsystem_tower::l4_mutation_checks_6ee847b4::rejects_invalid_boundary_mutant ... ok
+test regge_gravity_ghz_chern_finite_maps::l4_boundary_tests_fa4dc41d::admits_within_capacity_and_refuses_overflow ... ok
+test regge_gravity_ghz_chern_finite_maps::tests::test_combined_report_passes ... ok
+test regge_gravity_ghz_chern_finite_maps::tests::test_qm229_deflection_and_perihelion ... ok
+test regge_gravity_ghz_chern_finite_maps::tests::test_qm230_ghz_mermin_exact_eigenvalues_and_refusal ... ok
+test regge_gravity_ghz_chern_finite_maps::tests::test_qm230_page_wootters_lowering_shift ... ok
+test regge_gravity_ghz_chern_finite_maps::tests::test_qm230_phase_damping_three_applications ... ok
+test regge_gravity_ghz_chern_finite_maps::tests::test_qm231_chern_parity ... ok
+test relative_state_branching::l4_mutation_checks_40c97ee9::rejects_invalid_boundary_mutant ... ok
+test quantum_walk::tests::the_variance_never_exceeds_the_popoviciu_bound_so_there_is_no_asymptotic_ballistic_regime ... ok
+test residual_density_calculus::pointer_tests::pointer_pinching_preserves_populations_and_is_idempotent ... ok
+test richardson::tests::test_richardson_linear_scales_1_3 ... ok
+test richardson::tests::test_richardson_quadratic_scales_1_2_3 ... ok
+test s_matrix::tests::cayley_scalar_pins_the_scattering_sign_convention ... ok
+test s_matrix::tests::coupled_channels_are_unitary_and_obey_the_optical_theorem ... ok
+test s_matrix::tests::malformed_and_nonphysical_scattering_inputs_are_refused ... ok
+test s_matrix::tests::new_and_fence ... ok
+test scattering_amplitude::tests::lippmann_schwinger_resolvent_and_born_remainder_are_exact ... ok
+test scattering_amplitude::tests::scattering_optical_theorem_and_channel_probabilities_follow_unitarity ... ok
+test sector_conditioning::l4_mutation_checks_b2613b28::rejects_invalid_boundary_mutant ... ok
+test separating_predictions::tests::mermin_peres_cochain_bridge_obstructed ... ok
+test separating_predictions::tests::mermin_peres_no_noncontextual_assignment ... ok
+test separating_predictions::tests::separating_authority_none ... ok
+test shor::l4_boundary_tests_98942817::admits_within_capacity_and_refuses_overflow ... ok
+test shor::tests::nine_letter_words_are_read_and_others_refused ... ok
+test shor::tests::test_shor_code_invariants ... ok
+test shor::tests::test_shor_distance_is_computed_from_the_generators ... ok
+test signed_sampling::l4_mutation_checks_70bb9b94::rejects_invalid_boundary_mutant ... ok
+test simplicial_entropy_schedule::l4_boundary_tests_c2acb4fe::admits_within_capacity_and_refuses_overflow ... ok
+test simplicial_entropy_schedule::tests::area_count_and_page_schedule_match_the_declared_arithmetic ... ok
+test spin_area_spectrum::l4_mutation_checks_57456116::rejects_invalid_boundary_mutant ... ok
+test spin_structure_obstruction::l4_mutation_checks_5528a964::rejects_invalid_boundary_mutant ... ok
+test stabilizer_code_distance::enrichment_tests::five_qubit_weight_enumerators_obey_macwilliams_and_coding_bounds ... ok
+test stabilizer_code_distance::enrichment_tests::macwilliams_recurrence_matches_full_pauli_weight_counts_beyond_small_code_search ... ok
+test stabilizer_code_distance::enrichment_tests::signed_stabilizer_states_refuse_minus_identity_and_compute_bell_entropy ... ok
+test stabilizer_code_distance::tests::authority_fence_is_none ... ok
+test stabilizer_code_distance::tests::bit_flip_code_has_distance_one ... ok
+test stabilizer_code_distance::tests::correction_radius_needs_a_product_closed_alphabet ... ok
+test stabilizer_code_distance::tests::dependent_generators_use_the_rank ... ok
+test stabilizer_code_distance::tests::five_qubit_code_is_5_1_3 ... ok
+test stabilizer_code_distance::tests::four_qubit_css_code_is_4_2_2 ... ok
+test stabilizer_code_distance::tests::large_weight_classes_are_refused ... ok
+test stabilizer_code_distance::tests::refusals_are_typed ... ok
+test stabilizer_code_distance::tests::shor_code_is_9_1_3 ... ok
+test stabilizer_code_distance::tests::stabilizers_are_excluded_from_the_search ... ok
+test stabilizer_code_distance::tests::steane_code_is_7_1_3 ... ok
+test stinespring_dilation::tests::amplitude_damping_stinespring_reconstruction ... ok
+test stinespring_dilation::tests::new_and_fence ... ok
+test stochastic_unitary_boundary::l4_mutation_checks_a0c50cef::rejects_invalid_boundary_mutant ... ok
+test superselection_sector::tests::parity_sectors_are_minimal_central_blocks_and_hide_cross_sector_phase ... ok
+test teleportation::tests::a_non_qubit_input_is_refused ... ok
+test teleportation::tests::bobs_conditional_states_are_the_paulis_applied_to_psi_over_two ... ok
+test teleportation::tests::new_and_fence ... ok
+test teleportation::tests::teleport_computational_zero ... ok
+test teleportation::tests::teleport_superposition_state ... ok
+test teleportation::tests::the_four_born_probabilities_sum_to_one_for_every_input ... ok
+test teleportation::tests::the_wrong_or_missing_correction_does_not_recover_the_input ... ok
+test tensor_commuting_correlation_frontier::l4_boundary_tests_50f16360::admits_within_capacity_and_refuses_overflow ... ok
+test threshold_repair_certificate::bounded_power_tests::huge_scaling_requests_refuse_before_computing_unbounded_powers ... ok
+test time_sliced_action_shadow::l4_mutation_checks_cacf1b5a::rejects_invalid_boundary_mutant ... ok
+test tomography::l4_boundary_tests_66b7c54b::admits_within_capacity_and_refuses_overflow ... ok
+test tomography::tests::test_exact_d2_tomography_on_qubit_states ... ok
+test tomography::tests::test_exact_d4_tomography_on_bell_state ... ok
+test tomography::tests::test_exact_d4_tomography_on_ground_state ... ok
+test tomography::tests::test_exact_d4_tomography_on_mixed_state ... ok
+test tomography::tests::test_exact_d4_tomography_on_superposition_state ... ok
+test tomography::tests::test_exact_tomography_on_ground_state ... ok
+test tomography::tests::test_exact_tomography_on_magic_state ... ok
+test tomography::tests::test_exact_tomography_on_mixed_states ... ok
+test tomography::tests::test_exact_tomography_on_superposition_state ... ok
+test topological_quantum_computing::l4_boundary_tests_9c8c2258::admits_within_capacity_and_refuses_overflow ... ok
+test topological_quantum_computing::tests::gate_words_refuse_aggregate_dense_work_before_products ... ok
+test topological_quantum_computing::tests::ising_braid_image_is_projectively_clifford_and_excludes_t ... ok
+test toric_code::tests::moving_e_around_an_m_and_away_from_it_have_opposite_phases ... ok
+test toric_code::tests::toric_code_kitaev_preskill_entropy_is_one_bit ... ok
+test toric_code::tests::toric_code_parameters_and_intersection_form_are_derived_from_homology ... ok
+test tower::l4_boundary_tests_7deee7f8::admits_within_capacity_and_refuses_overflow ... ok
+test tower_topological_completion::l4_boundary_tests_5baccf45::admits_within_capacity_and_refuses_overflow ... ok
+test tower_walk_validator::l4_mutation_checks_e95f7013::rejects_invalid_boundary_mutant ... ok
+test trace_distance_quotient::l4_mutation_checks_11b9a1a9::rejects_invalid_boundary_mutant ... ok
+test trace_norm_certificate::tests::authority_fence_is_none ... ok
+test trace_norm_certificate::tests::diagonal_trace_norm_is_the_absolute_sum ... ok
+test trace_norm_certificate::tests::non_diagonal_three_by_three_with_rational_spectrum ... ok
+test trace_norm_certificate::tests::pauli_y_trace_norm_and_sign ... ok
+test trace_norm_certificate::tests::plan_pairing_refuses_short_vectors ... ok
+test trace_norm_certificate::tests::tampered_certificates_are_refused ... ok
+test trace_norm_certificate::tests::trace_distance_of_orthogonal_and_mixed_states ... ok
+test trace_norm_certificate::tests::trace_norm_certificate_and_sign_certificate_helstrom_effect ... ok
+test trace_norm_certificate::tests::wrong_or_irrational_spectra_are_refused ... ok
+test trace_norm_certificate::tests::zero_eigenvalue_is_handled ... ok
+test trace_observer_certificate::tests::test_operator_2cell_boundary_evaluation ... ok
+test transport_isometry_orbits::tests::complex_and_real_transports_preserve_exactly_the_declared_pairing ... ok
+test u1_gauge_triviality::l4_mutation_checks_3c67eacd::rejects_invalid_boundary_mutant ... ok
+test u1_graph_connection::l4_mutation_checks_aff0d000::rejects_invalid_boundary_mutant ... ok
+test unitary_operator::tests::gates_unitary ... ok
+test unitary_operator::tests::hadamard_superposition ... ok
+test unitary_operator::tests::new_and_fence ... ok
+test w_state::l4_boundary_tests_796ec0c4::admits_within_capacity_and_refuses_overflow ... ok
+test w_state::tests::new_and_fence ... ok
+test w_state::tests::standard_three_qubit_w ... ok
+test wigner::tests::test_d5_magic_state_point_negativity ... ok
+test wigner::tests::test_d5_phase_point_algebra ... ok
+test wigner::tests::test_d5_stabilizer_ground_state_non_negativity ... ok
+test yang_baxter_equation::l4_boundary_tests_67571396::admits_within_capacity_and_refuses_overflow ... ok
+test yang_baxter_equation::tests::wrong_spectral_argument_has_a_nonzero_residual ... ok
+test yang_baxter_equation::tests::yang_and_six_vertex_satisfy_the_spectral_equations ... ok
+test mub::prime_controls::tests::d7_complete_mub_verifies_exactly ... ok
+test mub::odd_prime_power_parametric_gate::tests::odd_prime_power_parametric_gate_accepts_only_complete_family_obligations ... ok
+test mub::odd_prime_power_parametric_gate::tests::odd_prime_power_parametric_gate_rejects_finite_schema_extrapolation ... ok
+test mub::composite_tensor_family_gate::tests::composite_tensor_family_rejects_complete_basis_escalation has been running for over 60 seconds
+test mub::composite_tensor_family_gate::tests::current_composite_tensor_family_verifies_min_factor_lower_bounds has been running for over 60 seconds
+test mub::composite_tensor_family_gate::tests::unsupported_composite_factor_blocks_family_verification has been running for over 60 seconds
+test mub::dimension_stratification::tests::a_board_without_complete_projector_control_grants_no_dimension has been running for over 60 seconds
+test mub::dimension_stratification::tests::the_computed_controls_reproduce_the_former_hard_coded_list has been running for over 60 seconds
+test mub::finite_projector_control::tests::finite_projector_control_requires_gtmur_ledger has been running for over 60 seconds
+test mub::finite_projector_control::tests::finite_projector_controls_verify_for_characteristic_two_samples has been running for over 60 seconds
+test mub::gtmur_projector_ledger::tests::gtmur_projector_ledgers_close_for_char_two_samples has been running for over 60 seconds
+test mub::hilbert_transport::tests::hilbert_transport_verifies_for_char_two_boards has been running for over 60 seconds
+test mub::non_cyclic_falser::tests::test_exhaustive_solver_search_all_falsified has been running for over 60 seconds
+test repair_capacity::concatenation_tests::conditional_concatenation_has_a_fixed_threshold_and_double_exponential_decay ... ok
+test mub::prime_power_gtmur_boundary::tests::prime_power_gtmur_boundary_records_composite_gaps has been running for over 60 seconds
+test mub::non_cyclic_falser::tests::test_exhaustive_solver_search_all_falsified ... ok
+error: test failed, to rerun pass `-p omega_quantum_physics --lib`
+
+Caused by:
+  process didn't exit successfully: `C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\target\debug\deps\omega_quantum_physics-9f49709e79a44cd6.exe` (exit code: 0xffffffff)
+note: test exited abnormally; to see the full output pass --no-capture to the harness.

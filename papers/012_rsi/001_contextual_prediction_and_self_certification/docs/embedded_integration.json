@@ -1,0 +1,24 @@
+{
+  "schema": "rsi.embedded-integration.v1",
+  "date": "2026-10-22",
+  "source": "../research/2026_10_22_embedded_limits",
+  "copied_verbatim": {
+    "lean4/EmbeddedLimits.lean": {
+      "source": "EmbeddedLimits.lean",
+      "sha256": "a0221842897133947fc3bd6f8bae9caf216a7f93f376ba96af96f3ca2ea6187b"
+    },
+    "code/finite_limits.py": {
+      "source": "finite_limits.py",
+      "sha256": "fe215a8a941fd04f18807efec5a8b629acfac78d3400646d2f1a01d4241906b6"
+    },
+    "code/tests/test_finite_limits.py": {
+      "source": "test_finite_limits.py",
+      "sha256": "328ecb0d182af5ec82077291179d1b88cefd58305ca0ad4999a40e4041a80519"
+    },
+    "docs/embedded_literature.json": {
+      "source": "sources.json",
+      "sha256": "653385bd8f6961d15a82aa82b3fe0b1b126304929ada462e3505473f2e3f9eb5"
+    }
+  },
+  "scope": "Finite declared models and conditional mathematical results. No current live-agent memory connection is asserted."
+}

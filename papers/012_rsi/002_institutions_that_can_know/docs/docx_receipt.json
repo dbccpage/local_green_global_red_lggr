@@ -1,0 +1,273 @@
+{
+  "schema": "institutions.docx.v1",
+  "manuscript_sha256": "01aa2c1d27ee1d9667e91b75a8ecc44ee886e5b4f1ed59705974801b72d44a42",
+  "artifact": "institutions_that_can_know_monograph.docx",
+  "sha256": "71ffccd9a6d12ea1ec32a71fcf414d460aa57098bd36e7a75377e7572505505a",
+  "builder_sha256": "640037a044fb5c1f6aa0fceb4b236e59aea6857c82d5d08f181b3b79dcb78f4c",
+  "ordered_math_roundtrip": "PASS_under_listed_typesetting_normalizations",
+  "occurrences": 76,
+  "typesetting_differences": [
+    {
+      "occurrence": 4,
+      "source_tex": "\n\\operatorname{CanAnswer}_{I,b}(q)\n",
+      "docx_roundtrip_tex": "{CanAnswer}_{I,b}(q)"
+    },
+    {
+      "occurrence": 5,
+      "source_tex": "\nP_i=(X_i,Q_i,W_i,V_i,F_i),\n",
+      "docx_roundtrip_tex": "P_{i} = (X_{i},Q_{i},W_{i},V_{i},F_{i}),"
+    },
+    {
+      "occurrence": 6,
+      "source_tex": "X_i",
+      "docx_roundtrip_tex": "X_{i}"
+    },
+    {
+      "occurrence": 7,
+      "source_tex": "Q_i",
+      "docx_roundtrip_tex": "Q_{i}"
+    },
+    {
+      "occurrence": 8,
+      "source_tex": "W_i",
+      "docx_roundtrip_tex": "W_{i}"
+    },
+    {
+      "occurrence": 9,
+      "source_tex": "V_i",
+      "docx_roundtrip_tex": "V_{i}"
+    },
+    {
+      "occurrence": 10,
+      "source_tex": "F_i",
+      "docx_roundtrip_tex": "F_{i}"
+    },
+    {
+      "occurrence": 11,
+      "source_tex": "T_{ij}:D_{ij}\\to X_j",
+      "docx_roundtrip_tex": "T_{ij}:D_{ij} \\rightarrow X_{j}"
+    },
+    {
+      "occurrence": 12,
+      "source_tex": "D_{ij}\\subseteq X_i",
+      "docx_roundtrip_tex": "D_{ij} \\subseteq X_{i}"
+    },
+    {
+      "occurrence": 13,
+      "source_tex": "\\mathcal A",
+      "docx_roundtrip_tex": "\\mathcal{A}"
+    },
+    {
+      "occurrence": 15,
+      "source_tex": "\\mathcal A",
+      "docx_roundtrip_tex": "\\mathcal{A}"
+    },
+    {
+      "occurrence": 17,
+      "source_tex": "J(P)\\ne J(P')",
+      "docx_roundtrip_tex": "J(P) \\neq J(P')"
+    },
+    {
+      "occurrence": 18,
+      "source_tex": "\\mathcal A",
+      "docx_roundtrip_tex": "\\mathcal{A}"
+    },
+    {
+      "occurrence": 22,
+      "source_tex": "J(P)=J(P')",
+      "docx_roundtrip_tex": "J(P) = J(P')"
+    },
+    {
+      "occurrence": 23,
+      "source_tex": "\\square",
+      "docx_roundtrip_tex": "\u25ab"
+    },
+    {
+      "occurrence": 25,
+      "source_tex": "C:X\\to Y",
+      "docx_roundtrip_tex": "C:X \\rightarrow Y"
+    },
+    {
+      "occurrence": 26,
+      "source_tex": "q:X\\to Z",
+      "docx_roundtrip_tex": "q:X \\rightarrow Z"
+    },
+    {
+      "occurrence": 28,
+      "source_tex": "d:C(X)\\to Z",
+      "docx_roundtrip_tex": "d:C(X) \\rightarrow Z"
+    },
+    {
+      "occurrence": 29,
+      "source_tex": "d(C(x))=q(x)",
+      "docx_roundtrip_tex": "d(C(x)) = q(x)"
+    },
+    {
+      "occurrence": 30,
+      "source_tex": "x\\in X",
+      "docx_roundtrip_tex": "x \\in X"
+    },
+    {
+      "occurrence": 33,
+      "source_tex": "C(x)=C(x')",
+      "docx_roundtrip_tex": "C(x) = C(x')"
+    },
+    {
+      "occurrence": 34,
+      "source_tex": "q(x)=q(x')",
+      "docx_roundtrip_tex": "q(x) = q(x')"
+    },
+    {
+      "occurrence": 37,
+      "source_tex": "C^{-1}(y)",
+      "docx_roundtrip_tex": "C^{- 1}(y)"
+    },
+    {
+      "occurrence": 38,
+      "source_tex": "\\square",
+      "docx_roundtrip_tex": "\u25ab"
+    },
+    {
+      "occurrence": 39,
+      "source_tex": "\\mathcal Q",
+      "docx_roundtrip_tex": "\\mathcal{Q}"
+    },
+    {
+      "occurrence": 40,
+      "source_tex": "s(x)=(q(x))_{q\\in\\mathcal Q}",
+      "docx_roundtrip_tex": "s(x) = (q(x))_{q \\in \\mathcal{Q}}"
+    },
+    {
+      "occurrence": 43,
+      "source_tex": "y\\in C(X)",
+      "docx_roundtrip_tex": "y \\in C(X)"
+    },
+    {
+      "occurrence": 44,
+      "source_tex": "\nm_y=\\left|\\{s(x):C(x)=y\\}\\right|.\n",
+      "docx_roundtrip_tex": "m_{y} = \\left| \\{ s(x):C(x) = y\\} \\right|."
+    },
+    {
+      "occurrence": 47,
+      "source_tex": "\n2^b\\geq\\max_{y\\in C(X)}m_y.\n",
+      "docx_roundtrip_tex": "2^{b} \\geq \\max_{y \\in C(X)}m_{y}."
+    },
+    {
+      "occurrence": 48,
+      "source_tex": "\\lceil\\log_2\\max_y m_y\\rceil",
+      "docx_roundtrip_tex": "\\lceil\\log_{2}\\max_{y}m_{y}\\rceil"
+    },
+    {
+      "occurrence": 50,
+      "source_tex": "\\square",
+      "docx_roundtrip_tex": "\u25ab"
+    },
+    {
+      "occurrence": 53,
+      "source_tex": "\nP_{ab}:a=b,\\qquad P_{bc}:b=c,\\qquad P_{ca}:c\\ne a.\n",
+      "docx_roundtrip_tex": "P_{ab}:a = b,\\quad\\quad P_{bc}:b = c,\\quad\\quad P_{ca}:c \\neq a."
+    },
+    {
+      "occurrence": 54,
+      "source_tex": "\\{0,1\\}",
+      "docx_roundtrip_tex": "\\{ 0,1\\}"
+    },
+    {
+      "occurrence": 55,
+      "source_tex": "a=c",
+      "docx_roundtrip_tex": "a = c"
+    },
+    {
+      "occurrence": 56,
+      "source_tex": "a=b",
+      "docx_roundtrip_tex": "a = b"
+    },
+    {
+      "occurrence": 57,
+      "source_tex": "b=c",
+      "docx_roundtrip_tex": "b = c"
+    },
+    {
+      "occurrence": 58,
+      "source_tex": "c\\ne a",
+      "docx_roundtrip_tex": "c \\neq a"
+    },
+    {
+      "occurrence": 60,
+      "source_tex": "P_i",
+      "docx_roundtrip_tex": "P_{i}"
+    },
+    {
+      "occurrence": 61,
+      "source_tex": "A_i\\subseteq U",
+      "docx_roundtrip_tex": "A_{i} \\subseteq U"
+    },
+    {
+      "occurrence": 62,
+      "source_tex": "\nA_{\\mathrm{joint}} = \\bigcap_i A_i\n",
+      "docx_roundtrip_tex": "A_{joint} = \\bigcap_{i}A_{i}"
+    },
+    {
+      "occurrence": 63,
+      "source_tex": "A_{\\mathrm{joint}}",
+      "docx_roundtrip_tex": "A_{joint}"
+    },
+    {
+      "occurrence": 64,
+      "source_tex": "\\operatorname{Auth}(a\\mid M,E,S)",
+      "docx_roundtrip_tex": "Auth(a \\mid M,E,S)"
+    },
+    {
+      "occurrence": 66,
+      "source_tex": "n\\geq 1",
+      "docx_roundtrip_tex": "n \\geq 1"
+    },
+    {
+      "occurrence": 67,
+      "source_tex": "\\sigma^2>0",
+      "docx_roundtrip_tex": "\\sigma^{2} > 0"
+    },
+    {
+      "occurrence": 68,
+      "source_tex": "n>1",
+      "docx_roundtrip_tex": "n > 1"
+    },
+    {
+      "occurrence": 69,
+      "source_tex": "-1/(n-1)\\leq\\rho\\leq1",
+      "docx_roundtrip_tex": "- 1/(n - 1) \\leq \\rho \\leq 1"
+    },
+    {
+      "occurrence": 70,
+      "source_tex": "n=1",
+      "docx_roundtrip_tex": "n = 1"
+    },
+    {
+      "occurrence": 71,
+      "source_tex": "\n\\operatorname{Var}(\\bar e)=\\frac{\\sigma^2}{n}\\bigl[1+(n-1)\\rho\\bigr].\n",
+      "docx_roundtrip_tex": "Var(\\bar{e}) = \\frac{\\sigma^{2}}{n}\\left\\lbrack 1 + (n - 1)\\rho \\right\\rbrack."
+    },
+    {
+      "occurrence": 72,
+      "source_tex": "1+(n-1)\\rho>0",
+      "docx_roundtrip_tex": "1 + (n - 1)\\rho > 0"
+    },
+    {
+      "occurrence": 73,
+      "source_tex": "n_{\\mathrm{eff}}=n/[1+(n-1)\\rho]",
+      "docx_roundtrip_tex": "n_{eff} = n/\\lbrack 1 + (n - 1)\\rho\\rbrack"
+    },
+    {
+      "occurrence": 74,
+      "source_tex": "n>1",
+      "docx_roundtrip_tex": "n > 1"
+    },
+    {
+      "occurrence": 75,
+      "source_tex": "\\rho=1/2",
+      "docx_roundtrip_tex": "\\rho = 1/2"
+    }
+  ],
+  "normalizations": "Whitespace; single-token script braces; arrow/inequality/bracket aliases; delimiter sizing; math spacing; square end-proof glyph; font wrappers for five explicitly named identifiers. No arithmetic, operand-order, or grouping rewrite.",
+  "scope": "Token agreement under listed typesetting normalizations; not symbolic proof or visual glyph equivalence."
+}

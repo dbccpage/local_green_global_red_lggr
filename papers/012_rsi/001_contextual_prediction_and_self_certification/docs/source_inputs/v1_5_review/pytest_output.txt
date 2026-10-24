@@ -1,0 +1,51 @@
+...........F.................................................FFF........ [ 80%]
+..................                                                       [100%]
+=================================== FAILURES ===================================
+_________________________ test_verbatim_source_custody _________________________
+code/tests/test_companion_bridge.py:74: in test_verbatim_source_custody
+    record = json.loads((ROOT / "docs/source_lineage.json").read_text(encoding="utf-8"))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/docs/source_lineage.json'
+___________ test_deposited_solver_outputs_and_lean_data_are_current ____________
+code/tests/test_contextuality_lp.py:183: in test_deposited_solver_outputs_and_lean_data_are_current
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1190: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/tools/generate_lp_certificates.py'
+_____________ test_ported_rust_source_copies_match_recorded_bytes ______________
+code/tests/test_contextuality_lp.py:191: in test_ported_rust_source_copies_match_recorded_bytes
+    record = json.loads((root / 'docs/solver_provenance.json').read_text(encoding='utf-8'))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/docs/solver_provenance.json'
+___ test_axiom_parser_handles_wrapped_lists_and_refuses_hidden_custom_axiom ____
+code/tests/test_contextuality_lp.py:200: in test_axiom_parser_handles_wrapped_lists_and_refuses_hidden_custom_axiom
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:995: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1132: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1190: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/tools/replay_lean_axiom_census.py'
+=========================== short test summary info ============================
+FAILED code/tests/test_companion_bridge.py::test_verbatim_source_custody - Fi...
+FAILED code/tests/test_contextuality_lp.py::test_deposited_solver_outputs_and_lean_data_are_current
+FAILED code/tests/test_contextuality_lp.py::test_ported_rust_source_copies_match_recorded_bytes
+FAILED code/tests/test_contextuality_lp.py::test_axiom_parser_handles_wrapped_lists_and_refuses_hidden_custom_axiom
+4 failed, 86 passed in 0.42s

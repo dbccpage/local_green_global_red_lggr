@@ -1,0 +1,43 @@
+{
+  "review_date": "2026-10-21",
+  "edition": "1.5.0",
+  "pytest": {
+    "collected": 90,
+    "passed": 86,
+    "failed_missing_release_files": [
+      {
+        "test": "test_verbatim_source_custody",
+        "failure_type": null,
+        "message": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/docs/source_lineage.json'"
+      },
+      {
+        "test": "test_deposited_solver_outputs_and_lean_data_are_current",
+        "failure_type": null,
+        "message": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/tools/generate_lp_certificates.py'"
+      },
+      {
+        "test": "test_ported_rust_source_copies_match_recorded_bytes",
+        "failure_type": null,
+        "message": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/docs/solver_provenance.json'"
+      },
+      {
+        "test": "test_axiom_parser_handles_wrapped_lists_and_refuses_hidden_custom_axiom",
+        "failure_type": null,
+        "message": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/9d9effc7238f/tmp/contextual_prediction_v15_review/tools/replay_lean_axiom_census.py'"
+      }
+    ]
+  },
+  "static_review": {
+    "math_occurrences": 31,
+    "distinct_spine_entries": 29,
+    "formula_multisets_match": true,
+    "named_new_theorems": {
+      "Simplex.lean": 20,
+      "ErrorBudget.lean": 10
+    },
+    "new_named_theorems_in_census": true
+  },
+  "Lean_build_performed": false,
+  "full_release_verification_performed": false,
+  "claimed_71_cross_language_comparisons_replayed": false
+}

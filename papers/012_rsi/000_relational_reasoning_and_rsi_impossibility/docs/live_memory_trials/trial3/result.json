@@ -1,0 +1,1 @@
+{"model":"openai/gpt-4o-mini","ok":true,"outcomes":[{"exit_code":0,"ok":true,"stage":"baseline"},{"exit_code":0,"ok":true,"stage":"learn"},{"exit_code":0,"ok":true,"stage":"recall"},{"exit_code":0,"ok":true,"stage":"reuse"}],"process_restarts":true,"schema":"rsi.synthetic-live-memory.v1"}

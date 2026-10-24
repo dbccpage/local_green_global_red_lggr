@@ -1,0 +1,170 @@
+{
+  "schema": "rsi.live-memory-edition-verification.v1",
+  "date": "2026-10-23",
+  "version": "1.2.0",
+  "package_tests": {
+    "tests": 204,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "named_theorems": 109,
+  "full_package_local_declarations": 577,
+  "new_memory_theorems": 8,
+  "axiom_allowlist": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "python": "3.12.14",
+  "lean": "4.35.0",
+  "offline_trial_replay": {
+    "offline_replay": "PASS",
+    "arithmetic_trial": [
+      {
+        "stage": "baseline",
+        "passed": true,
+        "answer": "UNKNOWN",
+        "expected": "UNKNOWN"
+      },
+      {
+        "stage": "learn",
+        "passed": true,
+        "answer": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-5532d34bfa549e9d7e4d34ecd3bf9507",
+              "value": "5054245"
+            }
+          ]
+        },
+        "expected": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-5532d34bfa549e9d7e4d34ecd3bf9507",
+              "value": "5054245"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "recall",
+        "passed": false,
+        "answer": "10104857",
+        "expected": "10108497"
+      }
+    ],
+    "exact_use_trial": [
+      {
+        "stage": "baseline",
+        "passed": true,
+        "answer": "UNKNOWN",
+        "expected": "UNKNOWN"
+      },
+      {
+        "stage": "learn",
+        "passed": true,
+        "answer": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-f6f4902ec0aa0be9f3dad65f58dbe7ea",
+              "value": "6514365"
+            }
+          ]
+        },
+        "expected": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-f6f4902ec0aa0be9f3dad65f58dbe7ea",
+              "value": "6514365"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "recall",
+        "passed": true,
+        "answer": "6514365/ready",
+        "expected": "6514365/ready"
+      },
+      {
+        "stage": "reuse",
+        "passed": true,
+        "answer": "6514365/checked",
+        "expected": "6514365/checked"
+      }
+    ],
+    "scope": "Captured finite evidence; no new network calls or provider attestation."
+  },
+  "runtime_tests": {
+    "passed": 22,
+    "excluded_after_failure": 2,
+    "reason": "Two pre-existing gateway tests require the unavailable native budget host. Its offline build failed in unchanged omega_functional Rust sources. No full gateway suite pass is claimed."
+  },
+  "prior_attempts": [
+    "The first transport-guard trial refused before provider response.",
+    "Arithmetic trial failed after correct recall; retained in evidence.",
+    "Paper A first test run hit sandbox temp ACL failures; normal-temp rerun passed."
+  ],
+  "source_bindings": {
+    "code/communication_channels.py": "3e3b9016a1e50d2a66c7ba2fbb3045bfc3b6b8647c1173fbfd60cc82d08bb0f4",
+    "code/deposit_paths.py": "37c4f3b5da608d38bffd5315ef73a79e066d2fd96b219325e818941e1b3dac62",
+    "code/eis_independence_vectors_v1.json": "152a97fd57d3fbd0fc43c9605ce0dc735912b14c16e6496c5ee7eedcd28ad672",
+    "code/eis_verifier.py": "1159c125d8d7fa9d03d9b707567ae17b500a9b5d48f53c9bc29213ef6d79ff0e",
+    "code/exact_dual_witness_solver.py": "0c14c5403958bdbeef760cc245ffaa0c82e636100faae6fb9fd750c4e28685da",
+    "code/finite_limits.py": "fe215a8a941fd04f18807efec5a8b629acfac78d3400646d2f1a01d4241906b6",
+    "code/higher_cell_async_hypergraph.py": "2e8b1f1b4817ce0822f1da525d89ec36a7d00994fbee70e612c8acc6281e1e15",
+    "code/memory_cli.py": "1e6abf77782cf4fe2a2f4edfae8b5694b5be2a0a47e79fe0afc8a06ef4f78365",
+    "code/memory_machine.py": "363c1634163866ed939daca1ee9e2de2c16a2000dab767a4b53764bc1292f65e",
+    "code/multi_agent_hypergraph.py": "f9652e86611c69893810615eb809f9d1eed659ed9da2f2a8c4e18f89d236c8c4",
+    "code/residual_memory.py": "be997d8c28570e925738c2e0176c25ee962d57c013555779c1d25cd17802734b",
+    "code/rsi_transition_harness.py": "c8c923b6e8cd3aee009e652f40f7b1ba4a0626685a1cb4ab983af443fa6fa854",
+    "code/simplicial_complex.py": "fd9f8fda64da77dc47111bd1bca0bd9052e55e149c3a81158f5553b15ad68337",
+    "code/simplicial_rewiring.py": "fbd5edf7bea1096e273d6c7ba4ec92aff3ec0ccdb9ebe351b32764ddcfb401ad",
+    "code/single_agent_graph.py": "33e25cd09a1df1af957bb78cbba2d1d541e62ad3dfefabf14693eecb261923e3",
+    "code/tests/test_architecture_and_value_objects.py": "550d17e32cec5cc1bd164a0d3f26f4460ef378b7c7c416c48d7cf23f4075f380",
+    "code/tests/test_census_proof_scan.py": "be07748e7f581077b5fea49bd6c351307bcc64bec6df0ab09e81406240ce3607",
+    "code/tests/test_finite_limits.py": "328ecb0d182af5ec82077291179d1b88cefd58305ca0ad4999a40e4041a80519",
+    "code/tests/test_higher_cell_async.py": "fc2681d94fdf61443c30b73e01f28c96999b69d31920c9ced8bc4993e5f824dc",
+    "code/tests/test_lean_formalization.py": "fbe309850210b7456b180251da23c3315685c2ebfd37154f07c104e975410484",
+    "code/tests/test_memory_machine.py": "e94602302b3d1a9fa0282169bd0b83ee796d701eb5139c7b49b5d52417b3a284",
+    "code/tests/test_multi_agent_hypergraph.py": "7749858e845dafa9350ec6727abc520ee1504a3a3fc86eb66553070fbb0f5379",
+    "code/tests/test_non_monotonic_rewiring.py": "6b96a0e2b2d986c943250fd041b3954e351ade3b1c13d5d067c814851f038bc8",
+    "code/tests/test_residual_memory.py": "ee27d045fabae0be2fe2ced31c8b6712b237b2fa8ec4384af14ac62fc983fc76",
+    "code/tests/test_rsi_impossible_lean_verification.py": "9a5eb24efa471a5159350388a2675358742c45a83536e72423102b423b7af6ef",
+    "code/tests/test_single_agent_transitions.py": "32d63efd7dea603a91f3b871cf77f7e3e2f55f900a93f01c7670973e179c3921",
+    "docs/live_memory_trials/trial1/baseline.json": "c7b91e784ab275022685afe84e233868be4b57986ba7d92ce4f5c84a73f13f54",
+    "docs/live_memory_trials/trial1/result.json": "8760b63f41093ac80bf1d781761c1dbca2891e8c81976d0606f2d7f5774152fb",
+    "docs/live_memory_trials/trial1/specimen.json": "d301f9a056fc50ef8a6f2553d313dd0b1eed1774b6d535559c3e9e31c61f4761",
+    "docs/live_memory_trials/trial1/synthetic_source.json": "2cd7575973e1ef3bdced35e82e532874178723db42c71332874c5c676f143991",
+    "docs/live_memory_trials/trial2/baseline.json": "43ea74f23238a3691ee8e80d3b6a1ce2e3e96c30eed94967d1d62c0783c99d30",
+    "docs/live_memory_trials/trial2/learn.json": "95a46e07759b7495bd8c7599b9e0328f003060fbbe80d82b8e6e2cdf36a1bfc2",
+    "docs/live_memory_trials/trial2/recall.json": "d0d0c8ef3bf19cc6c6b65e844b2ad21a3bcecf31d7c64ddfe4b5e7315665b843",
+    "docs/live_memory_trials/trial2/result.json": "f0610fa5bcf02af2cec8114dbc55176e45e69ae8ec6ce5cdc629ccd2968b634a",
+    "docs/live_memory_trials/trial2/specimen.json": "a905bb08dcf823a8d80dec4feec3e0fe67f54115c4ec915408965b26dd1517ba",
+    "docs/live_memory_trials/trial2/synthetic_source.json": "c163639969011de59c79a9165c65fcd10ead9521d4934b2273a019874a627263",
+    "docs/live_memory_trials/trial3/baseline.json": "752138cce825e8ad9602d97ee512b2b3e73aff4e30e3f92b099b8ebfedae76b3",
+    "docs/live_memory_trials/trial3/learn.json": "a1ef190b80b8ba2efce1c4650a0813db62937d2ac786e3fcc161dc6f34556e62",
+    "docs/live_memory_trials/trial3/recall.json": "09e1c9aabd3a56bdd635ceb2f59e52b9eff528f1da9b339e6e7f50f52393bcd5",
+    "docs/live_memory_trials/trial3/result.json": "44e7bd242f6312ebcce48e7972e88a353370e87e6de4e5a1e0963278302afde7",
+    "docs/live_memory_trials/trial3/reuse.json": "660fd2ef3fc7c714150a8f822cb17c8d4003256063130e13ec6cd0f815d5a199",
+    "docs/live_memory_trials/trial3/specimen.json": "6b2a0800c5c02bdebedfa3ea68dc3bd913e7cd6c90f4026a44beff7d7d9253b4",
+    "docs/live_memory_trials/trial3/synthetic_source.json": "fcacab61f68adcb22bd693f6dab2e3adf1f1f0663eba9ce9936befa07493fa5e",
+    "docs/runtime_snapshot/llm_gateway.py": "77499fd7dd45e280b196280faf3202648b7bf534395a057d2afb00b6a4a71661",
+    "docs/runtime_snapshot/memory_cli.py": "1e6abf77782cf4fe2a2f4edfae8b5694b5be2a0a47e79fe0afc8a06ef4f78365",
+    "docs/runtime_snapshot/residual_memory.py": "be997d8c28570e925738c2e0176c25ee962d57c013555779c1d25cd17802734b",
+    "docs/runtime_snapshot/synthetic_memory_experiment.py": "aee4dc6c202a916f4c9cfd02482b6b16585b62a68266202e0ed292550ad823ff",
+    "docs/runtime_snapshot/test_residual_memory.py": "17004d77eca3e67598fd377385dcd3e2e5bd4659df52fe10902f66c504737837",
+    "tools/rebuild_release.py": "564e80cb1e693826d48bec7c0568b3bad7bb2b8c3546d3f20f34c5404e6b4771",
+    "tools/replay_full_axiom_census.py": "19147e46d7ece3479d61fd43032adc6e876304d12ba93caa9b5b93d3eb40e990",
+    "tools/replay_lean_axiom_census.py": "fbe4b9a89f89addd1785fa6a7421393ef7f77a2cdbe1d56d4d4306368688fbb4",
+    "tools/replay_live_memory_evidence.py": "6144d812a6563e7a85b824ff62a7c21311f2ed0d0ecf23574fa196d4a8b85fdb"
+  },
+  "limits": [
+    "Finite captured model trials; no statistical generalization.",
+    "Abstract Lean gate proofs are not universal Python or SQLite refinement.",
+    "Source truth and model adequacy are assumptions.",
+    "Explicit repository agent configuration; no global Codex memory hook.",
+    "Prior simplex cross-language replay was not rerun; unchanged solver sources retain their dated receipts."
+  ]
+}

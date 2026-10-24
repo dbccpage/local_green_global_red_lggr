@@ -1,0 +1,1 @@
+PASS independent exact checks: 8 repair and 7 negative-mass certificates; actual-table uncertainty floor

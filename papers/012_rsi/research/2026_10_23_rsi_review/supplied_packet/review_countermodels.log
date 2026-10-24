@@ -1,0 +1,4 @@
+'ReviewCountermodels.succ_is_structurally_aligned' depends on axioms: [propext]
+'ReviewCountermodels.growing_trajectory_is_not_report_grounded' does not depend on any axioms
+'ReviewCountermodels.no_total_budget_satisfies_drop' does not depend on any axioms
+'ReviewCountermodels.no_total_refinement_satisfies_drop' does not depend on any axioms

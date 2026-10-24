@@ -1,0 +1,8 @@
+# The package manifests bind exact bytes, including retained source snapshots.
+** -text whitespace=cr-at-eol
+# Historical source and raw compiler output retain their original whitespace.
+docs/source_inputs/** -whitespace
+docs/render_build/** -whitespace
+# GitHub's ordinary Git blob limit cannot carry the standalone build bundles.
+lean4/vendor/dependencies.tar.gz filter=lfs diff=lfs merge=lfs -text
+001_contextual_prediction_and_self_certification_*.zip filter=lfs diff=lfs merge=lfs -text

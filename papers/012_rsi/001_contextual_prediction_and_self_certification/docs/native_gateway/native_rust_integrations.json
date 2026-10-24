@@ -1,0 +1,23 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "omega_solvers",
+    "--test",
+    "finite_stream_interpreter",
+    "--test",
+    "hodge_false_green_kill",
+    "--test",
+    "phi1_boundary",
+    "--test",
+    "plan_grammar_tests",
+    "--test",
+    "test_neville_aitken_enclosure"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+  "exit_code": 0,
+  "seconds": 187.46199417114258
+}

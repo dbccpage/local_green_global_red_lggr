@@ -1,0 +1,18 @@
+✔ [2/15] Built Bell.Extension (40s)
+✔ [3/15] Built Bell.Averaging (37s)
+✔ [4/15] Built Bell.Observer (37s)
+✔ [5/15] Built Bell.CHSH (37s)
+✔ [6/15] Built Bell.Quantum (43s)
+✔ [7/15] Built Bell.Integral (43s)
+✔ [8/15] Built Bell.QuantumState (104s)
+✔ [9/15] Built Bell.QuantumExample (104s)
+✔ [10/15] Built Bell.QuantumMeasurement (27s)
+✔ [11/15] Built Bell.QuantumTrace (30s)
+✔ [12/15] Built Bell.Dynamics (26s)
+✔ [13/15] Built Bell.Separable (27s)
+✔ [14/15] Built Bell (15s)
+Build completed successfully (15 jobs).
+info: bell_positive_extensions: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+warning: rsi_mathlib_vendor: ignoring missing manifest:
+  C:\Users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\F004_papers\002_projection_obstruction\036_bell_positive_extensions_and_projection_residuals\lean4\vendor\lake-manifest.json

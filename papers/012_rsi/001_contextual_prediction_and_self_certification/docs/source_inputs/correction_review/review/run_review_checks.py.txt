@@ -1,0 +1,250 @@
+"""Independent audit and extension examples. Run with standard-library Python 3.
+
+This does not run Lean, a release audit, or the absent upstream test suite.
+The independent LP oracle enumerates dual vertices using exact elimination.
+"""
+import ast
+from dataclasses import asdict, replace
+from fractions import Fraction as Q
+import hashlib
+from itertools import combinations, product
+import json
+from pathlib import Path
+import random
+import re
+import shutil
+
+from originals import contextuality_lp as old
+from originals import epistemic_kernel as legacy
+from originals import future_observation as future
+from proposed import contextuality_lp as new
+from quantitative_prediction import (hull_distance, verify_hull_distance,
+    robust_ball_lower_bound, leakage_bound, trace_bound, transcript_law,
+    total_variation, reveal_model)
+
+ROOT = Path(__file__).resolve().parent
+
+
+def decode(node):
+    if isinstance(node, ast.List):
+        return tuple(map(decode, node.elts))
+    if isinstance(node, ast.Constant) and type(node.value) is int:
+        return Q(node.value)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+        return -decode(node.operand)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+        return decode(node.left) / decode(node.right)
+    raise ValueError(ast.dump(node))
+
+
+def fixtures():
+    text = (ROOT / 'originals/RationalCertificates.lean').read_text()
+    values = {}
+    for match in re.finditer(r'^def (\w+) [^\n]* := (.*?)(?=\n(?:def|theorem)\b|\Z)', text, re.M | re.S):
+        values[match[1]] = decode(ast.parse(match[2].strip().replace('![', '['), mode='eval').body)
+    return {name: {key: values[name + key] for key in ('A', 'E', 'P', 'Y', 'Z', 'D')}
+            for name in ('classical', 'pr', 'near', 'triangle', 'boundary')}
+
+
+def exact_linear_solve(matrix, rhs):
+    n = len(rhs)
+    a = [[Q(x) for x in row] + [Q(b)] for row, b in zip(matrix, rhs)]
+    for j in range(n):
+        pivot = next((i for i in range(j, n) if a[i][j]), None)
+        if pivot is None:
+            return None
+        a[j], a[pivot] = a[pivot], a[j]
+        a[j] = [x / a[j][j] for x in a[j]]
+        for i in range(n):
+            if i != j:
+                q = a[i][j]
+                a[i] = [x - q * y for x, y in zip(a[i], a[j])]
+    return tuple(row[-1] for row in a)
+
+
+def independent_distance(generators, target):
+    """Max e.y+z with |y|<=1, g.y+z<=0, by exact vertex enumeration."""
+    m = len(target)
+    constraints = []
+    for j in range(m):
+        for sign in (-1, 1):
+            row = [Q(0)] * (m + 1)
+            row[j] = Q(sign)
+            constraints.append((tuple(row), Q(1)))
+    constraints += [(tuple(g) + (Q(1),), Q(0)) for g in generators]
+    values = []
+    objective = tuple(target) + (Q(1),)
+    for selected in combinations(constraints, m + 1):
+        solution = exact_linear_solve([x[0] for x in selected], [x[1] for x in selected])
+        if solution is not None and all(sum(a * b for a, b in zip(row, solution)) <= rhs
+                                         for row, rhs in constraints):
+            values.append(sum(a * b for a, b in zip(objective, solution)))
+    assert values, 'No dual vertex found'
+    return max(values)
+
+
+def outcome(module, model):
+    try:
+        return module.evaluate(model).kind
+    except module.Refusal as e:
+        return 'Refusal:' + e.kind
+    except Exception as e:
+        return type(e).__name__ + ':' + str(e)
+
+
+def main():
+    result = {'scope': 'Fresh exact Python checks; no Lean compilation', 'random_seed': 20261021,
+              'lean_available': shutil.which('lean'), 'lake_available': shutil.which('lake')}
+    fixture_data = fixtures()
+    fixture_results, mutations = {}, 0
+    for name, f in fixture_data.items():
+        A, e, p, y, z, d = (f[key] for key in ('A', 'E', 'P', 'Y', 'Z', 'D'))
+        assert all(x >= 0 for x in p) and sum(p) == 1
+        assert all(abs(x) <= 1 for x in y)
+        assert all(sum(x * w for x, w in zip(g, y)) + z <= 0 for g in A)
+        residual = [sum(g[i] * w for g, w in zip(A, p)) - e[i] for i in range(len(e))]
+        assert sum(map(abs, residual)) == sum(x * w for x, w in zip(e, y)) + z == d
+        cert = old.solve_l1(A, e)
+        assert old.verify_defect(A, e, cert) and cert.defect == d
+        assert asdict(new.solve_l1(A, e)) == asdict(cert)
+        # Dataclasses from the separately loaded modules have distinct class identities.
+        for bad in (replace(cert, coefficients=(cert.coefficients[0] + 1,) + cert.coefficients[1:]),
+                    replace(cert, residual=(cert.residual[0] + 1,) + cert.residual[1:]),
+                    replace(cert, witness=(cert.witness[0] + 3,) + cert.witness[1:]),
+                    replace(cert, offset=cert.offset + 1), replace(cert, defect=cert.defect + 1),
+                    replace(cert, lp=replace(cert.lp, value=cert.lp.value + 1))):
+            assert not old.verify_defect(A, e, bad)
+            mutations += 1
+        scenario_sizes = (2,) * (3 if name == 'triangle' else 4)
+        contexts = ((0, 1), (0, 2), (1, 2)) if name == 'triangle' else ((0, 2), (0, 3), (1, 2), (1, 3))
+        rows = tuple(e[i:i + 4] for i in range(0, len(e), 4))
+        old_result = old.evaluate(old.Scenario(scenario_sizes, contexts, rows))
+        new_result = new.evaluate(new.Scenario(scenario_sizes, contexts, rows))
+        assert old_result.certificate.defect == new_result.certificate.defect == d
+        fixture_results[name] = {'defect': str(d), 'pivots': cert.lp.pivots, 'result': old_result.kind}
+    result['fixtures'] = fixture_results
+    result['rejected_certificate_mutations'] = mutations
+
+    rng = random.Random(20261021)
+    oracle_cases = 0
+    for m, cases in ((1, 30), (2, 80), (3, 20)):
+        for _ in range(cases):
+            k = rng.randrange(1, 6)
+            generators = tuple(tuple(Q(rng.randrange(-5, 6), rng.randrange(1, 5)) for _ in range(m))
+                               for _ in range(k))
+            target = tuple(Q(rng.randrange(-5, 6), rng.randrange(1, 5)) for _ in range(m))
+            cert = old.solve_l1(generators, target)
+            assert cert.defect == independent_distance(generators, target)
+            oracle_cases += 1
+    result['independent_exact_dual_vertex_comparisons'] = oracle_cases
+
+    malformed = {
+        'mixed_context_types': ((2, 2), ((0, '1'),), ((1,),)),
+        'list_context': ((2,), ([0],), ((Q(1, 2), Q(1, 2)),)),
+        'noncontainer_context': ((2,), (None,), ((Q(1, 2), Q(1, 2)),)),
+        'noncontainer_table': ((2,), ((0,),), (None,)),
+        'duplicate_context': ((2,), ((0,), (0,)), ((Q(1, 2), Q(1, 2)),) * 2),
+        'bool_index': ((2,), ((False,),), ((Q(1, 2), Q(1, 2)),)),
+        'out_of_range': ((2,), ((1,),), ((Q(1, 2), Q(1, 2)),)),
+        'float_probability': ((2,), ((0,),), ((0.5, 0.5),)),
+        'negative_probability': ((2,), ((0,),), ((-1, 2),)),
+    }
+    result['input_boundaries'] = {}
+    for name, args in malformed.items():
+        before, after = outcome(old, old.Scenario(*args)), outcome(new, new.Scenario(*args))
+        assert after.startswith('Refusal:') or (name == 'list_context' and after == 'GlobalSection')
+        result['input_boundaries'][name] = {'original': before, 'proposed': after}
+
+    signed_joint = {}
+    for g in legacy.ALL_ASSIGNMENTS:
+        a0, a1, b0, b1 = ((-1) ** bit for bit in g)
+        chsh = a0 * b0 + a0 * b1 + a1 * b0 - a1 * b1
+        signed_joint[g] = Q(1 + chsh, 16)
+    assert sum(signed_joint.values()) == 1 and min(signed_joint.values()) < 0
+    assert legacy.marginalises(signed_joint, legacy.pr_box())
+    result['legacy_helper_scope'] = {
+        'empty_table_passes_is_distribution': legacy.is_distribution({}),
+        'signed_PR_joint_passes_marginalises': True,
+        'signed_joint_minimum': str(min(signed_joint.values())),
+        'strict_PR_verdict': fixture_results['pr']['result'],
+        'interpretation': 'Legacy row/marginal predicates are not complete probability-model validators.'}
+
+    deterministic_cases = 0
+    report = {0: 0, 1: 0, 2: 1, 3: 1}
+    for targets in product(range(4), repeat=4):
+        update = dict(enumerate(targets))
+        updates = {'u': update, 'identity': {s: s for s in report}}
+        assert future.preserves_fibers(report, updates) == future.reports_agree_through(report, updates, 4)
+        kernels = {a: {s: {t: Q(1)} for s, t in u.items()} for a, u in updates.items()}
+        assert (leakage_bound(report, kernels) == 0) == future.preserves_fibers(report, updates)
+        deterministic_cases += 1
+    result['deterministic_bridge_cases'] = deterministic_cases
+
+    ball_cases = 0
+    for _ in range(30):
+        A = tuple(tuple(Q(rng.randrange(-3, 4)) for _ in range(2)) for _ in range(3))
+        center = tuple(Q(rng.randrange(-3, 4)) for _ in range(2))
+        rho = Q(rng.randrange(0, 9), 4)
+        vertices = tuple(tuple(center[i] + (sign * rho if i == j else 0) for i in range(2))
+                         for j in range(2) for sign in (-1, 1))
+        c = hull_distance(A, vertices)
+        point = new.solve_l1(A, center)
+        assert verify_hull_distance(A, vertices, c)
+        assert c.distance == max(point.defect - rho, 0)
+        assert c.distance == robust_ball_lower_bound(A, center, point, rho)
+        assert not verify_hull_distance(A, vertices, replace(c, distance=c.distance + 1))
+        ball_cases += 1
+    result['exact_uncertainty_ball_comparisons'] = ball_cases
+    result['rejected_hull_certificate_mutations'] = ball_cases
+
+    boundary = fixture_data['boundary']
+    bc = new.solve_l1(boundary['A'], boundary['E'])
+    result['near_boundary_robustness'] = {str(rho): str(robust_ball_lower_bound(boundary['A'], boundary['E'], bc, rho))
+                                        for rho in (Q(0), Q(1, 50000000), Q(1, 25000000), Q(1, 1000000))}
+
+    stochastic_checks = 0
+    policies = (
+        lambda h: {'a': Q(1)},
+        lambda h: {'b' if (h[-1][1] if len(h) > 1 else h[0]) else 'a': Q(1)},
+        lambda h: {'a': Q(1, 3), 'b': Q(2, 3)},
+    )
+    for _ in range(20):
+        kernels = {}
+        for action in ('a', 'b'):
+            kernel = {}
+            for s in report:
+                weights = [rng.randrange(1, 6) for _ in report]
+                kernel[s] = {t: Q(w, sum(weights)) for t, w in zip(report, weights)}
+            kernels[action] = kernel
+        delta = leakage_bound(report, kernels)
+        for policy in policies:
+            for steps in (1, 2, 3):
+                laws = {s: transcript_law(report, kernels, s, policy, steps) for s in report}
+                assert all(sum(law.values()) == 1 for law in laws.values())
+                for s, t in ((0, 1), (2, 3)):
+                    assert total_variation(laws[s], laws[t]) <= trace_bound([delta] * steps)
+                    stochastic_checks += 1
+    result['adaptive_stochastic_pair_horizon_checks'] = stochastic_checks
+    sharpness = []
+    policy = lambda h: {'observe': Q(1)}
+    for delta in (Q(0), Q(1, 10), Q(1, 2), Q(1)):
+        r, kernels = reveal_model(delta)
+        assert leakage_bound(r, kernels) == delta
+        for n in range(7):
+            p, q = (transcript_law(r, kernels, s, policy, n) for s in (0, 1))
+            distance = total_variation(p, q)
+            assert distance == trace_bound([delta] * n)
+            # Shared all-'?' history is the only ambiguity; a fair guess equalizes error.
+            risk = (1 - delta) ** n / 2
+            assert risk == (1 - distance) / 2
+            sharpness.append({'delta': str(delta), 'steps': n, 'TV': str(distance), 'minimax_error': str(risk)})
+    result['sharp_reveal_examples'] = sharpness
+    result['source_hashes'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                               for p in sorted((ROOT / 'originals').iterdir()) if p.is_file()}
+    result['all_checks_passed'] = True
+    (ROOT / 'verification.json').write_text(json.dumps(result, indent=2) + '\n')
+    print(json.dumps({k: v for k, v in result.items() if k not in ('source_hashes', 'sharp_reveal_examples')}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

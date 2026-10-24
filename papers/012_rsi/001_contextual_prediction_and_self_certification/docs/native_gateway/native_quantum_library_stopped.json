@@ -1,0 +1,9 @@
+{
+  "ProcessName": "omega_quantum_physics-9f49709e79a44cd6",
+  "Id": 14600,
+  "CPU": 1377.703125,
+  "StartTime": "2026-10-23T02:05:33.5750432-04:00",
+  "stop_recorded_at_utc": "2026-10-23T06:14:44.083923+00:00",
+  "elapsed_wall_seconds": 550.50888,
+  "decision": "Agent stopped an additional broad audit; no verdict assigned to unfinished cases."
+}

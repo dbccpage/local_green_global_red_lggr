@@ -1,0 +1,64 @@
+........................................................................ [ 33%]
+........................................................................ [ 66%]
+........................................................................ [ 99%]
+F.                                                                       [100%]
+================================== FAILURES ===================================
+________________ test_preserved_review_and_new_example_replay _________________
+
+    def test_preserved_review_and_new_example_replay():
+        root = Path(__file__).resolve().parents[2]
+        sys.path.insert(0, str(root / "tools"))
+        from replay_review_corrections import replay
+>       assert replay(root)["adjusted_margin"] == "0"
+
+code\tests\test_uncertain_observations.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/a343o/source/repos/the_symbol_game/omega_engine_atlas/coda_atlas/F004_papers/012_rsi/001_contextual_prediction_and_self_certification')
+write = False
+
+    def replay(root, write=False):
+        source_record = root / "docs/v1_5_review_sources.json"
+        source = json.loads(source_record.read_text(encoding="utf-8"))
+        for row in source["sources"]:
+            path = root / row["deposited_copy"]
+            if digest(path) != row["sha256"] or path.stat().st_size != row["bytes"]:
+                raise ValueError("Review source changed: " + row["deposited_copy"])
+        review = root / "docs/source_inputs/v1_5_review"
+        # Separate process prevents the reviewed modules from shadowing current ones.
+        program = ("import json,runpy,sys; sys.path.insert(0," + repr(str(review)) + "); d=runpy.run_path(" + repr(str(review / "independent_review.py")) + "); "
+                   "print(json.dumps({k:d[k]() for k in ('fixture_bindings','noisy_boundary','cycling_fixture')}))")
+        def execute(args):
+            result = subprocess.run([sys.executable, "-X", "utf8", *args], cwd=root,
+                                    capture_output=True, text=True, encoding="utf-8", timeout=120)
+            if result.returncode:
+                raise ValueError(result.stdout + result.stderr)
+            return json.loads(result.stdout)
+        reviewed = execute(["-c", program])
+        supplied = json.loads((review / "independent_results.json").read_text(encoding="utf-8"))
+        mapping = {"fixture_bindings": "fixture_source_bindings", "noisy_boundary": "noisy_observation_boundary",
+                   "cycling_fixture": "degenerate_cycling_fixture"}
+        if any(reviewed[key] != supplied[value] for key, value in mapping.items()):
+            raise ValueError("Reviewed mathematical cases changed")
+        current = execute([str(root / "code/uncertain_observation_example.py")])
+        data = {"scope": "Three exact mathematical groups from preserved review; source literals are not Lean execution. The supplied path/symlink record is retained separately.",
+                "review_groups": reviewed, "new_api_example": current}
+        target = root / "docs/uncertain_observation_replay.json"
+        if write:
+            target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        elif json.loads(target.read_text(encoding="utf-8")) != data:
+            raise ValueError("Uncertain-observation replay changed")
+        paths = [source_record, root / "code/contextuality_lp.py", root / "code/epistemic_kernel.py",
+                 root / "code/uncertain_observation_example.py", Path(__file__), target]
+        hashes = {p.relative_to(root).as_posix(): digest(p) for p in paths}
+        bound = root / "docs/review_corrections_source_hashes.json"
+        if write:
+            bound.write_text(json.dumps(hashes, indent=2) + "\n", encoding="utf-8")
+        elif json.loads(bound.read_text(encoding="utf-8")) != hashes:
+>           raise ValueError("Review-correction source changed")
+E           ValueError: Review-correction source changed
+
+tools\replay_review_corrections.py:56: ValueError
+=========================== short test summary info ===========================
+FAILED code/tests/test_uncertain_observations.py::test_preserved_review_and_new_example_replay
+1 failed, 217 passed in 6.82s

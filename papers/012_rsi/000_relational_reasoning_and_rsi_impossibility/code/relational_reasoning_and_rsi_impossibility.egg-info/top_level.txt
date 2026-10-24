@@ -1,0 +1,15 @@
+communication_channels
+deposit_paths
+eis_verifier
+exact_dual_witness_solver
+finite_limits
+higher_cell_async_hypergraph
+memory_cli
+memory_machine
+multi_agent_hypergraph
+residual_memory
+rsi_eis_resources
+rsi_transition_harness
+simplicial_complex
+simplicial_rewiring
+single_agent_graph

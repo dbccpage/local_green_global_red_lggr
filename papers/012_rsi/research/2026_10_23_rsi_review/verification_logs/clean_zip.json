@@ -1,0 +1,15 @@
+{
+  "label": "clean_zip",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "tools/rebuild_release.py",
+    "--check"
+  ],
+  "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\rsi_review_20261023\\clean_v1.2.3\\000_relational_reasoning_and_rsi_impossibility",
+  "exit_code": 0,
+  "seconds": 0.5476734638214111,
+  "log": "clean_zip.txt",
+  "log_sha256": "2d8e34171582d91a34fba48b91860f577caba25e6856ee6d17b0df905d8be2b2"
+}

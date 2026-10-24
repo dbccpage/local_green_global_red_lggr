@@ -1,0 +1,67 @@
+{
+  "checks": [
+    {
+      "check": "bell_package",
+      "command": [
+        "python",
+        "-u",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/package.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\papers\\036_bell_positive_extensions_and_projection_residuals",
+      "exit_code": 0,
+      "log_sha256": "c1b5d97e82ac537b8741fcf3052e694370f328cb87b45383e8b33c37c87763c4"
+    },
+    {
+      "check": "rsi_000",
+      "command": [
+        "python",
+        "-u",
+        "-B",
+        "-X",
+        "utf8",
+        "verify_deposit.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\papers\\012_rsi\\000_relational_reasoning_and_rsi_impossibility",
+      "exit_code": 0,
+      "log_sha256": "adac025f28695c661994f68c53a7c6961e63d3006d47103d2a79eab4c8823ab0"
+    },
+    {
+      "check": "rsi_001",
+      "command": [
+        "python",
+        "-u",
+        "-B",
+        "-X",
+        "utf8",
+        "verify_deposit.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\papers\\012_rsi\\001_contextual_prediction_and_self_certification",
+      "exit_code": 0,
+      "log_sha256": "659b8463a59fd1e6b72c23dd3606c5df8c07e687be7e3b28dd60c56b9972f77b"
+    },
+    {
+      "check": "rsi_002",
+      "command": [
+        "python",
+        "-u",
+        "-B",
+        "-X",
+        "utf8",
+        "verify_deposit.py",
+        "--archive"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\papers\\012_rsi\\002_institutions_that_can_know",
+      "exit_code": 0,
+      "log_sha256": "4163fc02862efc2823b42c149567d996feb4c7de150d2f532290d98183f22813"
+    }
+  ],
+  "all_passed": true,
+  "preexisting_destination_edits_unchanged": true,
+  "index_sha256": "a56ec36504e07a494fcb8e2a5c3ae7240fe033951ac24e584dc6caa65b6c9bbd",
+  "index_path": "C:\\Users\\a343o\\source\\repos\\lggr\\papers\\rsi_and_bell_packages.md",
+  "shared_README_change_observed_during_verification": true,
+  "shared_README_final_sha256": "a18a465a26b76a23297154074c61933f517327985ef973415b375d99383cf898"
+}

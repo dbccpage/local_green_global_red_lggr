@@ -1,0 +1,8 @@
+{
+  "docs/v1_5_review_sources.json": "17d53f26d2d3891e91f996e7dba82d06d1eac80395c300cdb8f225b7e6105e6b",
+  "code/contextuality_lp.py": "75748fabf04ff764d666be25e2eafe1b7f330c6fb03986632640f32a647ba9cc",
+  "code/epistemic_kernel.py": "8211a3d7e61688c21de6a4a4d1e1e2e3a4501ccdb67aaef21024744be8a1fa5e",
+  "code/uncertain_observation_example.py": "0ec683f8746e9770583e8faab0d4cd0e45b36ef4a0009487c336dfc0ef5f4f32",
+  "tools/replay_review_corrections.py": "d1f4df83a7f024a75ebfedf5f405c48380fe6c8d1a2644cc073e84f474f830d3",
+  "docs/uncertain_observation_replay.json": "d01f583c455b46a258e7ee2607ffdaa7cac6edc2df3efac1a23632df92e85093"
+}

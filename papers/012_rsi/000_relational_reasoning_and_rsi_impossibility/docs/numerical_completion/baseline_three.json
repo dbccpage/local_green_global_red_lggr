@@ -1,0 +1,12 @@
+{
+  "command": [
+    "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs\\target\\debug\\deps\\omega_quantum_physics-9f49709e79a44cd6.exe",
+    "completely_positive_map::tests::transpose_map_choi_is_refused",
+    "quantum_hamiltonian::tests::a_hamiltonian_with_plus_minus_eigenvalues_has_the_right_spectrum_and_propagator",
+    "quantum_hamiltonian::tests::rabi_oscillation_follows_the_closed_form",
+    "--test-threads=1"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs\\omega_quantum_physics",
+  "exit_code": 101,
+  "seconds": 0.21539902687072754
+}

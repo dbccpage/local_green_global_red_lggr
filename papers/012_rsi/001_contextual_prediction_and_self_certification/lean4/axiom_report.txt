@@ -1,0 +1,167 @@
+Named theorem axiom census
+Declarations listed: 161
+Declarations with no axioms: 49
+Declarations with axiom dependencies: 112
+Approved axioms: propext, Quot.sound, Classical.choice
+
+'EpistemicNoGo.Bridge.report_eq_after_word' does not depend on any axioms
+'EpistemicNoGo.Bridge.fibers_preserved_iff_all_words' does not depend on any axioms
+'EpistemicNoGo.Bridge.intertwining_preserves_fibers' does not depend on any axioms
+'EpistemicNoGo.Bridge.future_task_collision_blocks_prediction' does not depend on any axioms
+'EpistemicNoGo.Bridge.pinned_tip_can_collide' depends on axioms: [propext]
+'EpistemicNoGo.Bridge.provenance_pass_can_be_unsafe' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.infeasible_excludes_real' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.ray_real_feasible' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.ray_real_objective' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.unbounded_below_real' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.accept_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.search_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_certified_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_infeasible_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_unbounded_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.CertifiedOutcomes.solve_optimal_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.separating_ball_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.compact_convex_distance_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.weak_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.zero_gap_certificate_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.linear_form_coordinates' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.dual_coordinates_bounded' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.mixtureMap_apply' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.cost_eq_norm' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.contextuality_strong_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.cost_zero_iff' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.joint_or_positive_dual' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.positive_dual_excludes_joint' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.slacks_l1_lower_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.exact_slacks_exist' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.rational_certificate_real_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.dual_offset_is_negative_max' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.canonical_dual_attainment' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.dual_solution_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.rational_simplex_cast' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ContextualDuality.contextuality_standard_form_strong_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EmbeddedLimits.determined_is_true' does not depend on any axioms
+'EmbeddedLimits.positive_introspection' does not depend on any axioms
+'EmbeddedLimits.own_record_is_determined' does not depend on any axioms
+'EmbeddedLimits.refinement_preserves_determination' does not depend on any axioms
+'EmbeddedLimits.decoder_implies_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.section_constructs_decoder' does not depend on any axioms
+'EmbeddedLimits.recoverable_iff_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.postprocessing_cannot_separate' does not depend on any axioms
+'EmbeddedLimits.collision_excludes_exact_decoder' does not depend on any axioms
+'EmbeddedLimits.added_task_requires_refinement' does not depend on any axioms
+'EmbeddedLimits.future_eq_refl' does not depend on any axioms
+'EmbeddedLimits.future_eq_symm' does not depend on any axioms
+'EmbeddedLimits.future_eq_trans' does not depend on any axioms
+'EmbeddedLimits.future_eq_preserves_readout' does not depend on any axioms
+'EmbeddedLimits.future_eq_stable' does not depend on any axioms
+'EmbeddedLimits.stable_relation_refines_future_eq' does not depend on any axioms
+'EmbeddedLimits.implemented_memory_preserves_future' does not depend on any axioms
+'EmbeddedLimits.bool_cannot_equal_its_negation' does not depend on any axioms
+'EmbeddedLimits.anti_prediction_not_universal' does not depend on any axioms
+'EmbeddedLimits.fiber_soundness_is_maximal' does not depend on any axioms
+'EpistemicNoGo.EmbeddedQuantitative.midpoint_error' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.fiber_pair_lower_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.midpoint_decoder_attains' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.attained_fiber_minimax' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.future_classes_require_memory' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.bounded_loss_tv' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.stochastic_simulation_mass' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.stochastic_simulation_nonnegative' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.EmbeddedQuantitative.simulation_loss_transfer' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.observation_radius' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.nearest_distance_lipschitz' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.uncertainty_adjusted_witness' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.trajectory_error_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.constant_residual_envelope' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.nonexpansive_envelope' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.correction_window' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.duhamel_waiting_window' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.correction_capacity_lower_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ErrorBudget.threshold_missed' depends on axioms: [Classical.choice, Quot.sound, propext]
+'LiveMemory.update_sound' does not depend on any axioms
+'LiveMemory.update_retains' does not depend on any axioms
+'LiveMemory.refused_update_preserves' does not depend on any axioms
+'LiveMemory.recall_sound' depends on axioms: [propext]
+'LiveMemory.changed_binding_refuses' depends on axioms: [propext]
+'LiveMemory.missing_support_refuses' depends on axioms: [propext]
+'LiveMemory.exact_reload_preserves_recall' depends on axioms: [propext]
+'LiveMemory.conflict_refused' does not depend on any axioms
+'EpistemicNoGo.MindContracts.whole_fiber_sound' does not depend on any axioms
+'EpistemicNoGo.MindContracts.whole_fiber_maximal' does not depend on any axioms
+'EpistemicNoGo.MindContracts.score_regret' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.MindContracts.score_gap_unique' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.MindContracts.upper_bound_does_not_force_failure' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.possible_iff_bounded_plan' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.rejected_budget_excludes_plan' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.actual_world_retained' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.valid_reaches_checked_leaf' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.checked_leaf_error' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.informative_branch_card_lt' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixture_two_queries_suffice' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixture_one_query_insufficient' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixture_every_fixed_pair_collides' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.QueryBudget.fixture_fixed_three_identify' depends on axioms: [propext]
+'EpistemicNoGo.QueryBudget.fixture_no_allowed_query_refuses' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classical_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.classical_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.pr_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.pr_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.near_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.near_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundary_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.boundary_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangle_certificate' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.RationalCertificates.triangle_optimal_over_reals' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultI.pr_box_no_global_assignment' does not depend on any axioms
+'EpistemicNoGo.ResultI.pr_box_no_supported_assignment' does not depend on any axioms
+'EpistemicNoGo.ResultI.no_positive_joint_into_pr' does not depend on any axioms
+'EpistemicNoGo.ResultI.foldl_add_zero' depends on axioms: [propext]
+'EpistemicNoGo.ResultI.mass_zero_into_pr' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.ResultI.classical_joint_is_global_section' does not depend on any axioms
+'EpistemicNoGo.ResultII.fiber_lemma' does not depend on any axioms
+'EpistemicNoGo.ResultII.no_perfect_peer_prediction' does not depend on any axioms
+'EpistemicNoGo.ResultII.private_fiber_blocks_prediction' does not depend on any axioms
+'EpistemicNoGo.ResultII.proj_has_private_fiber' does not depend on any axioms
+'EpistemicNoGo.ResultII.proj_no_perfect_prediction' does not depend on any axioms
+'EpistemicNoGo.ResultII.hidden_at_zero_is_report_at_one' does not depend on any axioms
+'EpistemicNoGo.ResultII.swap_not_intertwined' does not depend on any axioms
+'EpistemicNoGo.ResultII.kernel_does_not_give_privacy_over_time' does not depend on any axioms
+'EpistemicNoGo.ResultIII.verifyFrom_append_left' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.prefix_verifies' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.ledger_verifies' does not depend on any axioms
+'EpistemicNoGo.ResultIII.truncation_is_invisible' does not depend on any axioms
+'EpistemicNoGo.ResultIII.pinned_tip_separates' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.tamper_detected' does not depend on any axioms
+'EpistemicNoGo.ResultIII.internal_verification_is_not_completeness' depends on axioms: [propext]
+'EpistemicNoGo.ResultIII.invariant_verdict_blind' does not depend on any axioms
+'EpistemicNoGo.ResultIII.invariant_export_blind' does not depend on any axioms
+'EpistemicNoGo.ResultIII.noninvariant_verdict_separates' does not depend on any axioms
+'EpistemicNoGo.ResultIV.receipt_carries_no_authority' does not depend on any axioms
+'EpistemicNoGo.ResultIV.proposer_cannot_authorize' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.evaluator_cannot_authorize' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.prose_standing_refused' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.pass_implies_policy' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.delegated_standing_admitted' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.compose_refused_link' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.ResultIV.distinct_strings_pass' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.standard_weak_duality' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.valid_is_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.vector_get_ofFn' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.memo_apply' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_column' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_row_eval' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_preserves_equations' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_preserves_objective' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.pivot_preserves_rhs' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.entering_none_iff' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.entering_negative' depends on axioms: [Quot.sound, propext]
+'EpistemicNoGo.Simplex.simplex_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.cleanup_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.initial_rhs_nonnegative' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.execute_budget_exact' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.solve_correct' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.solve_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.solve_pivot_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.accepted_pivots_match_trace' depends on axioms: [Classical.choice, Quot.sound, propext]
+'EpistemicNoGo.Simplex.valid_is_real_optimal' depends on axioms: [Classical.choice, Quot.sound, propext]

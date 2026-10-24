@@ -1,0 +1,247 @@
+
+========================================================================
+verify_cf2n.py — the §18 conjecture CF(p) <= 2 N(p), settled exactly
+========================================================================
+[PASS] S0a simplex trivial LP — status=optimal val=-1
+[PASS] S0b Beale anti-cycling — status=optimal val=-1/20 (expect -1/20)
+
+========================================================================
+PART 1: CHSH (16-entry) — 62-point battery
+========================================================================
+[PASS] C22pre NS vertex list: 16 deterministic + 8 parity-odd fully-correlated boxes, each a normalized NS table (per-context sums = 1) — 24 vertices
+    CHSH p_0                           CF=0        N=0        2N=0        EQUAL
+    CHSH p_1/8                         CF=0        N=0        2N=0        EQUAL
+    CHSH p_1/4                         CF=0        N=0        2N=0        EQUAL
+    CHSH p_3/8                         CF=0        N=0        2N=0        EQUAL
+    CHSH p_7/16                        CF=0        N=0        2N=0        EQUAL
+    CHSH p_1/2                         CF=0        N=0        2N=0        EQUAL
+    CHSH p_9/16                        CF=1/8      N=1/16     2N=1/8      EQUAL
+    CHSH p_5/8                         CF=1/4      N=1/8      2N=1/4      EQUAL
+    CHSH p_11/16                       CF=3/8      N=3/16     2N=3/8      EQUAL
+    CHSH p_3/4                         CF=1/2      N=1/4      2N=1/2      EQUAL
+    CHSH p_7/8                         CF=3/4      N=3/8      2N=3/4      EQUAL
+    CHSH p_15/16                       CF=7/8      N=7/16     2N=7/8      EQUAL
+    CHSH p_1                           CF=1        N=1/2      2N=1        EQUAL
+    CHSH W (all-plus parity, local)    CF=0        N=0        2N=0        EQUAL
+    CHSH V_sig(1, 1, 1, -1)            CF=1        N=1/2      2N=1        EQUAL
+    CHSH V_sig(1, 1, -1, 1)            CF=1        N=1/2      2N=1        EQUAL
+    CHSH V_sig(1, -1, 1, 1)            CF=1        N=1/2      2N=1        EQUAL
+    CHSH V_sig(1, -1, -1, -1)          CF=1        N=1/2      2N=1        EQUAL
+    CHSH V_sig(-1, 1, 1, 1)            CF=1        N=1/2      2N=1        EQUAL
+    CHSH V_sig(-1, 1, -1, -1)          CF=1        N=1/2      2N=1        EQUAL
+    CHSH V_sig(-1, -1, 1, -1)          CF=1        N=1/2      2N=1        EQUAL
+    CHSH V_sig(-1, -1, -1, 1)          CF=1        N=1/2      2N=1        EQUAL
+    CHSH rnd0 (k=4, den=17)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd1 (k=4, den=22)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd2 (k=3, den=18)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd3 (k=3, den=16)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd4 (k=4, den=12)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd5 (k=5, den=26)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd6 (k=3, den=12)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd7 (k=3, den=7)             CF=0        N=0        2N=0        EQUAL
+    CHSH rnd8 (k=3, den=11)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd9 (k=4, den=29)            CF=7/29     N=7/58     2N=7/29     EQUAL
+    CHSH rnd10 (k=3, den=13)           CF=2/13     N=1/13     2N=2/13     EQUAL
+    CHSH rnd11 (k=4, den=15)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd12 (k=5, den=24)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd13 (k=4, den=19)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd14 (k=4, den=17)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd15 (k=3, den=18)           CF=1/9      N=1/18     2N=1/9      EQUAL
+    CHSH rnd16 (k=5, den=22)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd17 (k=4, den=17)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd18 (k=3, den=9)            CF=0        N=0        2N=0        EQUAL
+    CHSH rnd19 (k=5, den=15)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd20 (k=5, den=23)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd21 (k=5, den=18)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd22 (k=3, den=15)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd23 (k=3, den=19)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd24 (k=3, den=13)           CF=4/13     N=2/13     2N=4/13     EQUAL
+    CHSH rnd25 (k=5, den=28)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd26 (k=3, den=17)           CF=7/17     N=7/34     2N=7/17     EQUAL
+    CHSH rnd27 (k=4, den=22)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd28 (k=4, den=10)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd29 (k=4, den=16)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd30 (k=3, den=12)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd31 (k=4, den=16)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd32 (k=3, den=15)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd33 (k=5, den=26)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd34 (k=4, den=18)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd35 (k=3, den=11)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd36 (k=5, den=27)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd37 (k=4, den=11)           CF=1/11     N=1/22     2N=1/11     EQUAL
+    CHSH rnd38 (k=5, den=22)           CF=0        N=0        2N=0        EQUAL
+    CHSH rnd39 (k=5, den=16)           CF=0        N=0        2N=0        EQUAL
+[PASS] C22a CHSH: all 62 points — N-primal certificate re-verified (Tq=p, sum=1, mass=value); N-dual == N-primal to the last bit; CF-moment certificate re-verified (p = gamma-part + delta, delta >= 0, delta marginally consistent, sum gamma + kappa = 1); CF-vertex value == CF-moment value — 62/62 closed
+[PASS] C22b CHSH: Thm 27 + Prop 25 closed forms CF = max(0,2v-1), N = max(0,v-1/2) confirmed by LP on all 13 line points — 13/13
+[PASS] C22c CHSH: all 8 nonlocal NS vertices have CF = 1, N = 1/2 — 8/8
+[PASS] C24a CHSH analytic dual alpha = S/4: spread exactly 1 over the 16 vertices; N(p_v) >= v - 1/2 pinched tight for every v >= 1/2 — vertex range [-1/2,1/2], floors = v-1/2 exactly
+[PASS] C24b CHSH dual floor at PR: alpha.PR - max = 1/2
+[stage chsh done: 8 checks, 0 failures]
+
+========================================================================
+PART 2: GHZ (64-entry) — 16-point battery
+========================================================================
+    [working: GHZ Q_0]
+    GHZ Q_0                            CF=0        N=0        2N=0        EQUAL
+    [   5.3s] GHZ Q_0 done
+    [working: GHZ Q_3/8]
+    GHZ Q_3/8                          CF=0        N=0        2N=0        EQUAL
+    [   6.2s] GHZ Q_3/8 done
+    [working: GHZ Q_1/2]
+    GHZ Q_1/2                          CF=0        N=0        2N=0        EQUAL
+    [  43.7s] GHZ Q_1/2 done
+    [working: GHZ Q_5/8]
+    GHZ Q_5/8                          CF=1/4      N=1/8      2N=1/4      EQUAL
+    [  13.0s] GHZ Q_5/8 done
+    [working: GHZ Q_7/10]
+    GHZ Q_7/10                         CF=2/5      N=1/5      2N=2/5      EQUAL
+    [  15.1s] GHZ Q_7/10 done
+    [working: GHZ Q_1]
+    GHZ Q_1                            CF=1        N=1/2      2N=1        EQUAL
+    [  14.6s] GHZ Q_1 done
+    [working: GHZ G (GHZ box)]
+    GHZ G (GHZ box)                    CF=1        N=3/4      2N=3/2      strict
+    [  19.2s] GHZ G (GHZ box) done
+    [working: GHZ S-box (Svetlichny)]
+    GHZ S-box (Svetlichny)             CF=1        N=1/2      2N=1        EQUAL
+    [  12.3s] GHZ S-box (Svetlichny) done
+    [working: GHZ W (all-plus parity, local)]
+    GHZ W (all-plus parity, local)     CF=0        N=0        2N=0        EQUAL
+    [  27.4s] GHZ W (all-plus parity, local) done
+    [working: GHZ U (uniform)]
+    GHZ U (uniform)                    CF=0        N=0        2N=0        EQUAL
+    [   5.2s] GHZ U (uniform) done
+    [working: GHZ rnd0 (k=3, den=12)]
+    GHZ rnd0 (k=3, den=12)             CF=1/2      N=3/8      2N=3/4      strict
+    [  31.1s] GHZ rnd0 (k=3, den=12) done
+    [working: GHZ rnd1 (k=3, den=12)]
+    GHZ rnd1 (k=3, den=12)             CF=3/4      N=13/32    2N=13/16    strict
+    [  19.9s] GHZ rnd1 (k=3, den=12) done
+    [working: GHZ rnd2 (k=4, den=12)]
+    GHZ rnd2 (k=4, den=12)             CF=19/64    N=25/256   2N=25/128   VIOLATION
+[FAIL] C27 conjecture CF<=2N at GHZ rnd2 (k=4, den=12) — CF=19/64 > 2N=25/128  <-- COUNTEREXAMPLE
+    [  24.9s] GHZ rnd2 (k=4, den=12) done
+    [working: GHZ rnd3 (k=3, den=9)]
+    GHZ rnd3 (k=3, den=9)              CF=1/9      N=1/18     2N=1/9      EQUAL
+    [  21.6s] GHZ rnd3 (k=3, den=9) done
+    [working: GHZ rnd4 (k=3, den=7)]
+    GHZ rnd4 (k=3, den=7)              CF=0        N=0        2N=0        EQUAL
+    [   6.4s] GHZ rnd4 (k=3, den=7) done
+    [working: GHZ rnd5 (k=4, den=9)]
+    GHZ rnd5 (k=4, den=9)              CF=1/9      N=1/18     2N=1/9      EQUAL
+    [  26.1s] GHZ rnd5 (k=4, den=9) done
+[PASS] C23a GHZ: all 16 points — N-primal certificate re-verified; CF-moment certificate re-verified (p = gamma-part + delta, delta >= 0, delta marginally consistent at scale kappa, sum gamma + kappa = 1) — 16/16 closed
+[PASS] C23b GHZ: Thm 24 + Prop 25 closed forms CF = max(0,2v-1), N = max(0,v-1/2) confirmed by LP on all 6 Mermin-line points — 6/6
+[PASS] C23c GHZ: edge boxes close (G: CF=1; S-box: CF=1, N=1/2; W and U: 0,0) — 4/4
+[PASS] C26a GHZ analytic dual alpha = M/4: spread exactly 1 over the 64 vertices; N(Q_v) >= v - 1/2 pinched tight for every v >= 1/2 — vertex range [-1/2,1/2]
+[PASS] C26b GHZ analytic dual alpha = Svet/8: spread 1, N(S-box) >= 1/2 (C20d: exact)
+[stage ghz done: 14 checks, 1 failures]
+
+========================================================================
+PART 3: the conjecture CF(p) <= 2 N(p)
+========================================================================
+[FAIL] C25 CONJECTURE on CHSH: CF(p) <= 2 N(p) at all 62 battery points — violations: GHZ rnd2 (k=4, den=12)
+[FAIL] C27 CONJECTURE on GHZ: CF(p) <= 2 N(p) at all 16 battery points — violations: GHZ rnd2 (k=4, den=12)
+[FAIL] C28 summary: max ratio CF/(2N) over all battery points <= 1 — max ratio = 38/25; 74 equality points, 78 points closed
+
+Top ratios CF/(2N) (equality = tight points of the conjecture):
+    38/25      GHZ rnd2 (k=4, den=12)               CF=19/64 2N=25/128
+    1          GHZ rnd5 (k=4, den=9)                CF=1/9 2N=1/9
+    1          GHZ rnd3 (k=3, den=9)                CF=1/9 2N=1/9
+    1          GHZ S-box (Svetlichny)               CF=1 2N=1
+    1          GHZ Q_7/10                           CF=2/5 2N=2/5
+    1          GHZ Q_5/8                            CF=1/4 2N=1/4
+    1          GHZ Q_1                              CF=1 2N=1
+    1          CHSH rnd9 (k=4, den=29)              CF=7/29 2N=7/29
+    1          CHSH rnd37 (k=4, den=11)             CF=1/11 2N=1/11
+    1          CHSH rnd26 (k=3, den=17)             CF=7/17 2N=7/17
+    1          CHSH rnd24 (k=3, den=13)             CF=4/13 2N=4/13
+    1          CHSH rnd15 (k=3, den=18)             CF=1/9 2N=1/9
+    1          CHSH rnd10 (k=3, den=13)             CF=2/13 2N=2/13
+    1          CHSH p_9/16                          CF=1/8 2N=1/8
+    1          CHSH p_7/8                           CF=3/4 2N=3/4
+
+Equality points (CF = 2N):
+    CHSH p_0                             CF = 2N = 0
+    CHSH p_1/8                           CF = 2N = 0
+    CHSH p_1/4                           CF = 2N = 0
+    CHSH p_3/8                           CF = 2N = 0
+    CHSH p_7/16                          CF = 2N = 0
+    CHSH p_1/2                           CF = 2N = 0
+    CHSH p_9/16                          CF = 2N = 1/8
+    CHSH p_5/8                           CF = 2N = 1/4
+    CHSH p_11/16                         CF = 2N = 3/8
+    CHSH p_3/4                           CF = 2N = 1/2
+    CHSH p_7/8                           CF = 2N = 3/4
+    CHSH p_15/16                         CF = 2N = 7/8
+    CHSH p_1                             CF = 2N = 1
+    CHSH W (all-plus parity, local)      CF = 2N = 0
+    CHSH V_sig(1, 1, 1, -1)              CF = 2N = 1
+    CHSH V_sig(1, 1, -1, 1)              CF = 2N = 1
+    CHSH V_sig(1, -1, 1, 1)              CF = 2N = 1
+    CHSH V_sig(1, -1, -1, -1)            CF = 2N = 1
+    CHSH V_sig(-1, 1, 1, 1)              CF = 2N = 1
+    CHSH V_sig(-1, 1, -1, -1)            CF = 2N = 1
+    CHSH V_sig(-1, -1, 1, -1)            CF = 2N = 1
+    CHSH V_sig(-1, -1, -1, 1)            CF = 2N = 1
+    CHSH rnd0 (k=4, den=17)              CF = 2N = 0
+    CHSH rnd1 (k=4, den=22)              CF = 2N = 0
+    CHSH rnd2 (k=3, den=18)              CF = 2N = 0
+    CHSH rnd3 (k=3, den=16)              CF = 2N = 0
+    CHSH rnd4 (k=4, den=12)              CF = 2N = 0
+    CHSH rnd5 (k=5, den=26)              CF = 2N = 0
+    CHSH rnd6 (k=3, den=12)              CF = 2N = 0
+    CHSH rnd7 (k=3, den=7)               CF = 2N = 0
+    CHSH rnd8 (k=3, den=11)              CF = 2N = 0
+    CHSH rnd9 (k=4, den=29)              CF = 2N = 7/29
+    CHSH rnd10 (k=3, den=13)             CF = 2N = 2/13
+    CHSH rnd11 (k=4, den=15)             CF = 2N = 0
+    CHSH rnd12 (k=5, den=24)             CF = 2N = 0
+    CHSH rnd13 (k=4, den=19)             CF = 2N = 0
+    CHSH rnd14 (k=4, den=17)             CF = 2N = 0
+    CHSH rnd15 (k=3, den=18)             CF = 2N = 1/9
+    CHSH rnd16 (k=5, den=22)             CF = 2N = 0
+    CHSH rnd17 (k=4, den=17)             CF = 2N = 0
+    CHSH rnd18 (k=3, den=9)              CF = 2N = 0
+    CHSH rnd19 (k=5, den=15)             CF = 2N = 0
+    CHSH rnd20 (k=5, den=23)             CF = 2N = 0
+    CHSH rnd21 (k=5, den=18)             CF = 2N = 0
+    CHSH rnd22 (k=3, den=15)             CF = 2N = 0
+    CHSH rnd23 (k=3, den=19)             CF = 2N = 0
+    CHSH rnd24 (k=3, den=13)             CF = 2N = 4/13
+    CHSH rnd25 (k=5, den=28)             CF = 2N = 0
+    CHSH rnd26 (k=3, den=17)             CF = 2N = 7/17
+    CHSH rnd27 (k=4, den=22)             CF = 2N = 0
+    CHSH rnd28 (k=4, den=10)             CF = 2N = 0
+    CHSH rnd29 (k=4, den=16)             CF = 2N = 0
+    CHSH rnd30 (k=3, den=12)             CF = 2N = 0
+    CHSH rnd31 (k=4, den=16)             CF = 2N = 0
+    CHSH rnd32 (k=3, den=15)             CF = 2N = 0
+    CHSH rnd33 (k=5, den=26)             CF = 2N = 0
+    CHSH rnd34 (k=4, den=18)             CF = 2N = 0
+    CHSH rnd35 (k=3, den=11)             CF = 2N = 0
+    CHSH rnd36 (k=5, den=27)             CF = 2N = 0
+    CHSH rnd37 (k=4, den=11)             CF = 2N = 1/11
+    CHSH rnd38 (k=5, den=22)             CF = 2N = 0
+    CHSH rnd39 (k=5, den=16)             CF = 2N = 0
+    GHZ Q_0                              CF = 2N = 0
+    GHZ Q_3/8                            CF = 2N = 0
+    GHZ Q_1/2                            CF = 2N = 0
+    GHZ Q_5/8                            CF = 2N = 1/4
+    GHZ Q_7/10                           CF = 2N = 2/5
+    GHZ Q_1                              CF = 2N = 1
+    GHZ S-box (Svetlichny)               CF = 2N = 1
+    GHZ W (all-plus parity, local)       CF = 2N = 0
+    GHZ U (uniform)                      CF = 2N = 0
+    GHZ rnd3 (k=3, den=9)                CF = 2N = 1/9
+    GHZ rnd4 (k=3, den=7)                CF = 2N = 0
+    GHZ rnd5 (k=4, den=9)                CF = 2N = 1/9
+Traceback (most recent call last):
+  File "/home/z/my-project/scripts/verify_cf2n.py", line 1199, in <module>
+    main()
+  File "/home/z/my-project/scripts/verify_cf2n.py", line 1194, in main
+    run_final()
+  File "/home/z/my-project/scripts/verify_cf2n.py", line 1173, in run_final
+    f"ghz={n2}, final={N_CHECKS[0]}; total distinct failures: {len(all_fail)}")
+                                                                   ^^^^^^^^
+UnboundLocalError: cannot access local variable 'all_fail' where it is not associated with a value

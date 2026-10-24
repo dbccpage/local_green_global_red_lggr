@@ -1,0 +1,178 @@
+   Compiling omega_functional v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_functional)
+warning: struct `RefusalCensusError` is never constructed
+  --> omega_intelligence\src\refusal.rs:22:12
+   |
+22 | pub struct RefusalCensusError { kind: &'static str, left: u128, right: u128 }
+   |            ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated items `new` and `kind` are never used
+  --> omega_intelligence\src\refusal.rs:24:14
+   |
+23 | impl RefusalCensusError {
+   | ----------------------- associated items in this implementation
+24 |     const fn new(kind: &'static str, left: u128, right: u128) -> Self { Self { kind, left, right } }
+   |              ^^^
+25 |     pub const fn kind(&self) -> &'static str { self.kind }
+   |                  ^^^^
+
+warning: struct `RefusalAuthorityCensus` is never constructed
+  --> omega_intelligence\src\refusal.rs:29:12
+   |
+29 | pub struct RefusalAuthorityCensus { records: u64 }
+   |            ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated items `try_from_refusals` and `records` are never used
+  --> omega_intelligence\src\refusal.rs:31:12
+   |
+30 | impl RefusalAuthorityCensus {
+   | --------------------------- associated items in this implementation
+31 |     pub fn try_from_refusals(refusals: &[Refusal]) -> Result<Self, RefusalCensusError> {
+   |            ^^^^^^^^^^^^^^^^^
+...
+47 |     pub const fn records(&self) -> u64 { self.records }
+   |                  ^^^^^^^
+
+warning: omega_symbol_game_runtime@0.1.0: packet contracts enforced at compile time: 43
+warning: `omega_intelligence` (lib) generated 4 warnings
+warning: omega_symbol_game@0.1.0: packet contracts enforced at compile time: 57
+warning: struct `SimplexCertificate` is never constructed
+  --> omega_functional\src\wire.rs:34:12
+   |
+34 | pub struct SimplexCertificate {
+   |            ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: enum `SimplexError` is never used
+  --> omega_functional\src\wire.rs:41:10
+   |
+41 | pub enum SimplexError {
+   |          ^^^^^^^^^^^^
+
+warning: function `zero` is never used
+  --> omega_functional\src\wire.rs:62:4
+   |
+62 | fn zero() -> BigRational {
+   |    ^^^^
+
+warning: function `one` is never used
+  --> omega_functional\src\wire.rs:66:4
+   |
+66 | fn one() -> BigRational {
+   |    ^^^
+
+warning: function `try_simplex` is never used
+  --> omega_functional\src\wire.rs:70:8
+   |
+70 | pub fn try_simplex(values: &[String]) -> Result<SimplexCertificate, SimplexError> {
+   |        ^^^^^^^^^^^
+
+warning: methods `mass_count`, `even_mass`, and `odd_mass` are never used
+   --> omega_functional\src\wire.rs:103:12
+    |
+102 | impl SimplexCertificate {
+    | ----------------------- methods in this implementation
+103 |     pub fn mass_count(&self) -> usize {
+    |            ^^^^^^^^^^
+...
+107 |     pub fn even_mass(&self) -> &BigRational {
+    |            ^^^^^^^^^
+...
+111 |     pub fn odd_mass(&self) -> &BigRational {
+    |            ^^^^^^^^
+
+   Compiling omega_policy v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_policy)
+   Compiling omega_homology v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_homology)
+   Compiling omega_majorana v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_majorana)
+error[E0425]: cannot find type `FilteredSimplex` in this scope
+  --> omega_homology\src\persistent_homology.rs:70:15
+   |
+70 |     simplex: &FilteredSimplex,
+   |               ^^^^^^^^^^^^^^^ not found in this scope
+   |
+help: consider importing this struct
+   |
+ 4 + use crate::filtration::FilteredSimplex;
+   |
+
+warning: enum `GateLimitError` is never used
+  --> omega_policy\src\jcs.rs:12:17
+   |
+12 | pub(crate) enum GateLimitError {
+   |                 ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `certify_gate_limits` is never used
+  --> omega_policy\src\jcs.rs:33:15
+   |
+33 | pub(crate) fn certify_gate_limits(limits: Limits) -> Result<(), GateLimitError> {
+   |               ^^^^^^^^^^^^^^^^^^^
+
+   Compiling omega_types v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_types)
+warning: `omega_functional` (lib) generated 6 warnings (6 duplicates)
+warning: `omega_functional` (lib) generated 6 warnings
+warning: `omega_policy` (lib) generated 2 warnings (2 duplicates)
+warning: `omega_policy` (lib) generated 2 warnings
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `omega_homology` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+warning: enum `CaseTableError` is never used
+    --> omega_types\src\python_case_v1.rs:3565:17
+     |
+3565 | pub(crate) enum CaseTableError {
+     |                 ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `mapping_strictly_increasing` is never used
+    --> omega_types\src\python_case_v1.rs:3589:4
+     |
+3589 | fn mapping_strictly_increasing(
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `ranges_strictly_separated` is never used
+    --> omega_types\src\python_case_v1.rs:3612:4
+     |
+3612 | fn ranges_strictly_separated(table: &[(u32, u32)], name: &'static str) -> Result<(), CaseTableError> {
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `certify_case_tables` is never used
+    --> omega_types\src\python_case_v1.rs:3639:15
+     |
+3639 | pub(crate) fn certify_case_tables() -> Result<(), CaseTableError> {
+     |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `upper_of` is never used
+    --> omega_types\src\python_case_v1.rs:3646:15
+     |
+3646 | pub(crate) fn upper_of(code: u32) -> Option<&'static str> {
+     |               ^^^^^^^^
+
+warning: enum `UnicodeTableError` is never used
+    --> omega_types\src\python_unicode_v1.rs:2252:10
+     |
+2252 | pub enum UnicodeTableError {
+     |          ^^^^^^^^^^^^^^^^^
+
+warning: function `certify_unicode_tables` is never used
+    --> omega_types\src\python_unicode_v1.rs:2274:8
+     |
+2274 | pub fn certify_unicode_tables() -> Result<(usize, usize), UnicodeTableError> {
+     |        ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: methods `rank` and `max` are never used
+   --> omega_types\src\q_continuum.rs:105:8
+    |
+104 | impl AuthorityStrength {
+    | ---------------------- methods in this implementation
+105 |     fn rank(self) -> u8 {
+    |        ^^^^
+...
+116 |     fn max(self, other: Self) -> Self {
+    |        ^^^
+
+warning: `omega_types` (lib) generated 8 warnings
+warning: `omega_types` (lib) generated 8 warnings (8 duplicates)

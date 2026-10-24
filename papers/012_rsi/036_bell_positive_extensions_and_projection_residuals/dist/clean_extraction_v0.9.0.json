@@ -1,0 +1,31 @@
+{
+  "version": "0.9.0",
+  "date": "2026-10-23",
+  "archive": "bell_positive_extensions_v0.9.0.zip",
+  "archive_sha256": "63944bdf236a72ce57bfbfc36b56a071898b805d1361518b5f1603d817f87fe0",
+  "result": "passed",
+  "fresh_directory": true,
+  "cold_dependency_cache": true,
+  "command": "python -B -X utf8 verify_deposit.py",
+  "exit_code": 0,
+  "full_physical_copy_extraction": false,
+  "storage_method": "Dependency archive hardlinked after verifying its exact ZIP-member SHA256 and size; temporary NTFS compression; generated v0.9 ZIP temporarily removed after payload validation and identically rebuilt after cleanup. No pre-existing dependency cache or proof outputs reused.",
+  "archive_restored_byte_identically": true,
+  "log_sha256": "acec07b2f34f0125ff607af403e8c0c693367a8d45f2a7d720ec53689a9d5ba8",
+  "prior_storage_attempts": [
+    "Ordinary second ZIP build ran out of disk; streaming reconstruction matched every byte.",
+    "Full physical copy and initial hardlinked replay ran out of disk. Failed temporary directories were cleaned."
+  ],
+  "lean_theorems": 356,
+  "proof_modules": 28,
+  "custom_axioms": [],
+  "pytest_passed": 41,
+  "exact_certificate_cases": 78,
+  "quantum_Born_cells": 1152,
+  "quantum_LP_solves": 36,
+  "noisy_boundary_checks": 15,
+  "notebook_direct_cell_replay": "passed",
+  "payload_unchanged_during_verification": true,
+  "sibling_packages_used": false,
+  "network_fetch_required": false
+}

@@ -1,0 +1,3290 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-24",
+  "formalized_in_lean": true,
+  "toolchain": "leanprover/lean4:v4.35.0",
+  "sources": {
+    "lean4/Bell/Averaging.lean": "83db13a31516f4e8c798d8b874923afa6ab2241277218e274d98dc6d82555e53",
+    "lean4/Bell/BinaryScenarios.lean": "6d90d8dd9132b4ed07900b8a07381e27b38d608d089ccd0f0f425e4eafcec18a",
+    "lean4/Bell/ChainAnalysis.lean": "35c525a3884bd640d4a0c5b2136260da9e5792a14efa02d8b490220bf3717952",
+    "lean4/Bell/ChainAsymptotic.lean": "81ba3edf64a10f01e71f6a28244e4e8ff80214b3fbaa80c1fd7bdbc4024b36e0",
+    "lean4/Bell/ChainedComparison.lean": "7b4377ebef9d663083983aa394922e915530fdec581a32b88aa55fd87260ef24",
+    "lean4/Bell/ChainedData.lean": "938dd614f7b045d7b4c2e59e02855b72a6689a532936a0d817a6e666471068ca",
+    "lean4/Bell/ChainedQuantum.lean": "22f223ae242db6d531135482bc97f5d716198884428a6dbeaad40aa852f7c000",
+    "lean4/Bell/ChainWitness.lean": "4d43f60b77617ef16c1195f1ee31f93de5043504c072524a6ec75c4d5118aaa2",
+    "lean4/Bell/CHSH.lean": "e6b0795d5694bde6a712d3217c9f72eb17d6d62f51a006f8935e446b0e5e1c31",
+    "lean4/Bell/Clifford.lean": "1605ee188ea5c66da21e98a2fa3f8d3966ffeb179eed0c6a09774ea16245c396",
+    "lean4/Bell/CliffordObservables.lean": "0e0f97f4bfb93796b2caf88c6315dc05f9f05ecccb9aabc1cd2490536d7b9cdf",
+    "lean4/Bell/Comparison.lean": "2b00d21f533ed8a9584abdf5afbfda1af915e1b5704cbf65a1257f8c5372bfa0",
+    "lean4/Bell/ComparisonData.lean": "824fc4b38549dbbc757c30c0bbb7e7dad98445a45432466965d32858e74d511e",
+    "lean4/Bell/CompleteQuantumUnbounded.lean": "5049273be2737e90b05a9ad96927c610e228b13e27d1f460806a1cb14cbf4a7f",
+    "lean4/Bell/ContextualFraction.lean": "b96f3e5da1079194a63fe45470ee50aa33ed9201313c8e025bc03f75111fc0c7",
+    "lean4/Bell/ContinuumShadows.lean": "027e979680bed76eaa53f880e7c66f8beaf4a91b8624981d49b32483bf61b9e7",
+    "lean4/Bell/ConvexDistance.lean": "309841193c2e91c9c1e316ca9b125fd795f106d5e74ade4621eb1aa7c686f3dd",
+    "lean4/Bell/CycleLifting.lean": "73d2fe18062f6ca975a04b69975fca93b4a2067a967c85ef33862c6f638dcec9",
+    "lean4/Bell/CycleLimits.lean": "710f02d552a433466855c3866eb32e48f164fd9c392d9d2dfb67c728d2d15bc0",
+    "lean4/Bell/CycleParity.lean": "94810e4a19852a58d87f4f86d54f903fed6145f3002d7b367f242e65f8119ce4",
+    "lean4/Bell/CyclicProfile.lean": "dcdf59e9d1ee2ecf7cce730b549b4cee9ac992843eeb32a5178fa6c32ec75de0",
+    "lean4/Bell/Dynamics.lean": "858bf0c5efda761f68ba43f2870e629839d0897e154577db248b3e77881032f5",
+    "lean4/Bell/Extension.lean": "865b74f6cc0201a0753c796cd160ec76feea79d803c5415cf8df3fb8fd7c540b",
+    "lean4/Bell/FiveComparison.lean": "c7e7101e270b35a12fe31a4b95637ffa635835585e5f41c9c637fb5ea671957a",
+    "lean4/Bell/FiveData.lean": "1775befba2a98227c21f44700f97ac8cf755f89c1564ea6e7e7964f3e96a96d7",
+    "lean4/Bell/FiveQuantum.lean": "7a07c2f6aad3ccb2e385cddb4f35c1b0d41eb0b984812985d2bb7316cf9722df",
+    "lean4/Bell/FullChainBounds.lean": "00992546f94029cb43144bdb4910f72783645f319f0038945e25a01a0d3b62ca",
+    "lean4/Bell/GHZEvolution.lean": "43c59ff6117cb48287d8a68f4f5ff3e7d8f075630a7aa24f6482ed3d3862b318",
+    "lean4/Bell/GramQuantum.lean": "f5d21d52becdec8ac67f56d95c481f7130c6e74381f5a6cf1d6c288e3fcac8c2",
+    "lean4/Bell/Integral.lean": "b90ab6eee9f146e3869c0c1a9ae692907f44ba47203a1bd20b2ce05db2cc3c6b",
+    "lean4/Bell/LinearProgramming.lean": "e0a8ea0256859e75da8a47e8fca664442638e9a4bdf274517eccce576680aaf8",
+    "lean4/Bell/LocalGram.lean": "a90cd6db0c68eb646589c49499d44e0f8f4cfc4f6e03fb31ddafa82e1eb8ea3d",
+    "lean4/Bell/MaximallyEntangled.lean": "994550c4847224e9ffd8ae9c97c89c80ee1b364ae47e383f8daf6c5670d929bb",
+    "lean4/Bell/NegativeMassFamilies.lean": "5d723ae6292e6e0d15261446ea571436b4a1955ba45f48d54bb0ecda73511d3b",
+    "lean4/Bell/Observer.lean": "f1f1d9db9d8be154947dacf8f691d857a20c1d7240fe31fb12b32a5b71d9a3ee",
+    "lean4/Bell/PlanarQuantum.lean": "44622ebdeb073cd0d372f1214e0f845f5201df1db818d58305204dfec6b63c43",
+    "lean4/Bell/Polyhedral.lean": "ddd94881157c838de16ea051af00688544794df6d0d88348d7d091a0ce38d739",
+    "lean4/Bell/PolyhedralProjection.lean": "4901d913b2b8fcf7138816bac5c76d0607afedb2fbeed1543d5a00d1f0ba4586",
+    "lean4/Bell/Quantum.lean": "3140b78cfece68b50f9d94c6716e94300022907ac15bd74ae09e9409c04793d7",
+    "lean4/Bell/QuantumComparisons.lean": "56b6df09df862a1e89c751bb49a6a8b62726e26d09fe5cac26bd8e7aa7799dc4",
+    "lean4/Bell/QuantumExample.lean": "b8334da7478f12d2caa32ddf0ae1652c2e06f19202fcf5b35e76a0bf14fc0b27",
+    "lean4/Bell/QuantumMeasurement.lean": "4ac9a08907dd8d05275949e2e17caaeb10d058a8bb34328b04ad56d4e429e29f",
+    "lean4/Bell/QuantumState.lean": "54bd16213d3983e5b7627946e6617bcef3e1a6bb25c28a660e24af75952763d5",
+    "lean4/Bell/QuantumTrace.lean": "1dbde1ce683feac2aadce018c9209a1a36d6e3779758c273adf4b80a61a8a0d7",
+    "lean4/Bell/QuantumWindows.lean": "22ec67bf659d7e2d7e55625fa12a8b7fec5808ccc91523310c140e0a0e1f5d9a",
+    "lean4/Bell/RampSums.lean": "7358afca6237d94dc5f51cbbecd5984a69346de8c1db73518fb44e00f5520bf0",
+    "lean4/Bell/Repair.lean": "b82370f2cd1bd114f3ee08378273093c748b0f37fc9bef907e9cbd900f9c5650",
+    "lean4/Bell/RepairGeometry.lean": "086ea031779f6c611127938c424b3686960b93a9060c203c46ef86c2b3814b95",
+    "lean4/Bell/ScenarioRestriction.lean": "c5a65a75ae7f2195f566a93f16fc17b1121033b20514aff23bb5195e15de3963",
+    "lean4/Bell/Separable.lean": "2272a6d5a2bc219c05a8f63dda21746d7be2dec9be5b2dbc43a531bfac8a13c0",
+    "lean4/Bell/SignedDuality.lean": "cfac8b11eb2050318aac1328ac5037a5cf29e4eafcecc9db6fd9bef27fa6d2e3",
+    "lean4/Bell/SmoothedComparison.lean": "2a43e6c5ba352b44ee3af5690bf033d3184f53b0444eaaf0b609a4189d0569e7",
+    "lean4/Bell/SmoothedFamily.lean": "fba0cb6e282907259d5419157a2fb4a322eff8adfec44fdfb4227b2ed81c4815",
+    "lean4/Bell/SparseCertificates.lean": "4651e9bc18342784f6b84c1cadc7dc526708e244ad1730dd9630943051d6ba03",
+    "lean4/Bell/TangentCone.lean": "938b21579e8dce0af20a5eb00734b5623af123e08537cc9019d766a5730f4cc6",
+    "lean4/Bell.lean": "5b908a3521bbc17b9f3db9c3c72d5b6f52171d2e7962d104eee6bf528cb78f6e",
+    "lean4/Census.lean": "ac8dab8180704838d8ad837d499dbdda8a2bf579a128ab4ba926e3277905d3ce",
+    "lean4/lakefile.lean": "f1a7b61375d61f7b6b51eafd6ebb99ac11a0d31317d61ae433e701157be35c59",
+    "lean4/lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+    "lean4/vendor/lakefile.lean": "13e31b7e7443f1c0d8b65fa0e6fd4f6c53e8e755ddd07fcad34e02f0e89138de",
+    "lean4/vendor/manifest.json": "749a84a36d39deb1fd69053912d6b62675f08fcaced7abed068511eabb77ff7c",
+    "lean4/vendor/dependencies.tar.gz": "4ba752aeb082b6997cf88ea316d7d6603c6b876b6973b01a38b8e363625cc6b3"
+  },
+  "declarations": {
+    "Bell.BinaryScenarios.chsh_behavior_bridge": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.BinaryScenarios.chsh_contextual_fraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.BinaryScenarios.chsh_negative_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.BinaryScenarios.mermin_contextual_fraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.BinaryScenarios.mermin_negative_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.chsh_repair_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.coefficient_abs": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.deterministic_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.deterministic_values": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.isotropic_nonlocal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.isotropic_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.marginal_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.mixture_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.positive_extension_chsh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.score_lipschitz": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.signed_chsh_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.signed_negativity_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.signed_total_variation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.stochastic_local_chsh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.tv_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.uncertain_repair_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.uncertainty_excludes_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CHSH.violation_no_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.cosine_close": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.cosine_quadratic": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.full_grid_mass_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.full_grid_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.full_grid_uniform_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.grid_rounding": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.score_perturbation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAnalysis.sine_small": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainAsymptotic.eventual_coefficient": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.count_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.fraction_le_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.fraction_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.marginal_matching": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.marginal_mismatch": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.mass_le_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.packing_score_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.score_marginal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.score_monotone": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.some_failure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainWitness.weights_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.coefficient_values": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.columns": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.contextual_fraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.dual_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.dual_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.exact_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.extension_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.extension_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.extension_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.local_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.local_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.local_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.minus_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.minus_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.negative_mass_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.plus_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.plus_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.point_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.point_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.score_column": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.strict_separation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedComparison.sum_coefficients": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.assignment_complete": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.binary": [
+      "propext"
+    ],
+    "Bell.ChainedData.column": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.dual_c": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.dual_cover": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.dual_nonnegative": [
+      "propext"
+    ],
+    "Bell.ChainedData.dual_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.minus_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.minus_fiber": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.plus_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.plus_fiber": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.score_values": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.sum_c": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.sum_c_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.born_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.direction_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.direction_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.effect_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.effect_projector": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.effects_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.local_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.quantum_counterexample": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.quantum_realization": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.universal_coefficient_at_least_four": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.visibility_range": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedQuantum.visibility_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.carrier_card": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.gamma_anticommute": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.gamma_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.gamma_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.gamma_succ": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.gamma_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.gamma_trace_pair": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.gamma_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.kron_neg_left": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.kron_neg_right": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.pauli_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.pauli_laws": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Clifford.pauli_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.effect_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.effect_projector": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.effects_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.gamma_anticommutator": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.linear_anticommutator": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.linear_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.linear_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.linear_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.linear_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.linear_trace_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CliffordObservables.local_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.cf_dual_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.cf_dual_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.cf_gt_twice_negative_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.contextual_fraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.local_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.local_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.n_dual_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.n_dual_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.negative_mass_optimal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.point_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.point_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.ranking_reversal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.signed_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.signed_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Comparison.signed_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.cf_gap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.gamma_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.gamma_nonnegative": [
+      "propext"
+    ],
+    "Bell.ComparisonData.gamma_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.n_gap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.p_nonnegative": [
+      "propext"
+    ],
+    "Bell.ComparisonData.p_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.q_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.q_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.q_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.y_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ComparisonData.y_nonnegative": [
+      "propext"
+    ],
+    "Bell.ComparisonData.z_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.finite_shadow_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.minimum_mass_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.minimum_mass_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.optimizer_properties": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.optimum_exists": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.quantum_unbounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CompleteQuantumUnbounded.ratio_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.certificate_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.fraction_le_negative_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.fraction_le_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.fraction_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.lower_of_dual": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.packing_from_signed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.packing_mass_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.packing_weak_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.pairing_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.positive_parts": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.sum_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.upper_of_packing": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.weights_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.weights_nonempty": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContextualFraction.zero_packing": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContinuumShadows.fraction_deficit_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContinuumShadows.massCap_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContinuumShadows.no_finite_ratio_endpoint": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContinuumShadows.reciprocal_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ContinuumShadows.shadow_error_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ConvexDistance.attained_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ConvexDistance.attained_duality_closed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ConvexDistance.attained_duality_of_nearest": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ConvexDistance.weak_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.closing_iff": [
+      "propext"
+    ],
+    "Bell.CycleLifting.cycle_fraction_equal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.cycle_signed_budget": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.down_lift": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.down_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.down_negative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.down_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.edges_length": [
+      "propext"
+    ],
+    "Bell.CycleLifting.failures_reconstruct": [
+      "propext"
+    ],
+    "Bell.CycleLifting.fraction_equal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.lift_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.lift_negative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.lift_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.packing_down": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.packing_lift": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.packing_weights_equal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.parity_append": [
+      "propext"
+    ],
+    "Bell.CycleLifting.parity_odd": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.reconstruct_failures": [
+      "propext"
+    ],
+    "Bell.CycleLifting.reconstruction_unique": [
+      "propext"
+    ],
+    "Bell.CycleLifting.signed_budget_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLifting.walk_edges": [
+      "propext"
+    ],
+    "Bell.CycleLifting.walk_global_flip": [
+      "propext"
+    ],
+    "Bell.CycleLifting.walk_length": [
+      "propext"
+    ],
+    "Bell.CycleLimits.closing_quantum_cell": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLimits.cycle_quantum_cells": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLimits.cycle_unbounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleLimits.quantum_visibility": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.allButOne_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.columns": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.contextual_fraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.cover_column": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.cover_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.cover_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.exact_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.extension_mass_upper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.extension_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.extension_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.failures_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.local_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.local_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.negative_mass_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.oneBad_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.point_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.point_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CycleParity.size_ge": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.adjacent_inner": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.half_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.half_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.half_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.half_step": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.half_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.profile_antiperiodic": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.profile_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.profile_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_antiperiodic": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_first": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_step_first": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.raw_step_second": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.shift_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.shifted_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.CyclicProfile.translated_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.dynamical_born_repair": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.dynamical_witness": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.face_exit_rate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.oriented_exit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.oriented_repair_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.quadratic_exit_window": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.quadratic_linear_rate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.trace_decomposition": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.uncertain_oriented_repair": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Dynamics.zero_remainder_window": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.contextual_fraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.dual_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.dual_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.exact_counterexample": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.extension_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.extension_mass_upper": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.extension_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.extension_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.local_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.local_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.negative_mass_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.point_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.point_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.universal_coefficient": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveComparison.weights_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.assignment_complete": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.cells_nonnegative": [
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.context_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.cover": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.cover_nonnegative": [
+      "propext"
+    ],
+    "Bell.FiveData.cover_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.directions": [
+      "propext"
+    ],
+    "Bell.FiveData.first_context": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.packing_nonnegative": [
+      "propext"
+    ],
+    "Bell.FiveData.packing_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.packing_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.point_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.signed_dual": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.signed_dual_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.signed_negative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.signed_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveData.signed_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveQuantum.alice_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveQuantum.alice_unit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveQuantum.bob_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveQuantum.bob_unit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveQuantum.born_table": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveQuantum.quantum_counterexample": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FiveQuantum.quantum_realization": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FullChainBounds.complete_chain_cap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FullChainBounds.deterministic": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FullChainBounds.quantum_grid_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FullChainBounds.score_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.FullChainBounds.signed_chsh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.born_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.effect_projector": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.effects_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.generator_skew": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.hamiltonian_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.mean_corners": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.orbit_born": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.orbit_optima": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.orbit_unit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.pauli_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.pauli_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.rotation_add": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.rotation_unitary": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.rotation_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.state_norm_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GHZEvolution.visibility_range": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GramQuantum.born_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GramQuantum.effect_trace_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GramQuantum.model_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.GramQuantum.realization": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.atomicMeasure_integral": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.atomicMeasure_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.average_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.average_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.finite_model_as_integral": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.functions_integrable": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.positive_extension_iff_probability_integral": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.probability_integral_chsh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.probability_integral_positive_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Integral.response_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.contextuality_strong_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.cost_eq_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.dual_coordinates_bounded": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.linear_form_coordinates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.mixtureMap_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.simplex_compact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.simplex_convex": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.simplex_single": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.weak_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LinearProgramming.zero_gap_certificate_optimal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.inner_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.marginal_signed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.normalized_inner": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.normalized_table_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.normalized_vector": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.positive_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.response_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.signed_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.signed_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.LocalGram.white_positive_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.MaximallyEntangled.born_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.MaximallyEntangled.density_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.MaximallyEntangled.density_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.MaximallyEntangled.density_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.MaximallyEntangled.density_valid": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.MaximallyEntangled.transpose_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.behavior_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.behavior_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.behavior_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.cf_witness_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.cf_witness_value": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.contextual_fraction_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.extension_negative_mass": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.extension_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.extension_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.extension_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.negative_mass_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.NegativeMassFamilies.negative_mass_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.error_le_risk": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.factors_iff_constant_on_fibers": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.fiber_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.fiber_extrema": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.fiber_nonempty": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.mem_fiber": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.midpoint_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.midpoint_optimal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.minimax_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.pair_error_lower_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.randomized_error_floor": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.recursion_error_floor": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.recursion_preserves_fibers": [
+      "propext"
+    ],
+    "Bell.Observer.refinement_cannot_increase_minimax": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.same_fiber_error_limit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Observer.scalar_minimax": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PlanarQuantum.angle_born": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PlanarQuantum.angle_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PlanarQuantum.born_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PlanarQuantum.effect_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PlanarQuantum.effect_projector": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PlanarQuantum.effects_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PlanarQuantum.local_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Polyhedral.exists_scalar_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Polyhedral.of_finite_system": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Polyhedral.preimage": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Polyhedral.projection_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PolyhedralProjection.equalities": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PolyhedralProjection.intersection": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PolyhedralProjection.linear_image": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PolyhedralProjection.projection_fin": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PolyhedralProjection.projection_finite": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.PolyhedralProjection.simplex_polyhedral": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.chsh_apply_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.contraction_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.dichotomic_contraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.dichotomic_preserves_norm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.sum_difference_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.tsirelson_dichotomic_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.tsirelson_mixed_state_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.tsirelson_operator_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Quantum.tsirelson_pure_state_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumComparisons.cap_attained": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumComparisons.capped_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumComparisons.line_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumComparisons.quantum_line_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.alice_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.alice_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.bell_behavior_no_positive_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.bell_state_unit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.bob_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.bob_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.born_formula": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.local_commutation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.mean_eq_inner": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.mean_four_entries": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.state_norm_sq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.t_normalization": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumExample.tsirelson_attained": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_alice_marginal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_bob_marginal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_chsh_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_complex_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_normalized": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.born_score_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.joint_effect_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.leftLift_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.rightLift_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.tensor_behavior_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.tensor_born_chsh_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.tensor_born_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumMeasurement.tensor_cross_commute": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.asOperator_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.asOperator_chsh": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_chsh_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_mean_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_povm_chsh_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_spectral_decomposition": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_trace_mixture": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_trace_real": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_vectors_unit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.density_weights": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.eigenvector_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.hermitian_contraction_of_eigenvalues": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.mean_add": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.mean_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.mean_sub": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.povm_eigenvalues_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.povm_observable_contraction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.povm_observable_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.pure_add": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.pure_eq_dot": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.pure_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.pure_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.pure_sub": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumState.trace_asOperator": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.born_repair_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.born_tv_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.density_traceNorm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.hermitian_trace_mixture": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.joint_effect_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.mean_add_left": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.mean_real_smul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.mean_sub_left": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.measurement_l1_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.measurement_tv_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.pure_operator_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.pure_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.repair_le_comparison": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.state_distance_witness": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.tensor_tv_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.traceNorm_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.trace_operator_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumTrace.weighted_measurement_tv_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.all_visibilities_quantum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.contextual_fraction_witness": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.effect_hermitian": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.effect_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.exact_exit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.local_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.local_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.negative_mass_witness": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.no_score_guarantee_at_large_error": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.noisy_cf_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.noisy_exit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.noisy_negative_mass_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.noisy_threshold": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.noisy_tv_exit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.onset_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.quantum_endpoint": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.rotation_column": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.score_error_l1": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.QuantumWindows.visibility_threshold": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.active_edge_energy": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.full_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.norm_energy_to_visibility": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.ramp_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.ramp_difference": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.ramp_square_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.sum_linear": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RampSums.sum_square": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.bell_slack_primal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.bell_strong_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.bell_support_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.bell_witness_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.marginal_eq_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.scaled_cost": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.scaled_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.scaled_pairing": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.vertex_le_support": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.weighted_cost_eq_tv": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.weighted_slack_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.weighted_strong_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Repair.weighted_weak_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.bell_explicit_ray_window": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.bell_quadratic_remainder": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.bell_ray_distance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.dist_embed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.embed_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.embed_injective": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.localSet_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.localTangent_intrinsic": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.local_compact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.local_nonempty": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.local_polyhedral": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.mixture_embed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.presentation_exists": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.repair_eq_distance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.repair_lipschitz": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.RepairGeometry.repair_zero_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ScenarioRestriction.fraction_monotone": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ScenarioRestriction.projected_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ScenarioRestriction.restricted_packing": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ScenarioRestriction.signed_restriction": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.behaviorRepair_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.binary_povm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.born_complex_trace": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.born_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.born_weightedTV_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.chsh_full_state_to_behavior_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.full_state_to_behavior_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.leftMarginal_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.leftMarginal_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.leftMarginal_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.mean_sum_left": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.mean_sum_right": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.mixture_born": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.mixture_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.positive_sum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.povm_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.productMarginals_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.productMarginals_idempotent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.productMarginals_separable": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.productResidual_mem": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.product_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.product_mean": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.product_separable": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.rightMarginal_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.rightMarginal_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.rightMarginal_product": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.separableDistance_le_productResidual": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.separableDistance_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.separableDistances_bddBelow": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.separable_chsh_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.separable_density": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.separable_positive_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.tensor_effect_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.Separable.weightedTV_nonneg": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.affine_norm_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.augmentedMap_apply": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.bell_negative_mass_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.bell_signed_spread_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.factor_functional": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.negative_mass_dual_optimal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.negative_mass_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.negative_mass_weak_duality": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SignedDuality.signed_norm_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.behavior_decomposition": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.comparison_from_certificates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.fractionFloor_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.massCap_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.no_uniform_coefficient": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.norm_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.ratio_grows": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.ratio_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.signed_mass_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.signed_projects": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedComparison.signed_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.adjacent_correlation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.chain_score": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.closing_correlation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.closing_failure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.correlation_comm": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.diagonal_failure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.fraction_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.half_correlation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.half_vector": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.local_visibility_identity": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.position_add": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.position_half": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.position_step": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.position_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.positive_visibility": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.quantum_realization": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.raw_bounds": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.scale_positive": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.signed_certificate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.successor_failure": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.uniform_probability": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SmoothedFamily.vector_unit": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SparseCertificates.push_mix": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SparseCertificates.push_negative_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SparseCertificates.push_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.SparseCertificates.push_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.displacement_mem_tangent": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.explicit_ray_window": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.positive_window": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.quadratic_remainder": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.ray_distance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.ray_lower": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.remainder_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.tangent_closed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.tangent_eq_closed_radial": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.tangent_eq_radial": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.tangent_ray_feasible": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.tangent_smul": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.TangentCone.tangent_zero": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.averaged_extension_marginal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.averaged_extension_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.averaged_extension_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.averaged_positive_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.extension_marginal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.extension_nonnegative": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.extension_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.finite_model_as_averaged": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.local_positive_extension": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.positive_extension_iff_averaged": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.positive_extension_iff_local": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.positive_extension_local": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.response_marginal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.response_total": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Bell.ChainedData.coefficients": [],
+    "Bell.CycleLifting.closing_edge": [],
+    "Bell.CycleLifting.decode_encode": [],
+    "Bell.CycleLifting.edges_walk": [],
+    "Bell.CycleLifting.encode_decode": [],
+    "Bell.CycleLifting.finish_parity": [],
+    "Bell.SmoothedFamily.k_lower": []
+  },
+  "count": 656,
+  "fresh_compilation": true,
+  "custom_axioms": [],
+  "scope": "Positive extension iff finite stochastic locality or an actual setting-independent probability-integral model with measurable normalized responses; positive normalized linear averaging; classical CHSH, signed and uncertainty-adjusted bounds; complex Hilbert-space Tsirelson operator and pure/finite-mixture state bounds; exact two-qubit Born-table saturation; arbitrary finite-dimensional density spectral and binary-POVM conversions, real positive normalized Born tables, no-signalling marginals, exact CHSH score identity and local tensor lifts; finite Hermitian spectral trace-norm measurement contraction, weighted TV, local-comparison repair and state-distance witnesses; actual finite separable density mixtures and their positive extensions, partial-trace densities, product-marginal idempotence, and the full separable-infimum to product-residual bound for arbitrary finite local POVMs and its CHSH specialization; conditional matrix remainder and oriented CHSH dynamics with finite exit windows; finite scalar observer minimax and evidence-preserving recursion. Attained weighted Bell repair LP duality and normalized witness bounds, explicit slack-variable optimality, attained signed-extension negative-mass duality and vertex-spread witnesses; finite variable elimination and linear-image polyhedrality; intrinsic Bell tangent cones, exact short-ray repair and explicit quadratic trajectory bounds. Infinite-dimensional trace-class conversions and Mermin cohomology results are not claimed by this census. Real-parameter CHSH and eight-context Mermin negative-mass optima against all real signed extensions; contextual fraction as local-subdistribution packing, exact family values, explicit CF versus 2N counterexample and reversed ranking, and the constructive finite-context bound CF <= (m-1)N. Quantum CHSH-line caps from Hilbert-space bounds; explicit GHZ state, local POVMs, Born realization, unitary rotation block identities, exact first-interval exit and score/TV uncertainty-delayed windows. Full nine-context 3x3 two-qubit quantum counterexample to CF <= 2N, with an exact factor-four line and necessary universal coefficient at least four. Full rational 5x5 quantum counterexample to CF <= 4N with exact real optima; arbitrary-size parity-cycle optimization and quantum-cosine unboundedness; continuous complete-grid CHSH lower bounds and a 160/17 tail cap. The asymptotic coefficient is formalized as a quantified tail theorem. Cycle path reconstruction, global-sign propagation, two-fold packing equality and signed-budget equivalence are formalized. Constructive local Gram models, normalized complete signed extensions, vector normalization, exact finite ramp sums, restriction monotonicity and quantified unbounded comparison under explicit scalar envelope premises are proved. The cyclic profile, arbitrary finite real Clifford representation, maximally entangled density, local POVMs and every Born cell are constructed. The actual complete Bell family has an attained strictly positive signed optimum, the ratio bound and quantified quantum unboundedness with no supplied envelope or quantum-realization premise. Selected Archimedean finite shadow cutoffs and failure of a finite ratio endpoint are proved; no physical continuum or general matrix exponential/ODE claim is made."
+}
