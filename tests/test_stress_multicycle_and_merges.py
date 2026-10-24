@@ -30,6 +30,7 @@ from lggr.streaming import (
     StreamingCPTPTraceMonitor,
     StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
+    StreamingDFAGrammarGluingMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDefectSoundnessMonitor,
     StreamingFiberMonitor,
@@ -1863,6 +1864,62 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertTrue(receipt["all_orthogonality_verified"])
         self.assertTrue(receipt["all_pythagorean_energy_verified"])
         self.assertTrue(receipt["all_laplacian_kernels_verified"])
+
+    def test_dfa_grammar_gluing_boundary_state_mismatch_vs_reset_coherence(self) -> None:
+        """Verify DFA tape grammar gluing separates non-reset accepting boundary NGD from reset-coherent LGGG."""
+        # 3-state DFA: q0 (initial, accepting on reset), q1 (accepting single 'a'), q2 (sink on second 'a')
+        # Here F = {"q0", "q1"} so 'r' (stay at q0) is a reset-accepting segment,
+        # while 'a' (q0 -> q1) is a non-reset accepting segment that moves to q2 on a second 'a'.
+        transitions = {
+            "q0": {"a": "q1", "r": "q0"},
+            "q1": {"a": "q2", "r": "q0"},
+            "q2": {"a": "q2", "r": "q2"},
+        }
+
+        # 1. Non-reset boundary mismatch NGD: w1 = ["a"] (q0->q1 in F) and w2 = ["a"] (q0->q1 in F locally,
+        #    but q1->q2 not in F globally!)
+        dfa_ngd = StreamingDFAGrammarGluingMonitor(
+            ["q0", "q1", "q2"],
+            ["a", "r"],
+            transitions,
+            "q0",
+            ["q0", "q1"],
+            scope_id="dfa-ngd-test",
+        )
+        s1 = dfa_ngd.record_segment("seg_1", ["a"])
+        s2 = dfa_ngd.record_segment("seg_2", ["a"])
+        self.assertEqual(s1["local_pass_from_q0"], 1)
+        self.assertFalse(s1["is_reset_idempotent_on_q0"])
+        self.assertEqual(s2["local_pass_from_q0"], 1)
+        self.assertEqual(s2["chained_end_state"], "q2")
+        self.assertEqual(s2["chained_prefix_accepted"], 0)
+
+        r_ngd = dfa_ngd.get_receipt()
+        self.assertEqual(r_ngd["schema"], "lggr.online_dfa_grammar_gluing.v1")
+        self.assertEqual(r_ngd["status"], "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR")
+        self.assertEqual(r_ngd["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_ngd["local_product_aggregator"], 1)
+        self.assertEqual(r_ngd["global_concatenated_evaluator"], 0)
+        self.assertEqual(r_ngd["evaluator_defect"], -1)
+        self.assertEqual(r_ngd["non_reset_accepting_segment_ids"], ["seg_1", "seg_2"])
+        self.assertTrue(r_ngd["all_monoid_homomorphisms_verified"])
+
+        # 2. Reset-coherent LGGG: w1 = ["a", "r"] (q0->q1->q0 in F, reset-idempotent) followed by w2 = ["a"] (q0->q1 in F)
+        dfa_ok = StreamingDFAGrammarGluingMonitor(
+            ["q0", "q1", "q2"],
+            ["a", "r"],
+            transitions,
+            "q0",
+            ["q0", "q1"],
+            scope_id="dfa-ok-test",
+        )
+        dfa_ok.record_segment("seg_reset", ["a", "r"])
+        dfa_ok.record_segment("seg_next", ["a"])
+        r_ok = dfa_ok.get_receipt()
+        self.assertEqual(r_ok["status"], "DFA_CONCATENATION_COHERENT_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_ok["evaluator_defect"], 0)
+        self.assertTrue(r_ok["all_monoid_homomorphisms_verified"])
 
 
 if __name__ == "__main__":
