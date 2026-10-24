@@ -1,0 +1,8 @@
+{
+  "edges": [
+    {"src": "A", "dst": "B", "value": "1"},
+    {"src": "B", "dst": "C", "value": "1"},
+    {"src": "C", "dst": "A", "value": "1"}
+  ],
+  "exact_example": "examples/budget_exact_cochain.json"
+}

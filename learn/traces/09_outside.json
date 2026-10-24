@@ -1,0 +1,13 @@
+{
+  "proposer_declaration": {
+    "scope_id": "learn-09",
+    "query_scope": "endpoint",
+    "bound": 1,
+    "global_sample_source": "proposer",
+    "authority_id": "external-owner/v1",
+    "evaluator_id": "bounded-step/v1",
+    "policy_id": "budget-policy/v1"
+  },
+  "authority_example": "examples/authority_changed.json",
+  "obligation_example": "examples/open_obligation.json"
+}
