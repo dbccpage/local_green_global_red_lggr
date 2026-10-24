@@ -252,23 +252,23 @@ theorem open_chain_exactness (h1 h2 : Int) :
 def cycleD1 (h1 h2 h3 : Int) : Int :=
   h1 + h2 - h3
 
-/-- L1 repair residual for 3-cycle under integer vertex potentials `(x0, x1, x2)`. -/
-def cycleL1Residual (h1 h2 h3 x0 x1 x2 : Int) : Int :=
-  absInt (h1 - (x1 - x0)) + absInt (h2 - (x2 - x1)) + absInt (h3 - (x2 - x0))
+/-- Forward A->B->C->A circulation, distinct from the A->C chord helper. -/
+def forwardCycleD1 (h1 h2 h3 : Int) : Int := h1 + h2 + h3
 
-/-- Theorem 10 (`incremental_cycle_closure_obstruction`, Claim C-10): Closing an open chain with
-    a third edge `h3` yields circulation `cycleD1 h1 h2 h3 = h1 + h2 - h3`. If `h1 + h2 ≠ h3`,
-    then `cycleD1 ≠ 0`, the dual witness `z = (1, 1, -1)` annihilates coboundaries, and certifies
-    an L1 repair residual `cycleL1Residual ≥ 1` for all integer potentials `(x0, x1, x2)`. -/
-theorem incremental_cycle_closure_obstruction (h1 h2 h3 : Int) (h_inconsistent : h1 + h2 ≠ h3) :
-    cycleD1 h1 h2 h3 ≠ 0 ∧
-    (∀ x0 x1 x2 : Int, 1 * (x1 - x0) + 1 * (x2 - x1) + (-1) * (x2 - x0) = 0) ∧
+/-- L1 repair residual on the forward cycle edges. -/
+def cycleL1Residual (h1 h2 h3 x0 x1 x2 : Int) : Int :=
+  absInt (h1 - (x1 - x0)) + absInt (h2 - (x2 - x1)) + absInt (h3 - (x0 - x2))
+
+/-- Claim C-10: nonzero integer forward circulation forces residual at least one.
+    The dual witness (1,1,1) annihilates every coboundary. -/
+theorem incremental_cycle_closure_obstruction (h1 h2 h3 : Int)
+    (h_inconsistent : h1 + h2 + h3 ≠ 0) :
+    forwardCycleD1 h1 h2 h3 ≠ 0 ∧
+    (∀ x0 x1 x2 : Int, (x1 - x0) + (x2 - x1) + (x0 - x2) = 0) ∧
     (∀ x0 x1 x2 : Int, cycleL1Residual h1 h2 h3 x0 x1 x2 ≥ 1) := by
   refine ⟨?_, ?_, ?_⟩
-  · dsimp [cycleD1]
-    omega
-  · intro x0 x1 x2
-    omega
+  · exact h_inconsistent
+  · intro x0 x1 x2; omega
   · intro x0 x1 x2
     dsimp [cycleL1Residual, absInt]
     omega
@@ -641,7 +641,8 @@ theorem single_colliding_pair_error_lower_bound {X A B : Type} [DecidableEq B]
 theorem disjoint_colliding_pairs_additive_error_lower_bound {X A A' B : Type} [DecidableEq B]
     (p : X → A) (q : X → B) (E : A → B) (f : A → A') (E' : A' → B)
     (x1 y1 x2 y2 : X)
-    (hcol1 : IsCollision p q x1 y1) (hcol2 : IsCollision p q x2 y2) :
+    (hcol1 : IsCollision p q x1 y1) (hcol2 : IsCollision p q x2 y2)
+    (_hdisjoint : x1 ≠ x2 ∧ x1 ≠ y2 ∧ y1 ≠ x2 ∧ y1 ≠ y2) :
     ((statePredictionError p q E x1 + statePredictionError p q E y1) +
      (statePredictionError p q E x2 + statePredictionError p q E y2) ≥ 2) ∧
     ((statePredictionError (fun z => f (p z)) q E' x1 +
@@ -751,6 +752,18 @@ theorem boundary_sufficiency_without_quotient_factorization
     · right; rfl
     · exact False.elim (hdiff rfl)
 
+/-- Six edge defects, one along each coordinate axis, repeated twice. -/
+def stealthDefects (lam : Int) : List (Int × Int × Int) :=
+  [(lam, 0, 0), (0, lam, 0), (0, 0, lam),
+   (lam, 0, 0), (0, lam, 0), (0, 0, lam)]
+
+def defectL1 (v : Int × Int × Int) : Int :=
+  absInt v.1 + absInt v.2.1 + absInt v.2.2
+
+def deleteCoord0 (v : Int × Int × Int) : Int × Int := (v.2.1, v.2.2)
+def deleteCoord1 (v : Int × Int × Int) : Int × Int := (v.1, v.2.2)
+def deleteCoord2 (v : Int × Int × Int) : Int × Int := (v.1, v.2.1)
+
 /-- Theorem 30 (`realizable_defect_soundness_kernel_intersection`):
     Formalizes the LGGR V Realizable Soundness, Coupled Compensation, and
     Minkowski Repair Lower Bound:
@@ -765,16 +778,20 @@ theorem boundary_sufficiency_without_quotient_factorization
        `ω = (1, -1)`, `|1 + alpha| + |alpha - 1| ≥ 2`, with equality at `alpha = 0`. -/
 theorem realizable_defect_soundness_kernel_intersection
     (lam v1 v2 alpha : Int) (hlam : lam ≥ 0) :
-    (6 * absInt lam = 6 * lam ∧ (0 : Int) = 0) ∧
+    ((stealthDefects lam).map defectL1).sum = 6 * lam ∧
+    (deleteCoord0 (lam, 0, 0) = (0, 0) ∧
+     deleteCoord1 (0, lam, 0) = (0, 0) ∧
+     deleteCoord2 (0, 0, lam) = (0, 0)) ∧
     ((-(0 : Int) = 0 ∧ -(0 : Int) = 0) ∧
      ((-v1 = 0 ∧ -v2 = 0) ↔ (v1 = 0 ∧ v2 = 0))) ∧
     (absInt (1 + alpha) + absInt (alpha - 1) ≥ 2 ∧
      absInt (1 + 0) + absInt (0 - 1) = 2) := by
-  dsimp [absInt]
-  refine ⟨⟨?_, rfl⟩, ⟨⟨rfl, rfl⟩, ?_⟩, ⟨?_, by decide⟩⟩
-  · split <;> omega
+  refine ⟨?_, ⟨rfl, rfl, rfl⟩, ⟨⟨rfl, rfl⟩, ?_⟩, ⟨?_, by decide⟩⟩
+  · simp [stealthDefects, defectL1, absInt]
+    omega
   · constructor <;> intro h <;> omega
-  · split <;> split <;> omega
+  · dsimp [absInt]
+    split <;> split <;> omega
 
 /-- Theorem 31 (`dashboard_summary_reconstruction_and_collapsing_detector`):
     Formalizes the LGGR I (Claims E9–E18) & LGGR II (Claims M6–M7) Dashboard
@@ -1124,20 +1141,10 @@ theorem mayer_vietoris_local_exactness_gluing_obstruction
   refine ⟨⟨by omega, ?_, by omega, by omega⟩, ⟨by decide, by decide, by decide⟩⟩
   constructor <;> intro h <;> omega
 
-/-- Theorem 42 (`discrete_hodge_harmonic_orthogonality_and_decomposition`):
-    Formalizes the Discrete Hodge Decomposition and Pythagorean Energy Orthogonality
-    on the 3-Edge Triangle Cycle `C_3` over `ℤ` (scaled by 3 to avoid fractions):
-    For any 1-cochain `h = (3*a, 3*b, 3*c)` with cycle mean `m = a + b + c`,
-    define the exact component `g = (3*a - m, 3*b - m, 3*c - m)` generated by
-    vertex potential `φ = (0, 3*a - m, 3*a + 3*b - 2*m)` and harmonic component
-    `γ = (m, m, m) ∈ ker(D_0^T)`:
-    1. (Additive Decomposition): `h_i = g_i + γ_i` for all `i ∈ {0, 1, 2}`.
-    2. (Exact Coboundary Generation): `g = (φ_1 - φ_0, φ_2 - φ_1, φ_0 - φ_2)`
-       since `(0 - (3*a + 3*b - 2*m)) = 3*c - m`.
-    3. (Divergence-Free Kernel): `D_0^T γ = (γ_2 - γ_0, γ_0 - γ_1, γ_1 - γ_2) = (0, 0, 0)`.
-    4. (Orthogonality & Pythagorean Identity):
-       `g_0 * γ_0 + g_1 * γ_1 + g_2 * γ_2 = 0` and
-       `h_0^2 + h_1^2 + h_2^2 = (g_0^2 + g_1^2 + g_2^2) + (γ_0^2 + γ_1^2 + γ_2^2)`. -/
+/-- Theorem 42: Concrete Hodge decomposition of h = (3,0,0) on
+    the forward triangle. Exact component (2,-1,-1), harmonic component
+    (1,1,1), zero inner product and equal squared energies.
+    This declaration does not quantify arbitrary h. -/
 theorem discrete_hodge_harmonic_orthogonality_and_decomposition :
     (let h0 := (3 : Int); let h1 := 0; let h2 := 0;
      let m := (h0 + h1 + h2) / 3;
@@ -1325,5 +1332,35 @@ theorem discrete_regge_hinge_deficit_and_gauss_bonnet
      eps_cone + 4 * kap_bnd = 6 * (5 - 8 + 4) ∧
      e_global = 0 ∧ e_global - l_prod = -1) := by
   refine ⟨by omega, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
+
+/-- Theorem 48 (`fibered_pullback_compatibility_and_mediator_uniqueness`):
+    Formalizes the Categorical Fibered Pullback Universal Mediator Uniqueness
+    and Interface Mismatch `NGD`:
+    1. (Universal Mediator Existence & Uniqueness): For any cospan `f : A → C`,
+       `g : B → C` and cone `pA : W → A`, `pB : W → B` with `f (pA w) = g (pB w)`,
+       the mediator `u w = (pA w, pB w)` satisfies `(u w).1 = pA w ∧ (u w).2 = pB w`
+       and `f (u w).1 = g (u w).2`, and any map `u' : W → A × B` satisfying
+       `(u' w).1 = pA w ∧ (u' w).2 = pB w` equals `u w`.
+    2. (Pullback Interface Mismatch `NGD`): Under parity projections `f a = a % 2`
+       and `g b = b % 2`, locally valid branch states `a = 2` (`EA = 1`) and `b = 3`
+       (`EB = 1`) yield local product `L = 1 * 1 = 1`, yet `f 2 = 0 ≠ 1 = g 3`
+       violates pullback compatibility (`Eg = 0`, `Δ_E = Eg - L = -1`). -/
+theorem fibered_pullback_compatibility_and_mediator_uniqueness {W A B C : Type}
+    (f : A → C) (g : B → C) (pA : W → A) (pB : W → B) (u' : W → A × B) (w : W)
+    (h_comm : f (pA w) = g (pB w))
+    (hu1 : (u' w).1 = pA w) (hu2 : (u' w).2 = pB w) :
+    (let u := fun x => (pA x, pB x);
+     (u w).1 = pA w ∧ (u w).2 = pB w ∧ f (u w).1 = g (u w).2 ∧ u' w = u w) ∧
+    (let a := (2 : Nat); let b := (3 : Nat);
+     let fa := a % 2; let gb := b % 2;
+     let l_prod := (1 : Int) * 1;
+     let e_global := if fa = gb then (1 : Int) else 0;
+     fa = 0 ∧ gb = 1 ∧ l_prod = 1 ∧ e_global = 0 ∧ e_global - l_prod = -1) := by
+  refine ⟨⟨rfl, rfl, h_comm, ?_⟩, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
+  cases hpair : u' w with
+  | mk fst snd =>
+    rw [hpair] at hu1 hu2
+    dsimp at hu1 hu2
+    rw [hu1, hu2]
 
 end LggrVIII

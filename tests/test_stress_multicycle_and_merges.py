@@ -44,6 +44,7 @@ from lggr.streaming import (
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
+    StreamingPullbackSquareMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingReggeDeficitCurvatureMonitor,
     StreamingReplayOrderMonitor,
@@ -2106,6 +2107,55 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_flat["total_gauss_bonnet_curvature"], "1")
         self.assertEqual(r_flat["evaluator_defect"], 0)
         self.assertTrue(r_flat["gauss_bonnet_euler_identity_verified"])
+
+    def test_pullback_square_compatibility_and_universal_cone_mediator(self) -> None:
+        """Verify categorical fibered pullback monitor separates interface mismatch NGD from universal cone mediators."""
+        # Cospan A -f-> C <-g- B:
+        # f(a0) = c0, f(a1) = c1, f(a2) = c1
+        # g(b0) = c0, g(b1) = c1
+        # Pullback carrier P = {(a0, b0, c0), (a1, b1, c1), (a2, b1, c1)}
+        f_map = {"a0": "c0", "a1": "c1", "a2": "c1"}
+        g_map = {"b0": "c0", "b1": "c1"}
+
+        mon = StreamingPullbackSquareMonitor(f_map, g_map, scope_id="pullback-test")
+
+        # 1. Compatible pair (a0, b0) over singleton fiber c0
+        p1 = mon.record_branch_pair("pair_c0_unique", "a0", "b0")
+        self.assertTrue(p1["in_pullback_square"])
+        self.assertEqual(p1["evaluator_defect"], 0)
+        self.assertTrue(p1["interface_uniquely_identifies_pair"])
+
+        # 2. Compatible pair (a1, b1) over size-2 fiber c1
+        p2 = mon.record_branch_pair("pair_c1_ambiguous", "a1", "b1")
+        self.assertTrue(p2["in_pullback_square"])
+        self.assertEqual(p2["interface_fiber_size"], 2)
+        self.assertFalse(p2["interface_uniquely_identifies_pair"])
+
+        # 3. Interface mismatch NGD pair (a2, b0): f(a2) = c1 != c0 = g(b0)
+        p3 = mon.record_branch_pair("pair_mismatch_ngd", "a2", "b0")
+        self.assertFalse(p3["in_pullback_square"])
+        self.assertEqual(p3["local_product"], 1)
+        self.assertEqual(p3["global_pullback_evaluator"], 0)
+        self.assertEqual(p3["evaluator_defect"], -1)
+
+        # 4. Commuting cone W = {w0, w1} vs non-commuting cone
+        c_ok = mon.verify_cone_mediator("cone_valid", {"w0": "a0", "w1": "a2"}, {"w0": "b0", "w1": "b1"})
+        self.assertTrue(c_ok["commutes_over_c"])
+        self.assertEqual(c_ok["universal_mediator"], {"w0": ["a0", "b0"], "w1": ["a2", "b1"]})
+        self.assertTrue(c_ok["mediator_uniqueness_and_projection_verified"])
+
+        c_bad = mon.verify_cone_mediator("cone_invalid", {"w0": "a0", "w1": "a2"}, {"w0": "b0", "w1": "b0"})
+        self.assertFalse(c_bad["commutes_over_c"])
+        self.assertEqual(c_bad["mismatched_apex_states"], ["w1"])
+        self.assertIsNone(c_bad["universal_mediator"])
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_pullback_square.v1")
+        self.assertEqual(receipt["status"], "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["pullback_carrier_size"], 3)
+        self.assertEqual(receipt["ngd_mismatch_pair_ids"], ["pair_mismatch_ngd"])
+        self.assertEqual(receipt["ambiguous_fiber_pair_ids"], ["pair_c1_ambiguous"])
 
 
 if __name__ == "__main__":

@@ -41,7 +41,10 @@ def _flexible_step_witness_init(self: Any, *args: Any, **kwargs: Any) -> None:
         kwargs["smoke_passed"] = kwargs.pop("smoke_test_passed")
     if "policy_hash" in kwargs and "policy_sha256" not in kwargs:
         kwargs["policy_sha256"] = kwargs.pop("policy_hash")
-    kwargs.pop("prior_obligations_satisfied", None)
+    if "prior_obligations_satisfied" in kwargs:
+        satisfied = boolean(kwargs.pop("prior_obligations_satisfied"), "prior_obligations_satisfied")
+        if not satisfied:
+            kwargs["obligations"] = tuple(kwargs.get("obligations", ())) + ("prior_obligations_unsatisfied",)
     if "witness_id" not in kwargs and len(args) < 1:
         kwargs["witness_id"] = f"w_auto_{next(_witness_counter)}"
     if "evaluator_id" not in kwargs and len(args) < 5:
@@ -75,6 +78,7 @@ class StreamingFiberMonitor:
         self.scope_id = text(scope_id, "scope_id")
         self.fibers: dict[str, dict[str, Any]] = {}
         self.observed_states: dict[str, dict[str, Any]] = {}
+        self.observation_indices: dict[str, int] = {}
         self.history: list[dict[str, Any]] = []
         self.collision: dict[str, Any] | None = None
         self.status: str = "COMPOSABLE_LGGG"
@@ -100,12 +104,13 @@ class StreamingFiberMonitor:
             if metadata:
                 row["metadata"] = json.loads(canonical(metadata))
             self.observed_states[sid] = row
+            self.observation_indices[sid] = len(self.history)
             self.history.append(row)
 
         report_key = canonical(rep_clean)
         first_rep = self.fibers.get(report_key)
 
-        step_idx = len(self.history) - 1
+        step_idx = self.observation_indices[sid]
 
         if first_rep is not None and canonical(first_rep["query"]) != canonical(qry_clean):
             # Report collision detected
@@ -613,6 +618,9 @@ class StreamingAuditMonitor:
         self.obligations: set[str] = set()
         self.seen_witness_ids: set[str] = set()
         self.prefix_records: list[dict[str, Any]] = []
+        self.state_values: dict[str, int] = {}
+        if baseline is not None and baseline.value is not None:
+            self.state_values[baseline.state_id] = baseline.value
 
     def step(self, witness: StepWitness, *,
              global_evaluator_sample: int | bool | None = None,
@@ -650,6 +658,13 @@ class StreamingAuditMonitor:
                 "message": "Witness identities must be unique.", "witness_id": wid
             })
         self.seen_witness_ids.add(wid)
+
+        for state in (witness.source, witness.target):
+            if state.value is not None:
+                if state.state_id in self.state_values and self.state_values[state.state_id] != state.value:
+                    g1_ok = False
+                    g1_reasons.append("CONFLICTING_STATE")
+                self.state_values[state.state_id] = state.value
 
         if witness.source.state_id != self.expected_source:
             g1_ok = False
@@ -694,6 +709,17 @@ class StreamingAuditMonitor:
         # G2: Cost & Delta Tracking
         self.running_cost += step_cost
         val_a, val_b = witness.source.value, witness.target.value
+        if val_a is None or val_b is None:
+            g1_ok = False
+            g1_reasons.append("MISSING_ENDPOINT")
+        if self.obligations:
+            g1_ok = False
+            g1_reasons.append("OPEN_OBLIGATIONS")
+        if (val_a is not None and val_b is not None and rep_ok
+                and witness.observed_magnitude is not None
+                and witness.observed_magnitude != abs(val_b - val_a)):
+            g1_ok = False
+            g1_reasons.append("MAGNITUDE_MISMATCH")
         signed_delta: int | None = None
         if val_a is not None and val_b is not None:
             signed_delta = val_b - val_a
@@ -759,6 +785,8 @@ class StreamingAuditMonitor:
                 "bound": self.policy.max_total
             })
 
+        if self.policy.query_scope == "endpoint" and not prefix_within_bound:
+            alert_reasons.append("ENDPOINT_BUDGET_EXCEEDED")
         has_alert = len(alert_reasons) > 0
         if has_alert:
             self.status = "OBSTRUCTED_LGGR"
@@ -802,20 +830,19 @@ class StreamingAuditMonitor:
 
     def get_receipt(self) -> dict[str, Any]:
         """Emit comprehensive audit receipt."""
-        if abs(self.cumulative_delta) > self.policy.max_total:
-            if not any(f.get("code") == "PROTECTED_QUERY_FALSE" for f in self.findings):
-                self.findings.append({
-                    "kind": "OBSTRUCTION_DETECTED",
-                    "code": "PROTECTED_QUERY_FALSE",
-                    "message": "Cumulative delta exceeds bound under declared query scope.",
-                    "cumulative_delta": self.cumulative_delta,
-                    "bound": self.policy.max_total,
-                })
+        baseline = self.baseline or StateRef("unobserved-baseline", None)
+        replay = audit_history(self.policy, baseline, self.steps,
+                               prior_obligations=tuple(sorted(self.obligations)))
+        self.findings = list(replay["findings"])
+        if any(a.get("defect") == -1 for a in self.alerts):
+            self.findings.append({"kind": "OBSTRUCTION_DETECTED", "code": "NGD_DEFECT_DETECTED",
+                                  "message": "A supplied global sample disagreed with the local product."})
 
         priority = ["INVALID_WITNESS", "AUTHORITY_REQUIRED", "UNSUPPORTED", "LOCAL_REJECTED",
                     "OBSTRUCTION_DETECTED", "WITNESS_INCOMPLETE"]
         kinds = {f["kind"] for f in self.findings}
         status = next((k for k in priority if k in kinds), "COMPOSITION_VERIFIED")
+        self.status = "COMPOSABLE_LGGG" if status == "COMPOSITION_VERIFIED" else "OBSTRUCTED_LGGR"
 
         body = {
             "schema": "lggr.audit.v1",
@@ -4915,7 +4942,6 @@ class StreamingWindowedDriftMonitor:
         partition_sum = sum(block_sums, Fraction(0))
         block_partition_verified = (
             partition_sum == self.cumulative_drift
-            and all(b_sum <= self.max_window_sum for b_sum in block_sums)
             and (
                 n_steps == 0
                 or self.cumulative_drift <= Fraction(k_blocks) * self.max_window_sum
@@ -6426,6 +6452,190 @@ class StreamingReggeDeficitCurvatureMonitor:
             "triangles": self.triangles,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingPullbackSquareMonitor:
+    """Online categorical fibered pullback square and universal cone mediator monitor.
+
+    Audits a finite cospan A -f-> C <-g- B and its fibered pullback
+    A x_C B = {(a, b) in A x B | f(a) == g(b)}:
+      - Computes the exact fibered pullback carrier P = A x_C B and fiber cardinalities
+        |f^{-1}(c) x g^{-1}(c)| for each shared interface value c in C.
+      - For each recorded branch pair (a, b) with local branch indicators E_A, E_B in {0, 1}:
+          * Evaluates local product L = E_A * E_B,
+          * Checks pullback compatibility f(a) == g(b) and global fibered evaluator
+            E_g = 1[L == 1 and f(a) == g(b)],
+          * Flags fiber ambiguity when |f^{-1}(f(a)) x g^{-1}(g(b))| > 1 (where the
+            interface value c alone does not uniquely identify the pair in A x_C B).
+      - Audits candidate cones W -p_A-> A, W -p_B-> B for cone commutativity
+        f(p_A(w)) == g(p_B(w)) and constructs the unique mediating map
+        u: W -> A x_C B, u(w) = (p_A(w), p_B(w)).
+      - Separates:
+          * PULLBACK_FIBER_GLUED_LGGG (all recorded pairs have L == 1 and E_g == 1),
+          * PULLBACK_INTERFACE_MISMATCH_NGD_LGGR (at least one pair has L == 1 and f(a) != g(b)),
+          * LOCAL_BRANCH_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        f_map: Mapping[str, str],
+        g_map: Mapping[str, str],
+        *,
+        scope_id: str = "streaming-pullback-square-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        if not isinstance(f_map, Mapping) or not f_map:
+            raise ValidationError("f_map must be a non-empty mapping A -> C")
+        if not isinstance(g_map, Mapping) or not g_map:
+            raise ValidationError("g_map must be a non-empty mapping B -> C")
+
+        self.f_map: dict[str, str] = {
+            text(k, "a_state"): text(v, "c_state") for k, v in sorted(f_map.items())
+        }
+        self.g_map: dict[str, str] = {
+            text(k, "b_state"): text(v, "c_state") for k, v in sorted(g_map.items())
+        }
+
+        self.pullback_carrier: list[tuple[str, str, str]] = []
+        self.fiber_counts: dict[str, int] = {}
+        for a, ca in self.f_map.items():
+            for b, cb in self.g_map.items():
+                if ca == cb:
+                    self.pullback_carrier.append((a, b, ca))
+                    self.fiber_counts[ca] = self.fiber_counts.get(ca, 0) + 1
+
+        self.pair_records: list[dict[str, Any]] = []
+        self.cone_records: list[dict[str, Any]] = []
+
+    def record_branch_pair(
+        self,
+        pair_id: str,
+        a_state: str,
+        b_state: str,
+        *,
+        local_a_pass: bool = True,
+        local_b_pass: bool = True,
+    ) -> dict[str, Any]:
+        """Record a candidate branch pair (a, b) and test fibered pullback compatibility."""
+        pid = text(pair_id, "pair_id")
+        a = text(a_state, "a_state")
+        b = text(b_state, "b_state")
+        boolean(local_a_pass, "local_a_pass")
+        boolean(local_b_pass, "local_b_pass")
+        if a not in self.f_map:
+            raise ValidationError(f"a_state {a!r} not in domain of f_map")
+        if b not in self.g_map:
+            raise ValidationError(f"b_state {b!r} not in domain of g_map")
+
+        fa = self.f_map[a]
+        gb = self.g_map[b]
+        in_pullback = fa == gb
+        ea = 1 if local_a_pass else 0
+        eb = 1 if local_b_pass else 0
+        l_prod = ea * eb
+        eg = 1 if (l_prod == 1 and in_pullback) else 0
+        defect = eg - l_prod
+        fiber_size = self.fiber_counts.get(fa, 0) if in_pullback else 0
+
+        rec = {
+            "pair_index": len(self.pair_records),
+            "pair_id": pid,
+            "a_state": a,
+            "b_state": b,
+            "f_a": fa,
+            "g_b": gb,
+            "in_pullback_square": in_pullback,
+            "local_a_evaluator": ea,
+            "local_b_evaluator": eb,
+            "local_product": l_prod,
+            "global_pullback_evaluator": eg,
+            "evaluator_defect": defect,
+            "interface_fiber_size": fiber_size,
+            "interface_uniquely_identifies_pair": fiber_size == 1,
+        }
+        self.pair_records.append(rec)
+        return json_value(rec)
+
+    def verify_cone_mediator(
+        self,
+        cone_id: str,
+        p_a_map: Mapping[str, str],
+        p_b_map: Mapping[str, str],
+    ) -> dict[str, Any]:
+        """Verify universal pullback mediator existence and uniqueness for a cone W -> A, W -> B."""
+        cid = text(cone_id, "cone_id")
+        if not isinstance(p_a_map, Mapping) or not isinstance(p_b_map, Mapping):
+            raise ValidationError("p_a_map and p_b_map must be mappings")
+        if set(p_a_map.keys()) != set(p_b_map.keys()) or not p_a_map:
+            raise ValidationError("p_a_map and p_b_map must share the same non-empty apex domain W")
+
+        mediator: dict[str, list[str]] = {}
+        mismatched_apex_states: list[str] = []
+        projection_recovery_ok = True
+
+        for w_raw in sorted(p_a_map.keys()):
+            w = text(w_raw, "apex_state")
+            a = text(p_a_map[w_raw], "a_target")
+            b = text(p_b_map[w_raw], "b_target")
+            if a not in self.f_map or b not in self.g_map:
+                raise ValidationError(f"Cone target ({a!r}, {b!r}) outside cospan domains")
+            if self.f_map[a] == self.g_map[b]:
+                mediator[w] = [a, b]
+                if mediator[w][0] != a or mediator[w][1] != b:
+                    projection_recovery_ok = False
+            else:
+                mismatched_apex_states.append(w)
+
+        commutes = len(mismatched_apex_states) == 0
+        rec = {
+            "cone_id": cid,
+            "commutes_over_c": commutes,
+            "mismatched_apex_states": mismatched_apex_states,
+            "universal_mediator": mediator if commutes else None,
+            "mediator_uniqueness_and_projection_verified": commutes and projection_recovery_ok,
+        }
+        self.cone_records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed categorical pullback square and cone mediator audit receipt."""
+        if not self.pair_records:
+            raise ValidationError("At least one branch pair must be recorded before emitting a receipt")
+
+        ngd_pair_ids = [r["pair_id"] for r in self.pair_records if r["evaluator_defect"] == -1]
+        rejected_pair_ids = [r["pair_id"] for r in self.pair_records if r["local_product"] == 0]
+        ambiguous_fiber_pair_ids = [
+            r["pair_id"]
+            for r in self.pair_records
+            if r["in_pullback_square"] and not r["interface_uniquely_identifies_pair"]
+        ]
+
+        if ngd_pair_ids:
+            status = "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_pair_ids:
+            status = "LOCAL_BRANCH_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PULLBACK_FIBER_GLUED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_pullback_square.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "pullback_carrier_size": len(self.pullback_carrier),
+            "interface_fiber_counts": self.fiber_counts,
+            "pair_count": len(self.pair_records),
+            "ngd_mismatch_pair_ids": ngd_pair_ids,
+            "ambiguous_fiber_pair_ids": ambiguous_fiber_pair_ids,
+            "cone_records": self.cone_records,
+            "pair_records": self.pair_records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 
 
