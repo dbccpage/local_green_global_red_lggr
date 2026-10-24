@@ -725,4 +725,30 @@ theorem path_kernel_composition_discrepancy_identity
   have h6 : (Egb - Lb) * wb = Egb * wb - Lb * wb := Int.sub_mul Egb Lb wb
   exact ⟨by omega, by omega⟩
 
+/-- Theorem 29 (`boundary_sufficiency_without_quotient_factorization`):
+    Formalizes the LGGR II Organizational Gluing laws (Claims M3, M4, M5, M9):
+    1. (Product Sufficiency Equivalence — M4): Under weak sufficiency (`r3 = eg`),
+       product sufficiency (`r3 = e1 * e2`) holds if and only if `eg = e1 * e2`.
+    2. (Weak Sufficiency Without Factorization — M3): For `(e1, e2, eg, r3) = (1, 1, 0, 0)`,
+       weak sufficiency (`r3 = eg`) holds while `roleTripleDefect 1 1 0 = -1 ≠ 0`.
+    3. (Scalar Defect Non-Additivity — M5): Three NGD defects `(-1) + (-1) + (-1) = -3`
+       leave the legal defect range `{-1, 0, 1}`.
+    4. (Carrier-Local Transport Forces NGD on Mixed Class — M9): If two traces share a
+       locally passing joint carrier (`l1 = true ∧ l2 = true`) and have opposite global
+       verdicts (`eg1 ≠ eg2`), at least one trace has `streamingEvalDefect = -1` (NGD). -/
+theorem boundary_sufficiency_without_quotient_factorization
+    (e1 e2 eg r3 : Int) (hw : r3 = eg)
+    (eg1 eg2 : Bool) (hdiff : eg1 ≠ eg2) :
+    ((r3 = e1 * e2) ↔ (eg = e1 * e2)) ∧
+    (0 = (0 : Int) ∧ roleTripleDefect 1 1 0 = -1) ∧
+    (let s := (-1 : Int) + (-1) + (-1); s ≠ -1 ∧ s ≠ 0 ∧ s ≠ 1) ∧
+    (streamingEvalDefect true eg1 = -1 ∨ streamingEvalDefect true eg2 = -1) := by
+  refine ⟨?_, ⟨rfl, by decide⟩, ⟨by decide, by decide, by decide⟩, ?_⟩
+  · rw [hw]
+  · cases eg1 <;> cases eg2
+    · exact False.elim (hdiff rfl)
+    · left; rfl
+    · right; rfl
+    · exact False.elim (hdiff rfl)
+
 end LggrVIII

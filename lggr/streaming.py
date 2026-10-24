@@ -3031,4 +3031,190 @@ class StreamingPathKernelMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingOrganizationalGluingMonitor:
+    """Online LGGR II organizational evaluator gluing and carrier-mixing monitor.
+
+    Evaluates:
+      - Weak representation sufficiency (R_3 == E_G) vs. product sufficiency (R_3 == E_1 E_2)
+        and evaluator factorization (E_G == E_1 E_2), checking Claims M3 and M4.
+      - Governance conjunction G = G_rep and G_auth and G_time (Claim D1) and
+        checked-closure eligibility (Delta_E == 0 and G == True).
+      - Joint carrier quotient projection J(c) = (pi_1(a), pi_2(b)), detecting carrier-mixing
+        collisions J(c) == J(c') with E_G(c) != E_G(c') (Theorem 3 / Claim M8) and
+        verifying forced NGD defect when carrier-local evaluators pass on a mixed class (Claim M9).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-organizational-gluing-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+        self.joint_carrier_fibers: dict[str, dict[str, Any]] = {}
+        self.carrier_mixing_collisions: list[dict[str, Any]] = []
+        self.weak_nonfactored_count: int = 0
+        self.governance_failures_count: int = 0
+
+    @staticmethod
+    def _binary_int(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def observe_boundary(
+        self,
+        trace_id: str,
+        carrier_left: Any,
+        carrier_right: Any,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+        *,
+        r3: int | bool | None = None,
+        g_rep: bool = True,
+        g_auth: bool = True,
+        g_time: bool = True,
+    ) -> dict[str, Any]:
+        """Ingest a boundary trace record and evaluate M3, M4, M8, M9, and D1."""
+        tid = text(trace_id, "trace_id")
+        c_left = json.loads(canonical(carrier_left))
+        c_right = json.loads(canonical(carrier_right))
+        v1 = self._binary_int(e1, "e1")
+        v2 = self._binary_int(e2, "e2")
+        vg = self._binary_int(eg, "eg")
+        r3_val = self._binary_int(r3, "r3") if r3 is not None else vg
+        boolean(g_rep, "g_rep")
+        boolean(g_auth, "g_auth")
+        boolean(g_time, "g_time")
+
+        local_prod = v1 * v2
+        delta_e = vg - local_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[delta_e]
+
+        weak_sufficient = (r3_val == vg)
+        product_sufficient = (r3_val == local_prod)
+        factorizes = (vg == local_prod)
+        m4_equivalence_verified = (not weak_sufficient) or (product_sufficient == factorizes)
+
+        governance_ready = bool(g_rep and g_auth and g_time)
+        if not governance_ready:
+            self.governance_failures_count += 1
+        if weak_sufficient and not factorizes:
+            self.weak_nonfactored_count += 1
+
+        joint_carrier = {"left": c_left, "right": c_right}
+        jk = canonical(joint_carrier)
+        prev = self.joint_carrier_fibers.get(jk)
+
+        rec = {
+            "trace_id": tid,
+            "joint_carrier": joint_carrier,
+            "e1": v1,
+            "e2": v2,
+            "eg": vg,
+            "r3": r3_val,
+            "local_product": local_prod,
+            "delta_e": delta_e,
+            "classification": classification,
+            "weak_sufficient": weak_sufficient,
+            "product_sufficient": product_sufficient,
+            "factorizes": factorizes,
+            "m4_equivalence_verified": m4_equivalence_verified,
+            "g_rep": g_rep,
+            "g_auth": g_auth,
+            "g_time": g_time,
+            "governance_ready": governance_ready,
+        }
+        self.records.append(rec)
+
+        collision_entry: dict[str, Any] | None = None
+        if prev is not None and prev["eg"] != vg:
+            forced_ngd_on_pair = (
+                (prev["local_product"] == 1 and prev[" eg" if " eg" in prev else "eg"] == 0)
+                or (local_prod == 1 and vg == 0)
+            )
+            collision_entry = {
+                "joint_carrier": joint_carrier,
+                "first_trace_id": prev["trace_id"],
+                "first_eg": prev["eg"],
+                "first_delta_e": prev["delta_e"],
+                "second_trace_id": tid,
+                "second_eg": vg,
+                "second_delta_e": delta_e,
+                "locally_green_forced_ngd": forced_ngd_on_pair,
+            }
+            self.carrier_mixing_collisions.append(collision_entry)
+        elif prev is None:
+            self.joint_carrier_fibers[jk] = rec
+
+        has_carrier_mixing = len(self.carrier_mixing_collisions) > 0
+        checked_closure_eligible = (delta_e == 0 and governance_ready and not has_carrier_mixing)
+
+        if collision_entry is not None:
+            status = "CARRIER_MIXING_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not governance_ready:
+            status = "GOVERNANCE_PREREQUISITE_MISSING_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif weak_sufficient and not factorizes:
+            status = "WEAK_SUFFICIENT_NONFACTORED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif delta_e != 0 or has_carrier_mixing:
+            status = "FACTORIZATION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CHECKED_CLOSURE_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_organizational_gluing_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "checked_closure_eligible": checked_closure_eligible,
+            "carrier_mixing_collision": collision_entry,
+            **rec,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit summary receipt for the organizational gluing monitor."""
+        has_carrier_mixing = len(self.carrier_mixing_collisions) > 0
+        all_checked_closure = (
+            len(self.records) > 0
+            and not has_carrier_mixing
+            and self.governance_failures_count == 0
+            and all(r["delta_e"] == 0 for r in self.records)
+        )
+        if has_carrier_mixing:
+            status = "CARRIER_MIXING_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.governance_failures_count > 0:
+            status = "GOVERNANCE_PREREQUISITE_MISSING_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.weak_nonfactored_count > 0:
+            status = "WEAK_SUFFICIENT_NONFACTORED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif all_checked_closure:
+            status = "CHECKED_CLOSURE_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "FACTORIZATION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_organizational_gluing_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "records_count": len(self.records),
+            "carrier_mixing_collisions_count": len(self.carrier_mixing_collisions),
+            "weak_nonfactored_count": self.weak_nonfactored_count,
+            "governance_failures_count": self.governance_failures_count,
+            "all_m4_equivalences_verified": all(r["m4_equivalence_verified"] for r in self.records),
+            "carrier_mixing_collisions": self.carrier_mixing_collisions,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
