@@ -7800,6 +7800,180 @@ class StreamingClosedLoopRepairMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingJointMultiMonitorRepairGuard:
+    """Online coupled multi-monitor closed-loop repair guard (LGGR VIII §6 & Theorem 56).
+
+    Audits closed-loop orchestrator repair trajectories where a single orchestrator
+    decision u^{(r)} simultaneously touches two coupled frontier monitors (Monitor A and Monitor B):
+      - Evaluates joint local aggregator L_joint = L_A * L_B in {0, 1}
+        and joint global evaluator E_{g,joint} = E_{g,A} * E_{g,B} in {0, 1},
+        with joint defect Delta_{E,joint} = E_{g,joint} - L_joint in {-1, 0, 1}.
+      - Separates:
+          * JOINT_PARETO_COHERENT_LGGG (L_joint == 1, E_{g,A} == 1, E_{g,B} == 1, Delta_{E,joint} == 0),
+          * CROSS_MONITOR_WHACK_A_MOLE_NGD_LGGR (L_joint == 1 and E_{g,A} != E_{g,B}, so repairing
+            one monitor leaves or induces an NGD obstruction in the coupled monitor, Delta_{E,joint} == -1),
+          * DOUBLE_MONITOR_OBSTRUCTED_NGD_LGGR (L_joint == 1, E_{g,A} == 0, E_{g,B} == 0, Delta_{E,joint} == -1),
+          * LOCAL_SUBMONITOR_REJECTED_LRGR (L_joint == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-joint-multi-monitor-repair-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.trajectories: list[dict[str, Any]] = []
+
+    def record_coupled_trajectory(
+        self,
+        trajectory_id: str,
+        *,
+        pair_name: str,
+        monitor_a_name: str,
+        monitor_b_name: str,
+        model_id: str,
+        rounds: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Record a multi-round joint repair trajectory across two coupled frontier monitors."""
+        tid = text(trajectory_id, "trajectory_id")
+        pname = text(pair_name, "pair_name")
+        mon_a = text(monitor_a_name, "monitor_a_name")
+        mon_b = text(monitor_b_name, "monitor_b_name")
+        mdl = text(model_id, "model_id")
+        if len(rounds) < 2:
+            raise ValidationError("A coupled repair trajectory requires at least 2 rounds (R_0 and R_1)")
+
+        parsed_rounds: list[dict[str, Any]] = []
+        for idx, r in enumerate(rounds):
+            if not isinstance(r, Mapping):
+                raise ValidationError(f"rounds[{idx}] must be a mapping")
+            fb_mode = text(r.get("feedback_mode", f"round_{idx}"), f"rounds[{idx}].feedback_mode")
+            la = bool(r.get("local_a_pass", False))
+            ga = bool(r.get("global_a_pass", False))
+            lb = bool(r.get("local_b_pass", False))
+            gb = bool(r.get("global_b_pass", False))
+            sa = text(r.get("status_a", "UNKNOWN"), f"rounds[{idx}].status_a")
+            sb = text(r.get("status_b", "UNKNOWN"), f"rounds[{idx}].status_b")
+
+            l_joint = la and lb
+            g_joint = ga and gb
+            d_joint = (1 if g_joint else 0) - (1 if l_joint else 0)
+            whack_a_mole = l_joint and (ga != gb)
+
+            if l_joint and g_joint:
+                r_status = "JOINT_PARETO_COHERENT_LGGG"
+                c_status = "COMPOSABLE_LGGG"
+            elif whack_a_mole:
+                r_status = "CROSS_MONITOR_WHACK_A_MOLE_NGD_LGGR"
+                c_status = "OBSTRUCTED_LGGR"
+            elif l_joint and (not ga) and (not gb):
+                r_status = "DOUBLE_MONITOR_OBSTRUCTED_NGD_LGGR"
+                c_status = "OBSTRUCTED_LGGR"
+            else:
+                r_status = "LOCAL_SUBMONITOR_REJECTED_LRGR"
+                c_status = "OBSTRUCTED_LGGR"
+
+            parsed_rounds.append(
+                {
+                    "round_index": idx,
+                    "feedback_mode": fb_mode,
+                    "status_a": sa,
+                    "status_b": sb,
+                    "local_a_pass": la,
+                    "global_a_pass": ga,
+                    "local_b_pass": lb,
+                    "global_b_pass": gb,
+                    "local_pass": l_joint,
+                    "global_pass": g_joint,
+                    "defect": d_joint,
+                    "whack_a_mole_partial_repair": whack_a_mole,
+                    "round_joint_status": r_status,
+                    "contract_status": c_status,
+                }
+            )
+
+        r1 = parsed_rounds[1]
+        r_final = parsed_rounds[-1]
+
+        single_round_ok = r1["local_pass"] and r1["global_pass"] and (r1["defect"] == 0)
+        multi_round_ok = r_final["local_pass"] and r_final["global_pass"] and (r_final["defect"] == 0)
+        r1_whack_a_mole = r1["whack_a_mole_partial_repair"]
+
+        if single_round_ok and multi_round_ok:
+            traj_status = "JOINT_SINGLE_ROUND_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif (not single_round_ok) and multi_round_ok:
+            traj_status = "JOINT_MULTI_ROUND_PARETO_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            traj_status = "JOINT_UNREPAIRED_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "trajectory_id": tid,
+            "pair_name": pname,
+            "monitor_a_name": mon_a,
+            "monitor_b_name": mon_b,
+            "model_id": mdl,
+            "round_count": len(parsed_rounds),
+            "round_1_whack_a_mole_detected": r1_whack_a_mole,
+            "converged_single_round": single_round_ok,
+            "converged_multi_round": multi_round_ok,
+            "joint_defect_progression": [pr["defect"] for pr in parsed_rounds],
+            "trajectory_status": traj_status,
+            "contract_status": contract_status,
+            "rounds": parsed_rounds,
+        }
+        self.trajectories.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed coupled multi-monitor repair convergence receipt."""
+        if not self.trajectories:
+            raise ValidationError("At least one coupled trajectory must be recorded before emitting a receipt")
+
+        n = len(self.trajectories)
+        single_cnt = sum(1 for t in self.trajectories if t["converged_single_round"])
+        multi_cnt = sum(1 for t in self.trajectories if t["converged_multi_round"])
+        wam_cnt = sum(1 for t in self.trajectories if t["round_1_whack_a_mole_detected"])
+
+        unrepaired_ids = [
+            t["trajectory_id"] for t in self.trajectories if not t["converged_multi_round"]
+        ]
+        wam_ids = [
+            t["trajectory_id"] for t in self.trajectories if t["round_1_whack_a_mole_detected"]
+        ]
+
+        r1_rate = Fraction(single_cnt, n)
+        rt_rate = Fraction(multi_cnt, n)
+        multi_gain = rt_rate - r1_rate
+        wam_rate = Fraction(wam_cnt, n)
+
+        if len(unrepaired_ids) == 0:
+            status = "JOINT_MULTI_MONITOR_PARETO_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "JOINT_MULTI_MONITOR_RESIDUAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_joint_multi_monitor_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "trajectory_count": n,
+            "single_round_converged_count": single_cnt,
+            "multi_round_converged_count": multi_cnt,
+            "round_1_whack_a_mole_count": wam_cnt,
+            "single_round_convergence_rate": r1_rate,
+            "multi_round_convergence_rate": rt_rate,
+            "multi_round_convergence_gain": multi_gain,
+            "round_1_whack_a_mole_rate": wam_rate,
+            "monotonic_convergence_verified": rt_rate >= r1_rate,
+            "round_1_whack_a_mole_trajectory_ids": wam_ids,
+            "unrepaired_trajectory_ids": unrepaired_ids,
+            "trajectories": self.trajectories,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 
