@@ -55,6 +55,22 @@ def _rejected(reason: str) -> dict[str, Any]:
     )
 
 
+# A refused step did not enter the monitor. The loop stops there.
+_STEP_REFUSALS = frozenset({
+    "GLOBAL_SAMPLE_REJECTED",
+    "SIGNED_DELTA_MISMATCH",
+    "WITNESS_INCOMPLETE",
+})
+
+
+def _prediction_subject(event: dict[str, Any]) -> Any:
+    """Return the report StreamingRSIFiberCeilingMonitor stores for this event."""
+    refined = event.get("refined_report")
+    if event.get("use_refined_report") and refined is not None:
+        return refined
+    return event["coarse_report"]
+
+
 class RunGuard:
     """One declared run. Methods accept the event dicts from the contract."""
 
@@ -149,9 +165,7 @@ class RunGuard:
         if "prediction" in event:
             use_refined_pred = bool(event.get("use_refined_report"))
             bucket = self._refined_predictions if use_refined_pred else self._coarse_predictions
-            subject = refined if use_refined_pred else event["coarse_report"]
-            # The monitor looks up the canonical report string.
-            bucket[canonical(subject)] = event["prediction"]
+            bucket[canonical(_prediction_subject(event))] = event["prediction"]
         if not event.get("evaluate"):
             return envelope(recorded["status"], recorded)
         use_refined = bool(event.get("use_refined_report"))
@@ -199,14 +213,17 @@ def bind(declaration: dict[str, Any]) -> RunGuard:
 
 
 def wire_tool_loop(declaration: dict[str, Any], steps: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Sequential tool loop: one baseline, then each signed step."""
+    """Sequential tool loop. A refused step is the last receipt."""
     guard = bind(declaration)
     receipts = []
     for index, step in enumerate(steps, start=1):
         event = dict(step)
         event.setdefault("witness_id", f"w{index:03d}")
-        receipts.append(guard.step(event))
-    if guard.rejection is None and guard.audit is not None:
+        receipt = guard.step(event)
+        receipts.append(receipt)
+        if receipt["status"] in _STEP_REFUSALS:
+            return receipts
+    if guard.audit is not None:
         receipts.append(guard.summary())
     return receipts
 

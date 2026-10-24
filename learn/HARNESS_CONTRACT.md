@@ -53,7 +53,7 @@ The reference calls `StreamingFiberMonitor.observe`.
 | `witness_id` | no | Default `w001`, `w002`, ... |
 | `step_cost` | no | Nonnegative integer. Default `0`. |
 
-The reference calls `make_witness` and `StreamingAuditMonitor.step`. After the steps, `summary()` returns `get_receipt()`. Read `unresolved_obligations` on that summary. The batch audit `audit_history` promotes a nonempty obligation list to status `WITNESS_INCOMPLETE`. The streaming summary lists the same strings and may keep another primary status. The host reads the list either way.
+The reference calls `make_witness` and `StreamingAuditMonitor.step`. `wire_tool_loop` stops when a step returns `GLOBAL_SAMPLE_REJECTED`, `SIGNED_DELTA_MISMATCH`, or `WITNESS_INCOMPLETE`. That refusal is the last receipt. The function does not append `summary()` for the accepted prefix. When every step is accepted, the last receipt is `summary()`, which returns `get_receipt()`. A negative external sample remains `OBSTRUCTION_DETECTED` on that receipt, with `composition_certified` false. Read `unresolved_obligations` on that summary. The batch audit `audit_history` promotes a nonempty obligation list to status `WITNESS_INCOMPLETE`. The streaming summary lists the same strings and may keep another primary status. The host reads the list either way.
 
 ### `review_edge`
 
@@ -75,7 +75,7 @@ The reference calls `StreamingCochainMonitor.add_edge`.
 | `target` | yes | Rational target `f` on this state. |
 | `refined_report` | no | A finer observation, when you have one. |
 | `prediction` | no | Predictor value for this event's report. |
-| `use_refined_report` | no | When true, `prediction` is keyed by the refined report. |
+| `use_refined_report` | no | When true, `prediction` is keyed by the refined report. An omitted refined report uses the coarse report, which is the value the monitor stores. |
 | `evaluate` | no | When true, score the predictions stored on this guard. |
 | `generation_id` | no | Name of this generation. |
 

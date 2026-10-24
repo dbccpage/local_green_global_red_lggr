@@ -207,6 +207,98 @@ class LearnPathTests(unittest.TestCase):
         self.assertEqual(scored["status"], "RSI_FIBER_CEILING_LOCKED_LGGR")
         self.assertEqual(scored["monitor_receipt"]["coarse_half_spread_ceiling"], "1/2")
 
+    def test_negative_external_sample_stays_an_obstruction(self) -> None:
+        declaration = {
+            "scope_id": "adapter-ngd",
+            "query_scope": "endpoint",
+            "bound": 2,
+            "global_sample_source": "external",
+            "authority_id": "external-owner/v1",
+            "evaluator_id": "bounded-step/v1",
+            "policy_id": "budget-policy/v1",
+            "allowed_states": [0, 1, 2],
+            "max_step": 1,
+        }
+        receipts = wire_tool_loop(declaration, [{
+            "before": {"state_id": "s0", "value": 0},
+            "after": {"state_id": "s1", "value": 1},
+            "global_sample": 0,
+        }])
+        self.assertEqual([item["status"] for item in receipts], ["ALERT", "OBSTRUCTION_DETECTED"])
+        summary = receipts[-1]["monitor_receipt"]
+        self.assertFalse(summary["composition_certified"])
+        self.assertEqual(summary["alerts_count"], 1)
+        self.assertEqual(summary["findings"][0]["code"], "NGD_DEFECT_DETECTED")
+
+    def test_tool_loop_stops_on_refusal(self) -> None:
+        declaration = {
+            "scope_id": "adapter-stop",
+            "query_scope": "endpoint",
+            "bound": 2,
+            "global_sample_source": "external",
+            "authority_id": "external-owner/v1",
+            "evaluator_id": "bounded-step/v1",
+            "policy_id": "budget-policy/v1",
+            "allowed_states": [0, 1, 2],
+            "max_step": 2,
+        }
+        accepted = {
+            "before": {"state_id": "s0", "value": 0},
+            "after": {"state_id": "s1", "value": 1},
+            "signed_delta": 1,
+            "global_sample": 1,
+        }
+        proposer = wire_tool_loop(declaration, [
+            accepted,
+            {
+                "before": {"state_id": "s1", "value": 1},
+                "after": {"state_id": "s2", "value": 0},
+                "global_sample": 1,
+                "global_sample_source": "proposer",
+            },
+        ])
+        self.assertEqual([item["status"] for item in proposer], ["OK", "GLOBAL_SAMPLE_REJECTED"])
+        mismatch = wire_tool_loop(declaration, [
+            accepted,
+            {
+                "before": {"state_id": "s1", "value": 1},
+                "after": {"state_id": "s2", "value": 0},
+                "signed_delta": 5,
+                "global_sample": 1,
+            },
+        ])
+        self.assertEqual([item["status"] for item in mismatch], ["OK", "SIGNED_DELTA_MISMATCH"])
+
+    def test_omitted_refined_report_uses_the_coarse_report(self) -> None:
+        declaration = {
+            "scope_id": "adapter-refined-fallback",
+            "query_scope": "endpoint",
+            "bound": 1,
+            "global_sample_source": "external",
+            "authority_id": "external-owner/v1",
+            "evaluator_id": "bounded-step/v1",
+            "policy_id": "budget-policy/v1",
+        }
+        guard = bind(declaration)
+        guard.generation({
+            "state_id": "h0",
+            "coarse_report": {"channel": "summary"},
+            "target": "0",
+            "prediction": "1/2",
+            "use_refined_report": True,
+        })
+        scored = guard.generation({
+            "state_id": "h1",
+            "coarse_report": {"channel": "summary"},
+            "target": "1",
+            "prediction": "1/2",
+            "use_refined_report": True,
+            "evaluate": True,
+            "generation_id": "g0",
+        })
+        self.assertEqual(scored["status"], "RSI_FIBER_CEILING_LOCKED_LGGR")
+        self.assertEqual(scored["monitor_receipt"]["coarse_half_spread_ceiling"], "1/2")
+
 
 if __name__ == "__main__":
     unittest.main()
