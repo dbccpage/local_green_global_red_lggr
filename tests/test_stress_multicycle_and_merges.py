@@ -648,6 +648,41 @@ class TestStreamingPositiveExtensionMonitor(unittest.TestCase):
         self.assertEqual(cmp_res["status"], "ORDER_REVERSAL_DETECTED")
         self.assertTrue(cmp_res["order_reversal_detected"])
 
+    def test_cli_stream_minimax_mode_and_selftest(self) -> None:
+        """Exercise CLI stream --monitor minimax and selftest entry points."""
+        import io
+        from contextlib import redirect_stdout
+        from lggr.__main__ import main, run_selftest
+
+        st = run_selftest()
+        self.assertEqual(st["status"], "PASS")
+        self.assertEqual(st["details"]["streaming"], "PASS")
+
+        # Nonzero minimax floor exits with 1 (OBSTRUCTED_LGGR)
+        import tempfile
+        import os
+        import json
+
+        events = [
+            {"state_id": "s1", "report": {"tag": "ok"}, "target_value": 2},
+            {"state_id": "s2", "report": {"tag": "ok"}, "target_value": 6},
+        ]
+        with tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False, encoding="utf-8") as tf:
+            for ev in events:
+                tf.write(json.dumps(ev) + "\n")
+            tpath = tf.name
+        try:
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = main(["stream", "--monitor", "minimax", tpath])
+            self.assertEqual(rc, 1)
+            out = json.loads(buf.getvalue())
+            self.assertEqual(out["monitor"], "minimax")
+            self.assertEqual(out["status"], "OBSTRUCTED_LGGR")
+            self.assertEqual(out["final_receipt"]["global_minimax_error_floor"], "2")
+        finally:
+            os.remove(tpath)
+
 
 class TestStreamingAuditBranchSplice(unittest.TestCase):
     """Cross-branch witness splicing tests for StreamingAuditMonitor.merge()."""
