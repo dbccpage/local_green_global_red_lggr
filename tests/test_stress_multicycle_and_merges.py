@@ -39,6 +39,7 @@ from lggr.streaming import (
     StreamingProductRetractionMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingSixRoleOverlayMonitor,
+    StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
 )
 from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
@@ -1530,6 +1531,43 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertTrue(summary["all_efficiency_verified"])
         self.assertTrue(summary["all_symmetry_verified"])
         self.assertTrue(summary["all_dummy_player_axioms_verified"])
+
+    def test_threshold_governance_quorum_vs_product_defect(self) -> None:
+        """Verify LGGR II k-of-n quorum threshold vs. strict product aggregator defect separation."""
+        tmon = StreamingThresholdGovernanceMonitor(3, 2, scope_id="quorum-2of3-test")
+
+        # 1. Coherent unanimous pass: (1, 1, 1) with eg = 1 -> L = 1, M = 1, Delta_prod = 0, Delta_quorum = 0
+        r_ok = tmon.record_vote("t_coherent", [1, 1, 1], 1)
+        self.assertEqual(r_ok["status"], "THRESHOLD_GOVERNANCE_COHERENT_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_ok["latest_trace"]["trace_status"], "THRESHOLD_GOVERNANCE_COHERENT_LGGG")
+
+        # 2. Quorum-recovered PGD: (1, 1, 0) with eg = 1 -> L = 0, M = 1, Delta_prod = +1, Delta_quorum = 0
+        r_pgd = tmon.record_vote("t_quorum_pgd", [1, 1, 0], 1)
+        self.assertEqual(r_pgd["status"], "QUORUM_RECOVERED_PGD")
+        self.assertEqual(r_pgd["latest_trace"]["delta_product"], 1)
+        self.assertEqual(r_pgd["latest_trace"]["delta_quorum"], 0)
+        self.assertEqual(r_pgd["latest_trace"]["quorum_inflation_gap"], 1)
+
+        # 3. Quorum-masked defect: (1, 1, 0) with eg = 0 -> validator 3 vetoes (L = 0, Delta_prod = 0),
+        #    but 2-of-3 quorum passes (M = 1, Delta_quorum = -1)
+        r_qmask = tmon.record_vote("t_quorum_masked", [1, 1, 0], 0)
+        self.assertEqual(r_qmask["status"], "QUORUM_MASKED_DEFECT_LGGR")
+        self.assertEqual(r_qmask["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_qmask["latest_trace"]["delta_product"], 0)
+        self.assertEqual(r_qmask["latest_trace"]["delta_quorum"], -1)
+        self.assertEqual(r_qmask["latest_trace"]["quorum_inflation_gap"], 1)
+
+        # 4. Unanimous NGD: (1, 1, 1) with eg = 0 -> both L = 1 and M = 1 incur -1 defect
+        r_ungd = tmon.record_vote("t_unanimous_ngd", [1, 1, 1], 0)
+        self.assertEqual(r_ungd["status"], "UNANIMOUS_NGD_DEFECT_LGGR")
+        self.assertEqual(r_ungd["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_ungd["unanimous_ngd_count"], 1)
+        self.assertEqual(r_ungd["quorum_masked_ngd_count"], 1)
+        self.assertEqual(r_ungd["quorum_recovered_pgd_count"], 1)
+        self.assertEqual(r_ungd["coherent_count"], 1)
+        self.assertTrue(r_ungd["all_monotonicity_verified"])
+        self.assertTrue(r_ungd["all_defect_difference_identities_verified"])
 
 
 if __name__ == "__main__":

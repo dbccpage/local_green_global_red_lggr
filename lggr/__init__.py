@@ -21,6 +21,7 @@ from .streaming import (
     StreamingProductRetractionMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingSixRoleOverlayMonitor,
+    StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
 )
 from .transport import verify_transport
@@ -35,4 +36,4 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingDefectSoundnessMonitor", "StreamingFiberMonitor", "StreamingGramProbeMonitor",
            "StreamingOrganizationalGluingMonitor", "StreamingPathKernelMonitor", "StreamingPositiveExtensionMonitor",
            "StreamingProductRetractionMonitor", "StreamingRSIFiberCeilingMonitor", "StreamingSixRoleOverlayMonitor",
-           "StreamingTransportMonitor"]
+           "StreamingThresholdGovernanceMonitor", "StreamingTransportMonitor"]

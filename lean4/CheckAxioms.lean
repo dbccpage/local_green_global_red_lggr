@@ -52,3 +52,4 @@ import LggrVIII
 #print axioms LggrVIII.product_retraction_residual_vs_local_extension
 #print axioms LggrVIII.evidence_preserving_rsi_invariance_bound
 #print axioms LggrVIII.two_player_shapley_efficiency_and_symmetry
+#print axioms LggrVIII.quorum_threshold_vs_product_defect_separation
