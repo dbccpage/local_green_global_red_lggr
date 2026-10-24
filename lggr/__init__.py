@@ -11,6 +11,7 @@ from .streaming import (
     StreamingCochainMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
+    StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingSixRoleOverlayMonitor,
@@ -24,5 +25,6 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "classify_cochain", "verify_l1_certificate", "verify_transport", "BudgetPolicy", "StateRef",
            "StepWitness", "audit_document", "audit_history", "history_document", "make_witness",
            "StreamingAuditMonitor", "StreamingBaselineComparator", "StreamingCochainMonitor",
-           "StreamingFiberMonitor", "StreamingGramProbeMonitor", "StreamingPathKernelMonitor",
-           "StreamingPositiveExtensionMonitor", "StreamingSixRoleOverlayMonitor", "StreamingTransportMonitor"]
+           "StreamingFiberMonitor", "StreamingGramProbeMonitor", "StreamingOrganizationalGluingMonitor",
+           "StreamingPathKernelMonitor", "StreamingPositiveExtensionMonitor", "StreamingSixRoleOverlayMonitor",
+           "StreamingTransportMonitor"]

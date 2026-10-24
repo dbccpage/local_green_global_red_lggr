@@ -29,6 +29,7 @@ from lggr.streaming import (
     StreamingCochainMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
+    StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingSixRoleOverlayMonitor,
@@ -1187,6 +1188,41 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(aud_def["kernel_discrepancy"], "1/2")
         self.assertEqual(aud_def["evaluator_residual_re"], "-1")
         self.assertEqual(aud_def["weight_residual_rw"], "3/2")
+
+    def test_organizational_gluing_weak_sufficiency_and_carrier_mixing(self) -> None:
+        """Verify LGGR II weak vs. product sufficiency (M3/M4) and carrier-mixing forced NGD (M8/M9)."""
+        omon = StreamingOrganizationalGluingMonitor(scope_id="org-gluing-test")
+
+        # 1. Checked-closure eligible trace: E1=1, E2=1, EG=1, R3=1, G=True
+        r_ok = omon.observe_boundary("t1", "left_A", "right_A", 1, 1, 1, r3=1)
+        self.assertEqual(r_ok["status"], "CHECKED_CLOSURE_VERIFIED")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(r_ok["checked_closure_eligible"])
+        self.assertTrue(r_ok["weak_sufficient"])
+        self.assertTrue(r_ok["product_sufficient"])
+        self.assertTrue(r_ok["m4_equivalence_verified"])
+
+        # 2. Claim M3 witness: E1=1, E2=1, EG=0, R3=0, G=True -> WEAK_SUFFICIENT_NONFACTORED_LGGR
+        r_m3 = omon.observe_boundary("t2", "left_B", "right_B", 1, 1, 0, r3=0)
+        self.assertEqual(r_m3["status"], "WEAK_SUFFICIENT_NONFACTORED_LGGR")
+        self.assertEqual(r_m3["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(r_m3["weak_sufficient"])
+        self.assertFalse(r_m3["product_sufficient"])
+        self.assertFalse(r_m3["factorizes"])
+        self.assertTrue(r_m3["m4_equivalence_verified"])
+
+        # 3. Claims M8 & M9: t3 shares joint carrier ("left_A", "right_A") with t1,
+        #    local evaluators pass (1, 1), but EG(t3) = 0 != 1 = EG(t1) -> forced NGD on mixed class
+        r_mix = omon.observe_boundary("t3", "left_A", "right_A", 1, 1, 0, r3=0)
+        self.assertEqual(r_mix["status"], "CARRIER_MIXING_OBSTRUCTED_LGGR")
+        self.assertIsNotNone(r_mix["carrier_mixing_collision"])
+        self.assertTrue(r_mix["carrier_mixing_collision"]["locally_green_forced_ngd"])
+
+        summary = omon.get_receipt()
+        self.assertEqual(summary["status"], "CARRIER_MIXING_OBSTRUCTED_LGGR")
+        self.assertEqual(summary["carrier_mixing_collisions_count"], 1)
+        self.assertEqual(summary["weak_nonfactored_count"], 2)
+        self.assertTrue(summary["all_m4_equivalences_verified"])
 
 
 if __name__ == "__main__":
