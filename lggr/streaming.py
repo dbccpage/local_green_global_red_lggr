@@ -5903,6 +5903,174 @@ class StreamingCatalystDegradationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDiscreteCurvatureMonitor:
+    """Online discrete Bochner-Dirichlet curvature and 1-form Hodge Laplacian energy monitor.
+
+    Audits the discrete 1-form Hodge Laplacian on a finite 2-complex (D_0, D_1) over Q:
+      L_down = D_0 D_0^T,   L_up = D_1^T D_1,   L_1 = L_down + L_up.
+    For each recorded 1-cochain h in C^1(K; Q):
+      - Evaluates the quadratic Dirichlet energy identity:
+          <h, L_1 h> = <h, L_down h> + <h, L_up h> = ||D_0^T h||_2^2 + ||D_1 h||_2^2 >= 0.
+      - Verifies the nilpotent operator orthogonality L_down * L_up == 0 and L_up * L_down == 0
+        induced by D_1 * D_0 == 0.
+      - Verifies the kernel equivalence:
+          L_1 h == 0  <=>  <h, L_1 h> == 0  <=>  (D_0^T h == 0 and D_1 h == 0).
+      - Separates:
+          * ZERO_COCHAIN_TRIVIAL_LGGG (h == 0),
+          * HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR (h != 0 and L_1 h == 0),
+          * PURE_DIVERGENCE_GRADIENT_FLOW_LGGG (D_1 h == 0 and h in im(D_0) with h != 0),
+          * CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR (D_1 h != 0 or non-exact divergence flow).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-discrete-curvature-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _dot(u: tuple[Fraction, ...], v: tuple[Fraction, ...]) -> Fraction:
+        return sum((a * b for a, b in zip(u, v)), Fraction(0))
+
+    def record_laplacian_probe(
+        self,
+        probe_id: str,
+        D0: Any,
+        h: Any,
+        D1: Any | None = None,
+    ) -> dict[str, Any]:
+        """Evaluate L_down, L_up, L_1, and the Dirichlet energy identity on 1-cochain h."""
+        pid = text(probe_id, "probe_id")
+        d0 = matrix(D0, "D0")
+        m, _ = len(d0), len(d0[0])
+        hv = vector(h, "h", m)
+        d0_t = transpose(d0)
+        l_down = matmul(d0, d0_t)
+
+        has_d1 = False
+        d1: tuple[tuple[Fraction, ...], ...] = ()
+        d1_t: tuple[tuple[Fraction, ...], ...] = ()
+        if D1 is not None:
+            raw_d1 = sequence(D1, "D1")
+            if raw_d1:
+                d1 = matrix(raw_d1, "D1", cols=m)
+                d1_t = transpose(d1)
+                has_d1 = True
+                if not is_zero(matmul(d1, d0)):
+                    raise ValidationError("Invalid 2-complex: D1 * D0 must be zero")
+
+        if has_d1:
+            l_up = matmul(d1_t, d1)
+            operator_orthogonality_ok = is_zero(matmul(l_down, l_up)) and is_zero(matmul(l_up, l_down))
+        else:
+            l_up = tuple(tuple(Fraction(0) for _ in range(m)) for _ in range(m))
+            operator_orthogonality_ok = True
+
+        div_h = matvec(d0_t, hv)
+        curl_h = matvec(d1, hv) if has_d1 else ()
+        l_down_h = matvec(l_down, hv)
+        l_up_h = matvec(l_up, hv)
+        l1_h = tuple(l_down_h[i] + l_up_h[i] for i in range(m))
+
+        norm2_h = self._dot(hv, hv)
+        energy_div = self._dot(div_h, div_h)
+        energy_curl = self._dot(curl_h, curl_h) if has_d1 else Fraction(0)
+        energy_dirichlet = self._dot(hv, l1_h)
+        energy_identity_ok = (
+            self._dot(hv, l_down_h) == energy_div
+            and self._dot(hv, l_up_h) == energy_curl
+            and energy_dirichlet == (energy_div + energy_curl)
+        )
+
+        l1_h_zero = all(v == Fraction(0) for v in l1_h)
+        div_zero = all(v == Fraction(0) for v in div_h)
+        curl_zero = all(v == Fraction(0) for v in curl_h)
+        kernel_equivalence_ok = (
+            l1_h_zero == (energy_dirichlet == Fraction(0))
+            and l1_h_zero == (div_zero and curl_zero)
+        )
+
+        exact_sol = solve_exact(d0, hv)
+        is_exact = exact_sol is not None
+
+        if norm2_h == Fraction(0):
+            classification = "ZERO_COCHAIN_TRIVIAL_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l1_h_zero:
+            classification = "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif curl_zero and is_exact:
+            classification = "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            classification = "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "probe_id": pid,
+            "h": list(hv),
+            "divergence_d0_transpose_h": list(div_h),
+            "curl_d1_h": list(curl_h),
+            "l_down_h": list(l_down_h),
+            "l_up_h": list(l_up_h),
+            "l1_h": list(l1_h),
+            "norm2_h": norm2_h,
+            "divergence_energy": energy_div,
+            "curl_energy": energy_curl,
+            "dirichlet_energy": energy_dirichlet,
+            "in_laplacian_kernel": l1_h_zero,
+            "is_exact_coboundary": is_exact,
+            "dirichlet_energy_identity_verified": energy_identity_ok,
+            "operator_orthogonality_verified": operator_orthogonality_ok,
+            "kernel_equivalence_verified": kernel_equivalence_ok,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed discrete curvature and Hodge Laplacian energy audit receipt."""
+        if not self.records:
+            raise ValidationError("At least one Laplacian probe must be recorded before emitting a receipt")
+
+        harmonic_kernel_ids = [
+            r["probe_id"]
+            for r in self.records
+            if r["classification"] == "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+        ]
+        curl_obstructed_ids = [
+            r["probe_id"]
+            for r in self.records
+            if r["classification"] == "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR"
+        ]
+        all_energy_id = all(r["dirichlet_energy_identity_verified"] for r in self.records)
+        all_op_orth = all(r["operator_orthogonality_verified"] for r in self.records)
+        all_ker_eq = all(r["kernel_equivalence_verified"] for r in self.records)
+
+        if harmonic_kernel_ids or curl_obstructed_ids:
+            status = "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EXACT_GRADIENT_ENERGY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_discrete_curvature.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "probe_count": len(self.records),
+            "harmonic_kernel_probe_ids": sorted(harmonic_kernel_ids),
+            "curl_obstructed_probe_ids": sorted(curl_obstructed_ids),
+            "all_dirichlet_energy_identities_verified": all_energy_id,
+            "all_operator_orthogonalities_verified": all_op_orth,
+            "all_kernel_equivalences_verified": all_ker_eq,
+            "records": self.records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

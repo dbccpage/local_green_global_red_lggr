@@ -34,6 +34,7 @@ from lggr.streaming import (
     StreamingDFAGrammarGluingMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDefectSoundnessMonitor,
+    StreamingDiscreteCurvatureMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
     StreamingHodgeDecompositionMonitor,
@@ -1967,6 +1968,53 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_bounded["cumulative_catalyst_drift"], "0")
         self.assertEqual(r_bounded["max_catalyst_deviation"], "1")
         self.assertEqual(r_bounded["evaluator_defect"], 0)
+
+    def test_discrete_curvature_hodge_laplacian_dirichlet_energy_and_kernel(self) -> None:
+        """Verify discrete 1-form Hodge Laplacian Dirichlet energy identity and harmonic kernel separation."""
+        mon = StreamingDiscreteCurvatureMonitor(scope_id="curvature-test")
+        d0_tri = [
+            [-1, 1, 0],
+            [0, -1, 1],
+            [1, 0, -1],
+        ]
+
+        # 1. Exact gradient flow h = (1, 2, -3) = D0([0, 1, 3]) -> curl = 0, div = (-4, -1, 5), E_div = 16+1+25 = 42
+        r_grad = mon.record_laplacian_probe("tri_gradient", d0_tri, [1, 2, -3], D1=[[1, 1, 1]])
+        self.assertEqual(r_grad["classification"], "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG")
+        self.assertEqual(r_grad["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_grad["divergence_energy"], "42")
+        self.assertEqual(r_grad["curl_energy"], "0")
+        self.assertEqual(r_grad["dirichlet_energy"], "42")
+        self.assertFalse(r_grad["in_laplacian_kernel"])
+        self.assertTrue(r_grad["dirichlet_energy_identity_verified"])
+        self.assertTrue(r_grad["operator_orthogonality_verified"])
+
+        # 2. Unfilled triangle with h = (1, 1, 1) -> D0^T h = (0, 0, 0), D1 = None -> E_Dir = 0, in ker(L1)
+        r_harm = mon.record_laplacian_probe("tri_unfilled_harmonic", d0_tri, [1, 1, 1], D1=None)
+        self.assertEqual(r_harm["classification"], "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR")
+        self.assertEqual(r_harm["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_harm["dirichlet_energy"], "0")
+        self.assertTrue(r_harm["in_laplacian_kernel"])
+        self.assertFalse(r_harm["is_exact_coboundary"])
+        self.assertTrue(r_harm["kernel_equivalence_verified"])
+
+        # 3. Filled triangle D1 = [[1, 1, 1]] with h = (1, 1, 1) -> D0^T h = (0, 0, 0), D1 h = (3) -> E_Dir = 9
+        r_curl = mon.record_laplacian_probe("tri_filled_curl", d0_tri, [1, 1, 1], D1=[[1, 1, 1]])
+        self.assertEqual(r_curl["classification"], "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR")
+        self.assertEqual(r_curl["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_curl["divergence_energy"], "0")
+        self.assertEqual(r_curl["curl_energy"], "9")
+        self.assertEqual(r_curl["dirichlet_energy"], "9")
+        self.assertFalse(r_curl["in_laplacian_kernel"])
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_discrete_curvature.v1")
+        self.assertEqual(receipt["status"], "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["harmonic_kernel_probe_ids"], ["tri_unfilled_harmonic"])
+        self.assertEqual(receipt["curl_obstructed_probe_ids"], ["tri_filled_curl"])
+        self.assertTrue(receipt["all_dirichlet_energy_identities_verified"])
+        self.assertTrue(receipt["all_operator_orthogonalities_verified"])
+        self.assertTrue(receipt["all_kernel_equivalences_verified"])
 
 
 if __name__ == "__main__":
