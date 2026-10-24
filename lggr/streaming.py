@@ -4577,6 +4577,256 @@ class StreamingThresholdGovernanceMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCPTPTraceMonitor:
+    """Online rational Kraus channel trace-preservation residual, state-blindspot, and composition monitor.
+
+    Audits finite rational Kraus operator families E = {K_r}_{r=1}^m in Q^{d x d}:
+      - Trace-preservation residual matrix:
+          R_TP(E) = sum_{r=1}^m K_r^T K_r - I_d.
+      - Exact state-dependent trace discrepancy identity on any d x d matrix rho:
+          tr(E(rho)) - tr(rho) == tr(rho * R_TP(E)).
+      - Separates operator-level trace preservation (R_TP(E) == 0, OPERATOR_TP_VERIFIED_LGGG)
+        from state-dependent blindspots (tr(rho * R_TP(E)) == 0 while R_TP(E) != 0,
+        STATE_BLINDSPOT_NON_TP_LGGR) and overt state trace violations (tr(rho * R_TP(E)) != 0,
+        STATE_TRACE_VIOLATION_LGGR).
+      - Exact two-channel composition residual identity for E_2 o E_1 = {L_s K_r}_{s,r}:
+          R_TP(E_2 o E_1) == R_TP(E_1) + E_1^dagger(R_TP(E_2)),
+        where E_1^dagger(X) = sum_{r=1}^{m_1} K_r^T X K_r.
+    """
+
+    def __init__(
+        self,
+        kraus_operators: Iterable[Any],
+        *,
+        scope_id: str = "streaming-cptp-trace-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        raw_ops = sequence(kraus_operators, "kraus_operators")
+        if not raw_ops:
+            raise ValidationError("kraus_operators must be non-empty")
+
+        first_mat = matrix(raw_ops[0], "kraus_operators[0]")
+        d = len(first_mat)
+        if len(first_mat[0]) != d:
+            raise ValidationError("Each Kraus operator must be a square d x d matrix")
+
+        self.dim = d
+        self.kraus_ops = [
+            matrix(op, f"kraus_operators[{idx}]", rows=d, cols=d)
+            for idx, op in enumerate(raw_ops)
+        ]
+        self.sum_kt_k = self._compute_sum_kt_k(self.kraus_ops, d)
+        self.residual_r_tp = self._subtract_identity(self.sum_kt_k, d)
+        self.is_operator_trace_preserving = is_zero(self.residual_r_tp)
+        self.residual_l1_norm = sum(
+            (abs(val) for row in self.residual_r_tp for val in row),
+            Fraction(0),
+        )
+        self.probed_states: dict[str, dict[str, Any]] = {}
+        self.compositions: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _transpose(mat: Any) -> tuple[tuple[Fraction, ...], ...]:
+        rows = len(mat)
+        cols = len(mat[0])
+        return tuple(
+            tuple(mat[r][c] for r in range(rows))
+            for c in range(cols)
+        )
+
+    @classmethod
+    def _compute_sum_kt_k(cls, ops: list[Any], d: int) -> tuple[tuple[Fraction, ...], ...]:
+        acc = [[Fraction(0) for _ in range(d)] for _ in range(d)]
+        for k_mat in ops:
+            kt = cls._transpose(k_mat)
+            prod = matmul(kt, k_mat)
+            for r in range(d):
+                for c in range(d):
+                    acc[r][c] += prod[r][c]
+        return tuple(tuple(row) for row in acc)
+
+    @staticmethod
+    def _subtract_identity(mat: Any, d: int) -> tuple[tuple[Fraction, ...], ...]:
+        return tuple(
+            tuple(mat[r][c] - (Fraction(1) if r == c else Fraction(0)) for c in range(d))
+            for r in range(d)
+        )
+
+    @staticmethod
+    def _trace(mat: Any) -> Fraction:
+        return sum((mat[i][i] for i in range(len(mat))), Fraction(0))
+
+    @classmethod
+    def _apply_channel(cls, ops: list[Any], rho: Any, d: int) -> tuple[tuple[Fraction, ...], ...]:
+        acc = [[Fraction(0) for _ in range(d)] for _ in range(d)]
+        for k_mat in ops:
+            kt = cls._transpose(k_mat)
+            term = matmul(matmul(k_mat, rho), kt)
+            for r in range(d):
+                for c in range(d):
+                    acc[r][c] += term[r][c]
+        return tuple(tuple(row) for row in acc)
+
+    @classmethod
+    def _apply_adjoint(cls, ops: list[Any], obs: Any, d: int) -> tuple[tuple[Fraction, ...], ...]:
+        acc = [[Fraction(0) for _ in range(d)] for _ in range(d)]
+        for k_mat in ops:
+            kt = cls._transpose(k_mat)
+            term = matmul(matmul(kt, obs), k_mat)
+            for r in range(d):
+                for c in range(d):
+                    acc[r][c] += term[r][c]
+        return tuple(tuple(row) for row in acc)
+
+    def probe_state(self, state_id: str, rho: Any) -> dict[str, Any]:
+        """Audit tr(E(rho)) - tr(rho) == tr(rho * R_TP) on a d x d rational state matrix rho."""
+        sid = text(state_id, "state_id")
+        rho_mat = matrix(rho, "rho", rows=self.dim, cols=self.dim)
+        out_rho = self._apply_channel(self.kraus_ops, rho_mat, self.dim)
+        tr_in = self._trace(rho_mat)
+        tr_out = self._trace(out_rho)
+        tr_diff = tr_out - tr_in
+        rho_r_tp = matmul(rho_mat, self.residual_r_tp)
+        tr_rho_rtp = self._trace(rho_r_tp)
+        discrepancy_identity_ok = (tr_diff == tr_rho_rtp)
+
+        state_blindspot = (not self.is_operator_trace_preserving and tr_diff == Fraction(0))
+        if self.is_operator_trace_preserving:
+            status = "OPERATOR_TP_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif state_blindspot:
+            status = "STATE_BLINDSPOT_NON_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "STATE_TRACE_VIOLATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        entry = {
+            "schema": "lggr.online_cptp_state_probe.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "state_id": sid,
+            "status": status,
+            "contract_status": contract_status,
+            "input_trace": tr_in,
+            "output_trace": tr_out,
+            "trace_discrepancy": tr_diff,
+            "trace_rho_times_r_tp": tr_rho_rtp,
+            "operator_trace_preserving": self.is_operator_trace_preserving,
+            "residual_l1_norm": self.residual_l1_norm,
+            "state_blindspot_masked": state_blindspot,
+            "trace_discrepancy_identity_verified": discrepancy_identity_ok,
+        }
+        self.probed_states[sid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def audit_composition(
+        self,
+        composition_id: str,
+        second_kraus_operators: Iterable[Any],
+    ) -> dict[str, Any]:
+        """Audit R_TP(E_2 o E_1) == R_TP(E_1) + E_1^dagger(R_TP(E_2)) for composed Kraus channels."""
+        cid = text(composition_id, "composition_id")
+        raw_second = sequence(second_kraus_operators, "second_kraus_operators")
+        if not raw_second:
+            raise ValidationError("second_kraus_operators must be non-empty")
+        second_ops = [
+            matrix(op, f"second_kraus_operators[{idx}]", rows=self.dim, cols=self.dim)
+            for idx, op in enumerate(raw_second)
+        ]
+
+        r_tp_2 = self._subtract_identity(self._compute_sum_kt_k(second_ops, self.dim), self.dim)
+        composed_ops = [
+            matmul(l_mat, k_mat)
+            for l_mat in second_ops
+            for k_mat in self.kraus_ops
+        ]
+        r_tp_composed = self._subtract_identity(
+            self._compute_sum_kt_k(composed_ops, self.dim),
+            self.dim,
+        )
+        e1_dag_rtp2 = self._apply_adjoint(self.kraus_ops, r_tp_2, self.dim)
+        rhs_sum = tuple(
+            tuple(self.residual_r_tp[r][c] + e1_dag_rtp2[r][c] for c in range(self.dim))
+            for r in range(self.dim)
+        )
+        identity_ok = (r_tp_composed == rhs_sum)
+        composed_tp = is_zero(r_tp_composed)
+        second_tp = is_zero(r_tp_2)
+
+        if composed_tp and self.is_operator_trace_preserving and second_tp:
+            status = "COMPOSED_TP_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif composed_tp:
+            status = "COMPENSATED_COMPOSITION_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "COMPOSED_NON_TP_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        entry = {
+            "schema": "lggr.online_cptp_composition.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "composition_id": cid,
+            "status": status,
+            "contract_status": contract_status,
+            "first_channel_tp": self.is_operator_trace_preserving,
+            "second_channel_tp": second_tp,
+            "composed_channel_tp": composed_tp,
+            "residual_r_tp_first": self.residual_r_tp,
+            "residual_r_tp_second": r_tp_2,
+            "residual_r_tp_composed": r_tp_composed,
+            "composition_residual_identity_verified": identity_ok,
+        }
+        self.compositions[cid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate Kraus channel trace-preservation receipt."""
+        blindspot_states = [
+            sid for sid, s in self.probed_states.items() if s["state_blindspot_masked"]
+        ]
+        all_state_ids_ok = all(
+            s["trace_discrepancy_identity_verified"] for s in self.probed_states.values()
+        )
+        all_comp_ids_ok = all(
+            c["composition_residual_identity_verified"] for c in self.compositions.values()
+        )
+
+        if self.is_operator_trace_preserving and all(
+            c["composed_channel_tp"] for c in self.compositions.values()
+        ):
+            status = "OPERATOR_TP_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif blindspot_states:
+            status = "STATE_BLINDSPOT_NON_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "OPERATOR_NON_TP_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_cptp_trace.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "dimension": self.dim,
+            "kraus_count": len(self.kraus_ops),
+            "operator_trace_preserving": self.is_operator_trace_preserving,
+            "residual_r_tp": self.residual_r_tp,
+            "residual_l1_norm": self.residual_l1_norm,
+            "probed_states_count": len(self.probed_states),
+            "blindspot_state_ids": sorted(blindspot_states),
+            "audited_compositions_count": len(self.compositions),
+            "all_state_discrepancy_identities_verified": all_state_ids_ok,
+            "all_composition_identities_verified": all_comp_ids_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

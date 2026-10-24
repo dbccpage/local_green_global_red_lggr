@@ -53,3 +53,4 @@ import LggrVIII
 #print axioms LggrVIII.evidence_preserving_rsi_invariance_bound
 #print axioms LggrVIII.two_player_shapley_efficiency_and_symmetry
 #print axioms LggrVIII.quorum_threshold_vs_product_defect_separation
+#print axioms LggrVIII.kraus_trace_preservation_and_blindspot_residual
