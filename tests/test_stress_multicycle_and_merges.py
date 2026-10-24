@@ -45,6 +45,7 @@ from lggr.streaming import (
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
+    StreamingProjectiveTowerMonitor,
     StreamingPullbackSquareMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingReggeDeficitCurvatureMonitor,
@@ -2218,6 +2219,40 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["status"], "OPTIONAL_STOPPING_DRAWDOWN_OBSTRUCTED_LGGR")
         self.assertEqual(receipt["tail_drawdown_ngd_tree_ids"], ["double_or_nothing_skew"])
         self.assertTrue(receipt["all_optional_stopping_conservations_verified"])
+
+    def test_projective_tower_derived_limit_r1_lifting_obstruction(self) -> None:
+        """Verify LGGR IV projective tower monitor separates 3x+1=0 mod 2^n R^1 lim^1 obstruction from integer lifts."""
+        # 1. Obstructed 3x + 1 = 0 (mod 2^n) tower: x1 = 1 (mod 2), x2 = 1 (mod 4), x3 = 5 (mod 8)
+        #    Every finite stage is solvable and compatible (L = 1), yet x_inf = -1/3 not in Z -> Eg = 0, Delta_E = -1
+        tower_bad = StreamingProjectiveTowerMonitor(3, 1, scope_id="tower-3x-plus-1")
+        tower_bad.record_stage("stage_mod_2", 2, 1)
+        tower_bad.record_stage("stage_mod_4", 4, 1)
+        tower_bad.record_stage("stage_mod_8", 8, 5)
+
+        r_bad = tower_bad.get_receipt()
+        self.assertEqual(r_bad["schema"], "lggr.online_projective_tower.v1")
+        self.assertEqual(r_bad["status"], "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR")
+        self.assertEqual(r_bad["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_bad["rational_completion_root"], "-1/3")
+        self.assertIsNone(r_bad["integral_global_root"])
+        self.assertEqual(r_bad["r1_lim_coset_residual_mod_z"], "2/3")
+        self.assertEqual(r_bad["local_product_aggregator"], 1)
+        self.assertEqual(r_bad["global_integral_lift_evaluator"], 0)
+        self.assertEqual(r_bad["evaluator_defect"], -1)
+
+        # 2. Positive control: 3x - 6 = 0 (mod 2^n) with x1 = 0 (mod 2), x2 = 2 (mod 4), x3 = 2 (mod 8)
+        #    Global integer root x_* = 2 in Z lifts all stages -> L = 1, Eg = 1, Delta_E = 0
+        tower_ok = StreamingProjectiveTowerMonitor(3, -6, scope_id="tower-3x-minus-6")
+        tower_ok.record_stage("stage_mod_2", 2, 0)
+        tower_ok.record_stage("stage_mod_4", 4, 2)
+        tower_ok.record_stage("stage_mod_8", 8, 2)
+
+        r_ok = tower_ok.get_receipt()
+        self.assertEqual(r_ok["status"], "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_ok["integral_global_root"], 2)
+        self.assertEqual(r_ok["r1_lim_coset_residual_mod_z"], "0")
+        self.assertEqual(r_ok["evaluator_defect"], 0)
 
 
 if __name__ == "__main__":
