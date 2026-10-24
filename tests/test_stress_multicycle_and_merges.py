@@ -39,6 +39,7 @@ from lggr.streaming import (
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
     StreamingHodgeDecompositionMonitor,
+    StreamingMartingaleOptionalStoppingMonitor,
     StreamingMayerVietorisMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
@@ -926,7 +927,8 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["traces_evaluated"], 4)
         self.assertEqual(summary["conventional_false_acceptances"], 3)
         self.assertEqual(summary["conventional_false_refusals"], 0)
-        self.assertEqual(summary["faults_localized_online"], 2)
+        # Open obligations are now localized online as well as in batch replay.
+        self.assertEqual(summary["faults_localized_online"], 3)
         self.assertEqual(summary["traces_with_retained_obligations"], 1)
 
     def test_cycle_basis_sensitivity_and_complementary_slackness(self) -> None:
@@ -2156,6 +2158,66 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["pullback_carrier_size"], 3)
         self.assertEqual(receipt["ngd_mismatch_pair_ids"], ["pair_mismatch_ngd"])
         self.assertEqual(receipt["ambiguous_fiber_pair_ids"], ["pair_c1_ambiguous"])
+
+    def test_martingale_optional_stopping_expectation_conservation_vs_tail_drawdown_ngd(self) -> None:
+        """Verify bounded-horizon martingale optional stopping conservation vs asymmetric tail drawdown NGD."""
+        mon = StreamingMartingaleOptionalStoppingMonitor(
+            max_tail_drawdown_budget=1,
+            scope_id="martingale-ost-test",
+        )
+
+        # 1. Double-or-nothing asymmetric stopping on fair martingale:
+        #    x0 = 0; step 1: (+1, -1); step 2 from -1: (+1, -3)
+        #    Stop at step 1 if up (+1, prob 1/2), continue to step 2 if down (+1 prob 1/4, -3 prob 1/4)
+        #    Stopped expectation = 1/2*(1) + 1/4*(1) + 1/4*(-3) = 0 == x0, win prob = 3/4,
+        #    but tail drawdown = 0 - (-3) = 3 > 1 -> NGD (L=1, Eg=0, Delta_E=-1)
+        r_skew = mon.record_stopped_tree(
+            "double_or_nothing_skew",
+            x0=0,
+            x_u=1,
+            x_d=-1,
+            x_uu=2,
+            x_ud=0,
+            x_du=1,
+            x_dd=-3,
+            stop_on_step1_up=True,
+            stop_on_step1_down=False,
+        )
+        self.assertEqual(r_skew["classification"], "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR")
+        self.assertEqual(r_skew["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_skew["stopped_expectation"], "0")
+        self.assertEqual(r_skew["horizon2_expectation"], "0")
+        self.assertEqual(r_skew["stopped_win_probability"], "3/4")
+        self.assertEqual(r_skew["tail_drawdown"], "3")
+        self.assertEqual(r_skew["local_martingale_product"], 1)
+        self.assertEqual(r_skew["global_drawdown_evaluator"], 0)
+        self.assertEqual(r_skew["evaluator_defect"], -1)
+        self.assertTrue(r_skew["optional_stopping_conservation_verified"])
+
+        # 2. Immediate stop at t=1 on both branches: (+1, -1) -> tail drawdown = 1 <= 1 -> LGGG
+        r_ok = mon.record_stopped_tree(
+            "bounded_step1_stop",
+            x0=0,
+            x_u=1,
+            x_d=-1,
+            x_uu=2,
+            x_ud=0,
+            x_du=0,
+            x_dd=-2,
+            stop_on_step1_up=True,
+            stop_on_step1_down=True,
+        )
+        self.assertEqual(r_ok["classification"], "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_ok["stopped_expectation"], "0")
+        self.assertEqual(r_ok["tail_drawdown"], "1")
+        self.assertEqual(r_ok["evaluator_defect"], 0)
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_martingale_optional_stopping.v1")
+        self.assertEqual(receipt["status"], "OPTIONAL_STOPPING_DRAWDOWN_OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["tail_drawdown_ngd_tree_ids"], ["double_or_nothing_skew"])
+        self.assertTrue(receipt["all_optional_stopping_conservations_verified"])
 
 
 if __name__ == "__main__":
