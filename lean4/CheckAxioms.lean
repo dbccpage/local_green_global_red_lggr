@@ -1,0 +1,17 @@
+import LggrVII
+
+#print axioms LggrVII.collision_blocks_factorization
+#print axioms LggrVII.postprocessing_preserves_collision
+#print axioms LggrVII.verdict_ceiling_on_collision
+#print axioms LggrVII.evalDefect_partition
+#print axioms LggrVII.two_step_telescope
+#print axioms LggrVII.three_step_telescope
+#print axioms LggrVII.local_steps_do_not_imply_endpoint_bound
+#print axioms LggrVII.every_prefix_strictly_stronger_than_endpoint
+#print axioms LggrVII.unsigned_report_collision_good_vs_bad
+#print axioms LggrVII.triangle_l1_primal_dual_optimality
+#print axioms LggrVII.filled_triangle_closure_vs_budget_exactness
+#print axioms LggrVII.retraction_reflects_repair_and_obstruction
+#print axioms LggrVII.observer_fiber_two_point_minimax
+#print axioms LggrVII.contextual_fraction_packing_mass_identity
+#print axioms LggrVII.ghz_rnd2_cf_gt_two_neg_mass_and_order_reversal

@@ -1,0 +1,52 @@
+Local Green, Global Red I — theorem-level Lean axiom report
+Date: 2026-10-15
+Toolchain: Lean (version 4.33.1, x86_64-w64-windows-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)
+Build command: lake build
+Census command: lake env lean lggr_i_evaluated_path_kernels.lean
+Axiom report count: 44
+Allowed dependencies: Classical.choice, Quot.sound, propext
+
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.B1_local_green_global_red_witness' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.B1b_delta_range' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.B2_phone_identity' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.B2b_phone_local_passes' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.B2c_phone_global_passes' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.B2d_phone_delta_sum' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.B2e_phone_ngd_count' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.C1_kernel_composition_under_G1_G2_G3' depends on axioms: [propext]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.C1b_kernel_pair_sum_reindexing_under_G1_G2_G3' depends on axioms: [propext]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.C1c_g1_set_isomorphism' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.C1d_raw_kernel_composition_under_G1_G2_G3' depends on axioms: [propext, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.D1_delta_trichotomy' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.D2_defect_corrected_kernel_identity' depends on axioms: [propext]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.D3_fully_corrected_kernel_identity' depends on axioms: [propext]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.D4_cancellation_not_pointwise_zero' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E1_ngd_pgd_zdr_partition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E2_count_gap_eq_delta_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E3_local_pass_count_does_not_determine_global' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E4_local_dashboard_does_not_carry_global_or_delta' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E5_defect_class_semantic_normal_forms' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E6_egd_zero_iff_all_zdr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E7_egd_decomposition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E8_signed_defect_balance' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E9_pass_rates_do_not_determine_egd' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E10_defect_moment_reconstruction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E11_ngd_bounded_by_local_pass_count' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E12_diagnostic_dashboard_factors' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E13_defect_packet_non_sufficiency' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E14_defect_packet_plus_local_determines_global' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E15_defect_packet_eq_iff_defect_kind_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E16_bool_dashboard_cannot_be_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E17_carrier_collision_induces_zero_relation' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E17_carrier_cannot_separate_witness' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.E18_global_failure_decomposition' depends on axioms: [propext, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.P5_proposal_weighted_composition_under_G1_G2_G3_G4' depends on axioms: [propext]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.H2_structural_guard_implies_ngd_strictly_below_global_failure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.H2b_one_minus_gpr_eq_ngd_add_lrgr' depends on axioms: [propext, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.I1_verdict_ceiling' depends on axioms: [propext, Classical.choice, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.I3_local_product_invariant' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.I4_green_mixed_forces_negative_defect' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.I5_green_mixed_strict_pass_gap' depends on axioms: [propext, Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.I6_no_downstream_refinement' does not depend on any axioms
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.I7a_diagnostic_pair_factors_when_Eg_invariant' depends on axioms: [Quot.sound]
+'n_001_finite_obstruction_calculus_012_lggr_i_evaluated_path_kernels.I7b_Eg_no_factor_through_packet_quotient_of_mixed' depends on axioms: [Quot.sound]

@@ -218,3 +218,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Lean 4 / Lake build artifacts
+.lake/
+**/.lake/
+lean4/b/
+**/lean4/b/
+

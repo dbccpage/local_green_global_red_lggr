@@ -1,0 +1,25 @@
+Paper II Lean axiom report
+Date: 2026-10-15
+Toolchain: Lean (version 4.33.1, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)
+Build target: LGGR2
+Build result: success
+Census command: lake env lean check_axioms.lean
+
+'PaperAE005.certified_closure_requires_auth' does not depend on any axioms
+'PaperAE005.boundary_owner_not_sufficient' does not depend on any axioms
+'PaperAE005.weak_boundary_sufficiency_does_not_force_factorization' does not depend on any axioms
+'PaperAE005.product_sufficiency_iff_evaluator_factorization' does not depend on any axioms
+'PaperAE005.three_binary_defects_sum_can_leave_binary_range' does not depend on any axioms
+'PaperAE005.organizational_lggr_instance' does not depend on any axioms
+'PaperAE005.orgDelta_range' does not depend on any axioms
+'PaperAE005.orgDelta_is_negative_one_iff' does not depend on any axioms
+'PaperAE005.boundary_carrier_mixing_forces_lggr' does not depend on any axioms
+'PaperAE005.boundary_carrier_mixing_blocks_quotient_factorization' depends on axioms: [Quot.sound]
+'PaperAE005.aligned_validator_collapsing_detector' does not depend on any axioms
+'PaperAE005.aligned_validator_proxy_collapsing_detector' does not depend on any axioms
+'PaperAE005.red_verdict_sound_detection' does not depend on any axioms
+'PaperAE005.green_verdict_unsound_as_certificate' does not depend on any axioms
+'PaperAE005.governance_prerequisites_require_auth' does not depend on any axioms
+'PaperAE005.governancePrerequisitesSatisfied' does not depend on any axioms
+'PaperAE005.zero_defect_does_not_imply_all_pass' does not depend on any axioms
+'PaperAE005.aligned_validator_forces_zero_defect' does not depend on any axioms

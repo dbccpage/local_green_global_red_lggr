@@ -1,0 +1,65 @@
+paper_id: lggr_iii_epk_gtla_overlay
+version: 1.5.2
+date: 2026-10-15
+historical_anchor: "dbccpage/19L57G1 tag sealed-derivation-v1, commit 3100c4e"
+claims:
+  - id: LGGR3-C01
+    lean: LGGR3.defect
+    python: EvaluatorVerdictTriple.evaluator_defect
+    tests: [test_all_binary_triples]
+  - id: LGGR3-C02
+    lean: LGGR3.defect_range
+    python: classify_defect
+    tests: [test_all_binary_triples, test_classify_defect]
+  - id: LGGR3-C03
+    lean: LGGR3.local_green_global_red
+    python: EvaluatorVerdictTriple.is_local_green_global_red
+    tests: [test_all_binary_triples, test_mutation_01_nonbinary_verdict_then_binary_recovery]
+  - id: LGGR3-C04
+    lean: LGGR3.global_sub_local_eq_defect_sum
+    python: audit_sample
+    tests: [test_finite_sample_identity_and_empty_sample]
+  - id: LGGR3-C05
+    lean: LGGR3.binary_defect_cancellation
+    python: AggregateAudit.has_aggregate_cancellation
+    tests: [test_mutation_09_aggregate_cancellation_then_pointwise_recovery]
+  - id: LGGR3-C06
+    lean: LGGR3.phone_totals
+    python: phone_test
+    tests: [test_phone_test_exact_totals]
+  - id: LGGR3-C07
+    lean: LGGR3.factorized_integer_kernel_has_zero_residual
+    python: integer_kernel_residual_is_zero; audit_kernel_composition
+    tests: [test_integer_kernel_reindexes, test_explicit_boundary_bijection_and_unweighted_kernel, test_proposal_weighted_kernel_uses_computed_g4]
+    open_obligation: PL-025-8
+  - id: LGGR3-C08
+    lean: LGGR3.quotient_evaluator_constant
+    python: quotient_class_violations
+    tests: [test_actual_mixed_class_blocks_descent]
+  - id: LGGR3-C09
+    lean: LGGR3.quotient_evaluator_obstruction
+    python: descend_evaluator
+    tests: [test_mutation_10_mixed_quotient_class_then_split_recovery]
+  - id: LGGR3-C10
+    lean: LGGR3.six_roles
+    lean_status: MECHANIZED_PARTIAL
+    python: RoleOverlay; ROLE_NAMES
+    tests: [test_role_overlay_has_exact_six_roles_and_context]
+  - id: LGGR3-C11
+    lean: LGGR3.observer_weights_can_change_a_score
+    python: observer_score
+    tests: [test_observer_score_and_fixed_observation]
+  - id: LGGR3-C12
+    lean: LGGR3.fixed_observation_preserves_defect
+    python: fixed_observation_preserves_defect
+    tests: [test_mutation_12_changed_observation_then_fixed_recovery]
+  - id: LGGR3-C13
+    lean_status: PROSE_SCOPE_FENCE
+    python_status: NOT_APPLICABLE
+  - id: LGGR3-C14
+    lean_status: OPEN
+    python: require_non_collapsing
+    open_obligation: PL-025-6
+  - id: LGGR3-C15
+    lean_status: NOT_APPLICABLE
+    python_status: NOT_APPLICABLE

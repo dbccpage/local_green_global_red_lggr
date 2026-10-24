@@ -1,0 +1,30 @@
+{
+  "title": "Local Green, Global Red II: Organizational Evaluator Gluing",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-15",
+  "version": "1.3.1",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "An interface can pass every local check and fail its global check. This paper models the gap using Boolean local evaluators E_i, a global evaluator E_G, and the defect Delta_E = E_G - product_i E_i. The value -1 is exactly the local-green/global-red configuration. A finite counterexample shows that a boundary representation which recovers E_G does not thereby imply evaluator factorization. A stronger carrier result shows that if the global evaluator changes between two traces with the same retained local carrier, then no evaluator on carrier quotient classes can reproduce it. Lean 4 checks the Boolean and quotient theorems; Python implements the audit model, rejects malformed states, runs break-and-recover mutations, and generates the figures. A checked-in uv lockfile pins the tested Python environment. One notebook moves from the truth table through interactive widgets to the quotient obstruction and executes headlessly in the test suite. Named examples in the code are illustrative assignments, not empirical audits or predictions.",
+  "keywords": [
+    "evaluator composition",
+    "local-to-global obstruction",
+    "Boolean defect",
+    "organizational interface",
+    "boundary ownership",
+    "detector adequacy",
+    "quotient factorization",
+    "finite counterexample",
+    "Lean 4",
+    "mutation testing",
+    "reproducible research"
+  ],
+  "notes": "Zenodo record: https://zenodo.org/records/22882042 (DOI: 10.5281/zenodo.22882042). Existing Zenodo DOI lineage: 10.5281/zenodo.20674787. Republication version 1.3.1 deposit. Paper, figures, and documentation are licensed CC BY 4.0. Python, Lean 4, and tooling are licensed Apache 2.0. Historical review files bind earlier bytes and do not review the repaired archive."
+}

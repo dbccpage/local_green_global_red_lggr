@@ -1,0 +1,23 @@
+import lggr_ii_organizational_gluing
+
+-- Exact declarations cited by the paper and claim ledger.
+#print axioms PaperAE005.certified_closure_requires_auth
+#print axioms PaperAE005.boundary_owner_not_sufficient
+#print axioms PaperAE005.weak_boundary_sufficiency_does_not_force_factorization
+#print axioms PaperAE005.product_sufficiency_iff_evaluator_factorization
+#print axioms PaperAE005.three_binary_defects_sum_can_leave_binary_range
+#print axioms PaperAE005.organizational_lggr_instance
+#print axioms PaperAE005.orgDelta_range
+#print axioms PaperAE005.orgDelta_is_negative_one_iff
+#print axioms PaperAE005.boundary_carrier_mixing_forces_lggr
+#print axioms PaperAE005.boundary_carrier_mixing_blocks_quotient_factorization
+#print axioms PaperAE005.aligned_validator_collapsing_detector
+#print axioms PaperAE005.aligned_validator_proxy_collapsing_detector
+#print axioms PaperAE005.red_verdict_sound_detection
+#print axioms PaperAE005.green_verdict_unsound_as_certificate
+
+-- Public aliases.
+#print axioms PaperAE005.governance_prerequisites_require_auth
+#print axioms PaperAE005.governancePrerequisitesSatisfied
+#print axioms PaperAE005.zero_defect_does_not_imply_all_pass
+#print axioms PaperAE005.aligned_validator_forces_zero_defect

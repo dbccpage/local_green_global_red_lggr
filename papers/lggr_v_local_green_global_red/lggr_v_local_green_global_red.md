@@ -1,0 +1,314 @@
+---
+title: "Local Green, Global Red"
+subtitle: "Detection and Recovery in Finite Linear Evaluation Models"
+author: "Jeremy H. Carroll"
+date: "2026-10-15"
+series: "001_finite_obstruction_calculus / 001_local_green_global_red_foundational_series / lggr_v_local_green_global_red"
+paper_id: "lggr_v_local_green_global_red"
+version: "1.3.2"
+abstract: |
+  Consider a finite system of sites connected by directed interfaces. Each interface carries a non-expansive linear translation, and each evaluator observes a subset of interface defects through non-expansive linear measurements. We establish four principal conclusions. First, every evaluator score is bounded above by the total defect mass. Second, all evaluators score zero exactly when every interface defect lies in the joint kernel of that interface's watchers. Third, complete interface coverage does not ensure soundness: an explicit construction with three component sites, three overlap sites, six interfaces, and three evaluators has an identically zero score vector while its total defect mass can equal any prescribed $R > 0$. Consequently, no finite-valued function of the maximum evaluator score can uniformly upper-bound the true defect on this system. Fourth, trivial joint kernels at every interface are sufficient but not necessary for soundness, because coupling among realizable interface defects can eliminate otherwise invisible directions. The finite-dimensional quantitative recovery bound is proved in prose by compactness. Lean 4 formalizes the specified abstract observer statements and edge-level identities; rational repair identities include squared Euclidean quantities, while the real infima and square roots are established by the written proofs. The results apply only when a concrete evaluation system instantiates the stated finite linear model.
+---
+
+**Series:** `001_finite_obstruction_calculus / 001_local_green_global_red_foundational_series / lggr_v_local_green_global_red`  
+**Paper ID:** `lggr_v_local_green_global_red`  
+**Date:** 2026-10-15  
+**Version:** 1.3.2  
+**Claim Ledger:** `lggr_v_local_green_global_red_claim_ledger.md`  
+**Change Log:** `lggr_v_local_green_global_red_change_log.md`  
+**License:** CC-BY-4.0
+
+---
+
+## Why this matters
+
+A dashboard can test every interface and still miss inconsistency if its measurements discard the relevant directions. This note makes that observation precise in a finite linear model. A fixed covered system admits assignments with the same all-zero score vector and arbitrarily large hidden defect mass.
+
+Soundness depends on whether any nonzero realizable defect is invisible to all measurements. The note also gives a coupled system in which individually incomplete measurements jointly rule out hidden defects. Applications must specify the linear model and measurements to which these results are being applied.
+
+## 1. The objects
+
+Let $X$ and $E$ be finite sets of sites and interfaces, and let $A$ be a finite nonempty set of evaluators. Here “finite” refers to these index sets. The state spaces are real normed vector spaces; they need not be finite-dimensional unless explicitly stated. Assignments are unrestricted unless a state bound is specified.
+
+* A finite set of **sites** and a finite set of directed **interfaces** between them. Each site $x$ carries a real normed vector space $F(x)$ (its state space), and each interface $e$ from site $a$ to site $b$ carries a linear map $r_e : F(b)\to F(a)$ with $\lVert r_e v\rVert\le\lVert v\rVert$ (a lossy translation of $b$'s state into $a$'s terms).
+* An **assignment** $s$ gives each site a state $s(x)\in F(x)$. The **defect** of $s$ at interface $e=(a,b)$ is
+  $$\Delta(s)_e := r_e\,s(b) - s(a) \in F(a),$$
+  the disagreement between what $b$ claims (translated) and what $a$ holds. The **global inconsistency** is the total defect mass
+  $$I(s) := \sum_e \lVert\Delta(s)_e\rVert .$$
+  $I(s)=0$ means the assignment is globally consistent ("Global Green"); $I(s)>0$ is "Global Red".
+  If site states are bounded by $\lVert s(x)\rVert \le B$, then because translations are contractive ($\lVert r_e v\rVert\le\lVert v\rVert$), each defect satisfies $\lVert\Delta(s)_e\rVert \le \lVert r_e s(b)\rVert + \lVert s(a)\rVert \le 2B$, yielding the contractivity bound
+  $$I(s) \le 2B |E|.$$
+  In particular, producing arbitrarily large global inconsistency requires an unbounded family of assignments.
+* An evaluator $\alpha \in A$ is a pair: a set $E^\alpha \subseteq E$ of interfaces it watches, and for each watched interface a linear measurement $q_e^\alpha : F(a)\to V_e^\alpha$ into some normed space, with $\lVert q_e^\alpha v\rVert\le\lVert v\rVert$ (measurements do not amplify). Its **score** is
+  $$J^\alpha(s) := \sum_{e\in E^\alpha}\bigl\lVert q_e^\alpha(\Delta(s)_e)\bigr\rVert .$$
+  $J^\alpha(s)=0$ is "Local Green" for $\alpha$; the family is **All-Green** when every evaluator scores zero.
+* The **blind spot** of interface $e$ is the set $K_e$ of defect values that *every* watcher of $e$ measures as zero (the intersection of the measurements' kernels). An unwatched interface's blind spot is everything.
+
+That is the entire setup. An application of this note must name its sites, interfaces, state spaces, translation maps, evaluators, and measurements; if it cannot, the theorems below say nothing about it.
+
+## 2. Monitoring is one-way
+
+**Theorem 1 (evaluators cannot create inconsistency).** For every assignment $s$ and every evaluator $\alpha$: $J^\alpha(s)\le I(s)$. In particular, a globally consistent system makes every evaluator report green.
+
+*Proof sketch.* Each measured term is at most the true term because measurements do not amplify; then a sum over some interfaces is at most the sum over all. $\blacksquare$
+
+The useful direction would be the converse — do green evaluators certify a consistent system? Everything below is about exactly when that converse holds.
+
+## 3. The exact mechanism of false green
+
+**Theorem 2 (All-Green, characterized).** The family is All-Green at $s$ **if and only if** at every interface, the defect lies in that interface's blind spot: $\Delta(s)_e\in K_e$ for all $e$.
+
+*Proof.* Each score is a finite sum of nonnegative terms, so it vanishes exactly when every measured term vanishes. Since measurement codomains are normed spaces, a measured term has zero norm exactly when its measured vector is zero. Requiring this for every evaluator is precisely $\Delta(s)_e\in K_e$ for every interface. The unwatched case imposes no condition. $\blacksquare$
+
+So "all evaluators green" does not, without further assumptions, imply no defect; it means "no defect *outside the blind spots*". Whether that is reassuring depends entirely on the blind spots, which brings us to:
+
+**Theorem 3 (false green with full coverage, at any severity).** There is an explicit system — three component sites $u_0, u_1, u_2$ and three overlap sites $x_{01}, x_{12}, x_{20}$ (six sites total) connected by six directed interfaces $e_{01}^0 = (x_{01}, u_0)$, $e_{01}^1 = (x_{01}, u_1)$, $e_{12}^1 = (x_{12}, u_1)$, $e_{12}^2 = (x_{12}, u_2)$, $e_{20}^2 = (x_{20}, u_2)$, and $e_{20}^0 = (x_{20}, u_0)$, state spaces $\mathbb R^3$ with the $\ell^1$ norm, identity translations $r_e = I_3$ — and three evaluators $\alpha \in \{0, 1, 2\}$ that jointly watch *every* interface, such that for every number $R>0$ there is an assignment $s_R$ with:
+
+* every evaluator scores exactly zero (All-Green), and
+* $I(s_R) = R$.
+
+The six-site construction is explicit: for any amplitude $\lambda \in \mathbb R$, define the assignment $s^{(\lambda)}$ by setting $s^{(\lambda)}(u_i) = \lambda e_i$ for each component site $i \in \{0, 1, 2\}$, where $e_i$ is the standard basis vector in $\mathbb R^3$, and $s^{(\lambda)}(x_{ij}) = 0$ on all overlap sites. On each interface into component site $u_i$, the defect is $\Delta(s^{(\lambda)})_e = r_e s^{(\lambda)}(u_i) - s^{(\lambda)}(x_{ij}) = \lambda e_i$. Evaluator $i \in \{0, 1, 2\}$ watches the two interfaces incident to component site $u_i$ via the measurement $q^i$ that deletes coordinate $i$. Because the defects at those interfaces point precisely along coordinate $i$, each evaluator measures zero: $J^i(s^{(\lambda)}) = 0$. The global inconsistency is
+$$I(s^{(\lambda)}) = \sum_{e} \lVert\Delta(s^{(\lambda)})_e\rVert_1 = 6 \lVert\lambda e_i\rVert_1 = 6 |\lambda|.$$
+Setting $s_R := s^{(R/6)}$ gives the severity-indexed assignment with $I(s_R) = 6(R/6) = R$ and All-Green score vector $(0, 0, 0)$.
+
+*Why this construction uses overlap sites (not a minimality claim).* On a literal bidirected three-site triangle without overlap sites, interfaces between sites $u$ and $v$ in opposite directions have defects $s(v) - s(u) = -(s(u) - s(v))$. Opposite defects are negatives of each other; requiring them to lie along different coordinate axes forces them to vanish. Introducing the three overlap sites $x_{ij}$ with $s(x_{ij}) = 0$ decouples the interfaces. Setting the overlap states to zero makes both interfaces at component $u_i$ carry the same defect $\lambda e_i$. This realizes the required hidden directions without the opposite-edge constraint of the literal bidirected triangle; it does not make all six defects independent. Six sites are used for this construction, with no minimality claim.
+
+**Theorem 4 (no recovery function).** Over the fixed system of Theorem 3, there is **no finite-valued function** $f : \mathbb{R}_{\ge 0} \to \mathbb{R}_{\ge 0}$ with
+$$I(s)\ \le\ f\Bigl(\max_\alpha J^\alpha(s)\Bigr)\quad\text{for all assignments }s ;$$
+and in the stronger **joint** form, no finite-valued function $F : \mathbb{R}_{\ge 0}^3 \to \mathbb{R}_{\ge 0}$ of the full score vector with
+$$I(s)\ \le\ F\bigl(J^0(s),\,J^1(s),\,J^2(s)\bigr)\quad\text{for all assignments }s .$$
+The finite-valued qualification excludes the vacuous extended-real bound $F\equiv+\infty$. Every fixed finite rescaling of the zero score vector still leaves that vector compatible with arbitrarily large hidden defect mass. This conclusion uses unrestricted assignments; on a state-bounded family, the bound $I(s)\le 2B|E|$ from §1 remains available. Aggregating, weighting, or post-processing that vector cannot manufacture a finite uniform upper bound.
+
+*Proof.* Suppose such a function $f$ (or $F$) exists. Evaluating the bound on the family of assignments $s_R$ from Theorem 3 with $R > 0$, we have $J^\alpha(s_R) = 0$ for all $\alpha \in \{0, 1, 2\}$, so $\max_\alpha J^\alpha(s_R) = 0$ and the score vector is $(0, 0, 0)$. The bound requires $R = I(s_R) \le f(0)$ (or $R \le F(0, 0, 0)$) for every $R > 0$. Taking $R = f(0) + 1$ (or $F(0, 0, 0) + 1$) produces an immediate contradiction since $f(0) < \infty$. $\blacksquare$
+
+## 4. What actually restores soundness — and what does not
+
+For an interface $e=(a(e),b(e))$, define the assignment and defect spaces by
+$$C^0:=\prod_{x\in X}F(x),\qquad
+C^1:=\prod_{e\in E}F(a(e)).$$
+The linear defect operator $D: C^0\to C^1$ is
+$$(Ds)_e=r_e s(b(e))-s(a(e)).$$
+Equip $C^1$ with the sum norm
+$$\lVert\omega\rVert_{1,E}:=\sum_{e\in E}\lVert\omega_e\rVert_{F(a(e))}.$$
+Thus $I(s)=\lVert Ds\rVert_{1,E}$. Write $K:=\prod_{e\in E}K_e$.
+
+**Soundness Criterion.** All-Green implies $I(s)=0$ for every assignment $s\in C^0$ if and only if
+$$\operatorname{im}D\cap K=\{0\}.$$
+
+*Proof.* By Theorem 2, All-Green is equivalent to $Ds\in K$. Every such defect also belongs to $\operatorname{im}D$, and $I(s)=0$ exactly when $Ds=0$. Thus soundness says that $\operatorname{im}D\cap K$ contains no nonzero vector. Both spaces contain zero, giving the stated equality. $\blacksquare$
+
+The criterion concerns realizable defects. The sufficient condition in Theorem 5 makes all ambient blind spots trivial; Theorem 6 shows how coupling can give soundness without that stronger condition. The relation to the formalization's seminormed hypotheses is recorded in §6.
+
+Let $Q$ stack all the individual linear measurements of defect cochains. Then $\ker Q=K$, and the soundness criterion is injectivity of $Q$ on $\operatorname{im}D$. This is the familiar null-space criterion for linear observation; compare [2]. The present note expresses it for composed interface evaluation, gives explicit covered and coupled examples, and supplies accompanying formal proof artifacts.
+
+**Theorem 5 (a sufficient condition).** If every interface is watched and every interface's blind spot is trivial ($K_e=\{0\}$ — the watchers of each interface *jointly* separate all states, though no single watcher need do so), then All-Green implies $I(s)=0$.
+
+This corresponds to the special case where the ambient product $\prod_e K_e = \{0\}$ is trivial, so its intersection with $\operatorname{im} D$ is automatically $\{0\}$ regardless of the system's coupling.
+
+**Theorem 6 (the condition is not necessary).** Trivial blind spots are not required for soundness. There is a second explicit system — one shared site under two others, with *zero maps* as translations, so that both interface defects are forced to be the same vector $v \in \mathbb R^2$ — monitored by two evaluators with coordinate projections $q^0(v) = v_1$ and $q^1(v) = v_2$ (whose blind spots are the coordinate axes $K_0 = \{0\} \times \mathbb R$ and $K_1 = \mathbb R \times \{0\}$). Each evaluator has a full line as its blind spot, yet All-Green still forces $I(s)=0$: the shared defect $v$ must satisfy $q^0(v) = v_1 = 0$ and $q^1(v) = v_2 = 0$, forcing $v = (0, 0) = 0$. Here $\prod_e K_e \ne \{0\}$, but structural *coupling* ensures $\operatorname{im} D \cap \prod_e K_e = \{0\}$. Coupling between interfaces can compensate for individual blindness.
+
+*Proof.* Let every site carry $\mathbb R^2$ with its $\ell^1$ norm. Take sites $\{a_0,a_1,b\}$, interfaces $e_i=(b,a_i)$, and zero translations. For every assignment $s$, both interface defects equal $-s(b)$, independently of $s(a_0)$ and $s(a_1)$. Evaluator 0 watches $e_0$ and measures the first coordinate; evaluator 1 watches $e_1$ and measures the second. Their blind spots are respectively $\{0\}\times\mathbb R$ and $\mathbb R\times\{0\}$, so both are nontrivial and every interface is watched. If both scores vanish, both coordinates of $s(b)$ vanish. Hence both defects vanish and $I(s)=0$. This demonstrates soundness despite nontrivial blind spots on both interfaces. $\blacksquare$
+
+The design consequence cuts both ways. A family failing the Theorem 5 condition is not automatically unsound — but proving it sound then requires an argument about the specific coupling, and Theorem 3 shows what happens when nobody makes that argument.
+
+**Remark (Raw inconsistency and distance to the repair image).** The raw inconsistency is $I(s)=\lVert Ds\rVert_{1,E}$. For an arbitrary defect cochain $\omega\in C^1$, define its distance to the image of the allowed repair operator by
+$$\Phi(\omega):=\inf_{t\in C^0}\lVert\omega-Dt\rVert_{1,E},$$
+the infimal residual under adjustments of site states $t$. Exactness means $\omega\in\operatorname{im}D$ and implies $\Phi(\omega)=0$. The converse requires closedness of the image in the chosen norm; it holds for the finite-dimensional diagonal image in the example below but is not asserted for arbitrary normed fibers. A positive value of $\Phi$ excludes even approximation by repairs.
+
+**Proposition (finite-dimensional quantitative recovery; proved in prose).** If the realizable defect space $Y=\operatorname{im}D$ is finite-dimensional and soundness holds, there is a constant $C>0$, depending on the fixed system and measurements, such that
+$$I(s)\le C\max_{\alpha\in A}J^\alpha(s)\quad\text{for all }s\in C^0.$$
+*Proof.* Put
+$$p(\omega):=\max_{\alpha\in A}\sum_{e\in E^\alpha}\lVert q_e^\alpha(\omega_e)\rVert.$$
+If $Y\ne\{0\}$, the continuous function $p$ is positive on the compact unit sphere of $Y$, so its minimum $m$ there is positive. Homogeneity gives $\lVert\omega\rVert_{1,E}\le p(\omega)/m$ on $Y$; take $C=1/m$. If $Y=\{0\}$, the bound is immediate, for example with $C=1$. $\blacksquare$
+
+This is a proved finite-dimensional result, not Lean-mechanized in this deposit. The expression $\inf_{s:I(s)=1}\max_\alpha J^\alpha(s)$ is used only when $Y\ne\{0\}$; otherwise its constraint set is empty. The floating-point helper `compute_recovery_constant` instead uses ambient edgewise injectivity, singular values, and norm-conversion factors. It need not detect recovery supplied only by coupling and does not compute this compact-sphere optimum.
+
+Crucially, these represent two entirely distinct failure modes:
+
+1. **Raw Inconsistency / False Green:** The three-patch witness of Theorem 3 has $I(s_R) = R > 0$, but because its defect is generated by an actual section $s_R$, $\Delta(s_R) \in \operatorname{im} D$, and hence $\Phi(\Delta(s_R)) = 0$ by definition.
+2. **Quotient Inconsistency / Non-Exact Defect:** On the coupled system of Theorem 6 with scalar states, the defect operator $Ds = (-\alpha, -\alpha)$ has diagonal image $\operatorname{im} D = \{(-\alpha, -\alpha) : \alpha \in \mathbb R\}$. The test cochain $\omega = (1, -1)$ cannot arise as $\Delta(s)$ for any section at all: $\omega \notin \operatorname{im} D$. For this cochain,
+$$\Phi(\omega)\ =\ \inf_{\alpha \in \mathbb R} \bigl(|1 + \alpha| + |-1 + \alpha|\bigr)\ =\ 2\ >\ 0,$$
+Indeed, for every real $\alpha$,
+$$|1+\alpha|+|\alpha-1|\ge |(1+\alpha)-(\alpha-1)|=2,$$
+and $\alpha=0$ attains two (machine-checked by `repair_mass_ge_two`, `repair_mass_attained`, and `omega_not_exact`).
+
+**Lemma (Infimal Minkowski repair distances).** Let the scalar coupled repair image be $\{(-\alpha,-\alpha):\alpha\in\mathbb R\}$ and let $\omega=(1,-1)$. The residual is $r(\alpha)=(1+\alpha,\alpha-1)$. For $p\in\{1,2,\infty\}$ set
+$$\Phi_p(\omega)=\inf_{\alpha\in\mathbb R}\|r(\alpha)\|_p.$$
+Then $\Phi_1(\omega)=2$, $\Phi_2(\omega)=\sqrt{2}$, and $\Phi_\infty(\omega)=1$. The value $2$ is attained at every $\alpha\in[-1,1]$. The values $\sqrt{2}$ and $1$ are attained only at $\alpha=0$.
+
+*Proof.* For $\alpha\in[-1,1]$ one has $1+\alpha\ge 0$ and $1-\alpha\ge 0$, so
+$$\|r(\alpha)\|_1=(1+\alpha)+(1-\alpha)=2.$$
+For $\alpha>1$ the sum is $2\alpha>2$. For $\alpha<-1$ the sum is $-2\alpha>2$. Thus the infimum is $2$, attained exactly on $[-1,1]$. The inequality $\ge 2$ is the comparison already used for $\Phi$; the attainment set is new.
+
+Next,
+$$\|r(\alpha)\|_2^2=(1+\alpha)^2+(\alpha-1)^2=2\alpha^2+2=2(\alpha^2+1)\ge 2,$$
+with equality if and only if $\alpha=0$. The square root is increasing on $[0,\infty)$, so
+$$\|r(\alpha)\|_2=\sqrt{2}\,\sqrt{\alpha^2+1}\ge\sqrt{2},$$
+with equality only at $\alpha=0$.
+
+If $\alpha\ge 0$, then $\|r(\alpha)\|_\infty\ge|1+\alpha|=1+\alpha\ge 1$, so equality forces $\alpha=0$. If $\alpha\le 0$, then $\|r(\alpha)\|_\infty\ge|\alpha-1|=1-\alpha\ge 1$, so equality forces $\alpha=0$. At $\alpha=0$, $\|r(0)\|_\infty=\max(1,1)=1$.
+
+The chain $1\le\sqrt{2}\le 2$ is therefore the chain of these three infima. Evaluating the three norms only at $\alpha=0$ gives upper bounds on the infima. The matching lower bounds are the three calculations above. The $\ell^1$ identity and the squared $\ell^2$ identity are rational. The symbol $\sqrt{2}$ names the positive square root of the proved square $2$; the real square-root conclusion is proved above and has no separate Lean declaration here. $\blacksquare$
+
+The lemma is one cochain and one diagonal repair line. The next lemma keeps that image and replaces the single residual by the residual of an arbitrary scalar pair. Neither lemma computes a quotient distance for a general norm or a non-diagonal image. The rational content — the $\ell^1$ attainment interval, the squared Euclidean identity and its unique minimizer, and the $\ell^\infty$ identity — is `MinkowskiRepair.r2_l1_iff`, `MinkowskiRepair.r2_l2_sq_iff`, and `MinkowskiRepair.r2_linf_iff` in `lean4/minkowski_repair.lean`. That file is not a Lake root. `quotient_attained_minkowski_chain` still evaluates the three norms only at $\alpha=0$ and does not prove these infima. The positive square roots name the proved squares. The pointwise comparison $\|r(\alpha)\|_\infty\le\|r(\alpha)\|_2\le\|r(\alpha)\|_1$ does not by itself name the infima. No dashboard margin, sheaf, or observation map is added.
+
+**Lemma (Minkowski distances of a stated scalar cochain).** Let the scalar coupled repair image remain $\{(-\alpha,-\alpha):\alpha\in\mathbb R\}$. Let $\omega=(a,b)$ with $a,b\in\mathbb R$, and let the residual be $r(\alpha)=(a+\alpha,\,b+\alpha)$. For $p\in\{1,2,\infty\}$ set
+$$\Phi_p(\omega)=\inf_{\alpha\in\mathbb R}\|r(\alpha)\|_p.$$
+Then
+$$\Phi_1(\omega)=|a-b|,\qquad\Phi_2(\omega)=\frac{|a-b|}{\sqrt{2}},\qquad\Phi_\infty(\omega)=\frac{|a-b|}{2}.$$
+Let $m=\min(a,b)$ and $M=\max(a,b)$. The value $|a-b|$ is attained at every $\alpha\in[-M,-m]$. The values $|a-b|/\sqrt{2}$ and $|a-b|/2$ are attained only at $\alpha=-(a+b)/2$. In particular $\Phi_p(\omega)=0$ if and only if $a=b$, in which case the only attaining repair is $\alpha=-a$ and $\omega$ lies on the repair image. The pair $(a,b)=(1,-1)$ is the preceding lemma.
+
+Evaluating the three norms at the zero repair $\alpha=0$ produces $\|(a,b)\|_p$. Each such number is only an upper bound on $\Phi_p(\omega)$. It equals $\Phi_1(\omega)$ if and only if $ab\le 0$, and it equals $\Phi_2(\omega)$ or $\Phi_\infty(\omega)$ if and only if $b=-a$.
+
+*Proof.* For the $\ell^1$ norm and every real $\alpha$,
+$$|a+\alpha|+|b+\alpha|\ge|(a+\alpha)-(b+\alpha)|=|a-b|.$$
+Set $t=-\alpha$. If $m\le t\le M$, then $t$ lies between $a$ and $b$, so the sum equals $|a-b|$. If $t>M$, then $t>a$ and $t>b$, and
+$$|a-t|+|b-t|=2t-(a+b)=|a-b|+2(t-M),$$
+using $a+b=m+M$ and $|a-b|=M-m$. If $t<m$, the same expansion gives $|a-b|+2(m-t)$. Thus the infimum is $|a-b|$, attained exactly for $t\in[m,M]$, that is for $\alpha\in[-M,-m]$.
+
+For the Euclidean norm,
+$$\|r(\alpha)\|_2^2=(a+\alpha)^2+(b+\alpha)^2=2\alpha^2+2(a+b)\alpha+a^2+b^2=2\left(\alpha+\frac{a+b}{2}\right)^2-\frac{(a+b)^2}{2}+a^2+b^2.$$
+The constant term equals $(a-b)^2/2$, because
+$$-\frac{(a+b)^2}{2}+a^2+b^2=\frac{-(a^2+2ab+b^2)+2a^2+2b^2}{2}=\frac{(a-b)^2}{2}.$$
+Hence
+$$\|r(\alpha)\|_2^2=2\left(\alpha+\frac{a+b}{2}\right)^2+\frac{(a-b)^2}{2}.$$
+The squared shift is nonnegative and vanishes only at $\alpha=-(a+b)/2$. The square root is increasing on $[0,\infty)$, so
+$$\|r(\alpha)\|_2\ge\frac{|a-b|}{\sqrt{2}},$$
+with equality only at that repair.
+
+For the supremum norm, set $\delta=|a-b|/2$. Then
+$$\max(|a-t|,|b-t|)\ge\frac{|a-t|+|b-t|}{2}\ge\delta.$$
+At $t=(a+b)/2$ both absolute values equal $\delta$, so the maximum equals $\delta$. Suppose the maximum equals $\delta$. Then $t$ lies in both $[a-\delta,a+\delta]$ and $[b-\delta,b+\delta]$. If $a\le b$, these intervals are $[a-\delta,(a+b)/2]$ and $[(a+b)/2,b+\delta]$, whose intersection is the singleton $\{(a+b)/2\}$. The case $b\le a$ is symmetric. Hence $\Phi_\infty(\omega)=\delta=|a-b|/2$, attained only at $\alpha=-(a+b)/2$.
+
+The three formulas give the chain $\Phi_\infty(\omega)\le\Phi_2(\omega)\le\Phi_1(\omega)$. They vanish simultaneously exactly when $a=b$.
+
+The zero-repair residual is $r(0)=(a,b)$, so $\|(a,b)\|_p\ge\Phi_p(\omega)$. For $p=1$, the repair $\alpha=0$ lies in $[-M,-m]$ if and only if $m\le 0\le M$, equivalently $ab\le 0$; then $|a|+|b|=|a-b|$. If $ab>0$, then $\alpha=0$ lies outside that interval and $|a|+|b|>|a-b|$. For $p\in\{2,\infty\}$ the only attaining repair is $\alpha=0$ if and only if $a+b=0$. If $a+b\ne 0$, the zero-repair value is strictly larger than the infimum. $\blacksquare$
+
+The lemma is every cochain in $\mathbb R^2$ and the same diagonal repair line. It does not compute a quotient distance for a norm other than $p\in\{1,2,\infty\}$, a non-diagonal image, a third component, or a vector-valued fiber. The rational content is `MinkowskiRepair.diag_l1_iff`, `MinkowskiRepair.diag_l2_sq_iff`, and `MinkowskiRepair.diag_linf_iff` in `lean4/minkowski_repair.lean`. The symbol $|a-b|/\sqrt{2}$ names the positive square root of the proved square $(a-b)^2/2$. The declaration `quotient_attained_minkowski_chain` still evaluates a residual only at $\alpha=0$, and for a general pair that evaluation is the upper bound above, not the infimum. No dashboard margin, sheaf, or observation map is added. The next lemma leaves this diagonal image and computes the same three distances on one stated non-diagonal line.
+
+**Lemma (Minkowski distances on one non-diagonal line).** Let the repair image be $\{(-\alpha,-2\alpha):\alpha\in\mathbb R\}$, the line through the origin in the direction $(-1,-2)$. It is not the diagonal. Let $\omega=(a,b)$ with $a,b\in\mathbb R$, and let the residual be $r(\alpha)=(a+\alpha,\,b+2\alpha)$. For $p\in\{1,2,\infty\}$ set
+$$\Phi_p(\omega)=\inf_{\alpha\in\mathbb R}\|r(\alpha)\|_p.$$
+Then
+$$\Phi_1(\omega)=\frac{|2a-b|}{2},\qquad\Phi_2(\omega)=\frac{|2a-b|}{\sqrt{5}},\qquad\Phi_\infty(\omega)=\frac{|2a-b|}{3}.$$
+The attainment sets are the singletons
+$$A_1(\omega)=\left\{-\frac{b}{2}\right\},\qquad A_2(\omega)=\left\{-\frac{a+2b}{5}\right\},\qquad A_\infty(\omega)=\left\{-\frac{a+b}{3}\right\}.$$
+Thus $\Phi_1$ is attained only at $\alpha=-b/2$, $\Phi_2$ only at $\alpha=-(a+2b)/5$, and $\Phi_\infty$ only at $\alpha=-(a+b)/3$. The three distances vanish if and only if $b=2a$, in which case $\omega$ lies on the image and the only attaining repair is $\alpha=-a$. The three attainment sets coincide if and only if $b=2a$. Since $2<\sqrt{5}<3$, the coefficients satisfy $1/3<1/\sqrt{5}<1/2$, so $\Phi_\infty(\omega)\le\Phi_2(\omega)\le\Phi_1(\omega)$, and any two of the three distances agree if and only if $b=2a$. The pair $(a,b)=(1,-1)$ gives $\Phi_1=3/2$, $\Phi_2=3/\sqrt{5}$, and $\Phi_\infty=1$, with attainment sets $\{1/2\}$, $\{1/5\}$, and $\{0\}$. Those are not the diagonal values of the preceding lemmas.
+
+Evaluating the three norms at the zero repair $\alpha=0$ produces $\|(a,b)\|_p$. Each such number is only an upper bound on $\Phi_p(\omega)$. It equals $\Phi_1(\omega)$ if and only if $b=0$, it equals $\Phi_2(\omega)$ if and only if $a+2b=0$, and it equals $\Phi_\infty(\omega)$ if and only if $a+b=0$.
+
+*Proof.* For every real $\alpha$,
+$$|2a-b|=|2(a+\alpha)-(b+2\alpha)|\le 2|a+\alpha|+|b+2\alpha|\le 2\bigl(|a+\alpha|+|b+2\alpha|\bigr).$$
+The second inequality is an equality if and only if $b+2\alpha=0$. When $b+2\alpha=0$, the first inequality is an equality for every $a$. Thus
+$$\|r(\alpha)\|_1\ge\frac{|2a-b|}{2},$$
+with equality only at $\alpha=-b/2$. At that repair the residual is $(a-b/2,\,0)$, whose $\ell^1$ norm is $|2a-b|/2$.
+
+For the Euclidean norm,
+$$\|r(\alpha)\|_2^2=(a+\alpha)^2+(b+2\alpha)^2=5\alpha^2+2(a+2b)\alpha+a^2+b^2=5\left(\alpha+\frac{a+2b}{5}\right)^2-\frac{(a+2b)^2}{5}+a^2+b^2.$$
+The constant term equals $(2a-b)^2/5$, because
+$$-\frac{(a+2b)^2}{5}+a^2+b^2=\frac{-(a^2+4ab+4b^2)+5a^2+5b^2}{5}=\frac{4a^2-4ab+b^2}{5}=\frac{(2a-b)^2}{5}.$$
+Hence
+$$\|r(\alpha)\|_2^2=5\left(\alpha+\frac{a+2b}{5}\right)^2+\frac{(2a-b)^2}{5}.$$
+The squared shift is nonnegative and vanishes only at $\alpha=-(a+2b)/5$. The square root is increasing on $[0,\infty)$, so
+$$\|r(\alpha)\|_2\ge\frac{|2a-b|}{\sqrt{5}},$$
+with equality only at that repair.
+
+For the supremum norm, set $\delta=|2a-b|/3$. The same linear combination gives
+$$|2a-b|\le 2|a+\alpha|+|b+2\alpha|\le 3\max\bigl(|a+\alpha|,|b+2\alpha|\bigr),$$
+so $\|r(\alpha)\|_\infty\ge\delta$. At $\alpha=-(a+b)/3$,
+$$a+\alpha=\frac{2a-b}{3},\qquad b+2\alpha=-\frac{2a-b}{3},$$
+and the maximum equals $\delta$. Suppose the maximum equals $\delta$. Then both inequalities above are equalities, so $|a+\alpha|=|b+2\alpha|=\delta$ and $|2x+y|=2|x|+|y|$ for $x=a+\alpha$ and $y=-(b+2\alpha)$. For real numbers, $|u+v|=|u|+|v|$ if and only if $uv\ge 0$. Taking $u=2x$ and $v=y$ gives $xy\ge 0$, hence $(a+\alpha)(b+2\alpha)\le 0$. Two real numbers of equal absolute value whose product is at most zero are negatives of each other, so $a+\alpha=-(b+2\alpha)$, that is $\alpha=-(a+b)/3$. Thus $\Phi_\infty(\omega)=\delta$, attained only at that repair.
+
+Since $2<\sqrt{5}<3$, the coefficients $1/3$, $1/\sqrt{5}$, and $1/2$ are strictly ordered. The three formulas therefore give $\Phi_\infty(\omega)\le\Phi_2(\omega)\le\Phi_1(\omega)$, and any two of the distances agree if and only if $b=2a$. They vanish simultaneously exactly when $b=2a$. In that case each stated attainment point equals $-a$, and $r(-a)=(0,0)$. Conversely, if the three singletons are equal, then $-b/2=-(a+b)/3$, so $b=2a$.
+
+The zero-repair residual is $r(0)=(a,b)$, so $\|(a,b)\|_p\ge\Phi_p(\omega)$. Each infimum is attained at exactly one repair, so equality holds if and only if that repair is $\alpha=0$. For $p=1$ this says $b=0$. For $p=2$ it says $a+2b=0$. For $p=\infty$ it says $a+b=0$. If the corresponding linear condition fails, the zero-repair value is strictly larger than the infimum. $\blacksquare$
+
+The lemma is every cochain in $\mathbb R^2$ and this one line. The line is not the image of the scalar coupled operator. The lemma does not compute a quotient distance for a norm other than $p\in\{1,2,\infty\}$, a second direction, a third component, or a vector-valued fiber. The rational content is `MinkowskiRepair.skew_l1_iff`, `MinkowskiRepair.skew_l2_sq_iff`, and `MinkowskiRepair.skew_linf_iff` in `lean4/minkowski_repair.lean`. The symbol $|2a-b|/\sqrt{5}$ names the positive square root of the proved square $(2a-b)^2/5$. The declaration `quotient_attained_minkowski_chain` still evaluates a diagonal residual only at $\alpha=0$. No dashboard margin, sheaf, or observation map is added.
+
+For the companion discussion, see §7.4.12 of the anchor manuscript, in the v6.3 release cited as [1]. False green (Theorem 3) and irreparable red reflect distinct structural failures: raw inconsistency in the presence of unobserved directions versus unreachability in the quotient geometry. Raw section defects belong to $\operatorname{im}D$; a positive quotient distance instead identifies a cochain that remains separated from that fixed repair image. Changing the allowed repair operator is a different problem.
+
+## 5. What this note does *not* claim
+
+* Nothing here is about any particular AI system, evaluation suite, or organization. The theorems constrain the *shape* of composed evaluation; whether a real evaluation stack instantiates the setup — and with which kernels — is an empirical modeling question each application must answer and document.
+* The results are worst-case and exact, not average-case or statistical. They show green scores *can* be uninformative, and exactly when; they do not show any particular green dashboard *is*.
+* No result here authorizes or forbids any action. A theorem about evaluator blind spots is an input to judgment, not a substitute for it.
+* The severity number $I(s)$ is one declared diagnostic (a sum of interface norms). Other diagnostics make other choices; the companion anchor paper [1] states the axioms under which this additive form is forced.
+
+## 6. The machine-checked evidence
+
+The declaration list below maps the note's results to accompanying Lean declarations for the abstract observer statements and explicit defect calculations. The formalization boundaries are described below; in particular, the graph realization in Theorem 3 is supplied by the mathematical construction in §3. The recorded evidence, including axiom inventory (within `propext`, `Classical.choice`, `Quot.sound`) and compile receipts, is in `lean4/PROVENANCE.md`. This deposit ships three mathematical Lean sources under `lean4/`: `observer_visibility.lean`, the anchor snapshot `po000_l004_observer_visibility.lean`, and the mathlib-free rational repair module `minkowski_repair.lean`. `Census.lean` and `lakefile.lean` are build infrastructure; see `lean4/README.md` and `lean4/PROVENANCE.md` for provenance and compile receipts. The map names this deposit's `observer_visibility.lean`. The byte-identical anchor snapshot `po000_l004_observer_visibility.lean` retains the seven core results under the `PO000.` prefix; it does not contain either the joint score-vector strengthening or the Master Soundness Criterion. Both additions live in this deposit's own source.
+
+All declarations below have the prefix `ObserverVisibility.`. Where a subnamespace is specified, append it before the declaration name.
+
+**Theorem 1**
+
+- `tally_le_rawNorm`
+- `localGreen_of_globalGreen`
+
+**Theorem 2**
+
+- `allGreen_iff_kernel`
+
+**Master Soundness Criterion**
+
+- `master_soundness_iff`
+
+**Theorem 3 — subnamespace `ThreePatch`**
+
+- `three_patch_witness`
+- `rawNorm_scaled`
+- `scaledDefect_is_section_defect`
+
+**Theorem 4 — subnamespace `ThreePatch`**
+
+- Maximum-score form: `no_recovery_modulus`
+- Full-score-vector form: `vector_no_recovery_modulus`
+
+**Theorem 5**
+
+- `rawNorm_eq_zero_of_allGreen`
+- Coverage consequence: `coverage_of_jointTrivial`
+
+**Theorem 6 — subnamespace `Coupled`**
+
+- `full_coverage`
+- `joint_kernel_nontrivial`
+- `allGreen_forces_zero`
+
+**Quotient-distance remark — subnamespace `QuotientWitness`**
+
+- `repair_mass_ge_two`
+- `repair_mass_attained`
+- `omega_not_exact`
+
+**Repair lemmas — namespace `MinkowskiRepair` in `minkowski_repair.lean`**
+
+- Diagonal repair: `diag_l1_iff`, `diag_l2_sq_iff`, `diag_linf_iff`.
+- The pair $(1,-1)$: `r2_l1_iff`, `r2_l2_sq_iff`, `r2_linf_iff`.
+- Skew repair: `skew_l1_iff`, `skew_l2_sq_iff`, `skew_linf_iff`, `skew_pair_values`.
+- Zero-repair, vanishing, and coincident-attainment identities: `diag_zero_l1_iff`, `diag_zero_l2_iff`, `diag_zero_linf_iff`, `diag_vanish_iff`, `skew_vanish_iff`, `skew_points_coincide_iff`, `skew_zero_l1_iff`, `skew_zero_l2_iff`, `skew_zero_linf_iff`.
+
+These 19 reported declarations are over `Rat`. Euclidean identities concern squares. The real-valued infimum and square-root statements in §4 are proved in prose. The finite-dimensional recovery proposition also has a written proof and no Lean declaration here.
+
+The `CycleBlindSpot`, `Redundancy`, `NonlinearEvaluation`, and `MinkowskiQuotient` developments in `observer_visibility.lean` are supplementary. Their historical labels “Theorem 7”, “Theorem 7-prime”, and “Redundancy Corollary” do not refer to numbered results in this manuscript, whose numbered theorems are 1–6. They remain available without enlarging the current paper's claims.
+
+Theorems 1, 2, and 5 are proved over arbitrary finite interface sets, seminormed state spaces, and contractive measurements. The Master Soundness Criterion additionally assumes `hnorm_zero` on the supplied realizable set; for arbitrary cochain subsets $S$ it establishes $S \cap K \subseteq \{0\}$, and its intersection-equals-singleton form $S \cap K = \{0\}$ uses $0 \in S$ (such as $S = \operatorname{im} D$). Theorems 3, 4, and 6 are the explicit finite systems described, with their exact constants. For Theorem 3, the Lean declarations cover the edge-level defect calculations described below. The six-site graph realization follows from the explicit assignment and calculation in §3. The exact Python replay checks the resulting edge-cochain arithmetic; it does not independently reconstruct the graph incidence operator.
+
+*Formalization boundary for Theorem 3.* The per-edge realization declaration listed above formalizes the algebraic identity $v=v-0$ on edge-indexed vectors. It does not encode the graph incidence operator or the six site objects. The graph realization used in this note is established by the explicit assignment and calculation in §3.
+
+At unit amplitude, the six-interface example has defect mass $I(s^{(1)})=6$ and score vector $(J^0(s^{(1)}), J^1(s^{(1)}), J^2(s^{(1)})) = (0, 0, 0)$. The full exact-arithmetic replays — the unit-amplitude assignment, the scaled family $I(s^{(\lambda)})=6\lvert\lambda\rvert$, the coupled system of Theorem 6, and the repair-mass minimum of the Remark — are in `code/lgr_replay.py`, with every constant pinned by exact rational equality in `code/test_lgr_replay.py`.
+
+## 7. Provenance
+
+This note extracts and restates observer-visibility results from §7.4 of the author's anchor manuscript, Projection Obstruction for Factorized States. The corresponding Zenodo release is v6.3 Pre-Print, issued on 4 September 2026, with version DOI [10.5281/zenodo.22289548](https://doi.org/10.5281/zenodo.22289548) [1]. The concept DOI [10.5281/zenodo.18896776](https://doi.org/10.5281/zenodo.18896776) identifies the anchor's version family.
+
+This note presents its mathematical statements and proof arguments directly. The accompanying Lean sources and their recorded provenance are identified in §6. The distinction there between abstract formalization and the six-site graph realization applies throughout.
+
+Nothing in this note depends on the anchor's quantum-mechanical or differential-geometric material.
+
+No external funding. No conflicts of interest.
+
+## References
+
+[1] Carroll, J. H. (2026). Projection Obstruction Anchor: Product Projections and Exact Short-Time Defect Bounds. v6.3 Pre-Print. Zenodo. https://doi.org/10.5281/zenodo.22289548.
+
+[2] Boyd, S. (2008). Observability and state estimation. EE263, Lecture 19, Stanford University, especially slides 19–5 to 19–7 and 19–17. https://ee263.stanford.edu/archive/observ.pdf.

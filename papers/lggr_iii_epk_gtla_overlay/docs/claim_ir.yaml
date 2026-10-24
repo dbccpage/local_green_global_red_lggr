@@ -1,0 +1,94 @@
+schema: lggr-claim-ir-v1
+paper_id: LGGR-III
+version: 1.5.2
+date: 2026-10-15
+claim_count: 15
+claims:
+  - claim_id: LGGR3-C01
+    mechanization_class: LEAN_FULL
+    kind: definition
+    statement: "For binary e1, e2, eg, Delta_E is eg - e1*e2."
+    lean: LGGR3.defect
+    python: EvaluatorVerdictTriple.evaluator_defect
+  - claim_id: LGGR3-C02
+    mechanization_class: LEAN_FULL
+    kind: proven
+    statement: "The binary defect lies in the set {-1, 0, 1}."
+    lean: LGGR3.defect_range
+    python: classify_defect
+  - claim_id: LGGR3-C03
+    mechanization_class: LEAN_FULL
+    kind: proven
+    statement: "The one-trace triple (1, 1, 0) has defect -1."
+    lean: LGGR3.local_green_global_red
+    python: EvaluatorVerdictTriple.is_local_green_global_red
+  - claim_id: LGGR3-C04
+    mechanization_class: LEAN_FULL
+    kind: proven
+    statement: "For every finite sample, sum(eg) - sum(e1*e2) equals sum(Delta_E)."
+    lean: LGGR3.global_sub_local_eq_defect_sum
+    python: audit_sample
+  - claim_id: LGGR3-C05
+    mechanization_class: LEAN_FULL
+    kind: proven
+    statement: "A zero total defect does not imply zero pointwise defects."
+    lean: LGGR3.binary_defect_cancellation
+    python: AggregateAudit.has_aggregate_cancellation
+  - claim_id: LGGR3-C06
+    mechanization_class: LEAN_FULL
+    kind: worked_example
+    statement: "The five archived triples have global, local-product, and defect totals (1, 3, -2)."
+    lean: LGGR3.phone_totals
+    python: phone_test
+  - claim_id: LGGR3-C07
+    mechanization_class: LEAN_FULL
+    kind: conditional_proof
+    statement: "If the composite integer weights are the flattened products of the boundary weight lists, the composite sum equals the sum over boundaries of left-sum times right-sum, and the residual is zero."
+    lean: LGGR3.factorized_integer_kernel_has_zero_residual
+    python: integer_kernel_residual_is_zero; audit_kernel_composition
+    open_obligation: PL-025-8
+  - claim_id: LGGR3-C08
+    mechanization_class: LEAN_FULL
+    kind: proven
+    statement: "An evaluator that factors through a quotient is constant on each equivalence class."
+    lean: LGGR3.quotient_evaluator_constant
+    python: quotient_class_violations
+  - claim_id: LGGR3-C09
+    mechanization_class: LEAN_FULL
+    kind: proven
+    statement: "Different verdicts on equivalent elements obstruct evaluator descent."
+    lean: LGGR3.quotient_evaluator_obstruction
+    python: descend_evaluator
+  - claim_id: LGGR3-C10
+    mechanization_class: LEAN_PARTIAL
+    kind: definition
+    statement: "The overlay reuses one defect record across six named roles with role-specific context."
+    lean: LGGR3.six_roles
+    lean_scope: "Only the six-item list length is mechanized."
+    python: RoleOverlay; ROLE_NAMES
+  - claim_id: LGGR3-C11
+    mechanization_class: LEAN_FULL
+    kind: proven
+    statement: "For S_w(R)=wR, changing w can change the score of fixed R."
+    lean: LGGR3.observer_weights_can_change_a_score
+    python: observer_score
+  - claim_id: LGGR3-C12
+    mechanization_class: LEAN_FULL
+    kind: conditional_proof
+    statement: "Keeping (e1, e2, eg) fixed keeps Delta_E fixed."
+    lean: LGGR3.fixed_observation_preserves_defect
+    python: fixed_observation_preserves_defect
+  - claim_id: LGGR3-C13
+    mechanization_class: SCOPE_FENCE
+    kind: scope_fence
+    statement: "The paper defines a signed comparison defect, not a cochain complex."
+  - claim_id: LGGR3-C14
+    mechanization_class: PYTHON_INSTANCE
+    kind: open
+    statement: "Constant-output rejection is not a task-specific evaluator-adequacy certificate."
+    python: require_non_collapsing
+    open_obligation: PL-025-6
+  - claim_id: LGGR3-C15
+    mechanization_class: LITERATURE
+    kind: interpretive
+    statement: "The cited sheaf, contract, weighted-automata, and monadic formalisms are related languages, not identified theories."

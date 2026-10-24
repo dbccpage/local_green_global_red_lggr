@@ -1,0 +1,18 @@
+Paper IV Lean axiom report
+Date: 2026-10-15
+Toolchain: Lean (version 4.33.1, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)
+Build target: LGGR4
+Build result: success
+Census command: lake env lean check_axioms.lean
+
+'LggrIV.not_FinDesc_iff' does not depend on any axioms
+'LggrIV.stage_collision_witness' does not depend on any axioms
+'LggrIV.finite_notFinDesc_iff_collisions' depends on axioms: [propext, Quot.sound]
+'LggrIV.finite_stage_identity' depends on axioms: [propext, Quot.sound]
+'LggrIV.neg_two_pow_eq' depends on axioms: [propext, Quot.sound]
+'LggrIV.finite_stage_divisibility' depends on axioms: [propext, Quot.sound]
+'LggrIV.thread_compatibility' depends on axioms: [propext, Quot.sound]
+'LggrIV.no_integral_global_solution' depends on axioms: [propext, Quot.sound]
+'LggrIV.reflection_descent_criterion' does not depend on any axioms
+'LggrIV.finite_chain_limit_nonempty' depends on axioms: [propext]
+'LggrIV.overlap_dual_residual' depends on axioms: [propext, Quot.sound]

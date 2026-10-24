@@ -1,0 +1,57 @@
+schema_version: lggr-claim-code-map-v1
+paper: lggr_vi_nonlinear_aggregation_and_adjoint_probing
+claims:
+  - claim_id: LGGRVI-C01
+    manuscript: "Theorem 1"
+    python:
+      - "lggr_vi_core.postprocessing_invariant"
+      - "test_deterministic_postprocessing_cannot_split_equal_observations"
+    lean:
+      - "LGGRVI.postprocessing_invariance"
+  - claim_id: LGGRVI-C02
+    manuscript: "Corollary 1"
+    python:
+      - "lggr_vi_core.unanimous_green"
+      - "lggr_vi_core.k_of_n_green"
+      - "test_zero_preserving_aggregators"
+    lean:
+      - "LGGRVI.zero_preserving_accepts_hidden"
+  - claim_id: LGGRVI-C03
+    manuscript: "Theorem 2"
+    status: "classical Euclidean background"
+    python:
+      - "lggr_vi_core.ObservationSystem.cylinder_radius"
+      - "test_kernel_visible_decomposition_and_cylinder_bound"
+    lean: []
+  - claim_id: LGGRVI-C04
+    manuscript: "Theorem 3"
+    python:
+      - "lggr_vi_core.exact_apply_gram"
+      - "lggr_vi_core.exact_mul_vec"
+      - "test_exact_rational_identities_call_shipped_checkers"
+    lean:
+      - "LGGRVI.gram_zero_iff_hidden"
+      - "LGGRVI.detectable_has_nonzero_gram"
+      - "LGGRVI.gram_kernel_iff"
+      - "LGGRVI.gram_detectable_iff"
+    lean_boundary: "rational matrix identity; orthogonal range is not Lean"
+  - claim_id: LGGRVI-C05
+    manuscript: "Theorem 4"
+    python:
+      - "lggr_vi_core.exact_centered_derivative"
+      - "test_exact_rational_identities_call_shipped_checkers"
+    lean:
+      - "LGGRVI.centered_directional_identity"
+  - claim_id: LGGRVI-C06
+    manuscript: "Theorem 5"
+    python:
+      - "lggr_vi_core.exact_sign_cube_average"
+      - "test_exact_rational_identities_call_shipped_checkers"
+    lean:
+      - "LGGRVI.sign_cube_recovers"
+  - claim_id: LGGRVI-C07
+    manuscript: "Section 5"
+    python:
+      - "lggr_vi_core.break_and_recover_kernel_vector"
+      - "test_mutation_breaks_and_restoration_recovers_kernel_claim"
+    lean: []

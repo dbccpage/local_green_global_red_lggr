@@ -1,0 +1,873 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\pdftrailerid{}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% obstruction_preamble.tex — shared house style for ALL papers.
+% Engine: pdfLaTeX (portable, no font cache). Injected by pandoc (see makefile).
+% pandoc loads fontenc(T1)+inputenc(utf8) before this; hyperref after (so we set
+% link colors via pandoc -V flags, not here).
+
+% ---- Fonts & math ----
+\IfFileExists{lmodern.sty}{\usepackage{lmodern}}{}   % Latin Modern if present
+\usepackage{amsmath,amssymb,amsthm}                  % \mathbb \mathfrak \square ...
+\usepackage{microtype}
+
+% ---- Over-wide \boxed kernel statements shrink to fit the text width ----
+% A long \boxed{\text{...}} line can exceed \linewidth because \text does not
+% line-break in math mode. "max width=\linewidth" scales down ONLY boxes that
+% are wider than the text block; short math boxes are left at natural size.
+% One place, all papers.
+\usepackage{adjustbox}
+\let\oboldboxed\boxed
+\renewcommand{\boxed}[1]{\adjustbox{max width=\linewidth}{\oboldboxed{#1}}}
+\setlength{\emergencystretch}{3em}
+
+% ---- Line breaking for verbatim and code blocks ----
+\usepackage{fancyvrb}
+
+% ---- Safe line breaking for typewriter font & long URLs/DOIs ----
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\usepackage[hyphens]{url}
+
+
+% ---- Flawless fix: literal Unicode (ℓ¹ Φ₁ κ¹ ⊗ →) in TEXT mode ----
+% In $...$ these already work; this maps stray text-mode glyphs to math so
+% nothing renders blank and you never rewrite source. If a build ever says
+% "Unicode character X not set up", add one line here for that glyph.
+\usepackage{newunicodechar}
+\newcommand{\um}[1]{\ensuremath{#1}}
+\newunicodechar{ℓ}{\um{\ell}}
+\newunicodechar{Φ}{\um{\Phi}}\newunicodechar{φ}{\um{\varphi}}
+\newunicodechar{Ψ}{\um{\Psi}}\newunicodechar{ψ}{\um{\psi}}
+\newunicodechar{⇔}{\um{\Leftrightarrow}}
+\newunicodechar{Γ}{\um{\Gamma}}\newunicodechar{γ}{\um{\gamma}}
+\newunicodechar{Ω}{\um{\Omega}}\newunicodechar{ω}{\um{\omega}}
+\newunicodechar{κ}{\um{\kappa}}\newunicodechar{χ}{\um{\chi}}
+\newunicodechar{Λ}{\um{\Lambda}}\newunicodechar{λ}{\um{\lambda}}
+\newunicodechar{Θ}{\um{\Theta}}\newunicodechar{θ}{\um{\theta}}
+\newunicodechar{Δ}{\um{\Delta}}\newunicodechar{δ}{\um{\delta}}
+\newunicodechar{Σ}{\um{\Sigma}}\newunicodechar{σ}{\um{\sigma}}
+\newunicodechar{Π}{\um{\Pi}}\newunicodechar{π}{\um{\pi}}
+\newunicodechar{α}{\um{\alpha}}\newunicodechar{β}{\um{\beta}}
+\newunicodechar{ε}{\um{\varepsilon}}\newunicodechar{μ}{\um{\mu}}
+\newunicodechar{ρ}{\um{\rho}}\newunicodechar{τ}{\um{\tau}}
+\newunicodechar{ν}{\um{\nu}}\newunicodechar{ξ}{\um{\xi}}
+\newunicodechar{ζ}{\um{\zeta}}\newunicodechar{η}{\um{\eta}}
+\newunicodechar{ℝ}{\um{\mathbb{R}}}\newunicodechar{ℚ}{\um{\mathbb{Q}}}
+\newunicodechar{ℤ}{\um{\mathbb{Z}}}\newunicodechar{ℕ}{\um{\mathbb{N}}}
+\newunicodechar{ℂ}{\um{\mathbb{C}}}
+\newunicodechar{𝒟}{\um{\mathcal{D}}}
+\newunicodechar{→}{\um{\to}}\newunicodechar{↦}{\um{\mapsto}}
+\newunicodechar{≤}{\um{\leq}}\newunicodechar{≥}{\um{\geq}}
+\newunicodechar{≠}{\um{\neq}}\newunicodechar{≈}{\um{\approx}}
+\newunicodechar{≅}{\um{\cong}}\newunicodechar{≡}{\um{\equiv}}
+\newunicodechar{⊗}{\um{\otimes}}\newunicodechar{⊕}{\um{\oplus}}
+\newunicodechar{∘}{\um{\circ}}\newunicodechar{∂}{\um{\partial}}
+\newunicodechar{∇}{\um{\nabla}}\newunicodechar{∑}{\um{\sum}}
+\newunicodechar{∏}{\um{\prod}}\newunicodechar{∞}{\um{\infty}}
+\newunicodechar{⊆}{\um{\subseteq}}\newunicodechar{⊂}{\um{\subset}}
+\newunicodechar{⊇}{\um{\supseteq}}\newunicodechar{∈}{\um{\in}}
+\newunicodechar{∉}{\um{\notin}}\newunicodechar{∩}{\um{\cap}}
+\newunicodechar{∪}{\um{\cup}}\newunicodechar{∖}{\um{\setminus}}
+\newunicodechar{∅}{\um{\varnothing}}\newunicodechar{⊥}{\um{\perp}}
+\newunicodechar{∀}{\um{\forall}}\newunicodechar{∃}{\um{\exists}}
+\newunicodechar{±}{\um{\pm}}\newunicodechar{×}{\um{\times}}\newunicodechar{−}{\um{-}}
+\newunicodechar{·}{\um{\cdot}}\newunicodechar{√}{\um{\surd}}
+\newunicodechar{⟨}{\um{\langle}}\newunicodechar{⟩}{\um{\rangle}}
+\newunicodechar{≪}{\um{\ll}}\newunicodechar{≫}{\um{\gg}}
+\newunicodechar{∝}{\um{\propto}}\newunicodechar{≜}{\um{\triangleq}}
+\newunicodechar{⇒}{\um{\Rightarrow}}\newunicodechar{⇐}{\um{\Leftarrow}}
+\newunicodechar{∧}{\um{\wedge}}\newunicodechar{∨}{\um{\vee}}
+\newunicodechar{⟺}{\um{\iff}}\newunicodechar{□}{\um{\square}}
+\newunicodechar{⊔}{\um{\sqcup}}\newunicodechar{…}{\dots}\newunicodechar{‖}{\um{\Vert}}
+\newunicodechar{▼}{\um{\blacktriangledown}}\newunicodechar{«}{\guillemotleft}\newunicodechar{»}{\guillemotright}
+\newunicodechar{─}{--}\newunicodechar{│}{|}\newunicodechar{┌}{+}\newunicodechar{┐}{+}\newunicodechar{┼}{+}
+\newunicodechar{═}{=}\newunicodechar{║}{\um{\parallel}}\newunicodechar{̄}{\={}}
+\newunicodechar{⟹}{\um{\implies}}\newunicodechar{⟸}{\um{\impliedby}}
+\newunicodechar{⁰}{\textsuperscript{0}}\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{²}{\textsuperscript{2}}\newunicodechar{³}{\textsuperscript{3}}
+\newunicodechar{⁴}{\textsuperscript{4}}\newunicodechar{⁵}{\textsuperscript{5}}
+\newunicodechar{⁶}{\textsuperscript{6}}\newunicodechar{⁷}{\textsuperscript{7}}
+\newunicodechar{⁸}{\textsuperscript{8}}\newunicodechar{⁹}{\textsuperscript{9}}
+\newunicodechar{⁻}{\textsuperscript{-}}\newunicodechar{⁺}{\textsuperscript{+}}
+\newunicodechar{ⁿ}{\textsuperscript{n}}
+\newunicodechar{₀}{\textsubscript{0}}\newunicodechar{₁}{\textsubscript{1}}\newunicodechar{ᵀ}{\textsuperscript{T}}
+\newunicodechar{₂}{\textsubscript{2}}\newunicodechar{₃}{\textsubscript{3}}
+\newunicodechar{ₜ}{\textsubscript{t}}\newunicodechar{ₑ}{\textsubscript{e}}\newunicodechar{ₙ}{\textsubscript{n}}
+
+% ---- Geometry & spacing ----
+\usepackage{geometry}\geometry{letterpaper,margin=1in}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0.55\baselineskip}\linespread{1.04}
+
+% ---- Palette ----
+\usepackage{xcolor}
+\definecolor{oblink}{HTML}{1A4D8F}\definecolor{obrule}{HTML}{C2CCD6}
+\definecolor{obboxbg}{HTML}{F6F8FA}
+\definecolor{obproven}{HTML}{1B7F4B}   % PROVEN / DERIVED / STANDARD
+\definecolor{obconj}{HTML}{B45309}     % CONJECTURE / OPEN / FALSE
+\definecolor{obdef}{HTML}{6B21A8}      % DEFINITION / INTERPRETIVE
+\definecolor{obneutral}{HTML}{475569}
+
+% ---- Headings ----
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+
+% ---- Theorem environments (for when you adopt semantic theorems) ----
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem*{remark}{Remark}
+
+% ---- Blockquotes -> one uniform left-ruled callout ----
+% pandoc wraps every `>` block (your theorems, Status notes, caveats) in `quote`.
+\usepackage{mdframed}
+\renewenvironment{quote}{%
+  \begin{mdframed}[linewidth=0pt,leftline=true,linecolor=obrule,
+    rightline=false,topline=false,bottomline=false,
+    innerleftmargin=1em,innerrightmargin=0.8em,innertopmargin=0.5em,
+    innerbottommargin=0.5em,skipabove=0.6em,skipbelow=0.6em,
+    backgroundcolor=obboxbg]\small}{\end{mdframed}}
+
+% ---- Claim-type tag macro ----
+\newcommand{\claimtag}[2]{{\small\sffamily\bfseries\color{#1}[#2]}}
+
+% ---- Inline code / file references -> standard breakable typewriter font ----
+\DeclareRobustCommand{\texttt}[1]{%
+  \ifmmode
+    \mathtt{#1}%
+  \else
+    {\ttfamily\small\renewcommand{\_}{\symbol{95}\allowbreak}#1}%
+  \fi}
+
+
+
+% ---- "What this does not claim" box ----
+\usepackage[most]{tcolorbox}
+\newtcolorbox{nonclaim}{colback=obboxbg,colframe=obrule,boxrule=0.6pt,arc=2pt,
+  left=1em,right=1em,top=0.5em,bottom=0.5em,
+  title={What this does not claim},fonttitle=\bfseries,
+  coltitle=black,colbacktitle=obboxbg}
+
+% ---- Tables ----
+\usepackage{booktabs}\renewcommand{\arraystretch}{1.15}
+\usepackage{etoolbox}
+% Compact tables, and let over-long \mathsf{CamelCase} status identifiers wrap
+% inside cells. In math, \mathsf{ContinuumShadowBecomesFakeAuthority} is a single
+% unbreakable atom and overruns narrow pandoc columns. Scoped to tables only, we
+% re-render \mathsf as a sequence of per-word \mathsf atoms split before each
+% interior capital and joined by \allowbreak, so the identifier wraps at the math
+% top level (an \allowbreak between atoms IS a legal break in inline math; a text
+% \mbox/\seqsplit is not). Also shrink the table font and tighten column padding.
+% Body math is untouched; table cells carry only plain ASCII identifiers, so the
+% splitter is emoji-safe. One place, all papers.
+\let\obmathsforig\mathsf
+\ExplSyntaxOn
+\tl_new:N \l__obt_run_tl
+\int_new:N \l__obt_i_int
+\cs_new_protected:Npn \__obt_emit:
+  {
+    \tl_if_empty:NF \l__obt_run_tl
+      {
+        \int_compare:nNnT { \l__obt_i_int } > { 1 } { \allowbreak }
+        \exp_args:NV \obmathsforig \l__obt_run_tl
+        \int_incr:N \l__obt_i_int
+        \tl_clear:N \l__obt_run_tl
+      }
+  }
+\cs_new_protected:Npn \obtablesf #1
+  {
+    \tl_clear:N \l__obt_run_tl
+    \int_set:Nn \l__obt_i_int { 1 }
+    \tl_map_inline:nn {#1}
+      {
+        \str_if_eq:eeT { \str_uppercase:n {##1} } {##1}
+          { \str_if_eq:eeF { \str_lowercase:n {##1} } {##1} { \__obt_emit: } }
+        \tl_put_right:Nn \l__obt_run_tl {##1}
+      }
+    \__obt_emit:
+  }
+\ExplSyntaxOff
+\AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{4pt}\let\mathsf\obtablesf}
+\AtBeginEnvironment{tabular}{\let\mathsf\obtablesf}
+
+% ---- Title block polish (pandoc \maketitle) ----
+% Title and subtitle both centered under each other. Body metadata stays plain
+% roman (never a monospaced identity dump). Public monographs must not put
+% internal programme IDs (PO-xxx, GS-xxx, …) in the title line.
+\usepackage{titling}
+\newcommand{\obsubtitle}{}
+% Capture pandoc's \subtitle{...} (provide later is a no-op once this is defined).
+\newcommand{\subtitle}[1]{\gdef\obsubtitle{#1}}
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{%
+  \par
+  \ifx\obsubtitle\empty\else
+    \vskip0.4em
+    {\large\itshape \obsubtitle\par}%
+  \fi
+  \end{center}\vskip0.75em}
+\preauthor{\begin{center}\large}\postauthor{\par\end{center}}
+\predate{\begin{center}\normalsize}\postdate{\par\end{center}\vskip0.5em\hrule\vskip1em}
+
+% ---- Status-box markers (emoji rendered as text glyphs; one place, all papers) ----
+\newunicodechar{§}{\S}
+\newunicodechar{–}{--}
+\newunicodechar{—}{---}
+\newunicodechar{‘}{`}
+\newunicodechar{’}{'}
+\newunicodechar{“}{``}
+\newunicodechar{”}{''}
+\newunicodechar{✅}{\um{\checkmark}}
+\newunicodechar{⚠}{\textbf{!}}
+\newunicodechar{☣}{\um{\boxtimes}}
+\newunicodechar{⊣}{\um{\dashv}}
+\newunicodechar{🔷}{\textcolor{oblink}{\um{\blacklozenge}}}
+\newunicodechar{️}{}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  colorlinks=true,
+  linkcolor={oblink},
+  filecolor={Maroon},
+  citecolor={oblink},
+  urlcolor={oblink},
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\hypersetup{
+  pdftitle={Local Green, Global Red I: Evaluated Path Kernels for Composed Agent Reliability},
+  pdfauthor={Jeremy H. Carroll},
+  pdfsubject={Version 1.2.4; 2026-10-15; preprint; Zenodo lineage DOI 10.5281/zenodo.20675803},
+  pdfkeywords={evaluated path kernels, evaluator gluing defect, finite sample identities, Lean 4, reproducible research, composed agents, AI reliability}
+}
+\begin{document}
+
+\section{Local Green, Global Red I}\label{local-green-global-red-i}
+
+\subsection{Evaluated Path Kernels for Composed Agent Reliability}\label{evaluated-path-kernels-for-composed-agent-reliability}
+
+\textbf{Author:} Jeremy H. Carroll
+
+\textbf{Date:} 2026-10-15
+
+\textbf{Version:} 1.2.4
+
+\textbf{DOI:} \href{https://zenodo.org/records/22881911}{10.5281/zenodo.22881911} (lineage / previous version: \href{https://doi.org/10.5281/zenodo.20675803}{10.5281/zenodo.20675803})
+
+\subsection{Abstract}\label{abstract}
+
+A composed system can pass each local check yet fail its end-to-end test. For
+binary local verdicts \(E_1,E_2\) and global verdict \(E_g\), define the
+evaluator gluing defect
+
+\[
+\Delta_E=E_g-E_1E_2\in\{-1,0,1\}.
+\]
+
+We prove finite sample identities, a conditional composition theorem for
+weighted path sums, and its residual when evaluator judgments do not factor.
+We characterize the summaries that retain defect information and show how a
+carrier collision can place a globally failing trace in a locally green class.
+Python, Lean 4, and notebook companions are included. The benchmarks are
+proposed testbeds; no benchmark result or population-level claim is reported.
+
+\subsection{1. Finite setup}\label{finite-setup}
+
+Let \(\mathsf S\) be a finite set of states. For \(a,b\in\mathsf S\), let
+\(\Omega(a,b)\) be a finite set of recorded trajectories from \(a\) to \(b\).
+Each trajectory has a non-negative weight \(w(\gamma)\) and a binary evaluator
+\(E(\gamma)\in\{0,1\}\). The evaluated path kernel is
+
+\[
+Z_E(b\mid a)
+  =\sum_{\gamma\in\Omega(a,b)}E(\gamma)w(\gamma).
+\]
+
+The action-weighted instance uses
+\(w(\gamma)=\exp[-\beta\mathcal A(\gamma)]\) with \(\beta\ge0\).
+Section 6 adds proposal, cost, and risk factors. All sums in this paper are
+finite.
+
+Suppose a trajectory from \(a\) to \(c\) is considered in two stages, with a
+declared boundary state \(b\):
+
+\[
+\gamma=\gamma_2\star\gamma_1,\qquad
+\gamma_1:a\to b,\quad\gamma_2:b\to c.
+\]
+
+Write \(E_1=E(\gamma_1)\), \(E_2=E(\gamma_2)\), and
+\(E_g=E(\gamma_2\star\gamma_1)\). The local joint verdict is
+\(L=E_1E_2\).
+
+\subsection{2. The evaluator defect}\label{the-evaluator-defect}
+
+\subsubsection{2.1 Definition and normal forms}\label{definition-and-normal-forms}
+
+Define
+
+\[
+\Delta_E(\gamma_2,\gamma_1)=E_g-E_1E_2.
+\]
+
+Because \(E_g,L\in\{0,1\}\), exactly one of three cases occurs:
+
+\begin{longtable}[]{@{}lrrr@{}}
+\toprule\noalign{}
+Name & \(\Delta_E\) & Local joint verdict & Global verdict \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+negative gluing defect (NGD) & \(-1\) & \(1\) & \(0\) \\
+zero defect residual (ZDR) & \(0\) & \(0\) or \(1\) & same as \(L\) \\
+positive gluing defect (PGD) & \(+1\) & \(0\) & \(1\) \\
+\end{longtable}
+
+Thus ``local green, global red'' is precisely the NGD case. One instance,
+\((E_1,E_2,E_g)=(1,1,0)\), is already a counterexample to the implication
+\(E_1=E_2=1\Rightarrow E_g=1\).
+
+\subsubsection{2.2 Five-trace example}\label{five-trace-example}
+
+This worked example records the absolute local and global verdicts so that the
+defect can be recomputed, rather than reporting only a pass-rate total.
+
+\begin{longtable}[]{@{}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1481}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1481}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1481}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1481}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1481}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1481}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1111}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedleft
+Trace
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(E_1\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(E_2\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(L=E_1E_2\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(E_g\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(\Delta_E\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Kind
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 1 & 1 & 1 & 1 & 0 & ZDR \\
+2 & 1 & 1 & 1 & 0 & -1 & NGD \\
+3 & 1 & 1 & 1 & 0 & -1 & NGD \\
+4 & 1 & 0 & 0 & 0 & 0 & ZDR \\
+5 & 0 & 1 & 0 & 0 & 0 & ZDR \\
+\end{longtable}
+
+For these five traces,
+
+\[
+\mathrm{LPR}=3/5,\quad
+\mathrm{GPR}=1/5,\quad
+\overline{\Delta}_E=-2/5,\quad
+\mathrm{NGD}=2/5.
+\]
+
+The numbers are a computed fixture, not an empirical estimate.
+
+\subsubsection{2.3 Exact sample identities}\label{exact-sample-identities}
+
+For a nonempty sample of \(N\) traces, let \(n_-,n_+,n_0\) be the NGD, PGD,
+and ZDR counts. Let
+
+\[
+\mathrm{LPR}=\frac1N\sum_i L_i,\qquad
+\mathrm{GPR}=\frac1N\sum_i E_{g,i},\qquad
+\mathrm{EGD}=\frac{n_-+n_+}{N}.
+\]
+
+Summing \(E_{g,i}-L_i=\Delta_{E,i}\) gives
+
+\[
+\mathrm{GPR}-\mathrm{LPR}
+ =\overline{\Delta}_E
+ =\frac{n_+-n_-}{N}.
+\]
+
+The trichotomy gives
+
+\[
+n_-+n_++n_0=N,\qquad
+\mathrm{EGD}=\frac{n_-+n_+}{N}.
+\]
+
+Consequently,
+
+\[
+2n_+=N\,\mathrm{EGD}+\sum_i\Delta_{E,i},\qquad
+2n_-=N\,\mathrm{EGD}-\sum_i\Delta_{E,i}.
+\]
+
+These formulas show both the value and the limit of aggregate rates. LPR and
+GPR determine the signed balance \(n_+-n_-\), but not the absolute defect
+count \(n_-+n_+\). A sample containing one NGD and one PGD has zero signed
+defect while retaining two pointwise discrepancies.
+
+Global failures split into two disjoint classes:
+
+\[
+\#\{E_g=0\}=n_-+\#\{L=0,E_g=0\}.
+\]
+
+NGD therefore measures the locally passing part of global failure; it is not
+the global-failure rate itself.
+
+\subsection{3. Conditional kernel composition}\label{conditional-kernel-composition}
+
+Let \(\mathsf B\subseteq\mathsf S\) be a declared intermediate slice. Exact
+composition uses three hypotheses.
+
+\begin{itemize}
+\item
+  \textbf{G1, boundary-slice bijection.} Concatenation and splitting give a
+  bijection
+
+  \[
+  \Omega(a,c)\;\cong\;
+  \bigsqcup_{b\in\mathsf B}
+  \bigl(\Omega(b,c)\times\Omega(a,b)\bigr).
+  \]
+
+  Thus every \(\gamma\in\Omega(a,c)\) has exactly one representation
+  \((b,\gamma_2,\gamma_1)\), and conversely every compatible segment pair in
+  the displayed dependent disjoint union concatenates to an admitted global
+  path. No compatible pair is omitted or duplicated.
+\item
+  \textbf{G2, multiplicative weight.}
+  \(w(\gamma_2\star\gamma_1)=w_2(\gamma_2)w_1(\gamma_1)\).
+  For action weights this follows from
+  \(\mathcal A(\gamma_2\star\gamma_1)
+    =\mathcal A(\gamma_2)+\mathcal A(\gamma_1)\).
+\item
+  \textbf{G3, evaluator factorization.}
+  \(E_g(\gamma_2\star\gamma_1)=E_2(\gamma_2)E_1(\gamma_1)\).
+\end{itemize}
+
+\textbf{Theorem 1 (evaluated path-kernel composition).} Under G1--G3,
+
+\[
+Z_E(c\mid a)
+=\sum_{b\in\mathsf B}Z_{E_2}(c\mid b)Z_{E_1}(b\mid a).
+\]
+
+\textbf{Proof.} G1 reindexes the global finite sum by the unique boundary and the
+two segment paths. G2 and G3 factor each summand:
+
+\[
+\begin{aligned}
+Z_E(c\mid a)
+&=\sum_{b\in\mathsf B}
+  \sum_{\gamma_2,\gamma_1}
+  E_g(\gamma_2\star\gamma_1)
+  w(\gamma_2\star\gamma_1)\\
+&=\sum_{b\in\mathsf B}
+  \sum_{\gamma_2,\gamma_1}
+  E_2(\gamma_2)w_2(\gamma_2)
+  E_1(\gamma_1)w_1(\gamma_1)\\
+&=\sum_{b\in\mathsf B}
+  Z_{E_2}(c\mid b)Z_{E_1}(b\mid a).
+\end{aligned}
+\]
+
+The theorem is sufficient, not biconditional: an aggregate equality can hold
+through cancellation even when G3 fails pointwise.
+
+\subsection{4. Residual decomposition}\label{residual-decomposition}
+
+Assume G1 and G2, but do not assume G3. Substituting
+\(E_g=E_1E_2+\Delta_E\) gives the exact identity
+
+\[
+Z_E(c\mid a)
+=\sum_{b\in\mathsf B}Z_{E_2}(c\mid b)Z_{E_1}(b\mid a)
++R_E(c,a),
+\]
+
+where
+
+\[
+R_E(c,a)=
+\sum_{b,\gamma_2,\gamma_1}
+\Delta_E(\gamma_2,\gamma_1)
+w_2(\gamma_2)w_1(\gamma_1).
+\]
+
+The residual is signed. Hence \(R_E=0\) says that the weighted sum vanishes;
+it does not say \(\Delta_E=0\) for every pair.
+
+If the global weight also fails to factor, write
+
+\[
+w_g=w_1w_2+\Delta_w.
+\]
+
+Then each global contribution expands as
+
+\[
+E_gw_g
+=E_1E_2w_1w_2
++\Delta_Ew_1w_2
++E_1E_2\Delta_w
++\Delta_E\Delta_w.
+\]
+
+This is the fully corrected two-channel bookkeeping identity. The Lean
+development checks the abstract integer-weight expansion. The displayed
+real-exponential instance is not a Lean real-analysis theorem.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Finite defect diagnostics and model curves}]{public_export/figure_lggr_phase_boundary.png}}
+\caption{Finite defect diagnostics and model curves}
+\end{figure}
+
+\subsection{5. Information retained by a dashboard}\label{information-retained-by-a-dashboard}
+
+The finite Boolean model permits sharper statements than a two-rate summary.
+The claim identifiers below match the Lean root module and the claim ledger.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{E3--E4.} Local pass count alone does not determine the global pass count,
+  NGD count, or signed defect. A quotient that remembers only the local
+  verdict cannot carry \(E_g\) or \(\Delta_E\).
+\item
+  \textbf{E5--E8.} NGD, PGD, and ZDR have the normal forms in Section 2.
+  EGD is NGD plus PGD, while the signed defect is PGD minus NGD.
+\item
+  \textbf{E9--E11.} LPR and GPR do not determine EGD. EGD together with signed
+  defect reconstructs the oriented defect counts, and NGD count is bounded
+  by the local-pass count.
+\item
+  \textbf{E12--E16.} The pair \((L,E_g)\) carries the defect packet
+  \((\Delta_E,\mathrm{kind})\). The packet alone does not recover the two
+  absolute verdicts, but the packet plus either one does. Three diagnostic
+  classes exist, so no single Boolean key can encode the exact diagnostic
+  quotient.
+\item
+  \textbf{E17--E18.} A collision under an observed carrier becomes a zero-relation
+  in the induced quotient, and global failures partition into NGD and
+  local-red/global-red traces.
+\end{enumerate}
+
+These are statements about information in finite records. They do not assess
+whether the evaluators themselves are semantically adequate.
+
+\subsection{6. Proposal-weighted paths}\label{proposal-weighted-paths}
+
+Let a proposal mechanism assign non-negative mass \(P_\theta(\gamma)\), with
+cost \(C(\gamma)\) and risk \(R(\gamma)\). One useful finite kernel is
+
+\[
+Z_\theta(b\mid a)=
+\sum_{\gamma\in\Omega(a,b)}
+E(\gamma)P_\theta(\gamma)
+\exp[-\lambda C(\gamma)-\mu R(\gamma)],
+\]
+
+where \(\lambda,\mu\ge0\). For the displayed proposal--cost--risk kernel, G2
+is ensured by additive cost and risk under concatenation. At fixed penalties,
+equality of the combined weighted cost is sufficient; requiring factorization
+for all independently variable nonnegative penalties forces the separate
+additive identities. The implementation keeps three modes distinct:
+action weight, proposal-cost-risk weight, and their hybrid.
+
+For two-stage composition, add:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{G4, proposal factorization.}
+  \(P_\theta(\gamma_2\star\gamma_1)
+   =P_\theta(\gamma_2)P_\theta(\gamma_1)\).
+\end{itemize}
+
+Under G1--G4, the proof of Theorem 1 applies to the proposal-weighted
+contribution. The evaluator residual in this mode uses the same proposal,
+cost, and risk weight as the kernel. This extension is conditional on the
+declared factorization; it does not claim that an arbitrary language-model
+proposal distribution has that property.
+
+\subsection{7. Two conditional engineering models}\label{two-conditional-engineering-models}
+
+\subsubsection{7.1 Active support density}\label{active-support-density}
+
+Let \(C(\alpha)\) denote capability and \(D(\alpha)\) defect probability in a
+declared model with active-support parameter \(\alpha\in[0,1]\). Define
+
+\[
+S(\alpha)=C(\alpha)(1-D(\alpha)).
+\]
+
+If \(C,D\) are differentiable, then
+
+\[
+S'(\alpha)=C'(\alpha)(1-D(\alpha))-C(\alpha)D'(\alpha).
+\]
+
+An interior optimum satisfies
+
+\[
+C'(\alpha^\ast)(1-D(\alpha^\ast))
+=C(\alpha^\ast)D'(\alpha^\ast).
+\]
+
+A strict change of sign from positive to negative at \(\alpha^\ast\) is a
+sufficient single-crossing condition for the claimed reversal. The calculus
+does not derive that condition from primitive assumptions, and a boundary
+optimum need not satisfy the interior equation.
+
+\subsubsection{7.2 Product and mixture aggregation}\label{product-and-mixture-aggregation}
+
+Let \(\mathcal W\) be a nonempty finite candidate set and let each expert score
+be non-negative. Define
+
+\[
+D_{\mathrm{PoE}}=\sum_{\eta\in\mathcal W}\prod_e p_e(\eta).
+\]
+
+The normalized Product of Experts is defined only under the common-support
+condition \(D_{\mathrm{PoE}}>0\), equivalently when at least one candidate has
+strictly positive score from every expert. Under that condition,
+
+\[
+p_{\mathrm{PoE}}(W)
+=\frac{\prod_e p_e(W)}
+       {D_{\mathrm{PoE}}}.
+\]
+
+If \(p_e(W)\propto e^{-J_e(W)}\), its energy is additive up to the
+normalization constant. A zero from any hard expert forces that candidate's
+numerator, and hence its normalized probability when
+\(D_{\mathrm{PoE}}>0\), to zero. If the experts have no common positive-support
+candidate, the denominator is zero and the normalized distribution is
+undefined. A Mixture of Experts instead forms a weighted sum. The resulting
+false-accept/false-reject tradeoff is an engineering interpretation, not a
+general dominance theorem.
+
+\subsection{8. Carrier collisions}\label{carrier-collisions}
+
+Let \(\pi:\Omega\to P\) record only a finite packet. An evaluator is
+packet-bounded when it has the form \(e\circ\pi\). If
+\(\pi(\gamma)=\pi(\gamma')\), every packet-bounded evaluator gives the same
+verdict on the pair. Therefore, if a target verdict differs on a packet
+fiber, no packet-bounded evaluator realizes that target exactly.
+
+For two local carriers, let
+\(\Pi(\gamma_2,\gamma_1)=(\pi_2(\gamma_2),\pi_1(\gamma_1))\).
+The local product is constant on every \(\Pi\)-fiber. If such a fiber is
+locally green but contains two different global verdicts, one member has
+\(\Delta_E=-1\). Any downstream map applied only after \(\Pi\) preserves the
+collision. Conversely, when \(E_g\) is constant on every fiber, the diagnostic
+pair \((L,E_g)\) descends to the packet quotient.
+
+These statements explain a finite information ceiling. They neither identify
+the correct packet nor prove that any deployed packet has the required
+collision.
+
+\subsection{9. Falsification protocol}\label{falsification-protocol}
+
+The main empirical hypothesis is prospective:
+
+\begin{quote}
+Features available before terminal execution may predict held-out global
+failure better when they include historical defect structure than when they
+include local pass rates alone.
+\end{quote}
+
+A valid test must:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  declare the local and global evaluators before data collection;
+\item
+  show that local evaluators are neither constant nor tautological;
+\item
+  identify a genuine intermediate cut;
+\item
+  freeze all predictor features before the terminal evaluator runs;
+\item
+  separate training tasks from held-out tasks;
+\item
+  report NGD, PGD, ZDR, EGD, and ordinary global-failure rates;
+\item
+  compare against a local-pass-only baseline; and
+\item
+  retain failed and refused traces rather than conditioning them away.
+\end{enumerate}
+
+Same-trace NGD cannot serve as an advance predictor on a locally green trace,
+because there \(\mathrm{NGD}=1-E_g\). That equality is accounting after the
+outcome, not prediction before it.
+
+SWE-bench, tau-bench, OSWorld, WebArena, and AgentBench are possible sources
+of multi-step tasks {[}1--5{]}. They do not natively instantiate the evaluator
+split used here; an experiment must define and justify it.
+
+\subsection{10. Executable evidence}\label{executable-evidence}
+
+The Python module implements the finite data structures, defect metrics,
+weight modes, composition checks, expert models, and observed detector
+warnings. The tests include invalid-input refusal, mutation injection,
+cancellation fixtures, and headless execution of all notebooks.
+
+The nested Lean project formally mechanizes the Boolean trichotomy, sample-count
+identities, integer-weight composition and residual identities, diagnostic
+quotient results, detector count identities, and carrier-collision theorems.
+The root module in the \texttt{lean4} directory names the declarations by ledger ID.
+\texttt{docs/lean\_claim\_map.md} states the exact mechanization boundary.
+
+Neither a Python test nor a Lean build supplies the empirical observations
+required by Section 9.
+
+\subsection{11. Conclusion}\label{conclusion}
+
+The central calculation is small:
+\(\Delta_E=E_g-E_1E_2\). Its value is that it separates three questions that
+a local pass rate conflates: whether local checks passed, whether the global
+check passed, and whether those verdicts agree under composition. Under an
+explicit path decomposition and factorization hypotheses, evaluated path
+kernels compose. When evaluator factorization fails, the exact signed
+residual records the failure, while pointwise counts prevent cancellation
+from looking clean.
+
+The result is a finite diagnostic calculus. Its next scientific step is a
+prospective, held-out experiment with independently justified evaluators.
+
+\subsection{References}\label{references}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  C. E. Jimenez et al., ``SWE-bench: Can Language Models Resolve Real-World
+  GitHub Issues?'' arXiv:2310.06770, 2023.
+\item
+  S. Yao et al., ``tau-bench: A Benchmark for Tool-Agent-User Interaction in
+  Real-World Domains.'' arXiv:2406.12045, 2024.
+\item
+  T. Xie et al., ``OSWorld: Benchmarking Multimodal Agents for Open-Ended
+  Tasks in Real Computer Environments.'' arXiv:2404.07972, 2024.
+\item
+  S. Zhou et al., ``WebArena: A Realistic Web Environment for Building
+  Autonomous Agents.'' arXiv:2307.13854, 2023.
+\item
+  X. Liu et al., ``AgentBench: Evaluating LLMs as Agents.''
+  arXiv:2308.03688, 2023.
+\item
+  R. A. Jacobs, M. I. Jordan, S. J. Nowlan, and G. E. Hinton,
+  ``Adaptive Mixtures of Local Experts,'' Neural Computation 3(1), 79--87,
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \setcounter{enumii}{1990}
+  \tightlist
+  \item
+    doi:10.1162/neco.1991.3.1.79.
+  \end{enumerate}
+\item
+  G. E. Hinton, ``Training Products of Experts by Minimizing Contrastive
+  Divergence,'' Neural Computation 14(8), 1771--1800, 2002.
+  doi:10.1162/089976602760128018.
+\item
+  J. Hansen and R. Ghrist, ``Toward a Spectral Theory of Cellular Sheaves,''
+  Journal of Applied and Computational Topology 3, 315--358, 2019.
+  doi:10.1007/s41468-019-00038-7.
+\end{enumerate}
+
+\end{document}

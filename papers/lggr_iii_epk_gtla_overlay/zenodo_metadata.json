@@ -1,0 +1,38 @@
+{
+  "title": "Local Green, Global Red III: A finite evaluator overlay across six system roles",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "description": "<p><strong>Abstract.</strong> Local checks can pass while their composition fails. For binary local verdicts e<sub>1</sub>, e<sub>2</sub> and a binary composite verdict e<sub>g</sub>, this package studies the signed evaluator defect Δ<sub>E</sub> = e<sub>g</sub> − e<sub>1</sub>e<sub>2</sub>. The paper derives that the defect lies in {−1, 0, 1}, an exact finite-sample sum identity, a binary-triple cancellation counterexample, and a quotient-descent obstruction.</p>\n<p><strong>Why it matters.</strong> The same small diagnostic can be attached to six system roles while keeping carrier, transport, and observation assumptions explicit. This exposes an integration mismatch without turning a local pass into a claim about an entire system.</p>\n<p><strong>Contents.</strong> The archive includes matching Markdown, TeX, and PDF; a finite Python implementation; twelve paired break-detect-recover mutation tests; seven teaching and verification notebooks with generated plots and optional widgets; two publication figures; a Lean 4 library with a current theorem-level axiom report; typed claim maps; metadata; and deterministic checksum and archive scripts.</p>\n<p><strong>Reproduction.</strong> Install the locked development environment, run <code>python verify_deposit.py --lean</code>, and build the dated archive with <code>python scripts/build_deposit_zip.py</code>.</p>\n<p><strong>Scope.</strong> The checked results are finite identities and finite-data guards. A zero observed defect is not a general reliability guarantee, and the real exponential-kernel theorem remains conditional and is not fully mechanized in Lean.</p>",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "keywords": [
+    "Local Green Global Red",
+    "evaluator defect",
+    "local-to-global failure",
+    "compositional verification",
+    "evaluated path kernels",
+    "boundary factorization",
+    "quotient descent",
+    "formal methods",
+    "Lean 4",
+    "reproducible research",
+    "agentic AI governance"
+  ],
+  "publication_date": "2026-10-15",
+  "version": "1.5.2",
+  "language": "eng",
+  "notes": "Historical anchor: dbccpage/19L57G1 tag sealed-derivation-v1, commit 3100c4e. The anonymous public URL returned HTTP 404 on 2026-09-15; this access-controlled citation is provenance only and is non-load-bearing. At that frozen revision the recorded mechanical checks passed, but those checks are not evidence for this paper's claims or publication. Historical review files bind earlier bytes and do not review the repaired archive. No upload is asserted by this metadata file. The publication text, figures, and documentation are CC-BY-4.0; code, Lean, and tooling are Apache-2.0.",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/dbccpage/19L57G1/tree/sealed-derivation-v1",
+      "relation": "isDerivedFrom",
+      "resource_type": "software",
+      "scheme": "url"
+    }
+  ]
+}

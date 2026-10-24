@@ -1,0 +1,39 @@
+{
+  "title": "Local Green, Global Red IV: Finite-Stage Solvability and Completion-Relative Obstruction",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "description": "Local Green, Global Red IV is an expository technical preprint examining the distinction among solvability at every finite stage, existence of a compatible inverse-limit thread, and realization of that thread by an element of the original carrier. Its central arithmetic example considers the congruences 3x+1≡0(mod 2^n). Explicit finite-stage solutions form a compatible thread converging to the unique solution -1/3 in the 2-adic integers, while no ordinary integer satisfies every stage simultaneously. The paper develops finite-descent and reflection-image criteria, reviews the nonemptiness theorem for inverse limits of finite nonempty sets, and summarizes the R¹ lim← lifting obstruction for countable towers of abelian groups together with its vanishing under the Mittag–Leffler condition. Companion materials include Python tests, a Jupyter notebook, reproducible figures, and Lean 4 proofs of the arithmetic core. The work is intended as a mathematical foundation for staged evaluation and governance architectures; completion-level solvability is not treated as evidence of validity in the original operational carrier.",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "keywords": [
+    "inverse systems",
+    "inverse limits",
+    "finite-stage solvability",
+    "original-carrier obstruction",
+    "completion descent",
+    "2-adic integers",
+    "p-adic completion",
+    "Mittag-Leffler condition",
+    "derived inverse limits",
+    "formal verification",
+    "Lean 4",
+    "reproducible research"
+  ],
+  "publication_date": "2026-10-15",
+  "version": "0.1.1",
+  "language": "eng",
+  "notes": "Zenodo preprint deposit. Manuscript text is CC-BY-4.0; companion code and Lean 4 sources are Apache-2.0.",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/dbccpage/the_symbol_game/tree/main/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_iv_finite_presentations_completion_relative",
+      "relation": "isDerivedFrom",
+      "resource_type": "software",
+      "scheme": "url"
+    }
+  ]
+}

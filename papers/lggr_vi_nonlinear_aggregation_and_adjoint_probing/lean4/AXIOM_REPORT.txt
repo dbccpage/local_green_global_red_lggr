@@ -1,0 +1,17 @@
+LGGR VI theorem-level axiom report
+Format: lggr-vi-axioms-v1
+Toolchain: leanprover/lean4:v4.34.0-rc1
+Core.lean SHA-256: c6fb5639ac69477581111327fcc73a4a190720a0b067c5aa1b69d5787a361494
+check_axioms.lean SHA-256: 2220f5d5f39e079d0440c054bfa81a01d42d26260cacd7785f0250258ac6c53f
+Build command: lake build
+Census command: lake env lean check_axioms.lean
+
+Reports:
+'LGGRVI.postprocessing_invariance' does not depend on any axioms
+'LGGRVI.zero_preserving_accepts_hidden' does not depend on any axioms
+'LGGRVI.gram_zero_iff_hidden' does not depend on any axioms
+'LGGRVI.detectable_has_nonzero_gram' does not depend on any axioms
+'LGGRVI.gram_kernel_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LGGRVI.gram_detectable_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LGGRVI.centered_directional_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LGGRVI.sign_cube_recovers' depends on axioms: [propext, Classical.choice, Quot.sound]

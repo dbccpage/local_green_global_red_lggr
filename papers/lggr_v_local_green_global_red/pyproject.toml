@@ -1,0 +1,49 @@
+# Packaging metadata only — the deposit's verification path (verify_deposit.py
+# and code/test_lgr_replay.py) is pure standard library and needs no install.
+#
+# Earlier internal layout: on 2026-08-31 this root file absorbed an earlier internal
+# code/pyproject.toml (deleted), which belonged to the parallel full-package build
+# (code/code_*.py and its pytest suite). One canonical pyproject now lives at the deposit root. The absorbed
+# package's runtime dependencies survive below as the optional "harness"
+# extra; its pytest/coverage configuration is superseded by
+# code/run_tests.py, which pins the same 100% coverage gate on the
+# code_*.py modules explicitly.
+
+[project]
+name = "lgr-local-green-global-red"
+version = "1.3.2"
+description = "Exact-arithmetic replays for Local Green, Global Red: Detection and Recovery in Finite Linear Evaluation Models"
+authors = [{ name = "Jeremy H. Carroll" }]
+license = "Apache-2.0"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+# The computational harness and its tests (code/code_*.py, code/test_*.py,
+# code/run_tests.py) — from the parallel full-package build; not needed for
+# verify_deposit.py.
+harness = ["numpy>=1.24.0", "scipy>=1.10.0", "pytest", "pytest-cov"]
+
+[tool.pytest.ini_options]
+# Package pytest suite, including verifier regressions. The exact replay is
+# independently runnable with stdlib unittest. The numerical coverage gate
+# runs via `python code/run_tests.py` (requires the "harness" extra).
+testpaths = ["code"]
+pythonpath = ["code"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "code"}
+py-modules = [
+    "code_blind_spots",
+    "code_cli",
+    "code_core",
+    "code_exact_obstruction",
+    "code_quotient_solver",
+    "code_theorems",
+    "code_witnesses",
+    "lgr_replay",
+]

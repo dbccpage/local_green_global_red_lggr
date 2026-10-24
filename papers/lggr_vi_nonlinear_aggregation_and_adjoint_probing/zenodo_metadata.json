@@ -1,0 +1,26 @@
+{
+  "title": "Blind Spots Under Nonlinear Aggregation and Adjoint Probing",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-15",
+  "version": "0.1.1",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "<p><strong>Abstract.</strong> A finite evaluator is represented by a real observation matrix Q. If two states produce the same observation, every deterministic rule that sees only that observation gives them the same verdict. Thresholds, voting, ranking, and other nonlinear post-processing therefore preserve every direction in ker Q. The Gram response Q-transpose Qx vanishes exactly on ker Q. Its orthogonal-range description is classical real-matrix language and is outside the rational Lean formalization.</p>\n<p><strong>Results.</strong> The paper establishes observation-only post-processing invariance, the rational Gram-kernel identity, a centered two-query directional identity, and exact recovery of the Gram response by averaging over the full finite sign cube. The Euclidean singular-value cylinder bound remains visible as classical background and is cited from classical matrix analysis.</p>\n<p><strong>Artifacts.</strong> The deposit contains a self-contained Python implementation with branch-aware tests and a break-detect-restore mutation, Lean theorems for those rational identities with an axiom report, two executable teaching notebooks, and generated figures. Earlier live-model and distributed or topological prototypes are retained as research history but excluded from the evidentiary surface.</p>\n<p><strong>Reproduction.</strong></p>\n<pre><code>uv run --isolated --frozen --extra dev python verify_deposit.py --lean</code></pre>\n<p><strong>Scope.</strong> The work establishes finite real-matrix statements and reports deterministic fixtures. It does not evaluate a language model, certify an operational system, establish stochastic-optimization convergence, or demonstrate the deferred distributed and geometric extensions.</p>",
+  "keywords": [
+    "observation operator",
+    "kernel",
+    "nonlinear aggregation",
+    "Gram operator",
+    "adjoint probing",
+    "singular values",
+    "Lean 4"
+  ],
+  "notes": "Manuscript, documentation, notebooks, and figures: CC BY 4.0. Python, Lean 4, and release tooling: Apache 2.0. Initial publication. No DOI is claimed before Zenodo assigns one."
+}

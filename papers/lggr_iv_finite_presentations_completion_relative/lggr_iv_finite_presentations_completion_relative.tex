@@ -1,0 +1,1113 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  11pt,
+]{article}
+\pdftrailerid{}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% obstruction_preamble.tex — shared house style for ALL papers.
+% Engine: pdfLaTeX (portable, no font cache). Injected by pandoc (see makefile).
+% pandoc loads fontenc(T1)+inputenc(utf8) before this; hyperref after (so we set
+% link colors via pandoc -V flags, not here).
+
+% ---- Fonts & math ----
+\IfFileExists{lmodern.sty}{\usepackage{lmodern}}{}   % Latin Modern if present
+\usepackage{amsmath,amssymb,amsthm}                  % \mathbb \mathfrak \square ...
+\usepackage{microtype}
+
+% ---- Over-wide \boxed kernel statements shrink to fit the text width ----
+% A long \boxed{\text{...}} line can exceed \linewidth because \text does not
+% line-break in math mode. "max width=\linewidth" scales down ONLY boxes that
+% are wider than the text block; short math boxes are left at natural size.
+% One place, all papers.
+\usepackage{adjustbox}
+\let\oboldboxed\boxed
+\renewcommand{\boxed}[1]{\adjustbox{max width=\linewidth}{\oboldboxed{#1}}}
+\setlength{\emergencystretch}{3em}
+
+% ---- Line breaking for verbatim and code blocks ----
+\usepackage{fancyvrb}
+
+% ---- Safe line breaking for typewriter font & long URLs/DOIs ----
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\usepackage[hyphens]{url}
+
+
+% ---- Flawless fix: literal Unicode (ℓ¹ Φ₁ κ¹ ⊗ →) in TEXT mode ----
+% In $...$ these already work; this maps stray text-mode glyphs to math so
+% nothing renders blank and you never rewrite source. If a build ever says
+% "Unicode character X not set up", add one line here for that glyph.
+\usepackage{newunicodechar}
+\newcommand{\um}[1]{\ensuremath{#1}}
+\newunicodechar{ℓ}{\um{\ell}}
+\newunicodechar{Φ}{\um{\Phi}}\newunicodechar{φ}{\um{\varphi}}
+\newunicodechar{Ψ}{\um{\Psi}}\newunicodechar{ψ}{\um{\psi}}
+\newunicodechar{⇔}{\um{\Leftrightarrow}}
+\newunicodechar{Γ}{\um{\Gamma}}\newunicodechar{γ}{\um{\gamma}}
+\newunicodechar{Ω}{\um{\Omega}}\newunicodechar{ω}{\um{\omega}}
+\newunicodechar{κ}{\um{\kappa}}\newunicodechar{χ}{\um{\chi}}
+\newunicodechar{Λ}{\um{\Lambda}}\newunicodechar{λ}{\um{\lambda}}
+\newunicodechar{Θ}{\um{\Theta}}\newunicodechar{θ}{\um{\theta}}
+\newunicodechar{Δ}{\um{\Delta}}\newunicodechar{δ}{\um{\delta}}
+\newunicodechar{Σ}{\um{\Sigma}}\newunicodechar{σ}{\um{\sigma}}
+\newunicodechar{Π}{\um{\Pi}}\newunicodechar{π}{\um{\pi}}
+\newunicodechar{α}{\um{\alpha}}\newunicodechar{β}{\um{\beta}}
+\newunicodechar{ε}{\um{\varepsilon}}\newunicodechar{μ}{\um{\mu}}
+\newunicodechar{ρ}{\um{\rho}}\newunicodechar{τ}{\um{\tau}}
+\newunicodechar{ν}{\um{\nu}}\newunicodechar{ξ}{\um{\xi}}
+\newunicodechar{ζ}{\um{\zeta}}\newunicodechar{η}{\um{\eta}}
+\newunicodechar{ℝ}{\um{\mathbb{R}}}\newunicodechar{ℚ}{\um{\mathbb{Q}}}
+\newunicodechar{ℤ}{\um{\mathbb{Z}}}\newunicodechar{ℕ}{\um{\mathbb{N}}}
+\newunicodechar{ℂ}{\um{\mathbb{C}}}
+\newunicodechar{𝒟}{\um{\mathcal{D}}}
+\newunicodechar{→}{\um{\to}}\newunicodechar{↦}{\um{\mapsto}}
+\newunicodechar{≤}{\um{\leq}}\newunicodechar{≥}{\um{\geq}}
+\newunicodechar{≠}{\um{\neq}}\newunicodechar{≈}{\um{\approx}}
+\newunicodechar{≅}{\um{\cong}}\newunicodechar{≡}{\um{\equiv}}
+\newunicodechar{⊗}{\um{\otimes}}\newunicodechar{⊕}{\um{\oplus}}
+\newunicodechar{∘}{\um{\circ}}\newunicodechar{∂}{\um{\partial}}
+\newunicodechar{∇}{\um{\nabla}}\newunicodechar{∑}{\um{\sum}}
+\newunicodechar{∏}{\um{\prod}}\newunicodechar{∞}{\um{\infty}}
+\newunicodechar{⊆}{\um{\subseteq}}\newunicodechar{⊂}{\um{\subset}}
+\newunicodechar{⊇}{\um{\supseteq}}\newunicodechar{∈}{\um{\in}}
+\newunicodechar{∉}{\um{\notin}}\newunicodechar{∩}{\um{\cap}}
+\newunicodechar{∪}{\um{\cup}}\newunicodechar{∖}{\um{\setminus}}
+\newunicodechar{∅}{\um{\varnothing}}\newunicodechar{⊥}{\um{\perp}}
+\newunicodechar{∀}{\um{\forall}}\newunicodechar{∃}{\um{\exists}}
+\newunicodechar{±}{\um{\pm}}\newunicodechar{×}{\um{\times}}\newunicodechar{−}{\um{-}}
+\newunicodechar{·}{\um{\cdot}}\newunicodechar{√}{\um{\surd}}
+\newunicodechar{⟨}{\um{\langle}}\newunicodechar{⟩}{\um{\rangle}}
+\newunicodechar{≪}{\um{\ll}}\newunicodechar{≫}{\um{\gg}}
+\newunicodechar{∝}{\um{\propto}}\newunicodechar{≜}{\um{\triangleq}}
+\newunicodechar{⇒}{\um{\Rightarrow}}\newunicodechar{⇐}{\um{\Leftarrow}}
+\newunicodechar{∧}{\um{\wedge}}\newunicodechar{∨}{\um{\vee}}
+\newunicodechar{⟺}{\um{\iff}}\newunicodechar{□}{\um{\square}}
+\newunicodechar{⊔}{\um{\sqcup}}\newunicodechar{…}{\dots}\newunicodechar{‖}{\um{\Vert}}
+\newunicodechar{▼}{\um{\blacktriangledown}}\newunicodechar{«}{\guillemotleft}\newunicodechar{»}{\guillemotright}
+\newunicodechar{─}{--}\newunicodechar{│}{|}\newunicodechar{┌}{+}\newunicodechar{┐}{+}\newunicodechar{┼}{+}
+\newunicodechar{═}{=}\newunicodechar{║}{\um{\parallel}}\newunicodechar{̄}{\={}}
+\newunicodechar{⟹}{\um{\implies}}\newunicodechar{⟸}{\um{\impliedby}}
+\newunicodechar{⁰}{\textsuperscript{0}}\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{²}{\textsuperscript{2}}\newunicodechar{³}{\textsuperscript{3}}
+\newunicodechar{⁴}{\textsuperscript{4}}\newunicodechar{⁵}{\textsuperscript{5}}
+\newunicodechar{⁶}{\textsuperscript{6}}\newunicodechar{⁷}{\textsuperscript{7}}
+\newunicodechar{⁸}{\textsuperscript{8}}\newunicodechar{⁹}{\textsuperscript{9}}
+\newunicodechar{⁻}{\textsuperscript{-}}\newunicodechar{⁺}{\textsuperscript{+}}
+\newunicodechar{ⁿ}{\textsuperscript{n}}
+\newunicodechar{₀}{\textsubscript{0}}\newunicodechar{₁}{\textsubscript{1}}\newunicodechar{ᵀ}{\textsuperscript{T}}
+\newunicodechar{₂}{\textsubscript{2}}\newunicodechar{₃}{\textsubscript{3}}
+\newunicodechar{ₜ}{\textsubscript{t}}\newunicodechar{ₑ}{\textsubscript{e}}\newunicodechar{ₙ}{\textsubscript{n}}
+
+% ---- Geometry & spacing ----
+\usepackage{geometry}\geometry{letterpaper,margin=1in}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0.55\baselineskip}\linespread{1.04}
+
+% ---- Palette ----
+\usepackage{xcolor}
+\definecolor{oblink}{HTML}{1A4D8F}\definecolor{obrule}{HTML}{C2CCD6}
+\definecolor{obboxbg}{HTML}{F6F8FA}
+\definecolor{obproven}{HTML}{1B7F4B}   % PROVEN / DERIVED / STANDARD
+\definecolor{obconj}{HTML}{B45309}     % CONJECTURE / OPEN / FALSE
+\definecolor{obdef}{HTML}{6B21A8}      % DEFINITION / INTERPRETIVE
+\definecolor{obneutral}{HTML}{475569}
+
+% ---- Headings ----
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+
+% ---- Theorem environments (for when you adopt semantic theorems) ----
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem*{remark}{Remark}
+
+% ---- Blockquotes -> one uniform left-ruled callout ----
+% pandoc wraps every `>` block (your theorems, Status notes, caveats) in `quote`.
+\usepackage{mdframed}
+\renewenvironment{quote}{%
+  \begin{mdframed}[linewidth=0pt,leftline=true,linecolor=obrule,
+    rightline=false,topline=false,bottomline=false,
+    innerleftmargin=1em,innerrightmargin=0.8em,innertopmargin=0.5em,
+    innerbottommargin=0.5em,skipabove=0.6em,skipbelow=0.6em,
+    backgroundcolor=obboxbg]\small}{\end{mdframed}}
+
+% ---- Claim-type tag macro ----
+\newcommand{\claimtag}[2]{{\small\sffamily\bfseries\color{#1}[#2]}}
+
+% ---- Inline code / file references -> standard breakable typewriter font ----
+\DeclareRobustCommand{\texttt}[1]{%
+  \ifmmode
+    \mathtt{#1}%
+  \else
+    {\ttfamily\small\renewcommand{\_}{\symbol{95}\allowbreak}#1}%
+  \fi}
+
+
+
+% ---- "What this does not claim" box ----
+\usepackage[most]{tcolorbox}
+\newtcolorbox{nonclaim}{colback=obboxbg,colframe=obrule,boxrule=0.6pt,arc=2pt,
+  left=1em,right=1em,top=0.5em,bottom=0.5em,
+  title={What this does not claim},fonttitle=\bfseries,
+  coltitle=black,colbacktitle=obboxbg}
+
+% ---- Tables ----
+\usepackage{booktabs}\renewcommand{\arraystretch}{1.15}
+\usepackage{etoolbox}
+% Compact tables, and let over-long \mathsf{CamelCase} status identifiers wrap
+% inside cells. In math, \mathsf{ContinuumShadowBecomesFakeAuthority} is a single
+% unbreakable atom and overruns narrow pandoc columns. Scoped to tables only, we
+% re-render \mathsf as a sequence of per-word \mathsf atoms split before each
+% interior capital and joined by \allowbreak, so the identifier wraps at the math
+% top level (an \allowbreak between atoms IS a legal break in inline math; a text
+% \mbox/\seqsplit is not). Also shrink the table font and tighten column padding.
+% Body math is untouched; table cells carry only plain ASCII identifiers, so the
+% splitter is emoji-safe. One place, all papers.
+\let\obmathsforig\mathsf
+\ExplSyntaxOn
+\tl_new:N \l__obt_run_tl
+\int_new:N \l__obt_i_int
+\cs_new_protected:Npn \__obt_emit:
+  {
+    \tl_if_empty:NF \l__obt_run_tl
+      {
+        \int_compare:nNnT { \l__obt_i_int } > { 1 } { \allowbreak }
+        \exp_args:NV \obmathsforig \l__obt_run_tl
+        \int_incr:N \l__obt_i_int
+        \tl_clear:N \l__obt_run_tl
+      }
+  }
+\cs_new_protected:Npn \obtablesf #1
+  {
+    \tl_clear:N \l__obt_run_tl
+    \int_set:Nn \l__obt_i_int { 1 }
+    \tl_map_inline:nn {#1}
+      {
+        \str_if_eq:eeT { \str_uppercase:n {##1} } {##1}
+          { \str_if_eq:eeF { \str_lowercase:n {##1} } {##1} { \__obt_emit: } }
+        \tl_put_right:Nn \l__obt_run_tl {##1}
+      }
+    \__obt_emit:
+  }
+\ExplSyntaxOff
+\AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{4pt}\let\mathsf\obtablesf}
+\AtBeginEnvironment{tabular}{\let\mathsf\obtablesf}
+
+% ---- Title block polish (pandoc \maketitle) ----
+% Title and subtitle both centered under each other. Body metadata stays plain
+% roman (never a monospaced identity dump). Public monographs must not put
+% internal programme IDs (PO-xxx, GS-xxx, …) in the title line.
+\usepackage{titling}
+\newcommand{\obsubtitle}{}
+% Capture pandoc's \subtitle{...} (provide later is a no-op once this is defined).
+\newcommand{\subtitle}[1]{\gdef\obsubtitle{#1}}
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{%
+  \par
+  \ifx\obsubtitle\empty\else
+    \vskip0.4em
+    {\large\itshape \obsubtitle\par}%
+  \fi
+  \end{center}\vskip0.75em}
+\preauthor{\begin{center}\large}\postauthor{\par\end{center}}
+\predate{\begin{center}\normalsize}\postdate{\par\end{center}\vskip0.5em\hrule\vskip1em}
+
+% ---- Status-box markers (emoji rendered as text glyphs; one place, all papers) ----
+\newunicodechar{§}{\S}
+\newunicodechar{–}{--}
+\newunicodechar{—}{---}
+\newunicodechar{‘}{`}
+\newunicodechar{’}{'}
+\newunicodechar{“}{``}
+\newunicodechar{”}{''}
+\newunicodechar{✅}{\um{\checkmark}}
+\newunicodechar{⚠}{\textbf{!}}
+\newunicodechar{☣}{\um{\boxtimes}}
+\newunicodechar{⊣}{\um{\dashv}}
+\newunicodechar{🔷}{\textcolor{oblink}{\um{\blacklozenge}}}
+\newunicodechar{️}{}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  colorlinks=true,
+  linkcolor={oblink},
+  filecolor={Maroon},
+  citecolor={oblink},
+  urlcolor={oblink},
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{2026-10-15}
+
+\begin{document}
+
+\section{Local Green, Global Red IV: Finite-Stage Solvability and
+Completion-Relative
+Obstruction}\label{local-green-global-red-iv-finite-stage-solvability-and-completion-relative-obstruction}
+
+\textbf{Author:} Jeremy H. Carroll
+
+\textbf{Date:} 2026-10-15
+
+\textbf{Version:} 0.1.1
+
+\subsection{Abstract}\label{abstract}
+
+Evaluator agreements across finite stages of an inverse system need not
+imply the existence of a solution in the original carrier. On a finite
+chain, one element of the last stage pulls back along the transition
+maps to a nonempty compatible thread. The general statement that a
+cofiltered inverse limit of nonempty finite sets is nonempty is cited
+from Stacks Tag 086J. Thread existence does not imply realization by an
+element of the original carrier: in an explicit \(2\)-adic arithmetic
+family, the congruence \(3x+1 \equiv 0 \pmod{2^n}\) admits an exact
+solution \(x_n = -\sum_{k=0}^{n-1}(-2)^k\) at every stage \(n\) and
+forms a compatible thread, yet no integer satisfies all stages
+simultaneously because \(2^n \mid 3x+1\) for all \(n \ge 1\) forces
+\(x = -1/3 \notin \mathbb{Z}\). The unique solution lives in the
+completion \(\mathbb{Z}_2\). We formulate a general reflection image
+criterion: completed solutions descend to original-carrier solutions if
+and only if they belong to the image of the canonical reflection map
+\(\eta\). For a finite list of families, the overlap defect \(2(B-k^*)\)
+equals the dual value used by the rational certificate, and it vanishes
+when a common element exists. The general statement that the
+Mittag--Leffler condition implies \(R^1 \varprojlim A_n = 0\) is cited
+from Stacks Tag 07KV.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{1. Problem and Relation to the LGGR
+Series}\label{problem-and-relation-to-the-lggr-series}
+
+The foundational papers in this series address evaluator composition
+over a fixed finite observation presentation:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{LGGR I} {[}1{]} examines sample identities, weighted
+  path-kernel composition, and carrier collisions under binary evaluator
+  defects.
+\item
+  \textbf{LGGR II} {[}2{]} establishes the organizational composition of
+  boundary owners, distinguishing definitional sufficiency from true
+  factorization and identifying quotient-level boundary defects.
+\item
+  \textbf{LGGR III} {[}3{]} layers this defect across six explicit
+  system roles under finite sums and quotient descent.
+\item
+  \textbf{LGGR V} {[}4{]} characterizes linear observation blind spots,
+  showing that full interface coverage can leave an undetected subspace
+  \(\ker Q\) whenever \(\operatorname{im} D \cap \ker Q \neq \{0\}\).
+\item
+  \textbf{LGGR VI} {[}5{]} establishes that downstream nonlinear
+  post-processing cannot recover directions already erased by an
+  observation operator \(Q\).
+\end{itemize}
+
+Each of those results operates on a single, fixed stage of observation.
+\textbf{LGGR IV} addresses an orthogonal mathematical question:
+
+\begin{quote}
+\emph{Can a system appear solvable across an unbounded tower of finite
+observation stages, while admitting no solution in the original
+carrier---even though a valid solution emerges after completion?}
+\end{quote}
+
+When an engineered system or formal evaluator is subjected to
+progressively refined testing stages \(\pi_n: X \to X_n\), one observed
+outcome is that every finite stage passes: for every \(n\), there exists
+a state \(x_n\) satisfying the \(n\)-th requirement. If these
+requirements are mutually compatible, one might hope that a global state
+\(x \in X\) exists satisfying the requirements across all stages
+simultaneously.
+
+This paper establishes that such an inference is invalid in general:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Local Green}: Every finite refinement stage \(n\) admits a
+  valid witness.
+\item
+  \textbf{Global Red in the Original Carrier}: No element in the
+  original carrier \(X\) satisfies all stages.
+\item
+  \textbf{Completion Green}: A valid global witness exists in a
+  completion \(\widehat{X}\).
+\end{enumerate}
+
+We show that solving a problem in the completion does not retroactively
+solve the problem in the original carrier. We formalize this distinction
+through a reflection image criterion and clarify the homological
+boundary where lifting obstructions vanish.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{2. Finite-Stage Descent and the Moving-Witness
+Criterion}\label{finite-stage-descent-and-the-moving-witness-criterion}
+
+Let \(X\) denote a state space, and let \(I\) be a directed index set.
+Consider an inverse system of quotient or observation projections:
+
+\[
+\{\pi_i: X \longrightarrow X_i\}_{i \in I}.
+\]
+
+We formalize what it means for a defect or property to factor through a
+finite stage.
+
+\subsubsection{Definition 2.1 (Finite
+Descent)}\label{definition-2.1-finite-descent}
+
+Let \(D: X \to Y\) be an evaluation or defect function. We say that
+\(D\) has \textbf{finite descent} through the family
+\(\{\pi_i\}_{i \in I}\), denoted \(\operatorname{FinDesc}(D)\), if there
+exists an index \(i \in I\) and a function \(d_i: X_i \to Y\) such that
+
+\[
+D = d_i \circ \pi_i.
+\]
+
+When \(D = d_i \circ \pi_i\), any two states \(x, y \in X\) that agree
+at stage \(i\) (that is, \(\pi_i(x) = \pi_i(y)\)) must satisfy
+\(D(x) = D(y)\). The failure of finite descent is characterized by the
+following criterion.
+
+\subsubsection{Theorem 2.1 (Moving-Witness Collision
+Criterion)}\label{theorem-2.1-moving-witness-collision-criterion}
+
+Let \(X\) and \(Y\) be sets with \(Y\) nonempty, and let
+\(\{\pi_i: X \to X_i\}_{i \in I}\) be a family of surjective observation
+maps. A defect \(D: X \to Y\) fails to have finite descent through
+\(\{\pi_i\}_{i \in I}\) if and only if for every stage \(i \in I\),
+there exists a pair of states \(x_i, y_i \in X\) such that
+
+\[
+\pi_i(x_i) = \pi_i(y_i) \quad \text{and} \quad D(x_i) \neq D(y_i).
+\]
+
+\emph{Proof.}
+
+\begin{itemize}
+\tightlist
+\item
+  \((\implies)\) If \(\operatorname{FinDesc}(D)\) fails, then for every
+  \(i \in I\), no function \(d_i: X_i \to Y\) satisfies
+  \(D = d_i \circ \pi_i\). Because each \(\pi_i\) is surjective, a
+  function \(d_i: X_i \to Y\) satisfying \(D = d_i \circ \pi_i\) exists
+  if and only if \(D\) is constant on the fibers of \(\pi_i\) (that is,
+  \(\pi_i(x) = \pi_i(y) \implies D(x) = D(y)\) for all \(x, y \in X\)).
+  Without surjectivity, fiber constancy only defines \(d_i\) on the
+  image \(\operatorname{im} \pi_i \subseteq X_i\), requiring an
+  extension to \(X_i \setminus \operatorname{im} \pi_i\) using
+  \(Y \neq \emptyset\). Under surjectivity (or extension), the failure
+  of factorization implies that for every \(i \in I\), some fiber
+  contains at least two points on which \(D\) takes different values:
+  that is, states \(x_i, y_i \in X\) with \(\pi_i(x_i) = \pi_i(y_i)\)
+  and \(D(x_i) \neq D(y_i)\).
+\item
+  \((\impliedby)\) Conversely, if such a pair \((x_i, y_i)\) exists for
+  every \(i \in I\), then no function \(d_i: X_i \to Y\) can satisfy
+  both \(d_i(\pi_i(x_i)) = D(x_i)\) and \(d_i(\pi_i(y_i)) = D(y_i)\),
+  since \(\pi_i(x_i) = \pi_i(y_i)\) forces
+  \(d_i(\pi_i(x_i)) = d_i(\pi_i(y_i))\) whereas \(D(x_i) \neq D(y_i)\).
+  Hence no stage \(i\) factors \(D\), and \(\operatorname{FinDesc}(D)\)
+  is false. \(\square\)
+\end{itemize}
+
+The Lean development formalizes this equivalence for a finite complete
+state list, using one default output value to extend a stage map off its
+image (\texttt{LggrIV.finite\_notFinDesc\_iff\_collisions}). It does not
+treat an arbitrary non-enumerated carrier as a separate theorem.
+
+\subsubsection{Remark 2.1 (Moving Witnesses vs.~Fixed
+Collisions)}\label{remark-2.1-moving-witnesses-vs.-fixed-collisions}
+
+The pairs \((x_i, y_i)\) depend on the stage \(i\). If the projective
+family \(\{\pi_i\}_{i \in I}\) is \textbf{jointly separating}---meaning
+that for every pair \(x \neq y\) in \(X\), there exists some index
+\(j \in I\) such that \(\pi_j(x) \neq \pi_j(y)\)---then no \emph{fixed}
+pair \((x, y)\) can satisfy \(\pi_i(x) = \pi_i(y)\) for all \(i \in I\).
+Thus, failure of finite descent in a separating system is necessarily
+driven by moving witnesses: as the stage \(i\) deepens, the colliding
+pair \((x_i, y_i)\) must shift.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{3. A Non-Obstruction Theorem for Finite Repair
+Fibers}\label{a-non-obstruction-theorem-for-finite-repair-fibers}
+
+Before demonstrating how global solvability can fail, we establish a
+structural regime where failure does not arise: namely, when the repair
+sets at each finite stage are finite and nonempty.
+
+Let \((I, \le)\) be a directed partially ordered set. An inverse system
+of sets over \(I\) consists of sets \(\{S_i\}_{i \in I}\) together with
+transition maps \(f_{ij}: S_j \to S_i\) for all \(i \le j\), satisfying
+\(f_{ii} = \operatorname{id}_{S_i}\) and
+\(f_{ik} = f_{ij} \circ f_{jk}\) for all \(i \le j \le k\).
+
+The inverse limit is the set of compatible threads:
+
+\[
+\varprojlim_{i \in I} S_i = \left\{ (s_i)_{i \in I} \in \prod_{i \in I} S_i \;\middle|\; \forall i \le j,\; s_i = f_{ij}(s_j) \right\}.
+\]
+
+\subsubsection{Theorem 3.1 (Finite Fiber Coherence; Stacks Tag
+086J)}\label{theorem-3.1-finite-fiber-coherence-stacks-tag-086j}
+
+Let \((I, \le)\) be a directed partially ordered set, and let
+\(\{S_i, f_{ij}\}\) be an inverse system of sets. If each \(S_i\) is
+\textbf{finite and nonempty}, then the inverse limit is nonempty:
+
+\[
+\varprojlim_{i \in I} S_i \neq \emptyset.
+\]
+
+\emph{Proof.} Equip each finite set \(S_i\) with the discrete topology.
+Because \(S_i\) is finite, it is compact and Hausdorff. By Tychonoff's
+theorem, the product \(\prod_{i \in I} S_i\) is compact and Hausdorff.
+For each pair \(i \le j\), the condition
+\(E_{ij} = \{(s_k) \in \prod S_k \mid s_i = f_{ij}(s_j)\}\) is a closed
+subset.
+
+For any finite subset of indices \(J \subseteq I\), choose an upper
+bound \(m \in I\) such that \(j \le m\) for all \(j \in J\). Since
+\(S_m\) is nonempty, choose \(s_m \in S_m\) and set
+\(s_j = f_{jm}(s_m)\) for \(j \in J\). This shows that any finite
+intersection \(\bigcap_{i \le j \in J} E_{ij}\) is nonempty. By the
+finite intersection property of compact spaces,
+
+\[
+\varprojlim_{i \in I} S_i = \bigcap_{i \le j} E_{ij} \neq \emptyset. \quad \square
+\]
+
+The Lean companion formalizes only the finite-chain case
+(\texttt{LggrIV.finite\_chain\_limit\_nonempty}): one element of the
+last stage, pulled back along a finite list of transition functions,
+yields a nonempty compatible thread. Tag 086J remains a classical
+citation, and the topological compactness argument above is cited from
+the classical literature.
+
+\subsubsection{Corollary 3.1 (Non-Obstruction for Finite Diagnostic
+Repair)}\label{corollary-3.1-non-obstruction-for-finite-diagnostic-repair}
+
+Suppose an evaluator pipeline defines for each stage \(i\) a set of
+valid repairs \(R_i \subseteq X_i\). If each \(R_i\) is finite and
+nonempty, and transition maps preserve validity
+(\(f_{ij}(R_j) \subseteq R_i\)), then there exists a coherent global
+repair sequence \((r_i)_{i \in I} \in \varprojlim R_i\).
+
+\subsection{Consequently, an obstruction between finite-stage
+solvability and global thread existence requires infinite fibers at the
+finite stages, whereas an obstruction between thread existence and
+original-carrier descent persists even when all finite repair sets are
+singletons.}\label{consequently-an-obstruction-between-finite-stage-solvability-and-global-thread-existence-requires-infinite-fibers-at-the-finite-stages-whereas-an-obstruction-between-thread-existence-and-original-carrier-descent-persists-even-when-all-finite-repair-sets-are-singletons.}
+
+\subsection{\texorpdfstring{4. The Explicit \(3x+1 \equiv 0 \pmod{2^n}\)
+Arithmetic
+Counterexample}{4. The Explicit 3x+1 \textbackslash equiv 0 \textbackslash pmod\{2\^{}n\} Arithmetic Counterexample}}\label{the-explicit-3x1-equiv-0-pmod2n-arithmetic-counterexample}
+
+We now construct an elementary arithmetic inverse system that
+illustrates the triple phenomenon:
+\[\boxed{ \text{finite-stage green} \;+\; \text{original-carrier red} \;+\; \text{completion green} }\]
+
+\subsubsection{4.1 System Definition}\label{system-definition}
+
+Let the original carrier be the ring of integers:
+
+\[
+X = \mathbb{Z}.
+\]
+
+For each integer \(n \ge 1\), let the \(n\)-th observation stage be the
+residue ring:
+
+\[
+X_n = \mathbb{Z}/2^n\mathbb{Z},
+\]
+
+with canonical projection
+\(\pi_n: \mathbb{Z} \to \mathbb{Z}/2^n\mathbb{Z}\) given by
+\(\pi_n(x) = x \bmod 2^n\). The transition maps
+\(f_{nm}: \mathbb{Z}/2^m\mathbb{Z} \to \mathbb{Z}/2^n\mathbb{Z}\) for
+\(m \ge n\) are the standard quotient projections.
+
+The goal at each stage \(n\) is to satisfy the linear affine congruence:
+
+\[
+3x + 1 \equiv 0 \pmod{2^n}.
+\]
+
+\subsubsection{4.2 Finite-Stage Solvability (Local
+Green)}\label{finite-stage-solvability-local-green}
+
+For each \(n \ge 1\), define the integer:
+
+\[
+x_n = -\sum_{k=0}^{n-1} (-2)^k.
+\]
+
+\subsubsection{Proposition 4.1 (Exact Finite-Stage
+Solution)}\label{proposition-4.1-exact-finite-stage-solution}
+
+For every \(n \ge 1\), the integer \(x_n\) satisfies:
+
+\[
+3x_n + 1 = (-2)^n.
+\]
+
+In particular, \(2^n \mid (3x_n + 1)\), so \(\pi_n(x_n)\) is an exact
+solution in \(\mathbb{Z}/2^n\mathbb{Z}\).
+
+\emph{Proof.} Recall the geometric series identity for any real or
+algebraic variable \(t\): \[
+(1 - t)\sum_{k=0}^{n-1} t^k = 1 - t^n.
+\] Setting \(t = -2\), we obtain \(1 - t = 1 - (-2) = 3\). Therefore: \[
+3 \sum_{k=0}^{n-1} (-2)^k = 1 - (-2)^n.
+\] Multiplying through by \(-1\): \[
+3 \left( -\sum_{k=0}^{n-1} (-2)^k \right) = (-2)^n - 1.
+\] Substituting the definition \(x_n = -\sum_{k=0}^{n-1} (-2)^k\): \[
+3x_n = (-2)^n - 1 \iff 3x_n + 1 = (-2)^n.
+\] Because \((-2)^n = (-1)^n 2^n\), the term \(3x_n + 1\) is an exact
+multiple of \(2^n\): \[
+3x_n + 1 \equiv 0 \pmod{2^n}. \quad \square
+\]
+
+\subsubsection{Proposition 4.2 (Compatibility Across
+Stages)}\label{proposition-4.2-compatibility-across-stages}
+
+The sequence of residues \((\pi_n(x_n))_{n \ge 1}\) forms a compatible
+thread in \(\varprojlim \mathbb{Z}/2^n\mathbb{Z}\).
+
+\emph{Proof.} For any \(n \ge 1\): \[
+x_{n+1} - x_n = -\sum_{k=0}^n (-2)^k - \left( -\sum_{k=0}^{n-1} (-2)^k \right) = -(-2)^n.
+\] Since \(-(-2)^n = (-1)^{n+1} 2^n\), we have
+\(x_{n+1} \equiv x_n \pmod{2^n}\). Thus, under the projection
+\(f_{n,n+1}: \mathbb{Z}/2^{n+1}\mathbb{Z} \to \mathbb{Z}/2^n\mathbb{Z}\),
+\[
+f_{n,n+1}(\pi_{n+1}(x_{n+1})) = \pi_n(x_n). \quad \square
+\]
+
+The first four terms of this sequence illustrate the progression:
+
+\begin{itemize}
+\tightlist
+\item
+  \(n = 1\): \(x_1 = -1 \implies 3(-1) + 1 = -2 \equiv 0 \pmod 2\).
+\item
+  \(n = 2\):
+  \(x_2 = -(1 - 2) = 1 \implies 3(1) + 1 = 4 \equiv 0 \pmod 4\).
+\item
+  \(n = 3\):
+  \(x_3 = -(1 - 2 + 4) = -3 \implies 3(-3) + 1 = -8 \equiv 0 \pmod 8\).
+\item
+  \(n = 4\):
+  \(x_4 = -(1 - 2 + 4 - 8) = 5 \implies 3(5) + 1 = 16 \equiv 0 \pmod{16}\).
+\end{itemize}
+
+Every finite observation stage evaluates to zero defect (Local Green).
+
+\subsubsection{4.3 Original-Carrier Failure (Global
+Red)}\label{original-carrier-failure-global-red}
+
+\subsubsection{Theorem 4.1 (Impossibility of an Integral Global
+Solution)}\label{theorem-4.1-impossibility-of-an-integral-global-solution}
+
+There exists no integer \(x \in \mathbb{Z}\) such that
+
+\[
+3x + 1 \equiv 0 \pmod{2^n} \quad \text{for all } n \ge 1.
+\]
+
+\emph{Proof.} Suppose there exists \(x \in \mathbb{Z}\) satisfying
+\(3x + 1 \equiv 0 \pmod{2^n}\) for all \(n \ge 1\). This implies that
+\(2^n\) divides the fixed integer \(3x + 1\) for every positive integer
+\(n\):
+
+\[
+\forall n \ge 1, \quad 2^n \mid (3x + 1).
+\]
+
+In the integers, the only element divisible by \(2^n\) for all
+\(n \ge 1\) is \(0\). Therefore:
+
+\[
+3x + 1 = 0 \implies x = -\frac{1}{3}.
+\]
+
+However, \(-1/3 \notin \mathbb{Z}\). Thus no such integer exists.
+\(\square\)
+
+\subsubsection{4.4 Completion Solvability (Completion
+Green)}\label{completion-solvability-completion-green}
+
+The inverse limit of the finite residue rings
+\(\mathbb{Z}/2^n\mathbb{Z}\) defines the ring of \(2\)-adic integers:
+
+\[
+\mathbb{Z}_2 = \varprojlim_{n \ge 1} \mathbb{Z}/2^n\mathbb{Z}.
+\]
+
+There is a canonical injective ring homomorphism
+\(\eta: \mathbb{Z} \to \mathbb{Z}_2\) mapping an integer to its coherent
+sequence of residues \((\pi_n(x))_{n \ge 1}\).
+
+\subsubsection{Classical record 4.3 (existence and uniqueness in the
+2-adic
+completion)}\label{classical-record-4.3-existence-and-uniqueness-in-the-2-adic-completion}
+
+This argument is cited from standard \(2\)-adic analysis {[}9{]}.
+
+In \(\mathbb{Z}_2\), the equation \(3x + 1 = 0\) has a unique solution:
+
+\[
+x_\infty = -\frac{1}{3} \in \mathbb{Z}_2.
+\]
+
+Moreover, the thread \((\pi_n(x_n))_{n \ge 1}\) converges \(2\)-adically
+to \(x_\infty\).
+
+\emph{Proof.} The prime \(2\) does not divide \(3\). In the ring
+\(\mathbb{Z}_2\), an element is a unit if and only if its residue modulo
+\(2\) is nonzero. Since \(3 \equiv 1 \pmod 2\), \(3\) is a unit in
+\(\mathbb{Z}_2\). Hence the linear equation \(3x + 1 = 0\) has the
+unique solution \(x = -3^{-1} = -1/3\).
+
+The sequence of partial sums \(x_n = -\sum_{k=0}^{n-1} (-2)^k\)
+satisfies: \[
+|x_n - x_\infty|_2 = \left| -\frac{1 - (-2)^n}{3} - \left(-\frac{1}{3}\right) \right|_2 = \left| \frac{(-2)^n}{3} \right|_2 = \frac{1}{2^n} \xrightarrow{n \to \infty} 0.
+\] Thus \(x_n \to -1/3\) in \(\mathbb{Z}_2\). \(\square\)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5. Completion-Relative Versus Original-Carrier
+Repair}\label{completion-relative-versus-original-carrier-repair}
+
+The arithmetic example illustrates the structural hazard of completion
+laundering: an evaluator observing passing checks at every stage \(n\)
+concludes that the system is locally valid everywhere, and a solver
+operating on the completion finds an exact limit point
+\(-1/3 \in \mathbb{Z}_2\). However, if the operational system requires a
+solution in \(\mathbb{Z}\), the system remains red.
+
+\subsubsection{5.1 The Reflection Image
+Criterion}\label{the-reflection-image-criterion}
+
+Let \(X\) be an arbitrary carrier space, and let
+\(\eta: X \to \widehat{X}\) denote its completion or limit embedding
+with respect to an inverse family of projections.
+
+Let \(R_X \subseteq X\) denote the predicate of valid states in the
+original carrier, and let \(R_{\widehat{X}} \subseteq \widehat{X}\)
+denote the extended predicate in the completion. We require that the
+extension is faithful on the image of \(X\):
+
+\[
+\eta(R_X) = R_{\widehat{X}} \cap \operatorname{im}(\eta).
+\]
+
+\subsubsection{Criterion 5.1 (Reflection Descent
+Criterion)}\label{criterion-5.1-reflection-descent-criterion}
+
+Let \(\hat{r} \in R_{\widehat{X}}\) be a valid solution in the
+completion. Then \(\hat{r}\) descends to a valid solution in the
+original carrier \(X\) if and only if
+
+\[
+\hat{r} \in \operatorname{im}(\eta).
+\]
+
+When \(\hat{r} \notin \operatorname{im}(\eta)\), the element \(\hat{r}\)
+constitutes a \textbf{completion-only witness}.
+
+\subsubsection{5.2 The Completion
+Residual}\label{the-completion-residual}
+
+For a general completion, the primitive residual witnessing
+original-carrier obstruction is given by the set membership failure:
+
+\[
+\operatorname{Res}_{\text{refl}}(\hat{r}) = \hat{r} \notin \operatorname{im}(\eta).
+\]
+
+When \(X\) and \(\widehat{X}\) possess abelian group structures and
+\(\eta: X \hookrightarrow \widehat{X}\) is an injective homomorphism,
+the obstruction can be packaged additively as a non-trivial coset in the
+quotient group:
+
+\[
+[\hat{r}] \in \widehat{X} / \operatorname{im}(X).
+\]
+
+In our \(2\)-adic example, the element \(-1/3 \in \mathbb{Z}_2\) defines
+a nonzero residual class in the quotient group
+\(\mathbb{Z}_2 / \mathbb{Z}\).
+
+\subsubsection{5.3 Operational Rule: No Completion
+Laundering}\label{operational-rule-no-completion-laundering}
+
+We state the operational discipline required to prevent invalid claim
+promotion:
+
+\begin{quote}
+\textbf{Principle of No Completion Laundering}: Demonstrating that every
+finite refinement stage \(n\) admits a witness, or demonstrating that a
+coherent witness exists in a completion \(\widehat{X}\), does not
+establish the existence of a solution in the original carrier \(X\). A
+completed witness cannot be promoted to an operational certificate
+unless its reflection descent \(\hat{r} \in \operatorname{im}(\eta)\) is
+explicitly verified.
+\end{quote}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{6. Scope and Non-Claims}\label{scope-and-non-claims}
+
+To ensure claim hygiene, we explicitly fence the interpretive boundaries
+of this paper:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Diagnostic Geometry, Not Physics or Ontology}: The divergence
+  between \(\mathbb{Z}\) and \(\mathbb{Z}_2\) is a property of
+  projective limits and metric completions. It does not model physical
+  spacetime quantization, ontological emergence, or quantum measurement.
+\item
+  \textbf{Representation Limits}: The existence of moving-witness
+  collisions under \(\neg \operatorname{FinDesc}(D)\) reflects the
+  lossiness of finite stages, not an inherent defect in the underlying
+  mathematical reality.
+\item
+  \textbf{No Continuum Extrapolation}: Passing a countable sequence of
+  finite tests provides evidence only for those tests. It does not
+  authorize unverified assertions about continuous limits.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Appendix: Derived Limits and the Mittag--Leffler Vanishing
+Theorem}\label{appendix-derived-limits-and-the-mittagleffler-vanishing-theorem}
+
+In this appendix, we place the lifting obstruction into the standard
+framework of homological algebra. We clarify the role of the
+Mittag--Leffler condition, correcting a common misconception regarding
+the derived inverse limit \(R^1 \varprojlim\).
+
+\subsubsection{A.1 The Inverse System Exact
+Sequence}\label{a.1-the-inverse-system-exact-sequence}
+
+Let \(0 \to A_n \xrightarrow{\iota_n} B_n \xrightarrow{p_n} C_n \to 0\)
+be a sequence of short exact sequences of abelian groups, compatible
+with transition maps:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{0 {-}{-}{-}\textgreater{} A\_\{n+1\} {-}{-}{-}\textgreater{} B\_\{n+1\} {-}{-}{-}\textgreater{} C\_\{n+1\} {-}{-}{-}\textgreater{} 0}
+\NormalTok{         |              |              |}
+\NormalTok{         v              v              v}
+\NormalTok{0 {-}{-}{-}\textgreater{}   A\_n   {-}{-}{-}\textgreater{}   B\_n   {-}{-}{-}\textgreater{}   C\_n   {-}{-}{-}\textgreater{} 0}
+\end{Highlighting}
+\end{Shaded}
+
+Applying the left-exact inverse limit functor \(\varprojlim\) yields the
+standard six-term exact sequence:
+
+\[
+0 \longrightarrow \varprojlim A_n \longrightarrow \varprojlim B_n \longrightarrow \varprojlim C_n \xrightarrow{\;\delta\;} R^1 \varprojlim A_n \longrightarrow R^1 \varprojlim B_n \longrightarrow R^1 \varprojlim C_n \longrightarrow 0.
+\]
+
+Here, \(R^1 \varprojlim A_n\) denotes the first derived limit of the
+inverse system \(\{A_n\}\).
+
+\subsubsection{A.2 The Lifting Obstruction
+Class}\label{a.2-the-lifting-obstruction-class}
+
+Suppose we are given a compatible sequence of target requirements
+\((c_n) \in \varprojlim C_n\).
+
+\begin{itemize}
+\tightlist
+\item
+  At each finite stage \(n\), surjectivity of \(p_n\) ensures that there
+  exists some \(b_n \in B_n\) lifting \(c_n\) (Finite-Stage Green).
+\item
+  However, the choices of \(b_n\) may not be compatible under transition
+  maps: \(f_{n,n+1}(b_{n+1})\) need not equal \(b_n\).
+\item
+  The connecting homomorphism
+  \(\delta: \varprojlim C_n \to R^1 \varprojlim A_n\) maps the
+  compatible family \((c_n)\) to an obstruction class:
+\end{itemize}
+
+\[
+\omega = \delta((c_n)) \in R^1 \varprojlim A_n.
+\]
+
+By exactness of the sequence, the compatible family \((c_n)\) lifts to a
+global coherent element \((b_n) \in \varprojlim B_n\) if and only if
+\(\omega = 0\).
+
+\subsubsection{A.3 The Mittag--Leffler Condition (Stacks Tag 07KV, Tag
+0597)}\label{a.3-the-mittagleffler-condition-stacks-tag-07kv-tag-0597}
+
+\subsubsection{Definition A.1 (Mittag--Leffler
+Condition)}\label{definition-a.1-mittagleffler-condition}
+
+An inverse system of abelian groups \(\{A_n, f_{nm}\}\) satisfies the
+\textbf{Mittag--Leffler (ML) condition} if for every \(n\), the
+descending chain of images
+
+\[
+\operatorname{im}(f_{n, n+k}) \subseteq A_n \quad (k \ge 0)
+\]
+
+eventually stabilizes: that is, there exists \(k_0\) such that for all
+\(k \ge k_0\),
+\(\operatorname{im}(f_{n, n+k}) = \operatorname{im}(f_{n, n+k_0})\).
+
+\subsubsection{Theorem A.1 (Mittag--Leffler Vanishing; Stacks Tag
+07KV)}\label{theorem-a.1-mittagleffler-vanishing-stacks-tag-07kv}
+
+If \(\{A_n\}\) is an inverse system of abelian groups indexed by the
+natural numbers that satisfies the Mittag--Leffler condition, then:
+
+\[
+R^1 \varprojlim A_n = 0.
+\]
+
+\emph{Proof.} See Stacks Project, Tag 07KV. \(\square\)
+
+The Lean companion formalizes only the finite overlap identity
+(\texttt{LggrIV.overlap\_dual\_residual}): for a finite list of families
+the primal defect \(2(B-k^*)\) equals the dual value
+\(\mu - \sum \alpha_i\), and a nonempty list with \(k^*=B\) has a common
+element. Tag 07KV remains a classical citation.
+
+\subsubsection{Corollary A.1 (Vanishing of the Lifting
+Obstruction)}\label{corollary-a.1-vanishing-of-the-lifting-obstruction}
+
+If the kernel system \(\{A_n\}\) satisfies the Mittag--Leffler
+condition, then every compatible family \((c_n) \in \varprojlim C_n\)
+lifts to a compatible family \((b_n) \in \varprojlim B_n\).
+
+\subsubsection{Remark A.1 (Correction to the Role of
+Mittag--Leffler)}\label{remark-a.1-correction-to-the-role-of-mittagleffler}
+
+The Mittag--Leffler condition does \emph{not} create an obstruction;
+rather, it ensures the \emph{absence} of a lifting obstruction
+(\(R^1 \varprojlim A_n = 0\)). Consequently, coherent lifting failure
+(Local Green, Global Red in an abelian tower) can occur only when the
+kernel transition system \(\{A_n\}\) fails the Mittag--Leffler
+condition.
+
+\subsubsection{\texorpdfstring{A.4 The Direct Arithmetic Bridge:
+\(R^1 \varprojlim (2^n \mathbb{Z}) \cong \mathbb{Z}_2 / \mathbb{Z}\)}{A.4 The Direct Arithmetic Bridge: R\^{}1 \textbackslash varprojlim (2\^{}n \textbackslash mathbb\{Z\}) \textbackslash cong \textbackslash mathbb\{Z\}\_2 / \textbackslash mathbb\{Z\}}}\label{a.4-the-direct-arithmetic-bridge-r1-varprojlim-2n-mathbbz-cong-mathbbz_2-mathbbz}
+
+The derived-limit exact sequence of Section A.1 applies directly to the
+paper's primary arithmetic system. For each \(n \ge 1\), consider the
+short exact sequence of abelian groups:
+
+\[
+0 \longrightarrow 2^n \mathbb{Z} \longrightarrow \mathbb{Z} \longrightarrow \mathbb{Z}/2^n \mathbb{Z} \longrightarrow 0,
+\]
+
+equipped with standard inclusion homomorphisms on the submodules
+\(2^n \mathbb{Z}\), identity transitions on the constant tower
+\(\mathbb{Z}\), and modular reductions on the residue rings
+\(\mathbb{Z}/2^n \mathbb{Z}\).
+
+Evaluating the projective limits: 1.
+\(\varprojlim 2^n \mathbb{Z} = \bigcap_{n \ge 1} 2^n \mathbb{Z} = \{0\}\).
+2. The constant tower \(\{\mathbb{Z}, \operatorname{id}\}\) satisfies
+the Mittag--Leffler condition (its transition images are identically
+\(\mathbb{Z}\)), hence \(\varprojlim \mathbb{Z} = \mathbb{Z}\) and
+\(R^1 \varprojlim \mathbb{Z} = 0\). 3.
+\(\varprojlim \mathbb{Z}/2^n \mathbb{Z} = \mathbb{Z}_2\) (the ring of
+\(2\)-adic integers).
+
+Substituting these evaluations into the six-term derived limit exact
+sequence yields:
+
+\[
+0 \longrightarrow 0 \longrightarrow \mathbb{Z} \xrightarrow{\;\eta\;} \mathbb{Z}_2 \xrightarrow{\;\delta\;} R^1 \varprojlim (2^n \mathbb{Z}) \longrightarrow 0.
+\]
+
+Consequently, as abelian groups:
+
+\[
+R^1 \varprojlim (2^n \mathbb{Z}) \cong \mathbb{Z}_2 / \mathbb{Z}.
+\]
+
+The connecting homomorphism
+\(\delta: \mathbb{Z}_2 \to R^1 \varprojlim (2^n \mathbb{Z})\) is the
+canonical quotient projection modulo the embedded integers
+\(\eta(\mathbb{Z})\).
+
+In our arithmetic system, the unique \(2\)-adic solution
+\(x_\infty = -1/3 \in \mathbb{Z}_2\) does not lie in the image of
+\(\mathbb{Z}\). Therefore:
+
+\[
+\delta(x_\infty) = [-1/3] \neq 0 \in R^1 \varprojlim (2^n \mathbb{Z}).
+\]
+
+Thus, the completion residual \(\hat{r} \notin \operatorname{im}(\eta)\)
+and the non-vanishing derived limit lifting obstruction
+\(\delta(x_\infty) \neq 0\) coincide on the paper's primary system.
+
+At the level of finite representatives, the chosen stage solutions
+\((x_n)_{n \ge 1}\) satisfy the step discrepancies: \[
+x_n - x_{n+1} = (-2)^n \in 2^n \mathbb{Z}.
+\] If these step discrepancies were trivialized by compatible kernel
+corrections \(k_n \in 2^n \mathbb{Z}\), the corrected sequence
+\(x_n' = x_n - k_n\) would stabilize to a single integer
+\(x \in \mathbb{Z}\) satisfying \(3x + 1 \equiv 0 \pmod{2^n}\) for all
+\(n \ge 1\), which is ruled out by Theorem 4.1.
+
+\emph{Note on quotient topology:} The isomorphism
+\(R^1 \varprojlim (2^n \mathbb{Z}) \cong \mathbb{Z}_2 / \mathbb{Z}\) is
+an algebraic group isomorphism. Because \(\mathbb{Z}\) is dense in
+\(\mathbb{Z}_2\) under the \(2\)-adic metric, the quotient does not
+carry a Hausdorff metric; non-zero cosets admit representatives
+arbitrarily close to \(0\) in metric distance. This separation
+reinforces Criterion 5.1: finite-stage or metric proximity cannot
+substitute for exact reflection descent into the original operational
+carrier.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{References}\label{references}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Carroll, J. H. \emph{Local Green, Global Red I: Evaluated Path Kernels
+  for Composed Agent Reliability.} Zenodo preprint, 2026. DOI:
+  \url{https://doi.org/10.5281/zenodo.22881911}.
+\item
+  Carroll, J. H. \emph{Local Green, Global Red II: Organizational
+  Evaluator Gluing.} Zenodo preprint, 2026. DOI:
+  \url{https://doi.org/10.5281/zenodo.22882042}.
+\item
+  Carroll, J. H. \emph{Local Green, Global Red III: A finite evaluator
+  overlay across six system roles.} Zenodo preprint, 2026.
+\item
+  Carroll, J. H. \emph{Local Green, Global Red V: Linear Observation
+  Blind Spots and Kernel Intersections.} Zenodo preprint, 2026.
+\item
+  Carroll, J. H. \emph{Local Green, Global Red VI: Nonlinear Aggregation
+  and Adjoint Probing.} Zenodo preprint, 2026.
+\item
+  The Stacks Project Authors. \emph{Tag 086J: Inverse limits of finite
+  nonempty sets.} \url{https://stacks.math.columbia.edu/tag/086J}.
+\item
+  The Stacks Project Authors. \emph{Tag 07KV: Derived inverse limits and
+  the Mittag--Leffler condition.}
+  \url{https://stacks.math.columbia.edu/tag/07KV}.
+\item
+  The Stacks Project Authors. \emph{Tag 0597: Mittag--Leffler systems of
+  sets.} \url{https://stacks.math.columbia.edu/tag/0597}.
+\item
+  Koblitz, N. \emph{p-adic Numbers, p-adic Analysis, and
+  Zeta-Functions.} Graduate Texts in Mathematics, vol.~58, Springer,
+  1984.
+\item
+  Weibel, C. A. \emph{An Introduction to Homological Algebra.} Cambridge
+  Studies in Advanced Mathematics, vol.~38, Cambridge University Press,
+  1994.
+\end{enumerate}
+
+\end{document}

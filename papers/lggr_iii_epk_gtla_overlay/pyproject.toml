@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "epk-gtla-overlay"
+version = "1.5.2"
+description = "A finite evaluator overlay across six system roles"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+    { name = "Jeremy H. Carroll" }
+]
+keywords = [
+    "finite-path-kernels",
+    "composition",
+    "boundary-bijection",
+    "formal-verification",
+    "lean4",
+    "finite-obstruction-calculus",
+    "signed-defect-trichotomy",
+    "observer-relativity"
+]
+dependencies = [
+    "matplotlib>=3.7.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-xdist>=3.6.0",
+    "nbclient>=0.8.0",
+    "nbformat>=5.9.0",
+    "ipykernel>=6.29.0",
+    "ipywidgets>=8.0.0",
+    "pypdf>=6.21.1"
+]
+
+[tool.setuptools]
+package-dir = {"" = "code"}
+py-modules = ["epk_gtla_overlay_core", "generate_figures", "run_notebook"]
+
+[tool.pytest.ini_options]
+testpaths = ["code/tests"]
+pythonpath = ["code"]
+addopts = "-p no:asyncio"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::pytest_asyncio.plugin.PytestDeprecationWarning",
+    "ignore::coverage.exceptions.CoverageWarning",
+]
+
+
+[tool.uv]
+constraint-dependencies = ["pillow>=13.0.0"]

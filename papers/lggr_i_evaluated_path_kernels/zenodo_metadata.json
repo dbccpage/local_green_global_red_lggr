@@ -1,0 +1,36 @@
+{
+  "title": "Local Green, Global Red I: Evaluated Path Kernels for Composed Agent Reliability",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-15",
+  "version": "1.2.4",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "Local Green, Global Red I develops a finite, auditable calculus for a recurring failure mode in composed agent systems: each stage can pass a local evaluator while the completed trajectory fails a global evaluator. For binary stage and global verdicts, the paper defines the evaluator defect Δ_E = E_g − E_1 E_2 ∈ {−1, 0, 1} and introduces evaluated path kernels whose exact composition is proved under explicit boundary-slice, weight-factorization, and evaluator-factorization hypotheses.\n\nThe analysis derives a residual-corrected composition identity, separates evaluator mismatch from weight mismatch, characterizes cancellation and information loss in aggregate dashboards, and gives conditional treatments of proposal-weighted paths and Product-of-Experts versus Mixture-of-Experts aggregation. A prospective falsification protocol explains how the framework could be tested on multi-step agent benchmarks.\n\nThe contribution is deliberately scoped: the theorems are finite or conditional, the examples are finite synthetic fixtures, and no benchmark-performance or deployment-reliability result is claimed. Version 1.2.4 is a corrected and expanded republication in the existing Zenodo version lineage. Reproducibility materials and the authoritative file inventory are documented in the accompanying README and manifest.",
+  "keywords": [
+    "agentic AI",
+    "AI reliability",
+    "AI governance",
+    "governed agentic AI",
+    "composed agents",
+    "multi-step agents",
+    "evaluated path kernels",
+    "trajectory evaluation",
+    "evaluator defect",
+    "local–global consistency",
+    "process supervision",
+    "outcome supervision",
+    "formal methods",
+    "Lean 4",
+    "reproducible research",
+    "Product of Experts",
+    "Mixture of Experts"
+  ],
+  "notes": "Zenodo record: https://zenodo.org/records/22881911 (DOI: 10.5281/zenodo.22881911). Existing Zenodo DOI lineage: 10.5281/zenodo.20675803 (previous version record v0.2). Republication version 1.2.4 deposit. Paper, figures, and documentation: CC BY 4.0. Python, Lean 4, and release tooling: Apache 2.0. Historical review records bind earlier bytes and do not review the repaired archive. Run verify_deposit.py to check the pinned file set and Python suite; add --lean to rebuild the nested Lean project and inspect its axiom reports."
+}

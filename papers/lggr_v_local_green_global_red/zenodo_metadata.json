@@ -1,0 +1,48 @@
+{
+  "title": "Local Green, Global Red: Detection and Recovery in Finite Linear Evaluation Models",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-15",
+  "version": "1.3.2",
+  "access_right": "open",
+  "description": "<p>Consider a finite system of sites joined by directed interfaces, with non-expansive linear translations and evaluators that measure selected interface defects through non-expansive linear maps. Every evaluator score is bounded by the total defect mass. All evaluators report zero exactly when the defects lie in their joint watcher kernels. Sound detection is equivalent to the absence of a nonzero realizable defect in the joint observation kernel.</p><p>An explicit six-site, six-interface construction has full coverage and an identically zero score vector while its total defect mass can have any positive size. Consequently no finite-valued function of its evaluator scores can uniformly recover an upper bound on the true defect. Edgewise joint-kernel triviality is sufficient but not necessary for soundness: coupling can eliminate otherwise invisible realizable directions. On a fixed finite-dimensional realizable defect space, soundness gives a uniform linear recovery bound by a compactness argument.</p><p>The paper also derives exact real repair distances and attainment sets on the diagonal and one skew line for the ℓ¹, Euclidean, and ℓ∞ norms. Lean 4 formalizes specified abstract observer statements and edge-level calculations, and a separate Rat module formalizes rational repair identities and squared Euclidean quantities. The finite-dimensional recovery proposition, six-site graph realization, real infima, and square-root conclusions are established by written proofs, not fully mechanized in Lean. Exact Fraction replays and a separate numerical harness supply bounded computational evidence. Cycle, holonomy, redundancy, non-linear, and zero-repair norm-chain developments are retained as supplementary Lean material, not additional numbered theorems of this manuscript.</p><p>Applications require a concrete system satisfying the stated finite linear model; no empirical claim about an unspecified evaluation pipeline is made. Manuscript, figures, and documentation: CC BY 4.0 (LICENSE). Source code, Lean files, notebooks, and release tooling: Apache 2.0 (LICENSE-CODE).</p>",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H.",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "keywords": [
+    "finite linear evaluation",
+    "observer visibility",
+    "joint kernels",
+    "soundness",
+    "no recovery",
+    "repair distances",
+    "Lean 4",
+    "exact arithmetic"
+  ],
+  "license": "cc-by-4.0",
+  "rights": [
+    {
+      "id": "cc-by-4.0",
+      "description": "Manuscript, figures, and documentation (LICENSE)."
+    },
+    {
+      "id": "apache-2.0",
+      "description": "Source code, Lean files, notebooks, and release tooling (LICENSE-CODE)."
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.22289548",
+      "relation": "cites",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.18896776",
+      "relation": "cites",
+      "scheme": "doi"
+    }
+  ]
+}

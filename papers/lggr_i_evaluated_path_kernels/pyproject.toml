@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "epk-core"
+version = "1.2.4"
+description = "Local Green, Global Red: Evaluated Path Kernels for Composed Agent Reliability"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+    { name = "Jeremy H. Carroll" }
+]
+keywords = [
+    "evaluated-path-kernels",
+    "agent-reliability",
+    "evaluator-gluing-defect",
+    "formal-verification",
+    "lean4",
+    "finite-obstruction-calculus"
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-xdist>=3.0.0",
+    "nbclient>=0.8.0",
+    "nbformat>=5.9.0",
+    "ipywidgets>=8.0.0",
+    "pandas>=2.0.0",
+    "ipykernel>=6.0.0",
+    "tornado>=6.5.9"
+]
+notebook = [
+    "nbclient>=0.8.0",
+    "nbformat>=5.9.0",
+    "ipywidgets>=8.0.0",
+    "pandas>=2.0.0",
+    "ipykernel>=6.0.0",
+    "tornado>=6.5.9"
+]
+
+
+[tool.setuptools]
+package-dir = {"" = "code"}
+py-modules = ["epk_core", "generate_figures"]
+
+[tool.pytest.ini_options]
+testpaths = ["code/tests"]
+pythonpath = ["code"]
+addopts = "--dist=loadgroup"
+markers = [
+    "xdist_group(name): serialize notebook kernels to avoid Windows port races"
+]
+filterwarnings = [
+    "error",
+    "ignore:Proactor event loop does not implement add_reader.*:RuntimeWarning:zmq._future"
+]
+
+[tool.uv]
+constraint-dependencies = ["pillow>=13.0.0"]

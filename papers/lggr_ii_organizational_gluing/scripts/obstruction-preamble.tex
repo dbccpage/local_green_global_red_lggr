@@ -1,0 +1,230 @@
+% obstruction_preamble.tex — shared house style for ALL papers.
+% Engine: pdfLaTeX (portable, no font cache). Injected by pandoc (see makefile).
+% pandoc loads fontenc(T1)+inputenc(utf8) before this; hyperref after (so we set
+% link colors via pandoc -V flags, not here).
+
+% ---- Fonts & math ----
+\IfFileExists{lmodern.sty}{\usepackage{lmodern}}{}   % Latin Modern if present
+\usepackage{amsmath,amssymb,amsthm}                  % \mathbb \mathfrak \square ...
+\usepackage{microtype}
+
+% ---- Over-wide \boxed kernel statements shrink to fit the text width ----
+% A long \boxed{\text{...}} line can exceed \linewidth because \text does not
+% line-break in math mode. "max width=\linewidth" scales down ONLY boxes that
+% are wider than the text block; short math boxes are left at natural size.
+% One place, all papers.
+\usepackage{adjustbox}
+\let\oboldboxed\boxed
+\renewcommand{\boxed}[1]{\adjustbox{max width=\linewidth}{\oboldboxed{#1}}}
+\setlength{\emergencystretch}{3em}
+
+% ---- Line breaking for verbatim and code blocks ----
+\usepackage{fancyvrb}
+
+% ---- Safe line breaking for typewriter font & long URLs/DOIs ----
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\usepackage[hyphens]{url}
+
+
+% ---- Flawless fix: literal Unicode (ℓ¹ Φ₁ κ¹ ⊗ →) in TEXT mode ----
+% In $...$ these already work; this maps stray text-mode glyphs to math so
+% nothing renders blank and you never rewrite source. If a build ever says
+% "Unicode character X not set up", add one line here for that glyph.
+\usepackage{newunicodechar}
+\newcommand{\um}[1]{\ensuremath{#1}}
+\newunicodechar{ℓ}{\um{\ell}}
+\newunicodechar{Φ}{\um{\Phi}}\newunicodechar{φ}{\um{\varphi}}
+\newunicodechar{Ψ}{\um{\Psi}}\newunicodechar{ψ}{\um{\psi}}
+\newunicodechar{⇔}{\um{\Leftrightarrow}}
+\newunicodechar{Γ}{\um{\Gamma}}\newunicodechar{γ}{\um{\gamma}}
+\newunicodechar{Ω}{\um{\Omega}}\newunicodechar{ω}{\um{\omega}}
+\newunicodechar{κ}{\um{\kappa}}\newunicodechar{χ}{\um{\chi}}
+\newunicodechar{Λ}{\um{\Lambda}}\newunicodechar{λ}{\um{\lambda}}
+\newunicodechar{Θ}{\um{\Theta}}\newunicodechar{θ}{\um{\theta}}
+\newunicodechar{Δ}{\um{\Delta}}\newunicodechar{δ}{\um{\delta}}
+\newunicodechar{Σ}{\um{\Sigma}}\newunicodechar{σ}{\um{\sigma}}
+\newunicodechar{Π}{\um{\Pi}}\newunicodechar{π}{\um{\pi}}
+\newunicodechar{α}{\um{\alpha}}\newunicodechar{β}{\um{\beta}}
+\newunicodechar{ε}{\um{\varepsilon}}\newunicodechar{μ}{\um{\mu}}
+\newunicodechar{ρ}{\um{\rho}}\newunicodechar{τ}{\um{\tau}}
+\newunicodechar{ν}{\um{\nu}}\newunicodechar{ξ}{\um{\xi}}
+\newunicodechar{ζ}{\um{\zeta}}\newunicodechar{η}{\um{\eta}}
+\newunicodechar{ℝ}{\um{\mathbb{R}}}\newunicodechar{ℚ}{\um{\mathbb{Q}}}
+\newunicodechar{ℤ}{\um{\mathbb{Z}}}\newunicodechar{ℕ}{\um{\mathbb{N}}}
+\newunicodechar{ℂ}{\um{\mathbb{C}}}
+\newunicodechar{𝒟}{\um{\mathcal{D}}}
+\newunicodechar{→}{\um{\to}}\newunicodechar{↦}{\um{\mapsto}}
+\newunicodechar{≤}{\um{\leq}}\newunicodechar{≥}{\um{\geq}}
+\newunicodechar{≠}{\um{\neq}}\newunicodechar{≈}{\um{\approx}}
+\newunicodechar{≅}{\um{\cong}}\newunicodechar{≡}{\um{\equiv}}
+\newunicodechar{⊗}{\um{\otimes}}\newunicodechar{⊕}{\um{\oplus}}
+\newunicodechar{∘}{\um{\circ}}\newunicodechar{∂}{\um{\partial}}
+\newunicodechar{∇}{\um{\nabla}}\newunicodechar{∑}{\um{\sum}}
+\newunicodechar{∏}{\um{\prod}}\newunicodechar{∞}{\um{\infty}}
+\newunicodechar{⊆}{\um{\subseteq}}\newunicodechar{⊂}{\um{\subset}}
+\newunicodechar{⊇}{\um{\supseteq}}\newunicodechar{∈}{\um{\in}}
+\newunicodechar{∉}{\um{\notin}}\newunicodechar{∩}{\um{\cap}}
+\newunicodechar{∪}{\um{\cup}}\newunicodechar{∖}{\um{\setminus}}
+\newunicodechar{∅}{\um{\varnothing}}\newunicodechar{⊥}{\um{\perp}}
+\newunicodechar{∀}{\um{\forall}}\newunicodechar{∃}{\um{\exists}}
+\newunicodechar{±}{\um{\pm}}\newunicodechar{×}{\um{\times}}\newunicodechar{−}{\um{-}}
+\newunicodechar{·}{\um{\cdot}}\newunicodechar{√}{\um{\surd}}
+\newunicodechar{⟨}{\um{\langle}}\newunicodechar{⟩}{\um{\rangle}}
+\newunicodechar{≪}{\um{\ll}}\newunicodechar{≫}{\um{\gg}}
+\newunicodechar{∝}{\um{\propto}}\newunicodechar{≜}{\um{\triangleq}}
+\newunicodechar{⇒}{\um{\Rightarrow}}\newunicodechar{⇐}{\um{\Leftarrow}}
+\newunicodechar{∧}{\um{\wedge}}\newunicodechar{∨}{\um{\vee}}
+\newunicodechar{⟺}{\um{\iff}}\newunicodechar{□}{\um{\square}}
+\newunicodechar{⊔}{\um{\sqcup}}\newunicodechar{…}{\dots}\newunicodechar{‖}{\um{\Vert}}
+\newunicodechar{▼}{\um{\blacktriangledown}}\newunicodechar{«}{\guillemotleft}\newunicodechar{»}{\guillemotright}
+\newunicodechar{─}{--}\newunicodechar{│}{|}\newunicodechar{┌}{+}\newunicodechar{┐}{+}\newunicodechar{┼}{+}
+\newunicodechar{═}{=}\newunicodechar{║}{\um{\parallel}}\newunicodechar{̄}{\={}}
+\newunicodechar{⟹}{\um{\implies}}\newunicodechar{⟸}{\um{\impliedby}}
+\newunicodechar{⁰}{\textsuperscript{0}}\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{²}{\textsuperscript{2}}\newunicodechar{³}{\textsuperscript{3}}
+\newunicodechar{⁴}{\textsuperscript{4}}\newunicodechar{⁵}{\textsuperscript{5}}
+\newunicodechar{⁶}{\textsuperscript{6}}\newunicodechar{⁷}{\textsuperscript{7}}
+\newunicodechar{⁸}{\textsuperscript{8}}\newunicodechar{⁹}{\textsuperscript{9}}
+\newunicodechar{⁻}{\textsuperscript{-}}\newunicodechar{⁺}{\textsuperscript{+}}
+\newunicodechar{ⁿ}{\textsuperscript{n}}
+\newunicodechar{₀}{\textsubscript{0}}\newunicodechar{₁}{\textsubscript{1}}\newunicodechar{ᵀ}{\textsuperscript{T}}
+\newunicodechar{₂}{\textsubscript{2}}\newunicodechar{₃}{\textsubscript{3}}
+\newunicodechar{ₜ}{\textsubscript{t}}\newunicodechar{ₑ}{\textsubscript{e}}\newunicodechar{ₙ}{\textsubscript{n}}
+
+% ---- Geometry & spacing ----
+\usepackage{geometry}\geometry{letterpaper,margin=1in}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0.55\baselineskip}\linespread{1.04}
+
+% ---- Palette ----
+\usepackage{xcolor}
+\definecolor{oblink}{HTML}{1A4D8F}\definecolor{obrule}{HTML}{C2CCD6}
+\definecolor{obboxbg}{HTML}{F6F8FA}
+\definecolor{obproven}{HTML}{1B7F4B}   % PROVEN / DERIVED / STANDARD
+\definecolor{obconj}{HTML}{B45309}     % CONJECTURE / OPEN / FALSE
+\definecolor{obdef}{HTML}{6B21A8}      % DEFINITION / INTERPRETIVE
+\definecolor{obneutral}{HTML}{475569}
+
+% ---- Headings ----
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+
+% ---- Theorem environments (for when you adopt semantic theorems) ----
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem*{remark}{Remark}
+
+% ---- Blockquotes -> one uniform left-ruled callout ----
+% pandoc wraps every `>` block (your theorems, Status notes, caveats) in `quote`.
+\usepackage{mdframed}
+\renewenvironment{quote}{%
+  \begin{mdframed}[linewidth=0pt,leftline=true,linecolor=obrule,
+    rightline=false,topline=false,bottomline=false,
+    innerleftmargin=1em,innerrightmargin=0.8em,innertopmargin=0.5em,
+    innerbottommargin=0.5em,skipabove=0.6em,skipbelow=0.6em,
+    backgroundcolor=obboxbg]\small}{\end{mdframed}}
+
+% ---- Claim-type tag macro ----
+\newcommand{\claimtag}[2]{{\small\sffamily\bfseries\color{#1}[#2]}}
+
+% ---- Inline code / file references -> standard breakable typewriter font ----
+\DeclareRobustCommand{\texttt}[1]{%
+  \ifmmode
+    \mathtt{#1}%
+  \else
+    {\ttfamily\small\renewcommand{\_}{\symbol{95}\allowbreak}#1}%
+  \fi}
+
+
+
+% ---- "What this does not claim" box ----
+\usepackage[most]{tcolorbox}
+\newtcolorbox{nonclaim}{colback=obboxbg,colframe=obrule,boxrule=0.6pt,arc=2pt,
+  left=1em,right=1em,top=0.5em,bottom=0.5em,
+  title={What this does not claim},fonttitle=\bfseries,
+  coltitle=black,colbacktitle=obboxbg}
+
+% ---- Tables ----
+\usepackage{booktabs}\renewcommand{\arraystretch}{1.15}
+\usepackage{etoolbox}
+% Compact tables, and let over-long \mathsf{CamelCase} status identifiers wrap
+% inside cells. In math, \mathsf{ContinuumShadowBecomesFakeAuthority} is a single
+% unbreakable atom and overruns narrow pandoc columns. Scoped to tables only, we
+% re-render \mathsf as a sequence of per-word \mathsf atoms split before each
+% interior capital and joined by \allowbreak, so the identifier wraps at the math
+% top level (an \allowbreak between atoms IS a legal break in inline math; a text
+% \mbox/\seqsplit is not). Also shrink the table font and tighten column padding.
+% Body math is untouched; table cells carry only plain ASCII identifiers, so the
+% splitter is emoji-safe. One place, all papers.
+\let\obmathsforig\mathsf
+\ExplSyntaxOn
+\tl_new:N \l__obt_run_tl
+\int_new:N \l__obt_i_int
+\cs_new_protected:Npn \__obt_emit:
+  {
+    \tl_if_empty:NF \l__obt_run_tl
+      {
+        \int_compare:nNnT { \l__obt_i_int } > { 1 } { \allowbreak }
+        \exp_args:NV \obmathsforig \l__obt_run_tl
+        \int_incr:N \l__obt_i_int
+        \tl_clear:N \l__obt_run_tl
+      }
+  }
+\cs_new_protected:Npn \obtablesf #1
+  {
+    \tl_clear:N \l__obt_run_tl
+    \int_set:Nn \l__obt_i_int { 1 }
+    \tl_map_inline:nn {#1}
+      {
+        \str_if_eq:eeT { \str_uppercase:n {##1} } {##1}
+          { \str_if_eq:eeF { \str_lowercase:n {##1} } {##1} { \__obt_emit: } }
+        \tl_put_right:Nn \l__obt_run_tl {##1}
+      }
+    \__obt_emit:
+  }
+\ExplSyntaxOff
+\AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{4pt}\let\mathsf\obtablesf}
+\AtBeginEnvironment{tabular}{\let\mathsf\obtablesf}
+
+% ---- Title block polish (pandoc \maketitle) ----
+% Title and subtitle both centered under each other. Body metadata stays plain
+% roman (never a monospaced identity dump). Public monographs must not put
+% internal programme IDs (PO-xxx, GS-xxx, …) in the title line.
+\usepackage{titling}
+\newcommand{\obsubtitle}{}
+% Capture pandoc's \subtitle{...} (provide later is a no-op once this is defined).
+\newcommand{\subtitle}[1]{\gdef\obsubtitle{#1}}
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{%
+  \par
+  \ifx\obsubtitle\empty\else
+    \vskip0.4em
+    {\large\itshape \obsubtitle\par}%
+  \fi
+  \end{center}\vskip0.75em}
+\preauthor{\begin{center}\large}\postauthor{\par\end{center}}
+\predate{\begin{center}\normalsize}\postdate{\par\end{center}\vskip0.5em\hrule\vskip1em}
+
+% ---- Status-box markers (emoji rendered as text glyphs; one place, all papers) ----
+\newunicodechar{§}{\S}
+\newunicodechar{–}{--}
+\newunicodechar{—}{---}
+\newunicodechar{‘}{`}
+\newunicodechar{’}{'}
+\newunicodechar{“}{``}
+\newunicodechar{”}{''}
+\newunicodechar{✅}{\um{\checkmark}}
+\newunicodechar{⚠}{\textbf{!}}
+\newunicodechar{☣}{\um{\boxtimes}}
+\newunicodechar{⊣}{\um{\dashv}}
+\newunicodechar{🔷}{\textcolor{oblink}{\um{\blacklozenge}}}
+\newunicodechar{️}{}

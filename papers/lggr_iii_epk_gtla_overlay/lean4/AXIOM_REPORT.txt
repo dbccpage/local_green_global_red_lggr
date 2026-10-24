@@ -1,0 +1,19 @@
+Local Green, Global Red III — theorem-level Lean axiom report
+Date: 2026-10-15
+Toolchain: leanprover/lean4:v4.33.1
+Default build target: LGGR3 (Core.lean)
+Census command: lake env lean check_axioms.lean
+Theorem reports: 12
+
+'LGGR3.defect_range' does not depend on any axioms
+'LGGR3.local_green_global_red' does not depend on any axioms
+'LGGR3.global_sub_local_eq_defect_sum' depends on axioms: [propext, Quot.sound]
+'LGGR3.binary_defect_cancellation' does not depend on any axioms
+'LGGR3.phone_totals' does not depend on any axioms
+'LGGR3.factorized_integer_kernel_has_zero_residual' depends on axioms: [propext]
+'LGGR3.six_roles' does not depend on any axioms
+'LGGR3.observer_weights_can_change_a_score' does not depend on any axioms
+'LGGR3.fixed_observation_preserves_defect' does not depend on any axioms
+'LGGR3.quotient_evaluator_obstruction' depends on axioms: [Quot.sound]
+'LGGR3.quotient_evaluator_constant' depends on axioms: [Quot.sound]
+'LGGR3.quotient_obstruction_has_a_witness' does not depend on any axioms

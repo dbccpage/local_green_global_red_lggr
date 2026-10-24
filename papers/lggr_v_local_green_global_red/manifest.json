@@ -1,0 +1,229 @@
+{
+  "programme": "001_finite_obstruction_calculus/001_local_green_global_red_foundational_series",
+  "paper": "lggr_v_local_green_global_red",
+  "title": "Local Green, Global Red: Detection and Recovery in Finite Linear Evaluation Models",
+  "published_root": "omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/001_local_green_global_red_foundational_series/lggr_v_local_green_global_red",
+  "date": "2026-10-15",
+  "manuscript_date": "2026-10-15",
+  "version": "1.3.2",
+  "lean_files": [
+    {
+      "name": "lean4/observer_visibility.lean",
+      "role": "Current manuscript abstract observer and edge-level results, plus supplementary CycleBlindSpot, Redundancy, NonlinearEvaluation, and MinkowskiQuotient developments. Historical Theorem 7/7-prime/Redundancy labels are not current manuscript numbers. The recorded 2026-10-05 build has 67 axiom reports; see lean4/PROVENANCE.md.",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "print_axioms_reports": 67
+    },
+    {
+      "name": "lean4/po000_l004_observer_visibility.lean",
+      "role": "Byte-identical snapshot of the anchor paper's canonical module (namespace PO000.ObserverVisibility) at anchor v6.3; provenance and its packaging-time compile receipt (14 #print axioms reports) are in lean4/PROVENANCE.md.",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "print_axioms_reports": 14
+    },
+    {
+      "name": "lean4/minkowski_repair.lean",
+      "role": "Mathlib-free rational repair identities for LGR-R2–R4, including minimizers and squared Euclidean quantities. Real infima and square roots are proved in prose. Standalone pinned Lean elaboration; not a Lake root.",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "print_axioms_reports": 19
+    }
+  ],
+  "lean_dependency_manifest": {
+    "name": "lean4/lake-manifest.json",
+    "role": "Lake dependency manifest generated against leanprover/lean4:v4.34.0-rc1; shipped so the Mathlib and transitive dependency revisions are pinned for replay."
+  },
+  "declarations": [
+    "ObserverVisibility.tally_le_rawNorm",
+    "ObserverVisibility.localGreen_of_globalGreen",
+    "ObserverVisibility.allGreen_iff_kernel",
+    "ObserverVisibility.rawNorm_eq_zero_of_allGreen",
+    "ObserverVisibility.coverage_of_jointTrivial",
+    "ObserverVisibility.master_soundness_iff",
+    "ObserverVisibility.ThreePatch.three_patch_witness",
+    "ObserverVisibility.ThreePatch.rawNorm_scaled",
+    "ObserverVisibility.ThreePatch.scaledDefect_is_section_defect",
+    "ObserverVisibility.ThreePatch.no_recovery_modulus",
+    "ObserverVisibility.ThreePatch.vector_no_recovery_modulus",
+    "ObserverVisibility.Coupled.full_coverage",
+    "ObserverVisibility.Coupled.joint_kernel_nontrivial",
+    "ObserverVisibility.Coupled.allGreen_forces_zero",
+    "ObserverVisibility.QuotientWitness.repair_mass_ge_two",
+    "ObserverVisibility.QuotientWitness.repair_mass_attained",
+    "ObserverVisibility.QuotientWitness.omega_not_exact",
+    "ObserverVisibility.NonlinearEvaluation.nonlinear_obs_contractive_bound",
+    "ObserverVisibility.NonlinearEvaluation.nonlinear_lipschitz_obs_bound",
+    "ObserverVisibility.NonlinearEvaluation.nonlinear_bilipschitz_quotient_lower_bound",
+    "ObserverVisibility.NonlinearEvaluation.nonlinear_perturbed_residual_upper_bound",
+    "ObserverVisibility.NonlinearEvaluation.nonlinear_perturbed_residual_lower_bound",
+    "ObserverVisibility.CycleBlindSpot.cycleDefect_sum",
+    "ObserverVisibility.CycleBlindSpot.cycleDefect_potential",
+    "ObserverVisibility.CycleBlindSpot.realizable_iff_sum_eq_zero",
+    "ObserverVisibility.CycleBlindSpot.cycle_blind_spot_dependence",
+    "ObserverVisibility.CycleBlindSpot.cycle_unsound_of_finrank_lt",
+    "ObserverVisibility.CycleBlindSpot.cycle_allGreen_iff_dependent",
+    "ObserverVisibility.CycleBlindSpot.C3.gen_pairwise_independent",
+    "ObserverVisibility.CycleBlindSpot.C3.gen_dependent",
+    "ObserverVisibility.CycleBlindSpot.C3.false_green",
+    "ObserverVisibility.CycleBlindSpot.C3.scaled_defect",
+    "ObserverVisibility.CycleBlindSpot.transDefect_gauge",
+    "ObserverVisibility.CycleBlindSpot.gauge_blind_spot_dependence",
+    "ObserverVisibility.CycleBlindSpot.gaugeTrans_frame",
+    "ObserverVisibility.CycleBlindSpot.holonomy_blind_spot_dependence",
+    "ObserverVisibility.CycleBlindSpot.realizable_of_holonomy_surjective",
+    "ObserverVisibility.CycleBlindSpot.unsound_of_holonomy_surjective",
+    "ObserverVisibility.CycleBlindSpot.unsound_of_holonomy_fixed_point_free",
+    "ObserverVisibility.CycleBlindSpot.SignFlip.unsound",
+    "ObserverVisibility.Redundancy.allGreen_of_kernel_le",
+    "ObserverVisibility.Redundancy.sound_iff_of_kernel_eq",
+    "ObserverVisibility.Redundancy.augment_allGreen_iff",
+    "ObserverVisibility.Redundancy.duplicate_allGreen_iff",
+    "ObserverVisibility.Redundancy.augment_preserves_false_green",
+    "ObserverVisibility.Redundancy.augment_cycle_allGreen_iff_dependent",
+    "MinkowskiRepair.diag_l1_iff",
+    "MinkowskiRepair.diag_l2_sq_iff",
+    "MinkowskiRepair.diag_linf_iff",
+    "MinkowskiRepair.diag_zero_l1_iff",
+    "MinkowskiRepair.diag_zero_l2_iff",
+    "MinkowskiRepair.diag_zero_linf_iff",
+    "MinkowskiRepair.diag_vanish_iff",
+    "MinkowskiRepair.r2_l1_iff",
+    "MinkowskiRepair.r2_l2_sq_iff",
+    "MinkowskiRepair.r2_linf_iff",
+    "MinkowskiRepair.skew_l1_iff",
+    "MinkowskiRepair.skew_l2_sq_iff",
+    "MinkowskiRepair.skew_linf_iff",
+    "MinkowskiRepair.skew_vanish_iff",
+    "MinkowskiRepair.skew_points_coincide_iff",
+    "MinkowskiRepair.skew_pair_values",
+    "MinkowskiRepair.skew_zero_l1_iff",
+    "MinkowskiRepair.skew_zero_l2_iff",
+    "MinkowskiRepair.skew_zero_linf_iff"
+  ],
+  "declaration_count": 65,
+  "declaration_inventory_scope": "Selected declarations mapped to current manuscript claims or retained supplementary developments; not a census of all internal helper declarations. Lake census contains 81 reports; standalone rational repair census contains 19.",
+  "declaration_groups": {
+    "current_manuscript_observer": [
+      "ObserverVisibility.tally_le_rawNorm",
+      "ObserverVisibility.localGreen_of_globalGreen",
+      "ObserverVisibility.allGreen_iff_kernel",
+      "ObserverVisibility.rawNorm_eq_zero_of_allGreen",
+      "ObserverVisibility.coverage_of_jointTrivial",
+      "ObserverVisibility.master_soundness_iff",
+      "ObserverVisibility.ThreePatch.three_patch_witness",
+      "ObserverVisibility.ThreePatch.rawNorm_scaled",
+      "ObserverVisibility.ThreePatch.scaledDefect_is_section_defect",
+      "ObserverVisibility.ThreePatch.no_recovery_modulus",
+      "ObserverVisibility.ThreePatch.vector_no_recovery_modulus",
+      "ObserverVisibility.Coupled.full_coverage",
+      "ObserverVisibility.Coupled.joint_kernel_nontrivial",
+      "ObserverVisibility.Coupled.allGreen_forces_zero",
+      "ObserverVisibility.QuotientWitness.repair_mass_ge_two",
+      "ObserverVisibility.QuotientWitness.repair_mass_attained",
+      "ObserverVisibility.QuotientWitness.omega_not_exact"
+    ],
+    "current_manuscript_rational_repair": [
+      "MinkowskiRepair.diag_l1_iff",
+      "MinkowskiRepair.diag_l2_sq_iff",
+      "MinkowskiRepair.diag_linf_iff",
+      "MinkowskiRepair.diag_zero_l1_iff",
+      "MinkowskiRepair.diag_zero_l2_iff",
+      "MinkowskiRepair.diag_zero_linf_iff",
+      "MinkowskiRepair.diag_vanish_iff",
+      "MinkowskiRepair.r2_l1_iff",
+      "MinkowskiRepair.r2_l2_sq_iff",
+      "MinkowskiRepair.r2_linf_iff",
+      "MinkowskiRepair.skew_l1_iff",
+      "MinkowskiRepair.skew_l2_sq_iff",
+      "MinkowskiRepair.skew_linf_iff",
+      "MinkowskiRepair.skew_vanish_iff",
+      "MinkowskiRepair.skew_points_coincide_iff",
+      "MinkowskiRepair.skew_pair_values",
+      "MinkowskiRepair.skew_zero_l1_iff",
+      "MinkowskiRepair.skew_zero_l2_iff",
+      "MinkowskiRepair.skew_zero_linf_iff"
+    ],
+    "supplementary": [
+      "ObserverVisibility.NonlinearEvaluation.nonlinear_obs_contractive_bound",
+      "ObserverVisibility.NonlinearEvaluation.nonlinear_lipschitz_obs_bound",
+      "ObserverVisibility.NonlinearEvaluation.nonlinear_bilipschitz_quotient_lower_bound",
+      "ObserverVisibility.NonlinearEvaluation.nonlinear_perturbed_residual_upper_bound",
+      "ObserverVisibility.NonlinearEvaluation.nonlinear_perturbed_residual_lower_bound",
+      "ObserverVisibility.CycleBlindSpot.cycleDefect_sum",
+      "ObserverVisibility.CycleBlindSpot.cycleDefect_potential",
+      "ObserverVisibility.CycleBlindSpot.realizable_iff_sum_eq_zero",
+      "ObserverVisibility.CycleBlindSpot.cycle_blind_spot_dependence",
+      "ObserverVisibility.CycleBlindSpot.cycle_unsound_of_finrank_lt",
+      "ObserverVisibility.CycleBlindSpot.cycle_allGreen_iff_dependent",
+      "ObserverVisibility.CycleBlindSpot.C3.gen_pairwise_independent",
+      "ObserverVisibility.CycleBlindSpot.C3.gen_dependent",
+      "ObserverVisibility.CycleBlindSpot.C3.false_green",
+      "ObserverVisibility.CycleBlindSpot.C3.scaled_defect",
+      "ObserverVisibility.CycleBlindSpot.transDefect_gauge",
+      "ObserverVisibility.CycleBlindSpot.gauge_blind_spot_dependence",
+      "ObserverVisibility.CycleBlindSpot.gaugeTrans_frame",
+      "ObserverVisibility.CycleBlindSpot.holonomy_blind_spot_dependence",
+      "ObserverVisibility.CycleBlindSpot.realizable_of_holonomy_surjective",
+      "ObserverVisibility.CycleBlindSpot.unsound_of_holonomy_surjective",
+      "ObserverVisibility.CycleBlindSpot.unsound_of_holonomy_fixed_point_free",
+      "ObserverVisibility.CycleBlindSpot.SignFlip.unsound",
+      "ObserverVisibility.Redundancy.allGreen_of_kernel_le",
+      "ObserverVisibility.Redundancy.sound_iff_of_kernel_eq",
+      "ObserverVisibility.Redundancy.augment_allGreen_iff",
+      "ObserverVisibility.Redundancy.duplicate_allGreen_iff",
+      "ObserverVisibility.Redundancy.augment_preserves_false_green",
+      "ObserverVisibility.Redundancy.augment_cycle_allGreen_iff_dependent"
+    ]
+  },
+  "publication": {
+    "description": "<p>Consider a finite system of sites joined by directed interfaces, with non-expansive linear translations and evaluators that measure selected interface defects through non-expansive linear maps. Every evaluator score is bounded by the total defect mass. All evaluators report zero exactly when the defects lie in their joint watcher kernels. Sound detection is equivalent to the absence of a nonzero realizable defect in the joint observation kernel.</p><p>An explicit six-site, six-interface construction has full coverage and an identically zero score vector while its total defect mass can have any positive size. Consequently no finite-valued function of its evaluator scores can uniformly recover an upper bound on the true defect. Edgewise joint-kernel triviality is sufficient but not necessary for soundness: coupling can eliminate otherwise invisible realizable directions. On a fixed finite-dimensional realizable defect space, soundness gives a uniform linear recovery bound by a compactness argument.</p><p>The paper also derives exact real repair distances and attainment sets on the diagonal and one skew line for the ℓ¹, Euclidean, and ℓ∞ norms. Lean 4 formalizes specified abstract observer statements and edge-level calculations, and a separate Rat module formalizes rational repair identities and squared Euclidean quantities. The finite-dimensional recovery proposition, six-site graph realization, real infima, and square-root conclusions are established by written proofs, not fully mechanized in Lean. Exact Fraction replays and a separate numerical harness supply bounded computational evidence. Cycle, holonomy, redundancy, non-linear, and zero-repair norm-chain developments are retained as supplementary Lean material, not additional numbered theorems of this manuscript.</p><p>Applications require a concrete system satisfying the stated finite linear model; no empirical claim about an unspecified evaluation pipeline is made. Manuscript, figures, and documentation: CC BY 4.0 (LICENSE). Source code, Lean files, notebooks, and release tooling: Apache 2.0 (LICENSE-CODE).</p>",
+    "creators": [
+      {
+        "name": "Carroll, Jeremy H.",
+        "affiliation": "Independent Researcher"
+      }
+    ],
+    "keywords": [
+      "finite linear evaluation",
+      "observer visibility",
+      "joint kernels",
+      "soundness",
+      "no recovery",
+      "repair distances",
+      "Lean 4",
+      "exact arithmetic"
+    ],
+    "license": "cc-by-4.0",
+    "rights": [
+      {
+        "id": "cc-by-4.0",
+        "description": "Manuscript, figures, and documentation (LICENSE)."
+      },
+      {
+        "id": "apache-2.0",
+        "description": "Source code, Lean files, notebooks, and release tooling (LICENSE-CODE)."
+      }
+    ],
+    "related_identifiers": [
+      {
+        "identifier": "10.5281/zenodo.22289548",
+        "relation": "cites",
+        "scheme": "doi"
+      },
+      {
+        "identifier": "10.5281/zenodo.18896776",
+        "relation": "cites",
+        "scheme": "doi"
+      }
+    ]
+  }
+}
