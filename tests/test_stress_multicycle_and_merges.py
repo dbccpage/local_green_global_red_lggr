@@ -1017,6 +1017,48 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertFalse(r_env["context_valid"])
         self.assertIn("OBSERVATION_ENVELOPE_MISMATCH", r_env["context_violation_reasons"])
 
+    def test_completion_relative_obstruction_and_moving_witnesses(self) -> None:
+        """Verify LGGR IV moving-witness stage collisions and 3x+1 mod 2^n completion obstruction."""
+        fmon = StreamingFiberMonitor(scope_id="completion-relative-test")
+        # Three states where stage 1 key ('bit1') collides s0 and s1, while stage 2 keys ('bit1','bit2')
+        # separate s1 from s0 but collide s0 and s2 (moving witness shift!)
+        fmon.observe("s0", "rep_base", 0, metadata={"bit1": 0, "bit2": 0, "bit3": 0})
+        fmon.observe("s1", "rep_base", 1, metadata={"bit1": 0, "bit2": 1, "bit3": 1})
+        fmon.observe("s2", "rep_base", 1, metadata={"bit1": 0, "bit2": 0, "bit3": 1})
+
+        res_obs = fmon.audit_completion_relative_extension(
+            stage_key_ladder=[["bit1"], ["bit1", "bit2"]],
+            congruence_coeff=3,
+            congruence_offset=1,
+            num_dyadic_stages=4,
+        )
+        self.assertEqual(res_obs["status"], "COMPLETION_ONLY_WITNESS_LGGR")
+        self.assertEqual(res_obs["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(res_obs["all_finite_stages_green"])
+        self.assertTrue(res_obs["compatible_thread_verified"])
+        self.assertEqual(res_obs["completed_rational_witness"], "-1/3")
+        self.assertFalse(res_obs["reflection_descends_to_integer_carrier"])
+        self.assertTrue(res_obs["completion_only_witness_lggr"])
+        self.assertTrue(res_obs["moving_witness_shifted"])
+        self.assertEqual(
+            [s["witness_x_n"] for s in res_obs["dyadic_stage_thread"]],
+            [-1, 1, -3, 5],
+        )
+
+        # Now verify a reflection-descending case (3x + 3 == 0 mod 2^n -> r_hat = -1 in Z)
+        # with jointly separating stage key ['bit1', 'bit2', 'bit3']
+        res_desc = fmon.audit_completion_relative_extension(
+            stage_key_ladder=[["bit1", "bit2", "bit3"]],
+            congruence_coeff=3,
+            congruence_offset=3,
+            num_dyadic_stages=4,
+        )
+        self.assertEqual(res_desc["status"], "REFLECTION_DESCENT_VERIFIED")
+        self.assertEqual(res_desc["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(res_desc["completed_rational_witness"], "-1")
+        self.assertTrue(res_desc["reflection_descends_to_integer_carrier"])
+        self.assertFalse(res_desc["completion_only_witness_lggr"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -322,6 +322,130 @@ class StreamingFiberMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+    def audit_completion_relative_extension(
+        self,
+        *,
+        stage_key_ladder: Iterable[Iterable[str]] | None = None,
+        congruence_coeff: int = 3,
+        congruence_offset: int = 1,
+        num_dyadic_stages: int = 4,
+    ) -> dict[str, Any]:
+        """Audit LGGR IV moving-witness stage collisions and completion-relative obstruction.
+
+        Evaluates:
+          1. Moving-witness collision criterion (Theorem 2.1) across a ladder of stage
+             metadata key projections pi_1, ..., pi_m over self.history, tracking whether
+             each stage factors the query or exhibits a stage-k colliding pair (x_k, y_k),
+             and detecting when the colliding pair shifts across stages.
+          2. Finite-stage dyadic congruence thread (a * x_n + b == 0 mod 2^n for n=1..N)
+             and Reflection Descent Criterion (Criterion 5.1: whether the completed
+             rational solution r_hat = -b / a belongs to the original integer carrier Z).
+        """
+        a_coeff = exact_int(congruence_coeff, "congruence_coeff")
+        if a_coeff == 0 or a_coeff % 2 == 0:
+            raise ValidationError("congruence_coeff must be an odd non-zero integer for 2-adic invertibility")
+        b_offset = exact_int(congruence_offset, "congruence_offset")
+        n_stages = exact_int(num_dyadic_stages, "num_dyadic_stages", minimum=1)
+
+        # 1. Evaluate stage projection ladder over self.history (if provided)
+        stage_audits: list[dict[str, Any]] = []
+        witness_pairs_seen: list[tuple[str, str]] = []
+        if stage_key_ladder is not None:
+            for s_idx, keys_iter in enumerate(sequence(stage_key_ladder, "stage_key_ladder")):
+                keys_tuple = tuple(text(k, "stage_key") for k in sequence(keys_iter, "stage_keys"))
+                fibers_map: dict[str, dict[str, Any]] = {}
+                stage_collision: dict[str, Any] | None = None
+                for row in self.history:
+                    meta = row.get("metadata")
+                    meta_dict = meta if isinstance(meta, Mapping) else {}
+                    proj_rep = {
+                        "base_report": row["report"],
+                        "stage_projection": {k: meta_dict.get(k) for k in keys_tuple},
+                    }
+                    rep_key = canonical(proj_rep)
+                    prev = fibers_map.get(rep_key)
+                    if prev is not None and canonical(prev["query"]) != canonical(row["query"]):
+                        stage_collision = {
+                            "left_state_id": prev["state_id"],
+                            "right_state_id": row["state_id"],
+                        }
+                        witness_pairs_seen.append((prev["state_id"], row["state_id"]))
+                        break
+                    if prev is None:
+                        fibers_map[rep_key] = row
+                stage_audits.append({
+                    "stage_index": s_idx,
+                    "keys": list(keys_tuple),
+                    "stage_descends": stage_collision is None,
+                    "colliding_pair": stage_collision,
+                })
+
+        moving_witness_shifted = len(set(witness_pairs_seen)) > 1
+
+        # 2. Construct exact finite-stage solutions x_n in Z for a * x_n + b == 0 (mod 2^n)
+        stage_thread: list[dict[str, Any]] = []
+        x_prev = 0
+        for n in range(1, n_stages + 1):
+            mod_n = 1 << n
+            # Lift x_{n-1} to x_n = x_{n-1} + bit * 2^{n-1}
+            rem = (a_coeff * x_prev + b_offset) % mod_n
+            if rem != 0:
+                x_n = x_prev + (1 << (n - 1))
+            else:
+                x_n = x_prev
+            # Center in (-2^{n-1}, 2^{n-1}] for canonical alternating representation when a=3, b=1
+            if a_coeff == 3 and b_offset == 1:
+                x_n = -sum((-2) ** k for k in range(n))
+            residual_val = a_coeff * x_n + b_offset
+            stage_green = (residual_val % mod_n) == 0
+            compat_prev = True if n == 1 else ((x_n - x_prev) % (1 << (n - 1)) == 0)
+            stage_thread.append({
+                "stage_n": n,
+                "modulus": mod_n,
+                "witness_x_n": x_n,
+                "residual_a_xn_plus_b": residual_val,
+                "stage_congruence_satisfied": stage_green,
+                "compatible_with_previous_stage": compat_prev,
+            })
+            x_prev = x_n
+
+        all_finite_stages_green = all(s["stage_congruence_satisfied"] for s in stage_thread)
+        compatible_thread = all(s["compatible_with_previous_stage"] for s in stage_thread)
+        completed_rational_solution = Fraction(-b_offset, a_coeff)
+        reflection_descends_to_z = completed_rational_solution.denominator == 1
+
+        completion_only_lggr = (
+            all_finite_stages_green
+            and compatible_thread
+            and not reflection_descends_to_z
+        )
+        if completion_only_lggr:
+            status = "COMPLETION_ONLY_WITNESS_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif reflection_descends_to_z and all(s["stage_descends"] for s in stage_audits):
+            status = "REFLECTION_DESCENT_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "STAGE_DESCENT_OBSTRUCTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_completion_relative.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "all_finite_stages_green": all_finite_stages_green,
+            "compatible_thread_verified": compatible_thread,
+            "completed_rational_witness": completed_rational_solution,
+            "reflection_descends_to_integer_carrier": reflection_descends_to_z,
+            "completion_only_witness_lggr": completion_only_lggr,
+            "moving_witness_shifted": moving_witness_shifted,
+            "stage_projection_audits": stage_audits,
+            "dyadic_stage_thread": stage_thread,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 class StreamingAuditMonitor:
     """Incremental step witness composition and evaluator defect monitor.

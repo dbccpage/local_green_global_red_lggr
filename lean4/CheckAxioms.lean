@@ -41,3 +41,4 @@ import LggrVIII
 #print axioms LggrVIII.l1_dual_witness_subgradient_weight_sensitivity
 #print axioms LggrVIII.cycle_bottleneck_weight_pivot_threshold
 #print axioms LggrVIII.six_role_sample_defect_and_cancellation_masking
+#print axioms LggrVIII.completion_relative_obstruction_on_carrier_extension
