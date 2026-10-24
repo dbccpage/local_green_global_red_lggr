@@ -49,3 +49,4 @@ import LggrVIII
 #print axioms LggrVIII.realizable_defect_soundness_kernel_intersection
 #print axioms LggrVIII.dashboard_summary_reconstruction_and_collapsing_detector
 #print axioms LggrVIII.chsh_local_polytope_bound_and_negative_mass
+#print axioms LggrVIII.product_retraction_residual_vs_local_extension
