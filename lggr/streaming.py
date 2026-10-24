@@ -23,7 +23,7 @@ from .common import (
     text,
 )
 from .descent import _scope
-from .linear import Vector, classify_cochain, is_zero, matmul, matvec, matrix, rational, solve_exact, vector, verify_l1_certificate
+from .linear import Vector, classify_cochain, is_zero, matmul, matvec, matrix, rational, solve_exact, transpose, vector, verify_l1_certificate
 from .transport import verify_transport
 from .witnesses import BudgetPolicy, StateRef, StepWitness, audit_history, local_accepts
 import itertools
@@ -5404,6 +5404,181 @@ class StreamingMayerVietorisMonitor:
     def get_receipt(self) -> dict[str, Any]:
         """Return the current Mayer-Vietoris cover audit receipt."""
         return self.audit_mayer_vietoris()
+
+
+class StreamingHodgeDecompositionMonitor:
+    """Online discrete Hodge-Laplacian orthogonal decomposition monitor over Q.
+
+    Decomposes a rational 1-cochain h in C^1(K; Q) on a finite 2-complex (D_0, D_1)
+    with D_1 D_0 = 0 into three mutually orthogonal rational components:
+      h = h_exact + h_coexact + h_harmonic
+    where:
+      - h_exact = D_0 phi in im(D_0) solves the normal system (D_0^T D_0) phi = D_0^T h,
+      - h_coexact = D_1^T psi in im(D_1^T) solves the normal system (D_1 D_1^T) psi = D_1 h,
+      - h_harmonic = h - h_exact - h_coexact in ker(D_0^T) cap ker(D_1) = ker(L_1),
+        with discrete 1-form Hodge Laplacian L_1 = D_0 D_0^T + D_1^T D_1.
+    Audits pairwise Euclidean orthogonality, Pythagorean L2 energy decomposition
+    ||h||_2^2 = ||h_exact||_2^2 + ||h_coexact||_2^2 + ||h_harmonic||_2^2,
+    and separates pure exact gradients from coexact 2-cell curl and harmonic
+    cohomology obstructions.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-hodge-decomposition-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _dot(u: tuple[Fraction, ...], v: tuple[Fraction, ...]) -> Fraction:
+        return sum((a * b for a, b in zip(u, v)), Fraction(0))
+
+    def record_complex_cochain(
+        self,
+        complex_id: str,
+        D0: Any,
+        h: Any,
+        D1: Any | None = None,
+    ) -> dict[str, Any]:
+        """Decompose 1-cochain h on complex (D0, D1) into exact, coexact, and harmonic parts."""
+        cid = text(complex_id, "complex_id")
+        d0 = matrix(D0, "D0")
+        m, _ = len(d0), len(d0[0])
+        hv = vector(h, "h", m)
+        d0_t = transpose(d0)
+
+        has_d1 = False
+        d1: tuple[tuple[Fraction, ...], ...] = ()
+        d1_t: tuple[tuple[Fraction, ...], ...] = ()
+        if D1 is not None:
+            raw_d1 = sequence(D1, "D1")
+            if raw_d1:
+                d1 = matrix(raw_d1, "D1", cols=m)
+                d1_t = transpose(d1)
+                has_d1 = True
+                comp = matmul(d1, d0)
+                if not is_zero(comp):
+                    raise ValidationError("Invalid cochain complex: D1 * D0 must be zero")
+
+        # 1. Exact component: solve (D0^T D0) phi = D0^T h
+        gram_0 = matmul(d0_t, d0)
+        rhs_0 = matvec(d0_t, hv)
+        phi_opt = solve_exact(gram_0, rhs_0)
+        if phi_opt is None:
+            raise ValidationError("Normal equations for exact projection failed")
+        h_exact = matvec(d0, phi_opt)
+
+        # 2. Coexact component: solve (D1 D1^T) psi = D1 h
+        if has_d1:
+            gram_1 = matmul(d1, d1_t)
+            rhs_1 = matvec(d1, hv)
+            psi_opt = solve_exact(gram_1, rhs_1)
+            if psi_opt is None:
+                raise ValidationError("Normal equations for coexact projection failed")
+            h_coexact = matvec(d1_t, psi_opt)
+        else:
+            psi_opt = ()
+            h_coexact = tuple(Fraction(0) for _ in range(m))
+
+        # 3. Harmonic residual: h_harm = h - h_exact - h_coexact
+        h_harm = tuple(hv[i] - h_exact[i] - h_coexact[i] for i in range(m))
+
+        # Check kernel conditions on h_harm: D0^T h_harm == 0 and D1 h_harm == 0
+        div_harm = matvec(d0_t, h_harm)
+        curl_harm = matvec(d1, h_harm) if has_d1 else ()
+        harm_in_ker_d0t = all(v == Fraction(0) for v in div_harm)
+        harm_in_ker_d1 = all(v == Fraction(0) for v in curl_harm)
+
+        # Discrete 1-form Hodge Laplacian L_1 h_harm = D0(D0^T h_harm) + D1^T(D1 h_harm)
+        l1_down = matvec(d0, div_harm)
+        l1_up = matvec(d1_t, curl_harm) if has_d1 else tuple(Fraction(0) for _ in range(m))
+        l1_harm = tuple(l1_down[i] + l1_up[i] for i in range(m))
+        laplacian_kernel_verified = all(v == Fraction(0) for v in l1_harm)
+
+        # Orthogonality and Pythagorean identity
+        ip_exact_coexact = self._dot(h_exact, h_coexact)
+        ip_exact_harm = self._dot(h_exact, h_harm)
+        ip_coexact_harm = self._dot(h_coexact, h_harm)
+        orthogonality_ok = (
+            ip_exact_coexact == Fraction(0)
+            and ip_exact_harm == Fraction(0)
+            and ip_coexact_harm == Fraction(0)
+        )
+
+        norm2_h = self._dot(hv, hv)
+        norm2_exact = self._dot(h_exact, h_exact)
+        norm2_coexact = self._dot(h_coexact, h_coexact)
+        norm2_harm = self._dot(h_harm, h_harm)
+        pythagorean_ok = norm2_h == (norm2_exact + norm2_coexact + norm2_harm)
+
+        if norm2_coexact == Fraction(0) and norm2_harm == Fraction(0):
+            classification = "EXACT_GRADIENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif norm2_coexact == Fraction(0) and norm2_harm > Fraction(0):
+            classification = "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif norm2_coexact > Fraction(0) and norm2_harm == Fraction(0):
+            classification = "COEXACT_CURL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            classification = "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "complex_id": cid,
+            "h": list(hv),
+            "h_exact": list(h_exact),
+            "h_coexact": list(h_coexact),
+            "h_harmonic": list(h_harm),
+            "vertex_potential_phi": list(phi_opt),
+            "two_cell_potential_psi": list(psi_opt),
+            "norm2_total": norm2_h,
+            "norm2_exact": norm2_exact,
+            "norm2_coexact": norm2_coexact,
+            "norm2_harmonic": norm2_harm,
+            "harmonic_in_ker_d0_transpose": harm_in_ker_d0t,
+            "harmonic_in_ker_d1": harm_in_ker_d1,
+            "laplacian_kernel_verified": laplacian_kernel_verified,
+            "orthogonality_verified": orthogonality_ok,
+            "pythagorean_energy_verified": pythagorean_ok,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed discrete Hodge decomposition audit receipt."""
+        if not self.records:
+            raise ValidationError("At least one complex cochain must be recorded before emitting a receipt")
+
+        harmonic_ids = [r["complex_id"] for r in self.records if r["norm2_harmonic"] > Fraction(0)]
+        coexact_ids = [r["complex_id"] for r in self.records if r["norm2_coexact"] > Fraction(0)]
+        all_orth = all(r["orthogonality_verified"] for r in self.records)
+        all_pyth = all(r["pythagorean_energy_verified"] for r in self.records)
+        all_lap = all(r["laplacian_kernel_verified"] for r in self.records)
+
+        if harmonic_ids or coexact_ids:
+            status = "HODGE_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "HODGE_EXACT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_hodge_decomposition.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "complex_count": len(self.records),
+            "harmonic_obstructed_ids": sorted(harmonic_ids),
+            "coexact_obstructed_ids": sorted(coexact_ids),
+            "all_orthogonality_verified": all_orth,
+            "all_pythagorean_energy_verified": all_pyth,
+            "all_laplacian_kernels_verified": all_lap,
+            "records": self.records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 
 

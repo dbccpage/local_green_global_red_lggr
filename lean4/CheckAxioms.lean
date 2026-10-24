@@ -58,3 +58,4 @@ import LggrVIII
 #print axioms LggrVIII.arrival_order_endpoint_invariance_vs_prefix_divergence
 #print axioms LggrVIII.simplicial_cup_product_and_leibniz_cocycle_identity
 #print axioms LggrVIII.mayer_vietoris_local_exactness_gluing_obstruction
+#print axioms LggrVIII.discrete_hodge_harmonic_orthogonality_and_decomposition
