@@ -23,6 +23,11 @@ from .streaming import (
     StreamingAuditMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingMerminPeresParityMonitor,
+    StreamingProductOfExpertsMonitor,
+    StreamingProjectiveTowerMonitor,
+    StreamingSideInformationCapacityMonitor,
+    StreamingSkewRepairMonitor,
 )
 from .witnesses import BudgetPolicy, StateRef, StepWitness
 
@@ -754,6 +759,704 @@ def run_test4_composable_lggg(client: OpenRouterClient) -> dict[str, Any]:
         "meaning": "Test 4 composable LGGG certified: boundary-sufficient schema maintains zero defect.",
     }
     return json_value({**body, "receipt_sha256": digest(body)})
+
+
+# ------------------------------------------------------------------------------
+# Frontier Monitors Multi-Model Benchmark (Theorems 50-54)
+# ------------------------------------------------------------------------------
+
+FRONTIER_BENCHMARK_MODELS: list[str] = [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct",
+]
+
+JSON_ONLY_SYSTEM_PROMPT: str = (
+    "Respond with ONLY a single valid JSON object. Do not write any explanation or prose."
+)
+
+
+def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, Any]]:
+    """Run 10 live multi-agent orchestration traces (2 per frontier monitor) for one model."""
+    model_traces: list[dict[str, Any]] = []
+
+    # 1A. Projective Tower Obstructed: 3*x + 1 == 0 (mod 2^n), Theorem 50
+    pt_obs_p1 = (
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x + 1 == 0 (mod 2). "
+        "Find the unique integer x_1 in {0, 1} such that (3 * x_1 + 1) % 2 == 0. "
+        "Output ONLY valid JSON: {\"modulus\": 2, \"candidate_x\": 1}"
+    )
+    pt_obs_c1 = client.complete(pt_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    pt_obs_j1 = _extract_json(pt_obs_c1)
+    x1_obs = int(pt_obs_j1.get("candidate_x", -1)) if "candidate_x" in pt_obs_j1 else -1
+
+    pt_obs_p2 = (
+        f"You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x + 1 == 0 (mod 4), "
+        f"given Stage-1 witness x_1 = {x1_obs} (mod 2). Find the unique integer x_2 in {{0, 1, 2, 3}} such that "
+        f"(3 * x_2 + 1) % 4 == 0 and (x_2 - {x1_obs}) % 2 == 0. "
+        f"Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+    )
+    pt_obs_c2 = client.complete(pt_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    pt_obs_j2 = _extract_json(pt_obs_c2)
+    x2_obs = int(pt_obs_j2.get("candidate_x", -1)) if "candidate_x" in pt_obs_j2 else -1
+
+    mon_pt_obs = StreamingProjectiveTowerMonitor(
+        3, 1, scope_id=f"frontier_pt_obs_{client.model}"
+    )
+    mon_pt_obs.record_stage("stage_mod2", 2, x1_obs)
+    mon_pt_obs.record_stage("stage_mod4", 4, x2_obs)
+    rec_pt_obs = mon_pt_obs.get_receipt()
+    l_pt_obs = bool(rec_pt_obs["local_product_aggregator"] == 1)
+    g_pt_obs = bool(rec_pt_obs["global_integral_lift_evaluator"] == 1)
+    d_pt_obs = int(rec_pt_obs["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_01_projective_tower_obstructed",
+            "monitor": "StreamingProjectiveTowerMonitor",
+            "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+            "model": client.model,
+            "scenario": "obstructed_2adic_tower_3x_plus_1",
+            "prompts": [pt_obs_p1, pt_obs_p2],
+            "completions": [pt_obs_c1, pt_obs_c2],
+            "parsed_inputs": {
+                "coeff_a": 3,
+                "const_b": 1,
+                "stages": [
+                    {"stage_id": "stage_mod2", "modulus": 2, "candidate_x": x1_obs},
+                    {"stage_id": "stage_mod4", "modulus": 4, "candidate_x": x2_obs},
+                ],
+            },
+            "monitor_status": rec_pt_obs["status"],
+            "contract_status": rec_pt_obs["contract_status"],
+            "local_pass": l_pt_obs,
+            "global_pass": g_pt_obs,
+            "defect": d_pt_obs,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_pt_obs],
+            "monitor_receipt": rec_pt_obs,
+        }
+    )
+
+    # 1B. Projective Tower Coherent: 3*x - 6 == 0 (mod 2^n), Theorem 50
+    pt_coh_p1 = (
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x - 6 == 0 (mod 2). "
+        "Find the unique integer x_1 in {0, 1} such that (3 * x_1 - 6) % 2 == 0. "
+        "Output ONLY valid JSON with keys 'modulus' (2) and 'candidate_x' (integer)."
+    )
+    pt_coh_c1 = client.complete(pt_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    pt_coh_j1 = _extract_json(pt_coh_c1)
+    x1_coh = int(pt_coh_j1.get("candidate_x", -1)) if "candidate_x" in pt_coh_j1 else -1
+
+    pt_coh_p2 = (
+        f"You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x - 6 == 0 (mod 4), "
+        f"given Stage-1 witness x_1 = {x1_coh} (mod 2). Find the unique integer x_2 in {{0, 1, 2, 3}} such that "
+        f"(3 * x_2 - 6) % 4 == 0 and (x_2 - {x1_coh}) % 2 == 0. "
+        f"Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+    )
+    pt_coh_c2 = client.complete(pt_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    pt_coh_j2 = _extract_json(pt_coh_c2)
+    x2_coh = int(pt_coh_j2.get("candidate_x", -1)) if "candidate_x" in pt_coh_j2 else -1
+
+    mon_pt_coh = StreamingProjectiveTowerMonitor(
+        3, -6, scope_id=f"frontier_pt_coh_{client.model}"
+    )
+    mon_pt_coh.record_stage("stage_mod2", 2, x1_coh)
+    mon_pt_coh.record_stage("stage_mod4", 4, x2_coh)
+    rec_pt_coh = mon_pt_coh.get_receipt()
+    l_pt_coh = bool(rec_pt_coh["local_product_aggregator"] == 1)
+    g_pt_coh = bool(rec_pt_coh["global_integral_lift_evaluator"] == 1)
+    d_pt_coh = int(rec_pt_coh["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_02_projective_tower_coherent",
+            "monitor": "StreamingProjectiveTowerMonitor",
+            "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+            "model": client.model,
+            "scenario": "coherent_integral_tower_3x_minus_6",
+            "prompts": [pt_coh_p1, pt_coh_p2],
+            "completions": [pt_coh_c1, pt_coh_c2],
+            "parsed_inputs": {
+                "coeff_a": 3,
+                "const_b": -6,
+                "stages": [
+                    {"stage_id": "stage_mod2", "modulus": 2, "candidate_x": x1_coh},
+                    {"stage_id": "stage_mod4", "modulus": 4, "candidate_x": x2_coh},
+                ],
+            },
+            "monitor_status": rec_pt_coh["status"],
+            "contract_status": rec_pt_coh["contract_status"],
+            "local_pass": l_pt_coh,
+            "global_pass": g_pt_coh,
+            "defect": d_pt_coh,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_pt_coh],
+            "monitor_receipt": rec_pt_coh,
+        }
+    )
+
+    # 2A. Skew Repair l^inf vs l^1 Divergence on omega = (1, 0), Theorem 51
+    sr_obs_p1 = (
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) "
+        "coupled via skew residual r(alpha) = (a + alpha, b + 2*alpha). "
+        "Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}"
+    )
+    sr_obs_c1 = client.complete(sr_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    sr_obs_j1 = _extract_json(sr_obs_c1)
+    oa_obs = str(sr_obs_j1.get("omega_a", "1"))
+    ob_obs = str(sr_obs_j1.get("omega_b", "0"))
+
+    sr_obs_p2 = (
+        f"You are a Peak-Latency (l_infinity) Repair Planner Agent for residual r(alpha) = ({oa_obs} + alpha, {ob_obs} + 2*alpha). "
+        f"Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes "
+        f"max(|{oa_obs} + alpha|, |{ob_obs} + 2*alpha|) so both coordinates stay <= 2/3. "
+        f"Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+    )
+    sr_obs_c2 = client.complete(sr_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    sr_obs_j2 = _extract_json(sr_obs_c2)
+    alpha_obs = str(sr_obs_j2.get("candidate_alpha", "1"))
+    try:
+        Fraction(alpha_obs)
+    except Exception:
+        alpha_obs = "1"
+
+    mon_sr_obs = StreamingSkewRepairMonitor(scope_id=f"frontier_sr_obs_{client.model}")
+    probe_sr_obs = mon_sr_obs.record_probe(
+        "probe_linf_vs_l1",
+        oa_obs,
+        ob_obs,
+        candidate_alpha=alpha_obs,
+        l_inf_coordinate_budget="2/3",
+        l_1_global_budget="1",
+    )
+    rec_sr_obs = mon_sr_obs.get_receipt()
+    l_sr_obs = bool(probe_sr_obs["local_product_aggregator"] == 1)
+    g_sr_obs = bool(probe_sr_obs["global_l1_budget_evaluator"] == 1)
+    d_sr_obs = int(probe_sr_obs["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_03_skew_repair_linf_divergence",
+            "monitor": "StreamingSkewRepairMonitor",
+            "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+            "model": client.model,
+            "scenario": "linf_selected_repair_breaches_l1_minimum_budget",
+            "prompts": [sr_obs_p1, sr_obs_p2],
+            "completions": [sr_obs_c1, sr_obs_c2],
+            "parsed_inputs": {
+                "omega_a": oa_obs,
+                "omega_b": ob_obs,
+                "candidate_alpha": alpha_obs,
+                "l_inf_coordinate_budget": "2/3",
+                "l_1_global_budget": "1",
+            },
+            "monitor_status": rec_sr_obs["status"],
+            "contract_status": rec_sr_obs["contract_status"],
+            "local_pass": l_sr_obs,
+            "global_pass": g_sr_obs,
+            "defect": d_sr_obs,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_sr_obs],
+            "monitor_receipt": rec_sr_obs,
+        }
+    )
+
+    # 2B. Skew Repair l^1 Coherent on omega = (1, 0), Theorem 51
+    sr_coh_p1 = (
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) "
+        "with coordinate budget B_inf = 1 and cumulative l_1 budget B_1 = 1. "
+        "Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}"
+    )
+    sr_coh_c1 = client.complete(sr_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    sr_coh_j1 = _extract_json(sr_coh_c1)
+    oa_coh = str(sr_coh_j1.get("omega_a", "1"))
+    ob_coh = str(sr_coh_j1.get("omega_b", "0"))
+
+    sr_coh_p2 = (
+        f"You are a Cumulative-Cost (l_1) Repair Planner Agent for residual r(alpha) = ({oa_coh} + alpha, {ob_coh} + 2*alpha). "
+        f"Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes "
+        f"total l_1 cost |{oa_coh} + alpha| + |{ob_coh} + 2*alpha| so total l_1 cost <= 1. "
+        f"Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+    )
+    sr_coh_c2 = client.complete(sr_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    sr_coh_j2 = _extract_json(sr_coh_c2)
+    alpha_coh = str(sr_coh_j2.get("candidate_alpha", "2"))
+    try:
+        Fraction(alpha_coh)
+    except Exception:
+        alpha_coh = "2"
+
+    mon_sr_coh = StreamingSkewRepairMonitor(scope_id=f"frontier_sr_coh_{client.model}")
+    probe_sr_coh = mon_sr_coh.record_probe(
+        "probe_l1_coherent",
+        oa_coh,
+        ob_coh,
+        candidate_alpha=alpha_coh,
+        l_inf_coordinate_budget="1",
+        l_1_global_budget="1",
+    )
+    rec_sr_coh = mon_sr_coh.get_receipt()
+    l_sr_coh = bool(probe_sr_coh["local_product_aggregator"] == 1)
+    g_sr_coh = bool(probe_sr_coh["global_l1_budget_evaluator"] == 1)
+    d_sr_coh = int(probe_sr_coh["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_04_skew_repair_l1_coherent",
+            "monitor": "StreamingSkewRepairMonitor",
+            "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+            "model": client.model,
+            "scenario": "l1_optimal_repair_satisfies_global_budget",
+            "prompts": [sr_coh_p1, sr_coh_p2],
+            "completions": [sr_coh_c1, sr_coh_c2],
+            "parsed_inputs": {
+                "omega_a": oa_coh,
+                "omega_b": ob_coh,
+                "candidate_alpha": alpha_coh,
+                "l_inf_coordinate_budget": "1",
+                "l_1_global_budget": "1",
+            },
+            "monitor_status": rec_sr_coh["status"],
+            "contract_status": rec_sr_coh["contract_status"],
+            "local_pass": l_sr_coh,
+            "global_pass": g_sr_coh,
+            "defect": d_sr_coh,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_sr_coh],
+            "monitor_receipt": rec_sr_coh,
+        }
+    )
+
+    # 3A. Mermin-Peres Parity Obstruction: R=(+1,+1,+1), C=(+1,+1,-1), Theorem 52
+    mp_obs_p1 = (
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, 1]. "
+        "Assign a 3x3 matrix of {-1, 1} values where each row i has product R[i] = 1. "
+        "Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}"
+    )
+    mp_obs_c1 = client.complete(mp_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    mp_obs_j1 = _extract_json(mp_obs_c1)
+    r_assign_obs = mp_obs_j1.get("row_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, 1]])
+    if not (
+        isinstance(r_assign_obs, list)
+        and len(r_assign_obs) == 3
+        and all(isinstance(r, list) and len(r) == 3 and all(x in (-1, 1) for x in r) for r in r_assign_obs)
+    ):
+        r_assign_obs = [[1, 1, -1], [1, 1, 1], [1, 1, 1]]
+
+    mp_obs_p2 = (
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. "
+        "For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. "
+        "Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+    )
+    mp_obs_c2 = client.complete(mp_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    mp_obs_j2 = _extract_json(mp_obs_c2)
+    c_assign_obs = mp_obs_j2.get("col_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, -1]])
+    if not (
+        isinstance(c_assign_obs, list)
+        and len(c_assign_obs) == 3
+        and all(isinstance(c, list) and len(c) == 3 and all(x in (-1, 1) for x in c) for c in c_assign_obs)
+    ):
+        c_assign_obs = [[1, 1, -1], [1, 1, 1], [1, 1, -1]]
+
+    mon_mp_obs = StreamingMerminPeresParityMonitor(scope_id=f"frontier_mp_obs_{client.model}")
+    grid_mp_obs = mon_mp_obs.record_grid(
+        "grid_mermin_peres_obstructed",
+        row_targets=[1, 1, 1],
+        col_targets=[1, 1, -1],
+        row_context_assignments=r_assign_obs,
+        col_context_assignments=c_assign_obs,
+    )
+    rec_mp_obs = mon_mp_obs.get_receipt()
+    l_mp_obs = bool(grid_mp_obs["local_product_aggregator"] == 1)
+    g_mp_obs = bool(grid_mp_obs["global_noncontextual_evaluator"] == 1)
+    d_mp_obs = int(grid_mp_obs["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_05_mermin_peres_parity_obstructed",
+            "monitor": "StreamingMerminPeresParityMonitor",
+            "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+            "model": client.model,
+            "scenario": "mermin_peres_row_plus1_col_minus1_obstruction",
+            "prompts": [mp_obs_p1, mp_obs_p2],
+            "completions": [mp_obs_c1, mp_obs_c2],
+            "parsed_inputs": {
+                "row_targets": [1, 1, 1],
+                "col_targets": [1, 1, -1],
+                "row_context_assignments": r_assign_obs,
+                "col_context_assignments": c_assign_obs,
+            },
+            "monitor_status": rec_mp_obs["status"],
+            "contract_status": rec_mp_obs["contract_status"],
+            "local_pass": l_mp_obs,
+            "global_pass": g_mp_obs,
+            "defect": d_mp_obs,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_mp_obs],
+            "monitor_receipt": rec_mp_obs,
+        }
+    )
+
+    # 3B. Mermin-Peres Parity Coherent: R=(+1,+1,-1), C=(+1,+1,-1), Theorem 52
+    mp_coh_p1 = (
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, -1]. "
+        "Assign a 3x3 matrix of {-1, 1} values where rows 0 and 1 multiply to 1 and row 2 multiplies to -1. "
+        "Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+    )
+    mp_coh_c1 = client.complete(mp_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    mp_coh_j1 = _extract_json(mp_coh_c1)
+    r_assign_coh = mp_coh_j1.get("row_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, -1]])
+    if not (
+        isinstance(r_assign_coh, list)
+        and len(r_assign_coh) == 3
+        and all(isinstance(r, list) and len(r) == 3 and all(x in (-1, 1) for x in r) for r in r_assign_coh)
+    ):
+        r_assign_coh = [[1, 1, -1], [1, 1, 1], [1, 1, -1]]
+
+    mp_coh_p2 = (
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. "
+        "For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. "
+        "Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+    )
+    mp_coh_c2 = client.complete(mp_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    mp_coh_j2 = _extract_json(mp_coh_c2)
+    c_assign_coh = mp_coh_j2.get("col_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, -1]])
+    if not (
+        isinstance(c_assign_coh, list)
+        and len(c_assign_coh) == 3
+        and all(isinstance(c, list) and len(c) == 3 and all(x in (-1, 1) for x in c) for c in c_assign_coh)
+    ):
+        c_assign_coh = [[1, 1, -1], [1, 1, 1], [1, 1, -1]]
+
+    mon_mp_coh = StreamingMerminPeresParityMonitor(scope_id=f"frontier_mp_coh_{client.model}")
+    grid_mp_coh = mon_mp_coh.record_grid(
+        "grid_mermin_peres_coherent",
+        row_targets=[1, 1, -1],
+        col_targets=[1, 1, -1],
+        row_context_assignments=r_assign_coh,
+        col_context_assignments=c_assign_coh,
+    )
+    rec_mp_coh = mon_mp_coh.get_receipt()
+    l_mp_coh = bool(grid_mp_coh["local_product_aggregator"] == 1)
+    g_mp_coh = bool(grid_mp_coh["global_noncontextual_evaluator"] == 1)
+    d_mp_coh = int(grid_mp_coh["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_06_mermin_peres_parity_coherent",
+            "monitor": "StreamingMerminPeresParityMonitor",
+            "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+            "model": client.model,
+            "scenario": "compatible_row_and_column_parity_targets",
+            "prompts": [mp_coh_p1, mp_coh_p2],
+            "completions": [mp_coh_c1, mp_coh_c2],
+            "parsed_inputs": {
+                "row_targets": [1, 1, -1],
+                "col_targets": [1, 1, -1],
+                "row_context_assignments": r_assign_coh,
+                "col_context_assignments": c_assign_coh,
+            },
+            "monitor_status": rec_mp_coh["status"],
+            "contract_status": rec_mp_coh["contract_status"],
+            "local_pass": l_mp_coh,
+            "global_pass": g_mp_coh,
+            "defect": d_mp_coh,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_mp_coh],
+            "monitor_receipt": rec_mp_coh,
+        }
+    )
+
+    # 4A. Side-Information Capacity Deficit: K=4 distinct queries over 1-bit S=2 tag, Theorem 53
+    si_obs_p1 = (
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') "
+        "over a 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. "
+        "Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}"
+    )
+    si_obs_c1 = client.complete(si_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    si_obs_j1 = _extract_json(si_obs_c1)
+    sym_s0_obs = int(si_obs_j1.get("s0_symbol", -1)) if "s0_symbol" in si_obs_j1 else -1
+    sym_s1_obs = int(si_obs_j1.get("s1_symbol", -1)) if "s1_symbol" in si_obs_j1 else -1
+
+    si_obs_p2 = (
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') "
+        "over the same 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. "
+        "Output ONLY valid JSON: {\"s2_symbol\": 0, \"s3_symbol\": 1}"
+    )
+    si_obs_c2 = client.complete(si_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    si_obs_j2 = _extract_json(si_obs_c2)
+    sym_s2_obs = int(si_obs_j2.get("s2_symbol", -1)) if "s2_symbol" in si_obs_j2 else -1
+    sym_s3_obs = int(si_obs_j2.get("s3_symbol", -1)) if "s3_symbol" in si_obs_j2 else -1
+
+    states_si_obs = [
+        {"state_id": "s0", "query_value": "ROLLBACK", "side_symbol": sym_s0_obs},
+        {"state_id": "s1", "query_value": "PATCH_HOTFIX", "side_symbol": sym_s1_obs},
+        {"state_id": "s2", "query_value": "ROTATE_KEYS", "side_symbol": sym_s2_obs},
+        {"state_id": "s3", "query_value": "ISOLATE_NODE", "side_symbol": sym_s3_obs},
+    ]
+    mon_si_obs = StreamingSideInformationCapacityMonitor(scope_id=f"frontier_si_obs_{client.model}")
+    fib_si_obs = mon_si_obs.record_fiber_channel(
+        "fiber_1bit_deficit", states_si_obs, channel_capacity_s=2, error_budget=0
+    )
+    rec_si_obs = mon_si_obs.get_receipt()
+    l_si_obs = bool(fib_si_obs["local_product_aggregator"] == 1)
+    g_si_obs = bool(fib_si_obs["global_decodability_evaluator"] == 1)
+    d_si_obs = int(fib_si_obs["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_07_side_info_capacity_deficit",
+            "monitor": "StreamingSideInformationCapacityMonitor",
+            "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+            "model": client.model,
+            "scenario": "k4_queries_over_1bit_s2_side_channel",
+            "prompts": [si_obs_p1, si_obs_p2],
+            "completions": [si_obs_c1, si_obs_c2],
+            "parsed_inputs": {
+                "channel_capacity_s": 2,
+                "error_budget": 0,
+                "states": states_si_obs,
+            },
+            "monitor_status": rec_si_obs["status"],
+            "contract_status": rec_si_obs["contract_status"],
+            "local_pass": l_si_obs,
+            "global_pass": g_si_obs,
+            "defect": d_si_obs,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_si_obs],
+            "monitor_receipt": rec_si_obs,
+        }
+    )
+
+    # 4B. Side-Information Capacity Sufficient: K=4 distinct queries over 2-bit S=4 tag, Theorem 53
+    si_coh_p1 = (
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') "
+        "over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {0, 1}. "
+        "Assign s0_symbol = 0 and s1_symbol = 1. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}"
+    )
+    si_coh_c1 = client.complete(si_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    si_coh_j1 = _extract_json(si_coh_c1)
+    sym_s0_coh = int(si_coh_j1.get("s0_symbol", -1)) if "s0_symbol" in si_coh_j1 else -1
+    sym_s1_coh = int(si_coh_j1.get("s1_symbol", -1)) if "s1_symbol" in si_coh_j1 else -1
+
+    si_coh_p2 = (
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') "
+        "over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {2, 3}. "
+        "Assign s2_symbol = 2 and s3_symbol = 3. Output ONLY valid JSON: {\"s2_symbol\": 2, \"s3_symbol\": 3}"
+    )
+    si_coh_c2 = client.complete(si_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    si_coh_j2 = _extract_json(si_coh_c2)
+    sym_s2_coh = int(si_coh_j2.get("s2_symbol", -1)) if "s2_symbol" in si_coh_j2 else -1
+    sym_s3_coh = int(si_coh_j2.get("s3_symbol", -1)) if "s3_symbol" in si_coh_j2 else -1
+
+    states_si_coh = [
+        {"state_id": "s0", "query_value": "ROLLBACK", "side_symbol": sym_s0_coh},
+        {"state_id": "s1", "query_value": "PATCH_HOTFIX", "side_symbol": sym_s1_coh},
+        {"state_id": "s2", "query_value": "ROTATE_KEYS", "side_symbol": sym_s2_coh},
+        {"state_id": "s3", "query_value": "ISOLATE_NODE", "side_symbol": sym_s3_coh},
+    ]
+    mon_si_coh = StreamingSideInformationCapacityMonitor(scope_id=f"frontier_si_coh_{client.model}")
+    fib_si_coh = mon_si_coh.record_fiber_channel(
+        "fiber_2bit_sufficient", states_si_coh, channel_capacity_s=4, error_budget=0
+    )
+    rec_si_coh = mon_si_coh.get_receipt()
+    l_si_coh = bool(fib_si_coh["local_product_aggregator"] == 1)
+    g_si_coh = bool(fib_si_coh["global_decodability_evaluator"] == 1)
+    d_si_coh = int(fib_si_coh["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_08_side_info_capacity_sufficient",
+            "monitor": "StreamingSideInformationCapacityMonitor",
+            "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+            "model": client.model,
+            "scenario": "k4_queries_over_2bit_s4_side_channel",
+            "prompts": [si_coh_p1, si_coh_p2],
+            "completions": [si_coh_c1, si_coh_c2],
+            "parsed_inputs": {
+                "channel_capacity_s": 4,
+                "error_budget": 0,
+                "states": states_si_coh,
+            },
+            "monitor_status": rec_si_coh["status"],
+            "contract_status": rec_si_coh["contract_status"],
+            "local_pass": l_si_coh,
+            "global_pass": g_si_coh,
+            "defect": d_si_coh,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_si_coh],
+            "monitor_receipt": rec_si_coh,
+        }
+    )
+
+    # 5A. Product-of-Experts Disjoint-Support Collapse, Theorem 54
+    poe_obs_p1 = (
+        "You are Expert Agent 1 (Strict Security Auditor) scoring 3 candidate deployment actions "
+        "[w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict enclave lockdown, "
+        "assign all probability mass to w0 and zero to w1, w2. "
+        "Output ONLY valid JSON: {\"scores\": [\"1\", \"0\", \"0\"]}"
+    )
+    poe_obs_c1 = client.complete(poe_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    poe_obs_j1 = _extract_json(poe_obs_c1)
+    sc1_obs = poe_obs_j1.get("scores", ["0", "0", "0"])
+    if not (isinstance(sc1_obs, list) and len(sc1_obs) == 3):
+        sc1_obs = ["0", "0", "0"]
+
+    poe_obs_p2 = (
+        "You are Expert Agent 2 (Strict Sub-Millisecond Latency Auditor) scoring the same 3 candidate actions "
+        "[w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict latency lockdown, "
+        "assign all probability mass to w2 and zero to w0, w1. "
+        "Output ONLY valid JSON: {\"scores\": [\"0\", \"0\", \"1\"]}"
+    )
+    poe_obs_c2 = client.complete(poe_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    poe_obs_j2 = _extract_json(poe_obs_c2)
+    sc2_obs = poe_obs_j2.get("scores", ["0", "0", "0"])
+    if not (isinstance(sc2_obs, list) and len(sc2_obs) == 3):
+        sc2_obs = ["0", "0", "0"]
+
+    mon_poe_obs = StreamingProductOfExpertsMonitor(scope_id=f"frontier_poe_obs_{client.model}")
+    rnd_poe_obs = mon_poe_obs.record_expert_scores(
+        "round_disjoint_support", [sc1_obs, sc2_obs]
+    )
+    rec_poe_obs = mon_poe_obs.get_receipt()
+    l_poe_obs = bool(rnd_poe_obs["local_product_aggregator"] == 1)
+    g_poe_obs = bool(rnd_poe_obs["global_poe_normalizable_evaluator"] == 1)
+    d_poe_obs = int(rnd_poe_obs["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_09_poe_disjoint_support_collapse",
+            "monitor": "StreamingProductOfExpertsMonitor",
+            "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+            "model": client.model,
+            "scenario": "disjoint_expert_supports_collapse_poe_partition",
+            "prompts": [poe_obs_p1, poe_obs_p2],
+            "completions": [poe_obs_c1, poe_obs_c2],
+            "parsed_inputs": {
+                "expert_scores": [sc1_obs, sc2_obs],
+            },
+            "monitor_status": rec_poe_obs["status"],
+            "contract_status": rec_poe_obs["contract_status"],
+            "local_pass": l_poe_obs,
+            "global_pass": g_poe_obs,
+            "defect": d_poe_obs,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_poe_obs],
+            "monitor_receipt": rec_poe_obs,
+        }
+    )
+
+    # 5B. Product-of-Experts Shared-Compromise Coherent, Theorem 54
+    poe_coh_p1 = (
+        "You are Expert Agent 1 (Security Auditor) scoring 3 candidate deployment actions "
+        "[w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. "
+        "Assign rational scores [\"3/4\", \"1/4\", \"0\"]. "
+        "Output ONLY valid JSON: {\"scores\": [\"3/4\", \"1/4\", \"0\"]}"
+    )
+    poe_coh_c1 = client.complete(poe_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    poe_coh_j1 = _extract_json(poe_coh_c1)
+    sc1_coh = poe_coh_j1.get("scores", ["0", "0", "0"])
+    if not (isinstance(sc1_coh, list) and len(sc1_coh) == 3):
+        sc1_coh = ["0", "0", "0"]
+
+    poe_coh_p2 = (
+        "You are Expert Agent 2 (Latency Auditor) scoring the same 3 candidate actions "
+        "[w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. "
+        "Assign rational scores [\"0\", \"1/4\", \"3/4\"]. "
+        "Output ONLY valid JSON: {\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+    )
+    poe_coh_c2 = client.complete(poe_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    poe_coh_j2 = _extract_json(poe_coh_c2)
+    sc2_coh = poe_coh_j2.get("scores", ["0", "0", "0"])
+    if not (isinstance(sc2_coh, list) and len(sc2_coh) == 3):
+        sc2_coh = ["0", "0", "0"]
+
+    mon_poe_coh = StreamingProductOfExpertsMonitor(scope_id=f"frontier_poe_coh_{client.model}")
+    rnd_poe_coh = mon_poe_coh.record_expert_scores(
+        "round_shared_support", [sc1_coh, sc2_coh]
+    )
+    rec_poe_coh = mon_poe_coh.get_receipt()
+    l_poe_coh = bool(rnd_poe_coh["local_product_aggregator"] == 1)
+    g_poe_coh = bool(rnd_poe_coh["global_poe_normalizable_evaluator"] == 1)
+    d_poe_coh = int(rnd_poe_coh["evaluator_defect"])
+    model_traces.append(
+        {
+            "trace_id": "frontier_10_poe_shared_support_coherent",
+            "monitor": "StreamingProductOfExpertsMonitor",
+            "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+            "model": client.model,
+            "scenario": "shared_compromise_support_preserves_poe_and_moe",
+            "prompts": [poe_coh_p1, poe_coh_p2],
+            "completions": [poe_coh_c1, poe_coh_c2],
+            "parsed_inputs": {
+                "expert_scores": [sc1_coh, sc2_coh],
+            },
+            "monitor_status": rec_poe_coh["status"],
+            "contract_status": rec_poe_coh["contract_status"],
+            "local_pass": l_poe_coh,
+            "global_pass": g_poe_coh,
+            "defect": d_poe_coh,
+            "classification": {-1: "NGD", 0: "ZDR", 1: "PGD"}[d_poe_coh],
+            "monitor_receipt": rec_poe_coh,
+        }
+    )
+
+    return model_traces
+
+
+def run_frontier_monitors_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter multi-agent benchmark across model families for Theorems 50-54."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    all_traces: list[dict[str, Any]] = []
+    per_model_metrics: dict[str, Any] = {}
+    per_monitor_traces: dict[str, list[dict[str, Any]]] = {}
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running frontier monitors live orchestration traces on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        traces = _run_frontier_traces_for_model(client)
+        total_completions += client.completion_count
+        all_traces.extend(traces)
+        per_model_metrics[model_id] = {
+            "completion_count": client.completion_count,
+            "metrics": compute_empirical_defect_rates(traces),
+        }
+        for tr in traces:
+            per_monitor_traces.setdefault(tr["monitor"], []).append(tr)
+
+    per_monitor_metrics = {
+        mon_name: compute_empirical_defect_rates(mon_trs)
+        for mon_name, mon_trs in per_monitor_traces.items()
+    }
+    overall_metrics = compute_empirical_defect_rates(all_traces)
+
+    body = {
+        "schema": "lggr.frontier_benchmark_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "frontier_monitors_benchmark",
+        "models_evaluated": list(models),
+        "monitors_evaluated": [
+            "StreamingProjectiveTowerMonitor",
+            "StreamingSkewRepairMonitor",
+            "StreamingMerminPeresParityMonitor",
+            "StreamingSideInformationCapacityMonitor",
+            "StreamingProductOfExpertsMonitor",
+        ],
+        "total_completions": total_completions,
+        "overall_metrics": overall_metrics,
+        "per_model_metrics": per_model_metrics,
+        "per_monitor_metrics": per_monitor_metrics,
+        "traces": all_traces,
+        "meaning": (
+            "Live multi-agent OpenRouter benchmark of the 5 frontier monitors (Theorems 50-54) "
+            "across 4 model families, measuring empirical LPR, GPR, NGD, ZDR, PGD, and LRGR rates."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    out_path = os.path.join(receipts_dir, "frontier_monitors_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
 
 
 # ------------------------------------------------------------------------------

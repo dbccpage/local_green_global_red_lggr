@@ -26,6 +26,11 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingMerminPeresParityMonitor,
+    StreamingProductOfExpertsMonitor,
+    StreamingProjectiveTowerMonitor,
+    StreamingSideInformationCapacityMonitor,
+    StreamingSkewRepairMonitor,
 )
 from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
 
@@ -311,6 +316,115 @@ class TestOfflineTraceReplay(unittest.TestCase):
         for t in traces:
             expected_class = {-1: "NGD", 0: "ZDR", 1: "PGD"}[t["defect"]]
             self.assertEqual(t["classification"], expected_class)
+
+    def test_frontier_monitors_multi_model_benchmark_replay(self):
+        """F15: Replay all 50 live multi-agent frontier monitor traces across 5 model families."""
+        artifact = RECEIPTS_DIR / "frontier_monitors_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("frontier_monitors_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.frontier_benchmark_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("monitors_evaluated", [])), 5)
+        self.assertEqual(data.get("total_completions"), 100)
+
+        traces = data.get("traces", [])
+        self.assertEqual(len(traces), 50)
+
+        recomputed_overall = compute_empirical_defect_rates(traces)
+        self.assertEqual(data["overall_metrics"], recomputed_overall)
+        self.assertTrue(recomputed_overall["identity_verified"])
+
+        for model_id, model_entry in data.get("per_model_metrics", {}).items():
+            model_trs = [t for t in traces if t["model"] == model_id]
+            self.assertEqual(len(model_trs), 10)
+            self.assertEqual(model_entry["metrics"], compute_empirical_defect_rates(model_trs))
+            self.assertTrue(model_entry["metrics"]["identity_verified"])
+
+        for mon_name, mon_metrics in data.get("per_monitor_metrics", {}).items():
+            mon_trs = [t for t in traces if t["monitor"] == mon_name]
+            self.assertEqual(len(mon_trs), 10)
+            self.assertEqual(mon_metrics, compute_empirical_defect_rates(mon_trs))
+            self.assertTrue(mon_metrics["identity_verified"])
+
+        # Deterministically replay every single trace through its corresponding frontier monitor
+        for t in traces:
+            mon_name = t["monitor"]
+            inp = t["parsed_inputs"]
+            saved_rec = t["monitor_receipt"]
+            scope_id = saved_rec["scope_id"]
+
+            if mon_name == "StreamingProjectiveTowerMonitor":
+                mon = StreamingProjectiveTowerMonitor(
+                    inp["coeff_a"], inp["const_b"], scope_id=scope_id
+                )
+                for st in inp["stages"]:
+                    mon.record_stage(st["stage_id"], st["modulus"], st["candidate_x"])
+                replayed_rec = mon.get_receipt()
+                l_pass = bool(replayed_rec["local_product_aggregator"] == 1)
+                g_pass = bool(replayed_rec["global_integral_lift_evaluator"] == 1)
+                defect = int(replayed_rec["evaluator_defect"])
+            elif mon_name == "StreamingSkewRepairMonitor":
+                mon = StreamingSkewRepairMonitor(scope_id=scope_id)
+                probe_id = saved_rec["probes"][0]["probe_id"]
+                probe_rec = mon.record_probe(
+                    probe_id,
+                    inp["omega_a"],
+                    inp["omega_b"],
+                    candidate_alpha=inp["candidate_alpha"],
+                    l_inf_coordinate_budget=inp["l_inf_coordinate_budget"],
+                    l_1_global_budget=inp["l_1_global_budget"],
+                )
+                replayed_rec = mon.get_receipt()
+                l_pass = bool(probe_rec["local_product_aggregator"] == 1)
+                g_pass = bool(probe_rec["global_l1_budget_evaluator"] == 1)
+                defect = int(probe_rec["evaluator_defect"])
+            elif mon_name == "StreamingMerminPeresParityMonitor":
+                mon = StreamingMerminPeresParityMonitor(scope_id=scope_id)
+                grid_id = saved_rec["grids"][0]["grid_id"]
+                grid_rec = mon.record_grid(
+                    grid_id,
+                    row_targets=inp["row_targets"],
+                    col_targets=inp["col_targets"],
+                    row_context_assignments=inp["row_context_assignments"],
+                    col_context_assignments=inp["col_context_assignments"],
+                )
+                replayed_rec = mon.get_receipt()
+                l_pass = bool(grid_rec["local_product_aggregator"] == 1)
+                g_pass = bool(grid_rec["global_noncontextual_evaluator"] == 1)
+                defect = int(grid_rec["evaluator_defect"])
+            elif mon_name == "StreamingSideInformationCapacityMonitor":
+                mon = StreamingSideInformationCapacityMonitor(scope_id=scope_id)
+                fiber_id = saved_rec["fibers"][0]["fiber_id"]
+                fib_rec = mon.record_fiber_channel(
+                    fiber_id,
+                    inp["states"],
+                    channel_capacity_s=inp["channel_capacity_s"],
+                    error_budget=inp["error_budget"],
+                )
+                replayed_rec = mon.get_receipt()
+                l_pass = bool(fib_rec["local_product_aggregator"] == 1)
+                g_pass = bool(fib_rec["global_decodability_evaluator"] == 1)
+                defect = int(fib_rec["evaluator_defect"])
+            elif mon_name == "StreamingProductOfExpertsMonitor":
+                mon = StreamingProductOfExpertsMonitor(scope_id=scope_id)
+                round_id = saved_rec["rounds"][0]["round_id"]
+                rnd_rec = mon.record_expert_scores(round_id, inp["expert_scores"])
+                replayed_rec = mon.get_receipt()
+                l_pass = bool(rnd_rec["local_product_aggregator"] == 1)
+                g_pass = bool(rnd_rec["global_poe_normalizable_evaluator"] == 1)
+                defect = int(rnd_rec["evaluator_defect"])
+            else:
+                self.fail(f"Unknown frontier monitor: {mon_name}")
+
+            self.assertEqual(replayed_rec["receipt_sha256"], saved_rec["receipt_sha256"])
+            self.assertEqual(replayed_rec["status"], t["monitor_status"])
+            self.assertEqual(replayed_rec["contract_status"], t["contract_status"])
+            self.assertEqual(l_pass, t["local_pass"])
+            self.assertEqual(g_pass, t["global_pass"])
+            self.assertEqual(defect, t["defect"])
+            self.assertEqual({-1: "NGD", 0: "ZDR", 1: "PGD"}[defect], t["classification"])
 
 
 if __name__ == "__main__":

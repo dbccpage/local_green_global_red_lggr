@@ -1,0 +1,4805 @@
+{
+  "schema": "lggr.frontier_benchmark_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "frontier_monitors_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "monitors_evaluated": [
+    "StreamingProjectiveTowerMonitor",
+    "StreamingSkewRepairMonitor",
+    "StreamingMerminPeresParityMonitor",
+    "StreamingSideInformationCapacityMonitor",
+    "StreamingProductOfExpertsMonitor"
+  ],
+  "total_completions": 100,
+  "overall_metrics": {
+    "N": 50,
+    "LPR": "43/50",
+    "GPR": "19/50",
+    "NGD_rate": "12/25",
+    "ZDR_rate": "13/25",
+    "PGD_rate": "0",
+    "mean_defect": "-12/25",
+    "EGD_rate": "-12/25",
+    "LRGR_rate": "7/50",
+    "identity_verified": true
+  },
+  "per_model_metrics": {
+    "openai/gpt-4o-mini": {
+      "completion_count": 20,
+      "metrics": {
+        "N": 10,
+        "LPR": "4/5",
+        "GPR": "2/5",
+        "NGD_rate": "2/5",
+        "ZDR_rate": "3/5",
+        "PGD_rate": "0",
+        "mean_defect": "-2/5",
+        "EGD_rate": "-2/5",
+        "LRGR_rate": "1/5",
+        "identity_verified": true
+      }
+    },
+    "google/gemini-2.5-flash-lite": {
+      "completion_count": 20,
+      "metrics": {
+        "N": 10,
+        "LPR": "4/5",
+        "GPR": "3/10",
+        "NGD_rate": "1/2",
+        "ZDR_rate": "1/2",
+        "PGD_rate": "0",
+        "mean_defect": "-1/2",
+        "EGD_rate": "-1/2",
+        "LRGR_rate": "1/5",
+        "identity_verified": true
+      }
+    },
+    "meta-llama/llama-3.3-70b-instruct": {
+      "completion_count": 20,
+      "metrics": {
+        "N": 10,
+        "LPR": "9/10",
+        "GPR": "2/5",
+        "NGD_rate": "1/2",
+        "ZDR_rate": "1/2",
+        "PGD_rate": "0",
+        "mean_defect": "-1/2",
+        "EGD_rate": "-1/2",
+        "LRGR_rate": "1/10",
+        "identity_verified": true
+      }
+    },
+    "deepseek/deepseek-chat": {
+      "completion_count": 20,
+      "metrics": {
+        "N": 10,
+        "LPR": "1",
+        "GPR": "1/2",
+        "NGD_rate": "1/2",
+        "ZDR_rate": "1/2",
+        "PGD_rate": "0",
+        "mean_defect": "-1/2",
+        "EGD_rate": "-1/2",
+        "LRGR_rate": "0",
+        "identity_verified": true
+      }
+    },
+    "mistralai/mistral-small-3.2-24b-instruct": {
+      "completion_count": 20,
+      "metrics": {
+        "N": 10,
+        "LPR": "4/5",
+        "GPR": "3/10",
+        "NGD_rate": "1/2",
+        "ZDR_rate": "1/2",
+        "PGD_rate": "0",
+        "mean_defect": "-1/2",
+        "EGD_rate": "-1/2",
+        "LRGR_rate": "1/5",
+        "identity_verified": true
+      }
+    }
+  },
+  "per_monitor_metrics": {
+    "StreamingProjectiveTowerMonitor": {
+      "N": 10,
+      "LPR": "1/2",
+      "GPR": "2/5",
+      "NGD_rate": "1/10",
+      "ZDR_rate": "9/10",
+      "PGD_rate": "0",
+      "mean_defect": "-1/10",
+      "EGD_rate": "-1/10",
+      "LRGR_rate": "1/2",
+      "identity_verified": true
+    },
+    "StreamingSkewRepairMonitor": {
+      "N": 10,
+      "LPR": "9/10",
+      "GPR": "1/10",
+      "NGD_rate": "4/5",
+      "ZDR_rate": "1/5",
+      "PGD_rate": "0",
+      "mean_defect": "-4/5",
+      "EGD_rate": "-4/5",
+      "LRGR_rate": "1/10",
+      "identity_verified": true
+    },
+    "StreamingMerminPeresParityMonitor": {
+      "N": 10,
+      "LPR": "9/10",
+      "GPR": "2/5",
+      "NGD_rate": "1/2",
+      "ZDR_rate": "1/2",
+      "PGD_rate": "0",
+      "mean_defect": "-1/2",
+      "EGD_rate": "-1/2",
+      "LRGR_rate": "1/10",
+      "identity_verified": true
+    },
+    "StreamingSideInformationCapacityMonitor": {
+      "N": 10,
+      "LPR": "1",
+      "GPR": "1/2",
+      "NGD_rate": "1/2",
+      "ZDR_rate": "1/2",
+      "PGD_rate": "0",
+      "mean_defect": "-1/2",
+      "EGD_rate": "-1/2",
+      "LRGR_rate": "0",
+      "identity_verified": true
+    },
+    "StreamingProductOfExpertsMonitor": {
+      "N": 10,
+      "LPR": "1",
+      "GPR": "1/2",
+      "NGD_rate": "1/2",
+      "ZDR_rate": "1/2",
+      "PGD_rate": "0",
+      "mean_defect": "-1/2",
+      "EGD_rate": "-1/2",
+      "LRGR_rate": "0",
+      "identity_verified": true
+    }
+  },
+  "traces": [
+    {
+      "trace_id": "frontier_01_projective_tower_obstructed",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "obstructed_2adic_tower_3x_plus_1",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x + 1 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 + 1) % 2 == 0. Output ONLY valid JSON: {\"modulus\": 2, \"candidate_x\": 1}",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x + 1 == 0 (mod 4), given Stage-1 witness x_1 = 1 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 + 1) % 4 == 0 and (x_2 - 1) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "{\"modulus\":2,\"candidate_x\":1}",
+        "{\n  \"modulus\": 4,\n  \"candidate_x\": 2\n}"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": 1,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2
+          }
+        ]
+      },
+      "monitor_status": "LOCAL_TOWER_STAGE_REJECTED",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": false,
+      "global_pass": false,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_obs_openai/gpt-4o-mini",
+        "status": "LOCAL_TOWER_STAGE_REJECTED",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "coeff_a": 3,
+        "const_b": 1,
+        "stage_count": 2,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "local_product_aggregator": 0,
+        "global_integral_lift_evaluator": 0,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2,
+            "modular_residual": 3,
+            "local_modular_pass": 0,
+            "step_lift_difference": 1,
+            "inverse_limit_projection_compatible": 0,
+            "local_stage_evaluator": 0
+          }
+        ],
+        "receipt_sha256": "8370b934e65e25441f28abada52a64a1c88e923d6acd87432f954b71dab8865e"
+      }
+    },
+    {
+      "trace_id": "frontier_02_projective_tower_coherent",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "coherent_integral_tower_3x_minus_6",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x - 6 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 - 6) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (2) and 'candidate_x' (integer).",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x - 6 == 0 (mod 4), given Stage-1 witness x_1 = 0 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 - 6) % 4 == 0 and (x_2 - 0) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "{\n  \"modulus\": 2,\n  \"candidate_x\": 0\n}",
+        "{\n  \"modulus\": 4,\n  \"candidate_x\": 2\n}"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": -6,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2
+          }
+        ]
+      },
+      "monitor_status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_coh_openai/gpt-4o-mini",
+        "status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "coeff_a": 3,
+        "const_b": -6,
+        "stage_count": 2,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "local_product_aggregator": 1,
+        "global_integral_lift_evaluator": 1,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 2,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          }
+        ],
+        "receipt_sha256": "7a73b706f0a6f2be77376d8bfa9d548e33a87c566475bce371b37114a7795238"
+      }
+    },
+    {
+      "trace_id": "frontier_03_skew_repair_linf_divergence",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "linf_selected_repair_breaches_l1_minimum_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) coupled via skew residual r(alpha) = (a + alpha, b + 2*alpha). Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Peak-Latency (l_infinity) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes max(|1 + alpha|, |0 + 2*alpha|) so both coordinates stay <= 2/3. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "{\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "{\n  \"candidate_alpha\": \"-1/5\"\n}"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/5",
+        "l_inf_coordinate_budget": "2/3",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "LOCAL_COORDINATE_BOUND_REJECTED",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": false,
+      "global_pass": false,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_obs_openai/gpt-4o-mini",
+        "status": "LOCAL_COORDINATE_BOUND_REJECTED",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [],
+        "rejected_probe_ids": [
+          "probe_linf_vs_l1"
+        ],
+        "probes": [
+          {
+            "probe_id": "probe_linf_vs_l1",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/5",
+            "candidate_residual": [
+              "4/5",
+              "-2/5"
+            ],
+            "candidate_l1_cost": "6/5",
+            "candidate_l2_squared_cost": "4/5",
+            "candidate_linf_cost": "4/5",
+            "l_inf_coordinate_budget": "2/3",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              0,
+              1
+            ],
+            "local_product_aggregator": 0,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": 0,
+            "probe_status": "LOCAL_COORDINATE_BOUND_REJECTED"
+          }
+        ],
+        "receipt_sha256": "3de2c1bdc9178e1c75c606be022f3572308c0a36cb4f013d8a849d200bb87ee6"
+      }
+    },
+    {
+      "trace_id": "frontier_04_skew_repair_l1_coherent",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "l1_optimal_repair_satisfies_global_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) with coordinate budget B_inf = 1 and cumulative l_1 budget B_1 = 1. Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Cumulative-Cost (l_1) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes total l_1 cost |1 + alpha| + |0 + 2*alpha| so total l_1 cost <= 1. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "{\"omega_a\":\"1\",\"omega_b\":\"0\"}",
+        "{\n  \"candidate_alpha\": \"-1/5\"\n}"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/5",
+        "l_inf_coordinate_budget": "1",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_coh_openai/gpt-4o-mini",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_l1_coherent"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_l1_coherent",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/5",
+            "candidate_residual": [
+              "4/5",
+              "-2/5"
+            ],
+            "candidate_l1_cost": "6/5",
+            "candidate_l2_squared_cost": "4/5",
+            "candidate_linf_cost": "4/5",
+            "l_inf_coordinate_budget": "1",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "769e9acb32fbba7e7bd84f65a6c3039837273c7f83c136c2b125e6a8a1710691"
+      }
+    },
+    {
+      "trace_id": "frontier_05_mermin_peres_parity_obstructed",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "mermin_peres_row_plus1_col_minus1_obstruction",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, 1]. Assign a 3x3 matrix of {-1, 1} values where each row i has product R[i] = 1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}",
+        "{\"col_context_assignments\":[[1,1,1],[1,1,1],[1,1,-1]]}"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_obs_openai/gpt-4o-mini",
+        "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [
+          "grid_mermin_peres_obstructed"
+        ],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_obstructed",
+            "row_targets": [
+              1,
+              1,
+              1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": 1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": true,
+            "max_satisfied_contexts_out_of_6": 5,
+            "min_violated_contexts": 1,
+            "global_noncontextual_witness_count": 0,
+            "global_noncontextual_assignment_exists": false,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 0,
+            "evaluator_defect": -1,
+            "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+          }
+        ],
+        "receipt_sha256": "0ec63355aa5fbe4dde1d8468bfbd49689cdcfb1895676dd7659724b1ebfb2fc1"
+      }
+    },
+    {
+      "trace_id": "frontier_06_mermin_peres_parity_coherent",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "compatible_row_and_column_parity_targets",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, -1]. Assign a 3x3 matrix of {-1, 1} values where rows 0 and 1 multiply to 1 and row 2 multiplies to -1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "{\"row_context_assignments\":[[1,1,1],[1,1,1],[1,1,-1]]}",
+        "{\"col_context_assignments\":[[1,1,1],[1,1,1],[1,1,-1]]}"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          -1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_coh_openai/gpt-4o-mini",
+        "status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_coherent",
+            "row_targets": [
+              1,
+              1,
+              -1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": -1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": false,
+            "max_satisfied_contexts_out_of_6": 6,
+            "min_violated_contexts": 0,
+            "global_noncontextual_witness_count": 16,
+            "global_noncontextual_assignment_exists": true,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 1,
+            "evaluator_defect": 0,
+            "grid_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "d197896caf9234c2fb3154315150c3dc48b8502564804b07577886e4fddfb4ea"
+      }
+    },
+    {
+      "trace_id": "frontier_07_side_info_capacity_deficit",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "k4_queries_over_1bit_s2_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over the same 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s2_symbol\": 0, \"s3_symbol\": 1}"
+      ],
+      "completions": [
+        "{\"s0_symbol\":0,\"s1_symbol\":1}",
+        "{\"s2_symbol\":0,\"s3_symbol\":1}"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 2,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 1
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_obs_openai/gpt-4o-mini",
+        "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [
+          "fiber_1bit_deficit"
+        ],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_1bit_deficit",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "399175a5f9c3a533a107d61483a3af074ca20ed0f48a6dbf0ec102341cf3cfd6"
+      }
+    },
+    {
+      "trace_id": "frontier_08_side_info_capacity_sufficient",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "k4_queries_over_2bit_s4_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {0, 1}. Assign s0_symbol = 0 and s1_symbol = 1. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {2, 3}. Assign s2_symbol = 2 and s3_symbol = 3. Output ONLY valid JSON: {\"s2_symbol\": 2, \"s3_symbol\": 3}"
+      ],
+      "completions": [
+        "{\"s0_symbol\":0,\"s1_symbol\":1}",
+        "{\"s2_symbol\":2,\"s3_symbol\":3}"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 4,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 2
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 3
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_coh_openai/gpt-4o-mini",
+        "status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_2bit_sufficient",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 4,
+            "used_symbols_count": 4,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 3,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "7c145fe651619e5dd0d8bf86ecb560aa88a1af52db52ec5f5aa0a545d585d9bc"
+      }
+    },
+    {
+      "trace_id": "frontier_09_poe_disjoint_support_collapse",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "disjoint_expert_supports_collapse_poe_partition",
+      "prompts": [
+        "You are Expert Agent 1 (Strict Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict enclave lockdown, assign all probability mass to w0 and zero to w1, w2. Output ONLY valid JSON: {\"scores\": [\"1\", \"0\", \"0\"]}",
+        "You are Expert Agent 2 (Strict Sub-Millisecond Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict latency lockdown, assign all probability mass to w2 and zero to w0, w1. Output ONLY valid JSON: {\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "completions": [
+        "{\"scores\": [\"1\", \"0\", \"0\"]}",
+        "{\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "1",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "1"
+          ]
+        ]
+      },
+      "monitor_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_obs_openai/gpt-4o-mini",
+        "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [
+          "round_disjoint_support"
+        ],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_disjoint_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          }
+        ],
+        "receipt_sha256": "d4d4251f735cc6c9ecab950534016db781c6fe514008419681da64467c0d44b5"
+      }
+    },
+    {
+      "trace_id": "frontier_10_poe_shared_support_coherent",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "openai/gpt-4o-mini",
+      "scenario": "shared_compromise_support_preserves_poe_and_moe",
+      "prompts": [
+        "You are Expert Agent 1 (Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"3/4\", \"1/4\", \"0\"]. Output ONLY valid JSON: {\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "You are Expert Agent 2 (Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"0\", \"1/4\", \"3/4\"]. Output ONLY valid JSON: {\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "completions": [
+        "{\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "{\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "3/4",
+            "1/4",
+            "0"
+          ],
+          [
+            "0",
+            "1/4",
+            "3/4"
+          ]
+        ]
+      },
+      "monitor_status": "POE_AND_MOE_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_coh_openai/gpt-4o-mini",
+        "status": "POE_AND_MOE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_shared_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "0",
+              "1/16",
+              "0"
+            ],
+            "poe_partition_sum": "1/16",
+            "poe_normalized_distribution": [
+              "0",
+              "1",
+              "0"
+            ],
+            "moe_unnormalized_vector": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "edcd11173c5cd2dfdb4855043c08649280634cd0f97f92a12ffbb5d668741e7c"
+      }
+    },
+    {
+      "trace_id": "frontier_01_projective_tower_obstructed",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "obstructed_2adic_tower_3x_plus_1",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x + 1 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 + 1) % 2 == 0. Output ONLY valid JSON: {\"modulus\": 2, \"candidate_x\": 1}",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x + 1 == 0 (mod 4), given Stage-1 witness x_1 = 1 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 + 1) % 4 == 0 and (x_2 - 1) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "```json\n{\"modulus\": 2, \"candidate_x\": 1}\n```",
+        "```json\n{\n  \"modulus\": 4,\n  \"candidate_x\": 3\n}\n```"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": 1,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 3
+          }
+        ]
+      },
+      "monitor_status": "LOCAL_TOWER_STAGE_REJECTED",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": false,
+      "global_pass": false,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_obs_google/gemini-2.5-flash-lite",
+        "status": "LOCAL_TOWER_STAGE_REJECTED",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "coeff_a": 3,
+        "const_b": 1,
+        "stage_count": 2,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "local_product_aggregator": 0,
+        "global_integral_lift_evaluator": 0,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 3,
+            "modular_residual": 2,
+            "local_modular_pass": 0,
+            "step_lift_difference": 2,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 0
+          }
+        ],
+        "receipt_sha256": "6048647721d7d45f6198208659fc1304f367233e60d9c6a981fd8bde4f970f75"
+      }
+    },
+    {
+      "trace_id": "frontier_02_projective_tower_coherent",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "coherent_integral_tower_3x_minus_6",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x - 6 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 - 6) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (2) and 'candidate_x' (integer).",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x - 6 == 0 (mod 4), given Stage-1 witness x_1 = 0 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 - 6) % 4 == 0 and (x_2 - 0) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "```json\n{\n  \"modulus\": 2,\n  \"candidate_x\": 0\n}\n```",
+        "```json\n{\n  \"modulus\": 4,\n  \"candidate_x\": 0\n}\n```"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": -6,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 0
+          }
+        ]
+      },
+      "monitor_status": "LOCAL_TOWER_STAGE_REJECTED",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": false,
+      "global_pass": false,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_coh_google/gemini-2.5-flash-lite",
+        "status": "LOCAL_TOWER_STAGE_REJECTED",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "coeff_a": 3,
+        "const_b": -6,
+        "stage_count": 2,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "local_product_aggregator": 0,
+        "global_integral_lift_evaluator": 0,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 0,
+            "modular_residual": 2,
+            "local_modular_pass": 0,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 0
+          }
+        ],
+        "receipt_sha256": "138b9cc2db59624ca605b8dd147673cd4f93103514c99a1884cb191a6ba5746e"
+      }
+    },
+    {
+      "trace_id": "frontier_03_skew_repair_linf_divergence",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "linf_selected_repair_breaches_l1_minimum_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) coupled via skew residual r(alpha) = (a + alpha, b + 2*alpha). Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Peak-Latency (l_infinity) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes max(|1 + alpha|, |0 + 2*alpha|) so both coordinates stay <= 2/3. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "{\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "```json\n{\n  \"candidate_alpha\": \"-1/3\"\n}\n```"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/3",
+        "l_inf_coordinate_budget": "2/3",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_obs_google/gemini-2.5-flash-lite",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_linf_vs_l1"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_linf_vs_l1",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/3",
+            "candidate_residual": [
+              "2/3",
+              "-2/3"
+            ],
+            "candidate_l1_cost": "4/3",
+            "candidate_l2_squared_cost": "8/9",
+            "candidate_linf_cost": "2/3",
+            "l_inf_coordinate_budget": "2/3",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "1002e580ce424288b8efbcc81f0f93c135ae94617b25808c8fd0d39a5996e101"
+      }
+    },
+    {
+      "trace_id": "frontier_04_skew_repair_l1_coherent",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "l1_optimal_repair_satisfies_global_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) with coordinate budget B_inf = 1 and cumulative l_1 budget B_1 = 1. Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Cumulative-Cost (l_1) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes total l_1 cost |1 + alpha| + |0 + 2*alpha| so total l_1 cost <= 1. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "```json\n{\"omega_a\": \"1\", \"omega_b\": \"0\"}\n```",
+        "```json\n{\n  \"candidate_alpha\": \"-1/3\"\n}\n```"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/3",
+        "l_inf_coordinate_budget": "1",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_coh_google/gemini-2.5-flash-lite",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_l1_coherent"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_l1_coherent",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/3",
+            "candidate_residual": [
+              "2/3",
+              "-2/3"
+            ],
+            "candidate_l1_cost": "4/3",
+            "candidate_l2_squared_cost": "8/9",
+            "candidate_linf_cost": "2/3",
+            "l_inf_coordinate_budget": "1",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "f672acb7432e1f144470ef1e2882039937b1034f7574e38e64824f5abd298808"
+      }
+    },
+    {
+      "trace_id": "frontier_05_mermin_peres_parity_obstructed",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "mermin_peres_row_plus1_col_minus1_obstruction",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, 1]. Assign a 3x3 matrix of {-1, 1} values where each row i has product R[i] = 1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "```json\n{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}\n```",
+        "```json\n{\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}\n```"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_obs_google/gemini-2.5-flash-lite",
+        "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [
+          "grid_mermin_peres_obstructed"
+        ],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_obstructed",
+            "row_targets": [
+              1,
+              1,
+              1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": 1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": true,
+            "max_satisfied_contexts_out_of_6": 5,
+            "min_violated_contexts": 1,
+            "global_noncontextual_witness_count": 0,
+            "global_noncontextual_assignment_exists": false,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 0,
+            "evaluator_defect": -1,
+            "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+          }
+        ],
+        "receipt_sha256": "3e7c1c4008283be0338c1d7e0311fa7fc8c4306cc062de2b7afea05087dd9a0b"
+      }
+    },
+    {
+      "trace_id": "frontier_06_mermin_peres_parity_coherent",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "compatible_row_and_column_parity_targets",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, -1]. Assign a 3x3 matrix of {-1, 1} values where rows 0 and 1 multiply to 1 and row 2 multiplies to -1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "```json\n{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}\n```",
+        "```json\n{\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}\n```"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          -1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_coh_google/gemini-2.5-flash-lite",
+        "status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_coherent",
+            "row_targets": [
+              1,
+              1,
+              -1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": -1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": false,
+            "max_satisfied_contexts_out_of_6": 6,
+            "min_violated_contexts": 0,
+            "global_noncontextual_witness_count": 16,
+            "global_noncontextual_assignment_exists": true,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 1,
+            "evaluator_defect": 0,
+            "grid_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "5e2c40b929c0543a0a87e0e045f089533722e7d2f026aa0083db0cd33084e21c"
+      }
+    },
+    {
+      "trace_id": "frontier_07_side_info_capacity_deficit",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "k4_queries_over_1bit_s2_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over the same 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s2_symbol\": 0, \"s3_symbol\": 1}"
+      ],
+      "completions": [
+        "```json\n{\"s0_symbol\": 0, \"s1_symbol\": 1}\n```",
+        "```json\n{\"s2_symbol\": 0, \"s3_symbol\": 1}\n```"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 2,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 1
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_obs_google/gemini-2.5-flash-lite",
+        "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [
+          "fiber_1bit_deficit"
+        ],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_1bit_deficit",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "fea1e4dea014b3aede4659834f8ad7e3adc1faed30614ed128c441f6cd58c201"
+      }
+    },
+    {
+      "trace_id": "frontier_08_side_info_capacity_sufficient",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "k4_queries_over_2bit_s4_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {0, 1}. Assign s0_symbol = 0 and s1_symbol = 1. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {2, 3}. Assign s2_symbol = 2 and s3_symbol = 3. Output ONLY valid JSON: {\"s2_symbol\": 2, \"s3_symbol\": 3}"
+      ],
+      "completions": [
+        "```json\n{\"s0_symbol\": 0, \"s1_symbol\": 1}\n```",
+        "```json\n{\"s2_symbol\": 2, \"s3_symbol\": 3}\n```"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 4,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 2
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 3
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_coh_google/gemini-2.5-flash-lite",
+        "status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_2bit_sufficient",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 4,
+            "used_symbols_count": 4,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 3,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "60693676be4ba8ce1337e79796dc8ead8502d0165a7d08cb5476ce3c917d227e"
+      }
+    },
+    {
+      "trace_id": "frontier_09_poe_disjoint_support_collapse",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "disjoint_expert_supports_collapse_poe_partition",
+      "prompts": [
+        "You are Expert Agent 1 (Strict Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict enclave lockdown, assign all probability mass to w0 and zero to w1, w2. Output ONLY valid JSON: {\"scores\": [\"1\", \"0\", \"0\"]}",
+        "You are Expert Agent 2 (Strict Sub-Millisecond Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict latency lockdown, assign all probability mass to w2 and zero to w0, w1. Output ONLY valid JSON: {\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "completions": [
+        "```json\n{\"scores\": [\"1\", \"0\", \"0\"]}\n```",
+        "```json\n{\"scores\": [\"0\", \"0\", \"1\"]}\n```"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "1",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "1"
+          ]
+        ]
+      },
+      "monitor_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_obs_google/gemini-2.5-flash-lite",
+        "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [
+          "round_disjoint_support"
+        ],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_disjoint_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          }
+        ],
+        "receipt_sha256": "70f84a14e377285a20191cb7a3645144582faed3e5bdfca5c35c9f1f27b9d13d"
+      }
+    },
+    {
+      "trace_id": "frontier_10_poe_shared_support_coherent",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "google/gemini-2.5-flash-lite",
+      "scenario": "shared_compromise_support_preserves_poe_and_moe",
+      "prompts": [
+        "You are Expert Agent 1 (Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"3/4\", \"1/4\", \"0\"]. Output ONLY valid JSON: {\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "You are Expert Agent 2 (Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"0\", \"1/4\", \"3/4\"]. Output ONLY valid JSON: {\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "completions": [
+        "```json\n{\"scores\": [\"3/4\", \"1/4\", \"0\"]}\n```",
+        "```json\n{\"scores\": [\"0\", \"1/4\", \"3/4\"]}\n```"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "3/4",
+            "1/4",
+            "0"
+          ],
+          [
+            "0",
+            "1/4",
+            "3/4"
+          ]
+        ]
+      },
+      "monitor_status": "POE_AND_MOE_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_coh_google/gemini-2.5-flash-lite",
+        "status": "POE_AND_MOE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_shared_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "0",
+              "1/16",
+              "0"
+            ],
+            "poe_partition_sum": "1/16",
+            "poe_normalized_distribution": [
+              "0",
+              "1",
+              "0"
+            ],
+            "moe_unnormalized_vector": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "bceb65d0efb731a8811399d82b90d95469fc24557aa038eb099e80d903877a41"
+      }
+    },
+    {
+      "trace_id": "frontier_01_projective_tower_obstructed",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "obstructed_2adic_tower_3x_plus_1",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x + 1 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 + 1) % 2 == 0. Output ONLY valid JSON: {\"modulus\": 2, \"candidate_x\": 1}",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x + 1 == 0 (mod 4), given Stage-1 witness x_1 = 1 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 + 1) % 4 == 0 and (x_2 - 1) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "{\"modulus\": 2, \"candidate_x\": 1}",
+        "{\"modulus\": 4, \"candidate_x\": 3}"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": 1,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 3
+          }
+        ]
+      },
+      "monitor_status": "LOCAL_TOWER_STAGE_REJECTED",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": false,
+      "global_pass": false,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_obs_meta-llama/llama-3.3-70b-instruct",
+        "status": "LOCAL_TOWER_STAGE_REJECTED",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "coeff_a": 3,
+        "const_b": 1,
+        "stage_count": 2,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "local_product_aggregator": 0,
+        "global_integral_lift_evaluator": 0,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 3,
+            "modular_residual": 2,
+            "local_modular_pass": 0,
+            "step_lift_difference": 2,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 0
+          }
+        ],
+        "receipt_sha256": "abc156783f7eea5d974e68b248624f9173e9051ae116d5771c15d7984c69d6e0"
+      }
+    },
+    {
+      "trace_id": "frontier_02_projective_tower_coherent",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "coherent_integral_tower_3x_minus_6",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x - 6 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 - 6) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (2) and 'candidate_x' (integer).",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x - 6 == 0 (mod 4), given Stage-1 witness x_1 = 0 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 - 6) % 4 == 0 and (x_2 - 0) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "{\"modulus\": 2, \"candidate_x\": 0}",
+        "{\"modulus\": 4, \"candidate_x\": 2}"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": -6,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2
+          }
+        ]
+      },
+      "monitor_status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_coh_meta-llama/llama-3.3-70b-instruct",
+        "status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "coeff_a": 3,
+        "const_b": -6,
+        "stage_count": 2,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "local_product_aggregator": 1,
+        "global_integral_lift_evaluator": 1,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 2,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          }
+        ],
+        "receipt_sha256": "11258c1d67122f75ce57df26b953b6815c177eab6139b9cfb013748acf690dc4"
+      }
+    },
+    {
+      "trace_id": "frontier_03_skew_repair_linf_divergence",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "linf_selected_repair_breaches_l1_minimum_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) coupled via skew residual r(alpha) = (a + alpha, b + 2*alpha). Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Peak-Latency (l_infinity) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes max(|1 + alpha|, |0 + 2*alpha|) so both coordinates stay <= 2/3. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "{\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "{\"candidate_alpha\": \"-1/3\"}"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/3",
+        "l_inf_coordinate_budget": "2/3",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_obs_meta-llama/llama-3.3-70b-instruct",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_linf_vs_l1"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_linf_vs_l1",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/3",
+            "candidate_residual": [
+              "2/3",
+              "-2/3"
+            ],
+            "candidate_l1_cost": "4/3",
+            "candidate_l2_squared_cost": "8/9",
+            "candidate_linf_cost": "2/3",
+            "l_inf_coordinate_budget": "2/3",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "f7111194e0cd7604ea9bfba41cd099782ae29bc145c7ce8b8cbf23db810baae0"
+      }
+    },
+    {
+      "trace_id": "frontier_04_skew_repair_l1_coherent",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "l1_optimal_repair_satisfies_global_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) with coordinate budget B_inf = 1 and cumulative l_1 budget B_1 = 1. Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Cumulative-Cost (l_1) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes total l_1 cost |1 + alpha| + |0 + 2*alpha| so total l_1 cost <= 1. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "{\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "{\"candidate_alpha\": \"-1/3\"}"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/3",
+        "l_inf_coordinate_budget": "1",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_coh_meta-llama/llama-3.3-70b-instruct",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_l1_coherent"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_l1_coherent",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/3",
+            "candidate_residual": [
+              "2/3",
+              "-2/3"
+            ],
+            "candidate_l1_cost": "4/3",
+            "candidate_l2_squared_cost": "8/9",
+            "candidate_linf_cost": "2/3",
+            "l_inf_coordinate_budget": "1",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "0acf710ea90b1db41b0fded52ebbb867b032afcd8a4af5820ec867b2e54f45e6"
+      }
+    },
+    {
+      "trace_id": "frontier_05_mermin_peres_parity_obstructed",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "mermin_peres_row_plus1_col_minus1_obstruction",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, 1]. Assign a 3x3 matrix of {-1, 1} values where each row i has product R[i] = 1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}",
+        "{\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_obs_meta-llama/llama-3.3-70b-instruct",
+        "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [
+          "grid_mermin_peres_obstructed"
+        ],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_obstructed",
+            "row_targets": [
+              1,
+              1,
+              1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": 1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": true,
+            "max_satisfied_contexts_out_of_6": 5,
+            "min_violated_contexts": 1,
+            "global_noncontextual_witness_count": 0,
+            "global_noncontextual_assignment_exists": false,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 0,
+            "evaluator_defect": -1,
+            "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+          }
+        ],
+        "receipt_sha256": "e93448092ac70db7549d768a36449f714832608a18b40c398ce1c06e80304445"
+      }
+    },
+    {
+      "trace_id": "frontier_06_mermin_peres_parity_coherent",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "compatible_row_and_column_parity_targets",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, -1]. Assign a 3x3 matrix of {-1, 1} values where rows 0 and 1 multiply to 1 and row 2 multiplies to -1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}",
+        "{\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          -1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_coh_meta-llama/llama-3.3-70b-instruct",
+        "status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_coherent",
+            "row_targets": [
+              1,
+              1,
+              -1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": -1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": false,
+            "max_satisfied_contexts_out_of_6": 6,
+            "min_violated_contexts": 0,
+            "global_noncontextual_witness_count": 16,
+            "global_noncontextual_assignment_exists": true,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 1,
+            "evaluator_defect": 0,
+            "grid_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "5e6ecf6ff89da796672efb371787424ea5c4b051dbd67e1b4593137ae50eca0a"
+      }
+    },
+    {
+      "trace_id": "frontier_07_side_info_capacity_deficit",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "k4_queries_over_1bit_s2_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over the same 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s2_symbol\": 0, \"s3_symbol\": 1}"
+      ],
+      "completions": [
+        "{\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "{\"s2_symbol\": 0, \"s3_symbol\": 1}"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 2,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 1
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_obs_meta-llama/llama-3.3-70b-instruct",
+        "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [
+          "fiber_1bit_deficit"
+        ],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_1bit_deficit",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "321bc12c303205e2b052896961f2b82810bb8f8c399ee5b65e3157edc10fee5f"
+      }
+    },
+    {
+      "trace_id": "frontier_08_side_info_capacity_sufficient",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "k4_queries_over_2bit_s4_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {0, 1}. Assign s0_symbol = 0 and s1_symbol = 1. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {2, 3}. Assign s2_symbol = 2 and s3_symbol = 3. Output ONLY valid JSON: {\"s2_symbol\": 2, \"s3_symbol\": 3}"
+      ],
+      "completions": [
+        "{\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "{\"s2_symbol\": 2, \"s3_symbol\": 3}"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 4,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 2
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 3
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_coh_meta-llama/llama-3.3-70b-instruct",
+        "status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_2bit_sufficient",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 4,
+            "used_symbols_count": 4,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 3,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "a926a43aa85537771d6d6ef9e63b5ea353a5eaed95c0ae7dcac135bc494ed73f"
+      }
+    },
+    {
+      "trace_id": "frontier_09_poe_disjoint_support_collapse",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "disjoint_expert_supports_collapse_poe_partition",
+      "prompts": [
+        "You are Expert Agent 1 (Strict Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict enclave lockdown, assign all probability mass to w0 and zero to w1, w2. Output ONLY valid JSON: {\"scores\": [\"1\", \"0\", \"0\"]}",
+        "You are Expert Agent 2 (Strict Sub-Millisecond Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict latency lockdown, assign all probability mass to w2 and zero to w0, w1. Output ONLY valid JSON: {\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "completions": [
+        "{\"scores\": [\"1\", \"0\", \"0\"]}",
+        "{\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "1",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "1"
+          ]
+        ]
+      },
+      "monitor_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_obs_meta-llama/llama-3.3-70b-instruct",
+        "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [
+          "round_disjoint_support"
+        ],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_disjoint_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          }
+        ],
+        "receipt_sha256": "c9a5847330640073449f3e89f5c7d196ec03d635eb4e38f9a009fa4efc847b5c"
+      }
+    },
+    {
+      "trace_id": "frontier_10_poe_shared_support_coherent",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "scenario": "shared_compromise_support_preserves_poe_and_moe",
+      "prompts": [
+        "You are Expert Agent 1 (Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"3/4\", \"1/4\", \"0\"]. Output ONLY valid JSON: {\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "You are Expert Agent 2 (Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"0\", \"1/4\", \"3/4\"]. Output ONLY valid JSON: {\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "completions": [
+        "{\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "{\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "3/4",
+            "1/4",
+            "0"
+          ],
+          [
+            "0",
+            "1/4",
+            "3/4"
+          ]
+        ]
+      },
+      "monitor_status": "POE_AND_MOE_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_coh_meta-llama/llama-3.3-70b-instruct",
+        "status": "POE_AND_MOE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_shared_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "0",
+              "1/16",
+              "0"
+            ],
+            "poe_partition_sum": "1/16",
+            "poe_normalized_distribution": [
+              "0",
+              "1",
+              "0"
+            ],
+            "moe_unnormalized_vector": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "7d49ed442ee622a330cfb64bb947a3cb321151bbbeccc1f9db5bbdb27baca071"
+      }
+    },
+    {
+      "trace_id": "frontier_01_projective_tower_obstructed",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "obstructed_2adic_tower_3x_plus_1",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x + 1 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 + 1) % 2 == 0. Output ONLY valid JSON: {\"modulus\": 2, \"candidate_x\": 1}",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x + 1 == 0 (mod 4), given Stage-1 witness x_1 = 1 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 + 1) % 4 == 0 and (x_2 - 1) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "```json\n{\"modulus\": 2, \"candidate_x\": 1}\n```",
+        "```json\n{\"modulus\": 4, \"candidate_x\": 1}\n```"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": 1,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 1
+          }
+        ]
+      },
+      "monitor_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_obs_deepseek/deepseek-chat",
+        "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "coeff_a": 3,
+        "const_b": 1,
+        "stage_count": 2,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "local_product_aggregator": 1,
+        "global_integral_lift_evaluator": 0,
+        "evaluator_defect": -1,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 1,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          }
+        ],
+        "receipt_sha256": "0277087c585bdd946f91a45c997f765bd38f1dc661b59693d1aee2c4c24619c1"
+      }
+    },
+    {
+      "trace_id": "frontier_02_projective_tower_coherent",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "coherent_integral_tower_3x_minus_6",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x - 6 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 - 6) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (2) and 'candidate_x' (integer).",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x - 6 == 0 (mod 4), given Stage-1 witness x_1 = 0 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 - 6) % 4 == 0 and (x_2 - 0) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "```json\n{\"modulus\": 2, \"candidate_x\": 0}\n```",
+        "```json\n{\"modulus\": 4, \"candidate_x\": 2}\n```"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": -6,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2
+          }
+        ]
+      },
+      "monitor_status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_coh_deepseek/deepseek-chat",
+        "status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "coeff_a": 3,
+        "const_b": -6,
+        "stage_count": 2,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "local_product_aggregator": 1,
+        "global_integral_lift_evaluator": 1,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 2,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          }
+        ],
+        "receipt_sha256": "497d35664b774c7f5c16a3fa65706ba8cecf4dcc0aed74957e1042b1cf30290a"
+      }
+    },
+    {
+      "trace_id": "frontier_03_skew_repair_linf_divergence",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "linf_selected_repair_breaches_l1_minimum_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) coupled via skew residual r(alpha) = (a + alpha, b + 2*alpha). Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Peak-Latency (l_infinity) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes max(|1 + alpha|, |0 + 2*alpha|) so both coordinates stay <= 2/3. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "```json\n{\"omega_a\": \"1\", \"omega_b\": \"0\"}\n```",
+        "```json\n{\n  \"candidate_alpha\": \"-1/3\"\n}\n```"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/3",
+        "l_inf_coordinate_budget": "2/3",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_obs_deepseek/deepseek-chat",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_linf_vs_l1"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_linf_vs_l1",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/3",
+            "candidate_residual": [
+              "2/3",
+              "-2/3"
+            ],
+            "candidate_l1_cost": "4/3",
+            "candidate_l2_squared_cost": "8/9",
+            "candidate_linf_cost": "2/3",
+            "l_inf_coordinate_budget": "2/3",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "e679d42d040f7d6e0cd0d17b5ed53dbf27012b968c1d00d8051ba67bf1ffa41e"
+      }
+    },
+    {
+      "trace_id": "frontier_04_skew_repair_l1_coherent",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "l1_optimal_repair_satisfies_global_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) with coordinate budget B_inf = 1 and cumulative l_1 budget B_1 = 1. Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Cumulative-Cost (l_1) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes total l_1 cost |1 + alpha| + |0 + 2*alpha| so total l_1 cost <= 1. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "```json\n{\"omega_a\": \"1\", \"omega_b\": \"0\"}\n```",
+        "```json\n{\n  \"candidate_alpha\": \"0\"\n}\n```"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "0",
+        "l_inf_coordinate_budget": "1",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_coh_deepseek/deepseek-chat",
+        "status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_l1_coherent",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "0",
+            "candidate_residual": [
+              "1",
+              "0"
+            ],
+            "candidate_l1_cost": "1",
+            "candidate_l2_squared_cost": "1",
+            "candidate_linf_cost": "1",
+            "l_inf_coordinate_budget": "1",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 1,
+            "evaluator_defect": 0,
+            "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "94e2d93791ca8d9f68fad4cea77cc6c0f6adfe917b372130e32d267c175e76ea"
+      }
+    },
+    {
+      "trace_id": "frontier_05_mermin_peres_parity_obstructed",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "mermin_peres_row_plus1_col_minus1_obstruction",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, 1]. Assign a 3x3 matrix of {-1, 1} values where each row i has product R[i] = 1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "```json\n{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}\n```",
+        "```json\n{\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}\n```"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_obs_deepseek/deepseek-chat",
+        "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [
+          "grid_mermin_peres_obstructed"
+        ],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_obstructed",
+            "row_targets": [
+              1,
+              1,
+              1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": 1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": true,
+            "max_satisfied_contexts_out_of_6": 5,
+            "min_violated_contexts": 1,
+            "global_noncontextual_witness_count": 0,
+            "global_noncontextual_assignment_exists": false,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 0,
+            "evaluator_defect": -1,
+            "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+          }
+        ],
+        "receipt_sha256": "67ade8003a575f2c84779523c9effa442a777a7e750a3ecc9d4e584f9afab73d"
+      }
+    },
+    {
+      "trace_id": "frontier_06_mermin_peres_parity_coherent",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "compatible_row_and_column_parity_targets",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, -1]. Assign a 3x3 matrix of {-1, 1} values where rows 0 and 1 multiply to 1 and row 2 multiplies to -1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "```json\n{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}\n```",
+        "```json\n{\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}\n```"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          -1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_coh_deepseek/deepseek-chat",
+        "status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_coherent",
+            "row_targets": [
+              1,
+              1,
+              -1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": -1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": false,
+            "max_satisfied_contexts_out_of_6": 6,
+            "min_violated_contexts": 0,
+            "global_noncontextual_witness_count": 16,
+            "global_noncontextual_assignment_exists": true,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 1,
+            "evaluator_defect": 0,
+            "grid_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "d4218f88b5a28a782a2d3d542bdfe21dfad3cb2ba9d6a6a3ecb7600980c90796"
+      }
+    },
+    {
+      "trace_id": "frontier_07_side_info_capacity_deficit",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "k4_queries_over_1bit_s2_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over the same 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s2_symbol\": 0, \"s3_symbol\": 1}"
+      ],
+      "completions": [
+        "```json\n{\"s0_symbol\": 0, \"s1_symbol\": 1}\n```",
+        "```json\n{\"s2_symbol\": 0, \"s3_symbol\": 1}\n```"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 2,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 1
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_obs_deepseek/deepseek-chat",
+        "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [
+          "fiber_1bit_deficit"
+        ],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_1bit_deficit",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "f9241c2b13705d63e21e2d493d109efc737c1d0ab84492f9e17bcd8013feb8e0"
+      }
+    },
+    {
+      "trace_id": "frontier_08_side_info_capacity_sufficient",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "k4_queries_over_2bit_s4_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {0, 1}. Assign s0_symbol = 0 and s1_symbol = 1. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {2, 3}. Assign s2_symbol = 2 and s3_symbol = 3. Output ONLY valid JSON: {\"s2_symbol\": 2, \"s3_symbol\": 3}"
+      ],
+      "completions": [
+        "```json\n{\"s0_symbol\": 0, \"s1_symbol\": 1}\n```",
+        "```json\n{\"s2_symbol\": 2, \"s3_symbol\": 3}\n```"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 4,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 2
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 3
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_coh_deepseek/deepseek-chat",
+        "status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_2bit_sufficient",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 4,
+            "used_symbols_count": 4,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 3,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "66437d4647da507b9760e82b5e6666fa95a1c4226ab148a80c2a861979f37fe4"
+      }
+    },
+    {
+      "trace_id": "frontier_09_poe_disjoint_support_collapse",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "disjoint_expert_supports_collapse_poe_partition",
+      "prompts": [
+        "You are Expert Agent 1 (Strict Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict enclave lockdown, assign all probability mass to w0 and zero to w1, w2. Output ONLY valid JSON: {\"scores\": [\"1\", \"0\", \"0\"]}",
+        "You are Expert Agent 2 (Strict Sub-Millisecond Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict latency lockdown, assign all probability mass to w2 and zero to w0, w1. Output ONLY valid JSON: {\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "completions": [
+        "```json\n{\"scores\": [\"1\", \"0\", \"0\"]}\n```",
+        "```json\n{\"scores\": [\"0\", \"0\", \"1\"]}\n```"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "1",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "1"
+          ]
+        ]
+      },
+      "monitor_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_obs_deepseek/deepseek-chat",
+        "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [
+          "round_disjoint_support"
+        ],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_disjoint_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          }
+        ],
+        "receipt_sha256": "46ba6ad3bcf8f39843e1ab90d9c89cd349fe1040e615921931db8485b2235172"
+      }
+    },
+    {
+      "trace_id": "frontier_10_poe_shared_support_coherent",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "deepseek/deepseek-chat",
+      "scenario": "shared_compromise_support_preserves_poe_and_moe",
+      "prompts": [
+        "You are Expert Agent 1 (Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"3/4\", \"1/4\", \"0\"]. Output ONLY valid JSON: {\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "You are Expert Agent 2 (Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"0\", \"1/4\", \"3/4\"]. Output ONLY valid JSON: {\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "completions": [
+        "{\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "{\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "3/4",
+            "1/4",
+            "0"
+          ],
+          [
+            "0",
+            "1/4",
+            "3/4"
+          ]
+        ]
+      },
+      "monitor_status": "POE_AND_MOE_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_coh_deepseek/deepseek-chat",
+        "status": "POE_AND_MOE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_shared_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "0",
+              "1/16",
+              "0"
+            ],
+            "poe_partition_sum": "1/16",
+            "poe_normalized_distribution": [
+              "0",
+              "1",
+              "0"
+            ],
+            "moe_unnormalized_vector": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "812372d2c4024344623c2c26c9de446b47f56ae804eeaddeb3810328adab99f4"
+      }
+    },
+    {
+      "trace_id": "frontier_01_projective_tower_obstructed",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "obstructed_2adic_tower_3x_plus_1",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x + 1 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 + 1) % 2 == 0. Output ONLY valid JSON: {\"modulus\": 2, \"candidate_x\": 1}",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x + 1 == 0 (mod 4), given Stage-1 witness x_1 = 1 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 + 1) % 4 == 0 and (x_2 - 1) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "```json\n{\"modulus\": 2, \"candidate_x\": 1}\n```",
+        "```json\n{\n  \"modulus\": 4,\n  \"candidate_x\": 3\n}\n```"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": 1,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 3
+          }
+        ]
+      },
+      "monitor_status": "LOCAL_TOWER_STAGE_REJECTED",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": false,
+      "global_pass": false,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_obs_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "LOCAL_TOWER_STAGE_REJECTED",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "coeff_a": 3,
+        "const_b": 1,
+        "stage_count": 2,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "local_product_aggregator": 0,
+        "global_integral_lift_evaluator": 0,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 1,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 3,
+            "modular_residual": 2,
+            "local_modular_pass": 0,
+            "step_lift_difference": 2,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 0
+          }
+        ],
+        "receipt_sha256": "f307ceec3ebfaa03f3f5bbd9a68e8da906f100de02127d30e11429bd9b07dc0a"
+      }
+    },
+    {
+      "trace_id": "frontier_02_projective_tower_coherent",
+      "monitor": "StreamingProjectiveTowerMonitor",
+      "theorem": "LggrVIII.derived_limit_projective_tower_lifting_obstruction (Theorem 50)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "coherent_integral_tower_3x_minus_6",
+      "prompts": [
+        "You are Stage-1 Modular Verification Agent (modulus m_1 = 2) auditing equation 3*x - 6 == 0 (mod 2). Find the unique integer x_1 in {0, 1} such that (3 * x_1 - 6) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (2) and 'candidate_x' (integer).",
+        "You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x - 6 == 0 (mod 4), given Stage-1 witness x_1 = 0 (mod 2). Find the unique integer x_2 in {0, 1, 2, 3} such that (3 * x_2 - 6) % 4 == 0 and (x_2 - 0) % 2 == 0. Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
+      ],
+      "completions": [
+        "```json\n{\n  \"modulus\": 2,\n  \"candidate_x\": 0\n}\n```",
+        "```json\n{\n  \"modulus\": 4,\n  \"candidate_x\": 2\n}\n```"
+      ],
+      "parsed_inputs": {
+        "coeff_a": 3,
+        "const_b": -6,
+        "stages": [
+          {
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0
+          },
+          {
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2
+          }
+        ]
+      },
+      "monitor_status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_projective_tower.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_pt_coh_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "coeff_a": 3,
+        "const_b": -6,
+        "stage_count": 2,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "local_product_aggregator": 1,
+        "global_integral_lift_evaluator": 1,
+        "evaluator_defect": 0,
+        "stages": [
+          {
+            "stage_index": 0,
+            "stage_id": "stage_mod2",
+            "modulus": 2,
+            "candidate_x": 0,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 0,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          },
+          {
+            "stage_index": 1,
+            "stage_id": "stage_mod4",
+            "modulus": 4,
+            "candidate_x": 2,
+            "modular_residual": 0,
+            "local_modular_pass": 1,
+            "step_lift_difference": 2,
+            "inverse_limit_projection_compatible": 1,
+            "local_stage_evaluator": 1
+          }
+        ],
+        "receipt_sha256": "d5c919604f7c8b17c18e9fa9de2f3f241ab3b1a8d481eaea1ac239d7eb3c974d"
+      }
+    },
+    {
+      "trace_id": "frontier_03_skew_repair_linf_divergence",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "linf_selected_repair_breaches_l1_minimum_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) coupled via skew residual r(alpha) = (a + alpha, b + 2*alpha). Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Peak-Latency (l_infinity) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes max(|1 + alpha|, |0 + 2*alpha|) so both coordinates stay <= 2/3. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "```json\n{\n  \"omega_a\": \"1\",\n  \"omega_b\": \"0\"\n}\n```",
+        "```json\n{\"candidate_alpha\": \"-1/3\"}\n```"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/3",
+        "l_inf_coordinate_budget": "2/3",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_obs_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_linf_vs_l1"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_linf_vs_l1",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/3",
+            "candidate_residual": [
+              "2/3",
+              "-2/3"
+            ],
+            "candidate_l1_cost": "4/3",
+            "candidate_l2_squared_cost": "8/9",
+            "candidate_linf_cost": "2/3",
+            "l_inf_coordinate_budget": "2/3",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "f33c5ddc6005e0181ce15087c8bc936c3e34c4fe30f54061f4252f6034ffcafc"
+      }
+    },
+    {
+      "trace_id": "frontier_04_skew_repair_l1_coherent",
+      "monitor": "StreamingSkewRepairMonitor",
+      "theorem": "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction (Theorem 51)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "l1_optimal_repair_satisfies_global_budget",
+      "prompts": [
+        "You are a Telemetry Observer Agent measuring a 2-channel defect cochain omega = (a, b) = (1, 0) with coordinate budget B_inf = 1 and cumulative l_1 budget B_1 = 1. Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}",
+        "You are a Cumulative-Cost (l_1) Repair Planner Agent for residual r(alpha) = (1 + alpha, 0 + 2*alpha). Choose the exact rational repair parameter alpha from [\"-1/3\", \"-1/5\", \"0\"] that minimizes total l_1 cost |1 + alpha| + |0 + 2*alpha| so total l_1 cost <= 1. Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
+      ],
+      "completions": [
+        "```json\n{\n  \"omega_a\": \"1\",\n  \"omega_b\": \"0\",\n  \"B_inf\": 1,\n  \"B_1\": 1\n}\n```",
+        "```json\n{\"candidate_alpha\": \"-1/5\"}\n```"
+      ],
+      "parsed_inputs": {
+        "omega_a": "1",
+        "omega_b": "0",
+        "candidate_alpha": "-1/5",
+        "l_inf_coordinate_budget": "1",
+        "l_1_global_budget": "1"
+      },
+      "monitor_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_skew_repair.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_sr_coh_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "all_closed_form_identities_verified": true,
+        "skew_norm_divergence_probe_ids": [
+          "probe_l1_coherent"
+        ],
+        "rejected_probe_ids": [],
+        "probes": [
+          {
+            "probe_id": "probe_l1_coherent",
+            "omega": [
+              "1",
+              "0"
+            ],
+            "skew_discrepancy_2a_minus_b": "2",
+            "alpha_1": "0",
+            "alpha_2": "-1/5",
+            "alpha_inf": "-1/3",
+            "phi_1": "1",
+            "phi_2_squared": "4/5",
+            "phi_inf": "2/3",
+            "closed_form_identities_hold": true,
+            "minimizers_strictly_diverge": true,
+            "candidate_alpha": "-1/5",
+            "candidate_residual": [
+              "4/5",
+              "-2/5"
+            ],
+            "candidate_l1_cost": "6/5",
+            "candidate_l2_squared_cost": "4/5",
+            "candidate_linf_cost": "4/5",
+            "l_inf_coordinate_budget": "1",
+            "l_1_global_budget": "1",
+            "local_coordinate_evaluators": [
+              1,
+              1
+            ],
+            "local_product_aggregator": 1,
+            "global_l1_budget_evaluator": 0,
+            "evaluator_defect": -1,
+            "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+          }
+        ],
+        "receipt_sha256": "d868c7646b47c1f8b9243e51961441d0491a9cb3d7eb48da92016af23bd6c5a7"
+      }
+    },
+    {
+      "trace_id": "frontier_05_mermin_peres_parity_obstructed",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "mermin_peres_row_plus1_col_minus1_obstruction",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, 1]. Assign a 3x3 matrix of {-1, 1} values where each row i has product R[i] = 1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "```json\n{\n  \"row_context_assignments\": [\n    [1, 1, 1],\n    [1, -1, -1],\n    [-1, 1, -1]\n  ]\n}\n```",
+        "```json\n{\n  \"col_context_assignments\": [\n    [1, 1, 1],\n    [1, 1, 1],\n    [1, 1, -1]\n  ]\n}\n```"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            -1,
+            -1
+          ],
+          [
+            -1,
+            1,
+            -1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_obs_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [
+          "grid_mermin_peres_obstructed"
+        ],
+        "rejected_grid_ids": [],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_obstructed",
+            "row_targets": [
+              1,
+              1,
+              1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "row_target_product": 1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": true,
+            "max_satisfied_contexts_out_of_6": 5,
+            "min_violated_contexts": 1,
+            "global_noncontextual_witness_count": 0,
+            "global_noncontextual_assignment_exists": false,
+            "local_product_aggregator": 1,
+            "global_noncontextual_evaluator": 0,
+            "evaluator_defect": -1,
+            "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+          }
+        ],
+        "receipt_sha256": "568cf7eb3f0cab4f71bf3060cfd560ebb4723fec09de2080bdc97288c3e1a4c6"
+      }
+    },
+    {
+      "trace_id": "frontier_06_mermin_peres_parity_coherent",
+      "monitor": "StreamingMerminPeresParityMonitor",
+      "theorem": "LggrVIII.mermin_peres_magic_square_parity_obstruction (Theorem 52)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "compatible_row_and_column_parity_targets",
+      "prompts": [
+        "You are the Row-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with row product targets R = [1, 1, -1]. Assign a 3x3 matrix of {-1, 1} values where rows 0 and 1 multiply to 1 and row 2 multiplies to -1. Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}",
+        "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. For each column j in {0, 1, 2}, assign 3 values in {-1, 1} whose product equals C[j]. Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
+      ],
+      "completions": [
+        "```json\n{\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}\n```",
+        "```json\n{\n  \"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, -1, -1]]\n}\n```"
+      ],
+      "parsed_inputs": {
+        "row_targets": [
+          1,
+          1,
+          -1
+        ],
+        "col_targets": [
+          1,
+          1,
+          -1
+        ],
+        "row_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            -1
+          ]
+        ],
+        "col_context_assignments": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            -1,
+            -1
+          ]
+        ]
+      },
+      "monitor_status": "LOCAL_CONTEXT_PARITY_REJECTED",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": false,
+      "global_pass": false,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_mermin_peres_parity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_mp_coh_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "LOCAL_CONTEXT_PARITY_REJECTED",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "grid_count": 1,
+        "parity_obstructed_grid_ids": [],
+        "rejected_grid_ids": [
+          "grid_mermin_peres_coherent"
+        ],
+        "grids": [
+          {
+            "grid_id": "grid_mermin_peres_coherent",
+            "row_targets": [
+              1,
+              1,
+              -1
+            ],
+            "col_targets": [
+              1,
+              1,
+              -1
+            ],
+            "row_context_evaluators": [
+              1,
+              1,
+              1
+            ],
+            "col_context_evaluators": [
+              1,
+              1,
+              0
+            ],
+            "row_target_product": -1,
+            "col_target_product": -1,
+            "parity_mismatch_obstruction": false,
+            "max_satisfied_contexts_out_of_6": 6,
+            "min_violated_contexts": 0,
+            "global_noncontextual_witness_count": 16,
+            "global_noncontextual_assignment_exists": true,
+            "local_product_aggregator": 0,
+            "global_noncontextual_evaluator": 0,
+            "evaluator_defect": 0,
+            "grid_status": "LOCAL_CONTEXT_PARITY_REJECTED"
+          }
+        ],
+        "receipt_sha256": "e303dc2c08f9a4dcd3c13635296952b9fd5462622089b72c4593175f1f3189cd"
+      }
+    },
+    {
+      "trace_id": "frontier_07_side_info_capacity_deficit",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "k4_queries_over_1bit_s2_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over the same 1-bit escalation side-channel where side_symbol must be in {0, 1}. Assign distinct symbols in {0, 1}. Output ONLY valid JSON: {\"s2_symbol\": 0, \"s3_symbol\": 1}"
+      ],
+      "completions": [
+        "{\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "{\"s2_symbol\": 0, \"s3_symbol\": 1}"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 2,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 1
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_obs_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [
+          "fiber_1bit_deficit"
+        ],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_1bit_deficit",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "92bfeaeb07b5ed4156ca4748573dba5b9ef7ff9bde8191672f017554b53b1539"
+      }
+    },
+    {
+      "trace_id": "frontier_08_side_info_capacity_sufficient",
+      "monitor": "StreamingSideInformationCapacityMonitor",
+      "theorem": "LggrVIII.side_information_channel_capacity_and_fiber_error_floor (Theorem 53)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "k4_queries_over_2bit_s4_side_channel",
+      "prompts": [
+        "You are Triage Subagent 1 handling two incident states ('s0' requiring 'ROLLBACK' and 's1' requiring 'PATCH_HOTFIX') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {0, 1}. Assign s0_symbol = 0 and s1_symbol = 1. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}",
+        "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') over a 2-bit escalation side-channel (symbols in {0, 1, 2, 3}), allocated sub-band {2, 3}. Assign s2_symbol = 2 and s3_symbol = 3. Output ONLY valid JSON: {\"s2_symbol\": 2, \"s3_symbol\": 3}"
+      ],
+      "completions": [
+        "```json\n{\"s0_symbol\": 0, \"s1_symbol\": 1}\n```",
+        "{\"s2_symbol\": 2, \"s3_symbol\": 3}"
+      ],
+      "parsed_inputs": {
+        "channel_capacity_s": 4,
+        "error_budget": 0,
+        "states": [
+          {
+            "state_id": "s0",
+            "query_value": "ROLLBACK",
+            "side_symbol": 0
+          },
+          {
+            "state_id": "s1",
+            "query_value": "PATCH_HOTFIX",
+            "side_symbol": 1
+          },
+          {
+            "state_id": "s2",
+            "query_value": "ROTATE_KEYS",
+            "side_symbol": 2
+          },
+          {
+            "state_id": "s3",
+            "query_value": "ISOLATE_NODE",
+            "side_symbol": 3
+          }
+        ]
+      },
+      "monitor_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_si_coh_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "fiber_count": 1,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "fiber_2bit_sufficient",
+            "state_count": 4,
+            "distinct_query_values_k": 4,
+            "channel_capacity_s": 4,
+            "used_symbols_count": 4,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "s0",
+                "query_value": "ROLLBACK",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s1",
+                "query_value": "PATCH_HOTFIX",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s2",
+                "query_value": "ROTATE_KEYS",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "s3",
+                "query_value": "ISOLATE_NODE",
+                "side_symbol": 3,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "12efae005d607384534fe5d4be973b32c045c546cbcef1c14ccb5d4b6ad6b5cf"
+      }
+    },
+    {
+      "trace_id": "frontier_09_poe_disjoint_support_collapse",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "disjoint_expert_supports_collapse_poe_partition",
+      "prompts": [
+        "You are Expert Agent 1 (Strict Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict enclave lockdown, assign all probability mass to w0 and zero to w1, w2. Output ONLY valid JSON: {\"scores\": [\"1\", \"0\", \"0\"]}",
+        "You are Expert Agent 2 (Strict Sub-Millisecond Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath']. Under strict latency lockdown, assign all probability mass to w2 and zero to w0, w1. Output ONLY valid JSON: {\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "completions": [
+        "```json\n{\"scores\": [\"1\", \"0\", \"0\"]}\n```",
+        "{\"scores\": [\"0\", \"0\", \"1\"]}"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "1",
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0",
+            "1"
+          ]
+        ]
+      },
+      "monitor_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "local_pass": true,
+      "global_pass": false,
+      "defect": -1,
+      "classification": "NGD",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_obs_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [
+          "round_disjoint_support"
+        ],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_disjoint_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "0",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          }
+        ],
+        "receipt_sha256": "5b0695bb4d070636869b7f3e1d4de32f7a132262ae21abff7bd336048dd57319"
+      }
+    },
+    {
+      "trace_id": "frontier_10_poe_shared_support_coherent",
+      "monitor": "StreamingProductOfExpertsMonitor",
+      "theorem": "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture (Theorem 54)",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "scenario": "shared_compromise_support_preserves_poe_and_moe",
+      "prompts": [
+        "You are Expert Agent 1 (Security Auditor) scoring 3 candidate deployment actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"3/4\", \"1/4\", \"0\"]. Output ONLY valid JSON: {\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "You are Expert Agent 2 (Latency Auditor) scoring the same 3 candidate actions [w0='zero_trust_enclave', w1='standard_tls', w2='raw_fastpath'] with compromise support on w1. Assign rational scores [\"0\", \"1/4\", \"3/4\"]. Output ONLY valid JSON: {\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "completions": [
+        "{\"scores\": [\"3/4\", \"1/4\", \"0\"]}",
+        "{\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
+      ],
+      "parsed_inputs": {
+        "expert_scores": [
+          [
+            "3/4",
+            "1/4",
+            "0"
+          ],
+          [
+            "0",
+            "1/4",
+            "3/4"
+          ]
+        ]
+      },
+      "monitor_status": "POE_AND_MOE_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR",
+      "monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "frontier_poe_coh_mistralai/mistral-small-3.2-24b-instruct",
+        "status": "POE_AND_MOE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "round_count": 1,
+        "poe_collapsed_round_ids": [],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "round_shared_support",
+            "expert_count": 2,
+            "candidate_count": 3,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "0",
+              "1/16",
+              "0"
+            ],
+            "poe_partition_sum": "1/16",
+            "poe_normalized_distribution": [
+              "0",
+              "1",
+              "0"
+            ],
+            "moe_unnormalized_vector": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "3/8",
+              "1/4",
+              "3/8"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "a7d904b7d17480011aac6b51957462627c2a81faf559da3b2e656d8430562fef"
+      }
+    }
+  ],
+  "meaning": "Live multi-agent OpenRouter benchmark of the 5 frontier monitors (Theorems 50-54) across 4 model families, measuring empirical LPR, GPR, NGD, ZDR, PGD, and LRGR rates.",
+  "receipt_sha256": "7d674a6785ec7961710bf401ac183cec01fe57d14776d01a9298a332ca37aab7"
+}
