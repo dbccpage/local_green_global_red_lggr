@@ -1,0 +1,1 @@
+PASS: 95 complete simplex execution cases bound to current sources

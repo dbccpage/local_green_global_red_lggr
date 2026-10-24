@@ -1,0 +1,68 @@
+{
+  "allowed_probes": [
+    "semantics",
+    "source_counts",
+    "obligation_evidence",
+    "migration",
+    "branch_evidence"
+  ],
+  "available_operations": {
+    "integrator": [
+      "refund_multiplier"
+    ],
+    "orders": [
+      "scale_to_cents",
+      "join_mode",
+      "omit_last"
+    ],
+    "refunds": [
+      "scale_to_cents",
+      "sign",
+      "omit_last",
+      "duplicate"
+    ]
+  },
+  "contract": {
+    "authority_effect": "None",
+    "baseline": 0,
+    "customer_resolution": "first",
+    "max_step": 2,
+    "max_total": 1,
+    "output_columns": [
+      "order_id",
+      "customer_id",
+      "region",
+      "gross_cents",
+      "refund_cents",
+      "net_cents"
+    ],
+    "query_id": "ledger_reconciliation",
+    "query_scope": "endpoint",
+    "required_auxiliary_queries": [],
+    "required_event_roles": [
+      "orders",
+      "refunds"
+    ],
+    "required_evidence_probes": [
+      "semantics",
+      "branch_evidence"
+    ],
+    "required_versions": {
+      "evaluator": "v1",
+      "policy": "v1",
+      "report_schema": "v1",
+      "representation": "v1",
+      "specification": "v1"
+    },
+    "resource_limit": 20,
+    "terminal_observation": "only_after_integration"
+  },
+  "information_status": "Unit/sign metadata has not yet been observed. No correctness labels supplied.",
+  "report": {
+    "operation": "ledger",
+    "orders": 4,
+    "refunds": 2,
+    "schema": "coarse.v1"
+  },
+  "task": "Reconcile every original order with its first authoritative customer row and all refunds into an integer-cent ledger."
+}

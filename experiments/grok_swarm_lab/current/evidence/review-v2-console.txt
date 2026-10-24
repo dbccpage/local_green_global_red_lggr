@@ -1,0 +1,410 @@
+{
+  "fixed_trace_summary": {
+    "cases": 48,
+    "complete_cases": 48,
+    "complete_decision_agreement": {
+      "denominator": 48,
+      "numerator": 48
+    },
+    "complete_findings_agreement": {
+      "denominator": 48,
+      "numerator": 48
+    },
+    "separate_diagnostic_acquisition_cost": 247
+  },
+  "mode_summary": {
+    "A": {
+      "counts": {
+        "admissible_committed": 0,
+        "blocked": 0,
+        "cases": 48,
+        "committed": 46,
+        "correct_candidate_refused": 0,
+        "correct_committed": 29,
+        "deferred": 2,
+        "inadmissible_committed": 46,
+        "invalid_committed": 17,
+        "labelled_completed": 46,
+        "observed_correct_candidates": 29,
+        "tasks_with_unresolved_obligations": 5,
+        "unknown_global": 2,
+        "unresolved_obligations": 5
+      },
+      "defect_denominator": 46,
+      "defects": {
+        "NGD": 17,
+        "PGD": 0,
+        "UNKNOWN": 2,
+        "ZDR": 29
+      },
+      "detection_steps": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "model_cost": null,
+      "model_tokens": null,
+      "model_usage_status": "unmeasured; deterministic fixture evaluation",
+      "rates": {
+        "blocked": {
+          "denominator": 48,
+          "numerator": 0
+        },
+        "completion": {
+          "denominator": 48,
+          "numerator": 46
+        },
+        "deferred": {
+          "denominator": 48,
+          "numerator": 2
+        },
+        "inadmissible_output_acceptance": {
+          "denominator": 46,
+          "numerator": 46
+        },
+        "invalid_output_acceptance": {
+          "denominator": 46,
+          "numerator": 17
+        },
+        "task_correctness_of_committed": {
+          "denominator": 46,
+          "numerator": 29
+        },
+        "valid_candidate_refusal": {
+          "denominator": 29,
+          "numerator": 0
+        },
+        "valid_completion": {
+          "denominator": 48,
+          "numerator": 29
+        }
+      },
+      "refusal_limit": "Only actually produced candidates are scored. An unexecuted but potentially solvable task is not silently assigned a counterfactual passing artifact.",
+      "totals": {
+        "certificate_consumed_decisions": 0,
+        "consumed_cost": 230,
+        "controller_and_certificate_ns": 4554500,
+        "elapsed_ns": 195273600,
+        "evidence_bytes": 1494025,
+        "final_report_bytes": 4416,
+        "initial_report_bytes": 3168,
+        "issued_probe_attempts": 0,
+        "issued_repair_attempts": 0,
+        "issued_tool_attempts": 230,
+        "other_role_cost": 46,
+        "replay_elapsed_ns": 377432100,
+        "shared_cost": 48,
+        "successful_repairs": 0,
+        "worker_branch_cost": 136
+      }
+    },
+    "B": {
+      "counts": {
+        "admissible_committed": 33,
+        "blocked": 6,
+        "cases": 48,
+        "committed": 33,
+        "correct_candidate_refused": 1,
+        "correct_committed": 33,
+        "deferred": 9,
+        "inadmissible_committed": 0,
+        "invalid_committed": 0,
+        "labelled_completed": 33,
+        "observed_correct_candidates": 34,
+        "tasks_with_unresolved_obligations": 3,
+        "unknown_global": 15,
+        "unresolved_obligations": 3
+      },
+      "defect_denominator": 33,
+      "defects": {
+        "NGD": 0,
+        "PGD": 0,
+        "UNKNOWN": 15,
+        "ZDR": 33
+      },
+      "detection_steps": [
+        null,
+        6,
+        6,
+        null,
+        6,
+        6,
+        6,
+        null,
+        6,
+        null,
+        6,
+        null,
+        6,
+        6,
+        6,
+        6,
+        null,
+        9,
+        18,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        6,
+        null,
+        6,
+        6,
+        null,
+        6,
+        null,
+        null,
+        null,
+        null,
+        null,
+        23,
+        null,
+        23,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        6,
+        null,
+        null
+      ],
+      "model_cost": null,
+      "model_tokens": null,
+      "model_usage_status": "unmeasured; deterministic fixture evaluation",
+      "rates": {
+        "blocked": {
+          "denominator": 48,
+          "numerator": 6
+        },
+        "completion": {
+          "denominator": 48,
+          "numerator": 33
+        },
+        "deferred": {
+          "denominator": 48,
+          "numerator": 9
+        },
+        "inadmissible_output_acceptance": {
+          "denominator": 33,
+          "numerator": 0
+        },
+        "invalid_output_acceptance": {
+          "denominator": 33,
+          "numerator": 0
+        },
+        "task_correctness_of_committed": {
+          "denominator": 33,
+          "numerator": 33
+        },
+        "valid_candidate_refusal": {
+          "denominator": 34,
+          "numerator": 1
+        },
+        "valid_completion": {
+          "denominator": 48,
+          "numerator": 33
+        }
+      },
+      "refusal_limit": "Only actually produced candidates are scored. An unexecuted but potentially solvable task is not silently assigned a counterfactual passing artifact.",
+      "totals": {
+        "certificate_consumed_decisions": 0,
+        "consumed_cost": 309,
+        "controller_and_certificate_ns": 10111900,
+        "elapsed_ns": 238788200,
+        "evidence_bytes": 2067317,
+        "final_report_bytes": 7188,
+        "initial_report_bytes": 3168,
+        "issued_probe_attempts": 94,
+        "issued_repair_attempts": 14,
+        "issued_tool_attempts": 309,
+        "other_role_cost": 34,
+        "replay_elapsed_ns": 479984000,
+        "shared_cost": 156,
+        "successful_repairs": 14,
+        "worker_branch_cost": 119
+      }
+    },
+    "C": {
+      "counts": {
+        "admissible_committed": 33,
+        "blocked": 6,
+        "cases": 48,
+        "committed": 33,
+        "correct_candidate_refused": 1,
+        "correct_committed": 33,
+        "deferred": 9,
+        "inadmissible_committed": 0,
+        "invalid_committed": 0,
+        "labelled_completed": 33,
+        "observed_correct_candidates": 34,
+        "tasks_with_unresolved_obligations": 3,
+        "unknown_global": 15,
+        "unresolved_obligations": 3
+      },
+      "defect_denominator": 33,
+      "defects": {
+        "NGD": 0,
+        "PGD": 0,
+        "UNKNOWN": 15,
+        "ZDR": 33
+      },
+      "detection_steps": [
+        null,
+        6,
+        6,
+        null,
+        6,
+        6,
+        6,
+        null,
+        6,
+        null,
+        6,
+        null,
+        6,
+        6,
+        6,
+        6,
+        null,
+        9,
+        18,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        6,
+        null,
+        9,
+        6,
+        null,
+        6,
+        null,
+        null,
+        null,
+        null,
+        null,
+        23,
+        null,
+        23,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        6,
+        null,
+        null
+      ],
+      "model_cost": null,
+      "model_tokens": null,
+      "model_usage_status": "unmeasured; deterministic fixture evaluation",
+      "rates": {
+        "blocked": {
+          "denominator": 48,
+          "numerator": 6
+        },
+        "completion": {
+          "denominator": 48,
+          "numerator": 33
+        },
+        "deferred": {
+          "denominator": 48,
+          "numerator": 9
+        },
+        "inadmissible_output_acceptance": {
+          "denominator": 33,
+          "numerator": 0
+        },
+        "invalid_output_acceptance": {
+          "denominator": 33,
+          "numerator": 0
+        },
+        "task_correctness_of_committed": {
+          "denominator": 33,
+          "numerator": 33
+        },
+        "valid_candidate_refusal": {
+          "denominator": 34,
+          "numerator": 1
+        },
+        "valid_completion": {
+          "denominator": 48,
+          "numerator": 33
+        }
+      },
+      "refusal_limit": "Only actually produced candidates are scored. An unexecuted but potentially solvable task is not silently assigned a counterfactual passing artifact.",
+      "totals": {
+        "certificate_consumed_decisions": 28,
+        "consumed_cost": 310,
+        "controller_and_certificate_ns": 252464000,
+        "elapsed_ns": 525007200,
+        "evidence_bytes": 3068040,
+        "final_report_bytes": 7252,
+        "initial_report_bytes": 3168,
+        "issued_probe_attempts": 95,
+        "issued_repair_attempts": 14,
+        "issued_tool_attempts": 310,
+        "other_role_cost": 34,
+        "replay_elapsed_ns": 872600100,
+        "shared_cost": 157,
+        "successful_repairs": 14,
+        "worker_branch_cost": 119
+      }
+    }
+  },
+  "output": "C:\\Users\\a343o\\.codex\\worktrees\\grok-swarm-lab-pr\\lggr\\experiments\\grok_swarm_lab\\current\\evidence\\review-v2-evaluation",
+  "replay_failures": [],
+  "split": "evaluation"
+}

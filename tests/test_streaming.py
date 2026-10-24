@@ -169,6 +169,20 @@ class TestStreamingAuditMonitor(unittest.TestCase):
                 self.assertEqual(receipt["alerts_count"], 0)
                 self.assertIn("PROTECTED_QUERY_FALSE", {f["code"] for f in receipt["findings"]})
 
+    def test_intermediate_endpoint_receipt_does_not_poison_live_recovery(self):
+        policy = BudgetPolicy(allowed_states=(0, 1, 2), max_step=2, max_total=1, query_scope="endpoint")
+        for negative_sample in (False, True):
+            with self.subTest(negative_sample=negative_sample):
+                monitor = StreamingAuditMonitor(policy, self.s0)
+                monitor.step(make_witness(policy, self.s0, self.s2, witness_id="w1"),
+                             global_evaluator_sample=0 if negative_sample else None)
+                self.assertEqual(monitor.get_receipt()["contract_status"], "OBSTRUCTED_LGGR")
+                result = monitor.step(make_witness(policy, self.s2, self.s1, witness_id="w2"))
+                expected = "OBSTRUCTED_LGGR" if negative_sample else "COMPOSABLE_LGGG"
+                self.assertEqual(result["contract_status"], expected)
+                self.assertEqual(monitor.get_receipt()["contract_status"], expected)
+                self.assertEqual(monitor.get_receipt(), monitor.get_receipt())
+
     def test_endpoint_recovery_retains_other_obstructions(self):
         policy = BudgetPolicy(allowed_states=(0, 1, 2), max_step=2, max_total=1, query_scope="endpoint")
         for fault in ("boundary", "global_sample"):

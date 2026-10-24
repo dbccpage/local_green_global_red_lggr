@@ -1,0 +1,4 @@
+{
+  "faithful": "examples/faithful_transport.json",
+  "lossy": "examples/lossy_transport.json"
+}

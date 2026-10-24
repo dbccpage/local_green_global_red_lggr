@@ -1,0 +1,7 @@
+{
+  "rows": [
+    {"name": "local green, global red", "local": [1, 1], "global": 0, "defect_kind": "NGD", "delta": -1},
+    {"name": "agreement", "local": [1, 1], "global": 1, "defect_kind": "ZDR", "delta": 0},
+    {"name": "local red, global green", "local": [0, 1], "global": 1, "defect_kind": "PGD", "delta": 1}
+  ]
+}

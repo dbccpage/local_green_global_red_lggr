@@ -8,6 +8,16 @@
 
 This is a standalone, tested adapter. It does **not** modify the Omega Engine or finite-QM repositories, execute a hosted model, authenticate an owner, or authorize a merge. The source report and companion papers supply the mathematical formulations; this package implements scoped checks on explicit finite data.
 
+## Wiring a harness
+
+If you are adding these checks to your own agent loop or swarm, start with [`learn/README.md`](learn/README.md). Ten lessons show which object is the report, which is the query, and which extra generation cannot shrink a fiber. From the repository root:
+
+```console
+python learn/check.py
+```
+
+**AuthorityEffect: None.** The course calls the monitors in this package. It does not admit an authority.
+
 ## Foundational Context: LGGR Series & Positive-Extension / Projection Residuals
 
 This repository synthesizes executable finite verification rules from two related lines of work:
@@ -429,3 +439,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+
+### Reviewed laboratory and benchmark evidence
+
+The [swarm laboratory review revision](experiments/grok_swarm_lab/current/README.md) ships runnable offline source and regression evidence. The [original v1 archive](experiments/grok_swarm_lab/dist/lggr-swarm-lab-2026-10-24.zip) remains unchanged. v2 requires known scoped auxiliary evidence before admission and replays deterministic labels and counters. Its rerun uses already published fixtures; it is not a new held-out experiment.
+
+`lggr.benchmarks.verify_frontier_benchmark(receipt)` checks the outer and monitor receipt hashes, regenerates inputs from the saved model responses, checks the prompts, and compares complete traces and metrics. The original 50-trace artifact remains unchanged and is covered by `MANIFEST.sha256`. New live runs reject malformed output explicitly and honor an explicitly requested model over environment defaults. Recorded model names identify client configuration, not independent authentication of the provider.
+
+The frontier prompts often supply exact answers or impose incompatible requirements. The published 24/50 NGD count describes that selected fixture mixture, not a general swarm failure rate or an advantage over conventional checking. Theorem 54 proves an integer positivity statement and a fixed collapse example; the Python monitor's general rational, arbitrary-expert support calculation is not formalized by that theorem.
+
+[Historical RSI research records](papers/012_rsi/research/) and all seven research links in the RSI index have been restored from commit `103daa366d4cd9ef06fc0def10edee497f547d8e`. Their [restoration receipt](receipts/pr51_research_restoration.json) binds the original Git bytes without upgrading their historical verification claims.

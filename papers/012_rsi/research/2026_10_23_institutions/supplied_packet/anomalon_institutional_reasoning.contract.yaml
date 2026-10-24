@@ -1,0 +1,113 @@
+schema_name: InstitutionalComparisonPacket
+schema_version: '0.1.0'
+status: proposed_research_contract
+AuthorityEffect: None
+example_only: true
+packet_id: institution-inquiry-demo-001
+parent_packet_id: null
+
+inquiry:
+  original_question: Can we take a bounded action without merging explanations?
+  mode: exploration_and_action_proposal
+  task: Compare two reasons for a temporary shutdown.
+  constituency: [engineering, operations]
+  frame_owner: named_session_sponsor
+  scope: synthetic_example
+  budget:
+    maximum_deliberation_rounds: 3
+    maximum_external_checks: 2
+  questions_to_preserve:
+    - Which explanation belongs to each presentation?
+    - What evidence supports each explanation?
+    - Which action is jointly acceptable?
+    - Who, if anyone, may authorize execution?
+  excluded_questions:
+    - Actual diagnosis of a real facility.
+
+presentations:
+  - id: engineering
+    original_content: Temporary shutdown to inspect a suspected mechanical fault.
+    framing_commitments: [inspect_before_restart]
+    evidence_refs: []
+    evidence_status: hypothetical
+    acceptable_actions: [temporary_shutdown, repair]
+    source_lineage:
+      origin: synthetic_fixture
+      independence: not_established
+  - id: operations
+    original_content: Temporary shutdown to reconcile an inventory discrepancy.
+    framing_commitments: [recount_before_restart]
+    evidence_refs: []
+    evidence_status: hypothetical
+    acceptable_actions: [temporary_shutdown, recount]
+    source_lineage:
+      origin: synthetic_fixture
+      independence: not_established
+
+comparisons:
+  - id: common-action-001
+    scope: proposed_action_only
+    presentations: [engineering, operations]
+    result: jointly_actionable
+    witness_kind: finite_set_intersection
+    result_value: [temporary_shutdown]
+    explanation_equivalence: not_asserted
+  - id: explanation-001
+    scope: causes_of_shutdown_request
+    presentations: [engineering, operations]
+    result: unresolved
+    admitted_transport_class: []
+    separating_invariant: null
+    certificate: null
+
+compression:
+  short_record: Both participants accept a temporary shutdown for different reasons.
+  preserved_fields: [presentation_ids, acceptable_action, divergent_reasons]
+  retained_source_route: presentations
+  known_loss: The short sentence alone does not identify either reason.
+  recovery_test_required: true
+  recovery_test_receipt: null
+
+residuals:
+  - id: diagnosis-001
+    statement: Neither hypothetical diagnosis has supporting empirical evidence.
+    status: open
+    blocks: [asserting_either_diagnosis_as_verified]
+    recovery_route: obtain_actual_observations
+    owner: First_Curator
+    reopen_when: new_evidence_is_admitted
+  - id: permission-001
+    statement: No execution mandate is attached.
+    status: open
+    blocks: [execution]
+    recovery_route: separately_verified_external_mandate
+    owner: Procurator
+    reopen_when: scoped_mandate_is_verified
+
+findings:
+  - claim: The two finite action sets have temporary_shutdown in common.
+    status: finite_fixture_result
+  - claim: The explanations are equivalent.
+    status: not_established
+
+action:
+  proposal: temporary_shutdown
+  mandate_id: null
+  mandate_verification_receipt: null
+  executor: null
+  expires_at: null
+  authorization_status: not_authorized
+  execution_permitted: false
+
+role_obligations:
+  First_Curator: Develop presentations and discriminating observations.
+  Second_Curator: Test transport, loss, shared-source dependence, and counterexamples.
+  Procurator: Check scope, budget, procedure, and external mandate; do not mint truth.
+  Secretary: Preserve source anchors, comparison records, residuals, and recovery tests.
+
+terminal:
+  epistemic_status: partially_compared_with_open_residuals
+  procedural_status: example_completed
+  action_status: proposal_only
+  next_operation: collect_evidence_and_check_mandate
+  AuthorityEffect: None

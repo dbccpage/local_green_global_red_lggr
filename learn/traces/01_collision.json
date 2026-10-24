@@ -1,0 +1,15 @@
+{
+  "scope_id": "learn-01-handoff",
+  "observations": [
+    {
+      "state_id": "task-a",
+      "report": {"summary": "ship the etl job"},
+      "query": {"approval_tier": 3}
+    },
+    {
+      "state_id": "task-b",
+      "report": {"summary": "ship the etl job"},
+      "query": {"approval_tier": 1}
+    }
+  ]
+}

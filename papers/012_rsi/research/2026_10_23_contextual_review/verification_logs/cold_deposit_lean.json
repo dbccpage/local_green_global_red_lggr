@@ -1,0 +1,15 @@
+{
+  "label": "cold_deposit_lean",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "verify_deposit.py",
+    "--lean"
+  ],
+  "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\cp183\\001_contextual_prediction_and_self_certification",
+  "timestamp_utc": "2026-10-23T21:28:10.958931+00:00",
+  "seconds": 764.0668559074402,
+  "exit_code": 0,
+  "log": "cold_deposit_lean.txt"
+}

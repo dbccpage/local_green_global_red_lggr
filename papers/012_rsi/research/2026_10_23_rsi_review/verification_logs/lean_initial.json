@@ -1,0 +1,15 @@
+{
+  "label": "lean_initial",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "tools/replay_lean_axiom_census.py",
+    "--write"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\012_rsi\\000_relational_reasoning_and_rsi_impossibility",
+  "timestamp_utc": "2026-10-23T20:44:49.822107+00:00",
+  "seconds": 10.090430974960327,
+  "exit_code": 1,
+  "log": "lean_initial.txt"
+}

@@ -1,0 +1,99 @@
+{
+  "schema": "rsi.paired-live-memory-release.v1",
+  "date": "2026-10-23",
+  "papers": [
+    {
+      "schema": "rsi.live-memory-release-audit.v1",
+      "paper": "000_relational_reasoning_and_rsi_impossibility",
+      "version": "1.2.0",
+      "archive": "000_relational_reasoning_and_rsi_impossibility/000_relational_reasoning_and_rsi_impossibility_2026-10-23.zip",
+      "sha256": "f248d5f85299b429b7fffaa70dcf31f421e7f3e7d4a0a3c6811e576604ad6b66",
+      "zip_members": 106,
+      "payload_files": 104,
+      "package_tests": {
+        "tests": 204,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "clean_extraction_tests": {
+        "tests": 204,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "named_theorems": 109,
+      "full_package_local_declarations": 577,
+      "checks": [
+        "named census source bindings",
+        "fresh full Lean census",
+        "captured-trial replay",
+        "canonical release",
+        "default deposit verifier",
+        "safe extraction and every member byte match",
+        "extracted deposit verifier",
+        "extracted standalone tests"
+      ],
+      "limitation": "No second cold Lean rebuild from the extracted archive; fresh build and full census ran in the source package."
+    },
+    {
+      "schema": "rsi.live-memory-release-audit.v1",
+      "paper": "001_contextual_prediction_and_self_certification",
+      "version": "1.8.0",
+      "archive": "001_contextual_prediction_and_self_certification/001_contextual_prediction_and_self_certification_2026-10-23.zip",
+      "sha256": "22e39aff966e95a493f8668fab6c941a1690982914a04780feacf9772ebb5f83",
+      "zip_members": 200,
+      "payload_files": 198,
+      "package_tests": {
+        "tests": 170,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "clean_extraction_tests": {
+        "tests": 170,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "named_theorems": 161,
+      "full_package_local_declarations": 941,
+      "checks": [
+        "named census source bindings",
+        "fresh full Lean census",
+        "captured-trial replay",
+        "canonical release",
+        "default deposit verifier",
+        "safe extraction and every member byte match",
+        "extracted deposit verifier",
+        "extracted standalone tests"
+      ],
+      "limitation": "No second cold Lean rebuild from the extracted archive; fresh build and full census ran in the source package."
+    }
+  ],
+  "runtime_sources": {
+    "omega_engine_woland/infrastructure/providers/residual_memory.py": "be997d8c28570e925738c2e0176c25ee962d57c013555779c1d25cd17802734b",
+    "omega_engine_woland/infrastructure/providers/memory_cli.py": "1e6abf77782cf4fe2a2f4edfae8b5694b5be2a0a47e79fe0afc8a06ef4f78365",
+    "omega_engine_woland/infrastructure/providers/llm_gateway.py": "77499fd7dd45e280b196280faf3202648b7bf534395a057d2afb00b6a4a71661",
+    "omega_engine_woland/entrypoints/synthetic_memory_experiment.py": "aee4dc6c202a916f4c9cfd02482b6b16585b62a68266202e0ed292550ad823ff",
+    "omega_engine_woland/tests/providers/test_residual_memory.py": "17004d77eca3e67598fd377385dcd3e2e5bd4659df52fe10902f66c504737837"
+  },
+  "experiment": {
+    "provider": "OpenRouter",
+    "model": "openai/gpt-4o-mini",
+    "exact_use_stages_passed": 4,
+    "independent_processes": 4,
+    "arithmetic_trial": "Two stages passed; the third had correct memory injection but incorrect arithmetic. Retained in both packages.",
+    "guard_trial": "First attempt refused locally before a model response; retained.",
+    "private_file_export": false,
+    "full_raw_evidence": "Each paper: docs/live_memory_trials"
+  },
+  "runtime_tests": {
+    "passed": 22,
+    "broader_checks_blocked": 2,
+    "reason": "Native budget host build fails in unchanged omega_functional sources."
+  },
+  "local_cli_smoke": "Three separate processes initialized, learned and prepared checked context successfully.",
+  "scope": "Explicit memory configuration in the repository LlmGateway. No global Codex context hook, model weight update, universal Python/Lean refinement or physical safety result.",
+  "release": "Local standalone rebuild and verification; no commit, push or publication performed."
+}

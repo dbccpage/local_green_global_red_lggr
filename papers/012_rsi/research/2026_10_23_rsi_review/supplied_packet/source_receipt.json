@@ -1,0 +1,270 @@
+{
+  "review_date": "2026-10-23",
+  "repository": "dbccpage/the_symbol_game",
+  "directory": "omega_engine_atlas/coda_atlas/F004_papers/012_rsi/000_relational_reasoning_and_rsi_impossibility",
+  "commit": "e15a9d4ac6298524ce370cae679314aa0fef7585",
+  "files": [
+    {
+      "path": "LICENSE",
+      "bytes": 18656,
+      "git_blob_sha": "4ea99c213c5c0c005ae4e80df8e52169d06896ec",
+      "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94"
+    },
+    {
+      "path": "LICENSE-CODE",
+      "bytes": 4644,
+      "git_blob_sha": "a8d058cf00915c29da95db9e2cdfb45f9b534d2b",
+      "sha256": "fdc1b580085fb2812b93559cd3d5568149dc027d2616b6c636eaee6126a82bb4"
+    },
+    {
+      "path": "MANIFEST.sha256",
+      "bytes": 3655,
+      "git_blob_sha": "9d453518c8930639f3b1b185f814049b95ba8f07",
+      "sha256": "4259ca651e9bf66332e40817461691d50ebc6bf6a0e24ecd9049e80370fecd7c"
+    },
+    {
+      "path": "README.md",
+      "bytes": 8169,
+      "git_blob_sha": "b48d3447652b1218d2cd37912c30bb921bab62c4",
+      "sha256": "f913abbe2a6bb103c4715f7c1e1b47e16f68bc1d3e6947f4799c96a05c96a0bf"
+    },
+    {
+      "path": "SHA256SUMS",
+      "bytes": 3737,
+      "git_blob_sha": "7f82c9f6584ad82bf7fddb03ee780b268ccb1aab",
+      "sha256": "dd0db027ad3b72c00e504e543fc21f610a92252d327d7c037bb3ae00a68cd891"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 866,
+      "git_blob_sha": "016a9a8966643ea2d0831a290912079d6fb473d1",
+      "sha256": "76d5ce48c519b588927594db49937cace1a6173feb9b2bdfae62156cdf5352b1"
+    },
+    {
+      "path": "relational_reasoning_and_rsi_impossibility_change_log.md",
+      "bytes": 5763,
+      "git_blob_sha": "952581c3bdeb1877ad3cc917261aa2943930d3eb",
+      "sha256": "03f83567080fd34274caef4baaabf6a22c8e9ca1fa4611f359d2ce6531f2ad52"
+    },
+    {
+      "path": "relational_reasoning_and_rsi_impossibility_claim_ledger.md",
+      "bytes": 17160,
+      "git_blob_sha": "c6f35d619417c362d730a0f233d17c4c5fe2f3d1",
+      "sha256": "be228fab18c65f92e1c15a447bde76dd1a28bda22052773057fea5671883e026"
+    },
+    {
+      "path": "relational_reasoning_and_rsi_impossibility_monograph.md",
+      "bytes": 60505,
+      "git_blob_sha": "2818f1d469ccd5629c59c6d158096ec86fd5e7a9",
+      "sha256": "f27d7a178b64484085f2ee4c46d8d1cb763c0accffc4f4858c4293cdc9048b29"
+    },
+    {
+      "path": "verify_deposit.py",
+      "bytes": 10001,
+      "git_blob_sha": "aa708aeb6928b877d2722c431053a352d986ee67",
+      "sha256": "03a1bbdb07beb055499e5ae17ef9b13c9869f7f43c5d415a2299f5eaa64975fb"
+    },
+    {
+      "path": "zenodo_metadata.json",
+      "bytes": 2447,
+      "git_blob_sha": "f28b87aab5f98223624e5ee1b83d7f7127807018",
+      "sha256": "c0a2a53d24ee007efc34d26d3593c015ec057149b5e83f45e6f1cc818bc0a6cd"
+    },
+    {
+      "path": "code/communication_channels.py",
+      "bytes": 13034,
+      "git_blob_sha": "5354d23af639e982adebfd7fe70ed3380403b5d7",
+      "sha256": "3e3b9016a1e50d2a66c7ba2fbb3045bfc3b6b8647c1173fbfd60cc82d08bb0f4"
+    },
+    {
+      "path": "code/deposit_paths.py",
+      "bytes": 4029,
+      "git_blob_sha": "59bb61c870de02b5ce3e81fac6c7b4d1f934361e",
+      "sha256": "37c4f3b5da608d38bffd5315ef73a79e066d2fd96b219325e818941e1b3dac62"
+    },
+    {
+      "path": "code/eis_independence_vectors_v1.json",
+      "bytes": 50154,
+      "git_blob_sha": "f9cb9ebc11cb3a7306870a8aa58285a9a497a6e1",
+      "sha256": "152a97fd57d3fbd0fc43c9605ce0dc735912b14c16e6496c5ee7eedcd28ad672"
+    },
+    {
+      "path": "code/eis_verifier.py",
+      "bytes": 14809,
+      "git_blob_sha": "563dc5ff11561e5925faea4f32df8f0dce9d3556",
+      "sha256": "1159c125d8d7fa9d03d9b707567ae17b500a9b5d48f53c9bc29213ef6d79ff0e"
+    },
+    {
+      "path": "code/exact_dual_witness_solver.py",
+      "bytes": 9660,
+      "git_blob_sha": "b00722449f2f8e42c9e2ce78fc3c9a7cb4d1bdde",
+      "sha256": "0c14c5403958bdbeef760cc245ffaa0c82e636100faae6fb9fd750c4e28685da"
+    },
+    {
+      "path": "code/higher_cell_async_hypergraph.py",
+      "bytes": 48026,
+      "git_blob_sha": "fac3cebccc42e228712f5cb10b5ce3bfcf3ff408",
+      "sha256": "2e8b1f1b4817ce0822f1da525d89ec36a7d00994fbee70e612c8acc6281e1e15"
+    },
+    {
+      "path": "code/multi_agent_hypergraph.py",
+      "bytes": 19333,
+      "git_blob_sha": "4759e5767b92917f61578cf8c3a3c54e563845fc",
+      "sha256": "f9652e86611c69893810615eb809f9d1eed659ed9da2f2a8c4e18f89d236c8c4"
+    },
+    {
+      "path": "code/rsi_transition_harness.py",
+      "bytes": 113902,
+      "git_blob_sha": "3f828e36e424cb851f5ed8d70727ad2bef9b6818",
+      "sha256": "c8c923b6e8cd3aee009e652f40f7b1ba4a0626685a1cb4ab983af443fa6fa854"
+    },
+    {
+      "path": "code/rust_eis_companion.rs",
+      "bytes": 13116,
+      "git_blob_sha": "842b319336b1635f7a6ccf9915380ff9061c2f44",
+      "sha256": "f81e266c551f67524ec6e6f1b044a24ebe518ac6e30654e66db21b0028a651ab"
+    },
+    {
+      "path": "code/simplicial_complex.py",
+      "bytes": 6971,
+      "git_blob_sha": "ab133ecadcdfd28fd1459faac7dc58f5566287ea",
+      "sha256": "fd9f8fda64da77dc47111bd1bca0bd9052e55e149c3a81158f5553b15ad68337"
+    },
+    {
+      "path": "code/simplicial_rewiring.py",
+      "bytes": 5524,
+      "git_blob_sha": "1e233ae8388837ed7e6a2bd2ee67dd0a077f6e6d",
+      "sha256": "fbd5edf7bea1096e273d6c7ba4ec92aff3ec0ccdb9ebe351b32764ddcfb401ad"
+    },
+    {
+      "path": "code/single_agent_graph.py",
+      "bytes": 9685,
+      "git_blob_sha": "5ccc006032fdc035536df7d3519f66f2cd8f223f",
+      "sha256": "33e25cd09a1df1af957bb78cbba2d1d541e62ad3dfefabf14693eecb261923e3"
+    },
+    {
+      "path": "code/tests/test_architecture_and_value_objects.py",
+      "bytes": 9420,
+      "git_blob_sha": "da08ce9aeeff0381cdf5c94f1f010a2b4260d8e5",
+      "sha256": "550d17e32cec5cc1bd164a0d3f26f4460ef378b7c7c416c48d7cf23f4075f380"
+    },
+    {
+      "path": "code/tests/test_higher_cell_async.py",
+      "bytes": 12969,
+      "git_blob_sha": "c55143d8be52662bec42e607908c1d4c13857a10",
+      "sha256": "fc2681d94fdf61443c30b73e01f28c96999b69d31920c9ced8bc4993e5f824dc"
+    },
+    {
+      "path": "code/tests/test_lean_formalization.py",
+      "bytes": 10308,
+      "git_blob_sha": "d71941764599e5f433eaca580c38d1717d9c2466",
+      "sha256": "fbe309850210b7456b180251da23c3315685c2ebfd37154f07c104e975410484"
+    },
+    {
+      "path": "code/tests/test_multi_agent_hypergraph.py",
+      "bytes": 14684,
+      "git_blob_sha": "94e55615abef825a684f417cf157fe4d8e39fa9c",
+      "sha256": "7749858e845dafa9350ec6727abc520ee1504a3a3fc86eb66553070fbb0f5379"
+    },
+    {
+      "path": "code/tests/test_non_monotonic_rewiring.py",
+      "bytes": 5553,
+      "git_blob_sha": "173990eb0e847194b871d411b546b6b315d7e25f",
+      "sha256": "6b96a0e2b2d986c943250fd041b3954e351ade3b1c13d5d067c814851f038bc8"
+    },
+    {
+      "path": "code/tests/test_rsi_impossible_lean_verification.py",
+      "bytes": 4702,
+      "git_blob_sha": "a7fc3c40ba55fb7684a750eb344d44b10816a1d8",
+      "sha256": "9a5eb24efa471a5159350388a2675358742c45a83536e72423102b423b7af6ef"
+    },
+    {
+      "path": "code/tests/test_single_agent_transitions.py",
+      "bytes": 10601,
+      "git_blob_sha": "de0a6d9f9f8e425ab22bd5c288fd13055b4ddf11",
+      "sha256": "32d63efd7dea603a91f3b871cf77f7e3e2f55f900a93f01c7670973e179c3921"
+    },
+    {
+      "path": "docs/descriptions.md",
+      "bytes": 10293,
+      "git_blob_sha": "6c8578f742f52e3f29d7afca7746bce4e035834c",
+      "sha256": "e47c2c64b4772ab78bed50df014d99b6bbbf6ac2b9437ec51b1cceea6dac9712"
+    },
+    {
+      "path": "docs/references.md",
+      "bytes": 4107,
+      "git_blob_sha": "b537270103153d6cf0992290b60a0398ae8d16dc",
+      "sha256": "24ba3a45003749f9b4953307e3281536d7c83264b93afb22e4ff96ea5b40874f"
+    },
+    {
+      "path": "lean4/Census.lean",
+      "bytes": 2943,
+      "git_blob_sha": "8d8afe244f3fd6976d78fa18d98f374f91ecadd2",
+      "sha256": "847a032ae65471ec04ecf79fa33bb2f387286b199870541225988297863c4a8f"
+    },
+    {
+      "path": "lean4/RelationalRsiNoGo.lean",
+      "bytes": 37947,
+      "git_blob_sha": "9fc65c59921a7df27454203ee2d0f44e02184163",
+      "sha256": "fe1d1838820de974576dd38321871ef8851d4ada6bb16963f2fd05cd36226a9a"
+    },
+    {
+      "path": "lean4/RsiImpossible.lean",
+      "bytes": 35957,
+      "git_blob_sha": "20cbcf02109dedcfa0ffb65acde5444ddc21454e",
+      "sha256": "edfd8660d2e4bddbaefe2b3633e0b7971f4e331bae162cf3d4817e2faa30e163"
+    },
+    {
+      "path": "lean4/lake-manifest.json",
+      "bytes": 160,
+      "git_blob_sha": "d8447a4b1ce85f08673dcee76f081898dfd78ce7",
+      "sha256": "b9fd3b25182e354b70889f57718dbfab17685ae726ac3500bf42a92afdebad14"
+    },
+    {
+      "path": "lean4/lakefile.lean",
+      "bytes": 236,
+      "git_blob_sha": "983c2278513b2d3a788592ef8883b05887b81571",
+      "sha256": "85fd6842910a2cb84d5e766beef2b0221bb178f13c0feaa7d12365c5631304c7"
+    },
+    {
+      "path": "lean4/lean-toolchain",
+      "bytes": 25,
+      "git_blob_sha": "a6aff065db2882c535684f8c5bcd4f16e9a23915",
+      "sha256": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c"
+    },
+    {
+      "path": "scripts/regen_sha256sums.py",
+      "bytes": 3116,
+      "git_blob_sha": "fb051cc13cc0f026450c9745fef19b545d05007a",
+      "sha256": "2ec060492be0f7af01f4bf2b719da5076af7e3a0858182282c274fbaefb0731f"
+    },
+    {
+      "path": "tools/rebuild_release.py",
+      "bytes": 14427,
+      "git_blob_sha": "384e14bd9befe169c9393bf9de18a24292e511d8",
+      "sha256": "564e80cb1e693826d48bec7c0568b3bad7bb2b8c3546d3f20f34c5404e6b4771"
+    },
+    {
+      "path": "000_relational_reasoning_and_rsi_impossibility_2026-10-13.zip",
+      "bytes": 152997,
+      "git_blob_sha": "1298b14329932c083962c92ce3501c06a3eb20a8",
+      "sha256": "5585e5cbcde72ec1d4f6d0d1160e6fe76d3b56c250a8420d73f1227c34833a7d"
+    }
+  ],
+  "source_byte_mismatches": [],
+  "verification": {
+    "lean_version": "4.35.0",
+    "rustc_version": "1.85.1",
+    "python_version": "3.12.14",
+    "canonical_and_architecture_tests": {
+      "passed": 84,
+      "failed": 0
+    },
+    "census_entries": 40,
+    "lean_build": "PASS",
+    "deposit_verifier": "FAIL",
+    "review_negative_controls": 8,
+    "review_lean_countermodels": "PASS"
+  },
+  "environment_note": "Lean unmodified official release binaries; runtime-only readlink adapter maps numeric /proc/PID/exe to /proc/self/exe in this execution environment. Proof files and compiler binaries were not patched."
+}

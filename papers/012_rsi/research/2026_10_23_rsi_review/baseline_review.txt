@@ -1,0 +1,92 @@
+{
+  "findings": {
+    "closed_is_not_exact": {
+      "claimed_optimal_cost": "0",
+      "confirmed": true,
+      "independently_certified_optimal_cost": "9",
+      "outer_loop_period": "3",
+      "phi1": "0"
+    },
+    "contextual_fraction_normalization_counterexample": {
+      "claimed_phi_w_over_2": "2",
+      "confirmed": true,
+      "disjoint_PR_contexts": 8,
+      "exact_CF": "1",
+      "exact_phi_w": "4"
+    },
+    "equal_reports_receive_prescribed_stale_defect": {
+      "confirmed": true,
+      "delivered_reports": [
+        0,
+        0
+      ],
+      "emitted_reports": [
+        0,
+        0
+      ],
+      "prescribed_phi1": "1/6"
+    },
+    "false_primal_certificate": {
+      "confirmed": true,
+      "phi1": "0",
+      "reconstructed_cochain": {
+        "(0, 1)": "0",
+        "(0, 2)": "0",
+        "(1, 2)": "0"
+      },
+      "returned_cochain": {
+        "(0, 1)": "1",
+        "(0, 2)": "2",
+        "(1, 2)": "1"
+      },
+      "returned_potential": {
+        "(0,)": "0",
+        "(1,)": "0",
+        "(2,)": "0"
+      }
+    },
+    "negative_repair_cost_mints_budget": {
+      "confirmed": true,
+      "initial_budget": 1,
+      "kind": "REPORT_COLLISION",
+      "remaining_budget": 2,
+      "termination_step": 6,
+      "total_repair_budget_expended": -7
+    },
+    "parity_does_not_validate_obstruction": {
+      "confirmed": true,
+      "forged_kind": "OVERLAP_GLUING_REFUSAL",
+      "forged_phi1": "0",
+      "rust_summary": {
+        "eis_digest_vectors": 7,
+        "eis_fixture_vectors": 55,
+        "rust_companion_executed": true,
+        "verified_receipt_count": 1
+      }
+    },
+    "two_implementations_disagree": {
+      "confirmed": true,
+      "results": {
+        "rsi_transition_harness": {
+          "kind": "REPORT_COLLISION",
+          "step": 4
+        },
+        "single_agent_graph": {
+          "kind": "CAPACITY_THRESHOLD_EXCEEDED",
+          "step": 4
+        }
+      }
+    },
+    "unicode_identity_breaks_python_rust_parity": {
+      "confirmed": true,
+      "detector_id": "ss",
+      "mismatch": "Rust/Python EIS mismatch on ERR receipt: ['OK', 'sha256:18ac4dbd86b7b732737a84f38b0f94c16d672eff3cb22d9a2c898ff7d8fb8656', 'host observer \u00df reported REPLAY_FAILURE (1 defect(s), evidence sha256:bd4332cb036e4d25...), distinct from matcher ss and its matches'] vs {'code': 'TWO_SIGNAL_COLLAPSE', 'message': \"TWO_SIGNAL_COLLAPSE: Signal 2 was observed by '\u00df', the matcher that produced Signal 1; the danger bit is derived from the match\"}",
+      "observer_id": "\u00df",
+      "python_verdict": "TWO_SIGNAL_COLLAPSE",
+      "rust_verdict": "OK"
+    }
+  },
+  "meaning": "confirmed means a defect was reproduced",
+  "revision": "e15a9d4ac6298524ce370cae679314aa0fef7585",
+  "source": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\012_rsi\\000_relational_reasoning_and_rsi_impossibility"
+}

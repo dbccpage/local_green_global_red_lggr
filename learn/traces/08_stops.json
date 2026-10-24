@@ -1,0 +1,8 @@
+{
+  "reading": "Finite-carrier names from paper 000, mapped onto receipts this package emits.",
+  "stops": [
+    {"reason": "REPORT_COLLISION", "lesson": "01", "equals": "REPORT_INSUFFICIENT"},
+    {"reason": "LIFT_BUDGET_EXHAUSTION", "lesson": "03", "equals": "ALERT"},
+    {"reason": "OVERLAP_GLUING_REFUSAL", "lesson": "04", "equals": "CYCLE_CLOSED"}
+  ]
+}

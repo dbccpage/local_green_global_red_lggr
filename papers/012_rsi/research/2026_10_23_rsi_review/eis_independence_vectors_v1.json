@@ -1,0 +1,1750 @@
+{
+  "vectors": [
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": null,
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "no Signal 2 was observed"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": null,
+        "detector_id": "",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "no Signal 2 was observed"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "EIS_VALUE_ERROR",
+          "message": "EIS_VALUE_ERROR: detector_id must name the matcher that produced Signal 1"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": " \t",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "EIS_VALUE_ERROR",
+          "message": "EIS_VALUE_ERROR: detector_id must name the matcher that produced Signal 1"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": " \u001f",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "UNWITNESSED_DANGER_SIGNAL",
+          "message": "UNWITNESSED_DANGER_SIGNAL: Signal 2 names no host observer, so its independence cannot be checked"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "MODEL",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by 'MODEL'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": " model ",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by ' model '; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "LLM",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by 'LLM'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "Agent",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by 'Agent'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "detector",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by 'detector'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "MATCHER",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by 'MATCHER'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "Regex",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was observed by 'Regex', the matcher that produced Signal 1; the danger bit is derived from the match"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": " REGEX ",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was observed by ' REGEX ', the matcher that produced Signal 1; the danger bit is derived from the match"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "Host.Check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer Host.Check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "ß",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer ß reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "\nMODEL\t",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by '\\nMODEL\\t'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "MODEL'",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer MODEL' reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "\"MODEL'\\",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer \"MODEL'\\ reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "MODEL ",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by 'MODEL\\xa0'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "MODEL​",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer MODEL​ reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "STRASSE",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "Straße",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was observed by 'STRASSE', the matcher that produced Signal 1; the danger bit is derived from the match"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "ς",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "σ",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was observed by 'ς', the matcher that produced Signal 1; the danger bit is derived from the match"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "i̇",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "İ",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was observed by 'i̇', the matcher that produced Signal 1; the danger bit is derived from the match"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "unknown",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "UNREGISTERED_DANGER_KIND",
+          "message": "UNREGISTERED_DANGER_KIND: 'unknown' is not in the closed registry: MALFORMED_PAYLOAD, MANIFEST_CONTAMINATION, PROTECTED_FIELD_VIOLATION, REPLAY_FAILURE"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "bad'kind",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "UNREGISTERED_DANGER_KIND",
+          "message": "UNREGISTERED_DANGER_KIND: \"bad'kind\" is not in the closed registry: MALFORMED_PAYLOAD, MANIFEST_CONTAMINATION, PROTECTED_FIELD_VIOLATION, REPLAY_FAILURE"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "bad\"kind",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "UNREGISTERED_DANGER_KIND",
+          "message": "UNREGISTERED_DANGER_KIND: 'bad\"kind' is not in the closed registry: MALFORMED_PAYLOAD, MANIFEST_CONTAMINATION, PROTECTED_FIELD_VIOLATION, REPLAY_FAILURE"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "bad'\"\\\n\r\t\u0000 ​",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "UNREGISTERED_DANGER_KIND",
+          "message": "UNREGISTERED_DANGER_KIND: 'bad\\'\"\\\\\\n\\r\\t\\x00\\x7f\\xa0\\u200b' is not in the closed registry: MALFORMED_PAYLOAD, MANIFEST_CONTAMINATION, PROTECTED_FIELD_VIOLATION, REPLAY_FAILURE"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "bad 󠀁",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "UNREGISTERED_DANGER_KIND",
+          "message": "UNREGISTERED_DANGER_KIND: 'bad\\u2028\\U000e0001' is not in the closed registry: MALFORMED_PAYLOAD, MANIFEST_CONTAMINATION, PROTECTED_FIELD_VIOLATION, REPLAY_FAILURE"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [
+          "REPLAY_FAILURE"
+        ],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the matcher 'regex' already evaluates REPLAY_FAILURE; the same predicate would be counted twice"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:2fcbc9423a41b5fee1a4e6a00be3777b88126828d39dd66977d4c2334f2ca20d",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2's evidence is the digest of the Signal 1 matches; that is one signal counted twice"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:4f53cda18c2baa0c...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 0,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (0 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence 🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              2,
+              3
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the Signal 1 match at characters [2, 3) lies inside the REPLAY_FAILURE evidence; one token cannot be both signals"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "🙂核",
+            "offset": 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,
+              1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the Signal 1 match at characters [1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002) lies inside the REPLAY_FAILURE evidence; one token cannot be both signals"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": false
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              1,
+              3
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the Signal 1 match at characters [2, 10) lies inside the REPLAY_FAILURE evidence; one token cannot be both signals"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              1,
+              3
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": false
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              2,
+              9
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the Signal 1 match at characters [2, 10) lies inside the REPLAY_FAILURE evidence; one token cannot be both signals"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              2,
+              9
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": false
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the Signal 1 match at characters [2, 10) lies inside the REPLAY_FAILURE evidence; one token cannot be both signals"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": false
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              8,
+              9
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the Signal 1 match at characters [2, 10) lies inside the REPLAY_FAILURE evidence; one token cannot be both signals"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              8,
+              9
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": false
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              9,
+              10
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the Signal 1 match at characters [2, 10) lies inside the REPLAY_FAILURE evidence; one token cannot be both signals"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              9,
+              10
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": false
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": false
+      },
+      "expected": {
+        "ok": "host observer host.check reported REPLAY_FAILURE (1 defect(s), evidence sha256:3333333333333333...), distinct from matcher regex and its matches"
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "unknown",
+          "observer_id": "MODEL",
+          "evidence_digest": "sha256:2fcbc9423a41b5fee1a4e6a00be3777b88126828d39dd66977d4c2334f2ca20d",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: Signal 2 was reported by 'MODEL'; danger is observed by a host check, not proposed by a model or a detector"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "unknown",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:2fcbc9423a41b5fee1a4e6a00be3777b88126828d39dd66977d4c2334f2ca20d",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "UNREGISTERED_DANGER_KIND",
+          "message": "UNREGISTERED_DANGER_KIND: 'unknown' is not in the closed registry: MALFORMED_PAYLOAD, MANIFEST_CONTAMINATION, PROTECTED_FIELD_VIOLATION, REPLAY_FAILURE"
+        }
+      }
+    },
+    {
+      "input": {
+        "matches": [
+          {
+            "epitope_name": "fixture",
+            "pattern_matched": "proposal",
+            "offset": 2
+          }
+        ],
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "observer_id": "host.check",
+          "evidence_digest": "sha256:2fcbc9423a41b5fee1a4e6a00be3777b88126828d39dd66977d4c2334f2ca20d",
+          "defect_count": 1,
+          "evidence_spans": [
+            [
+              20,
+              25
+            ]
+          ]
+        },
+        "detector_id": "regex",
+        "detector_predicates": [
+          "REPLAY_FAILURE"
+        ],
+        "offsets_are_content": true
+      },
+      "expected": {
+        "error": {
+          "code": "TWO_SIGNAL_COLLAPSE",
+          "message": "TWO_SIGNAL_COLLAPSE: the matcher 'regex' already evaluates REPLAY_FAILURE; the same predicate would be counted twice"
+        }
+      }
+    }
+  ],
+  "digests": [
+    {
+      "input": [],
+      "expected": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "input": [
+        {
+          "epitope_name": "fixture",
+          "pattern_matched": "proposal",
+          "offset": 2
+        }
+      ],
+      "expected": "sha256:2fcbc9423a41b5fee1a4e6a00be3777b88126828d39dd66977d4c2334f2ca20d"
+    },
+    {
+      "input": [
+        {
+          "epitope_name": "fixture",
+          "pattern_matched": "proposal",
+          "offset": 2
+        }
+      ],
+      "expected": "sha256:2fcbc9423a41b5fee1a4e6a00be3777b88126828d39dd66977d4c2334f2ca20d"
+    },
+    {
+      "input": [
+        {
+          "epitope_name": "é",
+          "pattern_matched": "核🙂",
+          "offset": 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        }
+      ],
+      "expected": "sha256:97607258bc4cbac7fcd02b57fdababa4327929a669fd2085d43a11e8694e9733"
+    },
+    {
+      "input": [
+        {
+          "epitope_name": "quote'\"\\",
+          "pattern_matched": "\n\r\t\b\f\u0000\u001f​",
+          "offset": 0
+        }
+      ],
+      "expected": "sha256:46af5bd72c61839dd5e6c94e5ee5ac6898579d9a541427f05ebf7fdee4c4e40e"
+    },
+    {
+      "input": [
+        {
+          "epitope_name": "a",
+          "pattern_matched": "x",
+          "offset": 10
+        },
+        {
+          "epitope_name": "a",
+          "pattern_matched": "x",
+          "offset": 2
+        }
+      ],
+      "expected": "sha256:4b44e6368f9de0ff4a79ab65b1e533b9dd5231abd04473e4046eadf6321a6683"
+    },
+    {
+      "input": [
+        {
+          "epitope_name": "z",
+          "pattern_matched": "last",
+          "offset": 0
+        },
+        {
+          "epitope_name": "a",
+          "pattern_matched": "first",
+          "offset": 1
+        }
+      ],
+      "expected": "sha256:9c5d5d609ffac642e89e3bf664088944dfc077640a510cb39b9d5cd84668cf41"
+    }
+  ]
+}

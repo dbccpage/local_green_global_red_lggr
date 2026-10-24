@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "wheel_sha256": "4ffc51a6b432a6e68e29e8b8358757c3598c645465ee18c8f86e381559e25703",
+  "wheel_name": "relational_reasoning_and_rsi_impossibility-1.2.3-py3-none-any.whl",
+  "isolated_interpreter": true,
+  "system_site_packages": false,
+  "smoke": {
+    "installed_modules": 15,
+    "parity": {
+      "metadata_record_count": 1,
+      "rust_companion_executed": true,
+      "scope": "EIS_METADATA_ONLY",
+      "obstruction_predicates_checked": false,
+      "identity_contract": "ascii-identifiers-v2",
+      "eis_fixture_vectors": 55,
+      "eis_digest_vectors": 7
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "relational-reasoning-and-rsi-impossibility": "1.2.3"
+    }
+  },
+  "cli_executed": true
+}

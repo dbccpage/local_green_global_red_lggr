@@ -18,14 +18,20 @@ import unittest
 
 from lggr.benchmarks import (
     OpenRouterClient,
+    _eval_pair1_side_info_and_skew,
+    _eval_pair2_poe_and_skew,
+    _eval_pair3_tower_and_mermin_peres,
     compute_empirical_defect_rates,
     load_openrouter_credentials,
+    verify_frontier_benchmark,
 )
 from lggr.common import digest
 from lggr.streaming import (
     StreamingAuditMonitor,
+    StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
@@ -323,6 +329,7 @@ class TestOfflineTraceReplay(unittest.TestCase):
         if not artifact.is_file():
             self.skipTest("frontier_monitors_benchmark.json not generated yet")
         data = json.loads(artifact.read_text(encoding="utf-8"))
+        self.assertTrue(verify_frontier_benchmark(data)["replayed"])
 
         self.assertEqual(data.get("schema"), "lggr.frontier_benchmark_replay.v1")
         self.assertEqual(len(data.get("models_evaluated", [])), 5)
@@ -425,6 +432,169 @@ class TestOfflineTraceReplay(unittest.TestCase):
             self.assertEqual(g_pass, t["global_pass"])
             self.assertEqual(defect, t["defect"])
             self.assertEqual({-1: "NGD", 0: "ZDR", 1: "PGD"}[defect], t["classification"])
+
+    def test_closed_loop_repair_multi_model_benchmark_replay(self):
+        """F16: Replay all 25 closed-loop receipt-feedback repair trajectories across 5 model families."""
+        artifact = RECEIPTS_DIR / "closed_loop_repair_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("closed_loop_repair_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.closed_loop_repair_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("monitors_evaluated", [])), 5)
+        self.assertEqual(data.get("total_completions"), 50)
+        self.assertEqual(data.get("trajectory_count"), 25)
+
+        trajs = data.get("trajectories", [])
+        self.assertEqual(len(trajs), 25)
+
+        self.assertTrue(data["round_0_baseline_metrics"]["identity_verified"])
+        self.assertTrue(data["round_1_single_round_metrics"]["identity_verified"])
+        self.assertTrue(data["round_2_multi_round_metrics"]["identity_verified"])
+
+        # Replay all 25 trajectories through StreamingClosedLoopRepairMonitor
+        replay_cl = StreamingClosedLoopRepairMonitor(
+            scope_id=data["closed_loop_monitor_receipt"]["scope_id"]
+        )
+        for t in trajs:
+            replay_cl.record_trajectory(
+                t["trajectory_id"],
+                monitor_name=t["monitor_name"],
+                model_id=t["model_id"],
+                rounds=t["rounds"],
+            )
+            # Also replay each of the 3 rounds through its underlying frontier monitor
+            mon_name = t["monitor_name"]
+            for r_idx in range(3):
+                r_inp = t["round_inputs"][r_idx]
+                r_saved = t["round_receipts"][r_idx]
+                scope_id = r_saved["scope_id"]
+                if mon_name == "StreamingProjectiveTowerMonitor":
+                    m = StreamingProjectiveTowerMonitor(3, r_inp["const_b"], scope_id=scope_id)
+                    m.record_stage("stage_mod2", 2, r_inp["x_mod2"])
+                    m.record_stage("stage_mod4", 4, r_inp["x_mod4"])
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingSkewRepairMonitor":
+                    m = StreamingSkewRepairMonitor(scope_id=scope_id)
+                    m.record_probe(
+                        f"probe_r{r_idx}",
+                        "2",
+                        "0",
+                        candidate_alpha=r_inp["candidate_alpha"],
+                        l_inf_coordinate_budget="2",
+                        l_1_global_budget="2",
+                    )
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingMerminPeresParityMonitor":
+                    m = StreamingMerminPeresParityMonitor(scope_id=scope_id)
+                    m.record_grid(
+                        f"grid_r{r_idx}",
+                        row_targets=r_inp["row_targets"],
+                        col_targets=r_inp["col_targets"],
+                        row_context_assignments=r_inp["row_context_assignments"],
+                        col_context_assignments=r_inp["col_context_assignments"],
+                    )
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingSideInformationCapacityMonitor":
+                    m = StreamingSideInformationCapacityMonitor(scope_id=scope_id)
+                    m.record_fiber_channel(
+                        f"fiber_r{r_idx}",
+                        r_inp["states"],
+                        channel_capacity_s=r_inp["channel_capacity_s"],
+                        error_budget=0,
+                    )
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingProductOfExpertsMonitor":
+                    m = StreamingProductOfExpertsMonitor(scope_id=scope_id)
+                    m.record_expert_scores(f"round_r{r_idx}", r_inp["expert_scores"])
+                    r_rep = m.get_receipt()
+                else:
+                    self.fail(f"Unknown monitor: {mon_name}")
+                self.assertEqual(r_rep["receipt_sha256"], r_saved["receipt_sha256"])
+
+        cl_rec = replay_cl.get_receipt()
+        self.assertEqual(
+            cl_rec["receipt_sha256"],
+            data["closed_loop_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(cl_rec["single_round_convergence_rate"], "3/5")
+        self.assertEqual(cl_rec["multi_round_convergence_rate"], "1")
+        self.assertEqual(cl_rec["multi_round_convergence_gain"], "2/5")
+        self.assertTrue(cl_rec["monotonic_convergence_verified"])
+
+    def test_joint_multi_monitor_repair_benchmark_replay(self):
+        """F17: Replay all 15 coupled two-monitor repair trajectories across 5 model families."""
+        artifact = RECEIPTS_DIR / "joint_multi_monitor_repair_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("joint_multi_monitor_repair_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.joint_multi_monitor_repair_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("coupled_pairs_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("trajectory_count"), 15)
+
+        trajs = data.get("trajectories", [])
+        self.assertEqual(len(trajs), 15)
+
+        self.assertTrue(data["round_0_baseline_metrics"]["identity_verified"])
+        self.assertTrue(data["round_1_single_round_metrics"]["identity_verified"])
+        self.assertTrue(data["round_2_multi_round_metrics"]["identity_verified"])
+
+        replay_guard = StreamingJointMultiMonitorRepairGuard(
+            scope_id=data["joint_guard_receipt"]["scope_id"]
+        )
+        for t in trajs:
+            replay_guard.record_coupled_trajectory(
+                t["trajectory_id"],
+                pair_name=t["pair_name"],
+                monitor_a_name=t["monitor_a_name"],
+                monitor_b_name=t["monitor_b_name"],
+                model_id=t["model_id"],
+                rounds=t["rounds"],
+            )
+            pname = t["pair_name"]
+            mdl = t["model_id"]
+            for r_idx in range(3):
+                r_inp = t["round_inputs"][r_idx]
+                r_saved = t["round_receipts"][r_idx]
+                if pname == "SideInfoCapacity_x_SkewRepair":
+                    rec_a, rec_b = _eval_pair1_side_info_and_skew(
+                        f"j1_r{r_idx}_{mdl}",
+                        r_inp["channel_capacity_s"],
+                        r_inp["symbols"],
+                        r_inp["candidate_alpha"],
+                    )
+                elif pname == "ProductOfExperts_x_SkewRepair":
+                    rec_a, rec_b = _eval_pair2_poe_and_skew(
+                        f"j2_r{r_idx}_{mdl}",
+                        r_inp["compromise_eps"],
+                        r_inp["candidate_alpha"],
+                    )
+                elif pname == "ProjectiveTower_x_MerminPeresParity":
+                    rec_a, rec_b = _eval_pair3_tower_and_mermin_peres(
+                        f"j3_r{r_idx}_{mdl}",
+                        r_inp["const_b"],
+                        r_inp["x_mod2"],
+                        r_inp["x_mod4"],
+                    )
+                else:
+                    self.fail(f"Unknown coupled pair: {pname}")
+                self.assertEqual(rec_a["receipt_sha256"], r_saved["receipt_a"]["receipt_sha256"])
+                self.assertEqual(rec_b["receipt_sha256"], r_saved["receipt_b"]["receipt_sha256"])
+
+        jg_rec = replay_guard.get_receipt()
+        self.assertEqual(
+            jg_rec["receipt_sha256"],
+            data["joint_guard_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(jg_rec["single_round_convergence_rate"], "2/15")
+        self.assertEqual(jg_rec["multi_round_convergence_rate"], "1")
+        self.assertEqual(jg_rec["multi_round_convergence_gain"], "13/15")
+        self.assertEqual(jg_rec["round_1_whack_a_mole_rate"], "7/15")
+        self.assertTrue(jg_rec["monotonic_convergence_verified"])
 
 
 if __name__ == "__main__":

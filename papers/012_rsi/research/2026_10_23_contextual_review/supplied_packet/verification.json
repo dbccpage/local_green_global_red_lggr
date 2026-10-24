@@ -1,0 +1,54 @@
+{
+  "review_date": "2026-10-23",
+  "source_commit": "e15a9d4ac6298524ce370cae679314aa0fef7585",
+  "runtime": {
+    "python": "3.12.14",
+    "pytest": "9.1.1",
+    "scipy": "1.17.0",
+    "platform": "Linux"
+  },
+  "checks": {
+    "supplied_pytest": {
+      "passed": 143,
+      "failed": 0
+    },
+    "exact_lp_fixtures": {
+      "passed": 5
+    },
+    "python_stored_execution_cases": {
+      "passed": 95,
+      "fresh_lean_execution": false
+    },
+    "review_math_groups": {
+      "passed": 3
+    },
+    "mind_illustrations": {
+      "groups": 6,
+      "assertions": 19
+    },
+    "named_census_source_and_stored_report_check": {
+      "passed": true,
+      "named_theorems": 113,
+      "fresh_lean_execution": false
+    },
+    "paper_spine_verify": {
+      "passed": true
+    },
+    "source_blobs": {
+      "verified": 156
+    },
+    "release_manifest_content": {
+      "entries": 154,
+      "matching": 153,
+      "mismatch": "lean4/vendor/dependencies.tar.gz (unmaterialized Git LFS pointer)"
+    }
+  },
+  "limits": [
+    "No fresh Lean build or kernel replay",
+    "No full release ZIP verification; ZIP not retrieved",
+    "Full-census mutation probe mocks Lean output only to isolate Python writes",
+    "SciPy comparison is numerical finite evidence, supplemented by independent exact certificate checks",
+    "No repository changes"
+  ],
+  "independent_results": "independent_results.json"
+}

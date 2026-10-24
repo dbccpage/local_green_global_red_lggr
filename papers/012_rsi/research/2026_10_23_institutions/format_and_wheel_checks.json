@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0",
+  "wheel_sha256": "44ba722cc05a3dc5d6275fecf5a3f7f35d40b16ede786b72134f0aafee53fbd6",
+  "wheel_tests_passed": 17,
+  "installed_module_matches_source": true,
+  "pdf_pages": 16,
+  "pdf_pages_visually_reviewed": [
+    1,
+    6,
+    8
+  ],
+  "formula_occurrences": 76,
+  "docx_roundtrip": "all occurrences match under documented typesetting normalizations",
+  "scope": "Selected PDF pages inspected; not exhaustive glyph recognition. Wheel tests ran with Python isolated mode and the installed-module path asserted."
+}

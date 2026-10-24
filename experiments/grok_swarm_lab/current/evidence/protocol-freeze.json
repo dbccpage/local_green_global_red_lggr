@@ -1,0 +1,55 @@
+{
+  "authority_effect": "None",
+  "files": {
+    "lggr_swarm_lab/fixtures.py": "ec171fdc5a948c31b646cfea11d3cea65538e8cd9f11cf2c7050e565678df53e",
+    "lggr_swarm_lab/oracle.py": "651b6383d850902d39d5743586bbb0ff722eeec1e05b87bd0f7a63d71da3cc02",
+    "protocol.json": "0d84d7896666fbe7aa22f78d731ef1b88d79f65614daa51c2e9d074c30b4f3a6",
+    "tests/test_oracle.py": "777898c72d7e7c106ba30a80e51f632051a6512c98999037817c8c742f052cb9"
+  },
+  "frozen_at_utc": "2026-10-24T22:51:34.554513+00:00",
+  "operational_blinding": "Controllers receive public contract, planner proposals and actual tool results only. Family, seed, variant, original semantics and independent judge are absent from their input. Host-side Python code is inspectable, so this is a data-flow boundary rather than cryptographic secrecy.",
+  "phase": "before_post_review_regression",
+  "schema": "protocol-freeze.v1",
+  "splits": {
+    "development": {
+      "case_count": 24,
+      "case_sha256": "5a0f571d8be86a337e1ffcb68ab3bcdb428719ea4b6908cbe938b44d25f47c94",
+      "per_family": {
+        "branch_join": 2,
+        "completion_controls": 2,
+        "composition": 2,
+        "equal_reports": 2,
+        "event_integrity": 2,
+        "evidence_resolution": 2,
+        "merge_retention": 2,
+        "obligations": 2,
+        "query_scope": 2,
+        "shared_budget": 2,
+        "units_sign": 2,
+        "version_transition": 2
+      },
+      "seed": 271828
+    },
+    "evaluation": {
+      "case_count": 48,
+      "case_sha256": "dfc606efe1ea38abd0a2205e835a6bee460d8ac3541c45a121d448be9ec28256",
+      "per_family": {
+        "branch_join": 4,
+        "completion_controls": 4,
+        "composition": 4,
+        "equal_reports": 4,
+        "event_integrity": 4,
+        "evidence_resolution": 4,
+        "merge_retention": 4,
+        "obligations": 4,
+        "query_scope": 4,
+        "shared_budget": 4,
+        "units_sign": 4,
+        "version_transition": 4
+      },
+      "seed": 161803
+    }
+  },
+  "revision": "grok-swarm-lab.review-v2",
+  "historical_freeze": "Unmodified original freeze remains in the published v1 ZIP; this is a separately identified review revision."
+}

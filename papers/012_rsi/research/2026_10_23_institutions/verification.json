@@ -1,0 +1,91 @@
+{
+  "schema": "institutions.release-verification.v1",
+  "date": "2026-10-23",
+  "version": "0.1.0",
+  "archive": "002_institutions_that_can_know_2026-10-23.zip",
+  "sha256": "75b1833972778afc72b000830ba4afdf9ec45da01aee4f361a13195201e0ab0c",
+  "bytes": 342437,
+  "zip_members": 63,
+  "source": {
+    "return_code": 0,
+    "command": [
+      "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+      "verify_deposit.py",
+      "--test",
+      "--lean",
+      "--contract",
+      "--notebook",
+      "--documents",
+      "--archive"
+    ],
+    "log_sha256": "59aeac1ec90e650c40b1f1d9b85317fe23f5c9ffbfd88d7156cca9fc064284ba",
+    "log": "source_verification.txt"
+  },
+  "checks": {
+    "cold": {
+      "return_code": 0,
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "verify_deposit.py",
+        "--test",
+        "--lean",
+        "--contract",
+        "--notebook",
+        "--documents"
+      ],
+      "log_sha256": "59aeac1ec90e650c40b1f1d9b85317fe23f5c9ffbfd88d7156cca9fc064284ba",
+      "log": "cold_verification.txt"
+    },
+    "rebuild": {
+      "return_code": 0,
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "tools/rebuild_release.py"
+      ],
+      "log_sha256": "1cfdfd6fd537f022daa8f161e042b98b28e041d66f810376369c7eb65ab9fe12",
+      "log": "cold_rebuild.txt"
+    },
+    "mutation": {
+      "return_code": 1,
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "verify_deposit.py"
+      ],
+      "log_sha256": "521cd14fe472429c8adf24c297abaef73a10060539582de7c7a68f1e37d114c0",
+      "log": "cold_mutation_rejected.txt"
+    },
+    "unexpected_payload": {
+      "return_code": 1,
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "verify_deposit.py"
+      ],
+      "log_sha256": "521cd14fe472429c8adf24c297abaef73a10060539582de7c7a68f1e37d114c0",
+      "log": "cold_unsealed_file_rejected.txt"
+    },
+    "restored": {
+      "return_code": 0,
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "verify_deposit.py",
+        "--archive"
+      ],
+      "log_sha256": "4966d9cd28c854fb8ef831fb7dc546708777578460a8d410b7d646dd40d74bb9",
+      "log": "cold_restored.txt"
+    }
+  },
+  "named_lean_theorems": 8,
+  "full_local_declarations": 13,
+  "python_tests_source": 17,
+  "python_tests_cold": 17,
+  "exhaustive_cases_per_run": {
+    "recoverability": 216,
+    "side_information": 216
+  },
+  "cold_lean_cache_absent_initially": true,
+  "ambient_pythonpath_removed": true,
+  "ambient_cargo_target_dir_removed": true,
+  "later_clock_rebuild_identical": true,
+  "cold_rebuild_identical": true,
+  "scope": "Source and extracted package checks. No live council, Python-to-Lean refinement, general side-bit Lean theorem, human study, publication or deployment."
+}

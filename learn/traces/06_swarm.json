@@ -1,0 +1,37 @@
+{
+  "scope_id": "learn-06-boundary",
+  "observations": [
+    {
+      "state_id": "task-a",
+      "report": {
+        "summary": "ship the etl job",
+        "approval_tier": 3,
+        "isolation": "dedicated"
+      },
+      "query": {"approval_tier": 3, "isolation": "dedicated"}
+    },
+    {
+      "state_id": "task-b",
+      "report": {
+        "summary": "ship the etl job",
+        "approval_tier": 1,
+        "isolation": "shared"
+      },
+      "query": {"approval_tier": 1, "isolation": "shared"}
+    }
+  ],
+  "policy": {
+    "allowed_states": [0, 1, 2, 3],
+    "max_step": 1,
+    "max_total": 3,
+    "query_scope": "every_prefix",
+    "evaluator_id": "swarm-stage-evaluator/v1",
+    "spec_id": "stage-progression/v1",
+    "authority_id": "external-governor/v1"
+  },
+  "stages": [
+    {"witness_id": "spec-to-code", "source": "stage-spec", "target": "stage-code", "source_value": 0, "target_value": 1, "global_sample": 1},
+    {"witness_id": "code-to-review", "source": "stage-code", "target": "stage-review", "source_value": 1, "target_value": 2, "global_sample": 1},
+    {"witness_id": "review-to-ship", "source": "stage-review", "target": "stage-ship", "source_value": 2, "target_value": 3, "global_sample": 1}
+  ]
+}
