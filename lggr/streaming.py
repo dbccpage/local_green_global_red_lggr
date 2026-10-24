@@ -3381,6 +3381,175 @@ class StreamingDefectSoundnessMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDashboardAdequacyMonitor:
+    """Online LGGR I (E9-E18) & LGGR II (M6-M7) dashboard information and collapsing-detector monitor.
+
+    Evaluates:
+      - Exact sample rate & oriented defect count reconstruction identities (E9-E11):
+          2 * n_pos == M + D  and  2 * n_neg == M - D,
+          n_neg <= sum L_i,
+        where M = n_pos + n_neg = N * EGD and D = sum Delta_E = n_pos - n_neg.
+      - Global failure partition (E18):
+          #{E_g == 0} == n_neg + #{L == 0 and E_g == 0}.
+      - Packet information recovery (E12-E14):
+          E_g == L + Delta_E  and  L == E_g - Delta_E.
+      - Product-collapsing detector detection (M7): detects when a local validator copies E_g
+        and peers pass so L(x) == E_g(x) tautologically across the sample.
+      - All-zero agreement at failure detection (M6): detects when Delta_E == 0 on every trace
+        solely because E_g == L == 0 everywhere (zero global passes).
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-dashboard-adequacy-scope",
+        copied_global_validator: bool = False,
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        boolean(copied_global_validator, "copied_global_validator")
+        self.copied_global_validator = copied_global_validator
+        self.records: list[dict[str, Any]] = []
+        self.n_pos: int = 0
+        self.n_neg: int = 0
+        self.n_zero: int = 0
+        self.local_pass_sum: int = 0
+        self.global_pass_sum: int = 0
+        self.signed_defect_sum: int = 0
+        self.joint_fail_count: int = 0
+
+    @staticmethod
+    def _binary_int(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def record_trace(
+        self,
+        trace_id: str,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+    ) -> dict[str, Any]:
+        """Record a trace verdict triple (e1, e2, eg) and update dashboard statistics."""
+        tid = text(trace_id, "trace_id")
+        v1 = self._binary_int(e1, "e1")
+        v2 = self._binary_int(e2, "e2")
+        vg = self._binary_int(eg, "eg")
+
+        local_prod = v1 * v2
+        delta_e = vg - local_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[delta_e]
+
+        self.local_pass_sum += local_prod
+        self.global_pass_sum += vg
+        self.signed_defect_sum += delta_e
+        if delta_e == 1:
+            self.n_pos += 1
+        elif delta_e == -1:
+            self.n_neg += 1
+        else:
+            self.n_zero += 1
+        if local_prod == 0 and vg == 0:
+            self.joint_fail_count += 1
+
+        rec = {
+            "trace_id": tid,
+            "e1": v1,
+            "e2": v2,
+            "eg": vg,
+            "local_product": local_prod,
+            "delta_e": delta_e,
+            "classification": classification,
+            "recovered_eg_from_l_and_delta": local_prod + delta_e,
+            "recovered_l_from_eg_and_delta": vg - delta_e,
+            "packet_recovery_verified": (
+                (local_prod + delta_e == vg) and (vg - delta_e == local_prod)
+            ),
+        }
+        self.records.append(rec)
+        return self.get_receipt()
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit dashboard adequacy receipt checking E9-E18 and M6-M7."""
+        n_total = len(self.records)
+        disagreement_m = self.n_pos + self.n_neg
+        d_sum = self.signed_defect_sum
+        global_fail_count = n_total - self.global_pass_sum
+
+        lpr = Fraction(self.local_pass_sum, n_total) if n_total > 0 else Fraction(0)
+        gpr = Fraction(self.global_pass_sum, n_total) if n_total > 0 else Fraction(0)
+        egd = Fraction(disagreement_m, n_total) if n_total > 0 else Fraction(0)
+        mean_defect = Fraction(d_sum, n_total) if n_total > 0 else Fraction(0)
+
+        reconstruction_verified = (
+            2 * self.n_pos == disagreement_m + d_sum
+            and 2 * self.n_neg == disagreement_m - d_sum
+            and self.n_pos + self.n_neg + self.n_zero == n_total
+            and gpr - lpr == mean_defect
+        )
+        ngd_bounded_by_local_passes = (self.n_neg <= self.local_pass_sum)
+        global_failure_partition_verified = (
+            global_fail_count == self.n_neg + self.joint_fail_count
+        )
+        all_packet_recoveries_verified = all(
+            r["packet_recovery_verified"] for r in self.records
+        )
+
+        all_zero_agreement_at_failure = (
+            n_total > 0 and disagreement_m == 0 and self.global_pass_sum == 0
+        )
+        product_collapsing_detected = (
+            n_total > 0
+            and self.copied_global_validator
+            and disagreement_m == 0
+            and all(r["e1"] == r["eg"] and r["e2"] == 1 for r in self.records)
+        )
+
+        if self.n_neg > 0:
+            status = "NGD_DEFECT_PRESENT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif disagreement_m > 0:
+            status = "PGD_DISAGREEMENT_PRESENT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif product_collapsing_detected:
+            status = "PRODUCT_COLLAPSING_DETECTOR_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif all_zero_agreement_at_failure:
+            status = "ZERO_DEFECT_ALL_FAIL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "DASHBOARD_ADEQUACY_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_dashboard_adequacy.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "sample_size": n_total,
+            "n_pos_pgd": self.n_pos,
+            "n_neg_ngd": self.n_neg,
+            "n_zero_zdr": self.n_zero,
+            "disagreement_count_m": disagreement_m,
+            "signed_defect_sum_d": d_sum,
+            "local_pass_rate_lpr": lpr,
+            "global_pass_rate_gpr": gpr,
+            "evaluator_gluing_disagreement_egd": egd,
+            "mean_signed_defect": mean_defect,
+            "global_failure_count": global_fail_count,
+            "joint_local_global_failure_count": self.joint_fail_count,
+            "reconstruction_identities_verified": reconstruction_verified,
+            "ngd_bounded_by_local_passes": ngd_bounded_by_local_passes,
+            "global_failure_partition_verified": global_failure_partition_verified,
+            "all_packet_recoveries_verified": all_packet_recoveries_verified,
+            "all_zero_agreement_at_failure": all_zero_agreement_at_failure,
+            "product_collapsing_detected": product_collapsing_detected,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
