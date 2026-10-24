@@ -1,0 +1,9 @@
+# Change Log — LGGR Volume VIII (`lggr_viii_online_streaming_discovery_and_runtime_gluing`)
+
+## [0.1.0] — 2026-10-24
+
+- **Initial Release of Volume VIII:** Created `lggr_viii_online_streaming_discovery_and_runtime_gluing` establishing online/streaming discovery of Local Green, Global Green (LGGG) versus Local Green, Global Red (LGGR) behaviors during multi-agent swarm execution.
+- **Lean 4.35.0 Formalization (`lean4/LggrVIII.lean`):** Formalized 12 machine-checked, sorry-free theorems (`collision_monotonicity`, `postprocessing_preserves_streaming_collision`, `streaming_verdict_ceiling`, `streaming_evalDefect_partition`, `streaming_chain_telescoping`, `online_prefix_strictly_stronger_than_endpoint`, `prefix_violation_monotonicity`, `streaming_unsigned_report_collision`, `open_chain_exactness`, `incremental_cycle_closure_obstruction`, `boundary_sufficient_gluing_certifies_lggg`, `boundary_insufficiency_forces_defect`) with zero custom axioms.
+- **Python Exact Rational Suite (`code/lggr_viii_core.py`, `code/tests/test_lggr_viii_core.py`):** Implemented standalone reproducible online streaming monitors (`StreamingFiberMonitor`, `StreamingAuditMonitor`, `StreamingCochainMonitor`, `StreamingOnlineEvaluator`) with zero external runtime dependencies.
+- **Empirical Swarm Benchmark Resolution (Volume I §9 & Tests 1–4):** Bound live OpenRouter model benchmark receipts (`empirical_ngd_benchmark.json`, `test1_fiber_collision.json`, `test2_prefix_breach.json`, `test3_cochain_cycle.json`, `test4_composable_lggg.json`) establishing empirical defect rates ($N = 8, \mathrm{LPR}=1, \mathrm{GPR}=1, \mathrm{NGD}=0, \mathrm{ZDR}=1, \mathrm{PGD}=0$) and online detection receipts across Tests 1–4 with deterministic offline replay verification.
+- **License Standardization:** Released under the Apache License, Version 2.0.

@@ -111,3 +111,113 @@ class CliTests(unittest.TestCase):
     def test_duplicate_keys_rejected_at_parser_boundary(self):
         with self.assertRaises(ValidationError):
             loads_strict('{"report":false,"report":true}')
+
+    def test_selftest_exits_zero(self):
+        result = run('selftest')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['schema'], 'lggr.selftest.v1')
+        self.assertEqual(data['status'], 'PASS')
+        self.assertIn('streaming', data['modules_tested'])
+        self.assertEqual(data['tests_passed'], len(data['modules_tested']))
+
+    def test_selftest_with_output_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out_file = Path(directory) / 'selftest_receipt.json'
+            result = run('selftest', '-o', str(out_file))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout, '')
+            self.assertTrue(out_file.exists())
+            data = json.loads(out_file.read_text(encoding='utf-8'))
+            self.assertEqual(data['schema'], 'lggr.selftest.v1')
+            self.assertEqual(data['status'], 'PASS')
+
+    def test_stream_help(self):
+        result = run('stream', '--help')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('--monitor', result.stdout)
+
+    def test_stream_fiber_composable_exits_zero(self):
+        lines = (
+            '{"state_id": "s1", "report": "rep_1", "query": 1}\n'
+            '{"state_id": "s2", "report": "rep_2", "query": 2}\n'
+        )
+        result = run('stream', '--monitor', 'fiber', '-', input_text=lines)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['schema'], 'lggr.stream.v1')
+        self.assertEqual(data['status'], 'COMPOSABLE_LGGG')
+        self.assertEqual(data['events_processed'], 2)
+        self.assertEqual(data['final_receipt']['status'], 'DECODER_VERIFIED')
+
+    def test_stream_fiber_collision_exits_nonzero(self):
+        lines = (
+            '{"state_id": "s1", "report": "rep_A", "query": 1}\n'
+            '{"state_id": "s2", "report": "rep_A", "query": 2}\n'
+        )
+        result = run('stream', '--monitor', 'fiber', '-', input_text=lines)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['schema'], 'lggr.stream.v1')
+        self.assertEqual(data['status'], 'OBSTRUCTED_LGGR')
+        self.assertEqual(data['final_receipt']['status'], 'REPORT_INSUFFICIENT')
+        self.assertIsNotNone(data['final_receipt']['collision'])
+
+    def test_stream_audit_composable_exits_zero(self):
+        good_raw = json.loads((ROOT / 'examples/good_history.json').read_text(encoding='utf-8'))
+        policy = good_raw['policy']
+        baseline = good_raw['baseline']
+        witnesses = good_raw['witnesses']
+        lines = '\n'.join(json.dumps(w) for w in witnesses) + '\n'
+        with tempfile.TemporaryDirectory() as directory:
+            pol_path = Path(directory) / 'policy.json'
+            base_path = Path(directory) / 'base.json'
+            pol_path.write_text(json.dumps(policy), encoding='utf-8')
+            base_path.write_text(json.dumps(baseline), encoding='utf-8')
+            result = run('stream', '--monitor', 'audit', '--policy', str(pol_path),
+                         '--baseline', str(base_path), '-', input_text=lines)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            data = json.loads(result.stdout)
+            self.assertEqual(data['status'], 'COMPOSABLE_LGGG')
+            self.assertEqual(data['final_receipt']['status'], 'COMPOSITION_VERIFIED')
+
+    def test_stream_audit_alert_exits_nonzero(self):
+        bad_raw = json.loads((ROOT / 'examples/bad_history.json').read_text(encoding='utf-8'))
+        policy = bad_raw['policy']
+        baseline = bad_raw['baseline']
+        witnesses = bad_raw['witnesses']
+        lines = '\n'.join(json.dumps(w) for w in witnesses) + '\n'
+        with tempfile.TemporaryDirectory() as directory:
+            pol_path = Path(directory) / 'policy.json'
+            base_path = Path(directory) / 'base.json'
+            pol_path.write_text(json.dumps(policy), encoding='utf-8')
+            base_path.write_text(json.dumps(baseline), encoding='utf-8')
+            result = run('stream', '--monitor', 'audit', '--policy', str(pol_path),
+                         '--baseline', str(base_path), '-', input_text=lines)
+            self.assertEqual(result.returncode, 1, result.stderr)
+            data = json.loads(result.stdout)
+            self.assertEqual(data['status'], 'OBSTRUCTED_LGGR')
+
+    def test_stream_cochain_open_tree_exits_zero(self):
+        lines = (
+            '{"source": "0", "target": "1", "value": 1, "weight": 1}\n'
+            '{"source": "1", "target": "2", "value": 1, "weight": 1}\n'
+        )
+        result = run('stream', '--monitor', 'cochain', '-', input_text=lines)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['status'], 'COMPOSABLE_LGGG')
+        self.assertEqual(data['final_receipt']['status'], 'OPEN_TREE')
+
+    def test_stream_cochain_cycle_defect_exits_nonzero(self):
+        lines = (
+            '{"source": "0", "target": "1", "value": 1, "weight": 1}\n'
+            '{"source": "1", "target": "2", "value": 1, "weight": 1}\n'
+            '{"source": "0", "target": "2", "value": 1, "weight": 1}\n'
+        )
+        result = run('stream', '--monitor', 'cochain', '-', input_text=lines)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['status'], 'OBSTRUCTED_LGGR')
+        self.assertEqual(data['final_receipt']['status'], 'OBSTRUCTED_CYCLE')
+        self.assertEqual(data['final_receipt']['nonrepairable_cycles'], 1)

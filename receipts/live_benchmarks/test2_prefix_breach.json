@@ -1,0 +1,44 @@
+{
+  "schema": "lggr.trace_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "test2_prefix_breach",
+  "model": "openai/gpt-4o-mini",
+  "policy": {
+    "query_scope": "every_prefix",
+    "max_total": 5,
+    "max_step": 5
+  },
+  "step_witnesses": [
+    {
+      "step": 1,
+      "delta": 3,
+      "cumulative": 3,
+      "status": "OK"
+    },
+    {
+      "step": 2,
+      "delta": 4,
+      "cumulative": 7,
+      "status": "ALERT"
+    },
+    {
+      "step": 3,
+      "delta": -4,
+      "cumulative": 3,
+      "status": "OK"
+    }
+  ],
+  "alert_step_index": 1,
+  "endpoint_would_pass": true,
+  "alert_receipt": {
+    "cumulative_delta": 7,
+    "max_total": 5,
+    "status": "ALERT",
+    "reasons": [
+      "PREFIX_BUDGET_EXCEEDED"
+    ]
+  },
+  "final_status": "OBSTRUCTED_LGGR",
+  "meaning": "Test 2 online prefix breach: mid-flight early alert triggered before endpoint.",
+  "receipt_sha256": "d309e7bb795b404b60e5420772b3daf7f8bdf39da5541b9d0fac56e028340215"
+}

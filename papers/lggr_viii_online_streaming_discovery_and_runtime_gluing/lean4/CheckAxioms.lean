@@ -1,0 +1,14 @@
+import LggrVIII
+
+#print axioms LggrVIII.collision_monotonicity
+#print axioms LggrVIII.postprocessing_preserves_streaming_collision
+#print axioms LggrVIII.streaming_verdict_ceiling
+#print axioms LggrVIII.streaming_evalDefect_partition
+#print axioms LggrVIII.streaming_chain_telescoping
+#print axioms LggrVIII.online_prefix_strictly_stronger_than_endpoint
+#print axioms LggrVIII.prefix_violation_monotonicity
+#print axioms LggrVIII.streaming_unsigned_report_collision
+#print axioms LggrVIII.open_chain_exactness
+#print axioms LggrVIII.incremental_cycle_closure_obstruction
+#print axioms LggrVIII.boundary_sufficient_gluing_certifies_lggg
+#print axioms LggrVIII.boundary_insufficiency_forces_defect

@@ -1,0 +1,109 @@
+{
+  "schema": "lggr.trace_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "test1_fiber_collision",
+  "model": "openai/gpt-4o-mini",
+  "steps": [
+    {
+      "schema": "lggr.online_step.v1",
+      "authority_effect": "None",
+      "scope_id": "live_test1_fiber_collision",
+      "step_index": 0,
+      "state_id": "state_task_01",
+      "report": {
+        "key": "user_id",
+        "operation": "sort",
+        "order": "asc"
+      },
+      "query": {
+        "downstream_status": "PASS",
+        "oracle_pass": 1,
+        "stable_ties_required": false
+      },
+      "status": "OK",
+      "contract_status": "COMPOSABLE_LGGG",
+      "colliding_pair": null,
+      "meaning": "Report fiber is constant so far; contract is composable LGGG."
+    },
+    {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "live_test1_fiber_collision",
+      "step_index": 1,
+      "state_id": "state_task_02",
+      "report": {
+        "key": "user_id",
+        "operation": "sort",
+        "order": "asc"
+      },
+      "query": {
+        "downstream_status": "FAIL",
+        "oracle_pass": 0,
+        "stable_ties_required": true
+      },
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "colliding_pair": {
+        "left": {
+          "state_id": "state_task_01",
+          "report": {
+            "key": "user_id",
+            "operation": "sort",
+            "order": "asc"
+          },
+          "query": {
+            "downstream_status": "PASS",
+            "oracle_pass": 1,
+            "stable_ties_required": false
+          }
+        },
+        "right": {
+          "state_id": "state_task_02",
+          "report": {
+            "key": "user_id",
+            "operation": "sort",
+            "order": "asc"
+          },
+          "query": {
+            "downstream_status": "FAIL",
+            "oracle_pass": 0,
+            "stable_ties_required": true
+          }
+        }
+      },
+      "meaning": "Boundary reports cannot determine this query; contract is obstructed LGGR."
+    }
+  ],
+  "collision_step_index": 1,
+  "colliding_pair": {
+    "left": {
+      "state_id": "state_task_01",
+      "report": {
+        "key": "user_id",
+        "operation": "sort",
+        "order": "asc"
+      },
+      "query": {
+        "downstream_status": "PASS",
+        "oracle_pass": 1,
+        "stable_ties_required": false
+      }
+    },
+    "right": {
+      "state_id": "state_task_02",
+      "report": {
+        "key": "user_id",
+        "operation": "sort",
+        "order": "asc"
+      },
+      "query": {
+        "downstream_status": "FAIL",
+        "oracle_pass": 0,
+        "stable_ties_required": true
+      }
+    }
+  },
+  "final_status": "OBSTRUCTED_LGGR",
+  "meaning": "Test 1 online fiber collision: report constancy fails downstream oracle.",
+  "receipt_sha256": "9c525a5a2b5123c28670c6edae0bdb192d6599b02b06521a65faf874cd7d2df8"
+}

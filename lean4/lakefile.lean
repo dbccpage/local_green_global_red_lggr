@@ -10,5 +10,6 @@ lean_lib «LGGR» where
   srcDir := "."
   roots := #[
     `LggrVII,
+    `LggrVIII,
     `CheckAxioms
   ]

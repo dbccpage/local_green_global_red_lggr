@@ -25,6 +25,7 @@ The six-volume LGGR series (`001_local_green_global_red_foundational_series`) an
 | **LGGR IV (*Completion-Relative Obstruction*)** | **Stage-wise vs. completed solutions:** Compatible finite-stage solutions (such as $3x + 1 \equiv 0 \pmod{2^n}$) need not admit a single uncompleted witness; descent from a completion back to the original carrier requires membership in the reflection image (`reflection_descent_criterion`). | Reflected in explicit scope separation between finite-table certification, prefix vs. endpoint history queries, and uncertified extrapolation refusal. |
 | **LGGR V (*Finite No-Recovery & Repair Distance*)** | **Realizable soundness and $\ell^1$ repair duality:** For linear section-defect map $D$ and observation map $Q$, soundness on realizable defects is $\mathrm{im}(D) \cap \ker(Q) = \{0\}$. Raw defect mass $\|Ds\|_1$ (distance $0$ to $\mathrm{im}(D)$) is kept distinct from weighted $\ell^1$ repair distance $\Phi(h) = \min_x \sum_e w_e |h_e - (Dx)_e|$, certified by a dual annihilator $D^\top z = 0$, $|z_e| \le w_e$, and matching primal residual. | Implemented in `lggr/linear.py` (`verify_l1_certificate`, `classify_cochain`), separating exact coboundaries, closure failures ($d_1 h \ne 0$), and closed nonexact 1-cochains. |
 | **LGGR VI (*Nonlinear Aggregation & Adjoint Probing*)** | **Postprocessing invariance and Gram radical:** Deterministic postprocessing cannot separate states sharing an observation ($O(x) = O(y) \Rightarrow f(O(x)) = f(O(y))$). Over the rationals, $\ker(Q^\top Q) = \ker Q$; centered two-query and full sign-cube probes recover $Q^\top Q x$ but remain blind on $\ker Q$. | Motivates `lggr/transport.py` (`verify_transport`): forward commutation ($F_1 D_{\text{src}} = D_{\text{tgt}} F_0$) transports repairs, whereas preserving nonrepairability requires a verified left-inverse chain retraction ($G_k F_k = I$). |
+| **LGGR VIII (*Online Streaming Discovery*)** | **Online streaming runtime monitor:** Incremental fiber collision detection ($p(x_1) = p(x_2)$ with $q(x_1) \ne q(x_2)$), streaming evaluator defect tracking ($\Delta_E \in \{-1, 0, 1\}$), monotonic `every_prefix` early stopping, and incremental 1-cochain cycle closure with exact rational $\ell^1$ dual witness repair certification. | Implemented in `lggr/streaming.py` (`StreamingFiberMonitor`, `StreamingAuditMonitor`, `StreamingCochainMonitor`) and demonstrated in `cookbooks/`. |
 
 ### 2. Bell Positive Extensions, Projection Residuals, and Embedded Task Sufficiency
 
@@ -61,7 +62,7 @@ The companion study *Bell's Theorem as a Positive-Extension Obstruction* (`036_b
 
 ## Papers and Lean 4 Formalizations
 
-- **[`papers/`](papers/README.md):** Contains the seven-volume *Local Green, Global Red* series (`lggr_i_evaluated_path_kernels` through `lggr_vii_projection_residuals_and_witness_composition`) and the [monograph and implementation index](papers/local_green_global_red_monograph_index.md):
+- **[`papers/`](papers/README.md):** Contains the eight-volume *Local Green, Global Red* series (`lggr_i_evaluated_path_kernels` through `lggr_viii_online_streaming_discovery_and_runtime_gluing`) and the [monograph and implementation index](papers/local_green_global_red_monograph_index.md):
   - [`papers/lggr_i_evaluated_path_kernels/`](papers/lggr_i_evaluated_path_kernels/lggr_i_evaluated_path_kernels.md) — Volume I: *Evaluated Path Kernels for Composed Agent Reliability*
   - [`papers/lggr_ii_organizational_gluing/`](papers/lggr_ii_organizational_gluing/lggr_ii_organizational_gluing.md) — Volume II: *Organizational Evaluator Gluing*
   - [`papers/lggr_iii_epk_gtla_overlay/`](papers/lggr_iii_epk_gtla_overlay/lggr_iii_epk_gtla_overlay.md) — Volume III: *A Finite Evaluator Overlay Across Six System Roles*
@@ -69,7 +70,8 @@ The companion study *Bell's Theorem as a Positive-Extension Obstruction* (`036_b
   - [`papers/lggr_v_local_green_global_red/`](papers/lggr_v_local_green_global_red/lggr_v_local_green_global_red.md) — Volume V: *Local Green, Global Red: When Local Evaluators Cannot Certify Global Exactness*
   - [`papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/`](papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/lggr_vi_nonlinear_aggregation_and_adjoint_probing.md) — Volume VI: *Nonlinear Aggregation, Gram Kernels, and Centered Adjoint Probing*
   - [`papers/lggr_vii_projection_residuals_and_witness_composition/`](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition.md) — Volume VII: *Positive-Extension Projection Residuals, Observer-Fiber Minimax Floors, and Witnessed Composition* (with typed [claim ledger](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition_claim_ledger.md) and exact rational Python derivations/tests under `code/`).
-- **[`lean4/`](lean4/LggrVII.lean):** Standalone Lean 4 (`v4.35.0`) formalization package (`LGGR` / `LggrVII.lean`) proving the realized-image decoder/collision theorems, Boolean evaluator defect partition and verdict ceiling, multi-step history telescoping and prefix vs. endpoint separation, integer $\ell^1$ triangle primal/dual optimality and chain-retraction repair reflection, observer-fiber two-point minimax lower bound, and integer-scaled contextual-fraction vs. signed-extension negative-mass separation certificates. Build with `cd lean4 && lake build`.
+  - [`papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/`](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md) — Volume VIII: *Online Streaming LGGG vs. LGGR Discovery for Agentic Swarms* (with typed [claim ledger](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_claim_ledger.md), companion Python derivations/tests under `code/`, and recorded OpenRouter benchmark receipts).
+- **[`lean4/`](lean4/LggrVIII.lean):** Standalone Lean 4 (`v4.35.0`) formalization package (`LGGR` / `LggrVII.lean`, `LggrVIII.lean`, `CheckAxioms.lean`) proving the realized-image decoder/collision theorems, Boolean evaluator defect partition, multi-step history telescoping and prefix vs. endpoint separation, integer $\ell^1$ triangle primal/dual optimality, observer-fiber two-point minimax lower bound, online collision monotonicity under trace extensions, prefix budget violation monotonicity, and boundary-sufficient composable LGGG certificates with zero `sorry` and standard Lean core axioms only. Build with `cd lean4 && lake build`.
 
 ## Run without installing anything
 
@@ -85,6 +87,7 @@ python -m unittest discover -s tests -v
 A separately supplied single-file archive can run directly:
 
 ```console
+python lggr_witness_audit.pyz selftest
 python lggr_witness_audit.pyz demo
 python lggr_witness_audit.pyz --help
 ```
@@ -105,10 +108,13 @@ Installation requires a compatible local setuptools installation. It is unnecess
 | Mechanism | Executable behavior | Boundary |
 |---|---|---|
 | Decoder-or-collision | Groups finite observations by report, constructs a decoder on the realized image or exhibits a colliding pair, and replays either certificate. | A decoder is certified only on the supplied table. A collision certifies report insufficiency in this model, not which history occurred. |
+| Streaming fiber monitor | Ingests state observations incrementally, tracks realized report fibers, and immediately detects collisions $p(x_1) = p(x_2)$ with $q(x_1) \ne q(x_2)$. | Transitions contract status from `COMPOSABLE_LGGG` to `OBSTRUCTED_LGGR` upon the first observed collision; emits `lggr.online_collision.v1`. |
 | Witness composition | Checks endpoint identity, signed differences, local verdicts, smoke observations, baseline, policy manifest, evaluator/spec/representation/authority identity, and open obligations. | Its global query is the declared integer budget requirement, not arbitrary software semantics. |
+| Streaming audit monitor | Evaluates $G_1$–$G_4$ conditional gluing prefix-by-prefix, tracks signed delta drift, computes evaluator defect $\Delta_E \in \{-1,0,1\}$, and enforces early stopping under `every_prefix`. | Emits `lggr.online_alert.v1` and halts execution upon prefix budget breach or local/global defect. |
 | Evaluator defect | Computes `Eg - E1*E2` and labels NGD/ZDR/PGD. | Requires an independently supplied global verdict. It does not manufacture one from local passes. |
 | Exact L1 certificate | Checks `D.T z = 0`, `abs(z) <= w`, the primal residual and equality of bounds. | Verifies supplied rational certificates; does not optimize an arbitrary repair problem for you. |
 | Cochain classification | Exact rational elimination separates repairability, closure failure and closed/nonexact classes. | A degree-two differential must be supplied before any H1 classification. |
+| Streaming cochain monitor | Ingests graph edges incrementally, maintains an active spanning forest, and detects cycle closure. | On cycle closure, computes coboundary defect $(D_1 h)_C$, solves exact rational $\ell^1$ repair distance $\Phi(h)$, and verifies dual witness $z$. |
 | Witness transport | Checks commuting squares and optional chain retractions. | Forward commutation preserves repairs; it does not alone preserve nonrepairability. |
 | Retained obligations | Unions unresolved obligations across every supplied witness and prior obligation list. | The host must retain the original history/ledger. This package cannot prevent deletion outside its process. |
 
@@ -251,6 +257,53 @@ The full verified chain retraction is a sufficient repair-reflection certificate
 
 This finite rational check is **not automatically connected to runtime representation migration** in the budget adapter. That connection needs an independently admitted interpretation of the maps and states. The adapter refuses unprovided transport instead of assuming it.
 
+### 5. Online Streaming Monitors (`lggr.streaming`)
+
+The package provides three streaming monitors for real-time verification during live agent execution:
+
+```python
+from lggr.streaming import StreamingAuditMonitor, StreamingCochainMonitor, StreamingFiberMonitor
+from lggr.witnesses import BudgetPolicy, StateRef, make_witness
+
+# 1. Incremental fiber collision detection across agent handoffs
+fiber_mon = StreamingFiberMonitor(scope_id="pipeline-scope")
+fiber_mon.observe("state_1", report={"role": "worker"}, query={"tier": 1})
+collision_receipt = fiber_mon.observe("state_2", report={"role": "worker"}, query={"tier": 2})
+# Detects collision on-the-fly and transitions contract_status to "OBSTRUCTED_LGGR"
+
+# 2. Prefix budget and evaluator defect tracking
+policy = BudgetPolicy(max_step=1, max_total=2, query_scope="every_prefix")
+s0 = StateRef("s0", 0)
+audit_mon = StreamingAuditMonitor(policy, s0)
+w1 = make_witness(policy, s0, StateRef("s1", 1), witness_id="w1")
+audit_mon.step(w1, global_evaluator_sample=1)
+
+# 3. Incremental 1-cochain cycle closure and exact rational L1 repair
+cochain_mon = StreamingCochainMonitor()
+cochain_mon.add_edge("Agent_A", "Agent_B", value=1, weight=1)
+cochain_mon.add_edge("Agent_B", "Agent_C", value=1, weight=1)
+cycle_receipt = cochain_mon.add_edge("Agent_C", "Agent_A", value=1, weight=1)
+# Computes cycle closure defect (D_1 h)_C and exact rational L1 dual witness
+```
+
+## Practitioner Cookbooks (`cookbooks/`)
+
+Four standalone, zero-dependency runnable scripts in `cookbooks/` illustrate real-world practitioner patterns:
+
+```console
+# 1. Two-agent handoff with online report-fiber collision detection
+python cookbooks/01_online_fiber_monitoring.py
+
+# 2. Multi-step tool action trajectory with every_prefix budget early stopping
+python cookbooks/02_streaming_budget_audit.py
+
+# 3. 3-agent circular review loop with exact rational L1 repair distance and dual witness
+python cookbooks/03_cochain_cycle_repair.py
+
+# 4. Multi-stage swarm runtime guard certifying composable LGGG (Delta_E = 0)
+python cookbooks/04_swarm_runtime_guard.py
+```
+
 ## Replay, receipts and exit codes
 
 ```console
@@ -265,6 +318,8 @@ A negative receipt can replay successfully. **Exit 0 from `replay` means the cer
 
 | Command | Exit 0 means |
 |---|---|
+| `selftest` | All internal self-tests passed cleanly across descent, linear, cochain, transport, witnesses, and streaming. |
+| `stream` | Online streaming event trace verified under declared monitor; inspect status for `COMPOSABLE_LGGG` vs. `OBSTRUCTED_LGGR`. |
 | `demo` | The demonstration and exhaustive finite census completed. Expected counterexamples are included. |
 | `audit` | `COMPOSITION_VERIFIED` for the declared query and supplied evidence. No merge grant. |
 | `descent` | A decoder exists on the supplied finite table. |

@@ -1,0 +1,61 @@
+{
+  "schema": "lggr.trace_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "test4_composable_lggg",
+  "model": "openai/gpt-4o-mini",
+  "boundary_sufficient": true,
+  "collision_detected": false,
+  "max_evaluator_defect": 0,
+  "final_status": "COMPOSABLE_LGGG",
+  "steps": [
+    {
+      "schema": "lggr.online_step.v1",
+      "authority_effect": "None",
+      "scope_id": "live_test4_composable_lggg",
+      "step_index": 0,
+      "state_id": "state_1",
+      "report": {
+        "key": "id",
+        "operation": "sort",
+        "preconditions": [
+          "list_int"
+        ],
+        "stable": false,
+        "task_id": "task_01"
+      },
+      "query": {
+        "valid": 1
+      },
+      "status": "OK",
+      "contract_status": "COMPOSABLE_LGGG",
+      "colliding_pair": null,
+      "meaning": "Report fiber is constant so far; contract is composable LGGG."
+    },
+    {
+      "schema": "lggr.online_step.v1",
+      "authority_effect": "None",
+      "scope_id": "live_test4_composable_lggg",
+      "step_index": 1,
+      "state_id": "state_2",
+      "report": {
+        "key": "id",
+        "operation": "sort",
+        "preconditions": [
+          "list_int",
+          "preserve_ties"
+        ],
+        "stable": true,
+        "task_id": "task_02"
+      },
+      "query": {
+        "valid": 1
+      },
+      "status": "OK",
+      "contract_status": "COMPOSABLE_LGGG",
+      "colliding_pair": null,
+      "meaning": "Report fiber is constant so far; contract is composable LGGG."
+    }
+  ],
+  "meaning": "Test 4 composable LGGG certified: boundary-sufficient schema maintains zero defect.",
+  "receipt_sha256": "104422cd901777e1a3621f3f2d8a1d8ac7ac488f5370ab947619ab6000e103e3"
+}

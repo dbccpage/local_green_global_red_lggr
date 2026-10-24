@@ -1,0 +1,41 @@
+{
+  "schema": "lggr.trace_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "test3_cochain_cycle",
+  "model": "openai/gpt-4o-mini",
+  "edges": [
+    {
+      "source": "Agent_A",
+      "target": "Agent_B",
+      "value": "1/2",
+      "weight": "1"
+    },
+    {
+      "source": "Agent_B",
+      "target": "Agent_C",
+      "value": "1/3",
+      "weight": "1"
+    },
+    {
+      "source": "Agent_C",
+      "target": "Agent_A",
+      "value": "1/2",
+      "weight": "1"
+    }
+  ],
+  "cycle_closing_edge_index": 2,
+  "closure_defect": "4/3",
+  "l1_repair_distance": "4/3",
+  "dual_witness": {
+    "Agent_C->Agent_A": "1",
+    "Agent_A->Agent_B": "1",
+    "Agent_B->Agent_C": "1"
+  },
+  "potential": {
+    "Agent_A": "0",
+    "Agent_B": "1/2",
+    "Agent_C": "5/6"
+  },
+  "meaning": "Test 3 online cochain cycle: cycle closed on edge 2 with exact L1 repair distance.",
+  "receipt_sha256": "3d20e7f2402e17c842b2610cc9e5a82db1c21fd2ba207473b1bc3c2c3bd61dd2"
+}

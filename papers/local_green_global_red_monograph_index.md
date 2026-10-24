@@ -1,8 +1,8 @@
 # Local Green, Global Red: manuscript and implementation index
 
 **Author:** Jeremy H. Carroll  
-**Date:** 2026-10-23  
-**Series:** Local Green, Global Red (Volumes I–VII)
+**Date:** 2026-10-24  
+**Series:** Local Green, Global Red (Volumes I–VIII)
 
 | Volume | Package | Title | Version | Date |
 | --- | --- | --- | --- | --- |
@@ -13,8 +13,10 @@
 | V | [`lggr_v_local_green_global_red`](lggr_v_local_green_global_red/lggr_v_local_green_global_red.md) | Local Green, Global Red: When Local Evaluators Cannot Certify Global Exactness | 1.3.2 | 2026-10-15 |
 | VI | [`lggr_vi_nonlinear_aggregation_and_adjoint_probing`](lggr_vi_nonlinear_aggregation_and_adjoint_probing/lggr_vi_nonlinear_aggregation_and_adjoint_probing.md) | Nonlinear Aggregation, Gram Kernels, and Centered Adjoint Probing | 0.1.1 | 2026-10-15 |
 | VII | [`lggr_vii_projection_residuals_and_witness_composition`](lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition.md) | Positive-Extension Projection Residuals, Observer-Fiber Minimax Floors, and Witnessed Composition | 0.1.0 | 2026-10-23 |
+| VIII | [`lggr_viii_online_streaming_discovery_and_runtime_gluing`](lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md) | Online Streaming LGGG vs. LGGR Discovery for Agentic Swarms | 0.1.0 | 2026-10-24 |
 
-This repository index describes the six current manuscripts and selected proof
+
+This repository index describes the eight current manuscripts and selected proof
 sources. A source pointer records a declaration and its scope; it is not a fresh
 compiler result, a full paper verification, or an empirical reliability claim.
 See the [series guide](README.md) for entry points and focused replay commands.
@@ -191,6 +193,55 @@ bounds under evidence-preserving recursion (`Lean 4.35.0`, zero custom axioms).
 | `LggrVII.triangle_l1_primal_dual_optimality`, `LggrVII.filled_triangle_closure_vs_budget_exactness`, `LggrVII.retraction_reflects_repair_and_obstruction` | Exact integer-scaled 3-cycle $\ell^1$ optimum $\Phi(1,1,1)=1$, filled-triangle closure failure vs. exact budget coboundary $(1,1,2)=D_0(0,1,2)$, and left-inverse chain-retraction repair reflection. |
 | `LggrVII.observer_fiber_two_point_minimax` | Integer two-point fiber error bound $|a - z| + |b - z| \ge b - a$ and midpoint attainment. |
 | `LggrVII.contextual_fraction_packing_mass_identity`, `LggrVII.ghz_rnd2_cf_gt_two_neg_mass_and_order_reversal` | Scaled $m$-context mass identity $U - R = S - (mN - N)$ and exact denominator-$768$ certification of $CF(p_*) = 19/64 > 2 N_{\min}(p_*) = 25/128$ and order reversal against $Q_{5/8}$. |
+
+<!-- ## viii -->
+## VIII. Online streaming LGGG vs. LGGR discovery for agentic swarms
+
+[Manuscript](lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md),
+[Python](lggr_viii_online_streaming_discovery_and_runtime_gluing/code/lggr_viii_core.py),
+[Lean source](lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/LggrVIII.lean),
+[Claim Ledger](lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_claim_ledger.md).
+
+Extends the Local Green, Global Red framework from post-hoc batch evaluation to
+online streaming discovery during live agentic swarm execution. Evaluates finite
+step witnesses, report-fiber collisions, prefix-by-prefix signed budget drift,
+and 1-cochain cycle closure incrementally as steps arrive (`Lean 4.35.0`, zero
+custom axioms).
+
+- **Incremental fiber collision:** Monotonicity under streaming trace extension
+  ($T \subseteq T' \implies \mathrm{HasCollision}(p, q, T) \implies \mathrm{HasCollision}(p, q, T')$)
+  and deterministic postprocessing invariance ($f \circ p$ preserves collision).
+- **Streaming defect tracking:** Defect trichotomy $\Delta_E = E_{g,k} - L_k \in \{-1, 0, 1\}$,
+  with $\Delta_E = -1$ uniquely identifying Local Green, Global Red (`NGD`).
+- **Prefix vs. endpoint drift:** Exact signed step difference telescoping
+  $\sum_{i=1}^n (x_i - x_{i-1}) = x_n - x_0$; strict separation of online
+  `every_prefix` admissibility from endpoint admissibility on excursion trace
+  $[0, 1, 2, 1]$ with budget $B = 1$; monotonic early stopping.
+- **Incremental 1-cochain cycle closure:** Directed graph edge addition with
+  active spanning forest maintenance; cycle closure defect $(D_1 h)_C$, exact
+  rational weighted $\ell^1$ repair distance $\Phi(h)$, and dual witness $z$
+  with $D_0^\top z = 0$ and $\|z\|_{\infty,w^{-1}} \le 1$.
+- **Boundary sufficiency:** Certification of composable LGGG ($\Delta_E = 0$)
+  when boundary reports preserve fiber constancy on declared queries; proof that
+  colliding fibers force defect $\Delta_E = -1$ on at least one branch.
+- **Empirical benchmarks & live swarm receipts:** Live OpenRouter completions
+  ($N = 8$, $\mathrm{LPR} = 1$, $\mathrm{GPR} = 1$, $\mathrm{NGD} = 0$, $\mathrm{ZDR} = 1$,
+  $\mathrm{PGD} = 0$) and structured replay receipts across Tests 1–4.
+
+| Declaration | Actual formal scope |
+| --- | --- |
+| `LggrVIII.collision_monotonicity`, `LggrVIII.postprocessing_preserves_streaming_collision`, `LggrVIII.streaming_verdict_ceiling` | Arbitrary finite trace carrier; trace extension monotonicity and report-only verdict ceiling on colliding fibers. |
+| `LggrVIII.streaming_evalDefect_partition`, `LggrVIII.streaming_chain_telescoping` | Boolean local/global pairs, defect trichotomy $\Delta_E \in \{-1, 0, 1\}$, and signed step-history telescoping identity. |
+| `LggrVIII.online_prefix_strictly_stronger_than_endpoint`, `LggrVIII.prefix_violation_monotonicity`, `LggrVIII.streaming_unsigned_report_collision` | Excursion trace separation, monotonic early stopping under prefix violation, and unsigned report collision between $[0, 1, 0]$ and $[0, 1, 2]$. |
+| `LggrVIII.open_chain_exactness`, `LggrVIII.incremental_cycle_closure_obstruction` | Acyclic spanning forest exactness ($D_1 = 0$, $\ell^1 = 0$) vs. closing edge circulation failure with dual witness $z = (1, 1, -1)$. |
+| `LggrVIII.boundary_sufficient_gluing_certifies_lggg`, `LggrVIII.boundary_insufficiency_forces_defect` | Composable LGGG ($\Delta_E = 0$) under boundary sufficiency vs. forced LGGR ($\Delta_E = -1$) under colliding boundary fibers. |
+
+### Artifact Summary — Volume VIII
+
+1. **What it supports:** Exact finite theorems for streaming collision monotonicity, prefix budget early stopping, incremental 1-cochain cycle closure, dual witness certification, and empirical benchmark defect rate calculations.
+2. **What it does not support:** Does not establish that unobserved agent behaviors satisfy safety invariants, nor does it replace full end-to-end integration testing with local checks.
+3. **Narrowest defensible claim:** Online monitoring of realized report fibers, prefix sums, and spanning cycle defects detects composability obstructions at the exact step of occurrence and emits verified machine-readable receipts.
+4. **Next test needed:** Continuous multi-agent swarm deployment with dynamic task graphs and online automated boundary schema adaptation.
 
 ## Connections to WDP and the Engine
 

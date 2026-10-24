@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lggr-viii-online-streaming-discovery"
+version = "0.1.0"
+description = "LGGR Volume VIII: Online Streaming Discovery, Prefix Admissibility, and Runtime Gluing"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = []

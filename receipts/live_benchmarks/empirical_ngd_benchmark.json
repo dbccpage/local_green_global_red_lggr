@@ -1,0 +1,183 @@
+{
+  "schema": "lggr.trace_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "empirical_ngd_benchmark",
+  "model": "openai/gpt-4o-mini",
+  "completion_count": 16,
+  "metrics": {
+    "N": 8,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "traces": [
+    {
+      "trace_id": "task_01_sum_positive",
+      "description": "Write a Python function sum_positive(nums: list[int]) -> int that returns the sum of strictly positive integers in nums. If empty or no positive integers, return 0.",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function sum_positive(nums: list[int]) -> int that returns the sum of strictly positive integers in nums. If empty or no positive integers, return 0.\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function sum_positive(nums: list[int]) -> int that returns the sum of strictly positive integers in nums. If empty or no positive integers, return 0.\nOutput ONLY the python code defining sum_positive. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"sum_positive\",\n  \"inputs\": {\n    \"nums\": \"list[int]\"\n  },\n  \"output_type\": \"int\",\n  \"docstring\": \"Returns the sum of strictly positive integers in the input list. If the list is empty or contains no positive integers, returns 0.\"\n}\n```",
+        "def sum_positive(nums: list[int]) -> int:\n    return sum(num for num in nums if num > 0)"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    },
+    {
+      "trace_id": "task_02_reverse_words",
+      "description": "Write a Python function reverse_words(s: str) -> str that reverses the words in a string separated by single spaces. Truncate extra spaces between words and at ends.",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function reverse_words(s: str) -> str that reverses the words in a string separated by single spaces. Truncate extra spaces between words and at ends.\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function reverse_words(s: str) -> str that reverses the words in a string separated by single spaces. Truncate extra spaces between words and at ends.\nOutput ONLY the python code defining reverse_words. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"reverse_words\",\n  \"inputs\": {\n    \"s\": \"str\"\n  },\n  \"output_type\": \"str\",\n  \"docstring\": \"Reverses the words in a string separated by single spaces, truncating extra spaces between words and at the ends.\"\n}\n```",
+        "def reverse_words(s: str) -> str:\n    words = s.split()\n    return ' '.join(reversed(words))"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    },
+    {
+      "trace_id": "task_03_safe_divide_list",
+      "description": "Write a Python function safe_divide_list(numerator: list[int], denominator: list[int]) -> list[float] that divides each element of numerator by corresponding element of denominator. If a denominator element is 0, set that result to float('nan'). If the list lengths differ, truncate to the shorter length.",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function safe_divide_list(numerator: list[int], denominator: list[int]) -> list[float] that divides each element of numerator by corresponding element of denominator. If a denominator element is 0, set that result to float('nan'). If the list lengths differ, truncate to the shorter length.\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function safe_divide_list(numerator: list[int], denominator: list[int]) -> list[float] that divides each element of numerator by corresponding element of denominator. If a denominator element is 0, set that result to float('nan'). If the list lengths differ, truncate to the shorter length.\nOutput ONLY the python code defining safe_divide_list. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"safe_divide_list\",\n  \"inputs\": {\n    \"numerator\": \"list[int]\",\n    \"denominator\": \"list[int]\"\n  },\n  \"output_type\": \"list[float]\",\n  \"docstring\": \"Divides each element of the numerator list by the corresponding element of the denominator list. If a denominator element is 0, the result for that position is set to float('nan'). If the lists have different lengths, the result is truncated to the length of the shorter list.\"\n}\n```",
+        "def safe_divide_list(numerator: list[int], denominator: list[int]) -> list[float]:\n    min_length = min(len(numerator), len(denominator))\n    result = []\n    for i in range(min_length):\n        if denominator[i] == 0:\n            result.append(float('nan'))\n        else:\n            result.append(numerator[i] / denominator[i])\n    return result"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    },
+    {
+      "trace_id": "task_04_matrix_transpose",
+      "description": "Write a Python function matrix_transpose(matrix: list[list[int]]) -> list[list[int]] that returns the transpose of a 2D matrix. If matrix is empty [] or contains empty rows [[]], return []. If rows have different lengths, raise ValueError.",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function matrix_transpose(matrix: list[list[int]]) -> list[list[int]] that returns the transpose of a 2D matrix. If matrix is empty [] or contains empty rows [[]], return []. If rows have different lengths, raise ValueError.\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function matrix_transpose(matrix: list[list[int]]) -> list[list[int]] that returns the transpose of a 2D matrix. If matrix is empty [] or contains empty rows [[]], return []. If rows have different lengths, raise ValueError.\nOutput ONLY the python code defining matrix_transpose. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"matrix_transpose\",\n  \"inputs\": {\n    \"matrix\": \"list[list[int]]\"\n  },\n  \"output_type\": \"list[list[int]]\",\n  \"docstring\": \"Returns the transpose of a 2D matrix. If the matrix is empty or contains empty rows, returns an empty list. Raises ValueError if rows have different lengths.\"\n}\n```",
+        "def matrix_transpose(matrix: list[list[int]]) -> list[list[int]]:\n    if not matrix or any(not row for row in matrix):\n        return []\n    if any(len(row) != len(matrix[0]) for row in matrix):\n        raise ValueError(\"All rows must have the same length.\")\n    return [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    },
+    {
+      "trace_id": "task_05_is_isogram",
+      "description": "Write a Python function is_isogram(word: str) -> bool that returns True if no letter is repeated (case-insensitive, ignoring non-alphabetic characters like hyphens or spaces).",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function is_isogram(word: str) -> bool that returns True if no letter is repeated (case-insensitive, ignoring non-alphabetic characters like hyphens or spaces).\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function is_isogram(word: str) -> bool that returns True if no letter is repeated (case-insensitive, ignoring non-alphabetic characters like hyphens or spaces).\nOutput ONLY the python code defining is_isogram. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"is_isogram\",\n  \"inputs\": {\n    \"word\": \"str\"\n  },\n  \"output_type\": \"bool\",\n  \"docstring\": \"Returns True if the input word is an isogram, meaning no letter is repeated, ignoring case and non-alphabetic characters.\"\n}\n```",
+        "def is_isogram(word: str) -> bool:\n    cleaned_word = ''.join(char.lower() for char in word if char.isalpha())\n    return len(cleaned_word) == len(set(cleaned_word))"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    },
+    {
+      "trace_id": "task_06_clamp_integers",
+      "description": "Write a Python function clamp_integers(nums: list[int], low: int, high: int) -> list[int] where each number is clamped between low and high. If low > high, raise ValueError.",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function clamp_integers(nums: list[int], low: int, high: int) -> list[int] where each number is clamped between low and high. If low > high, raise ValueError.\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function clamp_integers(nums: list[int], low: int, high: int) -> list[int] where each number is clamped between low and high. If low > high, raise ValueError.\nOutput ONLY the python code defining clamp_integers. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"clamp_integers\",\n  \"inputs\": {\n    \"nums\": \"list[int]\",\n    \"low\": \"int\",\n    \"high\": \"int\"\n  },\n  \"output_type\": \"list[int]\",\n  \"docstring\": \"Clamp each integer in the input list 'nums' between 'low' and 'high'. If 'low' is greater than 'high', raise a ValueError.\"\n}\n```",
+        "def clamp_integers(nums: list[int], low: int, high: int) -> list[int]:\n    if low > high:\n        raise ValueError(\"low must be less than or equal to high\")\n    return [max(low, min(num, high)) for num in nums]"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    },
+    {
+      "trace_id": "task_07_extract_domain",
+      "description": "Write a Python function extract_domain(email: str) -> str that extracts the domain name from an email address (e.g. 'alice@example.com' -> 'example.com'). If the email does not contain exactly one '@' character or is empty, return an empty string ''.",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function extract_domain(email: str) -> str that extracts the domain name from an email address (e.g. 'alice@example.com' -> 'example.com'). If the email does not contain exactly one '@' character or is empty, return an empty string ''.\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function extract_domain(email: str) -> str that extracts the domain name from an email address (e.g. 'alice@example.com' -> 'example.com'). If the email does not contain exactly one '@' character or is empty, return an empty string ''.\nOutput ONLY the python code defining extract_domain. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"extract_domain\",\n  \"inputs\": {\n    \"email\": \"str\"\n  },\n  \"output_type\": \"str\",\n  \"docstring\": \"Extracts the domain name from an email address. Returns the domain if the email contains exactly one '@' character; otherwise, returns an empty string.\"\n}\n```",
+        "def extract_domain(email: str) -> str:\n    if email.count('@') != 1 or not email:\n        return ''\n    return email.split('@')[1]"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    },
+    {
+      "trace_id": "task_08_fibonacci_index",
+      "description": "Write a Python function fibonacci_index(n: int) -> int that returns the n-th Fibonacci number (0-indexed, with fib(0)=0, fib(1)=1). For negative n, return -1.",
+      "prompts": [
+        "You are a software architect. Write a JSON specification for the following task:\nWrite a Python function fibonacci_index(n: int) -> int that returns the n-th Fibonacci number (0-indexed, with fib(0)=0, fib(1)=1). For negative n, return -1.\nOutput ONLY valid JSON with keys: 'function_name', 'inputs', 'output_type', 'docstring'.",
+        "You are a Python developer. Implement the function based on this requirement:\nWrite a Python function fibonacci_index(n: int) -> int that returns the n-th Fibonacci number (0-indexed, with fib(0)=0, fib(1)=1). For negative n, return -1.\nOutput ONLY the python code defining fibonacci_index. Do not include markdown fences or extra explanations."
+      ],
+      "completions": [
+        "```json\n{\n  \"function_name\": \"fibonacci_index\",\n  \"inputs\": {\n    \"n\": {\n      \"type\": \"int\",\n      \"description\": \"The index of the Fibonacci number to retrieve (0-indexed).\"\n    }\n  },\n  \"output_type\": {\n    \"type\": \"int\",\n    \"description\": \"The n-th Fibonacci number or -1 for negative indices.\"\n  },\n  \"docstring\": \"Returns the n-th Fibonacci number (0-indexed). If n is negative, returns -1.\"\n}\n```",
+        "def fibonacci_index(n: int) -> int:\n    if n < 0:\n        return -1\n    elif n == 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        a, b = 0, 1\n        for _ in range(2, n + 1):\n            a, b = b, a + b\n        return b"
+      ],
+      "stage_evaluators": [
+        1,
+        1
+      ],
+      "local_pass": true,
+      "global_pass": true,
+      "defect": 0,
+      "classification": "ZDR"
+    }
+  ],
+  "meaning": "Volume I Section 9 evaluated path kernel empirical defect rates.",
+  "receipt_sha256": "96e0d917f7bb22550fc2315453c31fc55b0feba01c2230ec9f8702981cd2abb4"
+}

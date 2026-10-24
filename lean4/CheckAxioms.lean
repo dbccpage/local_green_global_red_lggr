@@ -1,4 +1,5 @@
 import LggrVII
+import LggrVIII
 
 #print axioms LggrVII.collision_blocks_factorization
 #print axioms LggrVII.postprocessing_preserves_collision
@@ -15,3 +16,16 @@ import LggrVII
 #print axioms LggrVII.observer_fiber_two_point_minimax
 #print axioms LggrVII.contextual_fraction_packing_mass_identity
 #print axioms LggrVII.ghz_rnd2_cf_gt_two_neg_mass_and_order_reversal
+
+#print axioms LggrVIII.collision_monotonicity
+#print axioms LggrVIII.postprocessing_preserves_streaming_collision
+#print axioms LggrVIII.streaming_verdict_ceiling
+#print axioms LggrVIII.streaming_evalDefect_partition
+#print axioms LggrVIII.streaming_chain_telescoping
+#print axioms LggrVIII.online_prefix_strictly_stronger_than_endpoint
+#print axioms LggrVIII.prefix_violation_monotonicity
+#print axioms LggrVIII.streaming_unsigned_report_collision
+#print axioms LggrVIII.open_chain_exactness
+#print axioms LggrVIII.incremental_cycle_closure_obstruction
+#print axioms LggrVIII.boundary_sufficient_gluing_certifies_lggg
+#print axioms LggrVIII.boundary_insufficiency_forces_defect
