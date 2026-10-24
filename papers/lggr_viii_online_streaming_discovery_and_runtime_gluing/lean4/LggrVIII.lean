@@ -455,4 +455,23 @@ theorem coarsened_macro_stage_masks_internal_prefix_breach :
   intro B x0 x1 x2 x3 ⟨h1, _, h3⟩
   exact ⟨h1, h3⟩
 
+/-- Theorem 20 (`minimal_metadata_refinement_eliminates_collision`):
+    Given a base report map `p : α → β`, an auxiliary metadata feature map `m : α → γ`, and a
+    protected query `q : α → δ`:
+    1. If `x` and `y` collide under `p` (`IsCollision p q x y`), enriching the report to the
+       product map `p_ext z = (p z, m z)` eliminates the collision between `x` and `y` whenever
+       `m x ≠ m y` (`¬ IsCollision (fun z => (p z, m z)) q x y`).
+    2. Conversely, any collision under the enriched map `(p, m)` projects to a collision under the
+       coarse map `p`. -/
+theorem minimal_metadata_refinement_eliminates_collision
+    {α β γ δ : Type} (p : α → β) (m : α → γ) (q : α → δ) (x y : α) :
+    (m x ≠ m y → ¬ IsCollision (fun z => (p z, m z)) q x y) ∧
+    (IsCollision (fun z => (p z, m z)) q x y → IsCollision p q x y) := by
+  refine ⟨?_, ?_⟩
+  · intro h_m_neq ⟨h_pair_eq, _⟩
+    have h_m_eq : m x = m y := congrArg Prod.snd h_pair_eq
+    exact h_m_neq h_m_eq
+  · intro ⟨h_pair_eq, h_q_neq⟩
+    exact ⟨congrArg Prod.fst h_pair_eq, h_q_neq⟩
+
 end LggrVIII
