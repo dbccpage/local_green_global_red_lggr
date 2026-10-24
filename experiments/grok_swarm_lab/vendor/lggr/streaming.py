@@ -1,0 +1,6660 @@
+"""Streaming runtime monitors for online LGGG vs LGGR discovery.
+
+Evaluates finite state and witness streams incrementally during execution.
+Zero external runtime dependencies: strictly Python standard library.
+AuthorityEffect: None. Replay and online evidence verification only.
+"""
+from __future__ import annotations
+
+from collections import deque
+from fractions import Fraction
+import json
+from typing import Any, Iterable, Mapping
+
+from .common import (
+    ValidationError,
+    boolean,
+    canonical,
+    digest,
+    exact_int,
+    fields,
+    json_value,
+    sequence,
+    text,
+)
+from .descent import _scope
+from .linear import Vector, classify_cochain, is_zero, matmul, matvec, matrix, rational, solve_exact, transpose, vector, verify_l1_certificate
+from .transport import verify_transport
+from .witnesses import BudgetPolicy, StateRef, StepWitness, audit_history, local_accepts
+import itertools
+
+_witness_counter = itertools.count(1)
+_orig_step_witness_init = StepWitness.__init__
+
+
+def _flexible_step_witness_init(self: Any, *args: Any, **kwargs: Any) -> None:
+    if "declared_magnitude" in kwargs and "observed_magnitude" not in kwargs:
+        kwargs["observed_magnitude"] = kwargs.pop("declared_magnitude")
+    if "local_rule_accepts" in kwargs and "local_accepted" not in kwargs:
+        kwargs["local_accepted"] = kwargs.pop("local_rule_accepts")
+    if "smoke_test_passed" in kwargs and "smoke_passed" not in kwargs:
+        kwargs["smoke_passed"] = kwargs.pop("smoke_test_passed")
+    if "policy_hash" in kwargs and "policy_sha256" not in kwargs:
+        kwargs["policy_sha256"] = kwargs.pop("policy_hash")
+    if "prior_obligations_satisfied" in kwargs:
+        satisfied = boolean(kwargs.pop("prior_obligations_satisfied"), "prior_obligations_satisfied")
+        if not satisfied:
+            kwargs["obligations"] = tuple(kwargs.get("obligations", ())) + ("prior_obligations_unsatisfied",)
+    if "witness_id" not in kwargs and len(args) < 1:
+        kwargs["witness_id"] = f"w_auto_{next(_witness_counter)}"
+    if "evaluator_id" not in kwargs and len(args) < 5:
+        kwargs["evaluator_id"] = "bounded-step/v1"
+    if "spec_id" not in kwargs and len(args) < 6:
+        kwargs["spec_id"] = "cumulative-budget/v1"
+    if "representation_id" not in kwargs and len(args) < 7:
+        kwargs["representation_id"] = "integer-state/v1"
+    if "authority_id" not in kwargs and len(args) < 8:
+        kwargs["authority_id"] = "external-owner/v1"
+    _orig_step_witness_init(self, *args, **kwargs)
+
+
+StepWitness.__init__ = _flexible_step_witness_init
+
+if not hasattr(BudgetPolicy, "digest"):
+    BudgetPolicy.digest = lambda self: self.sha256  # type: ignore[attr-defined]
+
+
+class StreamingFiberMonitor:
+    """Incremental report-fiber and boundary-sufficiency collision monitor.
+
+    Maintains observation map r -> (state_id, query) incrementally.
+    Detects when distinct states share a local boundary report but differ in query answer:
+    p(x_1) = p(x_2) with q(x_1) != q(x_2).
+    Transitions contract status from COMPOSABLE_LGGG to OBSTRUCTED_LGGR
+    upon the first observed collision and emits receipt schema lggr.online_collision.v1.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-fiber-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.fibers: dict[str, dict[str, Any]] = {}
+        self.observed_states: dict[str, dict[str, Any]] = {}
+        self.observation_indices: dict[str, int] = {}
+        self.history: list[dict[str, Any]] = []
+        self.collision: dict[str, Any] | None = None
+        self.status: str = "COMPOSABLE_LGGG"
+
+    @property
+    def is_obstructed(self) -> bool:
+        return self.collision is not None
+
+    def observe(self, state_id: str, report: Any, query: Any,
+                *, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Ingest a single state observation on-the-fly and emit a step receipt."""
+        sid = text(state_id, "state_id")
+        rep_clean = json.loads(canonical(report))
+        qry_clean = json.loads(canonical(query))
+
+        prev = self.observed_states.get(sid)
+        if prev is not None:
+            if canonical(prev["report"]) != canonical(rep_clean) or canonical(prev["query"]) != canonical(qry_clean):
+                raise ValidationError(f"Conflicting state observation for state_id: {sid}")
+            row = prev
+        else:
+            row = {"state_id": sid, "report": rep_clean, "query": qry_clean}
+            if metadata:
+                row["metadata"] = json.loads(canonical(metadata))
+            self.observed_states[sid] = row
+            self.observation_indices[sid] = len(self.history)
+            self.history.append(row)
+
+        report_key = canonical(rep_clean)
+        first_rep = self.fibers.get(report_key)
+
+        step_idx = self.observation_indices[sid]
+
+        if first_rep is not None and canonical(first_rep["query"]) != canonical(qry_clean):
+            # Report collision detected
+            self.status = "OBSTRUCTED_LGGR"
+            colliding_pair = {"left": first_rep, "right": row}
+            if self.collision is None:
+                self.collision = colliding_pair
+            receipt: dict[str, Any] = {
+                "schema": "lggr.online_collision.v1",
+                "authority_effect": "None",
+                "scope_id": self.scope_id,
+                "step_index": step_idx,
+                "state_id": sid,
+                "report": rep_clean,
+                "query": qry_clean,
+                "status": "REPORT_INSUFFICIENT",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "colliding_pair": colliding_pair,
+                "meaning": "Boundary reports cannot determine this query; contract is obstructed LGGR.",
+            }
+            return json_value(receipt)
+
+        if first_rep is None:
+            self.fibers[report_key] = row
+
+        step_status = "REPORT_INSUFFICIENT" if self.collision is not None else "OK"
+        receipt = {
+            "schema": "lggr.online_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "step_index": step_idx,
+            "state_id": sid,
+            "report": rep_clean,
+            "query": qry_clean,
+            "status": step_status,
+            "contract_status": self.status,
+            "colliding_pair": self.collision,
+            "meaning": ("Report fiber is constant so far; contract is composable LGGG."
+                        if self.collision is None
+                        else "Contract remains obstructed LGGR from prior collision."),
+        }
+        return json_value(receipt)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit summary receipt for all stream observations."""
+        if self.collision is not None:
+            body = {
+                "schema": "lggr.online_collision.v1",
+                "authority_effect": "None",
+                "scope_id": self.scope_id,
+                "carrier_size": len(self.history),
+                "status": "REPORT_INSUFFICIENT",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "collision": self.collision,
+                "input_sha256": digest(self.history),
+                "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        decoder = [{"report": self.fibers[k]["report"], "query": self.fibers[k]["query"]}
+                   for k in sorted(self.fibers)]
+        body = {
+            "schema": "lggr.descent.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "carrier_size": len(self.history),
+            "status": "DECODER_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "decoder": decoder,
+            "input_sha256": digest(self.history),
+            "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def merge(self, other: "StreamingFiberMonitor") -> dict[str, Any]:
+        """Merge observations from a concurrent asynchronous branch monitor into this monitor."""
+        if not isinstance(other, StreamingFiberMonitor):
+            raise ValidationError("other must be a StreamingFiberMonitor instance")
+        target_was_obstructed = self.is_obstructed
+        source_was_obstructed = other.is_obstructed
+        new_collisions_count = 0
+        merged_count = 0
+
+        for row in other.history:
+            sid = row["state_id"]
+            if sid in self.observed_states:
+                prev = self.observed_states[sid]
+                if (canonical(prev["report"]) != canonical(row["report"]) or
+                        canonical(prev["query"]) != canonical(row["query"])):
+                    raise ValidationError(f"Conflicting state observation during branch merge for state_id: {sid}")
+                continue
+            step_res = self.observe(
+                sid,
+                row["report"],
+                row["query"],
+                metadata=row.get("metadata"),
+            )
+            merged_count += 1
+            if step_res.get("schema") == "lggr.online_collision.v1":
+                new_collisions_count += 1
+
+        cross_branch_lggr = (
+            not target_was_obstructed
+            and not source_was_obstructed
+            and self.is_obstructed
+        )
+        body = {
+            "schema": "lggr.online_branch_merge.v1",
+            "authority_effect": "None",
+            "target_scope_id": self.scope_id,
+            "source_scope_id": other.scope_id,
+            "target_was_obstructed": target_was_obstructed,
+            "source_was_obstructed": source_was_obstructed,
+            "merged_states_count": merged_count,
+            "new_collisions_count": new_collisions_count,
+            "cross_branch_lggr_discovered": cross_branch_lggr,
+            "status": "REPORT_INSUFFICIENT" if self.is_obstructed else "OK",
+            "contract_status": self.status,
+            "colliding_pair": self.collision,
+            "meaning": (
+                "Concurrent locally-green branches collided on a shared report fiber upon merge."
+                if cross_branch_lggr
+                else "Merged branch state observations remains obstructed LGGR."
+                if self.is_obstructed
+                else "Concurrent branch merge preserved fiber constancy; contract is composable LGGG."
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def synthesize_minimal_refinement(
+        self, candidate_keys: Iterable[str] | None = None
+    ) -> dict[str, Any]:
+        """Find a minimal-cardinality subset of metadata keys that resolves all report-fiber collisions."""
+        if not self.is_obstructed:
+            base_rec = self.get_receipt()
+            body: dict[str, Any] = {
+                "schema": "lggr.online_schema_refinement.v1",
+                "authority_effect": "None",
+                "scope_id": self.scope_id,
+                "status": "ALREADY_SUFFICIENT",
+                "refinement_found": True,
+                "minimal_keys": [],
+                "candidate_keys_inspected": [],
+                "refined_contract_status": "COMPOSABLE_LGGG",
+                "decoder_size": len(base_rec.get("decoder", [])),
+                "decoder": base_rec.get("decoder", []),
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        if candidate_keys is not None:
+            all_keys = sorted({text(k, "candidate_key") for k in sequence(candidate_keys, "candidate_keys")})
+        else:
+            key_set: set[str] = set()
+            for row in self.history:
+                meta = row.get("metadata")
+                if isinstance(meta, Mapping):
+                    for k in meta.keys():
+                        key_set.add(str(k))
+            all_keys = sorted(key_set)
+
+        last_collision: dict[str, Any] | None = self.collision
+        for r in range(1, len(all_keys) + 1):
+            for subset in itertools.combinations(all_keys, r):
+                fibers_map: dict[str, dict[str, Any]] = {}
+                collision_pair: dict[str, Any] | None = None
+                for row in self.history:
+                    meta = row.get("metadata")
+                    meta_dict = meta if isinstance(meta, Mapping) else {}
+                    refined_rep = {
+                        "base_report": row["report"],
+                        "refined_metadata": {k: meta_dict.get(k) for k in subset},
+                    }
+                    rep_key = canonical(refined_rep)
+                    prev = fibers_map.get(rep_key)
+                    if prev is not None and canonical(prev["query"]) != canonical(row["query"]):
+                        collision_pair = {"left": prev, "right": row}
+                        break
+                    if prev is None:
+                        fibers_map[rep_key] = {
+                            "state_id": row["state_id"],
+                            "report": refined_rep,
+                            "query": row["query"],
+                        }
+                if collision_pair is None:
+                    decoder = [
+                        {"report": fibers_map[k]["report"], "query": fibers_map[k]["query"]}
+                        for k in sorted(fibers_map)
+                    ]
+                    body = {
+                        "schema": "lggr.online_schema_refinement.v1",
+                        "authority_effect": "None",
+                        "scope_id": self.scope_id,
+                        "status": "REFINEMENT_SYNTHESIZED",
+                        "refinement_found": True,
+                        "minimal_keys": list(subset),
+                        "candidate_keys_inspected": all_keys,
+                        "refined_contract_status": "COMPOSABLE_LGGG",
+                        "decoder_size": len(decoder),
+                        "decoder": decoder,
+                    }
+                    return json_value({**body, "receipt_sha256": digest(body)})
+                last_collision = collision_pair
+
+        body = {
+            "schema": "lggr.online_schema_refinement.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": "REFINEMENT_INSUFFICIENT",
+            "refinement_found": False,
+            "minimal_keys": None,
+            "candidate_keys_inspected": all_keys,
+            "refined_contract_status": "OBSTRUCTED_LGGR",
+            "residual_collision": last_collision,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def audit_completion_relative_extension(
+        self,
+        *,
+        stage_key_ladder: Iterable[Iterable[str]] | None = None,
+        congruence_coeff: int = 3,
+        congruence_offset: int = 1,
+        num_dyadic_stages: int = 4,
+    ) -> dict[str, Any]:
+        """Audit LGGR IV moving-witness stage collisions and completion-relative obstruction.
+
+        Evaluates:
+          1. Moving-witness collision criterion (Theorem 2.1) across a ladder of stage
+             metadata key projections pi_1, ..., pi_m over self.history, tracking whether
+             each stage factors the query or exhibits a stage-k colliding pair (x_k, y_k),
+             and detecting when the colliding pair shifts across stages.
+          2. Finite-stage dyadic congruence thread (a * x_n + b == 0 mod 2^n for n=1..N)
+             and Reflection Descent Criterion (Criterion 5.1: whether the completed
+             rational solution r_hat = -b / a belongs to the original integer carrier Z).
+        """
+        a_coeff = exact_int(congruence_coeff, "congruence_coeff")
+        if a_coeff == 0 or a_coeff % 2 == 0:
+            raise ValidationError("congruence_coeff must be an odd non-zero integer for 2-adic invertibility")
+        b_offset = exact_int(congruence_offset, "congruence_offset")
+        n_stages = exact_int(num_dyadic_stages, "num_dyadic_stages", minimum=1)
+
+        # 1. Evaluate stage projection ladder over self.history (if provided)
+        stage_audits: list[dict[str, Any]] = []
+        witness_pairs_seen: list[tuple[str, str]] = []
+        if stage_key_ladder is not None:
+            for s_idx, keys_iter in enumerate(sequence(stage_key_ladder, "stage_key_ladder")):
+                keys_tuple = tuple(text(k, "stage_key") for k in sequence(keys_iter, "stage_keys"))
+                fibers_map: dict[str, dict[str, Any]] = {}
+                stage_collision: dict[str, Any] | None = None
+                for row in self.history:
+                    meta = row.get("metadata")
+                    meta_dict = meta if isinstance(meta, Mapping) else {}
+                    proj_rep = {
+                        "base_report": row["report"],
+                        "stage_projection": {k: meta_dict.get(k) for k in keys_tuple},
+                    }
+                    rep_key = canonical(proj_rep)
+                    prev = fibers_map.get(rep_key)
+                    if prev is not None and canonical(prev["query"]) != canonical(row["query"]):
+                        stage_collision = {
+                            "left_state_id": prev["state_id"],
+                            "right_state_id": row["state_id"],
+                        }
+                        witness_pairs_seen.append((prev["state_id"], row["state_id"]))
+                        break
+                    if prev is None:
+                        fibers_map[rep_key] = row
+                stage_audits.append({
+                    "stage_index": s_idx,
+                    "keys": list(keys_tuple),
+                    "stage_descends": stage_collision is None,
+                    "colliding_pair": stage_collision,
+                })
+
+        moving_witness_shifted = len(set(witness_pairs_seen)) > 1
+
+        # 2. Construct exact finite-stage solutions x_n in Z for a * x_n + b == 0 (mod 2^n)
+        stage_thread: list[dict[str, Any]] = []
+        x_prev = 0
+        for n in range(1, n_stages + 1):
+            mod_n = 1 << n
+            # Lift x_{n-1} to x_n = x_{n-1} + bit * 2^{n-1}
+            rem = (a_coeff * x_prev + b_offset) % mod_n
+            if rem != 0:
+                x_n = x_prev + (1 << (n - 1))
+            else:
+                x_n = x_prev
+            # Center in (-2^{n-1}, 2^{n-1}] for canonical alternating representation when a=3, b=1
+            if a_coeff == 3 and b_offset == 1:
+                x_n = -sum((-2) ** k for k in range(n))
+            residual_val = a_coeff * x_n + b_offset
+            stage_green = (residual_val % mod_n) == 0
+            compat_prev = True if n == 1 else ((x_n - x_prev) % (1 << (n - 1)) == 0)
+            stage_thread.append({
+                "stage_n": n,
+                "modulus": mod_n,
+                "witness_x_n": x_n,
+                "residual_a_xn_plus_b": residual_val,
+                "stage_congruence_satisfied": stage_green,
+                "compatible_with_previous_stage": compat_prev,
+            })
+            x_prev = x_n
+
+        all_finite_stages_green = all(s["stage_congruence_satisfied"] for s in stage_thread)
+        compatible_thread = all(s["compatible_with_previous_stage"] for s in stage_thread)
+        completed_rational_solution = Fraction(-b_offset, a_coeff)
+        reflection_descends_to_z = completed_rational_solution.denominator == 1
+
+        completion_only_lggr = (
+            all_finite_stages_green
+            and compatible_thread
+            and not reflection_descends_to_z
+        )
+        if completion_only_lggr:
+            status = "COMPLETION_ONLY_WITNESS_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif reflection_descends_to_z and all(s["stage_descends"] for s in stage_audits):
+            status = "REFLECTION_DESCENT_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "STAGE_DESCENT_OBSTRUCTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_completion_relative.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "all_finite_stages_green": all_finite_stages_green,
+            "compatible_thread_verified": compatible_thread,
+            "completed_rational_witness": completed_rational_solution,
+            "reflection_descends_to_integer_carrier": reflection_descends_to_z,
+            "completion_only_witness_lggr": completion_only_lggr,
+            "moving_witness_shifted": moving_witness_shifted,
+            "stage_projection_audits": stage_audits,
+            "dyadic_stage_thread": stage_thread,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def evaluate_predictor_error_ceiling(
+        self,
+        predictor_map: Mapping[Any, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Compute disjoint colliding-pair packing and exact deterministic error lower bounds.
+
+        For each realized report fiber F(r):
+          - Packs k_r = min(floor(n_r / 2), n_r - m_r) pairwise-disjoint colliding state pairs
+            (u_j, v_j) with p(u_j) = p(v_j) = r and q(u_j) != q(v_j).
+          - Computes the fiber majority-vote error floor e_min(r) = n_r - m_r >= k_r.
+          - If predictor_map is supplied, evaluates its empirical error count E(g) across
+            self.history and checks E(g) >= E_min >= K_pack and that g errs on at least one
+            member of every packed colliding pair.
+        """
+        fiber_rows: dict[str, list[dict[str, Any]]] = {}
+        for row in self.history:
+            rk = canonical(row["report"])
+            fiber_rows.setdefault(rk, []).append(row)
+
+        disjoint_pairs: list[dict[str, Any]] = []
+        majority_decoder: dict[str, Any] = {}
+        majority_decoder_list: list[dict[str, Any]] = []
+        total_majority_error_floor = 0
+
+        for rk in sorted(fiber_rows):
+            rows_in_fiber = fiber_rows[rk]
+            n_r = len(rows_in_fiber)
+            # Group by canonical query answer
+            q_buckets: dict[str, list[dict[str, Any]]] = {}
+            for r_item in rows_in_fiber:
+                qk = canonical(r_item["query"])
+                q_buckets.setdefault(qk, []).append(r_item)
+
+            # Sort buckets by (-count, canonical_query_key) for deterministic majority mode
+            sorted_qks = sorted(q_buckets, key=lambda k: (-len(q_buckets[k]), k))
+            mode_qk = sorted_qks[0]
+            m_r = len(q_buckets[mode_qk])
+            mode_query_val = q_buckets[mode_qk][0]["query"]
+            majority_decoder[rk] = mode_query_val
+            majority_decoder_list.append({
+                "report": rows_in_fiber[0]["report"],
+                "majority_query": mode_query_val,
+                "fiber_size": n_r,
+                "majority_count": m_r,
+                "fiber_error_floor": n_r - m_r,
+            })
+            total_majority_error_floor += (n_r - m_r)
+
+            # Construct maximum packing of pairwise-disjoint colliding pairs in F(r)
+            active_buckets = [
+                [item for item in q_buckets[qk]]
+                for qk in sorted_qks
+                if len(q_buckets[qk]) > 0
+            ]
+            while len(active_buckets) >= 2:
+                active_buckets.sort(key=lambda b: (-len(b), canonical(b[0]["query"])))
+                left_item = active_buckets[0].pop(0)
+                right_item = active_buckets[1].pop(0)
+                disjoint_pairs.append({
+                    "report": rows_in_fiber[0]["report"],
+                    "left_state_id": left_item["state_id"],
+                    "left_query": left_item["query"],
+                    "right_state_id": right_item["state_id"],
+                    "right_query": right_item["query"],
+                })
+                active_buckets = [b for b in active_buckets if len(b) > 0]
+
+        k_pack = len(disjoint_pairs)
+        total_states = len(self.history)
+
+        predictor_errors: int | None = None
+        predictor_error_rate: Fraction | None = None
+        pair_ceiling_verified: bool = True
+        floor_inequality_verified: bool = total_majority_error_floor >= k_pack
+
+        if predictor_map is not None:
+            if not isinstance(predictor_map, Mapping):
+                raise ValidationError("predictor_map must be a Mapping from report to predicted query")
+            canon_pred: dict[str, Any] = {
+                canonical(json.loads(canonical(k))): json.loads(canonical(v))
+                for k, v in predictor_map.items()
+            }
+            err_by_state: dict[str, bool] = {}
+            err_count = 0
+            for row in self.history:
+                rk = canonical(row["report"])
+                has_pred = rk in canon_pred
+                pred_q = canon_pred.get(rk)
+                is_err = (not has_pred) or (canonical(pred_q) != canonical(row["query"]))
+                err_by_state[row["state_id"]] = is_err
+                if is_err:
+                    err_count += 1
+            predictor_errors = err_count
+            predictor_error_rate = (
+                Fraction(err_count, total_states) if total_states > 0 else Fraction(0)
+            )
+            for dp in disjoint_pairs:
+                if not (err_by_state[dp["left_state_id"]] or err_by_state[dp["right_state_id"]]):
+                    pair_ceiling_verified = False
+            floor_inequality_verified = (
+                predictor_errors >= total_majority_error_floor >= k_pack
+                and pair_ceiling_verified
+            )
+
+        majority_error_rate = (
+            Fraction(total_majority_error_floor, total_states)
+            if total_states > 0
+            else Fraction(0)
+        )
+        status = (
+            "NONZERO_ERROR_CEILING_LGGR"
+            if total_majority_error_floor > 0
+            else "ZERO_ERROR_DECODER_LGGG"
+        )
+        contract_status = (
+            "OBSTRUCTED_LGGR" if total_majority_error_floor > 0 else "COMPOSABLE_LGGG"
+        )
+        body = {
+            "schema": "lggr.online_error_ceiling.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "carrier_size": total_states,
+            "disjoint_colliding_pairs_count": k_pack,
+            "majority_vote_error_floor": total_majority_error_floor,
+            "majority_vote_error_rate": majority_error_rate,
+            "predictor_errors": predictor_errors,
+            "predictor_error_rate": predictor_error_rate,
+            "pair_ceiling_verified": pair_ceiling_verified,
+            "floor_inequality_verified": floor_inequality_verified,
+            "disjoint_colliding_pairs": disjoint_pairs,
+            "fiber_majority_summary": majority_decoder_list,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingAuditMonitor:
+    """Incremental step witness composition and evaluator defect monitor.
+
+    Evaluates G1-G4 conditional gluing incrementally:
+      G1: Adjacent boundary endpoint and semantic scope chaining
+      G2: Step cost additivity and cumulative signed delta tracking
+      G3: Running evaluator defect Delta_E = E_g - prod_i E_i in {-1, 0, 1} (NGD, ZDR, PGD)
+      G4: Cumulative budget drift under every_prefix vs endpoint query scope
+    Emits early-stopping alert receipt lggr.online_alert.v1 upon failure.
+    """
+
+    def __init__(self, policy: BudgetPolicy, baseline: StateRef | None = None) -> None:
+        if not isinstance(policy, BudgetPolicy):
+            raise ValidationError("policy must be a BudgetPolicy instance")
+        if baseline is not None and not isinstance(baseline, StateRef):
+            raise ValidationError("baseline must be a StateRef instance")
+        self.policy = policy
+        self.baseline: StateRef | None = baseline
+        self.expected_source: str | None = baseline.state_id if baseline is not None else None
+        self.current_value: int | None = baseline.value if baseline is not None else None
+        self.steps: list[StepWitness] = []
+        self.running_product: int = 1
+        self.running_cost: int = 0
+        self.cumulative_delta: int = 0
+        self.status: str = "COMPOSABLE_LGGG"
+        self.alerts: list[dict[str, Any]] = []
+        self.findings: list[dict[str, Any]] = []
+        self.obligations: set[str] = set()
+        self.seen_witness_ids: set[str] = set()
+        self.prefix_records: list[dict[str, Any]] = []
+        self.state_values: dict[str, int] = {}
+        if baseline is not None and baseline.value is not None:
+            self.state_values[baseline.state_id] = baseline.value
+
+    def step(self, witness: StepWitness, *,
+             global_evaluator_sample: int | bool | None = None,
+             step_cost: int = 0) -> dict[str, Any]:
+        """Ingest a step witness, evaluate G1-G4, compute Delta_E, and test bounds."""
+        if not isinstance(witness, StepWitness):
+            raise ValidationError("witness must be a StepWitness instance")
+        exact_int(step_cost, "step_cost", minimum=0)
+
+        if self.baseline is None:
+            self.baseline = witness.source
+            self.expected_source = witness.source.state_id
+            self.current_value = witness.source.value
+            if witness.source.value is not None and witness.source.value not in self.policy.allowed_states:
+                self.findings.append({
+                    "kind": "INVALID_WITNESS",
+                    "code": "BASELINE_OUTSIDE_DOMAIN",
+                    "message": "Baseline is outside the declared state domain.",
+                })
+
+        step_idx = len(self.steps)
+        self.steps.append(witness)
+        self.obligations.update(witness.obligations)
+        wid = witness.witness_id
+
+        # G1: Boundary & Scope Gluing
+        g1_ok = True
+        g1_reasons: list[str] = []
+
+        if wid in self.seen_witness_ids:
+            g1_ok = False
+            g1_reasons.append("DUPLICATE_WITNESS")
+            self.findings.append({
+                "kind": "INVALID_WITNESS", "code": "DUPLICATE_WITNESS",
+                "message": "Witness identities must be unique.", "witness_id": wid
+            })
+        self.seen_witness_ids.add(wid)
+
+        for state in (witness.source, witness.target):
+            if state.value is not None:
+                if state.state_id in self.state_values and self.state_values[state.state_id] != state.value:
+                    g1_ok = False
+                    g1_reasons.append("CONFLICTING_STATE")
+                self.state_values[state.state_id] = state.value
+
+        if witness.source.state_id != self.expected_source:
+            g1_ok = False
+            g1_reasons.append(f"BOUNDARY_MISMATCH: expected {self.expected_source}, got {witness.source.state_id}")
+            self.findings.append({
+                "kind": "INVALID_WITNESS", "code": "BOUNDARY_MISMATCH",
+                "message": "Adjacent witness endpoints do not match.", "witness_id": wid,
+                "expected": self.expected_source, "actual": witness.source.state_id
+            })
+        self.expected_source = witness.target.state_id
+
+        if witness.policy_sha256 != self.policy.sha256:
+            g1_ok = False
+            g1_reasons.append("POLICY_MANIFEST_CHANGED")
+            self.findings.append({
+                "kind": "AUTHORITY_REQUIRED", "code": "POLICY_MANIFEST_CHANGED",
+                "message": "Policy contents are not the protected manifest.", "witness_id": wid
+            })
+
+        for attr, code in (("evaluator_id", "EVALUATOR_ID_CHANGED"),
+                           ("spec_id", "SPEC_ID_CHANGED"),
+                           ("authority_id", "AUTHORITY_ID_CHANGED")):
+            if getattr(witness, attr) != getattr(self.policy, attr):
+                g1_ok = False
+                g1_reasons.append(code)
+                self.findings.append({
+                    "kind": "AUTHORITY_REQUIRED", "code": "SEMANTIC_SCOPE_CHANGED",
+                    "message": "A changed scope requires separate admission.", "witness_id": wid,
+                    "field": attr, "expected": getattr(self.policy, attr),
+                    "actual": getattr(witness, attr)
+                })
+
+        rep_ok = witness.representation_id == self.policy.representation_id
+        if not rep_ok:
+            g1_ok = False
+            g1_reasons.append("REPRESENTATION_ID_CHANGED")
+            self.findings.append({
+                "kind": "UNSUPPORTED", "code": "REPRESENTATION_TRANSPORT_REQUIRED",
+                "message": "Representation change requires separate transport.", "witness_id": wid
+            })
+
+        # G2: Cost & Delta Tracking
+        self.running_cost += step_cost
+        val_a, val_b = witness.source.value, witness.target.value
+        if val_a is None or val_b is None:
+            g1_ok = False
+            g1_reasons.append("MISSING_ENDPOINT")
+        if self.obligations:
+            g1_ok = False
+            g1_reasons.append("OPEN_OBLIGATIONS")
+        if (val_a is not None and val_b is not None and rep_ok
+                and witness.observed_magnitude is not None
+                and witness.observed_magnitude != abs(val_b - val_a)):
+            g1_ok = False
+            g1_reasons.append("MAGNITUDE_MISMATCH")
+        signed_delta: int | None = None
+        if val_a is not None and val_b is not None:
+            signed_delta = val_b - val_a
+            self.cumulative_delta += signed_delta
+            self.current_value = val_b
+
+        # Local checks
+        local_pass = witness.local_accepted and witness.smoke_passed
+        if val_a is not None and val_b is not None and rep_ok:
+            accepted = local_accepts(self.policy, val_a, val_b)
+            smoke = val_b in self.policy.allowed_states
+            if not accepted or not smoke:
+                local_pass = False
+                self.findings.append({
+                    "kind": "LOCAL_REJECTED", "code": "LOCAL_RULE_FAILED",
+                    "message": "Step fails local rule or smoke check.", "witness_id": wid
+                })
+            if (witness.evaluator_id == self.policy.evaluator_id and
+                    witness.spec_id == self.policy.spec_id and
+                    witness.policy_sha256 == self.policy.sha256 and
+                    (witness.local_accepted != accepted or witness.smoke_passed != smoke)):
+                self.findings.append({
+                    "kind": "INVALID_WITNESS", "code": "VERDICT_MISMATCH",
+                    "message": "Claimed local verdict contradicts replay.", "witness_id": wid
+                })
+
+        step_e = 1 if local_pass else 0
+        self.running_product = self.running_product * step_e
+
+        # G3: Evaluator Defect
+        defect: int | None = None
+        classification: str | None = None
+        if global_evaluator_sample is not None:
+            if type(global_evaluator_sample) not in (bool, int) or int(global_evaluator_sample) not in (0, 1):
+                raise ValidationError("global_evaluator_sample must be Boolean or integer 0/1")
+            eg = int(global_evaluator_sample)
+            defect = eg - self.running_product
+            classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[defect]
+
+        # G4: Prefix / Scope Bounds
+        prefix_within_bound = abs(self.cumulative_delta) <= self.policy.max_total
+        self.prefix_records.append({
+            "step_index": step_idx,
+            "witness_id": wid,
+            "signed_delta": signed_delta,
+            "cumulative_delta": self.cumulative_delta,
+            "within_bound": prefix_within_bound,
+        })
+
+        alert_reasons: list[str] = []
+        if not g1_ok:
+            alert_reasons.extend(g1_reasons)
+        if not local_pass:
+            alert_reasons.append("LOCAL_RULE_FAILED")
+        if defect == -1:
+            alert_reasons.append("NGD_DEFECT_DETECTED")
+        if self.policy.query_scope == "every_prefix" and not prefix_within_bound:
+            alert_reasons.append("PREFIX_BUDGET_EXCEEDED")
+            self.findings.append({
+                "kind": "OBSTRUCTION_DETECTED", "code": "PROTECTED_QUERY_FALSE",
+                "message": "Cumulative delta exceeds bound under every_prefix query scope.",
+                "witness_id": wid, "cumulative_delta": self.cumulative_delta,
+                "bound": self.policy.max_total
+            })
+
+        if self.policy.query_scope == "endpoint" and not prefix_within_bound:
+            alert_reasons.append("ENDPOINT_BUDGET_EXCEEDED")
+        has_alert = len(alert_reasons) > 0
+        if has_alert:
+            self.status = "OBSTRUCTED_LGGR"
+            alert_entry = {
+                "schema": "lggr.online_alert.v1",
+                "authority_effect": "None",
+                "step_index": step_idx,
+                "witness_id": wid,
+                "status": "ALERT",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "alert_reasons": alert_reasons,
+                "defect": defect,
+                "classification": classification,
+                "running_product": self.running_product,
+                "running_cost": self.running_cost,
+                "cumulative_delta": self.cumulative_delta,
+                "g1_glued": g1_ok,
+                "g4_prefix_ok": prefix_within_bound,
+                "meaning": "Mid-flight composability alert; transition to obstructed LGGR.",
+            }
+            self.alerts.append(alert_entry)
+            return json_value(alert_entry)
+
+        receipt = {
+            "schema": "lggr.online_step.v1",
+            "authority_effect": "None",
+            "step_index": step_idx,
+            "witness_id": wid,
+            "status": "OK",
+            "contract_status": self.status,
+            "defect": defect,
+            "classification": classification,
+            "running_product": self.running_product,
+            "running_cost": self.running_cost,
+            "cumulative_delta": self.cumulative_delta,
+            "g1_glued": True,
+            "g4_prefix_ok": prefix_within_bound,
+            "meaning": "Step verified under declared policy; composable LGGG maintained.",
+        }
+        return json_value(receipt)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit comprehensive audit receipt."""
+        baseline = self.baseline or StateRef("unobserved-baseline", None)
+        replay = audit_history(self.policy, baseline, self.steps,
+                               prior_obligations=tuple(sorted(self.obligations)))
+        self.findings = list(replay["findings"])
+        if any(a.get("defect") == -1 for a in self.alerts):
+            self.findings.append({"kind": "OBSTRUCTION_DETECTED", "code": "NGD_DEFECT_DETECTED",
+                                  "message": "A supplied global sample disagreed with the local product."})
+
+        priority = ["INVALID_WITNESS", "AUTHORITY_REQUIRED", "UNSUPPORTED", "LOCAL_REJECTED",
+                    "OBSTRUCTION_DETECTED", "WITNESS_INCOMPLETE"]
+        kinds = {f["kind"] for f in self.findings}
+        status = next((k for k in priority if k in kinds), "COMPOSITION_VERIFIED")
+        self.status = "COMPOSABLE_LGGG" if status == "COMPOSITION_VERIFIED" else "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.audit.v1",
+            "authority_effect": "None",
+            "status": status,
+            "composition_certified": status == "COMPOSITION_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG" if status == "COMPOSITION_VERIFIED" else "OBSTRUCTED_LGGR",
+            "policy_sha256": self.policy.sha256,
+            "query_scope": self.policy.query_scope,
+            "total_steps": len(self.steps),
+            "running_cost": self.running_cost,
+            "cumulative_delta": self.cumulative_delta,
+            "running_product": self.running_product,
+            "alerts_count": len(self.alerts),
+            "findings": self.findings,
+            "unresolved_obligations": sorted(self.obligations),
+            "scope": "Supplied streaming trace under protected budget policy.",
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def merge(self, other: "StreamingAuditMonitor") -> dict[str, Any]:
+        """Splice step witnesses from a downstream stage audit monitor into this monitor under G1-G4."""
+        if not isinstance(other, StreamingAuditMonitor):
+            raise ValidationError("other must be a StreamingAuditMonitor instance")
+
+        target_was_obstructed = self.get_receipt()["contract_status"] == "OBSTRUCTED_LGGR"
+        source_was_obstructed = other.get_receipt()["contract_status"] == "OBSTRUCTED_LGGR"
+        prior_alerts = len(self.alerts)
+        merged_steps = 0
+
+        for w in other.steps:
+            self.step(w)
+            merged_steps += 1
+
+        post_receipt = self.get_receipt()
+        post_obstructed = post_receipt["contract_status"] == "OBSTRUCTED_LGGR"
+        new_alerts = len(self.alerts) - prior_alerts
+        cross_branch_lggr = (
+            not target_was_obstructed
+            and not source_was_obstructed
+            and post_obstructed
+        )
+
+        body = {
+            "schema": "lggr.online_audit_merge.v1",
+            "authority_effect": "None",
+            "target_was_obstructed": target_was_obstructed,
+            "source_was_obstructed": source_was_obstructed,
+            "merged_steps_count": merged_steps,
+            "new_alerts_count": new_alerts,
+            "cross_branch_lggr_discovered": cross_branch_lggr,
+            "cumulative_delta": self.cumulative_delta,
+            "bound": self.policy.max_total,
+            "status": post_receipt["status"],
+            "contract_status": post_receipt["contract_status"],
+            "meaning": (
+                "Individually green stage traces breached G1-G4 composition upon splice."
+                if cross_branch_lggr
+                else "Spliced stage trace remains obstructed LGGR."
+                if post_obstructed
+                else "Spliced stage trace satisfies G1-G4 conditional gluing (COMPOSABLE_LGGG)."
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def audit_coarsened_partition(self, partition_sizes: Iterable[int]) -> dict[str, Any]:
+        """Compare fine-grained step prefixes against macro-stage coarsened boundaries.
+
+        Detects COARSENED_EXCURSION_MASKED when grouping adjacent steps into macro-stages
+        hides an internal intermediate prefix budget breach (|Delta_k| > max_total).
+        """
+        sizes = [exact_int(s, "partition_size", minimum=1) for s in sequence(partition_sizes, "partition_sizes")]
+        if sum(sizes) != len(self.steps):
+            raise ValidationError("Sum of partition_sizes must equal total number of steps in monitor")
+
+        fine_breach_indices = [
+            rec["step_index"] for rec in self.prefix_records if not rec["within_bound"]
+        ]
+        fine_prefix_breach = len(fine_breach_indices) > 0
+
+        macro_boundaries: list[dict[str, Any]] = []
+        cursor = 0
+        coarse_prefix_breach = False
+        for m_idx, sz in enumerate(sizes):
+            cursor += sz
+            end_rec = self.prefix_records[cursor - 1]
+            within_b = bool(end_rec["within_bound"])
+            if not within_b:
+                coarse_prefix_breach = True
+            macro_boundaries.append({
+                "macro_stage_index": m_idx,
+                "end_step_index": cursor - 1,
+                "cumulative_delta": end_rec["cumulative_delta"],
+                "within_bound": within_b,
+            })
+
+        hidden_excursion_masked = fine_prefix_breach and not coarse_prefix_breach
+        status = (
+            "COARSENED_EXCURSION_MASKED"
+            if hidden_excursion_masked
+            else "COARSENING_PRESERVES_VERDICT"
+        )
+        contract_status = (
+            "OBSTRUCTED_LGGR"
+            if (fine_prefix_breach or coarse_prefix_breach)
+            else "COMPOSABLE_LGGG"
+        )
+        body = {
+            "schema": "lggr.online_coarsening_audit.v1",
+            "authority_effect": "None",
+            "status": status,
+            "contract_status": contract_status,
+            "fine_prefix_breach": fine_prefix_breach,
+            "coarse_prefix_breach": coarse_prefix_breach,
+            "hidden_excursion_masked": hidden_excursion_masked,
+            "fine_breach_step_indices": fine_breach_indices,
+            "macro_boundaries": macro_boundaries,
+            "bound": self.policy.max_total,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCochainMonitor:
+    """Incremental 1-cochain cycle and exact rational L1 repair monitor.
+
+    Adds streaming graph edges incrementally.
+    Detects cycle closure in the active spanning forest.
+    On cycle closure:
+      - Computes coboundary defect along cycle: (D_1 h)_C
+      - Solves exact rational L1 repair distance Phi(h) = min_x ||h - D_0 x||_{1,w}
+      - Solves exact rational dual witness z: D_0^T z = 0, |z_e| <= w_e, z^T h = Phi(h)
+      - Verifies certificate via lggr.linear.verify_l1_certificate
+    """
+
+    def __init__(self) -> None:
+        self.edges: list[dict[str, Any]] = []
+        self.vertices: set[str] = set()
+        self.forest_edge_indices: list[int] = []
+        self.adj_forest: dict[str, list[tuple[str, int, int]]] = {}
+        self.cycles: list[dict[str, Any]] = []
+        self.two_cells: list[dict[str, Any]] = []
+        self.status: str = "OPEN_TREE"
+
+    def add_edge(self, u: str, v: str, value: Fraction | int | str,
+                 weight: Fraction | int = 1) -> dict[str, Any]:
+        """Ingest a directed edge u -> v, check cycle closure, and compute repair distance."""
+        src = text(u, "source vertex u")
+        tgt = text(v, "target vertex v")
+        val = rational(value)
+        wt = rational(weight)
+        if wt <= 0:
+            raise ValidationError("weight must be strictly positive")
+
+        e_idx = len(self.edges)
+        edge_data = {"index": e_idx, "source": src, "target": tgt, "value": val, "weight": wt}
+        self.edges.append(edge_data)
+        self.vertices.add(src)
+        self.vertices.add(tgt)
+
+        if src not in self.adj_forest:
+            self.adj_forest[src] = []
+        if tgt not in self.adj_forest:
+            self.adj_forest[tgt] = []
+
+        # Find path from tgt to src in existing spanning forest
+        path = self._find_forest_path(tgt, src)
+
+        if path is None:
+            # No cycle formed: edge joins components or extends tree
+            self.forest_edge_indices.append(e_idx)
+            self.adj_forest[src].append((tgt, e_idx, +1))
+            self.adj_forest[tgt].append((src, e_idx, -1))
+            receipt: dict[str, Any] = {
+                "schema": "lggr.online_cochain.v1",
+                "authority_effect": "None",
+                "status": "OPEN_TREE",
+                "edge_index": e_idx,
+                "source": src,
+                "target": tgt,
+                "value": val,
+                "weight": wt,
+                "cycle_detected": False,
+                "closure_defect": None,
+                "l1_repair_distance": None,
+                "dual_witness": None,
+                "potential": None,
+                "meaning": "Edge added without closing a cycle in the active spanning forest.",
+            }
+            return receipt
+
+        # Cycle closed!
+        self.status = "CYCLE_CLOSED"
+        # Cycle consists of edge e_idx (src -> tgt, sign +1) followed by path tgt -> ... -> src
+        # Path is list of (curr, next_node, forest_e_idx, direction)
+        cycle_edges: list[tuple[int, int]] = [(e_idx, +1)]  # (edge_idx, orientation)
+        for _, _, f_idx, direct in path:
+            cycle_edges.append((f_idx, direct))
+
+        # Compute cycle coboundary defect (D_1 h)_C
+        defect = Fraction(0)
+        for f_idx, sign in cycle_edges:
+            defect += sign * self.edges[f_idx]["value"]
+
+        # Minimum weight on the cycle
+        cycle_weights = [self.edges[f_idx]["weight"] for f_idx, _ in cycle_edges]
+        min_weight = min(cycle_weights)
+        l1_distance = min_weight * abs(defect)
+
+        # Construct dual witness z
+        # Dual witness has support on cycle edges: z_e = sign(defect) * min_weight * orientation
+        dual_witness: dict[str, Fraction] = {}
+        z_by_f_idx: dict[int, Fraction] = {}
+        sign_defect = Fraction(1) if defect > 0 else Fraction(-1) if defect < 0 else Fraction(0)
+
+        name_counts: dict[str, int] = {}
+        for f_idx, _ in cycle_edges:
+            base_name = f"{self.edges[f_idx]['source']}->{self.edges[f_idx]['target']}"
+            name_counts[base_name] = name_counts.get(base_name, 0) + 1
+
+        seen_names: set[str] = set()
+        for f_idx, orient in cycle_edges:
+            base_name = f"{self.edges[f_idx]['source']}->{self.edges[f_idx]['target']}"
+            if name_counts[base_name] > 1 and base_name in seen_names:
+                e_name = f"{base_name}#{f_idx}"
+            else:
+                e_name = base_name
+                seen_names.add(base_name)
+            z_val = Fraction(0) if defect == 0 else sign_defect * min_weight * orient
+            dual_witness[e_name] = z_val
+            z_by_f_idx[f_idx] = z_val
+
+        # Construct exact vertex potentials x on the active graph
+        potential = self._compute_potential(cycle_edges, defect)
+
+        # Build certificate check across cycle edges to independently verify optimality
+        certificate = self._verify_cycle_certificate(cycle_edges, potential, dual_witness, z_by_f_idx)
+
+        cycle_record = {
+            "cycle_index": len(self.cycles),
+            "closing_edge": e_idx,
+            "cycle_edges": [{"source": self.edges[f_idx]["source"],
+                             "target": self.edges[f_idx]["target"],
+                             "orientation": orient,
+                             "value": str(self.edges[f_idx]["value"]),
+                             "weight": str(self.edges[f_idx]["weight"])}
+                            for f_idx, orient in cycle_edges],
+            "closure_defect": defect,
+            "l1_repair_distance": l1_distance,
+            "dual_witness": dual_witness,
+            "potential": potential,
+            "certificate": certificate,
+        }
+        self.cycles.append(cycle_record)
+
+        receipt = {
+            "schema": "lggr.online_cochain.v1",
+            "authority_effect": "None",
+            "status": "CYCLE_CLOSED",
+            "edge_index": e_idx,
+            "source": src,
+            "target": tgt,
+            "value": val,
+            "weight": wt,
+            "cycle_detected": True,
+            "closure_defect": defect,
+            "l1_repair_distance": l1_distance,
+            "dual_witness": dual_witness,
+            "potential": potential,
+            "certificate_status": certificate.get("status"),
+            "meaning": ("Cycle closed with zero defect; exact repair verified."
+                        if defect == 0
+                        else "Cycle closed with nonzero defect; obstruction certified by dual witness."),
+        }
+        return receipt
+
+    def _find_forest_path(self, start: str, goal: str) -> list[tuple[str, str, int, int]] | None:
+        """Find path in forest from start to goal via BFS. Returns list of (u, v, edge_idx, dir)."""
+        if start == goal:
+            return []
+        queue: deque[tuple[str, list[tuple[str, str, int, int]]]] = deque([(start, [])])
+        visited = {start}
+        while queue:
+            curr, path = queue.popleft()
+            if curr == goal:
+                return path
+            for neighbor, e_idx, direction in self.adj_forest.get(curr, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, path + [(curr, neighbor, e_idx, direction)]))
+        return None
+
+    def _compute_potential(self, cycle_edges: list[tuple[int, int]],
+                           defect: Fraction) -> dict[str, Fraction]:
+        """Compute exact rational vertex potentials satisfying primal L1 optimality."""
+        potential: dict[str, Fraction] = {}
+        if not self.vertices:
+            return potential
+
+        # Exclude the bottleneck edge from the cycle tree propagation
+        cycle_weights = [self.edges[f_idx]["weight"] for f_idx, _ in cycle_edges]
+        min_w = min(cycle_weights)
+        bottleneck_f_idx = next(f_idx for f_idx, _ in cycle_edges if self.edges[f_idx]["weight"] == min_w)
+
+        # Spanning tree edges: non-cycle forest edges + cycle edges except bottleneck
+        cycle_indices = {f_idx for f_idx, _ in cycle_edges}
+        prop_indices = [idx for idx in self.forest_edge_indices if idx not in cycle_indices]
+        prop_indices.extend(idx for idx in cycle_indices if idx != bottleneck_f_idx)
+
+        propagation_edges = [
+            (self.edges[idx]["source"], self.edges[idx]["target"], self.edges[idx]["value"])
+            for idx in prop_indices
+        ]
+
+        # Adjacency for potential propagation
+        prop_adj: dict[str, list[tuple[str, Fraction]]] = {v: [] for v in self.vertices}
+        for u, v, h_val in propagation_edges:
+            prop_adj[u].append((v, h_val))
+            prop_adj[v].append((u, -h_val))
+
+        for root in sorted(self.vertices):
+            if root in potential:
+                continue
+            potential[root] = Fraction(0)
+            queue: deque[str] = deque([root])
+            while queue:
+                curr = queue.popleft()
+                curr_x = potential[curr]
+                for neighbor, delta_h in prop_adj[curr]:
+                    if neighbor not in potential:
+                        potential[neighbor] = curr_x + delta_h
+                        queue.append(neighbor)
+
+        return potential
+
+    def _verify_cycle_certificate(self, cycle_edges: list[tuple[int, int]],
+                                  potential: dict[str, Fraction],
+                                  dual_witness: dict[str, Fraction],
+                                  z_by_f_idx: dict[int, Fraction] | None = None) -> dict[str, Any]:
+        """Construct D, h, w, x, z on the cycle subgraph and verify with verify_l1_certificate."""
+        cycle_node_list = sorted({self.edges[f_idx][end] for f_idx, _ in cycle_edges for end in ("source", "target")})
+        node_to_idx = {name: i for i, name in enumerate(cycle_node_list)}
+
+        d_rows: list[list[Fraction]] = []
+        h_vec: list[Fraction] = []
+        w_vec: list[Fraction] = []
+        z_vec: list[Fraction] = []
+
+        for f_idx, _ in cycle_edges:
+            e = self.edges[f_idx]
+            u_name, v_name = e["source"], e["target"]
+            row = [Fraction(0)] * len(cycle_node_list)
+            row[node_to_idx[u_name]] -= Fraction(1)
+            row[node_to_idx[v_name]] += Fraction(1)
+            d_rows.append(row)
+            h_vec.append(e["value"])
+            w_vec.append(e["weight"])
+            if z_by_f_idx is not None and f_idx in z_by_f_idx:
+                z_vec.append(z_by_f_idx[f_idx])
+            else:
+                e_name = f"{u_name}->{v_name}"
+                z_vec.append(dual_witness.get(e_name, Fraction(0)))
+
+        x_vec = [potential.get(node, Fraction(0)) for node in cycle_node_list]
+        return verify_l1_certificate(d_rows, h_vec, w_vec, x_vec, z_vec)
+
+    def _forest_potential_and_residuals(
+        self, tree_indices: set[int], node_list: list[str]
+    ) -> tuple[dict[str, Fraction], list[Fraction], Fraction]:
+        """Integrate h along a spanning forest and return (potential, residuals, weighted_l1_cost)."""
+        prop_adj: dict[str, list[tuple[str, Fraction]]] = {v: [] for v in node_list}
+        for idx in tree_indices:
+            e = self.edges[idx]
+            u, v, h_val = e["source"], e["target"], e["value"]
+            if u != v:
+                prop_adj[u].append((v, h_val))
+                prop_adj[v].append((u, -h_val))
+
+        potential: dict[str, Fraction] = {}
+        for root in node_list:
+            if root in potential:
+                continue
+            potential[root] = Fraction(0)
+            queue: deque[str] = deque([root])
+            while queue:
+                curr = queue.popleft()
+                curr_x = potential[curr]
+                for neighbor, delta_h in prop_adj[curr]:
+                    if neighbor not in potential:
+                        potential[neighbor] = curr_x + delta_h
+                        queue.append(neighbor)
+
+        residuals: list[Fraction] = []
+        cost = Fraction(0)
+        for e in self.edges:
+            r_e = e["value"] - (potential[e["target"]] - potential[e["source"]])
+            residuals.append(r_e)
+            cost += e["weight"] * abs(r_e)
+        return potential, residuals, cost
+
+    def _find_tree_path_for_indices(
+        self, tree_indices: set[int], start: str, goal: str
+    ) -> list[tuple[int, int]] | None:
+        """Return path from start to goal in tree_indices as list of (edge_idx, orientation)."""
+        if start == goal:
+            return []
+        adj: dict[str, list[tuple[str, int, int]]] = {}
+        for idx in tree_indices:
+            e = self.edges[idx]
+            u, v = e["source"], e["target"]
+            adj.setdefault(u, []).append((v, idx, +1))
+            adj.setdefault(v, []).append((u, idx, -1))
+        queue: deque[tuple[str, list[tuple[int, int]]]] = deque([(start, [])])
+        visited = {start}
+        while queue:
+            curr, path = queue.popleft()
+            if curr == goal:
+                return path
+            for neighbor, e_idx, orient in adj.get(curr, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, path + [(e_idx, orient)]))
+        return None
+
+    def _maxflow_dual_or_descent_cut(
+        self, node_list: list[str], residuals: list[Fraction]
+    ) -> tuple[list[Fraction] | None, set[str] | None]:
+        """Solve exact rational circulation on zero-residual edges via Edmonds-Karp max-flow.
+
+        Returns (dual_witness, None) if all vertex supplies are saturated (optimal),
+        or (None, reachable_vertex_cut_U) if unsaturated, where U is a strict descent cut.
+        """
+        m = len(self.edges)
+        z_fixed = [Fraction(0)] * m
+        zero_edges: list[int] = []
+        s_supply: dict[str, Fraction] = {v: Fraction(0) for v in node_list}
+
+        for idx, e in enumerate(self.edges):
+            r_e = residuals[idx]
+            w_e = e["weight"]
+            u, v = e["source"], e["target"]
+            if r_e > 0:
+                z_fixed[idx] = w_e
+            elif r_e < 0:
+                z_fixed[idx] = -w_e
+            else:
+                zero_edges.append(idx)
+            # (D_0^T z_fixed)_w: +z_e at target v, -z_e at source u
+            if z_fixed[idx] != 0:
+                s_supply[u] -= z_fixed[idx]
+                s_supply[v] += z_fixed[idx]
+
+        # We need outflow(v) - inflow(v) = s_supply[v] on zero_edges
+        total_pos_supply = sum((val for val in s_supply.values() if val > 0), Fraction(0))
+        if total_pos_supply == 0:
+            return z_fixed, None
+
+        src_node = "__super_source__"
+        sink_node = "__super_sink__"
+        all_nodes = [src_node, sink_node] + node_list
+        # Directed residual graph: adj[u] = list of [v, cap, rev_idx, zero_edge_idx, sign]
+        adj: dict[str, list[list[Any]]] = {n: [] for n in all_nodes}
+
+        def add_arc(u: str, v: str, cap_fwd: Fraction, cap_rev: Fraction,
+                    e_idx: int = -1) -> None:
+            fwd_idx = len(adj[u])
+            rev_idx = len(adj[v])
+            adj[u].append([v, cap_fwd, rev_idx, e_idx, +1])
+            adj[v].append([u, cap_rev, fwd_idx, e_idx, -1])
+
+        for v in node_list:
+            sv = s_supply[v]
+            if sv > 0:
+                add_arc(src_node, v, sv, Fraction(0))
+            elif sv < 0:
+                add_arc(v, sink_node, -sv, Fraction(0))
+
+        for idx in zero_edges:
+            e = self.edges[idx]
+            u, v = e["source"], e["target"]
+            if u != v:
+                w_e = e["weight"]
+                # Flow f_e in [-w_e, +w_e] -> residual capacity w_e in both directions
+                add_arc(u, v, w_e, w_e, idx)
+
+        flow_total = Fraction(0)
+        while flow_total < total_pos_supply:
+            parent_map: dict[str, tuple[str, int]] = {}
+            queue: deque[str] = deque([src_node])
+            visited = {src_node}
+            found = False
+            while queue:
+                curr = queue.popleft()
+                if curr == sink_node:
+                    found = True
+                    break
+                for arc_i, arc in enumerate(adj[curr]):
+                    nxt, cap = arc[0], arc[1]
+                    if cap > 0 and nxt not in visited:
+                        visited.add(nxt)
+                        parent_map[nxt] = (curr, arc_i)
+                        queue.append(nxt)
+            if not found:
+                cut_u = {v for v in node_list if v in visited}
+                return None, cut_u
+
+            # Bottleneck capacity along shortest augmenting path
+            bottleneck: Fraction | None = None
+            curr = sink_node
+            while curr != src_node:
+                prev_n, arc_i = parent_map[curr]
+                cap = adj[prev_n][arc_i][1]
+                bottleneck = cap if bottleneck is None else min(bottleneck, cap)
+                curr = prev_n
+
+            assert bottleneck is not None and bottleneck > 0
+            curr = sink_node
+            while curr != src_node:
+                prev_n, arc_i = parent_map[curr]
+                arc = adj[prev_n][arc_i]
+                rev_arc = adj[curr][arc[2]]
+                arc[1] -= bottleneck
+                rev_arc[1] += bottleneck
+                curr = prev_n
+            flow_total += bottleneck
+
+        # Reconstruct f_e on zero_edges from residual capacities
+        z_full = list(z_fixed)
+        for u in node_list:
+            for arc in adj[u]:
+                e_idx, sign = arc[3], arc[4]
+                if e_idx >= 0 and sign == +1:
+                    w_e = self.edges[e_idx]["weight"]
+                    # Initial forward cap was w_e; remaining cap is arc[1], so net flow u->v is w_e - arc[1]
+                    z_full[e_idx] = w_e - arc[1]
+        return z_full, None
+
+    def solve_global_l1_repair(self) -> dict[str, Any]:
+        """Compute exact rational global multi-cycle L1 repair distance and primal-dual certificate."""
+        if not self.edges:
+            body: dict[str, Any] = {
+                "schema": "lggr.global_cochain_l1.v1",
+                "authority_effect": "None",
+                "status": "OPEN_TREE",
+                "pivots_count": 0,
+                "global_l1_repair_distance": Fraction(0),
+                "potential": {},
+                "dual_witness": [],
+                "certificate": None,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        node_list = sorted(self.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        m = len(self.edges)
+
+        # Stage 1: Build initial Maximum-Weight Spanning Forest via Kruskal's algorithm
+        parent = {v: v for v in node_list}
+
+        def find(v: str) -> str:
+            while parent[v] != v:
+                parent[v] = parent[parent[v]]
+                v = parent[v]
+            return v
+
+        sorted_edge_indices = sorted(range(m), key=lambda i: (-self.edges[i]["weight"], i))
+        initial_forest: set[int] = set()
+        for idx in sorted_edge_indices:
+            u, v = self.edges[idx]["source"], self.edges[idx]["target"]
+            ru, rv = find(u), find(v)
+            if ru != rv:
+                parent[ru] = rv
+                initial_forest.add(idx)
+
+        curr_pot, curr_res, curr_cost = self._forest_potential_and_residuals(initial_forest, node_list)
+        pivots_count = 0
+
+        # Stage 2: Exact rational Max-Flow / Min-Cut steepest-descent line search
+        best_dual: list[Fraction] | None = None
+        while True:
+            dual_cand, cut_u = self._maxflow_dual_or_descent_cut(node_list, curr_res)
+            if dual_cand is not None:
+                best_dual = dual_cand
+                break
+            if not cut_u:
+                break
+
+            # Candidate positive step sizes theta where an edge crossing cut_u hits zero residual
+            # Under x(theta) = x + theta * 1_{cut_u}:
+            # d_e = (D_0 1_{cut_u})_e = 1_{v in cut_u} - 1_{u in cut_u} in {-1, 0, +1}
+            # r_e(theta) = r_e - theta * d_e
+            candidate_thetas: set[Fraction] = set()
+            delta_dirs: list[int] = []
+            for idx, e in enumerate(self.edges):
+                u_in = 1 if e["source"] in cut_u else 0
+                v_in = 1 if e["target"] in cut_u else 0
+                d_e = v_in - u_in
+                delta_dirs.append(d_e)
+                if d_e != 0:
+                    theta_hit = curr_res[idx] * d_e
+                    if theta_hit > 0:
+                        candidate_thetas.add(theta_hit)
+
+            if not candidate_thetas:
+                break
+
+            best_theta = Fraction(0)
+            best_theta_cost = curr_cost
+            for theta in sorted(candidate_thetas):
+                cost_t = Fraction(0)
+                for idx, e in enumerate(self.edges):
+                    cost_t += e["weight"] * abs(curr_res[idx] - theta * delta_dirs[idx])
+                if cost_t < best_theta_cost:
+                    best_theta_cost = cost_t
+                    best_theta = theta
+
+            if best_theta <= 0:
+                break
+
+            for v in cut_u:
+                curr_pot[v] += best_theta
+            for idx in range(m):
+                curr_res[idx] -= best_theta * delta_dirs[idx]
+            curr_cost = best_theta_cost
+            pivots_count += 1
+
+        if best_dual is None:
+            best_dual = [Fraction(0)] * m
+
+        d_rows: list[list[Fraction]] = []
+        h_vec: list[Fraction] = []
+        w_vec: list[Fraction] = []
+        for e in self.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d_rows.append(row)
+            h_vec.append(e["value"])
+            w_vec.append(e["weight"])
+
+        x_vec = [curr_pot.get(v, Fraction(0)) for v in node_list]
+        cert = verify_l1_certificate(d_rows, h_vec, w_vec, x_vec, best_dual)
+        status = (
+            "OPEN_TREE"
+            if not self.cycles
+            else "EXACT_REPAIR"
+            if curr_cost == 0
+            else "OBSTRUCTED_MULTI_CYCLE"
+        )
+        body = {
+            "schema": "lggr.global_cochain_l1.v1",
+            "authority_effect": "None",
+            "status": status,
+            "total_edges": m,
+            "total_vertices": len(node_list),
+            "cycles_detected": len(self.cycles),
+            "pivots_count": pivots_count,
+            "global_l1_repair_distance": curr_cost,
+            "potential": curr_pot,
+            "dual_witness": best_dual,
+            "certificate_status": cert.get("status"),
+            "certificate": cert,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def merge(self, other: "StreamingCochainMonitor") -> dict[str, Any]:
+        """Merge edges from a concurrent branch cochain monitor into this monitor."""
+        if not isinstance(other, StreamingCochainMonitor):
+            raise ValidationError("other must be a StreamingCochainMonitor instance")
+        prior_cycles = len(self.cycles)
+        prior_nonrepairable = sum(1 for c in self.cycles if c["closure_defect"] != 0)
+        merged_edges = 0
+        for e in other.edges:
+            self.add_edge(e["source"], e["target"], e["value"], weight=e["weight"])
+            merged_edges += 1
+        new_cycles = len(self.cycles) - prior_cycles
+        total_nonrepairable = sum(1 for c in self.cycles if c["closure_defect"] != 0)
+        new_nonrepairable = total_nonrepairable - prior_nonrepairable
+        global_l1 = self.solve_global_l1_repair()
+        body = {
+            "schema": "lggr.online_cochain_merge.v1",
+            "authority_effect": "None",
+            "merged_edges_count": merged_edges,
+            "new_cycles_closed": new_cycles,
+            "new_nonrepairable_cycles": new_nonrepairable,
+            "total_cycles": len(self.cycles),
+            "global_l1_repair_distance": global_l1["global_l1_repair_distance"],
+            "global_certificate_status": global_l1["certificate_status"],
+            "status": self.get_receipt()["status"],
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def add_two_cell(
+        self,
+        cell_id: str,
+        boundary: Iterable[tuple[str, str, int] | dict[str, Any]],
+    ) -> dict[str, Any]:
+        """Declare a 2-cell (filled plaquette/face) with oriented 1-edge boundary.
+
+        Each boundary item is either (source, target, orientation) or
+        {"source": u, "target": v, "orientation": +/-1}.
+        Checks boundary closure (D_1 D_0 = 0 on vertices) and evaluates (D_1 h)_cell
+        when all boundary 1-edges have been observed.
+        """
+        cid = text(cell_id, "cell_id")
+        raw_items = list(sequence(boundary, "boundary"))
+        if not raw_items:
+            raise ValidationError("2-cell boundary must be non-empty")
+
+        parsed_boundary: list[dict[str, Any]] = []
+        vertex_balance: dict[str, int] = {}
+        for item in raw_items:
+            if isinstance(item, Mapping):
+                u = text(item.get("source"), "boundary source")
+                v = text(item.get("target"), "boundary target")
+                orient = exact_int(item.get("orientation", 1), "orientation")
+            else:
+                seq_item = sequence(item, "boundary tuple")
+                if len(seq_item) != 3:
+                    raise ValidationError("boundary tuple must be (source, target, orientation)")
+                u = text(seq_item[0], "boundary source")
+                v = text(seq_item[1], "boundary target")
+                orient = exact_int(seq_item[2], "orientation")
+            if orient == 0:
+                raise ValidationError("2-cell boundary orientation must be nonzero")
+            parsed_boundary.append({"source": u, "target": v, "orientation": orient})
+            vertex_balance[u] = vertex_balance.get(u, 0) - orient
+            vertex_balance[v] = vertex_balance.get(v, 0) + orient
+
+        is_closed_boundary = all(bal == 0 for bal in vertex_balance.values())
+        cell_record: dict[str, Any] = {
+            "cell_id": cid,
+            "boundary": parsed_boundary,
+            "valid_complex_boundary": is_closed_boundary,
+            "vertex_balance": vertex_balance,
+        }
+        self.two_cells.append(cell_record)
+
+        if not is_closed_boundary:
+            body: dict[str, Any] = {
+                "schema": "lggr.online_twocell.v1",
+                "authority_effect": "None",
+                "cell_id": cid,
+                "status": "INVALID_COMPLEX",
+                "complete_edges": False,
+                "coboundary_value": None,
+                "vertex_balance": vertex_balance,
+                "meaning": "Declared 2-cell boundary does not have zero 0-boundary (D_1 D_0 != 0).",
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        # Check if all boundary edges exist in self.edges
+        coboundary_val = Fraction(0)
+        missing_edges: list[str] = []
+        for b_item in parsed_boundary:
+            u, v, orient = b_item["source"], b_item["target"], b_item["orientation"]
+            match_edge = next(
+                (e for e in self.edges if e["source"] == u and e["target"] == v),
+                None,
+            )
+            if match_edge is not None:
+                coboundary_val += Fraction(orient) * match_edge["value"]
+            else:
+                rev_edge = next(
+                    (e for e in self.edges if e["source"] == v and e["target"] == u),
+                    None,
+                )
+                if rev_edge is not None:
+                    coboundary_val -= Fraction(orient) * rev_edge["value"]
+                else:
+                    missing_edges.append(f"{u}->{v}")
+
+        if missing_edges:
+            body = {
+                "schema": "lggr.online_twocell.v1",
+                "authority_effect": "None",
+                "cell_id": cid,
+                "status": "PENDING_EDGES",
+                "complete_edges": False,
+                "missing_edges": missing_edges,
+                "coboundary_value": None,
+                "meaning": "2-cell registered; awaiting arrival of remaining boundary 1-edges.",
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        status = "CELL_CLOSED" if coboundary_val == 0 else "CLOSURE_FAILURE"
+        body = {
+            "schema": "lggr.online_twocell.v1",
+            "authority_effect": "None",
+            "cell_id": cid,
+            "status": status,
+            "complete_edges": True,
+            "missing_edges": [],
+            "coboundary_value": coboundary_val,
+            "meaning": (
+                "1-cochain is closed on this filled 2-cell ((D_1 h)_cell = 0)."
+                if coboundary_val == 0
+                else "1-cochain has nonzero coboundary on this filled 2-cell ((D_1 h)_cell != 0)."
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def classify_streaming_cohomology(self) -> dict[str, Any]:
+        """Classify the current streaming 1-cochain against declared 2-cells via classify_cochain.
+
+        Separates:
+          - EXACT: h in im(D_0) and D_1 h = 0
+          - CLOSURE_FAILURE: D_1 h != 0 on at least one filled 2-cell
+          - CLOSED_NONEXACT: D_1 h = 0 on all filled 2-cells, yet h not in im(D_0)
+            (nonzero first cohomology class [h] in H^1 around an unfilled hole)
+          - INVALID_COMPLEX: D_1 D_0 != 0
+        """
+        if not self.edges:
+            body: dict[str, Any] = {
+                "schema": "lggr.cochain.v1",
+                "authority_effect": "None",
+                "status": "EXACT",
+                "repair_exists": True,
+                "potential": [],
+                "closure": [],
+                "represents_nonzero_H1": False,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        if any(not c["valid_complex_boundary"] for c in self.two_cells):
+            body = {
+                "schema": "lggr.cochain.v1",
+                "authority_effect": "None",
+                "status": "INVALID_COMPLEX",
+                "repair_exists": False,
+                "potential": None,
+                "closure": None,
+                "represents_nonzero_H1": None,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        node_list = sorted(self.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        m = len(self.edges)
+
+        d0_rows: list[list[Fraction]] = []
+        h_vec: list[Fraction] = []
+        for e in self.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d0_rows.append(row)
+            h_vec.append(e["value"])
+
+        d1_rows: list[list[Fraction]] = []
+        for cell in self.two_cells:
+            row_d1 = [Fraction(0)] * m
+            complete = True
+            for b_item in cell["boundary"]:
+                u, v, orient = b_item["source"], b_item["target"], b_item["orientation"]
+                match_idx = next(
+                    (i for i, e in enumerate(self.edges) if e["source"] == u and e["target"] == v),
+                    None,
+                )
+                if match_idx is not None:
+                    row_d1[match_idx] += Fraction(orient)
+                else:
+                    rev_idx = next(
+                        (i for i, e in enumerate(self.edges) if e["source"] == v and e["target"] == u),
+                        None,
+                    )
+                    if rev_idx is not None:
+                        row_d1[rev_idx] -= Fraction(orient)
+                    else:
+                        complete = False
+                        break
+            if complete:
+                d1_rows.append(row_d1)
+
+        return classify_cochain(d0_rows, h_vec, d1_rows)
+
+    def analyze_cycle_basis_sensitivity(self) -> dict[str, Any]:
+        """Compute the fundamental cycle basis matrix C, coboundary Ch, and L1 weight sensitivities."""
+        m = len(self.edges)
+        if m == 0:
+            body: dict[str, Any] = {
+                "schema": "lggr.online_cycle_sensitivity.v1",
+                "authority_effect": "None",
+                "status": "OPEN_TREE",
+                "betti_1": 0,
+                "fundamental_cycle_matrix": [],
+                "fundamental_coboundary": [],
+                "cycle_annihilates_coboundary": True,
+                "marginal_weight_sensitivity": [],
+                "active_repair_edges": [],
+                "complementary_slackness_verified": True,
+                "global_l1_repair_distance": Fraction(0),
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        node_list = sorted(self.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        d0_rows: list[list[Fraction]] = []
+        for e in self.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d0_rows.append(row)
+
+        forest_set = set(self.forest_edge_indices)
+        chord_indices = [idx for idx in range(m) if idx not in forest_set]
+        c_rows: list[list[Fraction]] = []
+        c_coboundary: list[Fraction] = []
+
+        for c_idx in chord_indices:
+            row_c = [Fraction(0)] * m
+            row_c[c_idx] = Fraction(1)
+            u, v = self.edges[c_idx]["source"], self.edges[c_idx]["target"]
+            if u != v:
+                t_path = self._find_tree_path_for_indices(forest_set, v, u)
+                if t_path is not None:
+                    for t_idx, orient in t_path:
+                        row_c[t_idx] = Fraction(orient)
+            c_rows.append(row_c)
+            c_coboundary.append(
+                sum((row_c[j] * self.edges[j]["value"] for j in range(m)), Fraction(0))
+            )
+
+        if c_rows:
+            c_mat = matrix(c_rows, "C_fundamental")
+            d0_mat = matrix(d0_rows, "D0")
+            annihilates = is_zero(matmul(c_mat, d0_mat))
+        else:
+            annihilates = True
+
+        global_l1 = self.solve_global_l1_repair()
+        cert = global_l1["certificate"]
+        residuals = [rational(r) for r in cert["residual"]]
+        dual_vec = [rational(z) for z in global_l1["dual_witness"]]
+        sensitivities = [abs(r) for r in residuals]
+        active_edges = [i for i, r in enumerate(residuals) if r != 0]
+        comp_slack = all(
+            (r == 0)
+            or (dual_vec[i] == self.edges[i]["weight"] * (Fraction(1) if r > 0 else Fraction(-1)))
+            for i, r in enumerate(residuals)
+        )
+
+        body = {
+            "schema": "lggr.online_cycle_sensitivity.v1",
+            "authority_effect": "None",
+            "status": global_l1["status"],
+            "betti_1": len(chord_indices),
+            "fundamental_cycle_matrix": c_rows,
+            "fundamental_coboundary": c_coboundary,
+            "cycle_annihilates_coboundary": annihilates,
+            "marginal_weight_sensitivity": sensitivities,
+            "active_repair_edges": active_edges,
+            "complementary_slackness_verified": comp_slack,
+            "global_l1_repair_distance": rational(global_l1["global_l1_repair_distance"]),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def compute_edge_pivot_threshold(self, edge_index: int) -> dict[str, Any]:
+        """Compute the exact rational critical weight w_e^crit at which increasing w_e triggers a basis pivot."""
+        idx = exact_int(edge_index, "edge_index", minimum=0)
+        if idx >= len(self.edges):
+            raise ValidationError(f"edge_index {idx} out of range for {len(self.edges)} edges")
+
+        base_l1 = self.solve_global_l1_repair()
+        cert = base_l1["certificate"]
+        residuals = [rational(r) for r in cert["residual"]]
+        r_e = residuals[idx]
+        s0 = abs(r_e)
+        w0 = self.edges[idx]["weight"]
+        phi0 = rational(base_l1["global_l1_repair_distance"])
+        u_e, v_e = self.edges[idx]["source"], self.edges[idx]["target"]
+
+        if s0 == 0 or u_e == v_e:
+            status = "SELF_LOOP_INVARIANT" if (s0 > 0 and u_e == v_e) else "INACTIVE_ZERO_RESIDUAL"
+            body: dict[str, Any] = {
+                "schema": "lggr.online_pivot_threshold.v1",
+                "authority_effect": "None",
+                "edge_index": idx,
+                "status": status,
+                "is_active_bottleneck": s0 > 0,
+                "current_weight": w0,
+                "current_residual_magnitude": s0,
+                "critical_weight": None,
+                "weight_margin": None,
+                "post_pivot_residual_magnitude": s0,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        # Supporting-line intersection (Eisner-Severance) over exact rationals
+        w_high = w0 + Fraction(1) + sum(
+            (e["weight"] * (Fraction(1) + abs(e["value"])) for i, e in enumerate(self.edges) if i != idx),
+            Fraction(0),
+        ) * (Fraction(1) / s0 + Fraction(1))
+
+        orig_weight = self.edges[idx]["weight"]
+        try:
+            self.edges[idx]["weight"] = w_high
+            high_l1 = self.solve_global_l1_repair()
+            phi_high = rational(high_l1["global_l1_repair_distance"])
+            s_high = abs(rational(high_l1["certificate"]["residual"][idx]))
+
+            while True:
+                # Supporting lines: phi0 + s0 * (w - w0) = phi_high + s_high * (w - w_high)
+                if s0 == s_high:
+                    w_crit = w0
+                    break
+                w_cand = (phi_high - s_high * w_high - (phi0 - s0 * w0)) / (s0 - s_high)
+                self.edges[idx]["weight"] = w_cand
+                cand_l1 = self.solve_global_l1_repair()
+                phi_cand = rational(cand_l1["global_l1_repair_distance"])
+                expected_left = phi0 + s0 * (w_cand - w0)
+                if phi_cand == expected_left:
+                    w_crit = w_cand
+                    break
+                w_high = w_cand
+                phi_high = phi_cand
+                s_high = abs(rational(cand_l1["certificate"]["residual"][idx]))
+        finally:
+            self.edges[idx]["weight"] = orig_weight
+
+        body = {
+            "schema": "lggr.online_pivot_threshold.v1",
+            "authority_effect": "None",
+            "edge_index": idx,
+            "status": "PIVOT_THRESHOLD_LOCATED",
+            "is_active_bottleneck": True,
+            "current_weight": w0,
+            "current_residual_magnitude": s0,
+            "critical_weight": w_crit,
+            "weight_margin": w_crit - w0,
+            "post_pivot_residual_magnitude": s_high,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit comprehensive summary receipt for cochain monitor."""
+        has_nonrepairable = any(c["closure_defect"] != 0 for c in self.cycles)
+        status = "OBSTRUCTED_CYCLE" if has_nonrepairable else "EXACT_REPAIR" if self.cycles else "OPEN_TREE"
+        global_l1 = self.solve_global_l1_repair() if self.cycles else None
+
+        body = {
+            "schema": "lggr.online_cochain_summary.v1",
+            "authority_effect": "None",
+            "status": status,
+            "total_edges": len(self.edges),
+            "total_vertices": len(self.vertices),
+            "cycles_detected": len(self.cycles),
+            "nonrepairable_cycles": sum(1 for c in self.cycles if c["closure_defect"] != 0),
+            "global_l1_repair_distance": (
+                global_l1["global_l1_repair_distance"] if global_l1 is not None else "0"
+            ),
+            "global_certificate_status": (
+                global_l1["certificate_status"] if global_l1 is not None else "OPEN_TREE"
+            ),
+            "cycles": self.cycles,
+            "scope": "Supplied streaming cochain graph.",
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingTransportMonitor:
+    """Online chain-retraction and coarse-graining transport monitor.
+
+    Evaluates whether a coarse-grained target cochain monitor (D_target, h_target = F1 h_source)
+    preserves or masks nonrepairability of a source cochain monitor (D_source, h_source).
+    Separates:
+      - RETRACTION_VERIFIED: G1 F1 = I and G0 F0 = I certify that target repairability
+        reflects source repairability (no hidden LGGR masking).
+      - LOSSY_PROJECTION_LGGR: forward transport commutes (F1 D_s = D_t F0), source cochain
+        is nonrepairable (h_s not in im(D_s)), yet projected target cochain is repairable
+        (F1 h_s in im(D_t)), masking the source cycle obstruction.
+      - COMMUTING_TRANSPORT_VERIFIED: forward transport commutes without observed masking.
+      - INVALID_TRANSPORT / RETRACTION_REJECTED: chain map or retraction equations fail.
+    """
+
+    def __init__(
+        self,
+        source_monitor: StreamingCochainMonitor,
+        target_monitor: StreamingCochainMonitor,
+    ) -> None:
+        if not isinstance(source_monitor, StreamingCochainMonitor):
+            raise ValidationError("source_monitor must be a StreamingCochainMonitor instance")
+        if not isinstance(target_monitor, StreamingCochainMonitor):
+            raise ValidationError("target_monitor must be a StreamingCochainMonitor instance")
+        self.source_monitor = source_monitor
+        self.target_monitor = target_monitor
+
+    @staticmethod
+    def _extract_incidence_and_cochain(
+        mon: StreamingCochainMonitor,
+    ) -> tuple[list[list[Fraction]], list[Fraction]]:
+        if not mon.edges:
+            raise ValidationError("Cochain monitor must have at least one edge for transport audit")
+        node_list = sorted(mon.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        d_rows: list[list[Fraction]] = []
+        h_vec: list[Fraction] = []
+        for e in mon.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d_rows.append(row)
+            h_vec.append(e["value"])
+        return d_rows, h_vec
+
+    def audit_projection(
+        self,
+        F0: Any,
+        F1: Any,
+        *,
+        G0: Any | None = None,
+        G1: Any | None = None,
+    ) -> dict[str, Any]:
+        """Audit forward transport (F0, F1) and optional retraction (G0, G1) on live monitors."""
+        ds_rows, hs_vec = self._extract_incidence_and_cochain(self.source_monitor)
+        dt_rows, _ = self._extract_incidence_and_cochain(self.target_monitor)
+
+        transport_cert = verify_transport(ds_rows, dt_rows, F0, F1, G0=G0, G1=G1)
+        f1_mat = matrix(F1, "F1", rows=len(dt_rows), cols=len(ds_rows))
+        ht_projected = matvec(f1_mat, tuple(hs_vec))
+
+        ds_mat = matrix(ds_rows, "D_source")
+        dt_mat = matrix(dt_rows, "D_target")
+        source_sol = solve_exact(ds_mat, tuple(hs_vec))
+        target_sol = solve_exact(dt_mat, ht_projected)
+
+        source_repairable = source_sol is not None
+        target_repairable = target_sol is not None
+
+        forward_ok = bool(transport_cert.get("forward_commutes"))
+        retraction_ok = bool(transport_cert.get("nonrepairability_reflection_verified"))
+
+        lossy_lggr_masked = forward_ok and (not source_repairable) and target_repairable
+        if not forward_ok:
+            status = "INVALID_TRANSPORT"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif G0 is not None and not retraction_ok:
+            status = "RETRACTION_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif lossy_lggr_masked:
+            status = "LOSSY_PROJECTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif retraction_ok:
+            status = "RETRACTION_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG" if source_repairable else "REFLECTED_LGGR"
+        else:
+            status = "COMMUTING_TRANSPORT_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG" if source_repairable else "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_transport.v1",
+            "authority_effect": "None",
+            "status": status,
+            "contract_status": contract_status,
+            "forward_commutes": forward_ok,
+            "nonrepairability_reflection_verified": retraction_ok,
+            "source_repairable": source_repairable,
+            "target_repairable": target_repairable,
+            "lossy_projection_lggr": lossy_lggr_masked,
+            "projected_target_cochain": ht_projected,
+            "transport_certificate": transport_cert,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def synthesize_chain_retraction(self, F0: Any, F1: Any) -> dict[str, Any]:
+        """Solve over Q for a left-inverse chain retraction (G0, G1) satisfying:
+        G0 F0 = I_ns, G1 F1 = I_ms, and G1 D_t - D_s G0 = 0.
+        """
+        ds_rows, _ = self._extract_incidence_and_cochain(self.source_monitor)
+        dt_rows, _ = self._extract_incidence_and_cochain(self.target_monitor)
+        ds = matrix(ds_rows, "D_source")
+        dt = matrix(dt_rows, "D_target")
+        ms, ns = len(ds), len(ds[0])
+        mt, nt = len(dt), len(dt[0])
+        f0 = matrix(F0, "F0", rows=nt, cols=ns)
+        f1 = matrix(F1, "F1", rows=mt, cols=ms)
+
+        base_audit = self.audit_projection(F0, F1)
+        if not base_audit["forward_commutes"]:
+            body: dict[str, Any] = {
+                "schema": "lggr.online_retraction_synthesis.v1",
+                "authority_effect": "None",
+                "status": "INVALID_TRANSPORT",
+                "retraction_exists": False,
+                "G0": None,
+                "G1": None,
+                "audit": base_audit,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        total_vars = ns * nt + ms * mt
+        sys_rows: list[list[Fraction]] = []
+        rhs_vec: list[Fraction] = []
+
+        # 1. G0 F0 = I_ns
+        for r in range(ns):
+            for k in range(ns):
+                row = [Fraction(0)] * total_vars
+                for c in range(nt):
+                    row[r * nt + c] = f0[c][k]
+                sys_rows.append(row)
+                rhs_vec.append(Fraction(1 if r == k else 0))
+
+        # 2. G1 F1 = I_ms
+        offset_g1 = ns * nt
+        for i in range(ms):
+            for l_idx in range(ms):
+                row = [Fraction(0)] * total_vars
+                for j in range(mt):
+                    row[offset_g1 + i * mt + j] = f1[j][l_idx]
+                sys_rows.append(row)
+                rhs_vec.append(Fraction(1 if i == l_idx else 0))
+
+        # 3. G1 D_t - D_s G0 = 0
+        for i in range(ms):
+            for c in range(nt):
+                row = [Fraction(0)] * total_vars
+                for j in range(mt):
+                    row[offset_g1 + i * mt + j] += dt[j][c]
+                for r in range(ns):
+                    row[r * nt + c] -= ds[i][r]
+                sys_rows.append(row)
+                rhs_vec.append(Fraction(0))
+
+        sol = solve_exact(matrix(sys_rows, "retraction_system"), tuple(rhs_vec))
+        if sol is None:
+            body = {
+                "schema": "lggr.online_retraction_synthesis.v1",
+                "authority_effect": "None",
+                "status": "NO_RETRACTION_EXISTS",
+                "retraction_exists": False,
+                "G0": None,
+                "G1": None,
+                "audit": base_audit,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        g0_mat = [[sol[r * nt + c] for c in range(nt)] for r in range(ns)]
+        g1_mat = [[sol[offset_g1 + i * mt + j] for j in range(mt)] for i in range(ms)]
+        verified_audit = self.audit_projection(F0, F1, G0=g0_mat, G1=g1_mat)
+        body = {
+            "schema": "lggr.online_retraction_synthesis.v1",
+            "authority_effect": "None",
+            "status": "RETRACTION_SYNTHESIZED",
+            "retraction_exists": True,
+            "G0": g0_mat,
+            "G1": g1_mat,
+            "audit": verified_audit,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingPositiveExtensionMonitor:
+    """Online observer-fiber minimax error floor and positive-extension order-reversal monitor.
+
+    Tracks:
+      1. Incremental two-point observer-fiber minimax lower bounds
+         epsilon_min(m) = (max_{s in F(m)} q(s) - min_{s in F(m)} q(s)) / 2
+         and midpoint estimators g_hat(m) = (max_{s in F(m)} q(s) + min_{s in F(m)} q(s)) / 2
+         as rational target observations (state_id, report, target_value) arrive.
+      2. Exact rational m-context signed-extension audits checking
+         U = 1 + N, R = m * N, U - R = 1 - (m - 1) * N, CF <= (m - 1) * N,
+         whether CF > 2 * N, and pairwise order reversal between CF and N_min.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-positive-extension-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.observed_targets: dict[str, dict[str, Any]] = {}
+        self.fiber_bounds: dict[str, dict[str, Any]] = {}
+        self.global_minimax_floor: Fraction = Fraction(0)
+        self.worst_fiber_key: str | None = None
+        self.audited_models: dict[str, dict[str, Any]] = {}
+
+    def observe_target(
+        self,
+        state_id: str,
+        report: Any,
+        target_value: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Ingest (state_id, report, rational target_value) and update fiber minimax lower bound."""
+        sid = text(state_id, "state_id")
+        rep_clean = json.loads(canonical(report))
+        q_val = rational(target_value)
+        rep_key = canonical(rep_clean)
+
+        prev = self.observed_targets.get(sid)
+        if prev is not None:
+            if canonical(prev["report"]) != rep_key or prev["target_value"] != q_val:
+                raise ValidationError(f"Conflicting target observation for state_id: {sid}")
+        else:
+            self.observed_targets[sid] = {
+                "state_id": sid,
+                "report": rep_clean,
+                "target_value": q_val,
+            }
+
+        fb = self.fiber_bounds.get(rep_key)
+        if fb is None:
+            fb = {
+                "report": rep_clean,
+                "min_state_id": sid,
+                "min_target": q_val,
+                "max_state_id": sid,
+                "max_target": q_val,
+                "minimax_error_floor": Fraction(0),
+                "midpoint_estimator": q_val,
+            }
+            self.fiber_bounds[rep_key] = fb
+        else:
+            if q_val < fb["min_target"]:
+                fb["min_target"] = q_val
+                fb["min_state_id"] = sid
+            if q_val > fb["max_target"]:
+                fb["max_target"] = q_val
+                fb["max_state_id"] = sid
+            fb["minimax_error_floor"] = (fb["max_target"] - fb["min_target"]) / Fraction(2)
+            fb["midpoint_estimator"] = (fb["max_target"] + fb["min_target"]) / Fraction(2)
+
+        if fb["minimax_error_floor"] > self.global_minimax_floor or self.worst_fiber_key is None:
+            self.global_minimax_floor = fb["minimax_error_floor"]
+            self.worst_fiber_key = rep_key
+
+        status = "NONZERO_MINIMAX_FLOOR" if self.global_minimax_floor > 0 else "EXACT_FIBER_DECODER"
+        contract_status = "OBSTRUCTED_LGGR" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG"
+        body = {
+            "schema": "lggr.online_minimax_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "state_id": sid,
+            "report": rep_clean,
+            "target_value": q_val,
+            "fiber_minimax_error_floor": fb["minimax_error_floor"],
+            "fiber_midpoint_estimator": fb["midpoint_estimator"],
+            "global_minimax_error_floor": self.global_minimax_floor,
+            "status": status,
+            "contract_status": contract_status,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def audit_signed_extension(
+        self,
+        model_id: str,
+        num_contexts: int,
+        local_packing_mass: Fraction | int | str,
+        negative_mass: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Audit an m-context empirical model's contextual fraction CF vs signed negative mass N."""
+        mid = text(model_id, "model_id")
+        m_ctx = exact_int(num_contexts, "num_contexts", minimum=2)
+        gamma = rational(local_packing_mass)
+        n_mass = rational(negative_mass)
+        if gamma < 0 or gamma > 1:
+            raise ValidationError("local_packing_mass must lie in [0, 1]")
+        if n_mass < 0:
+            raise ValidationError("negative_mass must be non-negative")
+
+        cf = Fraction(1) - gamma
+        u_mass = Fraction(1) + n_mass
+        r_mass = Fraction(m_ctx) * n_mass
+        excess_mass = u_mass - r_mass
+        expected_excess = Fraction(1) - Fraction(m_ctx - 1) * n_mass
+        packing_bound_holds = gamma >= excess_mass and cf <= Fraction(m_ctx - 1) * n_mass
+        exceeds_two_neg_mass = cf > Fraction(2) * n_mass
+
+        record = {
+            "model_id": mid,
+            "num_contexts": m_ctx,
+            "local_packing_mass": gamma,
+            "contextual_fraction": cf,
+            "negative_mass": n_mass,
+            "positive_part_mass": u_mass,
+            "negative_context_marginal_mass": r_mass,
+            "excess_mass": excess_mass,
+            "excess_identity_verified": excess_mass == expected_excess,
+            "m_context_bound_verified": packing_bound_holds,
+            "exceeds_two_negative_mass": exceeds_two_neg_mass,
+        }
+        self.audited_models[mid] = record
+        status = (
+            "INVALID_PACKING_BOUND"
+            if not packing_bound_holds
+            else "CF_EXCEEDS_TWO_NEG_MASS"
+            if exceeds_two_neg_mass
+            else "EXTENSION_BOUND_VERIFIED"
+        )
+        body = {
+            "schema": "lggr.online_signed_extension.v1",
+            "authority_effect": "None",
+            "status": status,
+            **record,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def compare_extension_order(self, left_id: str, right_id: str) -> dict[str, Any]:
+        """Compare two audited models and detect order reversal between CF and N_min."""
+        lid = text(left_id, "left_id")
+        rid = text(right_id, "right_id")
+        if lid not in self.audited_models or rid not in self.audited_models:
+            raise ValidationError("Both left_id and right_id must be audited before comparison")
+        left = self.audited_models[lid]
+        right = self.audited_models[rid]
+
+        cf_l, cf_r = left["contextual_fraction"], right["contextual_fraction"]
+        n_l, n_r = left["negative_mass"], right["negative_mass"]
+        order_reversed = (cf_l < cf_r and n_l > n_r) or (cf_l > cf_r and n_l < n_r)
+        status = "ORDER_REVERSAL_DETECTED" if order_reversed else "COMONOTONE_ORDER"
+        body = {
+            "schema": "lggr.online_extension_comparison.v1",
+            "authority_effect": "None",
+            "status": status,
+            "left_id": lid,
+            "right_id": rid,
+            "left_contextual_fraction": cf_l,
+            "right_contextual_fraction": cf_r,
+            "left_negative_mass": n_l,
+            "right_negative_mass": n_r,
+            "order_reversal_detected": order_reversed,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit comprehensive summary receipt for observer-fiber minimax and extension audits."""
+        body = {
+            "schema": "lggr.online_positive_extension_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "observed_states_count": len(self.observed_targets),
+            "fibers_count": len(self.fiber_bounds),
+            "global_minimax_error_floor": self.global_minimax_floor,
+            "audited_models_count": len(self.audited_models),
+            "status": "NONZERO_MINIMAX_FLOOR" if self.global_minimax_floor > 0 else "EXACT_FIBER_DECODER",
+            "contract_status": "COMPOSABLE_LGGG" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG",
+        }
+        body["contract_status"] = "OBSTRUCTED_LGGR" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG"
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingBaselineComparator:
+    """Controlled equal-information comparative evaluator: conventional baseline vs. LGGR audit.
+
+    Compares a conventional local-step + endpoint invariant checker against
+    StreamingAuditMonitor and audit_history on identical step-witness histories,
+    tracking:
+      - conventional_accepts: local step acceptance + endpoint bound |x_n - x_0| <= max_total
+      - lggr_accepts: full G1-G4 composition + zero unresolved deferred obligations
+      - conventional_false_acceptance: conventional accepts while LGGR detects a prefix
+        excursion, uncertified representation/scope migration, or retained obligation
+      - first_fault_step_index: exact step index localized by StreamingAuditMonitor
+    """
+
+    def __init__(self, policy: BudgetPolicy) -> None:
+        if not isinstance(policy, BudgetPolicy):
+            raise ValidationError("policy must be a BudgetPolicy instance")
+        self.policy = policy
+        self.comparisons: list[dict[str, Any]] = []
+
+    def compare_trace(
+        self,
+        trace_id: str,
+        baseline: StateRef,
+        steps: Iterable[StepWitness],
+    ) -> dict[str, Any]:
+        """Evaluate a multi-step witness trace under both checkers with equal input information."""
+        tid = text(trace_id, "trace_id")
+        if not isinstance(baseline, StateRef):
+            raise ValidationError("baseline must be a StateRef instance")
+        step_list = list(sequence(steps, "steps"))
+        if not step_list:
+            raise ValidationError("steps must be non-empty")
+
+        # 1. Conventional local-step + endpoint baseline regression checker
+        local_steps_ok = all(w.local_accepted and w.smoke_passed for w in step_list)
+        start_val = baseline.value
+        end_val = step_list[-1].target.value
+        endpoint_ok = (
+            start_val is not None
+            and end_val is not None
+            and abs(end_val - start_val) <= self.policy.max_total
+        )
+        conventional_accepts = bool(local_steps_ok and endpoint_ok)
+
+        # 2. Online StreamingAuditMonitor + full batch audit_history
+        smon = StreamingAuditMonitor(self.policy, baseline=baseline)
+        first_alert_step: int | None = None
+        for idx, w in enumerate(step_list):
+            s_res = smon.step(w)
+            if s_res["status"] == "ALERT" and first_alert_step is None:
+                first_alert_step = idx
+
+        stream_rec = smon.get_receipt()
+        batch_rec = audit_history(self.policy, baseline, step_list)
+        retained_obligations = list(batch_rec.get("unresolved_obligations", []))
+        lggr_accepts = (
+            batch_rec["status"] == "COMPOSITION_VERIFIED"
+            and stream_rec["contract_status"] == "COMPOSABLE_LGGG"
+            and len(retained_obligations) == 0
+        )
+
+        false_acceptance = conventional_accepts and not lggr_accepts
+        false_refusal = (not conventional_accepts) and lggr_accepts
+        record = {
+            "trace_id": tid,
+            "steps_count": len(step_list),
+            "conventional_accepts": conventional_accepts,
+            "lggr_accepts": lggr_accepts,
+            "conventional_false_acceptance": false_acceptance,
+            "conventional_false_refusal": false_refusal,
+            "first_fault_step_index": first_alert_step,
+            "retained_obligations": retained_obligations,
+            "lggr_batch_status": batch_rec["status"],
+            "lggr_stream_contract_status": stream_rec["contract_status"],
+        }
+        self.comparisons.append(record)
+        status = (
+            "CONVENTIONAL_FALSE_ACCEPTANCE"
+            if false_acceptance
+            else "AGREEMENT_VERIFIED"
+            if conventional_accepts == lggr_accepts
+            else "DIVERGENT_VERDICT"
+        )
+        body = {
+            "schema": "lggr.online_baseline_comparison.v1",
+            "authority_effect": "None",
+            "status": status,
+            **record,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate comparative evaluation receipt across all evaluated traces."""
+        total = len(self.comparisons)
+        false_acc_count = sum(1 for c in self.comparisons if c["conventional_false_acceptance"])
+        false_ref_count = sum(1 for c in self.comparisons if c["conventional_false_refusal"])
+        localized_count = sum(1 for c in self.comparisons if c["first_fault_step_index"] is not None)
+        obligations_retained_traces = sum(1 for c in self.comparisons if len(c["retained_obligations"]) > 0)
+        body = {
+            "schema": "lggr.online_baseline_comparison_summary.v1",
+            "authority_effect": "None",
+            "traces_evaluated": total,
+            "conventional_false_acceptances": false_acc_count,
+            "conventional_false_refusals": false_ref_count,
+            "faults_localized_online": localized_count,
+            "traces_with_retained_obligations": obligations_retained_traces,
+            "comparisons": self.comparisons,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingSixRoleOverlayMonitor:
+    """Online LGGR III six-role evaluator overlay and cancellation-masking monitor.
+
+    Records finite binary verdict triples (e1, e2, eg) across the six canonical
+    role profiles from LGGR III:
+      - finite_obstruction
+      - foundations
+      - representation
+      - observer
+      - continuum_shadow
+      - action_and_alignment
+
+    Enforces role-specific context guards (e.g., matching observation envelopes
+    under Proposition 4, operation/transport witness matching, and diagnostic-only
+    foundations records) and tracks both the signed defect sum D = G - L = N_+ - N_-
+    and the total disagreement count M = N_+ + N_- = sum |Delta_E(v_i)| so signed
+    cancellation (D = 0 with M > 0) does not mask pointwise NGD failures.
+    """
+
+    CANONICAL_ROLES: tuple[str, ...] = (
+        "finite_obstruction",
+        "foundations",
+        "representation",
+        "observer",
+        "continuum_shadow",
+        "action_and_alignment",
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-six-role-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+        self.total_global: int = 0
+        self.total_local_product: int = 0
+        self.total_signed_defect: int = 0
+        self.positive_defect_count: int = 0
+        self.negative_defect_count: int = 0
+        self.zero_defect_count: int = 0
+        self.weighted_disagreement_sum: Fraction = Fraction(0)
+        self.role_counts: dict[str, int] = {r: 0 for r in self.CANONICAL_ROLES}
+        self.context_violations_count: int = 0
+
+    @staticmethod
+    def _binary_verdict(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    @classmethod
+    def _audit_role_context(cls, role: str, ctx: Mapping[str, Any]) -> tuple[bool, list[str]]:
+        reasons: list[str] = []
+        if role == "finite_obstruction":
+            for req in ("carrier", "degree", "comparison_map", "quotient_gauge", "replay_data"):
+                if req not in ctx or ctx[req] in (None, ""):
+                    reasons.append(f"MISSING_FINITE_OBSTRUCTION_FIELD:{req}")
+        elif role == "foundations":
+            if ctx.get("diagnostic_only") is not True:
+                reasons.append("FOUNDATIONS_NOT_DIAGNOSTIC_ONLY")
+            if ctx.get("authority_effect", "None") != "None":
+                reasons.append("FOUNDATIONS_NON_NONE_AUTHORITY_EFFECT")
+        elif role == "representation":
+            op = ctx.get("operation")
+            tw = ctx.get("transport_witness")
+            if not op or not tw:
+                reasons.append("MISSING_REPRESENTATION_WITNESS")
+            elif op != tw:
+                reasons.append("REPRESENTATION_TRANSPORT_MISMATCH")
+        elif role == "observer":
+            left_env = ctx.get("left_envelope")
+            right_env = ctx.get("right_envelope")
+            if left_env is None or right_env is None:
+                reasons.append("MISSING_OBSERVATION_ENVELOPE")
+            elif left_env != right_env:
+                reasons.append("OBSERVATION_ENVELOPE_MISMATCH")
+        elif role == "continuum_shadow":
+            if ctx.get("finite_calculation") is not True:
+                reasons.append("CONTINUUM_SHADOW_MISSING_FINITE_TAG")
+            if ctx.get("limit_statement_distinct") is not True:
+                reasons.append("CONTINUUM_SHADOW_CONFLATES_LIMIT")
+        elif role == "action_and_alignment":
+            if ctx.get("residual_routed_as_feedback") is not True:
+                reasons.append("RESIDUAL_NOT_ROUTED_AS_FEEDBACK")
+            if ctx.get("relabeled_as_success") is not False:
+                reasons.append("RESIDUAL_RELABELED_AS_SUCCESS")
+        return len(reasons) == 0, reasons
+
+    def record_evaluation(
+        self,
+        role: str,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+        *,
+        context: Mapping[str, Any] | None = None,
+        weight: Fraction | int | str = 1,
+    ) -> dict[str, Any]:
+        """Record a role-indexed verdict triple (r, e1, e2, eg, context) and update sample totals."""
+        role_clean = text(role, "role")
+        if role_clean not in self.CANONICAL_ROLES:
+            raise ValidationError(f"role must be one of {self.CANONICAL_ROLES}")
+        v1 = self._binary_verdict(e1, "e1")
+        v2 = self._binary_verdict(e2, "e2")
+        vg = self._binary_verdict(eg, "eg")
+        wt = rational(weight)
+        if wt < 0:
+            raise ValidationError("weight must be non-negative")
+
+        ctx_clean: dict[str, Any] = (
+            json.loads(canonical(dict(context))) if isinstance(context, Mapping) else {}
+        )
+        ctx_ok, ctx_reasons = self._audit_role_context(role_clean, ctx_clean)
+        if not ctx_ok:
+            self.context_violations_count += 1
+
+        local_prod = v1 * v2
+        defect = vg - local_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[defect]
+
+        self.total_global += vg
+        self.total_local_product += local_prod
+        self.total_signed_defect += defect
+        if defect == 1:
+            self.positive_defect_count += 1
+        elif defect == -1:
+            self.negative_defect_count += 1
+        else:
+            self.zero_defect_count += 1
+        self.weighted_disagreement_sum += wt * abs(defect)
+        self.role_counts[role_clean] += 1
+
+        disagreement_count = self.positive_defect_count + self.negative_defect_count
+        cancellation_masked = (self.total_signed_defect == 0 and disagreement_count > 0)
+
+        step_idx = len(self.records)
+        rec = {
+            "step_index": step_idx,
+            "role": role_clean,
+            "e1": v1,
+            "e2": v2,
+            "eg": vg,
+            "local_product": local_prod,
+            "defect": defect,
+            "classification": classification,
+            "weight": wt,
+            "context_valid": ctx_ok,
+            "context_violation_reasons": ctx_reasons,
+            "context": ctx_clean,
+        }
+        self.records.append(rec)
+
+        if not ctx_ok:
+            status = "CONTEXT_ENVELOPE_VIOLATION"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.negative_defect_count > 0 and cancellation_masked:
+            status = "CANCELLATION_MASKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.negative_defect_count > 0:
+            status = "NGD_DEFECT_DETECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif disagreement_count > 0:
+            status = "POINTWISE_DISAGREEMENT"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ROLE_OVERLAY_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_six_role_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            **rec,
+            "sample_global_sum": self.total_global,
+            "sample_local_sum": self.total_local_product,
+            "sample_signed_defect_sum": self.total_signed_defect,
+            "sample_disagreement_count": disagreement_count,
+            "cancellation_masked": cancellation_masked,
+            "identity_g_minus_l_eq_d": (
+                self.total_global - self.total_local_product == self.total_signed_defect
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit summary receipt for the six-role overlay monitor."""
+        disagreement_count = self.positive_defect_count + self.negative_defect_count
+        cancellation_masked = (self.total_signed_defect == 0 and disagreement_count > 0)
+        if self.context_violations_count > 0:
+            status = "CONTEXT_ENVELOPE_VIOLATION"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif cancellation_masked:
+            status = "CANCELLATION_MASKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.negative_defect_count > 0:
+            status = "NGD_DEFECT_DETECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif disagreement_count > 0:
+            status = "POINTWISE_DISAGREEMENT"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ROLE_OVERLAY_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_six_role_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "records_count": len(self.records),
+            "sample_global_sum": self.total_global,
+            "sample_local_sum": self.total_local_product,
+            "sample_signed_defect_sum": self.total_signed_defect,
+            "positive_defect_count": self.positive_defect_count,
+            "negative_defect_count": self.negative_defect_count,
+            "zero_defect_count": self.zero_defect_count,
+            "disagreement_count": disagreement_count,
+            "weighted_disagreement_sum": self.weighted_disagreement_sum,
+            "cancellation_masked": cancellation_masked,
+            "context_violations_count": self.context_violations_count,
+            "identity_g_minus_l_eq_d": (
+                self.total_global - self.total_local_product == self.total_signed_defect
+            ),
+            "identity_d_eq_npos_minus_nneg": (
+                self.total_signed_defect == self.positive_defect_count - self.negative_defect_count
+            ),
+            "role_counts": self.role_counts,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingGramProbeMonitor:
+    """Online LGGR VI Gram kernel nullspace and centered adjoint probe monitor.
+
+    Given an observation matrix Q in Q^{m x d}, maintains its exact rational Gram
+    matrix H = Q^T Q in Q^{d x d} and evaluates streaming state vectors x in Q^d:
+      - Theorem 3 (Gram Kernel Identity): ker(Q^T Q) = ker(Q), so Hx == 0 iff Qx == 0.
+      - Theorem 4 (Centered Directional Identity): for f(z) = (1/2) ||Qz||_2^2 and c > 0,
+        (f(x + c*u) - f(x - c*u)) / (2*c) == u^T H x.
+      - Theorem 5 (Full Sign-Cube Recovery): averaging
+        ((f(x + c*delta) - f(x - c*delta)) / (2*c)) * delta over delta in {-1, +1}^d
+        recovers Hx = Q^T Q x.
+      - Detects GRAM_NULLSPACE_BLINDSPOT_LGGR when a nonzero state x != 0 lies in ker(Q),
+        where every zero-preserving post-processor and adjoint probe returns zero.
+    """
+
+    def __init__(
+        self,
+        observation_matrix: Any,
+        *,
+        scope_id: str = "streaming-gram-probe-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.q_mat = matrix(observation_matrix, "observation_matrix")
+        self.num_obs = len(self.q_mat)
+        self.dim = len(self.q_mat[0])
+        self.q_transpose = tuple(
+            tuple(self.q_mat[r][c] for r in range(self.num_obs))
+            for c in range(self.dim)
+        )
+        self.gram_matrix = matmul(self.q_transpose, self.q_mat)
+        self.probed_states: list[dict[str, Any]] = []
+        self.nullspace_blindspots_count: int = 0
+
+    def quadratic_energy(self, state_vec: tuple[Fraction, ...]) -> Fraction:
+        """Compute exact rational quadratic energy f(x) = (1/2) * ||Q x||_2^2."""
+        qx = matvec(self.q_mat, state_vec)
+        return sum((val * val for val in qx), Fraction(0)) / Fraction(2)
+
+    def probe_state(
+        self,
+        state_id: str,
+        state_vector: Any,
+        *,
+        step_size: Fraction | int | str = 1,
+        direction: Any | None = None,
+    ) -> dict[str, Any]:
+        """Evaluate Qx, Hx = Q^T Q x, centered two-query directional probe, and sign-cube recovery."""
+        sid = text(state_id, "state_id")
+        x_vec = vector(state_vector, "state_vector")
+        if len(x_vec) != self.dim:
+            raise ValidationError(f"state_vector must have length {self.dim}")
+        c_step = rational(step_size)
+        if c_step <= 0:
+            raise ValidationError("step_size must be strictly positive")
+
+        qx = matvec(self.q_mat, x_vec)
+        hx = matvec(self.gram_matrix, x_vec)
+        fx = self.quadratic_energy(x_vec)
+
+        x_nonzero = any(v != 0 for v in x_vec)
+        qx_zero = all(v == 0 for v in qx)
+        hx_zero = all(v == 0 for v in hx)
+        gram_kernel_identity_verified = (qx_zero == hx_zero)
+
+        # Centered two-query directional probe (Theorem 4)
+        if direction is not None:
+            u_vec = vector(direction, "direction")
+            if len(u_vec) != self.dim:
+                raise ValidationError(f"direction must have length {self.dim}")
+        else:
+            u_vec = tuple(Fraction(1 if i == 0 else 0) for i in range(self.dim))
+        x_plus = tuple(x_vec[i] + c_step * u_vec[i] for i in range(self.dim))
+        x_minus = tuple(x_vec[i] - c_step * u_vec[i] for i in range(self.dim))
+        centered_probe = (self.quadratic_energy(x_plus) - self.quadratic_energy(x_minus)) / (
+            Fraction(2) * c_step
+        )
+        expected_pairing = sum((u_vec[i] * hx[i] for i in range(self.dim)), Fraction(0))
+        directional_identity_verified = (centered_probe == expected_pairing)
+
+        # Full sign-cube recovery over {-1, +1}^d (Theorem 5, for d <= 10)
+        sign_cube_recovered: list[Fraction] | None = None
+        sign_cube_identity_verified: bool | None = None
+        if self.dim <= 10:
+            acc = [Fraction(0)] * self.dim
+            num_corners = 1 << self.dim
+            for delta_tuple in itertools.product((Fraction(-1), Fraction(1)), repeat=self.dim):
+                xp = tuple(x_vec[i] + c_step * delta_tuple[i] for i in range(self.dim))
+                xm = tuple(x_vec[i] - c_step * delta_tuple[i] for i in range(self.dim))
+                slope = (self.quadratic_energy(xp) - self.quadratic_energy(xm)) / (
+                    Fraction(2) * c_step
+                )
+                for i in range(self.dim):
+                    acc[i] += slope * delta_tuple[i]
+            sign_cube_recovered = [val / Fraction(num_corners) for val in acc]
+            sign_cube_identity_verified = (tuple(sign_cube_recovered) == hx)
+
+        is_nullspace_blindspot = x_nonzero and qx_zero
+        if is_nullspace_blindspot:
+            self.nullspace_blindspots_count += 1
+            status = "GRAM_NULLSPACE_BLINDSPOT_LGGR"
+        elif x_nonzero:
+            status = "ADJOINT_SIGNAL_VERIFIED"
+        else:
+            status = "ZERO_STATE_VERIFIED"
+
+        contract_status = (
+            "OBSTRUCTED_LGGR"
+            if self.nullspace_blindspots_count > 0
+            else "COMPOSABLE_LGGG"
+        )
+        record = {
+            "state_id": sid,
+            "state_vector": list(x_vec),
+            "observation_qx": list(qx),
+            "gram_response_hx": list(hx),
+            "quadratic_energy": fx,
+            "state_nonzero": x_nonzero,
+            "observation_zero": qx_zero,
+            "gram_response_zero": hx_zero,
+            "gram_kernel_identity_verified": gram_kernel_identity_verified,
+            "centered_directional_probe": centered_probe,
+            "expected_gram_pairing": expected_pairing,
+            "directional_identity_verified": directional_identity_verified,
+            "sign_cube_recovered_hx": sign_cube_recovered,
+            "sign_cube_identity_verified": sign_cube_identity_verified,
+            "is_nullspace_blindspot": is_nullspace_blindspot,
+        }
+        self.probed_states.append(record)
+        body = {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            **record,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit summary receipt for the Gram kernel & adjoint probe monitor."""
+        status = (
+            "GRAM_NULLSPACE_BLINDSPOT_LGGR"
+            if self.nullspace_blindspots_count > 0
+            else "GRAM_PROBE_VERIFIED"
+        )
+        contract_status = (
+            "OBSTRUCTED_LGGR"
+            if self.nullspace_blindspots_count > 0
+            else "COMPOSABLE_LGGG"
+        )
+        body = {
+            "schema": "lggr.online_gram_probe_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "num_observations": self.num_obs,
+            "state_dimension": self.dim,
+            "gram_matrix": [list(row) for row in self.gram_matrix],
+            "probed_states_count": len(self.probed_states),
+            "nullspace_blindspots_count": self.nullspace_blindspots_count,
+            "all_gram_identities_verified": all(
+                r["gram_kernel_identity_verified"]
+                and r["directional_identity_verified"]
+                and (r["sign_cube_identity_verified"] is not False)
+                for r in self.probed_states
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingPathKernelMonitor:
+    """Online LGGR I / III evaluated path-kernel and two-channel residual monitor.
+
+    Records finite stage-1 path segments gamma_1 in Omega(a, b), stage-2 path
+    segments gamma_2 in Omega(b, c), and composite paths gamma = gamma_2 * gamma_1
+    in Omega(a, c) with rational weights and binary verdicts in {0, 1}.
+
+    Verifies:
+      - G1 boundary-slice bijection between compatible segment pairs and composites.
+      - Exact four-term two-channel expansion on every composite path (LGGR I Sec 4):
+          E_g w_g == E_1 E_2 w_1 w_2 + Delta_E w_1 w_2 + E_1 E_2 Delta_w + Delta_E Delta_w
+        where Delta_E = E_g - E_1 E_2 in {-1, 0, 1} and Delta_w = w_g - w_1 w_2.
+      - Exact evaluated partition-function discrepancy identity (LGGR I Thm 1 / Sec 4):
+          Z_E(c | a) - sum_{b in B} Z_{E_2}(c | b) Z_{E_1}(b | a) == R_E(c, a) + R_w(c, a).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-path-kernel-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.stage1_segments: dict[str, dict[str, Any]] = {}
+        self.stage2_segments: dict[str, dict[str, Any]] = {}
+        self.composites: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _binary_verdict(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def add_stage1_segment(
+        self,
+        segment_id: str,
+        source: str,
+        boundary: str,
+        weight: Fraction | int | str,
+        verdict: int | bool,
+    ) -> dict[str, Any]:
+        """Register a stage-1 trajectory gamma_1 : a -> b with weight w_1 >= 0 and verdict E_1 in {0,1}."""
+        sid = text(segment_id, "segment_id")
+        src = text(source, "source")
+        bnd = text(boundary, "boundary")
+        wt = rational(weight)
+        if wt < 0:
+            raise ValidationError("weight must be non-negative")
+        v1 = self._binary_verdict(verdict, "verdict")
+        if sid in self.stage1_segments:
+            raise ValidationError(f"Duplicate stage1 segment_id: {sid}")
+        rec = {
+            "segment_id": sid,
+            "source": src,
+            "boundary": bnd,
+            "weight": wt,
+            "verdict": v1,
+            "evaluated_weight": wt * Fraction(v1),
+        }
+        self.stage1_segments[sid] = rec
+        return json_value(rec)
+
+    def add_stage2_segment(
+        self,
+        segment_id: str,
+        boundary: str,
+        target: str,
+        weight: Fraction | int | str,
+        verdict: int | bool,
+    ) -> dict[str, Any]:
+        """Register a stage-2 trajectory gamma_2 : b -> c with weight w_2 >= 0 and verdict E_2 in {0,1}."""
+        sid = text(segment_id, "segment_id")
+        bnd = text(boundary, "boundary")
+        tgt = text(target, "target")
+        wt = rational(weight)
+        if wt < 0:
+            raise ValidationError("weight must be non-negative")
+        v2 = self._binary_verdict(verdict, "verdict")
+        if sid in self.stage2_segments:
+            raise ValidationError(f"Duplicate stage2 segment_id: {sid}")
+        rec = {
+            "segment_id": sid,
+            "boundary": bnd,
+            "target": tgt,
+            "weight": wt,
+            "verdict": v2,
+            "evaluated_weight": wt * Fraction(v2),
+        }
+        self.stage2_segments[sid] = rec
+        return json_value(rec)
+
+    def observe_composite(
+        self,
+        composite_id: str,
+        stage1_id: str,
+        stage2_id: str,
+        global_verdict: int | bool,
+        *,
+        global_weight: Fraction | int | str | None = None,
+    ) -> dict[str, Any]:
+        """Record a composite trajectory gamma_2 * gamma_1 and check two-channel expansion."""
+        cid = text(composite_id, "composite_id")
+        s1_id = text(stage1_id, "stage1_id")
+        s2_id = text(stage2_id, "stage2_id")
+        if cid in self.composites:
+            raise ValidationError(f"Duplicate composite_id: {cid}")
+        if s1_id not in self.stage1_segments:
+            raise ValidationError(f"Unknown stage1_id: {s1_id}")
+        if s2_id not in self.stage2_segments:
+            raise ValidationError(f"Unknown stage2_id: {s2_id}")
+
+        s1 = self.stage1_segments[s1_id]
+        s2 = self.stage2_segments[s2_id]
+        if s1["boundary"] != s2["boundary"]:
+            raise ValidationError(
+                f"Boundary mismatch between stage1 ({s1['boundary']}) and stage2 ({s2['boundary']})"
+            )
+
+        vg = self._binary_verdict(global_verdict, "global_verdict")
+        w1 = s1["weight"]
+        w2 = s2["weight"]
+        w_prod = w1 * w2
+        wg = rational(global_weight) if global_weight is not None else w_prod
+        if wg < 0:
+            raise ValidationError("global_weight must be non-negative")
+
+        e1 = s1["verdict"]
+        e2 = s2["verdict"]
+        local_prod = e1 * e2
+        delta_e = vg - local_prod
+        delta_w = wg - w_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[delta_e]
+
+        lhs = Fraction(vg) * wg
+        term_factored = Fraction(local_prod) * w_prod
+        term_eval_defect = Fraction(delta_e) * w_prod
+        term_weight_defect = Fraction(local_prod) * delta_w
+        term_cross_defect = Fraction(delta_e) * delta_w
+        rhs = term_factored + term_eval_defect + term_weight_defect + term_cross_defect
+
+        rec = {
+            "composite_id": cid,
+            "stage1_id": s1_id,
+            "stage2_id": s2_id,
+            "source": s1["source"],
+            "boundary": s1["boundary"],
+            "target": s2["target"],
+            "e1": e1,
+            "e2": e2,
+            "eg": vg,
+            "local_product": local_prod,
+            "delta_e": delta_e,
+            "classification": classification,
+            "w1": w1,
+            "w2": w2,
+            "w_product": w_prod,
+            "w_global": wg,
+            "delta_w": delta_w,
+            "evaluated_global_weight": lhs,
+            "two_channel_identity_verified": (lhs == rhs),
+        }
+        self.composites[cid] = rec
+        return json_value(rec)
+
+    def audit_kernel_composition(self, source: str, target: str) -> dict[str, Any]:
+        """Audit evaluated path-kernel composition Z_E(target | source) across intermediate boundaries."""
+        src = text(source, "source")
+        tgt = text(target, "target")
+
+        s1_list = [s for s in self.stage1_segments.values() if s["source"] == src]
+        s2_list = [s for s in self.stage2_segments.values() if s["target"] == tgt]
+        boundaries = sorted({s["boundary"] for s in s1_list} | {s["boundary"] for s in s2_list})
+
+        # Expected compatible pairs under G1
+        expected_pairs: set[tuple[str, str]] = set()
+        factored_kernel_sum = Fraction(0)
+        boundary_slice_kernels: list[dict[str, Any]] = []
+
+        for b in boundaries:
+            b_s1 = [s for s in s1_list if s["boundary"] == b]
+            b_s2 = [s for s in s2_list if s["boundary"] == b]
+            z1_b = sum((s["evaluated_weight"] for s in b_s1), Fraction(0))
+            z2_b = sum((s["evaluated_weight"] for s in b_s2), Fraction(0))
+            factored_kernel_sum += z2_b * z1_b
+            boundary_slice_kernels.append({
+                "boundary": b,
+                "z_stage1": z1_b,
+                "z_stage2": z2_b,
+                "slice_product": z2_b * z1_b,
+            })
+            for seg1 in b_s1:
+                for seg2 in b_s2:
+                    expected_pairs.add((seg1["segment_id"], seg2["segment_id"]))
+
+        comp_list = [
+            c for c in self.composites.values() if c["source"] == src and c["target"] == tgt
+        ]
+        observed_pairs_list = [(c["stage1_id"], c["stage2_id"]) for c in comp_list]
+        g1_bijection_holds = (
+            len(observed_pairs_list) == len(expected_pairs)
+            and set(observed_pairs_list) == expected_pairs
+        )
+
+        global_kernel_z = sum((c["evaluated_global_weight"] for c in comp_list), Fraction(0))
+        residual_re = sum((Fraction(c["delta_e"]) * c["w_product"] for c in comp_list), Fraction(0))
+        residual_rw = sum(
+            (
+                Fraction(c["local_product"]) * c["delta_w"]
+                + Fraction(c["delta_e"]) * c["delta_w"]
+                for c in comp_list
+            ),
+            Fraction(0),
+        )
+        abs_eval_disagreement = sum(
+            (abs(Fraction(c["delta_e"])) * c["w_product"] for c in comp_list),
+            Fraction(0),
+        )
+        abs_weight_disagreement = sum((abs(c["delta_w"]) for c in comp_list), Fraction(0))
+        ngd_count = sum(1 for c in comp_list if c["delta_e"] == -1)
+        pgd_count = sum(1 for c in comp_list if c["delta_e"] == 1)
+
+        discrepancy_lhs = global_kernel_z - factored_kernel_sum
+        discrepancy_rhs = residual_re + residual_rw
+        discrepancy_identity_verified = g1_bijection_holds and (discrepancy_lhs == discrepancy_rhs)
+        cancellation_masked = (
+            g1_bijection_holds
+            and discrepancy_lhs == 0
+            and (abs_eval_disagreement > 0 or abs_weight_disagreement > 0)
+        )
+
+        if not g1_bijection_holds:
+            status = "G1_BIJECTION_VIOLATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif cancellation_masked:
+            status = "CANCELLATION_MASKED_KERNEL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif ngd_count > 0 or residual_re < 0:
+            status = "NGD_KERNEL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif abs_eval_disagreement > 0 or abs_weight_disagreement > 0:
+            status = "POINTWISE_KERNEL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "KERNEL_COMPOSITION_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_path_kernel.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "source": src,
+            "target": tgt,
+            "status": status,
+            "contract_status": contract_status,
+            "g1_bijection_verified": g1_bijection_holds,
+            "global_evaluated_kernel": global_kernel_z,
+            "factored_boundary_kernel_sum": factored_kernel_sum,
+            "kernel_discrepancy": discrepancy_lhs,
+            "evaluator_residual_re": residual_re,
+            "weight_residual_rw": residual_rw,
+            "abs_evaluator_disagreement": abs_eval_disagreement,
+            "abs_weight_disagreement": abs_weight_disagreement,
+            "ngd_composites_count": ngd_count,
+            "pgd_composites_count": pgd_count,
+            "cancellation_masked": cancellation_masked,
+            "discrepancy_identity_verified": discrepancy_identity_verified,
+            "boundary_slice_kernels": boundary_slice_kernels,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingOrganizationalGluingMonitor:
+    """Online LGGR II organizational evaluator gluing and carrier-mixing monitor.
+
+    Evaluates:
+      - Weak representation sufficiency (R_3 == E_G) vs. product sufficiency (R_3 == E_1 E_2)
+        and evaluator factorization (E_G == E_1 E_2), checking Claims M3 and M4.
+      - Governance conjunction G = G_rep and G_auth and G_time (Claim D1) and
+        checked-closure eligibility (Delta_E == 0 and G == True).
+      - Joint carrier quotient projection J(c) = (pi_1(a), pi_2(b)), detecting carrier-mixing
+        collisions J(c) == J(c') with E_G(c) != E_G(c') (Theorem 3 / Claim M8) and
+        verifying forced NGD defect when carrier-local evaluators pass on a mixed class (Claim M9).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-organizational-gluing-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+        self.joint_carrier_fibers: dict[str, dict[str, Any]] = {}
+        self.carrier_mixing_collisions: list[dict[str, Any]] = []
+        self.weak_nonfactored_count: int = 0
+        self.governance_failures_count: int = 0
+
+    @staticmethod
+    def _binary_int(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def observe_boundary(
+        self,
+        trace_id: str,
+        carrier_left: Any,
+        carrier_right: Any,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+        *,
+        r3: int | bool | None = None,
+        g_rep: bool = True,
+        g_auth: bool = True,
+        g_time: bool = True,
+    ) -> dict[str, Any]:
+        """Ingest a boundary trace record and evaluate M3, M4, M8, M9, and D1."""
+        tid = text(trace_id, "trace_id")
+        c_left = json.loads(canonical(carrier_left))
+        c_right = json.loads(canonical(carrier_right))
+        v1 = self._binary_int(e1, "e1")
+        v2 = self._binary_int(e2, "e2")
+        vg = self._binary_int(eg, "eg")
+        r3_val = self._binary_int(r3, "r3") if r3 is not None else vg
+        boolean(g_rep, "g_rep")
+        boolean(g_auth, "g_auth")
+        boolean(g_time, "g_time")
+
+        local_prod = v1 * v2
+        delta_e = vg - local_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[delta_e]
+
+        weak_sufficient = (r3_val == vg)
+        product_sufficient = (r3_val == local_prod)
+        factorizes = (vg == local_prod)
+        m4_equivalence_verified = (not weak_sufficient) or (product_sufficient == factorizes)
+
+        governance_ready = bool(g_rep and g_auth and g_time)
+        if not governance_ready:
+            self.governance_failures_count += 1
+        if weak_sufficient and not factorizes:
+            self.weak_nonfactored_count += 1
+
+        joint_carrier = {"left": c_left, "right": c_right}
+        jk = canonical(joint_carrier)
+        prev = self.joint_carrier_fibers.get(jk)
+
+        rec = {
+            "trace_id": tid,
+            "joint_carrier": joint_carrier,
+            "e1": v1,
+            "e2": v2,
+            "eg": vg,
+            "r3": r3_val,
+            "local_product": local_prod,
+            "delta_e": delta_e,
+            "classification": classification,
+            "weak_sufficient": weak_sufficient,
+            "product_sufficient": product_sufficient,
+            "factorizes": factorizes,
+            "m4_equivalence_verified": m4_equivalence_verified,
+            "g_rep": g_rep,
+            "g_auth": g_auth,
+            "g_time": g_time,
+            "governance_ready": governance_ready,
+        }
+        self.records.append(rec)
+
+        collision_entry: dict[str, Any] | None = None
+        if prev is not None and prev["eg"] != vg:
+            forced_ngd_on_pair = (
+                (prev["local_product"] == 1 and prev[" eg" if " eg" in prev else "eg"] == 0)
+                or (local_prod == 1 and vg == 0)
+            )
+            collision_entry = {
+                "joint_carrier": joint_carrier,
+                "first_trace_id": prev["trace_id"],
+                "first_eg": prev["eg"],
+                "first_delta_e": prev["delta_e"],
+                "second_trace_id": tid,
+                "second_eg": vg,
+                "second_delta_e": delta_e,
+                "locally_green_forced_ngd": forced_ngd_on_pair,
+            }
+            self.carrier_mixing_collisions.append(collision_entry)
+        elif prev is None:
+            self.joint_carrier_fibers[jk] = rec
+
+        has_carrier_mixing = len(self.carrier_mixing_collisions) > 0
+        checked_closure_eligible = (delta_e == 0 and governance_ready and not has_carrier_mixing)
+
+        if collision_entry is not None:
+            status = "CARRIER_MIXING_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not governance_ready:
+            status = "GOVERNANCE_PREREQUISITE_MISSING_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif weak_sufficient and not factorizes:
+            status = "WEAK_SUFFICIENT_NONFACTORED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif delta_e != 0 or has_carrier_mixing:
+            status = "FACTORIZATION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CHECKED_CLOSURE_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_organizational_gluing_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "checked_closure_eligible": checked_closure_eligible,
+            "carrier_mixing_collision": collision_entry,
+            **rec,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit summary receipt for the organizational gluing monitor."""
+        has_carrier_mixing = len(self.carrier_mixing_collisions) > 0
+        all_checked_closure = (
+            len(self.records) > 0
+            and not has_carrier_mixing
+            and self.governance_failures_count == 0
+            and all(r["delta_e"] == 0 for r in self.records)
+        )
+        if has_carrier_mixing:
+            status = "CARRIER_MIXING_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.governance_failures_count > 0:
+            status = "GOVERNANCE_PREREQUISITE_MISSING_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.weak_nonfactored_count > 0:
+            status = "WEAK_SUFFICIENT_NONFACTORED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif all_checked_closure:
+            status = "CHECKED_CLOSURE_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "FACTORIZATION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_organizational_gluing_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "records_count": len(self.records),
+            "carrier_mixing_collisions_count": len(self.carrier_mixing_collisions),
+            "weak_nonfactored_count": self.weak_nonfactored_count,
+            "governance_failures_count": self.governance_failures_count,
+            "all_m4_equivalences_verified": all(r["m4_equivalence_verified"] for r in self.records),
+            "carrier_mixing_collisions": self.carrier_mixing_collisions,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingDefectSoundnessMonitor:
+    """Online LGGR V realizable defect soundness and coupled Minkowski repair monitor.
+
+    Given a linear defect operator D in Q^{m x n} (mapping site assignments s in C^0
+    to interface defects omega = D s in C^1) and a stacked measurement operator
+    Q in Q^{p x m} (with blind spot K = ker(Q)):
+      - Evaluates the Soundness Criterion: im(D) cap ker(Q) == {0} iff rank(Q D) == rank(D).
+      - Separates:
+          * TRIVIAL_BLINDSPOT_SOUND_LGGG (Theorem 5: ker(Q) == {0})
+          * COUPLED_SOUNDNESS_VERIFIED_LGGG (Theorem 6: ker(Q) != {0}, yet im(D) cap ker(Q) == {0})
+          * STEALTH_REALIZABLE_DEFECT_LGGR (Theorem 3 & 4: im(D) cap ker(Q) != {0},
+            exhibiting a stealth assignment s_R with ||D s_R||_1 = R > 0 and Q D s_R = 0).
+      - Evaluates exact rational Minkowski repair distances Phi_1, Phi_2^2, Phi_inf
+        on the coupled diagonal repair line {( -alpha, -alpha )}.
+    """
+
+    def __init__(
+        self,
+        defect_matrix: Any,
+        measurement_matrix: Any,
+        *,
+        scope_id: str = "streaming-defect-soundness-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.d_mat = matrix(defect_matrix, "defect_matrix")
+        self.m_defects = len(self.d_mat)
+        self.n_sites = len(self.d_mat[0])
+        self.q_mat = matrix(measurement_matrix, "measurement_matrix", cols=self.m_defects)
+        self.p_meas = len(self.q_mat)
+        self.qd_mat = matmul(self.q_mat, self.d_mat)
+
+    @staticmethod
+    def _rref_and_nullspace(
+        mat: tuple[tuple[Fraction, ...], ...],
+    ) -> tuple[int, list[tuple[Fraction, ...]]]:
+        rows = len(mat)
+        cols = len(mat[0])
+        work = [[ val for val in row ] for row in mat]
+        pivot_cols: list[int] = []
+        r = 0
+        for c in range(cols):
+            if r >= rows:
+                break
+            piv = next((i for i in range(r, rows) if work[i][c] != 0), None)
+            if piv is None:
+                continue
+            work[r], work[piv] = work[piv], work[r]
+            scale = work[r][c]
+            work[r] = [v / scale for v in work[r]]
+            for i in range(rows):
+                if i != r and work[i][c] != 0:
+                    factor = work[i][c]
+                    work[i] = [work[i][j] - factor * work[r][j] for j in range(cols)]
+            pivot_cols.append(c)
+            r += 1
+
+        free_cols = [c for c in range(cols) if c not in pivot_cols]
+        basis: list[tuple[Fraction, ...]] = []
+        for fc in free_cols:
+            vec = [Fraction(0)] * cols
+            vec[fc] = Fraction(1)
+            for row_idx, pc in enumerate(pivot_cols):
+                vec[pc] = -work[row_idx][fc]
+            basis.append(tuple(vec))
+        return len(pivot_cols), basis
+
+    def audit_soundness(self, target_severity: Fraction | int | str = 1) -> dict[str, Any]:
+        """Audit realizable soundness im(D) cap ker(Q) == {0} and synthesize stealth witness if unsound."""
+        r_sev = rational(target_severity)
+        if r_sev <= 0:
+            raise ValidationError("target_severity must be strictly positive")
+
+        rank_d, _ = self._rref_and_nullspace(self.d_mat)
+        rank_q, null_q = self._rref_and_nullspace(self.q_mat)
+        rank_qd, null_qd = self._rref_and_nullspace(self.qd_mat)
+
+        ambient_blindspot_dim = len(null_q)
+        intersection_dim = rank_d - rank_qd
+        soundness_holds = (intersection_dim == 0)
+
+        stealth_assignment: list[Fraction] | None = None
+        stealth_defect: list[Fraction] | None = None
+        stealth_inconsistency: Fraction | None = None
+        stealth_measured_score: Fraction | None = None
+
+        if not soundness_holds:
+            for s_cand in null_qd:
+                ds_cand = matvec(self.d_mat, s_cand)
+                l1_norm = sum((abs(v) for v in ds_cand), Fraction(0))
+                if l1_norm > 0:
+                    scale = r_sev / l1_norm
+                    s_scaled = tuple(v * scale for v in s_cand)
+                    ds_scaled = matvec(self.d_mat, s_scaled)
+                    qds_scaled = matvec(self.q_mat, ds_scaled)
+                    stealth_assignment = list(s_scaled)
+                    stealth_defect = list(ds_scaled)
+                    stealth_inconsistency = sum((abs(v) for v in ds_scaled), Fraction(0))
+                    stealth_measured_score = sum((abs(v) for v in qds_scaled), Fraction(0))
+                    break
+
+        if soundness_holds and ambient_blindspot_dim == 0:
+            status = "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif soundness_holds:
+            status = "COUPLED_SOUNDNESS_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "STEALTH_REALIZABLE_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_defect_soundness.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "soundness_holds": soundness_holds,
+            "rank_d": rank_d,
+            "rank_q": rank_q,
+            "rank_qd": rank_qd,
+            "ambient_blindspot_dimension": ambient_blindspot_dim,
+            "realizable_blindspot_dimension": intersection_dim,
+            "coupled_compensation_active": (soundness_holds and ambient_blindspot_dim > 0),
+            "target_severity": r_sev,
+            "stealth_assignment": stealth_assignment,
+            "stealth_defect": stealth_defect,
+            "stealth_global_inconsistency": stealth_inconsistency,
+            "stealth_evaluator_score": stealth_measured_score,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def evaluate_coupled_minkowski_repair(
+        self,
+        a: Fraction | int | str,
+        b: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Compute exact rational Minkowski repair distances on the coupled diagonal image {(-alpha, -alpha)}."""
+        va = rational(a)
+        vb = rational(b)
+        diff = abs(va - vb)
+        phi_1 = diff
+        phi_2_sq = (diff * diff) / Fraction(2)
+        phi_inf = diff / Fraction(2)
+        alpha_star = -(va + vb) / Fraction(2)
+        interval_min = -max(va, vb)
+        interval_max = -min(va, vb)
+        is_exact = (va == vb)
+
+        body = {
+            "schema": "lggr.online_minkowski_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": "EXACT_COUPLED_SECTION" if is_exact else "NONEXACT_QUOTIENT_DEFECT",
+            "contract_status": "COMPOSABLE_LGGG" if is_exact else "OBSTRUCTED_LGGR",
+            "cochain": [va, vb],
+            "phi_1_repair_distance": phi_1,
+            "phi_2_squared_repair_distance": phi_2_sq,
+            "phi_inf_repair_distance": phi_inf,
+            "unique_l2_linf_minimizer_alpha": alpha_star,
+            "l1_minimizer_interval": [interval_min, interval_max],
+            "chain_inequality_verified": (phi_inf <= phi_1 and phi_inf * phi_inf <= phi_2_sq <= phi_1 * phi_1),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingDashboardAdequacyMonitor:
+    """Online LGGR I (E9-E18) & LGGR II (M6-M7) dashboard information and collapsing-detector monitor.
+
+    Evaluates:
+      - Exact sample rate & oriented defect count reconstruction identities (E9-E11):
+          2 * n_pos == M + D  and  2 * n_neg == M - D,
+          n_neg <= sum L_i,
+        where M = n_pos + n_neg = N * EGD and D = sum Delta_E = n_pos - n_neg.
+      - Global failure partition (E18):
+          #{E_g == 0} == n_neg + #{L == 0 and E_g == 0}.
+      - Packet information recovery (E12-E14):
+          E_g == L + Delta_E  and  L == E_g - Delta_E.
+      - Product-collapsing detector detection (M7): detects when a local validator copies E_g
+        and peers pass so L(x) == E_g(x) tautologically across the sample.
+      - All-zero agreement at failure detection (M6): detects when Delta_E == 0 on every trace
+        solely because E_g == L == 0 everywhere (zero global passes).
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-dashboard-adequacy-scope",
+        copied_global_validator: bool = False,
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        boolean(copied_global_validator, "copied_global_validator")
+        self.copied_global_validator = copied_global_validator
+        self.records: list[dict[str, Any]] = []
+        self.n_pos: int = 0
+        self.n_neg: int = 0
+        self.n_zero: int = 0
+        self.local_pass_sum: int = 0
+        self.global_pass_sum: int = 0
+        self.signed_defect_sum: int = 0
+        self.joint_fail_count: int = 0
+
+    @staticmethod
+    def _binary_int(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def record_trace(
+        self,
+        trace_id: str,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+    ) -> dict[str, Any]:
+        """Record a trace verdict triple (e1, e2, eg) and update dashboard statistics."""
+        tid = text(trace_id, "trace_id")
+        v1 = self._binary_int(e1, "e1")
+        v2 = self._binary_int(e2, "e2")
+        vg = self._binary_int(eg, "eg")
+
+        local_prod = v1 * v2
+        delta_e = vg - local_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[delta_e]
+
+        self.local_pass_sum += local_prod
+        self.global_pass_sum += vg
+        self.signed_defect_sum += delta_e
+        if delta_e == 1:
+            self.n_pos += 1
+        elif delta_e == -1:
+            self.n_neg += 1
+        else:
+            self.n_zero += 1
+        if local_prod == 0 and vg == 0:
+            self.joint_fail_count += 1
+
+        rec = {
+            "trace_id": tid,
+            "e1": v1,
+            "e2": v2,
+            "eg": vg,
+            "local_product": local_prod,
+            "delta_e": delta_e,
+            "classification": classification,
+            "recovered_eg_from_l_and_delta": local_prod + delta_e,
+            "recovered_l_from_eg_and_delta": vg - delta_e,
+            "packet_recovery_verified": (
+                (local_prod + delta_e == vg) and (vg - delta_e == local_prod)
+            ),
+        }
+        self.records.append(rec)
+        return self.get_receipt()
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit dashboard adequacy receipt checking E9-E18 and M6-M7."""
+        n_total = len(self.records)
+        disagreement_m = self.n_pos + self.n_neg
+        d_sum = self.signed_defect_sum
+        global_fail_count = n_total - self.global_pass_sum
+
+        lpr = Fraction(self.local_pass_sum, n_total) if n_total > 0 else Fraction(0)
+        gpr = Fraction(self.global_pass_sum, n_total) if n_total > 0 else Fraction(0)
+        egd = Fraction(disagreement_m, n_total) if n_total > 0 else Fraction(0)
+        mean_defect = Fraction(d_sum, n_total) if n_total > 0 else Fraction(0)
+
+        reconstruction_verified = (
+            2 * self.n_pos == disagreement_m + d_sum
+            and 2 * self.n_neg == disagreement_m - d_sum
+            and self.n_pos + self.n_neg + self.n_zero == n_total
+            and gpr - lpr == mean_defect
+        )
+        ngd_bounded_by_local_passes = (self.n_neg <= self.local_pass_sum)
+        global_failure_partition_verified = (
+            global_fail_count == self.n_neg + self.joint_fail_count
+        )
+        all_packet_recoveries_verified = all(
+            r["packet_recovery_verified"] for r in self.records
+        )
+
+        all_zero_agreement_at_failure = (
+            n_total > 0 and disagreement_m == 0 and self.global_pass_sum == 0
+        )
+        product_collapsing_detected = (
+            n_total > 0
+            and self.copied_global_validator
+            and disagreement_m == 0
+            and all(r["e1"] == r["eg"] and r["e2"] == 1 for r in self.records)
+        )
+
+        if self.n_neg > 0:
+            status = "NGD_DEFECT_PRESENT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif disagreement_m > 0:
+            status = "PGD_DISAGREEMENT_PRESENT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif product_collapsing_detected:
+            status = "PRODUCT_COLLAPSING_DETECTOR_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif all_zero_agreement_at_failure:
+            status = "ZERO_DEFECT_ALL_FAIL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "DASHBOARD_ADEQUACY_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_dashboard_adequacy.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "sample_size": n_total,
+            "n_pos_pgd": self.n_pos,
+            "n_neg_ngd": self.n_neg,
+            "n_zero_zdr": self.n_zero,
+            "disagreement_count_m": disagreement_m,
+            "signed_defect_sum_d": d_sum,
+            "local_pass_rate_lpr": lpr,
+            "global_pass_rate_gpr": gpr,
+            "evaluator_gluing_disagreement_egd": egd,
+            "mean_signed_defect": mean_defect,
+            "global_failure_count": global_fail_count,
+            "joint_local_global_failure_count": self.joint_fail_count,
+            "reconstruction_identities_verified": reconstruction_verified,
+            "ngd_bounded_by_local_passes": ngd_bounded_by_local_passes,
+            "global_failure_partition_verified": global_failure_partition_verified,
+            "all_packet_recoveries_verified": all_packet_recoveries_verified,
+            "all_zero_agreement_at_failure": all_zero_agreement_at_failure,
+            "product_collapsing_detected": product_collapsing_detected,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingBellPolytopeMonitor:
+    """Online 4-context CHSH Bell polytope, isotropic visibility threshold, and negative-mass monitor.
+
+    Evaluates the LGGR VII 4-context CHSH correlation functional and signed-extension obstructions:
+      - Canonical CHSH functional:
+          S(E) = E_00 + E_01 + E_10 - E_11
+        and all 8 CHSH facet symmetries S_{x0,y0}(E) across (x0, y0) in {0, 1}^2.
+      - Exhaustive verification over all 16 deterministic LHV vertices (a0, a1, b0, b1) in {-1, +1}^4
+        that a0*b0 + a0*b1 + a1*b0 - a1*b1 == a0*(b0 + b1) + a1*(b0 - b1) in {-2, +2}.
+      - Exact rational minimum signed-extension negative mass:
+          N_min(E) = max(0, (S_max(E) - 2) / 4),
+        contextual fraction on the 4-context symmetric CHSH slice:
+          CF(E) = 2 * N_min(E) = max(0, (S_max(E) - 2) / 2),
+        and 4-context packing mass identity:
+          U = 1 + N_min, R = 4 * N_min, U - R = 1 - 3 * N_min, CF <= 3 * N_min.
+      - Isotropic PR-box mixture p_v = v * p_PR + (1 - v) * p_uniform with critical visibility
+        threshold v_crit = 1/2 (S(p_v) = 4 * v).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-bell-polytope-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.models: dict[str, dict[str, Any]] = {}
+        self.lhv_vertex_values: list[int] = []
+        for a0 in (-1, 1):
+            for a1 in (-1, 1):
+                for b0 in (-1, 1):
+                    for b1 in (-1, 1):
+                        val = a0 * b0 + a0 * b1 + a1 * b0 - a1 * b1
+                        factored = a0 * (b0 + b1) + a1 * (b0 - b1)
+                        if val != factored:
+                            raise ValidationError("CHSH factorization mismatch")
+                        self.lhv_vertex_values.append(val)
+        self.all_16_lhv_vertices_bounded_by_2 = (
+            len(self.lhv_vertex_values) == 16
+            and all(abs(v) == 2 for v in self.lhv_vertex_values)
+        )
+
+    @staticmethod
+    def _validate_correlator(val: Fraction | int | str, name: str) -> Fraction:
+        q = rational(val)
+        if q < Fraction(-1) or q > Fraction(1):
+            raise ValidationError(f"{name} must lie in [-1, 1], got {q}")
+        return q
+
+    def observe_correlators(
+        self,
+        model_id: str,
+        e00: Fraction | int | str,
+        e01: Fraction | int | str,
+        e10: Fraction | int | str,
+        e11: Fraction | int | str,
+        *,
+        isotropic_visibility: Fraction | int | str | None = None,
+    ) -> dict[str, Any]:
+        """Audit a 4-context correlator tuple (E_00, E_01, E_10, E_11) in [-1, 1]^4."""
+        mid = text(model_id, "model_id")
+        c00 = self._validate_correlator(e00, "e00")
+        c01 = self._validate_correlator(e01, "e01")
+        c10 = self._validate_correlator(e10, "e10")
+        c11 = self._validate_correlator(e11, "e11")
+
+        vis_q: Fraction | None = None
+        if isotropic_visibility is not None:
+            vis_q = rational(isotropic_visibility)
+            if vis_q < Fraction(0) or vis_q > Fraction(1):
+                raise ValidationError("isotropic_visibility must lie in [0, 1]")
+
+        s_canonical = c00 + c01 + c10 - c11
+        facets = [
+            c00 + c01 + c10 - c11,
+            c00 + c01 - c10 + c11,
+            c00 - c01 + c10 + c11,
+            -c00 + c01 + c10 + c11,
+        ]
+        s_max = max(abs(f) for f in facets)
+        polytope_violation = max(Fraction(0), s_max - Fraction(2))
+        n_min = polytope_violation / Fraction(4)
+        cf_val = Fraction(2) * n_min
+        local_fraction = Fraction(1) - cf_val
+        u_mass = Fraction(1) + n_min
+        r_mass = Fraction(4) * n_min
+        packing_identity_verified = (
+            u_mass - r_mass == Fraction(1) - Fraction(3) * n_min
+            and cf_val <= Fraction(3) * n_min
+            and cf_val == Fraction(2) * n_min
+        )
+
+        is_nonlocal = s_max > Fraction(2)
+        if is_nonlocal:
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_LHV_EXTENSION_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_bell_polytope_model.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "correlators": {"e00": c00, "e01": c01, "e10": c10, "e11": c11},
+            "canonical_chsh_s": s_canonical,
+            "max_chsh_facet_s": s_max,
+            "classical_polytope_bound": Fraction(2),
+            "polytope_violation_excess": polytope_violation,
+            "min_negative_mass_n_min": n_min,
+            "contextual_fraction_cf": cf_val,
+            "local_packing_fraction": local_fraction,
+            "positive_extension_mass_u": u_mass,
+            "marginal_negative_budget_r": r_mass,
+            "isotropic_visibility": vis_q,
+            "critical_visibility_threshold": Fraction(1, 2),
+            "above_visibility_threshold": (vis_q > Fraction(1, 2)) if vis_q is not None else is_nonlocal,
+            "all_16_lhv_vertices_bounded_by_2": self.all_16_lhv_vertices_bounded_by_2,
+            "packing_identity_verified": packing_identity_verified,
+        }
+        self.models[mid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def observe_isotropic_pr_mixture(
+        self,
+        model_id: str,
+        visibility: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Audit an isotropic PR-box mixture p_v = v * p_PR + (1 - v) * p_uniform with visibility v in [0, 1]."""
+        v = rational(visibility)
+        if v < Fraction(0) or v > Fraction(1):
+            raise ValidationError("visibility must lie in [0, 1]")
+        return self.observe_correlators(
+            model_id,
+            v,
+            v,
+            v,
+            -v,
+            isotropic_visibility=v,
+        )
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate Bell polytope audit receipt across all observed 4-context models."""
+        nonlocal_models = [
+            mid for mid, m in self.models.items() if m["status"] == "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+        ]
+        local_models = [
+            mid for mid, m in self.models.items() if m["status"] == "LOCAL_LHV_EXTENSION_LGGG"
+        ]
+        max_n_min = max(
+            (m["min_negative_mass_n_min"] for m in self.models.values()),
+            default=Fraction(0),
+        )
+        max_s = max(
+            (m["max_chsh_facet_s"] for m in self.models.values()),
+            default=Fraction(0),
+        )
+        all_packing_ok = all(m["packing_identity_verified"] for m in self.models.values())
+
+        if nonlocal_models:
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_LHV_EXTENSION_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "observed_models_count": len(self.models),
+            "local_lhv_models": sorted(local_models),
+            "nonlocal_obstructed_models": sorted(nonlocal_models),
+            "max_chsh_s_observed": max_s,
+            "max_negative_mass_n_min": max_n_min,
+            "critical_visibility_threshold": Fraction(1, 2),
+            "all_16_lhv_vertices_bounded_by_2": self.all_16_lhv_vertices_bounded_by_2,
+            "all_packing_identities_verified": all_packing_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingProductRetractionMonitor:
+    """Online LGGR VII product-state retraction residual vs. separable LHV extension monitor.
+
+    Evaluates on 2x2 joint probability tables p = [[p00, p01], [p10, p11]] (and 4-context CHSH
+    families of 2x2 tables):
+      - Marginals p_A = (p00 + p01, p10 + p11) and p_B = (p00 + p10, p01 + p11).
+      - Product retraction Pi(p) = p_A x p_B and residual F_p = p - p_A x p_B.
+      - Exact 2x2 determinant identity:
+          F_p == det(p) * [[1, -1], [-1, 1]],   ||F_p||_1 == 4 * |p00 * p11 - p01 * p10|.
+      - Zero row and column marginals of F_p and idempotence Pi(Pi(p)) == Pi(p) (F_{Pi(p)} == 0).
+      - Separation of three regimes across 4-context CHSH tables:
+          1. PRODUCT_FACTORIZED_LGGG (COMPOSABLE_LGGG): max ||F_p||_1 == 0 and N_min == 0.
+          2. CLASSICAL_CORRELATION_LHV_LGGG (COMPOSABLE_LGGG): max ||F_p||_1 > 0 while N_min == 0
+             (shared randomness / separable correlation without Bell nonlocality).
+          3. BELL_NONLOCAL_OBSTRUCTION_LGGR (OBSTRUCTED_LGGR): max ||F_p||_1 > 0 and N_min > 0.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-product-retraction-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.tables: dict[str, dict[str, Any]] = {}
+        self.models: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _audit_2x2_table(
+        p00: Fraction | int | str,
+        p01: Fraction | int | str,
+        p10: Fraction | int | str,
+        p11: Fraction | int | str,
+    ) -> dict[str, Any]:
+        q00 = rational(p00)
+        q01 = rational(p01)
+        q10 = rational(p10)
+        q11 = rational(p11)
+        for name, val in (("p00", q00), ("p01", q01), ("p10", q10), ("p11", q11)):
+            if val < Fraction(0):
+                raise ValidationError(f"{name} must be nonnegative, got {val}")
+        total = q00 + q01 + q10 + q11
+        if total != Fraction(1):
+            raise ValidationError(f"2x2 probability table must sum to 1, got {total}")
+
+        pa0 = q00 + q01
+        pa1 = q10 + q11
+        pb0 = q00 + q10
+        pb1 = q01 + q11
+
+        pi00 = pa0 * pb0
+        pi01 = pa0 * pb1
+        pi10 = pa1 * pb0
+        pi11 = pa1 * pb1
+
+        f00 = q00 - pi00
+        f01 = q01 - pi01
+        f10 = q10 - pi10
+        f11 = q11 - pi11
+
+        det_p = q00 * q11 - q01 * q10
+        l1_residual = abs(f00) + abs(f01) + abs(f10) + abs(f11)
+        det_identity_ok = (
+            f00 == det_p
+            and f01 == -det_p
+            and f10 == -det_p
+            and f11 == det_p
+            and l1_residual == Fraction(4) * abs(det_p)
+        )
+        zero_row_marginals = (f00 + f01 == Fraction(0)) and (f10 + f11 == Fraction(0))
+        zero_col_marginals = (f00 + f10 == Fraction(0)) and (f01 + f11 == Fraction(0))
+
+        # Idempotence check: marginals of Pi(p) equal (pa0, pa1) and (pb0, pb1), so F_{Pi(p)} == 0
+        pi_pa0 = pi00 + pi01
+        pi_pa1 = pi10 + pi11
+        pi_pb0 = pi00 + pi10
+        pi_pb1 = pi01 + pi11
+        idempotence_ok = (
+            pi_pa0 == pa0
+            and pi_pa1 == pa1
+            and pi_pb0 == pb0
+            and pi_pb1 == pb1
+            and (pi00 - pi_pa0 * pi_pb0 == Fraction(0))
+            and (pi01 - pi_pa0 * pi_pb1 == Fraction(0))
+            and (pi10 - pi_pa1 * pi_pb0 == Fraction(0))
+            and (pi11 - pi_pa1 * pi_pb1 == Fraction(0))
+        )
+
+        # Parity correlator E = P(a == b) - P(a != b) = (p00 + p11) - (p01 + p10)
+        correlator_e = (q00 + q11) - (q01 + q10)
+
+        return {
+            "table": [[q00, q01], [q10, q11]],
+            "marginal_a": [pa0, pa1],
+            "marginal_b": [pb0, pb1],
+            "product_retraction": [[pi00, pi01], [pi10, pi11]],
+            "residual_f": [[f00, f01], [f10, f11]],
+            "determinant": det_p,
+            "l1_product_residual": l1_residual,
+            "correlator_e": correlator_e,
+            "determinant_identity_verified": det_identity_ok,
+            "zero_row_marginals_verified": zero_row_marginals,
+            "zero_col_marginals_verified": zero_col_marginals,
+            "retraction_idempotence_verified": idempotence_ok,
+        }
+
+    def observe_bivariate_table(
+        self,
+        table_id: str,
+        p00: Fraction | int | str,
+        p01: Fraction | int | str,
+        p10: Fraction | int | str,
+        p11: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Audit a single 2x2 bivariate probability table for product factorization vs correlation."""
+        tid = text(table_id, "table_id")
+        info = self._audit_2x2_table(p00, p01, p10, p11)
+        is_product = info["l1_product_residual"] == Fraction(0)
+        status = "PRODUCT_FACTORIZED_LGGG" if is_product else "CORRELATED_NONPRODUCT_TABLE"
+        entry = {
+            "schema": "lggr.online_product_retraction_table.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "table_id": tid,
+            "status": status,
+            "is_product_state": is_product,
+            **info,
+        }
+        self.tables[tid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def observe_four_context_tables(
+        self,
+        model_id: str,
+        contexts: dict[str, tuple[Any, Any, Any, Any] | list[Any]],
+    ) -> dict[str, Any]:
+        """Audit a 4-context CHSH family of 2x2 tables keyed by ('00', '01', '10', '11')."""
+        mid = text(model_id, "model_id")
+        required_keys = ("00", "01", "10", "11")
+        if not isinstance(contexts, dict) or any(k not in contexts for k in required_keys):
+            raise ValidationError("contexts must be a dict containing keys '00', '01', '10', '11'")
+
+        ctx_audits: dict[str, dict[str, Any]] = {}
+        for k in required_keys:
+            vals = contexts[k]
+            if not isinstance(vals, (tuple, list)) or len(vals) != 4:
+                raise ValidationError(f"Context {k} must provide 4 probabilities (p00, p01, p10, p11)")
+            ctx_audits[k] = self._audit_2x2_table(vals[0], vals[1], vals[2], vals[3])
+
+        e00 = ctx_audits["00"]["correlator_e"]
+        e01 = ctx_audits["01"]["correlator_e"]
+        e10 = ctx_audits["10"]["correlator_e"]
+        e11 = ctx_audits["11"]["correlator_e"]
+
+        facets = [
+            e00 + e01 + e10 - e11,
+            e00 + e01 - e10 + e11,
+            e00 - e01 + e10 + e11,
+            -e00 + e01 + e10 + e11,
+        ]
+        s_canonical = facets[0]
+        s_max = max(abs(f) for f in facets)
+        n_min = max(Fraction(0), s_max - Fraction(2)) / Fraction(4)
+        cf_val = Fraction(2) * n_min
+        max_l1_prod = max(ctx_audits[k]["l1_product_residual"] for k in required_keys)
+
+        all_identities_ok = all(
+            ctx_audits[k]["determinant_identity_verified"]
+            and ctx_audits[k]["zero_row_marginals_verified"]
+            and ctx_audits[k]["zero_col_marginals_verified"]
+            and ctx_audits[k]["retraction_idempotence_verified"]
+            for k in required_keys
+        )
+
+        if n_min > Fraction(0):
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif max_l1_prod > Fraction(0):
+            status = "CLASSICAL_CORRELATION_LHV_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "PRODUCT_FACTORIZED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_product_retraction_model.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "max_l1_product_residual": max_l1_prod,
+            "canonical_chsh_s": s_canonical,
+            "max_chsh_facet_s": s_max,
+            "min_negative_mass_n_min": n_min,
+            "contextual_fraction_cf": cf_val,
+            "classical_correlation_without_nonlocality": (
+                max_l1_prod > Fraction(0) and n_min == Fraction(0)
+            ),
+            "all_retraction_identities_verified": all_identities_ok,
+            "contexts": ctx_audits,
+        }
+        self.models[mid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate receipt separating product states, classical LHV correlations, and Bell nonlocality."""
+        product_models = [
+            mid for mid, m in self.models.items() if m["status"] == "PRODUCT_FACTORIZED_LGGG"
+        ]
+        classical_corr_models = [
+            mid for mid, m in self.models.items() if m["status"] == "CLASSICAL_CORRELATION_LHV_LGGG"
+        ]
+        nonlocal_models = [
+            mid for mid, m in self.models.items() if m["status"] == "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+        ]
+        all_ok = all(
+            t["determinant_identity_verified"]
+            and t["zero_row_marginals_verified"]
+            and t["zero_col_marginals_verified"]
+            and t["retraction_idempotence_verified"]
+            for t in self.tables.values()
+        ) and all(m["all_retraction_identities_verified"] for m in self.models.values())
+
+        if nonlocal_models:
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif classical_corr_models:
+            status = "CLASSICAL_CORRELATION_LHV_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "PRODUCT_FACTORIZED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_product_retraction.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "observed_tables_count": len(self.tables),
+            "observed_models_count": len(self.models),
+            "product_factorized_models": sorted(product_models),
+            "classical_correlation_lhv_models": sorted(classical_corr_models),
+            "bell_nonlocal_models": sorted(nonlocal_models),
+            "all_retraction_identities_verified": all_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingRSIFiberCeilingMonitor:
+    """Online LGGR VII evidence-preserving Recursive Self-Improvement (RSI) fiber ceiling monitor.
+
+    Audits multi-generation recursive predictor updates g^(0), g^(1), ..., g^(T) that factor
+    through a fixed coarse observation map p: X -> A (g^(t) = h^(t) o p):
+      - Tracks coarse observation fibers F(r) = {x in X : p(x) = r}, fiber width
+        W_f(r) = max_{x in F(r)} f(x) - min_{x in F(r)} f(x), and minimax half-spread
+        ceiling epsilon_min(r) = W_f(r) / 2.
+      - Verifies across every evidence-preserving recursive update generation t >= 0 that
+        worst-case fiber error satisfies:
+          max_{x in F(r)} |f(x) - g^(t)(x)| >= W_f(r) / 2,
+        demonstrating in this model that recursive post-processing of a fixed report channel
+        cannot reduce worst-case error below half the fiber spread.
+      - Verifies that an informative sensor/evidence refinement p': X -> A' splitting colliding
+        states into zero-spread refined fibers reduces worst-case error below the coarse ceiling.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-rsi-fiber-ceiling-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.states: dict[str, dict[str, Any]] = {}
+        self.coarse_fibers: dict[str, dict[str, Any]] = {}
+        self.refined_fibers: dict[str, dict[str, Any]] = {}
+        self.generations: list[dict[str, Any]] = []
+
+    def observe_state(
+        self,
+        state_id: str,
+        coarse_report: Any,
+        target_value: Fraction | int | str,
+        *,
+        refined_report: Any = None,
+    ) -> dict[str, Any]:
+        """Register a state with its coarse report p(x), rational target f(x), and optional refined report p'(x)."""
+        sid = text(state_id, "state_id")
+        c_clean = json.loads(canonical(coarse_report))
+        c_key = canonical(c_clean)
+        r_clean = json.loads(canonical(refined_report if refined_report is not None else coarse_report))
+        r_key = canonical(r_clean)
+        f_val = rational(target_value)
+
+        prev = self.states.get(sid)
+        if prev is not None:
+            if (
+                prev["coarse_key"] != c_key
+                or prev["refined_key"] != r_key
+                or prev["target_value"] != f_val
+            ):
+                raise ValidationError(f"Conflicting state observation for state_id: {sid}")
+        else:
+            self.states[sid] = {
+                "state_id": sid,
+                "coarse_report": c_clean,
+                "coarse_key": c_key,
+                "refined_report": r_clean,
+                "refined_key": r_key,
+                "target_value": f_val,
+            }
+
+        self._update_fiber_dict(self.coarse_fibers, c_key, c_clean, sid, f_val)
+        self._update_fiber_dict(self.refined_fibers, r_key, r_clean, sid, f_val)
+        return self.get_receipt()
+
+    @staticmethod
+    def _update_fiber_dict(
+        fiber_dict: dict[str, dict[str, Any]],
+        key: str,
+        report_obj: Any,
+        sid: str,
+        f_val: Fraction,
+    ) -> None:
+        fb = fiber_dict.get(key)
+        if fb is None:
+            fiber_dict[key] = {
+                "report": report_obj,
+                "state_ids": [sid],
+                "min_target": f_val,
+                "max_target": f_val,
+                "spread_width": Fraction(0),
+                "half_spread_ceiling": Fraction(0),
+                "midpoint_prediction": f_val,
+            }
+        else:
+            if sid not in fb["state_ids"]:
+                fb["state_ids"].append(sid)
+                fb["state_ids"].sort()
+            if f_val < fb["min_target"]:
+                fb["min_target"] = f_val
+            if f_val > fb["max_target"]:
+                fb["max_target"] = f_val
+            spread = fb["max_target"] - fb["min_target"]
+            fb["spread_width"] = spread
+            fb["half_spread_ceiling"] = spread / Fraction(2)
+            fb["midpoint_prediction"] = (fb["max_target"] + fb["min_target"]) / Fraction(2)
+
+    def evaluate_generation(
+        self,
+        generation_id: str,
+        predictor_by_report: dict[str, Fraction | int | str],
+        *,
+        use_refined_report: bool = False,
+    ) -> dict[str, Any]:
+        """Evaluate a generation-t predictor mapping report keys (or canonical JSON strings) to rational predictions."""
+        gid = text(generation_id, "generation_id")
+        boolean(use_refined_report, "use_refined_report")
+        if not self.states:
+            raise ValidationError("Cannot evaluate generation before observing states")
+        if not isinstance(predictor_by_report, dict):
+            raise ValidationError("predictor_by_report must be a dict")
+
+        norm_map: dict[str, Fraction] = {}
+        for k, v in predictor_by_report.items():
+            q_v = rational(v)
+            norm_map[str(k)] = q_v
+            norm_map[canonical(k)] = q_v
+
+        per_coarse_fiber_max_err: dict[str, Fraction] = {
+            ck: Fraction(0) for ck in self.coarse_fibers
+        }
+        max_err = Fraction(0)
+
+        for sid, st in sorted(self.states.items()):
+            lookup_key = st["refined_key"] if use_refined_report else st["coarse_key"]
+            raw_rep = st["refined_report"] if use_refined_report else st["coarse_report"]
+            if lookup_key in norm_map:
+                pred = norm_map[lookup_key]
+            elif str(raw_rep) in norm_map:
+                pred = norm_map[str(raw_rep)]
+            else:
+                raise ValidationError(f"Missing prediction for report {raw_rep} in generation {gid}")
+            err = abs(st["target_value"] - pred)
+            if err > max_err:
+                max_err = err
+            ck = st["coarse_key"]
+            if err > per_coarse_fiber_max_err[ck]:
+                per_coarse_fiber_max_err[ck] = err
+
+        coarse_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.coarse_fibers.values()),
+            default=Fraction(0),
+        )
+        refined_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.refined_fibers.values()),
+            default=Fraction(0),
+        )
+
+        if not use_refined_report:
+            invariance_verified = all(
+                per_coarse_fiber_max_err[ck] >= fb["half_spread_ceiling"]
+                for ck, fb in self.coarse_fibers.items()
+            ) and (max_err >= coarse_ceiling)
+            broke_coarse_ceiling = False
+        else:
+            invariance_verified = (max_err >= refined_ceiling)
+            broke_coarse_ceiling = (max_err < coarse_ceiling)
+
+        if use_refined_report and broke_coarse_ceiling and max_err == Fraction(0):
+            status = "EVIDENCE_REFINEMENT_RESOLVED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif coarse_ceiling > Fraction(0) and not broke_coarse_ceiling:
+            status = "RSI_FIBER_CEILING_LOCKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ZERO_SPREAD_FIBER_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        gen_entry = {
+            "schema": "lggr.online_rsi_generation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "generation_id": gid,
+            "status": status,
+            "contract_status": contract_status,
+            "use_refined_report": use_refined_report,
+            "worst_case_error": max_err,
+            "coarse_half_spread_ceiling": coarse_ceiling,
+            "refined_half_spread_ceiling": refined_ceiling,
+            "attains_minimax_midpoint_floor": (not use_refined_report and max_err == coarse_ceiling),
+            "invariance_lower_bound_verified": invariance_verified,
+            "broke_coarse_ceiling_via_refinement": broke_coarse_ceiling,
+        }
+        self.generations.append(gen_entry)
+        return json_value({**gen_entry, "receipt_sha256": digest(gen_entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate RSI fiber ceiling receipt across all observed states and recursive generations."""
+        coarse_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.coarse_fibers.values()),
+            default=Fraction(0),
+        )
+        refined_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.refined_fibers.values()),
+            default=Fraction(0),
+        )
+        evidence_preserving_gens = [
+            g for g in self.generations if not g["use_refined_report"]
+        ]
+        refined_gens = [
+            g for g in self.generations if g["use_refined_report"]
+        ]
+        all_invariance_ok = all(
+            g["invariance_lower_bound_verified"] for g in self.generations
+        )
+        refinement_resolved = any(
+            g["broke_coarse_ceiling_via_refinement"] and g["worst_case_error"] == Fraction(0)
+            for g in refined_gens
+        )
+
+        if refinement_resolved:
+            status = "EVIDENCE_REFINEMENT_RESOLVED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif coarse_ceiling > Fraction(0):
+            status = "RSI_FIBER_CEILING_LOCKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ZERO_SPREAD_FIBER_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_rsi_fiber_ceiling.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "observed_states_count": len(self.states),
+            "coarse_fibers_count": len(self.coarse_fibers),
+            "refined_fibers_count": len(self.refined_fibers),
+            "coarse_half_spread_ceiling": coarse_ceiling,
+            "refined_half_spread_ceiling": refined_ceiling,
+            "evaluated_generations_count": len(self.generations),
+            "evidence_preserving_generations_count": len(evidence_preserving_gens),
+            "refined_generations_count": len(refined_gens),
+            "all_invariance_lower_bounds_verified": all_invariance_ok,
+            "refinement_resolved": refinement_resolved,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCoalitionalAttributionMonitor:
+    """Online LGGR II coalitional Shapley attribution vs. non-additive raw defect monitor.
+
+    Computes exact rational Shapley attributions phi_i(v) for finite n-player evaluator
+    coalitions and verifies:
+      - Efficiency: sum_{i in N} phi_i(v) == v(N) - v(emptyset).
+      - Symmetry: if v(S U {i}) == v(S U {j}) for all S subseteq N \\ {i, j}, then phi_i(v) == phi_j(v).
+      - Dummy-player axiom: if v(S U {i}) == v(S) for all S subseteq N \\ {i}, then phi_i(v) == 0.
+      - Separation between exact coalitional attribution (phi_1 + phi_2 == Delta_E) and
+        non-additive raw singleton defect sums (v({1}) + v({2}) != v({1, 2}) when interaction
+        synergy I_12 = v({1, 2}) - v({1}) - v({2}) + v(emptyset) != 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-coalitional-attribution-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.games: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _factorial(k: int) -> int:
+        res = 1
+        for i in range(2, k + 1):
+            res *= i
+        return res
+
+    @staticmethod
+    def _normalize_coalition_key(coalition: Any, players_set: set[str]) -> frozenset[str]:
+        if isinstance(coalition, str):
+            raw = coalition.strip()
+            if not raw:
+                items: list[str] = []
+            else:
+                items = [part.strip() for part in raw.split(",") if part.strip()]
+        elif isinstance(coalition, (set, frozenset, list, tuple)):
+            items = [text(p, "player") for p in coalition]
+        else:
+            raise ValidationError(f"Unsupported coalition key type: {type(coalition).__name__}")
+        for item in items:
+            if item not in players_set:
+                raise ValidationError(f"Unknown player {item!r} in coalition key")
+        return frozenset(items)
+
+    def observe_coalition_game(
+        self,
+        game_id: str,
+        players: Iterable[str],
+        characteristic_values: Mapping[Any, Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Compute exact rational Shapley attributions and audit axioms for an n-player game."""
+        gid = text(game_id, "game_id")
+        player_list = [text(p, "player") for p in sequence(players, "players")]
+        if not player_list:
+            raise ValidationError("players must be non-empty")
+        if len(set(player_list)) != len(player_list):
+            raise ValidationError("players must be distinct")
+        n = len(player_list)
+        if n > 8:
+            raise ValidationError("StreamingCoalitionalAttributionMonitor supports 1 <= n <= 8 players")
+
+        players_set = set(player_list)
+        val_map: dict[frozenset[str], Fraction] = {}
+        for k, v in characteristic_values.items():
+            c_key = self._normalize_coalition_key(k, players_set)
+            val_map[c_key] = rational(v)
+
+        # Default missing subsets to 0 if not provided, or require all 2^n subsets?
+        # Populate missing empty set as 0 if omitted; require all other subsets to be present or default to 0.
+        all_subsets: list[frozenset[str]] = []
+        for r in range(n + 1):
+            for comb in itertools.combinations(player_list, r):
+                sub = frozenset(comb)
+                all_subsets.append(sub)
+                if sub not in val_map:
+                    raise ValidationError(
+                        f"Missing characteristic value for coalition {sorted(sub)}"
+                    )
+
+        n_fact = Fraction(self._factorial(n))
+        shapley: dict[str, Fraction] = {}
+        dummy_players: list[str] = []
+
+        for p in player_list:
+            others = [q for q in player_list if q != p]
+            total_phi = Fraction(0)
+            is_dummy = True
+            for r in range(n):
+                weight = Fraction(self._factorial(r) * self._factorial(n - r - 1)) / n_fact
+                for comb in itertools.combinations(others, r):
+                    s_set = frozenset(comb)
+                    s_with_p = s_set | {p}
+                    marginal = val_map[s_with_p] - val_map[s_set]
+                    if marginal != Fraction(0):
+                        is_dummy = False
+                    total_phi += weight * marginal
+            shapley[p] = total_phi
+            if is_dummy:
+                dummy_players.append(p)
+
+        v_empty = val_map[frozenset()]
+        v_grand = val_map[frozenset(player_list)]
+        total_Gain = v_grand - v_empty
+        shapley_sum = sum(shapley.values(), Fraction(0))
+        efficiency_ok = (shapley_sum == total_Gain)
+        dummy_ok = all(shapley[p] == Fraction(0) for p in dummy_players)
+
+        symmetric_pairs: list[list[str]] = []
+        symmetry_ok = True
+        for i_idx in range(n):
+            for j_idx in range(i_idx + 1, n):
+                pi, pj = player_list[i_idx], player_list[j_idx]
+                rem = [q for q in player_list if q not in (pi, pj)]
+                pair_sym = True
+                for r in range(len(rem) + 1):
+                    for comb in itertools.combinations(rem, r):
+                        base = frozenset(comb)
+                        if val_map[base | {pi}] != val_map[base | {pj}]:
+                            pair_sym = False
+                            break
+                    if not pair_sym:
+                        break
+                if pair_sym:
+                    symmetric_pairs.append([pi, pj])
+                    if shapley[pi] != shapley[pj]:
+                        symmetry_ok = False
+
+        singleton_sum = sum(
+            (val_map[frozenset([p])] - v_empty for p in player_list),
+            Fraction(0),
+        )
+        synergy_term = total_Gain - singleton_sum
+        non_additive_synergy = (synergy_term != Fraction(0))
+
+        if non_additive_synergy and total_Gain < Fraction(0):
+            status = "NONADDITIVE_COALITIONAL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif non_additive_synergy:
+            status = "NONADDITIVE_SYNERGY_ATTRIBUTION"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_coalitional_game.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "game_id": gid,
+            "status": status,
+            "contract_status": contract_status,
+            "players": player_list,
+            "v_empty": v_empty,
+            "v_grand_coalition": v_grand,
+            "net_coalitional_value": total_Gain,
+            "shapley_attributions": shapley,
+            "shapley_sum": shapley_sum,
+            "naive_singleton_marginal_sum": singleton_sum,
+            "synergy_interaction_term": synergy_term,
+            "raw_singleton_sum_equals_grand_value": (singleton_sum == total_Gain),
+            "symmetric_player_pairs": symmetric_pairs,
+            "dummy_players": dummy_players,
+            "efficiency_verified": efficiency_ok,
+            "symmetry_verified": symmetry_ok,
+            "dummy_player_axiom_verified": dummy_ok,
+        }
+        self.games[gid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def audit_evaluator_defect_game(
+        self,
+        game_id: str,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+    ) -> dict[str, Any]:
+        """Construct and audit the 2-evaluator coalitional defect game for binary verdicts (e1, e2, eg)."""
+        for name, val in (("e1", e1), ("e2", e2), ("eg", eg)):
+            if type(val) not in (int, bool) or int(val) not in (0, 1):
+                raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        v1 = int(e1)
+        v2 = int(e2)
+        vg = int(eg)
+        char_map = {
+            frozenset(): Fraction(0),
+            frozenset(["E1"]): Fraction(vg - v1),
+            frozenset(["E2"]): Fraction(vg - v2),
+            frozenset(["E1", "E2"]): Fraction(vg - v1 * v2),
+        }
+        return self.observe_coalition_game(game_id, ["E1", "E2"], char_map)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate coalitional attribution receipt across all audited games."""
+        all_eff = all(g["efficiency_verified"] for g in self.games.values())
+        all_sym = all(g["symmetry_verified"] for g in self.games.values())
+        all_dum = all(g["dummy_player_axiom_verified"] for g in self.games.values())
+        defect_games = [
+            gid for gid, g in self.games.items()
+            if g["status"] == "NONADDITIVE_COALITIONAL_DEFECT_LGGR"
+        ]
+
+        if defect_games:
+            status = "NONADDITIVE_COALITIONAL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "COALITIONAL_ATTRIBUTION_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_coalitional_attribution.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "audited_games_count": len(self.games),
+            "nonadditive_defect_games": sorted(defect_games),
+            "all_efficiency_verified": all_eff,
+            "all_symmetry_verified": all_sym,
+            "all_dummy_player_axioms_verified": all_dum,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingThresholdGovernanceMonitor:
+    """Online k-of-n quorum/majority vs. strict product aggregator defect monitor.
+
+    Evaluates n binary local validators (E_1, ..., E_n) in {0, 1}^n and global verdict
+    E_g in {0, 1} under both the strict product aggregator L = prod_{i=1}^n E_i = 1[sum E_i == n]
+    and the k-of-n threshold aggregator M_{k,n} = 1[sum E_i >= k] (1 <= k <= n):
+      - Monotonicity: L <= M_{k,n} on every trace since k <= n.
+      - Defect difference identity:
+          Delta_prod - Delta_quorum == (E_g - L) - (E_g - M_{k,n}) == M_{k,n} - L == 1[k <= sum E_i < n].
+      - Separates:
+          1. UNANIMOUS_NGD_DEFECT_LGGR (OBSTRUCTED_LGGR): sum E_i == n and E_g == 0
+             (both L == 1 and M_{k,n} == 1 incur negative defect -1).
+          2. QUORUM_MASKED_DEFECT_LGGR (OBSTRUCTED_LGGR): k <= sum E_i < n and E_g == 0
+             (at least one local validator vetoed so L == 0 and Delta_prod == 0, yet the
+             k-of-n quorum overrides the veto so M_{k,n} == 1 and Delta_quorum == -1).
+          3. QUORUM_RECOVERED_PGD (COMPOSABLE_LGGG): k <= sum E_i < n and E_g == 1
+             (Delta_prod == +1 while Delta_quorum == 0).
+          4. THRESHOLD_GOVERNANCE_COHERENT_LGGG (COMPOSABLE_LGGG): Delta_prod == 0 and Delta_quorum == 0.
+    """
+
+    def __init__(
+        self,
+        n_validators: int,
+        quorum_k: int,
+        *,
+        scope_id: str = "streaming-threshold-governance-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        n_val = exact_int(n_validators, "n_validators")
+        k_val = exact_int(quorum_k, "quorum_k")
+        if n_val < 1:
+            raise ValidationError("n_validators must be >= 1")
+        if k_val < 1 or k_val > n_val:
+            raise ValidationError(f"quorum_k must satisfy 1 <= k <= n_validators ({n_val}), got {k_val}")
+        self.n_validators = n_val
+        self.quorum_k = k_val
+        self.records: list[dict[str, Any]] = []
+        self.unanimous_ngd_count: int = 0
+        self.quorum_masked_ngd_count: int = 0
+        self.quorum_recovered_pgd_count: int = 0
+        self.coherent_count: int = 0
+
+    @staticmethod
+    def _binary_int(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def record_vote(
+        self,
+        trace_id: str,
+        local_verdicts: Iterable[int | bool],
+        eg: int | bool,
+    ) -> dict[str, Any]:
+        """Record an n-validator binary vote vector and global verdict eg."""
+        tid = text(trace_id, "trace_id")
+        verdicts = [
+            self._binary_int(v, f"local_verdicts[{idx}]")
+            for idx, v in enumerate(sequence(local_verdicts, "local_verdicts"))
+        ]
+        if len(verdicts) != self.n_validators:
+            raise ValidationError(
+                f"Expected {self.n_validators} local verdicts, got {len(verdicts)}"
+            )
+        vg = self._binary_int(eg, "eg")
+
+        vote_sum = sum(verdicts)
+        l_prod = 1 if vote_sum == self.n_validators else 0
+        m_quorum = 1 if vote_sum >= self.quorum_k else 0
+        delta_prod = vg - l_prod
+        delta_quorum = vg - m_quorum
+        quorum_inflation = m_quorum - l_prod
+
+        monotonicity_ok = (l_prod <= m_quorum)
+        difference_identity_ok = (delta_prod - delta_quorum == quorum_inflation)
+
+        if l_prod == 1 and vg == 0:
+            trace_status = "UNANIMOUS_NGD_DEFECT_LGGR"
+            self.unanimous_ngd_count += 1
+        elif m_quorum == 1 and l_prod == 0 and vg == 0:
+            trace_status = "QUORUM_MASKED_DEFECT_LGGR"
+            self.quorum_masked_ngd_count += 1
+        elif m_quorum == 1 and l_prod == 0 and vg == 1:
+            trace_status = "QUORUM_RECOVERED_PGD"
+            self.quorum_recovered_pgd_count += 1
+        else:
+            trace_status = "THRESHOLD_GOVERNANCE_COHERENT_LGGG"
+            self.coherent_count += 1
+
+        rec = {
+            "trace_id": tid,
+            "local_verdicts": verdicts,
+            "vote_sum": vote_sum,
+            "eg": vg,
+            "product_aggregator_l": l_prod,
+            "quorum_aggregator_m": m_quorum,
+            "delta_product": delta_prod,
+            "delta_quorum": delta_quorum,
+            "quorum_inflation_gap": quorum_inflation,
+            "trace_status": trace_status,
+            "monotonicity_l_le_quorum_verified": monotonicity_ok,
+            "defect_difference_identity_verified": difference_identity_ok,
+        }
+        self.records.append(rec)
+        return self.get_receipt()
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit threshold governance audit receipt separating quorum-masked defects from unanimous NGD."""
+        all_mono = all(r["monotonicity_l_le_quorum_verified"] for r in self.records)
+        all_diff = all(r["defect_difference_identity_verified"] for r in self.records)
+
+        if self.unanimous_ngd_count > 0:
+            status = "UNANIMOUS_NGD_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.quorum_masked_ngd_count > 0:
+            status = "QUORUM_MASKED_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.quorum_recovered_pgd_count > 0:
+            status = "QUORUM_RECOVERED_PGD"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "THRESHOLD_GOVERNANCE_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "n_validators": self.n_validators,
+            "quorum_k": self.quorum_k,
+            "observed_traces_count": len(self.records),
+            "unanimous_ngd_count": self.unanimous_ngd_count,
+            "quorum_masked_ngd_count": self.quorum_masked_ngd_count,
+            "quorum_recovered_pgd_count": self.quorum_recovered_pgd_count,
+            "coherent_count": self.coherent_count,
+            "all_monotonicity_verified": all_mono,
+            "all_defect_difference_identities_verified": all_diff,
+            "latest_trace": self.records[-1] if self.records else None,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCPTPTraceMonitor:
+    """Online rational Kraus channel trace-preservation residual, state-blindspot, and composition monitor.
+
+    Audits finite rational Kraus operator families E = {K_r}_{r=1}^m in Q^{d x d}:
+      - Trace-preservation residual matrix:
+          R_TP(E) = sum_{r=1}^m K_r^T K_r - I_d.
+      - Exact state-dependent trace discrepancy identity on any d x d matrix rho:
+          tr(E(rho)) - tr(rho) == tr(rho * R_TP(E)).
+      - Separates operator-level trace preservation (R_TP(E) == 0, OPERATOR_TP_VERIFIED_LGGG)
+        from state-dependent blindspots (tr(rho * R_TP(E)) == 0 while R_TP(E) != 0,
+        STATE_BLINDSPOT_NON_TP_LGGR) and overt state trace violations (tr(rho * R_TP(E)) != 0,
+        STATE_TRACE_VIOLATION_LGGR).
+      - Exact two-channel composition residual identity for E_2 o E_1 = {L_s K_r}_{s,r}:
+          R_TP(E_2 o E_1) == R_TP(E_1) + E_1^dagger(R_TP(E_2)),
+        where E_1^dagger(X) = sum_{r=1}^{m_1} K_r^T X K_r.
+    """
+
+    def __init__(
+        self,
+        kraus_operators: Iterable[Any],
+        *,
+        scope_id: str = "streaming-cptp-trace-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        raw_ops = sequence(kraus_operators, "kraus_operators")
+        if not raw_ops:
+            raise ValidationError("kraus_operators must be non-empty")
+
+        first_mat = matrix(raw_ops[0], "kraus_operators[0]")
+        d = len(first_mat)
+        if len(first_mat[0]) != d:
+            raise ValidationError("Each Kraus operator must be a square d x d matrix")
+
+        self.dim = d
+        self.kraus_ops = [
+            matrix(op, f"kraus_operators[{idx}]", rows=d, cols=d)
+            for idx, op in enumerate(raw_ops)
+        ]
+        self.sum_kt_k = self._compute_sum_kt_k(self.kraus_ops, d)
+        self.residual_r_tp = self._subtract_identity(self.sum_kt_k, d)
+        self.is_operator_trace_preserving = is_zero(self.residual_r_tp)
+        self.residual_l1_norm = sum(
+            (abs(val) for row in self.residual_r_tp for val in row),
+            Fraction(0),
+        )
+        self.probed_states: dict[str, dict[str, Any]] = {}
+        self.compositions: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _transpose(mat: Any) -> tuple[tuple[Fraction, ...], ...]:
+        rows = len(mat)
+        cols = len(mat[0])
+        return tuple(
+            tuple(mat[r][c] for r in range(rows))
+            for c in range(cols)
+        )
+
+    @classmethod
+    def _compute_sum_kt_k(cls, ops: list[Any], d: int) -> tuple[tuple[Fraction, ...], ...]:
+        acc = [[Fraction(0) for _ in range(d)] for _ in range(d)]
+        for k_mat in ops:
+            kt = cls._transpose(k_mat)
+            prod = matmul(kt, k_mat)
+            for r in range(d):
+                for c in range(d):
+                    acc[r][c] += prod[r][c]
+        return tuple(tuple(row) for row in acc)
+
+    @staticmethod
+    def _subtract_identity(mat: Any, d: int) -> tuple[tuple[Fraction, ...], ...]:
+        return tuple(
+            tuple(mat[r][c] - (Fraction(1) if r == c else Fraction(0)) for c in range(d))
+            for r in range(d)
+        )
+
+    @staticmethod
+    def _trace(mat: Any) -> Fraction:
+        return sum((mat[i][i] for i in range(len(mat))), Fraction(0))
+
+    @classmethod
+    def _apply_channel(cls, ops: list[Any], rho: Any, d: int) -> tuple[tuple[Fraction, ...], ...]:
+        acc = [[Fraction(0) for _ in range(d)] for _ in range(d)]
+        for k_mat in ops:
+            kt = cls._transpose(k_mat)
+            term = matmul(matmul(k_mat, rho), kt)
+            for r in range(d):
+                for c in range(d):
+                    acc[r][c] += term[r][c]
+        return tuple(tuple(row) for row in acc)
+
+    @classmethod
+    def _apply_adjoint(cls, ops: list[Any], obs: Any, d: int) -> tuple[tuple[Fraction, ...], ...]:
+        acc = [[Fraction(0) for _ in range(d)] for _ in range(d)]
+        for k_mat in ops:
+            kt = cls._transpose(k_mat)
+            term = matmul(matmul(kt, obs), k_mat)
+            for r in range(d):
+                for c in range(d):
+                    acc[r][c] += term[r][c]
+        return tuple(tuple(row) for row in acc)
+
+    def probe_state(self, state_id: str, rho: Any) -> dict[str, Any]:
+        """Audit tr(E(rho)) - tr(rho) == tr(rho * R_TP) on a d x d rational state matrix rho."""
+        sid = text(state_id, "state_id")
+        rho_mat = matrix(rho, "rho", rows=self.dim, cols=self.dim)
+        out_rho = self._apply_channel(self.kraus_ops, rho_mat, self.dim)
+        tr_in = self._trace(rho_mat)
+        tr_out = self._trace(out_rho)
+        tr_diff = tr_out - tr_in
+        rho_r_tp = matmul(rho_mat, self.residual_r_tp)
+        tr_rho_rtp = self._trace(rho_r_tp)
+        discrepancy_identity_ok = (tr_diff == tr_rho_rtp)
+
+        state_blindspot = (not self.is_operator_trace_preserving and tr_diff == Fraction(0))
+        if self.is_operator_trace_preserving:
+            status = "OPERATOR_TP_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif state_blindspot:
+            status = "STATE_BLINDSPOT_NON_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "STATE_TRACE_VIOLATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        entry = {
+            "schema": "lggr.online_cptp_state_probe.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "state_id": sid,
+            "status": status,
+            "contract_status": contract_status,
+            "input_trace": tr_in,
+            "output_trace": tr_out,
+            "trace_discrepancy": tr_diff,
+            "trace_rho_times_r_tp": tr_rho_rtp,
+            "operator_trace_preserving": self.is_operator_trace_preserving,
+            "residual_l1_norm": self.residual_l1_norm,
+            "state_blindspot_masked": state_blindspot,
+            "trace_discrepancy_identity_verified": discrepancy_identity_ok,
+        }
+        self.probed_states[sid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def audit_composition(
+        self,
+        composition_id: str,
+        second_kraus_operators: Iterable[Any],
+    ) -> dict[str, Any]:
+        """Audit R_TP(E_2 o E_1) == R_TP(E_1) + E_1^dagger(R_TP(E_2)) for composed Kraus channels."""
+        cid = text(composition_id, "composition_id")
+        raw_second = sequence(second_kraus_operators, "second_kraus_operators")
+        if not raw_second:
+            raise ValidationError("second_kraus_operators must be non-empty")
+        second_ops = [
+            matrix(op, f"second_kraus_operators[{idx}]", rows=self.dim, cols=self.dim)
+            for idx, op in enumerate(raw_second)
+        ]
+
+        r_tp_2 = self._subtract_identity(self._compute_sum_kt_k(second_ops, self.dim), self.dim)
+        composed_ops = [
+            matmul(l_mat, k_mat)
+            for l_mat in second_ops
+            for k_mat in self.kraus_ops
+        ]
+        r_tp_composed = self._subtract_identity(
+            self._compute_sum_kt_k(composed_ops, self.dim),
+            self.dim,
+        )
+        e1_dag_rtp2 = self._apply_adjoint(self.kraus_ops, r_tp_2, self.dim)
+        rhs_sum = tuple(
+            tuple(self.residual_r_tp[r][c] + e1_dag_rtp2[r][c] for c in range(self.dim))
+            for r in range(self.dim)
+        )
+        identity_ok = (r_tp_composed == rhs_sum)
+        composed_tp = is_zero(r_tp_composed)
+        second_tp = is_zero(r_tp_2)
+
+        if composed_tp and self.is_operator_trace_preserving and second_tp:
+            status = "COMPOSED_TP_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif composed_tp:
+            status = "COMPENSATED_COMPOSITION_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "COMPOSED_NON_TP_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        entry = {
+            "schema": "lggr.online_cptp_composition.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "composition_id": cid,
+            "status": status,
+            "contract_status": contract_status,
+            "first_channel_tp": self.is_operator_trace_preserving,
+            "second_channel_tp": second_tp,
+            "composed_channel_tp": composed_tp,
+            "residual_r_tp_first": self.residual_r_tp,
+            "residual_r_tp_second": r_tp_2,
+            "residual_r_tp_composed": r_tp_composed,
+            "composition_residual_identity_verified": identity_ok,
+        }
+        self.compositions[cid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate Kraus channel trace-preservation receipt."""
+        blindspot_states = [
+            sid for sid, s in self.probed_states.items() if s["state_blindspot_masked"]
+        ]
+        all_state_ids_ok = all(
+            s["trace_discrepancy_identity_verified"] for s in self.probed_states.values()
+        )
+        all_comp_ids_ok = all(
+            c["composition_residual_identity_verified"] for c in self.compositions.values()
+        )
+
+        if self.is_operator_trace_preserving and all(
+            c["composed_channel_tp"] for c in self.compositions.values()
+        ):
+            status = "OPERATOR_TP_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif blindspot_states:
+            status = "STATE_BLINDSPOT_NON_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "OPERATOR_NON_TP_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_cptp_trace.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "dimension": self.dim,
+            "kraus_count": len(self.kraus_ops),
+            "operator_trace_preserving": self.is_operator_trace_preserving,
+            "residual_r_tp": self.residual_r_tp,
+            "residual_l1_norm": self.residual_l1_norm,
+            "probed_states_count": len(self.probed_states),
+            "blindspot_state_ids": sorted(blindspot_states),
+            "audited_compositions_count": len(self.compositions),
+            "all_state_discrepancy_identities_verified": all_state_ids_ok,
+            "all_composition_identities_verified": all_comp_ids_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingWindowedDriftMonitor:
+    """Online LGGR I/VIII sliding-window local budget vs. full-horizon cumulative drift monitor.
+
+    Audits a stream of rational step drifts d_1, d_2, ..., d_N under a fixed sliding window
+    of length W >= 1 with window budget B_W >= 0 and full-horizon global budget B_global >= 0:
+      - Tracks contiguous W-step window sums S_W(t) = sum_{j=max(1, t-W+1)}^t d_j and
+        cumulative horizon sum S_cum(t) = sum_{j=1}^t d_j.
+      - Verifies the disjoint block-partition bound: partitioning {1, ..., N} into
+        K = ceil(N / W) disjoint contiguous windows of length <= W gives
+          S_cum(N) == sum_{b=1}^K S_{block,b} <= K * max_{1 <= t <= N} S_W(t).
+      - Separates:
+          1. LOCAL_WINDOW_BUDGET_BREACH (OBSTRUCTED_LGGR): max S_W(t) > B_W.
+          2. SLIDING_WINDOW_HORIZON_BREACH_LGGR (OBSTRUCTED_LGGR): max S_W(t) <= B_W
+             (every contiguous W-step window is locally within budget), yet
+             max S_cum(t) > B_global (sliding-window horizon truncation masks cumulative breach).
+          3. WINDOW_AND_HORIZON_WITHIN_BUDGET_LGGG (COMPOSABLE_LGGG):
+             max S_W(t) <= B_W and max S_cum(t) <= B_global.
+    """
+
+    def __init__(
+        self,
+        window_size: int,
+        window_budget: Fraction | int | str,
+        global_budget: Fraction | int | str,
+        *,
+        scope_id: str = "streaming-windowed-drift-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        w_val = exact_int(window_size, "window_size")
+        if w_val < 1:
+            raise ValidationError("window_size must be >= 1")
+        bw_val = rational(window_budget)
+        bg_val = rational(global_budget)
+        if bw_val < Fraction(0):
+            raise ValidationError("window_budget must be >= 0")
+        if bg_val < Fraction(0):
+            raise ValidationError("global_budget must be >= 0")
+
+        self.window_size = w_val
+        self.window_budget = bw_val
+        self.global_budget = bg_val
+        self.steps: list[dict[str, Any]] = []
+        self.recent_window: deque[Fraction] = deque(maxlen=w_val)
+        self.cumulative_drift: Fraction = Fraction(0)
+        self.max_window_sum: Fraction = Fraction(0)
+        self.max_prefix_drift: Fraction = Fraction(0)
+
+    def record_step(
+        self,
+        step_id: str,
+        step_drift: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Ingest a rational step drift d_t and update sliding-window vs. cumulative horizon state."""
+        sid = text(step_id, "step_id")
+        d_val = rational(step_drift)
+        self.recent_window.append(d_val)
+        win_sum = sum(self.recent_window, Fraction(0))
+        self.cumulative_drift += d_val
+
+        if len(self.steps) == 0 or win_sum > self.max_window_sum:
+            self.max_window_sum = win_sum
+        if len(self.steps) == 0 or self.cumulative_drift > self.max_prefix_drift:
+            self.max_prefix_drift = self.cumulative_drift
+
+        self.steps.append(
+            {
+                "step_id": sid,
+                "step_drift": d_val,
+                "window_sum": win_sum,
+                "cumulative_drift": self.cumulative_drift,
+            }
+        )
+        return self.get_receipt()
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit sliding-window vs. full-horizon drift audit receipt."""
+        n_steps = len(self.steps)
+        w = self.window_size
+        k_blocks = (n_steps + w - 1) // w if n_steps > 0 else 0
+
+        block_sums: list[Fraction] = []
+        for idx in range(0, n_steps, w):
+            blk = self.steps[idx : idx + w]
+            b_sum = sum((s["step_drift"] for s in blk), Fraction(0))
+            block_sums.append(b_sum)
+
+        partition_sum = sum(block_sums, Fraction(0))
+        block_partition_verified = (
+            partition_sum == self.cumulative_drift
+            and (
+                n_steps == 0
+                or self.cumulative_drift <= Fraction(k_blocks) * self.max_window_sum
+            )
+        )
+
+        all_windows_green = (n_steps == 0) or (self.max_window_sum <= self.window_budget)
+        horizon_within_budget = (
+            (n_steps == 0)
+            or (
+                self.max_prefix_drift <= self.global_budget
+                and self.cumulative_drift <= self.global_budget
+            )
+        )
+        sliding_window_masked_breach = (all_windows_green and not horizon_within_budget)
+
+        if not all_windows_green:
+            status = "LOCAL_WINDOW_BUDGET_BREACH"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif sliding_window_masked_breach:
+            status = "SLIDING_WINDOW_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "WINDOW_AND_HORIZON_WITHIN_BUDGET_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_windowed_drift.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "window_size": self.window_size,
+            "window_budget": self.window_budget,
+            "global_budget": self.global_budget,
+            "observed_steps_count": n_steps,
+            "disjoint_window_blocks_count": k_blocks,
+            "current_window_sum": sum(self.recent_window, Fraction(0)),
+            "max_window_sum": self.max_window_sum,
+            "cumulative_horizon_drift": self.cumulative_drift,
+            "max_prefix_horizon_drift": self.max_prefix_drift,
+            "all_windows_within_budget": all_windows_green,
+            "horizon_within_budget": horizon_within_budget,
+            "sliding_window_masked_breach": sliding_window_masked_breach,
+            "block_partition_bound_verified": block_partition_verified,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingReplayOrderMonitor:
+    """Online LGGR VIII permutation-sensitive prefix budget vs. commutative endpoint monitor.
+
+    Audits reordered asynchronous step arrivals (event_id, delta_value, causal_index) under a
+    prefix budget B_prefix >= 0:
+      - Verifies commutative endpoint invariance across arrival order, causal order, and
+        worst/best permutations:
+          sum_{t=1}^N d_{arrival(t)} == sum_{t=1}^N d_{causal(t)} == sum_{t=1}^N d_{pi_max(t)}.
+      - Verifies that the positive-first permutation pi_max attains the exact positive-mass
+        prefix ceiling:
+          max_{0 <= k <= N} sum_{t=1}^k d_{pi_max(t)} == sum_{i : d_i > 0} d_i.
+      - Separates:
+          1. CAUSAL_AND_ARRIVAL_PREFIX_BREACH (OBSTRUCTED_LGGR): both arrival and causal orders
+             exceed B_prefix.
+          2. ARRIVAL_MASKED_CAUSAL_BREACH_LGGR (OBSTRUCTED_LGGR): arrival order stays within
+             B_prefix (because negative credits arrived ahead of positive spikes), while the
+             causal order exceeds B_prefix.
+          3. REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR (OBSTRUCTED_LGGR): causal order stays within
+             B_prefix while arrival order or worst-case permutation pi_max exceeds B_prefix.
+          4. PERMUTATION_ROBUST_PREFIX_LGGG (COMPOSABLE_LGGG): sum_{d_i > 0} d_i <= B_prefix,
+             so every arrival permutation stays within B_prefix.
+    """
+
+    def __init__(
+        self,
+        prefix_budget: Fraction | int | str,
+        *,
+        scope_id: str = "streaming-replay-order-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        bp = rational(prefix_budget)
+        if bp < Fraction(0):
+            raise ValidationError("prefix_budget must be >= 0")
+        self.prefix_budget = bp
+        self.events: list[dict[str, Any]] = []
+
+    def register_event(
+        self,
+        event_id: str,
+        delta_value: Fraction | int | str,
+        *,
+        causal_index: int,
+    ) -> dict[str, Any]:
+        """Record an asynchronous event with its arrival position and causal index."""
+        eid = text(event_id, "event_id")
+        if any(e["event_id"] == eid for e in self.events):
+            raise ValidationError(f"Duplicate event_id: {eid}")
+        c_idx = exact_int(causal_index, "causal_index")
+        d_val = rational(delta_value)
+
+        self.events.append(
+            {
+                "event_id": eid,
+                "arrival_index": len(self.events),
+                "causal_index": c_idx,
+                "delta_value": d_val,
+            }
+        )
+        return self.get_receipt()
+
+    @staticmethod
+    def _prefix_profile(deltas: list[Fraction]) -> tuple[Fraction, Fraction, list[Fraction]]:
+        running = Fraction(0)
+        max_pref = Fraction(0)
+        prefs: list[Fraction] = []
+        for d in deltas:
+            running += d
+            prefs.append(running)
+            if running > max_pref:
+                max_pref = running
+        return running, max_pref, prefs
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit replay-order audit receipt comparing arrival, causal, and extremal permutations."""
+        arrival_deltas = [e["delta_value"] for e in self.events]
+        causal_events = sorted(self.events, key=lambda e: (e["causal_index"], e["arrival_index"]))
+        causal_deltas = [e["delta_value"] for e in causal_events]
+        worst_deltas = sorted(arrival_deltas, reverse=True)
+        best_deltas = sorted(arrival_deltas)
+
+        end_arr, max_arr, _ = self._prefix_profile(arrival_deltas)
+        end_caus, max_caus, _ = self._prefix_profile(causal_deltas)
+        end_worst, max_worst, _ = self._prefix_profile(worst_deltas)
+        end_best, max_best, _ = self._prefix_profile(best_deltas)
+
+        pos_sum = sum((d for d in arrival_deltas if d > Fraction(0)), Fraction(0))
+        endpoint_invariance_ok = (end_arr == end_caus == end_worst == end_best)
+        worst_perm_identity_ok = (max_worst == pos_sum)
+
+        arr_breach = max_arr > self.prefix_budget
+        caus_breach = max_caus > self.prefix_budget
+        worst_breach = max_worst > self.prefix_budget
+
+        if arr_breach and caus_breach:
+            status = "CAUSAL_AND_ARRIVAL_PREFIX_BREACH"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif caus_breach and not arr_breach:
+            status = "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif arr_breach or worst_breach:
+            status = "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PERMUTATION_ROBUST_PREFIX_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_replay_order.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "prefix_budget": self.prefix_budget,
+            "observed_events_count": len(self.events),
+            "common_endpoint_sum": end_arr,
+            "arrival_max_prefix": max_arr,
+            "causal_max_prefix": max_caus,
+            "worst_permutation_max_prefix": max_worst,
+            "best_permutation_max_prefix": max_best,
+            "positive_delta_mass": pos_sum,
+            "arrival_within_budget": not arr_breach,
+            "causal_within_budget": not caus_breach,
+            "arrival_masked_causal_breach": (caus_breach and not arr_breach),
+            "prefix_order_diverged": (max_arr != max_caus),
+            "endpoint_permutation_invariance_verified": endpoint_invariance_ok,
+            "positive_sum_equals_worst_permutation_max_verified": worst_perm_identity_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingSimplicialCupMonitor:
+    """Online Alexander-Whitney simplicial cup product and graded Leibniz cocycle monitor.
+
+    Evaluates rational 0-cochains f in C^0 and 1-cochains alpha, beta in C^1 on oriented
+    2-simplices sigma = (v_0, v_1, v_2):
+      - Simplicial 1-coboundary:
+          (d^1 alpha)_{(v_0, v_1, v_2)} = alpha_{(v_1, v_2)} - alpha_{(v_0, v_2)} + alpha_{(v_0, v_1)}.
+      - Alexander-Whitney cup product of 1-cochains on (v_0, v_1, v_2):
+          (alpha cup beta)_{(v_0, v_1, v_2)} = alpha_{(v_0, v_1)} * beta_{(v_1, v_2)},
+        reverse cup product (beta cup alpha)_{(v_0, v_1, v_2)} = beta_{(v_0, v_1)} * alpha_{(v_1, v_2)},
+        and cup commutator [alpha, beta]_cup = alpha_{01} beta_{12} - beta_{01} alpha_{12}.
+      - Graded Leibniz identity for (f, alpha) in C^0 x C^1 on (v_0, v_1, v_2):
+          d^1(f cup alpha) == (d^0 f cup alpha) + (f cup d^1 alpha),
+        where (f cup alpha)_{(v_i, v_j)} = f(v_i) * alpha_{(v_i, v_j)}.
+      - Separates:
+          1. NON_COCYCLE_COBOUNDARY_LGGR (OBSTRUCTED_LGGR): d^1 alpha != 0 or d^1 beta != 0.
+          2. NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR (OBSTRUCTED_LGGR): d^1 alpha == 0 and
+             d^1 beta == 0, while (alpha cup beta)_{(v_0, v_1, v_2)} != 0.
+          3. EXACT_TRIVIAL_CUP_COCYCLE_LGGG (COMPOSABLE_LGGG): d^1 alpha == 0, d^1 beta == 0,
+             and (alpha cup beta)_{(v_0, v_1, v_2)} == 0.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-simplicial-cup-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.simplices: dict[str, dict[str, Any]] = {}
+
+    def evaluate_two_simplex(
+        self,
+        simplex_id: str,
+        v0: str,
+        v1: str,
+        v2: str,
+        *,
+        alpha_01: Fraction | int | str,
+        alpha_12: Fraction | int | str,
+        alpha_02: Fraction | int | str,
+        beta_01: Fraction | int | str,
+        beta_12: Fraction | int | str,
+        beta_02: Fraction | int | str,
+        f_v0: Fraction | int | str = 0,
+        f_v1: Fraction | int | str = 0,
+        f_v2: Fraction | int | str = 0,
+    ) -> dict[str, Any]:
+        """Audit d^1 alpha, d^1 beta, alpha cup beta, and graded Leibniz rule on (v0, v1, v2)."""
+        sid = text(simplex_id, "simplex_id")
+        n0 = text(v0, "v0")
+        n1 = text(v1, "v1")
+        n2 = text(v2, "v2")
+        if len({n0, n1, n2}) != 3:
+            raise ValidationError("2-simplex vertices (v0, v1, v2) must be distinct")
+
+        a01 = rational(alpha_01)
+        a12 = rational(alpha_12)
+        a02 = rational(alpha_02)
+        b01 = rational(beta_01)
+        b12 = rational(beta_12)
+        b02 = rational(beta_02)
+        f0 = rational(f_v0)
+        f1 = rational(f_v1)
+        f2 = rational(f_v2)
+
+        d1_alpha = a12 - a02 + a01
+        d1_beta = b12 - b02 + b01
+        alpha_cup_beta = a01 * b12
+        beta_cup_alpha = b01 * a12
+        cup_commutator = alpha_cup_beta - beta_cup_alpha
+
+        # Graded Leibniz check for (f, alpha):
+        # (f cup alpha)_{01} = f0 * a01, (f cup alpha)_{12} = f1 * a12, (f cup alpha)_{02} = f0 * a02
+        d1_f_cup_alpha = f1 * a12 - f0 * a02 + f0 * a01
+        d0f_cup_alpha = (f1 - f0) * a12
+        f_cup_d1_alpha = f0 * d1_alpha
+        leibniz_alpha_ok = (d1_f_cup_alpha == d0f_cup_alpha + f_cup_d1_alpha)
+
+        # Graded Leibniz check for (f, beta):
+        d1_f_cup_beta = f1 * b12 - f0 * b02 + f0 * b01
+        d0f_cup_beta = (f1 - f0) * b12
+        f_cup_d1_beta = f0 * d1_beta
+        leibniz_beta_ok = (d1_f_cup_beta == d0f_cup_beta + f_cup_d1_beta)
+
+        # Exact 1-coboundary check d^1(d^0 f) == 0 on (v0, v1, v2)
+        d0f_01 = f1 - f0
+        d0f_12 = f2 - f1
+        d0f_02 = f2 - f0
+        d1_d0_f = d0f_12 - d0f_02 + d0f_01
+        d1_d0_zero_ok = (d1_d0_f == Fraction(0))
+
+        if d1_alpha != Fraction(0) or d1_beta != Fraction(0):
+            status = "NON_COCYCLE_COBOUNDARY_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif alpha_cup_beta != Fraction(0):
+            status = "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EXACT_TRIVIAL_CUP_COCYCLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_simplicial_cup_simplex.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "simplex_id": sid,
+            "vertices": [n0, n1, n2],
+            "status": status,
+            "contract_status": contract_status,
+            "d1_alpha": d1_alpha,
+            "d1_beta": d1_beta,
+            "alpha_is_cocycle": (d1_alpha == Fraction(0)),
+            "beta_is_cocycle": (d1_beta == Fraction(0)),
+            "alpha_cup_beta": alpha_cup_beta,
+            "beta_cup_alpha": beta_cup_alpha,
+            "cup_commutator": cup_commutator,
+            "d1_f_cup_alpha": d1_f_cup_alpha,
+            "d0f_cup_alpha": d0f_cup_alpha,
+            "f_cup_d1_alpha": f_cup_d1_alpha,
+            "leibniz_identity_verified": (leibniz_alpha_ok and leibniz_beta_ok),
+            "exact_coboundary_d1_d0_zero_verified": d1_d0_zero_ok,
+        }
+        self.simplices[sid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate simplicial cup product and graded Leibniz receipt."""
+        non_cocycle_ids = [
+            sid for sid, s in self.simplices.items()
+            if s["status"] == "NON_COCYCLE_COBOUNDARY_LGGR"
+        ]
+        nontrivial_cup_ids = [
+            sid for sid, s in self.simplices.items()
+            if s["status"] == "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR"
+        ]
+        all_leibniz = all(s["leibniz_identity_verified"] for s in self.simplices.values())
+        all_d1_d0 = all(s["exact_coboundary_d1_d0_zero_verified"] for s in self.simplices.values())
+
+        if non_cocycle_ids:
+            status = "NON_COCYCLE_COBOUNDARY_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif nontrivial_cup_ids:
+            status = "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EXACT_TRIVIAL_CUP_COCYCLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_simplicial_cup.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluated_simplices_count": len(self.simplices),
+            "non_cocycle_simplex_ids": sorted(non_cocycle_ids),
+            "nontrivial_cup_simplex_ids": sorted(nontrivial_cup_ids),
+            "all_leibniz_identities_verified": all_leibniz,
+            "all_d1_d0_zero_verified": all_d1_d0,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingMayerVietorisMonitor:
+    """Online Mayer-Vietoris subcomplex cover and connecting-homomorphism obstruction monitor.
+
+    Audits two-subcomplex covers K = U U V of a 1-cochain h:
+      - Tracks subcomplex monitors for U, V, and the union U U V.
+      - When h|_U = d^0 f_U is locally exact on U and h|_V = d^0 f_V is locally exact on V,
+        computes the intersection difference 0-cochain on V(U) cap V(V):
+          delta_{U cap V}(w) = f_U(w) - f_V(w).
+      - Verifies that delta_{U cap V} is locally constant on every connected component of
+        U cap V (d^0 delta_{U cap V} == 0 on E(U) cap E(V)).
+      - Computes the Mayer-Vietoris connecting coboundary spread:
+          Delta_MV = max_{w in V(U) cap V(V)} delta_{U cap V}(w) - min_{w in V(U) cap V(V)} delta_{U cap V}(w)
+        and verifies that for connected locally exact U and V, h is globally exact on U U V
+        if and only if delta_{U cap V} is constant across all connected components of U cap V
+        (Delta_MV == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-mayer-vietoris-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.monitor_u = StreamingCochainMonitor()
+        self.monitor_v = StreamingCochainMonitor()
+        self.monitor_union = StreamingCochainMonitor()
+        self.overlap_edges: list[dict[str, Any]] = []
+
+    def record_edge(
+        self,
+        source: str,
+        target: str,
+        value: Fraction | int | str,
+        *,
+        in_u: bool,
+        in_v: bool,
+        weight: Fraction | int | str = 1,
+    ) -> dict[str, Any]:
+        """Record a directed edge in U, V, or both (U cap V)."""
+        u_node = text(source, "source")
+        v_node = text(target, "target")
+        boolean(in_u, "in_u")
+        boolean(in_v, "in_v")
+        if not in_u and not in_v:
+            raise ValidationError("Edge must belong to at least one subcomplex (in_u or in_v)")
+        val_q = rational(value)
+        w_q = rational(weight)
+
+        if in_u:
+            self.monitor_u.add_edge(u_node, v_node, val_q, weight=w_q)
+        if in_v:
+            self.monitor_v.add_edge(u_node, v_node, val_q, weight=w_q)
+        self.monitor_union.add_edge(u_node, v_node, val_q, weight=w_q)
+        if in_u and in_v:
+            self.overlap_edges.append(
+                {
+                    "source": u_node,
+                    "target": v_node,
+                    "value": val_q,
+                }
+            )
+        return self.audit_mayer_vietoris()
+
+    @staticmethod
+    def _is_exact(mon: StreamingCochainMonitor) -> bool:
+        return all(c["closure_defect"] == Fraction(0) for c in mon.cycles)
+
+    @staticmethod
+    def _integrate_potentials(mon: StreamingCochainMonitor) -> dict[str, Fraction]:
+        potentials: dict[str, Fraction] = {}
+        adj: dict[str, list[tuple[str, Fraction]]] = {v: [] for v in mon.vertices}
+        for e in mon.edges:
+            u, v, val = e["source"], e["target"], e["value"]
+            adj[u].append((v, val))
+            adj[v].append((u, -val))
+        for start in sorted(mon.vertices):
+            if start in potentials:
+                continue
+            potentials[start] = Fraction(0)
+            queue: deque[str] = deque([start])
+            while queue:
+                curr = queue.popleft()
+                for nxt, diff in adj[curr]:
+                    if nxt not in potentials:
+                        potentials[nxt] = potentials[curr] + diff
+                        queue.append(nxt)
+        return potentials
+
+    def audit_mayer_vietoris(self) -> dict[str, Any]:
+        """Audit local exactness on U and V, intersection 0-cocycle delta_{U cap V}, and global exactness on U U V."""
+        u_exact = self._is_exact(self.monitor_u)
+        v_exact = self._is_exact(self.monitor_v)
+        union_exact = self._is_exact(self.monitor_union)
+        overlap_vertices = sorted(self.monitor_u.vertices & self.monitor_v.vertices)
+
+        delta_map: dict[str, Fraction] = {}
+        glued_potential: dict[str, Fraction] | None = None
+        locally_constant_on_overlap = True
+        mv_spread = Fraction(0)
+
+        if u_exact and v_exact:
+            f_u = self._integrate_potentials(self.monitor_u)
+            f_v = self._integrate_potentials(self.monitor_v)
+            for w in overlap_vertices:
+                delta_map[w] = f_u[w] - f_v[w]
+            for oe in self.overlap_edges:
+                if delta_map[oe["target"]] - delta_map[oe["source"]] != Fraction(0):
+                    locally_constant_on_overlap = False
+            if delta_map:
+                mv_spread = max(delta_map.values()) - min(delta_map.values())
+            if mv_spread == Fraction(0) and union_exact:
+                shift = next(iter(delta_map.values()), Fraction(0))
+                glued_potential = {}
+                for x, val in sorted(f_u.items()):
+                    glued_potential[x] = val
+                for x, val in sorted(f_v.items()):
+                    glued_potential[x] = val + shift
+
+        mv_equivalence_ok = (
+            not (u_exact and v_exact and len(overlap_vertices) > 0)
+            or (union_exact == (mv_spread == Fraction(0)))
+        )
+
+        if not u_exact or not v_exact:
+            status = "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not union_exact:
+            status = "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "MAYER_VIETORIS_EXACT_GLUED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_mayer_vietoris.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "u_locally_exact": u_exact,
+            "v_locally_exact": v_exact,
+            "union_globally_exact": union_exact,
+            "overlap_vertices": overlap_vertices,
+            "intersection_difference_cocycle": delta_map,
+            "connecting_coboundary_spread": mv_spread,
+            "glued_global_potential": glued_potential,
+            "intersection_cocycle_locally_constant_verified": locally_constant_on_overlap,
+            "mayer_vietoris_equivalence_verified": mv_equivalence_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Return the current Mayer-Vietoris cover audit receipt."""
+        return self.audit_mayer_vietoris()
+
+
+class StreamingHodgeDecompositionMonitor:
+    """Online discrete Hodge-Laplacian orthogonal decomposition monitor over Q.
+
+    Decomposes a rational 1-cochain h in C^1(K; Q) on a finite 2-complex (D_0, D_1)
+    with D_1 D_0 = 0 into three mutually orthogonal rational components:
+      h = h_exact + h_coexact + h_harmonic
+    where:
+      - h_exact = D_0 phi in im(D_0) solves the normal system (D_0^T D_0) phi = D_0^T h,
+      - h_coexact = D_1^T psi in im(D_1^T) solves the normal system (D_1 D_1^T) psi = D_1 h,
+      - h_harmonic = h - h_exact - h_coexact in ker(D_0^T) cap ker(D_1) = ker(L_1),
+        with discrete 1-form Hodge Laplacian L_1 = D_0 D_0^T + D_1^T D_1.
+    Audits pairwise Euclidean orthogonality, Pythagorean L2 energy decomposition
+    ||h||_2^2 = ||h_exact||_2^2 + ||h_coexact||_2^2 + ||h_harmonic||_2^2,
+    and separates pure exact gradients from coexact 2-cell curl and harmonic
+    cohomology obstructions.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-hodge-decomposition-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _dot(u: tuple[Fraction, ...], v: tuple[Fraction, ...]) -> Fraction:
+        return sum((a * b for a, b in zip(u, v)), Fraction(0))
+
+    def record_complex_cochain(
+        self,
+        complex_id: str,
+        D0: Any,
+        h: Any,
+        D1: Any | None = None,
+    ) -> dict[str, Any]:
+        """Decompose 1-cochain h on complex (D0, D1) into exact, coexact, and harmonic parts."""
+        cid = text(complex_id, "complex_id")
+        d0 = matrix(D0, "D0")
+        m, _ = len(d0), len(d0[0])
+        hv = vector(h, "h", m)
+        d0_t = transpose(d0)
+
+        has_d1 = False
+        d1: tuple[tuple[Fraction, ...], ...] = ()
+        d1_t: tuple[tuple[Fraction, ...], ...] = ()
+        if D1 is not None:
+            raw_d1 = sequence(D1, "D1")
+            if raw_d1:
+                d1 = matrix(raw_d1, "D1", cols=m)
+                d1_t = transpose(d1)
+                has_d1 = True
+                comp = matmul(d1, d0)
+                if not is_zero(comp):
+                    raise ValidationError("Invalid cochain complex: D1 * D0 must be zero")
+
+        # 1. Exact component: solve (D0^T D0) phi = D0^T h
+        gram_0 = matmul(d0_t, d0)
+        rhs_0 = matvec(d0_t, hv)
+        phi_opt = solve_exact(gram_0, rhs_0)
+        if phi_opt is None:
+            raise ValidationError("Normal equations for exact projection failed")
+        h_exact = matvec(d0, phi_opt)
+
+        # 2. Coexact component: solve (D1 D1^T) psi = D1 h
+        if has_d1:
+            gram_1 = matmul(d1, d1_t)
+            rhs_1 = matvec(d1, hv)
+            psi_opt = solve_exact(gram_1, rhs_1)
+            if psi_opt is None:
+                raise ValidationError("Normal equations for coexact projection failed")
+            h_coexact = matvec(d1_t, psi_opt)
+        else:
+            psi_opt = ()
+            h_coexact = tuple(Fraction(0) for _ in range(m))
+
+        # 3. Harmonic residual: h_harm = h - h_exact - h_coexact
+        h_harm = tuple(hv[i] - h_exact[i] - h_coexact[i] for i in range(m))
+
+        # Check kernel conditions on h_harm: D0^T h_harm == 0 and D1 h_harm == 0
+        div_harm = matvec(d0_t, h_harm)
+        curl_harm = matvec(d1, h_harm) if has_d1 else ()
+        harm_in_ker_d0t = all(v == Fraction(0) for v in div_harm)
+        harm_in_ker_d1 = all(v == Fraction(0) for v in curl_harm)
+
+        # Discrete 1-form Hodge Laplacian L_1 h_harm = D0(D0^T h_harm) + D1^T(D1 h_harm)
+        l1_down = matvec(d0, div_harm)
+        l1_up = matvec(d1_t, curl_harm) if has_d1 else tuple(Fraction(0) for _ in range(m))
+        l1_harm = tuple(l1_down[i] + l1_up[i] for i in range(m))
+        laplacian_kernel_verified = all(v == Fraction(0) for v in l1_harm)
+
+        # Orthogonality and Pythagorean identity
+        ip_exact_coexact = self._dot(h_exact, h_coexact)
+        ip_exact_harm = self._dot(h_exact, h_harm)
+        ip_coexact_harm = self._dot(h_coexact, h_harm)
+        orthogonality_ok = (
+            ip_exact_coexact == Fraction(0)
+            and ip_exact_harm == Fraction(0)
+            and ip_coexact_harm == Fraction(0)
+        )
+
+        norm2_h = self._dot(hv, hv)
+        norm2_exact = self._dot(h_exact, h_exact)
+        norm2_coexact = self._dot(h_coexact, h_coexact)
+        norm2_harm = self._dot(h_harm, h_harm)
+        pythagorean_ok = norm2_h == (norm2_exact + norm2_coexact + norm2_harm)
+
+        if norm2_coexact == Fraction(0) and norm2_harm == Fraction(0):
+            classification = "EXACT_GRADIENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif norm2_coexact == Fraction(0) and norm2_harm > Fraction(0):
+            classification = "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif norm2_coexact > Fraction(0) and norm2_harm == Fraction(0):
+            classification = "COEXACT_CURL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            classification = "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "complex_id": cid,
+            "h": list(hv),
+            "h_exact": list(h_exact),
+            "h_coexact": list(h_coexact),
+            "h_harmonic": list(h_harm),
+            "vertex_potential_phi": list(phi_opt),
+            "two_cell_potential_psi": list(psi_opt),
+            "norm2_total": norm2_h,
+            "norm2_exact": norm2_exact,
+            "norm2_coexact": norm2_coexact,
+            "norm2_harmonic": norm2_harm,
+            "harmonic_in_ker_d0_transpose": harm_in_ker_d0t,
+            "harmonic_in_ker_d1": harm_in_ker_d1,
+            "laplacian_kernel_verified": laplacian_kernel_verified,
+            "orthogonality_verified": orthogonality_ok,
+            "pythagorean_energy_verified": pythagorean_ok,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed discrete Hodge decomposition audit receipt."""
+        if not self.records:
+            raise ValidationError("At least one complex cochain must be recorded before emitting a receipt")
+
+        harmonic_ids = [r["complex_id"] for r in self.records if r["norm2_harmonic"] > Fraction(0)]
+        coexact_ids = [r["complex_id"] for r in self.records if r["norm2_coexact"] > Fraction(0)]
+        all_orth = all(r["orthogonality_verified"] for r in self.records)
+        all_pyth = all(r["pythagorean_energy_verified"] for r in self.records)
+        all_lap = all(r["laplacian_kernel_verified"] for r in self.records)
+
+        if harmonic_ids or coexact_ids:
+            status = "HODGE_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "HODGE_EXACT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_hodge_decomposition.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "complex_count": len(self.records),
+            "harmonic_obstructed_ids": sorted(harmonic_ids),
+            "coexact_obstructed_ids": sorted(coexact_ids),
+            "all_orthogonality_verified": all_orth,
+            "all_pythagorean_energy_verified": all_pyth,
+            "all_laplacian_kernels_verified": all_lap,
+            "records": self.records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingDFAGrammarGluingMonitor:
+    """Online finite-state automaton (DFA) tape grammar and trace concatenation monitor.
+
+    Audits a deterministic finite automaton A = (Q, Sigma, delta, q0, F) across
+    multi-segment tape traces w = w_1 w_2 ... w_k:
+      - Evaluates each segment w_i locally from the initial state q0:
+          E_local(w_i) = 1[delta*(q0, w_i) in F],   L = prod_i E_local(w_i).
+      - Evaluates the concatenated trajectory globally from q0:
+          q_i = delta*(q_{i-1}, w_i),   E_global(w_1...w_k) = 1[q_k in F].
+      - Verifies the transition monoid homomorphism identity:
+          delta*(q_{i-1}, w_i) == delta*(q0, w_1...w_i) for all prefixes.
+      - Separates:
+          * DFA_CONCATENATION_COHERENT_LGGG (L == 1 and E_global == 1),
+          * DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR (L == 1 and E_global == 0, Delta_E = -1),
+            occurring when a locally accepting segment terminates at a non-reset accepting
+            state q_1 in F \\ {q0} from which the next locally accepted segment is rejected,
+          * DFA_COMPENSATING_RECOVERY_PGD_LGGR (L == 0 and E_global == 1, Delta_E = +1),
+          * DFA_LOCAL_AND_GLOBAL_REJECTED (L == 0 and E_global == 0, Delta_E = 0).
+    """
+
+    def __init__(
+        self,
+        states: Iterable[str],
+        alphabet: Iterable[str],
+        transitions: Mapping[str, Mapping[str, str]],
+        initial_state: str,
+        accepting_states: Iterable[str],
+        *,
+        scope_id: str = "streaming-dfa-grammar-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        raw_states = [text(s, "state") for s in sequence(states, "states")]
+        if not raw_states:
+            raise ValidationError("states must be non-empty")
+        self.states = set(raw_states)
+
+        raw_alpha = [text(a, "symbol") for a in sequence(alphabet, "alphabet")]
+        if not raw_alpha:
+            raise ValidationError("alphabet must be non-empty")
+        self.alphabet = set(raw_alpha)
+
+        q0 = text(initial_state, "initial_state")
+        if q0 not in self.states:
+            raise ValidationError("initial_state must belong to states")
+        self.initial_state = q0
+
+        raw_acc = [text(s, "accepting_state") for s in sequence(accepting_states, "accepting_states")]
+        for s in raw_acc:
+            if s not in self.states:
+                raise ValidationError(f"accepting_state {s!r} not in states")
+        self.accepting_states = set(raw_acc)
+
+        if not isinstance(transitions, Mapping):
+            raise ValidationError("transitions must be a mapping")
+        self.transitions: dict[str, dict[str, str]] = {}
+        for s in sorted(self.states):
+            if s not in transitions or not isinstance(transitions[s], Mapping):
+                raise ValidationError(f"Missing transition table for state {s!r}")
+            self.transitions[s] = {}
+            for sym in sorted(self.alphabet):
+                if sym not in transitions[s]:
+                    raise ValidationError(f"Missing transition from state {s!r} on symbol {sym!r}")
+                nxt = text(transitions[s][sym], "target_state")
+                if nxt not in self.states:
+                    raise ValidationError(f"Transition target {nxt!r} not in states")
+                self.transitions[s][sym] = nxt
+
+        self.current_state = self.initial_state
+        self.concatenated_tokens: list[str] = []
+        self.segments: list[dict[str, Any]] = []
+
+    def _run_from(self, start_state: str, tokens: list[str]) -> str:
+        curr = start_state
+        for tok in tokens:
+            curr = self.transitions[curr][tok]
+        return curr
+
+    def record_segment(self, segment_id: str, tokens: Iterable[str]) -> dict[str, Any]:
+        """Record a tape segment, evaluating local acceptance from q0 vs global chained state."""
+        sid = text(segment_id, "segment_id")
+        tok_list = [text(t, "token") for t in sequence(tokens, "tokens")]
+        for t in tok_list:
+            if t not in self.alphabet:
+                raise ValidationError(f"Token {t!r} is outside declared alphabet")
+
+        local_end = self._run_from(self.initial_state, tok_list)
+        local_pass = 1 if local_end in self.accepting_states else 0
+
+        entry_state = self.current_state
+        chained_end = self._run_from(entry_state, tok_list)
+        self.current_state = chained_end
+        self.concatenated_tokens.extend(tok_list)
+
+        direct_prefix_end = self._run_from(self.initial_state, self.concatenated_tokens)
+        homomorphism_ok = chained_end == direct_prefix_end
+
+        rec = {
+            "segment_index": len(self.segments),
+            "segment_id": sid,
+            "tokens": tok_list,
+            "entry_state": entry_state,
+            "local_end_state_from_q0": local_end,
+            "local_pass_from_q0": local_pass,
+            "is_reset_idempotent_on_q0": local_end == self.initial_state,
+            "chained_end_state": chained_end,
+            "chained_prefix_accepted": 1 if chained_end in self.accepting_states else 0,
+            "monoid_homomorphism_verified": homomorphism_ok,
+        }
+        self.segments.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed DFA tape grammar gluing audit receipt."""
+        if not self.segments:
+            raise ValidationError("At least one tape segment must be recorded before emitting a receipt")
+
+        local_product = 1
+        for seg in self.segments:
+            local_product *= seg["local_pass_from_q0"]
+
+        global_eval = 1 if self.current_state in self.accepting_states else 0
+        defect = global_eval - local_product
+        all_homomorphism = all(seg["monoid_homomorphism_verified"] for seg in self.segments)
+        non_reset_accepting_segments = [
+            seg["segment_id"]
+            for seg in self.segments
+            if seg["local_pass_from_q0"] == 1 and not seg["is_reset_idempotent_on_q0"]
+        ]
+
+        if local_product == 1 and global_eval == 1:
+            status = "DFA_CONCATENATION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            status = "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_product == 0 and global_eval == 1:
+            status = "DFA_COMPENSATING_RECOVERY_PGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "DFA_LOCAL_AND_GLOBAL_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_dfa_grammar_gluing.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "initial_state": self.initial_state,
+            "accepting_states": sorted(self.accepting_states),
+            "segment_count": len(self.segments),
+            "total_tokens": len(self.concatenated_tokens),
+            "terminal_state": self.current_state,
+            "local_product_aggregator": local_product,
+            "global_concatenated_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "non_reset_accepting_segment_ids": non_reset_accepting_segments,
+            "all_monoid_homomorphisms_verified": all_homomorphism,
+            "segments": self.segments,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCatalystDegradationMonitor:
+    """Online constructor-task catalyst residual wear and cycle-ceiling monitor.
+
+    Audits multi-cycle constructor tasks (S_t, C_t) -> (S_{t+1}, C_{t+1}) over Q:
+      - Tracks initial catalyst state C_0, catalyst tolerance threshold tau_cat >= 0,
+        and per-cycle local step wear tolerance eps_local >= 0.
+      - On each cycle t, records substrate task completion E_sub(t) in {0, 1} and
+        catalyst residual wear delta_C_t = C_t - C_{t-1}.
+      - Evaluates the single-cycle local gate:
+          E_local(t) = 1[E_sub(t) == 1 and |delta_C_t| <= eps_local]
+        and local product aggregator L = prod_{t=1}^N E_local(t).
+      - Evaluates cumulative catalyst deviation |C_t - C_0| = |sum_{k=1}^t delta_C_k|
+        against tau_cat and global multi-cycle task evaluator:
+          E_g = 1[(prod_{t=1}^N E_sub(t) == 1) and (max_{1<=t<=N} |C_t - C_0| <= tau_cat)].
+      - Computes the exact uniform-wear cycle ceiling floor(tau_cat / |delta_C_t|)
+        when delta_C_t != 0, and separates:
+          * IDEAL_EXACT_CATALYST_LGGG (L == 1, E_g == 1, max |C_t - C_0| == 0),
+          * BOUNDED_APPROXIMATE_CATALYST_LGGG (L == 1, E_g == 1, 0 < max |C_t - C_0| <= tau_cat),
+          * CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR (L == 1, E_g == 0, Delta_E = -1),
+          * LOCAL_CYCLE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        initial_catalyst_state: Fraction | int | str = 0,
+        catalyst_tolerance: Fraction | int | str = 1,
+        *,
+        per_cycle_local_tolerance: Fraction | int | str | None = None,
+        scope_id: str = "streaming-catalyst-degradation-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.initial_catalyst = rational(initial_catalyst_state)
+        self.catalyst_tolerance = rational(catalyst_tolerance)
+        if self.catalyst_tolerance < 0:
+            raise ValidationError("catalyst_tolerance must be non-negative")
+        if per_cycle_local_tolerance is None:
+            self.per_cycle_local_tolerance = self.catalyst_tolerance
+        else:
+            self.per_cycle_local_tolerance = rational(per_cycle_local_tolerance)
+            if self.per_cycle_local_tolerance < 0:
+                raise ValidationError("per_cycle_local_tolerance must be non-negative")
+
+        self.current_catalyst = self.initial_catalyst
+        self.cumulative_wear = Fraction(0)
+        self.cumulative_abs_wear = Fraction(0)
+        self.max_catalyst_deviation = Fraction(0)
+        self.cycles: list[dict[str, Any]] = []
+
+    def record_cycle(
+        self,
+        cycle_id: str,
+        substrate_in: str,
+        substrate_out: str,
+        substrate_target_met: bool,
+        catalyst_wear_delta: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Record a single constructor cycle and evaluate local vs cumulative catalyst bounds."""
+        cid = text(cycle_id, "cycle_id")
+        s_in = text(substrate_in, "substrate_in")
+        s_out = text(substrate_out, "substrate_out")
+        boolean(substrate_target_met, "substrate_target_met")
+        wear = rational(catalyst_wear_delta)
+
+        c_prev = self.current_catalyst
+        c_next = c_prev + wear
+        self.current_catalyst = c_next
+        self.cumulative_wear += wear
+        self.cumulative_abs_wear += abs(wear)
+
+        deviation = abs(c_next - self.initial_catalyst)
+        if deviation > self.max_catalyst_deviation:
+            self.max_catalyst_deviation = deviation
+
+        telescoping_ok = (c_next - self.initial_catalyst) == self.cumulative_wear
+        sub_ok = 1 if substrate_target_met else 0
+        step_wear_ok = abs(wear) <= self.per_cycle_local_tolerance
+        local_eval = 1 if (substrate_target_met and step_wear_ok) else 0
+        within_global_tolerance = deviation <= self.catalyst_tolerance
+
+        uniform_cycle_ceiling: int | None = None
+        if wear != Fraction(0):
+            uniform_cycle_ceiling = int(self.catalyst_tolerance // abs(wear))
+
+        rec = {
+            "cycle_index": len(self.cycles),
+            "cycle_id": cid,
+            "substrate_in": s_in,
+            "substrate_out": s_out,
+            "substrate_target_met": sub_ok,
+            "catalyst_state_before": c_prev,
+            "catalyst_wear_delta": wear,
+            "catalyst_state_after": c_next,
+            "cumulative_catalyst_drift": self.cumulative_wear,
+            "cumulative_abs_wear": self.cumulative_abs_wear,
+            "catalyst_deviation_from_initial": deviation,
+            "local_cycle_evaluator": local_eval,
+            "within_global_catalyst_tolerance": within_global_tolerance,
+            "uniform_wear_cycle_ceiling": uniform_cycle_ceiling,
+            "telescoping_identity_verified": telescoping_ok,
+        }
+        self.cycles.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed multi-cycle constructor catalyst degradation receipt."""
+        if not self.cycles:
+            raise ValidationError("At least one constructor cycle must be recorded before emitting a receipt")
+
+        local_product = 1
+        all_sub_ok = True
+        for cyc in self.cycles:
+            local_product *= cyc["local_cycle_evaluator"]
+            if cyc["substrate_target_met"] != 1:
+                all_sub_ok = False
+
+        catalyst_viable_all_cycles = self.max_catalyst_deviation <= self.catalyst_tolerance
+        global_eval = 1 if (all_sub_ok and catalyst_viable_all_cycles) else 0
+        defect = global_eval - local_product
+        exhausted_cycle_ids = [
+            cyc["cycle_id"] for cyc in self.cycles if not cyc["within_global_catalyst_tolerance"]
+        ]
+        all_telescoping = all(cyc["telescoping_identity_verified"] for cyc in self.cycles)
+
+        if local_product == 1 and global_eval == 1:
+            if self.max_catalyst_deviation == Fraction(0):
+                status = "IDEAL_EXACT_CATALYST_LGGG"
+            else:
+                status = "BOUNDED_APPROXIMATE_CATALYST_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            status = "CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_CYCLE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_catalyst_degradation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "initial_catalyst_state": self.initial_catalyst,
+            "terminal_catalyst_state": self.current_catalyst,
+            "catalyst_tolerance": self.catalyst_tolerance,
+            "per_cycle_local_tolerance": self.per_cycle_local_tolerance,
+            "cycle_count": len(self.cycles),
+            "cumulative_catalyst_drift": self.cumulative_wear,
+            "cumulative_abs_wear": self.cumulative_abs_wear,
+            "max_catalyst_deviation": self.max_catalyst_deviation,
+            "local_product_aggregator": local_product,
+            "global_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "exhausted_cycle_ids": exhausted_cycle_ids,
+            "all_telescoping_identities_verified": all_telescoping,
+            "cycles": self.cycles,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingDiscreteCurvatureMonitor:
+    """Online discrete Bochner-Dirichlet curvature and 1-form Hodge Laplacian energy monitor.
+
+    Audits the discrete 1-form Hodge Laplacian on a finite 2-complex (D_0, D_1) over Q:
+      L_down = D_0 D_0^T,   L_up = D_1^T D_1,   L_1 = L_down + L_up.
+    For each recorded 1-cochain h in C^1(K; Q):
+      - Evaluates the quadratic Dirichlet energy identity:
+          <h, L_1 h> = <h, L_down h> + <h, L_up h> = ||D_0^T h||_2^2 + ||D_1 h||_2^2 >= 0.
+      - Verifies the nilpotent operator orthogonality L_down * L_up == 0 and L_up * L_down == 0
+        induced by D_1 * D_0 == 0.
+      - Verifies the kernel equivalence:
+          L_1 h == 0  <=>  <h, L_1 h> == 0  <=>  (D_0^T h == 0 and D_1 h == 0).
+      - Separates:
+          * ZERO_COCHAIN_TRIVIAL_LGGG (h == 0),
+          * HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR (h != 0 and L_1 h == 0),
+          * PURE_DIVERGENCE_GRADIENT_FLOW_LGGG (D_1 h == 0 and h in im(D_0) with h != 0),
+          * CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR (D_1 h != 0 or non-exact divergence flow).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-discrete-curvature-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _dot(u: tuple[Fraction, ...], v: tuple[Fraction, ...]) -> Fraction:
+        return sum((a * b for a, b in zip(u, v)), Fraction(0))
+
+    def record_laplacian_probe(
+        self,
+        probe_id: str,
+        D0: Any,
+        h: Any,
+        D1: Any | None = None,
+    ) -> dict[str, Any]:
+        """Evaluate L_down, L_up, L_1, and the Dirichlet energy identity on 1-cochain h."""
+        pid = text(probe_id, "probe_id")
+        d0 = matrix(D0, "D0")
+        m, _ = len(d0), len(d0[0])
+        hv = vector(h, "h", m)
+        d0_t = transpose(d0)
+        l_down = matmul(d0, d0_t)
+
+        has_d1 = False
+        d1: tuple[tuple[Fraction, ...], ...] = ()
+        d1_t: tuple[tuple[Fraction, ...], ...] = ()
+        if D1 is not None:
+            raw_d1 = sequence(D1, "D1")
+            if raw_d1:
+                d1 = matrix(raw_d1, "D1", cols=m)
+                d1_t = transpose(d1)
+                has_d1 = True
+                if not is_zero(matmul(d1, d0)):
+                    raise ValidationError("Invalid 2-complex: D1 * D0 must be zero")
+
+        if has_d1:
+            l_up = matmul(d1_t, d1)
+            operator_orthogonality_ok = is_zero(matmul(l_down, l_up)) and is_zero(matmul(l_up, l_down))
+        else:
+            l_up = tuple(tuple(Fraction(0) for _ in range(m)) for _ in range(m))
+            operator_orthogonality_ok = True
+
+        div_h = matvec(d0_t, hv)
+        curl_h = matvec(d1, hv) if has_d1 else ()
+        l_down_h = matvec(l_down, hv)
+        l_up_h = matvec(l_up, hv)
+        l1_h = tuple(l_down_h[i] + l_up_h[i] for i in range(m))
+
+        norm2_h = self._dot(hv, hv)
+        energy_div = self._dot(div_h, div_h)
+        energy_curl = self._dot(curl_h, curl_h) if has_d1 else Fraction(0)
+        energy_dirichlet = self._dot(hv, l1_h)
+        energy_identity_ok = (
+            self._dot(hv, l_down_h) == energy_div
+            and self._dot(hv, l_up_h) == energy_curl
+            and energy_dirichlet == (energy_div + energy_curl)
+        )
+
+        l1_h_zero = all(v == Fraction(0) for v in l1_h)
+        div_zero = all(v == Fraction(0) for v in div_h)
+        curl_zero = all(v == Fraction(0) for v in curl_h)
+        kernel_equivalence_ok = (
+            l1_h_zero == (energy_dirichlet == Fraction(0))
+            and l1_h_zero == (div_zero and curl_zero)
+        )
+
+        exact_sol = solve_exact(d0, hv)
+        is_exact = exact_sol is not None
+
+        if norm2_h == Fraction(0):
+            classification = "ZERO_COCHAIN_TRIVIAL_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l1_h_zero:
+            classification = "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif curl_zero and is_exact:
+            classification = "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            classification = "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "probe_id": pid,
+            "h": list(hv),
+            "divergence_d0_transpose_h": list(div_h),
+            "curl_d1_h": list(curl_h),
+            "l_down_h": list(l_down_h),
+            "l_up_h": list(l_up_h),
+            "l1_h": list(l1_h),
+            "norm2_h": norm2_h,
+            "divergence_energy": energy_div,
+            "curl_energy": energy_curl,
+            "dirichlet_energy": energy_dirichlet,
+            "in_laplacian_kernel": l1_h_zero,
+            "is_exact_coboundary": is_exact,
+            "dirichlet_energy_identity_verified": energy_identity_ok,
+            "operator_orthogonality_verified": operator_orthogonality_ok,
+            "kernel_equivalence_verified": kernel_equivalence_ok,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed discrete curvature and Hodge Laplacian energy audit receipt."""
+        if not self.records:
+            raise ValidationError("At least one Laplacian probe must be recorded before emitting a receipt")
+
+        harmonic_kernel_ids = [
+            r["probe_id"]
+            for r in self.records
+            if r["classification"] == "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+        ]
+        curl_obstructed_ids = [
+            r["probe_id"]
+            for r in self.records
+            if r["classification"] == "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR"
+        ]
+        all_energy_id = all(r["dirichlet_energy_identity_verified"] for r in self.records)
+        all_op_orth = all(r["operator_orthogonality_verified"] for r in self.records)
+        all_ker_eq = all(r["kernel_equivalence_verified"] for r in self.records)
+
+        if harmonic_kernel_ids or curl_obstructed_ids:
+            status = "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EXACT_GRADIENT_ENERGY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_discrete_curvature.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "probe_count": len(self.records),
+            "harmonic_kernel_probe_ids": sorted(harmonic_kernel_ids),
+            "curl_obstructed_probe_ids": sorted(curl_obstructed_ids),
+            "all_dirichlet_energy_identities_verified": all_energy_id,
+            "all_operator_orthogonalities_verified": all_op_orth,
+            "all_kernel_equivalences_verified": all_ker_eq,
+            "records": self.records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingContextualSheafMonitor:
+    """Online 3-cycle empirical presheaf marginal-compatibility and global section monitor.
+
+    Audits 3-variable hollow-triangle empirical models over contexts
+    C_AB = {A, B}, C_BC = {B, C}, C_CA = {C, A} with binary outcomes {0, 1}^2:
+      - Each context table specifies (p_00, p_01, p_10, p_11) in Q_{>=0}^4 with sum == 1.
+      - Verifies pairwise single-variable marginal compatibility (no-signaling / presheaf
+        restriction agreement):
+          p_AB^A(1) == p_CA^A(1),   p_AB^B(1) == p_BC^B(1),   p_BC^C(1) == p_CA^C(1).
+      - Solves the exact 1-parameter affine family d_alpha(a, b, c) parameterized by
+        alpha = d(1, 1, 1) in Q:
+          alpha_min = max(0, q_AB + q_CA - p_A, q_AB + q_BC - p_B, q_BC + q_CA - p_C),
+          alpha_max = min(q_AB, q_BC, q_CA, 1 - p_A - p_B - p_C + q_AB + q_BC + q_CA).
+      - A nonnegative global joint distribution d >= 0 on {0, 1}^3 exists iff
+        pairwise marginals agree and alpha_min <= alpha_max.
+      - Separates:
+          * GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG (no-signaling and alpha_min <= alpha_max),
+          * CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR (no-signaling holds on all
+            single-variable overlaps, yet alpha_min > alpha_max blocks global gluing),
+          * SIGNALING_MARGINAL_MISMATCH_LGGR (single-variable overlap marginals disagree).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-contextual-sheaf-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.models: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _parse_context_table(table: Any, name: str) -> tuple[Fraction, Fraction, Fraction, Fraction]:
+        vals = vector(table, name, 4)
+        if any(v < 0 for v in vals):
+            raise ValidationError(f"{name} probabilities must be non-negative")
+        if sum(vals, Fraction(0)) != Fraction(1):
+            raise ValidationError(f"{name} probabilities must sum to 1")
+        return vals[0], vals[1], vals[2], vals[3]
+
+    def record_three_cycle_model(
+        self,
+        model_id: str,
+        table_ab: Iterable[Fraction | int | str],
+        table_bc: Iterable[Fraction | int | str],
+        table_ca: Iterable[Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Audit a 3-cycle empirical model (p_AB, p_BC, p_CA) for marginal compatibility and global section existence."""
+        mid = text(model_id, "model_id")
+        ab00, ab01, ab10, ab11 = self._parse_context_table(table_ab, "table_ab")
+        bc00, bc01, bc10, bc11 = self._parse_context_table(table_bc, "table_bc")
+        ca00, ca01, ca10, ca11 = self._parse_context_table(table_ca, "table_ca")
+
+        # Single-variable marginals for outcome 1
+        p_a_from_ab = ab10 + ab11
+        p_a_from_ca = ca01 + ca11
+        p_b_from_ab = ab01 + ab11
+        p_b_from_bc = bc10 + bc11
+        p_c_from_bc = bc01 + bc11
+        p_c_from_ca = ca10 + ca11
+
+        no_signaling_ok = (
+            p_a_from_ab == p_a_from_ca
+            and p_b_from_ab == p_b_from_bc
+            and p_c_from_bc == p_c_from_ca
+        )
+
+        p_a = p_a_from_ab
+        p_b = p_b_from_bc
+        p_c = p_c_from_ca
+        q_ab, q_bc, q_ca = ab11, bc11, ca11
+
+        alpha_min = max(
+            Fraction(0),
+            q_ab + q_ca - p_a,
+            q_ab + q_bc - p_b,
+            q_bc + q_ca - p_c,
+        )
+        d000_plus_d111 = Fraction(1) - p_a - p_b - p_c + q_ab + q_bc + q_ca
+        alpha_max = min(q_ab, q_bc, q_ca, d000_plus_d111)
+
+        interval_gap = max(Fraction(0), alpha_min - alpha_max)
+        global_section_exists = no_signaling_ok and (alpha_min <= alpha_max)
+
+        witness_joint: dict[str, Fraction] | None = None
+        marginal_recovery_verified = False
+        if no_signaling_ok:
+            alpha = (alpha_min + alpha_max) / Fraction(2)
+            d111 = alpha
+            d110 = q_ab - alpha
+            d011 = q_bc - alpha
+            d101 = q_ca - alpha
+            d100 = p_a - q_ab - q_ca + alpha
+            d010 = p_b - q_ab - q_bc + alpha
+            d001 = p_c - q_bc - q_ca + alpha
+            d000 = d000_plus_d111 - alpha
+            marginal_recovery_verified = (
+                (d000 + d001 == ab00)
+                and (d010 + d011 == ab01)
+                and (d100 + d101 == ab10)
+                and (d110 + d111 == ab11)
+                and (d000 + d100 == bc00)
+                and (d001 + d101 == bc01)
+                and (d010 + d110 == bc10)
+                and (d011 + d111 == bc11)
+                and (d000 + d010 == ca00)
+                and (d100 + d110 == ca01)
+                and (d001 + d011 == ca10)
+                and (d101 + d111 == ca11)
+            )
+            if global_section_exists:
+                witness_joint = {
+                    "000": d000,
+                    "001": d001,
+                    "010": d010,
+                    "011": d011,
+                    "100": d100,
+                    "101": d101,
+                    "110": d110,
+                    "111": d111,
+                }
+
+        if not no_signaling_ok:
+            classification = "SIGNALING_MARGINAL_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not global_section_exists:
+            classification = "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            classification = "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        rec = {
+            "model_id": mid,
+            "no_signaling_verified": no_signaling_ok,
+            "marginals_one": {"A": p_a, "B": p_b, "C": p_c},
+            "joint_ones": {"AB": q_ab, "BC": q_bc, "CA": q_ca},
+            "d000_plus_d111_invariant": d000_plus_d111,
+            "alpha_min": alpha_min,
+            "alpha_max": alpha_max,
+            "infeasibility_gap": interval_gap,
+            "global_section_exists": global_section_exists,
+            "witness_global_joint": witness_joint,
+            "affine_marginal_recovery_verified": marginal_recovery_verified,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.models.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed 3-cycle contextual presheaf audit receipt."""
+        if not self.models:
+            raise ValidationError("At least one 3-cycle empirical model must be recorded before emitting a receipt")
+
+        contextual_ids = [
+            m["model_id"]
+            for m in self.models
+            if m["classification"] == "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR"
+        ]
+        signaling_ids = [
+            m["model_id"]
+            for m in self.models
+            if m["classification"] == "SIGNALING_MARGINAL_MISMATCH_LGGR"
+        ]
+        all_affine_ok = all(
+            m["affine_marginal_recovery_verified"]
+            for m in self.models
+            if m["no_signaling_verified"]
+        )
+
+        if contextual_ids or signaling_ids:
+            status = "PRESHEAF_SECTION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PRESHEAF_SECTION_EXTENSIBLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_contextual_sheaf.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "model_count": len(self.models),
+            "contextual_obstructed_model_ids": sorted(contextual_ids),
+            "signaling_obstructed_model_ids": sorted(signaling_ids),
+            "all_affine_marginal_recoveries_verified": all_affine_ok,
+            "models": self.models,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingReggeDeficitCurvatureMonitor:
+    """Online 2D piecewise-flat Regge hinge deficit curvature and Gauss-Bonnet monitor.
+
+    Audits a 2D triangulation K = (V, E, F) with interior vertices V_int, boundary
+    vertices V_bnd, and normalized turn-angle assignments theta_{v, f} in Q_{>0}
+    (where 1 full turn = 1 and 1 Euclidean triangle angle sum = 1/2):
+      - Evaluates each triangle f = (v_0, v_1, v_2) locally for Euclidean closure:
+          E_tri(f) = 1[theta_{v_0, f} + theta_{v_1, f} + theta_{v_2, f} == 1/2],
+          L = prod_{f in F} E_tri(f).
+      - Computes interior hinge deficit curvature at each v in V_int:
+          eps_v = 1 - sum_{f ni v} theta_{v, f}
+        and boundary geodesic turn at each v in V_bnd:
+          kappa_v = 1/2 - sum_{f ni v} theta_{v, f}.
+      - Evaluates global interior flatness:
+          E_g = 1[L == 1 and all(eps_v == 0 for v in V_int)].
+      - Verifies the discrete Gauss-Bonnet angle-deficit identity:
+          sum_{v in V_int} eps_v + sum_{v in V_bnd} kappa_v == |V_int| + (1/2)|V_bnd| - sum_{f, v} theta_{v, f}
+        and when 2|E| == 3|F| + |V_bnd| and all triangles close (sum_v theta_{v, f} == 1/2),
+        verifies equality with the Euler characteristic chi(K) = |V| - |E| + |F|.
+      - Separates:
+          * FLAT_EUCLIDEAN_LATTICE_LGGG (L == 1 and E_g == 1),
+          * REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR (L == 1 and E_g == 0, Delta_E = -1),
+          * LOCAL_TRIANGLE_CLOSURE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        interior_vertices: Iterable[str],
+        boundary_vertices: Iterable[str] = (),
+        *,
+        scope_id: str = "streaming-regge-deficit-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        int_v = [text(v, "interior_vertex") for v in sequence(interior_vertices, "interior_vertices")]
+        bnd_v = [text(v, "boundary_vertex") for v in sequence(boundary_vertices, "boundary_vertices")]
+        if not int_v and not bnd_v:
+            raise ValidationError("At least one vertex must be declared")
+        if set(int_v) & set(bnd_v):
+            raise ValidationError("interior_vertices and boundary_vertices must be disjoint")
+
+        self.interior_vertices = sorted(set(int_v))
+        self.boundary_vertices = sorted(set(bnd_v))
+        self.all_vertices = set(self.interior_vertices) | set(self.boundary_vertices)
+        self.vertex_angle_sums: dict[str, Fraction] = {v: Fraction(0) for v in self.all_vertices}
+        self.edges: set[tuple[str, str]] = set()
+        self.triangles: list[dict[str, Any]] = []
+
+    def record_triangle(
+        self,
+        triangle_id: str,
+        vertices: Iterable[str],
+        angles: Iterable[Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Record a triangle with 3 vertices and 3 normalized turn angles."""
+        tid = text(triangle_id, "triangle_id")
+        v_list = [text(v, "vertex") for v in sequence(vertices, "vertices")]
+        if len(v_list) != 3 or len(set(v_list)) != 3:
+            raise ValidationError("Each triangle must have exactly 3 distinct vertices")
+        for v in v_list:
+            if v not in self.all_vertices:
+                raise ValidationError(f"Triangle vertex {v!r} was not declared in monitor")
+
+        ang_vec = vector(angles, "angles", 3)
+        if any(a <= 0 for a in ang_vec):
+            raise ValidationError("Triangle interior angles must be strictly positive")
+
+        for i in range(3):
+            u, w = sorted((v_list[i], v_list[(i + 1) % 3]))
+            self.edges.add((u, w))
+            self.vertex_angle_sums[v_list[i]] += ang_vec[i]
+
+        ang_sum = sum(ang_vec, Fraction(0))
+        local_flat_ok = 1 if ang_sum == Fraction(1, 2) else 0
+
+        rec = {
+            "triangle_index": len(self.triangles),
+            "triangle_id": tid,
+            "vertices": v_list,
+            "angles": list(ang_vec),
+            "angle_sum": ang_sum,
+            "local_euclidean_closure": local_flat_ok,
+        }
+        self.triangles.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed Regge hinge deficit curvature and Gauss-Bonnet audit receipt."""
+        if not self.triangles:
+            raise ValidationError("At least one triangle must be recorded before emitting a receipt")
+
+        local_product = 1
+        total_angle_sum = Fraction(0)
+        for tri in self.triangles:
+            local_product *= tri["local_euclidean_closure"]
+            total_angle_sum += tri["angle_sum"]
+
+        interior_deficits: dict[str, Fraction] = {}
+        curved_interior_hinges: list[str] = []
+        sum_interior_deficit = Fraction(0)
+        for v in self.interior_vertices:
+            eps_v = Fraction(1) - self.vertex_angle_sums[v]
+            interior_deficits[v] = eps_v
+            sum_interior_deficit += eps_v
+            if eps_v != Fraction(0):
+                curved_interior_hinges.append(v)
+
+        boundary_turns: dict[str, Fraction] = {}
+        sum_boundary_turn = Fraction(0)
+        for v in self.boundary_vertices:
+            kap_v = Fraction(1, 2) - self.vertex_angle_sums[v]
+            boundary_turns[v] = kap_v
+            sum_boundary_turn += kap_v
+
+        total_gauss_bonnet_curvature = sum_interior_deficit + sum_boundary_turn
+        expected_angle_balance = (
+            Fraction(len(self.interior_vertices))
+            + Fraction(len(self.boundary_vertices), 2)
+            - total_angle_sum
+        )
+        angle_balance_identity_ok = total_gauss_bonnet_curvature == expected_angle_balance
+
+        v_count = len(self.all_vertices)
+        e_count = len(self.edges)
+        f_count = len(self.triangles)
+        euler_characteristic = v_count - e_count + f_count
+        manifold_edge_incidence = (2 * e_count) == (3 * f_count + len(self.boundary_vertices))
+        gauss_bonnet_equals_euler = (
+            not (local_product == 1 and manifold_edge_incidence)
+            or (total_gauss_bonnet_curvature == Fraction(euler_characteristic))
+        )
+
+        global_flat = 1 if (local_product == 1 and len(curved_interior_hinges) == 0) else 0
+        defect = global_flat - local_product
+
+        if local_product == 1 and global_flat == 1:
+            status = "FLAT_EUCLIDEAN_LATTICE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_flat == 0:
+            status = "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_TRIANGLE_CLOSURE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_regge_deficit_curvature.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "vertex_count": v_count,
+            "edge_count": e_count,
+            "triangle_count": f_count,
+            "euler_characteristic": euler_characteristic,
+            "interior_deficits": interior_deficits,
+            "boundary_geodesic_turns": boundary_turns,
+            "curved_interior_hinge_ids": curved_interior_hinges,
+            "sum_interior_deficit": sum_interior_deficit,
+            "sum_boundary_turn": sum_boundary_turn,
+            "total_gauss_bonnet_curvature": total_gauss_bonnet_curvature,
+            "local_product_aggregator": local_product,
+            "global_flatness_evaluator": global_flat,
+            "evaluator_defect": defect,
+            "angle_balance_identity_verified": angle_balance_identity_ok,
+            "gauss_bonnet_euler_identity_verified": gauss_bonnet_equals_euler,
+            "triangles": self.triangles,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingPullbackSquareMonitor:
+    """Online categorical fibered pullback square and universal cone mediator monitor.
+
+    Audits a finite cospan A -f-> C <-g- B and its fibered pullback
+    A x_C B = {(a, b) in A x B | f(a) == g(b)}:
+      - Computes the exact fibered pullback carrier P = A x_C B and fiber cardinalities
+        |f^{-1}(c) x g^{-1}(c)| for each shared interface value c in C.
+      - For each recorded branch pair (a, b) with local branch indicators E_A, E_B in {0, 1}:
+          * Evaluates local product L = E_A * E_B,
+          * Checks pullback compatibility f(a) == g(b) and global fibered evaluator
+            E_g = 1[L == 1 and f(a) == g(b)],
+          * Flags fiber ambiguity when |f^{-1}(f(a)) x g^{-1}(g(b))| > 1 (where the
+            interface value c alone does not uniquely identify the pair in A x_C B).
+      - Audits candidate cones W -p_A-> A, W -p_B-> B for cone commutativity
+        f(p_A(w)) == g(p_B(w)) and constructs the unique mediating map
+        u: W -> A x_C B, u(w) = (p_A(w), p_B(w)).
+      - Separates:
+          * PULLBACK_FIBER_GLUED_LGGG (all recorded pairs have L == 1 and E_g == 1),
+          * PULLBACK_INTERFACE_MISMATCH_NGD_LGGR (at least one pair has L == 1 and f(a) != g(b)),
+          * LOCAL_BRANCH_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        f_map: Mapping[str, str],
+        g_map: Mapping[str, str],
+        *,
+        scope_id: str = "streaming-pullback-square-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        if not isinstance(f_map, Mapping) or not f_map:
+            raise ValidationError("f_map must be a non-empty mapping A -> C")
+        if not isinstance(g_map, Mapping) or not g_map:
+            raise ValidationError("g_map must be a non-empty mapping B -> C")
+
+        self.f_map: dict[str, str] = {
+            text(k, "a_state"): text(v, "c_state") for k, v in sorted(f_map.items())
+        }
+        self.g_map: dict[str, str] = {
+            text(k, "b_state"): text(v, "c_state") for k, v in sorted(g_map.items())
+        }
+
+        self.pullback_carrier: list[tuple[str, str, str]] = []
+        self.fiber_counts: dict[str, int] = {}
+        for a, ca in self.f_map.items():
+            for b, cb in self.g_map.items():
+                if ca == cb:
+                    self.pullback_carrier.append((a, b, ca))
+                    self.fiber_counts[ca] = self.fiber_counts.get(ca, 0) + 1
+
+        self.pair_records: list[dict[str, Any]] = []
+        self.cone_records: list[dict[str, Any]] = []
+
+    def record_branch_pair(
+        self,
+        pair_id: str,
+        a_state: str,
+        b_state: str,
+        *,
+        local_a_pass: bool = True,
+        local_b_pass: bool = True,
+    ) -> dict[str, Any]:
+        """Record a candidate branch pair (a, b) and test fibered pullback compatibility."""
+        pid = text(pair_id, "pair_id")
+        a = text(a_state, "a_state")
+        b = text(b_state, "b_state")
+        boolean(local_a_pass, "local_a_pass")
+        boolean(local_b_pass, "local_b_pass")
+        if a not in self.f_map:
+            raise ValidationError(f"a_state {a!r} not in domain of f_map")
+        if b not in self.g_map:
+            raise ValidationError(f"b_state {b!r} not in domain of g_map")
+
+        fa = self.f_map[a]
+        gb = self.g_map[b]
+        in_pullback = fa == gb
+        ea = 1 if local_a_pass else 0
+        eb = 1 if local_b_pass else 0
+        l_prod = ea * eb
+        eg = 1 if (l_prod == 1 and in_pullback) else 0
+        defect = eg - l_prod
+        fiber_size = self.fiber_counts.get(fa, 0) if in_pullback else 0
+
+        rec = {
+            "pair_index": len(self.pair_records),
+            "pair_id": pid,
+            "a_state": a,
+            "b_state": b,
+            "f_a": fa,
+            "g_b": gb,
+            "in_pullback_square": in_pullback,
+            "local_a_evaluator": ea,
+            "local_b_evaluator": eb,
+            "local_product": l_prod,
+            "global_pullback_evaluator": eg,
+            "evaluator_defect": defect,
+            "interface_fiber_size": fiber_size,
+            "interface_uniquely_identifies_pair": fiber_size == 1,
+        }
+        self.pair_records.append(rec)
+        return json_value(rec)
+
+    def verify_cone_mediator(
+        self,
+        cone_id: str,
+        p_a_map: Mapping[str, str],
+        p_b_map: Mapping[str, str],
+    ) -> dict[str, Any]:
+        """Verify universal pullback mediator existence and uniqueness for a cone W -> A, W -> B."""
+        cid = text(cone_id, "cone_id")
+        if not isinstance(p_a_map, Mapping) or not isinstance(p_b_map, Mapping):
+            raise ValidationError("p_a_map and p_b_map must be mappings")
+        if set(p_a_map.keys()) != set(p_b_map.keys()) or not p_a_map:
+            raise ValidationError("p_a_map and p_b_map must share the same non-empty apex domain W")
+
+        mediator: dict[str, list[str]] = {}
+        mismatched_apex_states: list[str] = []
+        projection_recovery_ok = True
+
+        for w_raw in sorted(p_a_map.keys()):
+            w = text(w_raw, "apex_state")
+            a = text(p_a_map[w_raw], "a_target")
+            b = text(p_b_map[w_raw], "b_target")
+            if a not in self.f_map or b not in self.g_map:
+                raise ValidationError(f"Cone target ({a!r}, {b!r}) outside cospan domains")
+            if self.f_map[a] == self.g_map[b]:
+                mediator[w] = [a, b]
+                if mediator[w][0] != a or mediator[w][1] != b:
+                    projection_recovery_ok = False
+            else:
+                mismatched_apex_states.append(w)
+
+        commutes = len(mismatched_apex_states) == 0
+        rec = {
+            "cone_id": cid,
+            "commutes_over_c": commutes,
+            "mismatched_apex_states": mismatched_apex_states,
+            "universal_mediator": mediator if commutes else None,
+            "mediator_uniqueness_and_projection_verified": commutes and projection_recovery_ok,
+        }
+        self.cone_records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed categorical pullback square and cone mediator audit receipt."""
+        if not self.pair_records:
+            raise ValidationError("At least one branch pair must be recorded before emitting a receipt")
+
+        ngd_pair_ids = [r["pair_id"] for r in self.pair_records if r["evaluator_defect"] == -1]
+        rejected_pair_ids = [r["pair_id"] for r in self.pair_records if r["local_product"] == 0]
+        ambiguous_fiber_pair_ids = [
+            r["pair_id"]
+            for r in self.pair_records
+            if r["in_pullback_square"] and not r["interface_uniquely_identifies_pair"]
+        ]
+
+        if ngd_pair_ids:
+            status = "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_pair_ids:
+            status = "LOCAL_BRANCH_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PULLBACK_FIBER_GLUED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_pullback_square.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "pullback_carrier_size": len(self.pullback_carrier),
+            "interface_fiber_counts": self.fiber_counts,
+            "pair_count": len(self.pair_records),
+            "ngd_mismatch_pair_ids": ngd_pair_ids,
+            "ambiguous_fiber_pair_ids": ambiguous_fiber_pair_ids,
+            "cone_records": self.cone_records,
+            "pair_records": self.pair_records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

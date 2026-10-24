@@ -7036,15 +7036,17 @@ class StreamingSkewRepairMonitor:
 
         alpha_c = rational(candidate_alpha) if candidate_alpha is not None else alpha_inf
         b_inf = (
-            nonnegative_rational(l_inf_coordinate_budget, "l_inf_coordinate_budget")
+            rational(l_inf_coordinate_budget)
             if l_inf_coordinate_budget is not None
             else phi_inf
         )
         b_1 = (
-            nonnegative_rational(l_1_global_budget, "l_1_global_budget")
+            rational(l_1_global_budget)
             if l_1_global_budget is not None
             else phi_1
         )
+        if b_inf < 0 or b_1 < 0:
+            raise ValidationError("Repair budgets must be non-negative")
 
         res_1 = a + alpha_c
         res_2 = b + 2 * alpha_c
@@ -7136,7 +7138,7 @@ class StreamingSkewRepairMonitor:
 
 
 class StreamingMerminPeresParityMonitor:
-    """Online 3x3 Mermin-Peres magic-square parity contextuality monitor (012_rsi/036 BELL-08 & LGGR VII §5.2).
+    """Online 3x3 Mermin-Peres magic-square parity contextuality monitor (012_rsi/003 BELL-08 & LGGR VII §5.2).
 
     Audits 3x3 parity grids of {-1, +1}-valued observables across 3 row contexts and 3 column contexts:
       - Row product targets R = (R_0, R_1, R_2) in {-1, +1}^3 (defaulting to (+1, +1, +1))
@@ -7475,6 +7477,170 @@ class StreamingSideInformationCapacityMonitor:
             "fibers": self.fibers,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingProductOfExpertsMonitor:
+    """Online Product-of-Experts (PoE) vs Mixture-of-Experts (MoE) disjoint-support collapse monitor (LGGR I §7.2 & II §2.2).
+
+    Audits finite K-expert score tables p_k in Q_{>=0}^m over m candidate actions W = {w_0, ..., w_{m-1}}:
+      - Evaluates each expert k in {0, ..., K-1} locally for positive total score mass:
+          M_k = sum_{j=0}^{m-1} p_k(w_j),   E_expert(k) = 1[M_k > 0],
+        and forms the local product aggregator:
+          L = prod_{k=0}^{K-1} E_expert(k) in {0, 1}.
+      - Computes the unnormalized Product-of-Experts score vector:
+          P_PoE(w_j) = prod_{k=0}^{K-1} p_k(w_j)
+        and the PoE partition sum (normalizing denominator):
+          D_PoE = sum_{j=0}^{m-1} P_PoE(w_j).
+      - Computes the weighted Mixture-of-Experts score vector (under positive weights alpha_k > 0,
+        sum_k alpha_k = 1, defaulting to uniform 1/K):
+          P_MoE(w_j) = sum_{k=0}^{K-1} alpha_k * p_k(w_j)
+        and the MoE partition sum:
+          D_MoE = sum_{j=0}^{m-1} P_MoE(w_j) = sum_{k=0}^{K-1} alpha_k * M_k.
+      - Identifies the joint support intersection:
+          supp_intersection = {j in {0, ..., m-1} : forall k, p_k(w_j) > 0},
+        where D_PoE > 0 iff supp_intersection is non-empty.
+      - Evaluates global PoE normalizability E_g = 1[L == 1 and D_PoE > 0] and separates:
+          * POE_DISJOINT_SUPPORT_COLLAPSE_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            every expert has positive score mass M_k > 0 and D_MoE > 0, yet disjoint expert
+            supports cause D_PoE == 0 so PoE normalization collapses),
+          * POE_AND_MOE_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_EXPERT_ZERO_MASS_REJECTED (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-product-of-experts-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.rounds: list[dict[str, Any]] = []
+
+    def record_expert_scores(
+        self,
+        round_id: str,
+        expert_scores: Sequence[Sequence[int | str | Fraction]],
+        *,
+        mixture_weights: Sequence[int | str | Fraction] | None = None,
+    ) -> dict[str, Any]:
+        """Record a K x m table of non-negative rational expert scores and audit PoE vs MoE partition sums."""
+        rid = text(round_id, "round_id")
+        if not expert_scores:
+            raise ValidationError("expert_scores must contain at least one expert row")
+        num_experts = len(expert_scores)
+        num_candidates = len(expert_scores[0])
+        if num_candidates == 0:
+            raise ValidationError("expert_scores must have at least one candidate column")
+
+        parsed_scores: list[list[Fraction]] = []
+        for k, row in enumerate(expert_scores):
+            if len(row) != num_candidates:
+                raise ValidationError("All expert score rows must have the same number of candidates")
+            parsed_row = [rational(val) for val in row]
+            if any(v < 0 for v in parsed_row):
+                raise ValidationError(f"expert_scores[{k}] entries must be non-negative")
+            parsed_scores.append(parsed_row)
+
+        if mixture_weights is not None:
+            if len(mixture_weights) != num_experts:
+                raise ValidationError("mixture_weights length must match number of experts")
+            weights = [rational(w) for w in mixture_weights]
+            if any(w <= 0 for w in weights) or sum(weights, Fraction(0)) != Fraction(1):
+                raise ValidationError("mixture_weights must be strictly positive and sum to 1")
+        else:
+            weights = [Fraction(1, num_experts) for _ in range(num_experts)]
+
+        expert_masses = [sum(row, Fraction(0)) for row in parsed_scores]
+        expert_evals = [1 if m > 0 else 0 for m in expert_masses]
+        local_product = 1
+        for ev in expert_evals:
+            local_product *= ev
+
+        poe_vector: list[Fraction] = []
+        moe_vector: list[Fraction] = []
+        joint_support_indices: list[int] = []
+
+        for j in range(num_candidates):
+            prod_j = Fraction(1)
+            mix_j = Fraction(0)
+            for k in range(num_experts):
+                prod_j *= parsed_scores[k][j]
+                mix_j += weights[k] * parsed_scores[k][j]
+            poe_vector.append(prod_j)
+            moe_vector.append(mix_j)
+            if prod_j > 0:
+                joint_support_indices.append(j)
+
+        d_poe = sum(poe_vector, Fraction(0))
+        d_moe = sum(moe_vector, Fraction(0))
+        normalized_poe = [val / d_poe for val in poe_vector] if d_poe > 0 else None
+        normalized_moe = [val / d_moe for val in moe_vector] if d_moe > 0 else None
+
+        global_eval = 1 if (local_product == 1 and d_poe > 0) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            round_status = "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            round_status = "POE_AND_MOE_COHERENT_LGGG"
+        else:
+            round_status = "LOCAL_EXPERT_ZERO_MASS_REJECTED"
+
+        rec = {
+            "round_id": rid,
+            "expert_count": num_experts,
+            "candidate_count": num_candidates,
+            "expert_masses": expert_masses,
+            "local_expert_evaluators": expert_evals,
+            "joint_support_indices": joint_support_indices,
+            "poe_unnormalized_vector": poe_vector,
+            "poe_partition_sum": d_poe,
+            "poe_normalized_distribution": normalized_poe,
+            "moe_unnormalized_vector": moe_vector,
+            "moe_partition_sum": d_moe,
+            "moe_normalized_distribution": normalized_moe,
+            "local_product_aggregator": local_product,
+            "global_poe_normalizable_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "round_status": round_status,
+        }
+        self.rounds.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed Product-of-Experts vs Mixture-of-Experts support-collapse receipt."""
+        if not self.rounds:
+            raise ValidationError("At least one expert score round must be recorded before emitting a receipt")
+
+        collapsed_ids = [
+            r["round_id"]
+            for r in self.rounds
+            if r["round_status"] == "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        ]
+        rejected_ids = [
+            r["round_id"]
+            for r in self.rounds
+            if r["round_status"] == "LOCAL_EXPERT_ZERO_MASS_REJECTED"
+        ]
+
+        if collapsed_ids:
+            status = "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_EXPERT_ZERO_MASS_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "POE_AND_MOE_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_product_of_experts.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "round_count": len(self.rounds),
+            "poe_collapsed_round_ids": collapsed_ids,
+            "rejected_round_ids": rejected_ids,
+            "rounds": self.rounds,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 
 

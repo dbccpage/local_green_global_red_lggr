@@ -1471,7 +1471,7 @@ theorem skew_repair_norm_attainment_divergence_and_obstruction
 
 /-- Theorem 52 (`mermin_peres_magic_square_parity_obstruction`):
     Formalizes the 3×3 Mermin-Peres Magic Square Parity Obstruction
-    (`012_rsi/036` Claim BELL-08 & LGGR VII §5.2):
+    (`012_rsi/003` Claim BELL-08 & LGGR VII §5.2):
     1. (Context-Wise Satisfiability & Target Product Discrepancy):
        For row targets `(R₁, R₂, R₃) = (1, 1, 1)` and column targets `(C₁, C₂, C₃) = (1, 1, -1)`
        over `{-1, +1}`, each of the 6 contexts admits a local `{-1, +1}³` assignment
@@ -1547,5 +1547,41 @@ theorem side_information_channel_capacity_and_fiber_error_floor
      e_global - l_prod = -1) := by
   refine ⟨?_, ⟨by decide, by decide, by decide⟩⟩
   cases b0 <;> cases b1 <;> cases b2 <;> cases b3 <;> dsimp <;> omega
+
+/-- Theorem 54 (`product_of_experts_disjoint_support_collapse_vs_mixture`):
+    Formalizes the Product-of-Experts Disjoint-Support Collapse vs. Mixture-of-Experts
+    Positivity (LGGR I §7.2 & LGGR II §2.2):
+    1. (Universal Positivity of Mixture vs. Vanishing Product on Disjoint Supports):
+       For any non-negative expert scores `p1_1, p1_2, p2_1, p2_2 : Int` with `p1_1 ≥ 0`,
+       `p1_2 ≥ 0`, `p2_1 ≥ 0`, `p2_2 ≥ 0`, if Expert 1 has positive mass (`p1_1 + p1_2 > 0`)
+       and Expert 2 has positive mass (`p2_1 + p2_2 > 0`), the unnormalized symmetric mixture
+       sum `(p1_1 + p1_2) + (p2_1 + p2_2)` is strictly positive (`≥ 2`).
+    2. (Concrete Disjoint-Support Collapse Witness `NGD`):
+       For `p₁ = (1, 0)` and `p₂ = (0, 1)`, both experts have positive total mass (`L = 1`)
+       and positive mixture partition sum `D_MoE_scaled = 2 > 0`, whereas their pointwise
+       Product-of-Experts partition sum vanishes (`D_PoE = 1 * 0 + 0 * 1 = 0`, `Eg = 0`,
+       `Δ_E = Eg - L = -1`). -/
+theorem product_of_experts_disjoint_support_collapse_vs_mixture
+    (p1_1 p1_2 p2_1 p2_2 : Int)
+    (h1 : p1_1 + p1_2 > 0) (h2 : p2_1 + p2_2 > 0) :
+    ((p1_1 + p1_2) + (p2_1 + p2_2) ≥ 2) ∧
+    (let a1_1 : Int := 1; let a1_2 : Int := 0;
+     let a2_1 : Int := 0; let a2_2 : Int := 1;
+     let mass1 := a1_1 + a1_2;
+     let mass2 := a2_1 + a2_2;
+     let d_poe := a1_1 * a2_1 + a1_2 * a2_2;
+     let d_moe_scaled := mass1 + mass2;
+     let e1 := if mass1 > 0 then (1 : Int) else 0;
+     let e2 := if mass2 > 0 then (1 : Int) else 0;
+     let l_prod := e1 * e2;
+     let e_global := if d_poe > 0 then (1 : Int) else 0;
+     mass1 = 1 ∧
+     mass2 = 1 ∧
+     d_poe = 0 ∧
+     d_moe_scaled = 2 ∧
+     l_prod = 1 ∧
+     e_global = 0 ∧
+     e_global - l_prod = -1) := by
+  refine ⟨by omega, ⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩⟩
 
 end LggrVIII

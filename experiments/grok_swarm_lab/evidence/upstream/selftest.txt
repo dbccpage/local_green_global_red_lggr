@@ -1,0 +1,24 @@
+{
+  "authority_effect": "None",
+  "details": {
+    "cochain": "PASS",
+    "descent": "PASS",
+    "linear": "PASS",
+    "streaming": "PASS",
+    "transport": "PASS",
+    "witnesses": "PASS"
+  },
+  "modules_tested": [
+    "descent",
+    "linear",
+    "cochain",
+    "transport",
+    "witnesses",
+    "streaming"
+  ],
+  "receipt_sha256": "ef073e834e0600d9de145c618b5db35a206f0daf3abdd05fab9f440f5243176b",
+  "schema": "lggr.selftest.v1",
+  "status": "PASS",
+  "tests_executed": 6,
+  "tests_passed": 6
+}

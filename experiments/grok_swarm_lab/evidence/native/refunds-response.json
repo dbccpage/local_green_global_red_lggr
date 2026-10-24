@@ -1,0 +1,19 @@
+{
+  "role": "refunds",
+  "execution_mode": "native_codex",
+  "input_sha256": "17ca5ea51a77241dd32ddd7be3cf4271ee999347cf01cee501e10cf2c0717d8d",
+  "operation": {
+    "operation": "refunds",
+    "scale_to_cents": 1,
+    "sign": 1,
+    "omit_last": false,
+    "duplicate": false
+  },
+  "assumptions": [
+    "The handoff supplies refund_scale_to_cents=1 and refund_sign=1 as observed semantics; the proposed operation uses those values without inferring them from amount magnitudes.",
+    "Both supplied refund rows must be retained once with their refund_id and order_id bindings. No refund is omitted or duplicated.",
+    "The host is responsible for executing this bounded operation, preserving provenance and checking the resulting branch evidence before integration.",
+    "This is the same native Codex agent previously used as planner, now assigned the refunds role; no statistical or epistemic independence is claimed."
+  ],
+  "response_text": "Propose the refunds operation with scale_to_cents=1 and sign=1 from the observed semantic handoff. Retain both supplied refunds exactly once, with no omission or duplication. This produces a branch proposal only; the host must execute it and inspect the resulting evidence before integration. The planner and refunds roles reuse the same native agent."
+}

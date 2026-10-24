@@ -1,0 +1,72 @@
+{
+  "engineering_costs_excluded_from_runtime_counts": true,
+  "independence_explanation": "Agents share parent model/context; role reuse and prior engineering knowledge are explicit. Runtime roles were instructed to use only sanitized handoff files. No epistemic-blindness claim.",
+  "inputs": [
+    "planner-input.json",
+    "orders-input.json",
+    "refunds-input.json"
+  ],
+  "local_reexecutions": "Recorded native proposals replayed/reexecuted by SQLite after pre-freeze provenance fixes without new model dispatch; history retained separately.",
+  "model_settings": "Inherited Codex session settings; exact model name/usage not exposed in tools.",
+  "native_dispatch_order": [
+    "math_upstream:planner",
+    "adversarial:orders and math_upstream:refunds after host semantics acquisition"
+  ],
+  "native_integration_or_verifier": false,
+  "native_role_turn_limit": 3,
+  "native_role_turns_recorded": 3,
+  "provider_cost": null,
+  "raw_responses": [
+    "planner-response.json",
+    "orders-response.json",
+    "refunds-response.json"
+  ],
+  "role_independence": false,
+  "roles": [
+    {
+      "agent": "/root",
+      "engineering": [
+        "application/tools/controller/integration",
+        "verification and packaging"
+      ],
+      "runtime": [
+        "deterministic host dispatch/integration; not a native model integrator"
+      ]
+    },
+    {
+      "agent": "/root/math_upstream",
+      "engineering": [
+        "mathematical interpretation",
+        "pinned source review/export/reproductions",
+        "Lean/source-map custody"
+      ],
+      "runtime": [
+        "planner",
+        "refunds worker (same agent reused)"
+      ]
+    },
+    {
+      "agent": "/root/oracle_protocol",
+      "engineering": [
+        "frozen generator and independent oracle",
+        "benchmark protocol/runner",
+        "read-only completion audit",
+        "supplemental join diagnostic"
+      ],
+      "runtime": []
+    },
+    {
+      "agent": "/root/adversarial",
+      "engineering": [
+        "evidence merging and tampering tests",
+        "numeric edge validation",
+        "post-evaluation read-only audit"
+      ],
+      "runtime": [
+        "orders worker"
+      ]
+    }
+  ],
+  "schema": "swarm-lab.native-provenance.v1",
+  "token_usage": null
+}

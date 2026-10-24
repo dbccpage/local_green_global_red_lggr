@@ -24,5 +24,5 @@ The [October 23 independent-review response](000_relational_reasoning_and_rsi_im
 The separate [Contextual Prediction review response](001_contextual_prediction_and_self_certification/docs/review_response_2026_10_23.md) and [release receipt](research/2026_10_23_contextual_review/verification.md) cover paper 001's three API and reproduction findings. The paper 000 package is unchanged by that repair.
 
 
-- [Paper 036: Bell positive extensions and projection residuals](036_bell_positive_extensions_and_projection_residuals/README.md), version 0.13.0: constructed complete quantum Bell behaviors with unbounded contextual-fraction/negative-mass ratio, Clifford realizations, and declared continuum-shadow limits.
+- [Paper 003: Bell positive extensions and projection residuals](003_bell_positive_extensions_and_projection_residuals/README.md), version 0.13.0: constructed complete quantum Bell behaviors with unbounded contextual-fraction/negative-mass ratio, Clifford realizations, and declared continuum-shadow limits.
 - [Bell research history](bell_research_history/) preserves the preceding release audits.

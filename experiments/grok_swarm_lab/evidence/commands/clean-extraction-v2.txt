@@ -1,0 +1,99 @@
+{
+  "created_utc": "2026-10-24T21:32:02.676954+00:00",
+  "archive_sha256": "94c5f89ec0485129674b02da2bb52014d18c2c74f2eca32b93cc257f845e9528",
+  "manifested_files_verified": 1001,
+  "commands": [
+    {
+      "name": "tests",
+      "argv": [
+        "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_ns": 4519559900,
+      "output_file": "evidence/clean-extraction-logs/tests.txt"
+    },
+    {
+      "name": "demo",
+      "argv": [
+        "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "lggr_swarm_lab",
+        "demo",
+        "--output",
+        "clean-demo"
+      ],
+      "exit_code": 0,
+      "elapsed_ns": 2121239000,
+      "output_file": "evidence/clean-extraction-logs/demo.txt"
+    },
+    {
+      "name": "evaluation",
+      "argv": [
+        "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "lggr_swarm_lab",
+        "benchmark",
+        "--protocol",
+        "protocol.json",
+        "--output",
+        "clean-evaluation",
+        "--split",
+        "evaluation"
+      ],
+      "exit_code": 0,
+      "elapsed_ns": 15471849000,
+      "output_file": "evidence/clean-extraction-logs/evaluation.txt"
+    },
+    {
+      "name": "interactive-replay",
+      "argv": [
+        "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "lggr_swarm_lab",
+        "replay",
+        "evidence/evaluation/runs/evaluation.query_scope.01.C.json"
+      ],
+      "exit_code": 0,
+      "elapsed_ns": 1237257100,
+      "output_file": "evidence/clean-extraction-logs/interactive-replay.txt"
+    },
+    {
+      "name": "fixed-replay",
+      "argv": [
+        "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "lggr_swarm_lab",
+        "replay",
+        "evidence/evaluation/fixed-traces/evaluation.equal_reports.00.json"
+      ],
+      "exit_code": 0,
+      "elapsed_ns": 1171967200,
+      "output_file": "evidence/clean-extraction-logs/fixed-replay.txt"
+    },
+    {
+      "name": "native-replay",
+      "argv": [
+        "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "lggr_swarm_lab",
+        "replay",
+        "evidence/native/run.json"
+      ],
+      "exit_code": 0,
+      "elapsed_ns": 1046425300,
+      "output_file": "evidence/clean-extraction-logs/native-replay.txt"
+    }
+  ],
+  "repeated_evaluation_matches": true,
+  "repeated_evaluation_replay_failures": [],
+  "git_required": false,
+  "api_key_required": false,
+  "native_model_calls_on_replay": 0,
+  "success": true
+}

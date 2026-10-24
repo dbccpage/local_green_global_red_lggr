@@ -1,0 +1,35 @@
+test_boundary_insufficiency_forces_defect (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_boundary_insufficiency_forces_defect)
+Claim C-12: Boundary insufficiency forces defect on colliding fiber. ... ok
+test_boundary_sufficient_gluing (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_boundary_sufficient_gluing)
+Claim C-11: Boundary-sufficient gluing certifies composable LGGG (Delta_E = 0). ... ok
+test_early_stopping_soundness (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_early_stopping_soundness)
+Claim C-07: Monotonicity of prefix budget violation and sound early stopping. ... ok
+test_empirical_ngd_pgd_rates (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_empirical_ngd_pgd_rates)
+Claim C-13: Empirical OpenRouter benchmark receipt verification. ... ok
+test_incremental_cycle_closure_obstruction (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_incremental_cycle_closure_obstruction)
+Claim C-10: Incremental cycle closure obstruction and L1 dual witness. ... ok
+test_online_discovery_replay_tests_1_to_4 (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_online_discovery_replay_tests_1_to_4)
+Claim C-14: Deterministic replay verification across Tests 1–4. ... ok
+test_online_fiber_collision_detector (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_online_fiber_collision_detector)
+Claim C-01: Collision detection and monotonicity under trace extension. ... ok
+test_online_prefix_vs_endpoint (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_online_prefix_vs_endpoint)
+Claim C-06: Strict separation of online every-prefix vs endpoint admissibility. ... ok
+test_open_chain_exactness (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_open_chain_exactness)
+Claim C-09: Acyclic tree handoffs have exact potential and zero L1 repair cost. ... ok
+test_postprocessing_preserves_streaming_collision (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_postprocessing_preserves_streaming_collision)
+Claim C-02: Deterministic postprocessing preserves streaming collisions. ... ok
+test_streaming_chain_telescoping (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_streaming_chain_telescoping)
+Claim C-05: Arbitrary-length signed step drift telescoping. ... ok
+test_streaming_defect_tracking (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_streaming_defect_tracking)
+Claim C-04: Streaming evaluator defect trichotomy Delta_E in {-1, 0, 1}. ... ok
+test_streaming_unsigned_report_collision (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_streaming_unsigned_report_collision)
+Claim C-08: Streaming unsigned step-magnitude report collision. ... ok
+test_streaming_verdict_ceiling (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_streaming_verdict_ceiling)
+Claim C-03: Report-only monitor verdict ceiling on colliding fibers. ... ok
+test_to_fraction_type_validation (papers.lggr_viii_online_streaming_discovery_and_runtime_gluing.code.tests.test_lggr_viii_core.TestLggrVIIICore.test_to_fraction_type_validation)
+Verify exact rational converter rejects floats/bools and handles fractions. ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.018s
+
+OK

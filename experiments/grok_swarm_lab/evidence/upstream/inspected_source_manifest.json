@@ -1,0 +1,460 @@
+{
+  "schema": "grok-swarm-lab.source-inspection.v1",
+  "reviewed_commit": "6910e0730c44bc37a65c44d3f7a5c9f2d7bf6a85",
+  "current_head_observed": "6c2e1d023ffb9d2f0c1d56ac17f1c52b253906de",
+  "read_order": [
+    "1_readme",
+    "2_core",
+    "3_streaming",
+    "4_cookbooks",
+    "5_benchmarks_and_tests",
+    "6_volume_viii",
+    "7_root_lean",
+    "additional_runtime"
+  ],
+  "sources": [
+    {
+      "group": "1_readme",
+      "path": "README.md",
+      "size_bytes": 36922,
+      "git_blob_sha1": "37a6bf5c59eba92a6afeecf5df64ee3a06c16479",
+      "sha256": "53b85b4afae5b75b9ef222b5e9250cea66be1f967e505724b36a607eb219012a",
+      "current_git_blob_sha1": "37a6bf5c59eba92a6afeecf5df64ee3a06c16479",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "2_core",
+      "path": "lggr/descent.py",
+      "size_bytes": 6659,
+      "git_blob_sha1": "301a617ee2b8bc8974c6317d10ddb7f6be5064e8",
+      "sha256": "abbcf1cf60744b3d7cb23c4117cff38037922d5e25eabbb9dd80118de6588643",
+      "current_git_blob_sha1": "301a617ee2b8bc8974c6317d10ddb7f6be5064e8",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "2_core",
+      "path": "lggr/witnesses.py",
+      "size_bytes": 14984,
+      "git_blob_sha1": "97c38fb24643cfa8492de09f527df6805e17df9c",
+      "sha256": "7a8ada3328a13201ca1c891eda59e79992cf28cc82547fcf7da5eeab9813c9a4",
+      "current_git_blob_sha1": "97c38fb24643cfa8492de09f527df6805e17df9c",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "2_core",
+      "path": "lggr/linear.py",
+      "size_bytes": 7995,
+      "git_blob_sha1": "0b2e5429df5ec8ddb6ea633355872da89c285e42",
+      "sha256": "743a523ba8a2fdd36e840df86cb887592655e754bcad11761928920ecb15ddd9",
+      "current_git_blob_sha1": "0b2e5429df5ec8ddb6ea633355872da89c285e42",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "2_core",
+      "path": "lggr/transport.py",
+      "size_bytes": 2714,
+      "git_blob_sha1": "f6d82b45c48a64577377677f2789b45f1e6c897c",
+      "sha256": "e7036ce386a0dd36618d3ea20f534eff526949c9d9538475736dc0bf755be730",
+      "current_git_blob_sha1": "f6d82b45c48a64577377677f2789b45f1e6c897c",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "3_streaming",
+      "path": "lggr/streaming.py",
+      "size_bytes": 289913,
+      "git_blob_sha1": "f3cedfa2766c1120d9285c4d4266ecd8b7f9ddab",
+      "sha256": "127ab88222f1e7f40bf74395a8c9a08d4fcd1c7c2481a85b7bda77b5b49958e1",
+      "current_git_blob_sha1": "09a8fae319c3a317f27cf74269fe2f33940476b7",
+      "same_git_blob_at_current_head": false
+    },
+    {
+      "group": "4_cookbooks",
+      "path": "cookbooks/01_online_fiber_monitoring.py",
+      "size_bytes": 5050,
+      "git_blob_sha1": "8bd0b498a3d42541a6ccdec2885b4cd62d8f9340",
+      "sha256": "1a46b0cb3ee615cac8986c7ce7fb809545dda43fc594da9d64d188bb45278176",
+      "current_git_blob_sha1": "8bd0b498a3d42541a6ccdec2885b4cd62d8f9340",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "4_cookbooks",
+      "path": "cookbooks/02_streaming_budget_audit.py",
+      "size_bytes": 4631,
+      "git_blob_sha1": "3211ff937eaa9802cebfff39550f9886229c1027",
+      "sha256": "888ca83409c3424f5a035b90b1e3270ca66201d51a6f23d3ecc774db0ac1655f",
+      "current_git_blob_sha1": "3211ff937eaa9802cebfff39550f9886229c1027",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "4_cookbooks",
+      "path": "cookbooks/03_cochain_cycle_repair.py",
+      "size_bytes": 4330,
+      "git_blob_sha1": "a6d9b64d83e35e82af0b8cb76ccb768983926023",
+      "sha256": "986b14e55b44024f0ce5cc2d975daa996f8a82a3b3c6f804f6b19b1aa8221ebe",
+      "current_git_blob_sha1": "a6d9b64d83e35e82af0b8cb76ccb768983926023",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "4_cookbooks",
+      "path": "cookbooks/04_swarm_runtime_guard.py",
+      "size_bytes": 6835,
+      "git_blob_sha1": "ca8277d2ad3c0e849b9824145a81ccaab4a6b6f3",
+      "sha256": "ec8bc7eb81031ad776852075b14b47c9ab82afedebb8926083f9b528ec66f8a5",
+      "current_git_blob_sha1": "ca8277d2ad3c0e849b9824145a81ccaab4a6b6f3",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "5_benchmarks_and_tests",
+      "path": "lggr/benchmarks.py",
+      "size_bytes": 33184,
+      "git_blob_sha1": "ce0c07fa4498c0f8a073c95c2d188144ebccef1e",
+      "sha256": "c11915b47a02cd3bdb3438c78c9c3fad44bb7312ade3cf2aa5f69b84f1b86481",
+      "current_git_blob_sha1": "ce0c07fa4498c0f8a073c95c2d188144ebccef1e",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "5_benchmarks_and_tests",
+      "path": "tests/test_streaming.py",
+      "size_bytes": 12158,
+      "git_blob_sha1": "25d1d0efc9e4cecd30b07ef4bc1a7bc6ef19979b",
+      "sha256": "b18a8b19362acecc1f68928480d22b7fee50b620386e5f858b40693a822d9b33",
+      "current_git_blob_sha1": "25d1d0efc9e4cecd30b07ef4bc1a7bc6ef19979b",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "5_benchmarks_and_tests",
+      "path": "tests/test_stress_multicycle_and_merges.py",
+      "size_bytes": 115628,
+      "git_blob_sha1": "067f68a21e32a99099f4045c6ede7fef15d6ce52",
+      "sha256": "43c75f10606d1309f7b461e47195ba5e3448a29a9fef2290549f898a7a3ba1de",
+      "current_git_blob_sha1": "0694b42d23abd9dce25f236497f23cc444d74cb6",
+      "same_git_blob_at_current_head": false
+    },
+    {
+      "group": "5_benchmarks_and_tests",
+      "path": "tests/test_live_benchmarks.py",
+      "size_bytes": 14525,
+      "git_blob_sha1": "f6176cf7e609bac2be1ed2de8958150a9f1b48d9",
+      "sha256": "0dc55f74036c4b00cfd24ef3c01eab610cc9293f305e8da6215c79126a52f503",
+      "current_git_blob_sha1": "f6176cf7e609bac2be1ed2de8958150a9f1b48d9",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/CHANGELOG.md",
+      "size_bytes": 1838,
+      "git_blob_sha1": "ac2fad3505f814043ab54e6f69671a4e9a0189cf",
+      "sha256": "a47de9c456d7b2db055c29484092525b507fc2471d2dc57d5fe9f3f7374855e8",
+      "current_git_blob_sha1": "ac2fad3505f814043ab54e6f69671a4e9a0189cf",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/LICENSE",
+      "size_bytes": 10169,
+      "git_blob_sha1": "bd52dfd557e3f0923855884546d6c663a4b7707c",
+      "sha256": "f4d9b0aad8ff9e650f5890fa3eeb7c1311479cab901f8a9b416a2d9acaf54266",
+      "current_git_blob_sha1": "bd52dfd557e3f0923855884546d6c663a4b7707c",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/README.md",
+      "size_bytes": 2272,
+      "git_blob_sha1": "a2800088d8402d7fe0e18f7f72e713458ee723a0",
+      "sha256": "6a4fe214f1bede343814e1ec9bf7409017fc6950e8fc2c9e02755c09f0ed566e",
+      "current_git_blob_sha1": "a2800088d8402d7fe0e18f7f72e713458ee723a0",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/code/lggr_viii_core.py",
+      "size_bytes": 24379,
+      "git_blob_sha1": "c34514fe861cbf5d6885ba30b5c3132497f00fd5",
+      "sha256": "a5cc5e7f09b39d049cd9e2f3b1cc0f25bea267f09f119cb59db1a433b945fff3",
+      "current_git_blob_sha1": "c34514fe861cbf5d6885ba30b5c3132497f00fd5",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/code/tests/test_lggr_viii_core.py",
+      "size_bytes": 14390,
+      "git_blob_sha1": "24744070cd0589f8725065d87d3216fa453f6c0e",
+      "sha256": "a911442d016bc703dcfc3ad7079c571817ae844ebd38e0d69623613036e7b634",
+      "current_git_blob_sha1": "24744070cd0589f8725065d87d3216fa453f6c0e",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/CheckAxioms.lean",
+      "size_bytes": 1448,
+      "git_blob_sha1": "57697b592f96c1bc8dccbbde60d70aacd1853f45",
+      "sha256": "6a8f97850bbc2ebb32877f4edd9c778ccbd9e6a075a16695894633b0e622485f",
+      "current_git_blob_sha1": "57697b592f96c1bc8dccbbde60d70aacd1853f45",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/LggrVIII.lean",
+      "size_bytes": 27188,
+      "git_blob_sha1": "246337d058212bd0b3799b029129563ad7e5b572",
+      "sha256": "090edff770a9d8ec8da8654b7bbcaf43955e7765c8889084ce0c72a7a8429260",
+      "current_git_blob_sha1": "246337d058212bd0b3799b029129563ad7e5b572",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/README.md",
+      "size_bytes": 2961,
+      "git_blob_sha1": "a6680e3f7a3be88b3699b8f57992f9a00a418b73",
+      "sha256": "51065792092c29b62bfa9fdbb505f84de106228544ae3518b26cc8b48b804a64",
+      "current_git_blob_sha1": "a6680e3f7a3be88b3699b8f57992f9a00a418b73",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/lake-manifest.json",
+      "size_bytes": 136,
+      "git_blob_sha1": "5d1810c0cc597b21df0af5b0ff7494a2b40c053e",
+      "sha256": "264a3ab6feb06eaad7a9dd30df5ca8f85a0a3a116f9a2e5a04fdab14248da5b8",
+      "current_git_blob_sha1": "5d1810c0cc597b21df0af5b0ff7494a2b40c053e",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/lakefile.lean",
+      "size_bytes": 200,
+      "git_blob_sha1": "830c5d0df0baedcc8d32e739c7a5008e5ff79dc5",
+      "sha256": "cefa6561064a097783cb051dcf2ecc574bce9d0fba03dcbff00c1694cbcff122",
+      "current_git_blob_sha1": "830c5d0df0baedcc8d32e739c7a5008e5ff79dc5",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/lean-toolchain",
+      "size_bytes": 25,
+      "git_blob_sha1": "a6aff065db2882c535684f8c5bcd4f16e9a23915",
+      "sha256": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+      "current_git_blob_sha1": "a6aff065db2882c535684f8c5bcd4f16e9a23915",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md",
+      "size_bytes": 24620,
+      "git_blob_sha1": "cd7737145256933163c954d34aef69d4199463e7",
+      "sha256": "9ba2214cc08ef8535cb67469c850b6cd1bbda74cf20325f8bd3e2de35d50ad35",
+      "current_git_blob_sha1": "cd7737145256933163c954d34aef69d4199463e7",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_change_log.md",
+      "size_bytes": 1838,
+      "git_blob_sha1": "ac2fad3505f814043ab54e6f69671a4e9a0189cf",
+      "sha256": "a47de9c456d7b2db055c29484092525b507fc2471d2dc57d5fe9f3f7374855e8",
+      "current_git_blob_sha1": "ac2fad3505f814043ab54e6f69671a4e9a0189cf",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_claim_ledger.md",
+      "size_bytes": 4830,
+      "git_blob_sha1": "c6b2b51e31f179f5ca745afccd9a5ceaca17044d",
+      "sha256": "bbc37d7f410a9f12f4f0c8cad542d7ce7b75c7340e0344d1cdac57524bfe568a",
+      "current_git_blob_sha1": "c6b2b51e31f179f5ca745afccd9a5ceaca17044d",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/pyproject.toml",
+      "size_bytes": 360,
+      "git_blob_sha1": "00515a4ec81dfd128afde4b33eba54e3690dc5e1",
+      "sha256": "b81abd088955c1acfac3f70dc6a6462ebc4fe6c5507785efcb18d8d81ac1b941",
+      "current_git_blob_sha1": "00515a4ec81dfd128afde4b33eba54e3690dc5e1",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/empirical_ngd_benchmark.json",
+      "size_bytes": 15552,
+      "git_blob_sha1": "dc7c892d19c5698cca5d145972a61b3ad244f88e",
+      "sha256": "f0b06a2e1f5bd1cd1911d10cfddad6aa6f9dba536d814b303d0880fe17b490b9",
+      "current_git_blob_sha1": "dc7c892d19c5698cca5d145972a61b3ad244f88e",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test1_fiber_collision.json",
+      "size_bytes": 2925,
+      "git_blob_sha1": "f87bb185022bc744b8c3026671e55e9aadb8922d",
+      "sha256": "43c28cd34222965051604219d9912fdff578719acf6be293c81cba633e679ed9",
+      "current_git_blob_sha1": "f87bb185022bc744b8c3026671e55e9aadb8922d",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test2_prefix_breach.json",
+      "size_bytes": 969,
+      "git_blob_sha1": "51deaaa38eb9afd4f03a8e524643e5773fc19c5e",
+      "sha256": "5aa3ca0c05886c2b058c4994d8dbe274a98da125db55f7dcec345cb115eeaf70",
+      "current_git_blob_sha1": "51deaaa38eb9afd4f03a8e524643e5773fc19c5e",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test3_cochain_cycle.json",
+      "size_bytes": 963,
+      "git_blob_sha1": "69d525f2473e80d9ed901f883cfc4302f12a7b6d",
+      "sha256": "eb558d73bfea999e68c0f8fa128a016e9b02530e2dd9667f336df43be238fcf5",
+      "current_git_blob_sha1": "69d525f2473e80d9ed901f883cfc4302f12a7b6d",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "6_volume_viii",
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test4_composable_lggg.json",
+      "size_bytes": 1702,
+      "git_blob_sha1": "a2ceb9ae9732e490c621739c031930dc5740ded3",
+      "sha256": "d6eb5e310d2ce193839404a9d112a7ad17bdce44a16750cf69b4e1b2f686af92",
+      "current_git_blob_sha1": "a2ceb9ae9732e490c621739c031930dc5740ded3",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "7_root_lean",
+      "path": "lean4/LggrVIII.lean",
+      "size_bytes": 73419,
+      "git_blob_sha1": "2b4cf638402fca68d29fec99d6158e1cd13466a8",
+      "sha256": "f4e95c89530fd921f497ac48ff3bea7de18726efbba5300334c41f4d02d899ec",
+      "current_git_blob_sha1": "5cd4ad9ffb3a5fd9c5342594bcd777be67fa47a8",
+      "same_git_blob_at_current_head": false
+    },
+    {
+      "group": "7_root_lean",
+      "path": "lean4/CheckAxioms.lean",
+      "size_bytes": 4112,
+      "git_blob_sha1": "3a269ef757df4dcd0af376cd1b5c7fac40d7d0e3",
+      "sha256": "7faf05d6c32dae4a91a5832b69784d0a4fcde69f77e7066bbeeee901b595f8ec",
+      "current_git_blob_sha1": "4f7ef6385be108ff0dbb07f107e05c2ece2e045c",
+      "same_git_blob_at_current_head": false
+    },
+    {
+      "group": "7_root_lean",
+      "path": "lean4/LggrVII.lean",
+      "size_bytes": 13620,
+      "git_blob_sha1": "ebe6139075d3494ab2a4227af2a8cf11ebee83e5",
+      "sha256": "bfa2af7f8da648ea0bd4e0a735f1f13ada50e6f25ece0ddf79fe1b2be19bfd6d",
+      "current_git_blob_sha1": "ebe6139075d3494ab2a4227af2a8cf11ebee83e5",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "7_root_lean",
+      "path": "lean4/lean-toolchain",
+      "size_bytes": 25,
+      "git_blob_sha1": "a6aff065db2882c535684f8c5bcd4f16e9a23915",
+      "sha256": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+      "current_git_blob_sha1": "a6aff065db2882c535684f8c5bcd4f16e9a23915",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "7_root_lean",
+      "path": "lean4/lakefile.lean",
+      "size_bytes": 214,
+      "git_blob_sha1": "0bdcd7ad6ca782f456470d64332dde0721bc8475",
+      "sha256": "7336b4df5c2520a4cac21bcc0bf6f227170fd81484f667c89b360e9fb51a8be2",
+      "current_git_blob_sha1": "0bdcd7ad6ca782f456470d64332dde0721bc8475",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "additional_runtime",
+      "path": "lggr/__main__.py",
+      "size_bytes": 18193,
+      "git_blob_sha1": "49fdf6942981356d4390774976d3923e9a3ab4e3",
+      "sha256": "e521de149e15396a3009987cd25d2b59b2660b61224a66e3a78718843f1703c9",
+      "current_git_blob_sha1": "49fdf6942981356d4390774976d3923e9a3ab4e3",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "additional_runtime",
+      "path": "lggr/common.py",
+      "size_bytes": 3782,
+      "git_blob_sha1": "396a74886e52a7ee4feb95ad8f68fedd61e133a6",
+      "sha256": "3d6f43da81d09798c1e26b958006a00b5fc0ee5e6c62f6223258132b38340bc9",
+      "current_git_blob_sha1": "396a74886e52a7ee4feb95ad8f68fedd61e133a6",
+      "same_git_blob_at_current_head": true
+    },
+    {
+      "group": "additional_runtime",
+      "path": "lggr/__init__.py",
+      "size_bytes": 3023,
+      "git_blob_sha1": "42b4c30501b1d84430b568a430a4f93b1c7d7be2",
+      "sha256": "0da12e30a801da0821b3af45e827c28fe6bb7aff8a6674f747fc8d0ef69a66cd",
+      "current_git_blob_sha1": "f41ff1aacca013f0c82fc9f9a74eb413983f1096",
+      "same_git_blob_at_current_head": false
+    }
+  ],
+  "reused_streaming_class_ast_parity": {
+    "StreamingFiberMonitor": true,
+    "StreamingAuditMonitor": true,
+    "StreamingBaselineComparator": true
+  },
+  "historical_receipt_summaries": [
+    {
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/empirical_ngd_benchmark.json",
+      "model": "openai/gpt-4o-mini",
+      "completion_count": 16,
+      "metrics": {
+        "N": 8,
+        "LPR": "1",
+        "GPR": "1",
+        "NGD_rate": "0",
+        "ZDR_rate": "1",
+        "PGD_rate": "0",
+        "mean_defect": "0",
+        "EGD_rate": "0",
+        "LRGR_rate": "0",
+        "identity_verified": true
+      },
+      "final_status": null,
+      "scope": "Historical stored receipt inspected and replayed offline; no new model call"
+    },
+    {
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test1_fiber_collision.json",
+      "model": "openai/gpt-4o-mini",
+      "completion_count": null,
+      "metrics": null,
+      "final_status": "OBSTRUCTED_LGGR",
+      "scope": "Historical stored receipt inspected and replayed offline; no new model call"
+    },
+    {
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test2_prefix_breach.json",
+      "model": "openai/gpt-4o-mini",
+      "completion_count": null,
+      "metrics": null,
+      "final_status": "OBSTRUCTED_LGGR",
+      "scope": "Historical stored receipt inspected and replayed offline; no new model call"
+    },
+    {
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test3_cochain_cycle.json",
+      "model": "openai/gpt-4o-mini",
+      "completion_count": null,
+      "metrics": null,
+      "final_status": null,
+      "scope": "Historical stored receipt inspected and replayed offline; no new model call"
+    },
+    {
+      "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/receipts/test4_composable_lggg.json",
+      "model": "openai/gpt-4o-mini",
+      "completion_count": null,
+      "metrics": null,
+      "final_status": "COMPOSABLE_LGGG",
+      "scope": "Historical stored receipt inspected and replayed offline; no new model call"
+    }
+  ],
+  "root_and_paper_local_lean_are_identical": false,
+  "root_and_paper_python_are_same_artifact": false,
+  "limitations": [
+    "AST equality ignores comments and source formatting; blob hashes preserve exact bytes.",
+    "Hashes bind bytes and do not establish truth or author identity.",
+    "Current complete checkout changed concurrently; the laboratory dependency remains pinned."
+  ]
+}

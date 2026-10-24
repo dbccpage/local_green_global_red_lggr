@@ -1,0 +1,69 @@
+{
+  "schema": "grok-swarm-lab.verification.v1",
+  "suite": "pinned-root-original-tests",
+  "upstream_commit": "6910e0730c44bc37a65c44d3f7a5c9f2d7bf6a85",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\verify_upstream.py",
+    "--suite",
+    "pinned-root"
+  ],
+  "exit_code": 1,
+  "tests_run": 179,
+  "failures": [
+    "pinned_original_test_4.TestStreamingAuditMonitor.test_every_prefix_vs_endpoint_scope",
+    "pinned_original_test_5.TestStreamingBaselineComparator.test_comparative_evaluation_across_excursions_migrations_and_obligations"
+  ],
+  "errors": [],
+  "skips": [],
+  "elapsed_seconds": 10.6026987999212,
+  "python": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "sources": [
+    {
+      "path": "tests/test_cli.py",
+      "git_blob_sha1": "383b56900aa643d89c4657ae731670b775b28f5e",
+      "sha256": "9244314c315063df23725a6230be96925700f28be91ab9958a6c6a51aa5117b7"
+    },
+    {
+      "path": "tests/test_descent.py",
+      "git_blob_sha1": "7dd8551bda0ede6b6bdfe02e2e4b7d7e4568557e",
+      "sha256": "d0787985a3ab194a9dc7efd5239b24260133a856324ddf6323878a2d93c84145"
+    },
+    {
+      "path": "tests/test_linear.py",
+      "git_blob_sha1": "f307df5c5a4e1fc07574b2c231c7204f5da2e335",
+      "sha256": "2dea888e223eda6e603cded70cdccb9b24cb3b1108a93eebe95dcb2eb86a9fe9"
+    },
+    {
+      "path": "tests/test_live_benchmarks.py",
+      "git_blob_sha1": "f6176cf7e609bac2be1ed2de8958150a9f1b48d9",
+      "sha256": "0dc55f74036c4b00cfd24ef3c01eab610cc9293f305e8da6215c79126a52f503"
+    },
+    {
+      "path": "tests/test_streaming.py",
+      "git_blob_sha1": "25d1d0efc9e4cecd30b07ef4bc1a7bc6ef19979b",
+      "sha256": "b18a8b19362acecc1f68928480d22b7fee50b620386e5f858b40693a822d9b33"
+    },
+    {
+      "path": "tests/test_stress_multicycle_and_merges.py",
+      "git_blob_sha1": "067f68a21e32a99099f4045c6ede7fef15d6ce52",
+      "sha256": "43c75f10606d1309f7b461e47195ba5e3448a29a9fef2290549f898a7a3ba1de"
+    },
+    {
+      "path": "tests/test_transport.py",
+      "git_blob_sha1": "a1d541350bb8a6e066f8593c24f7cd4edd086e77",
+      "sha256": "ba271bd84b0bbe203b296f0e352ba26d409e5aa6b5d1d9948b80d721c9e352c1"
+    },
+    {
+      "path": "tests/test_witnesses.py",
+      "git_blob_sha1": "41e0749df6edf3c683160c36b8aa0df2c680c28e",
+      "sha256": "2189037a5976d012b51795edcb716fb90d441682c962265b994dd6f456e5f8bb"
+    }
+  ],
+  "log": "pinned-root-tests.txt",
+  "scope": "Pinned tests/library in complete current checkout; metadata-dependent test_e2e_suite.py excluded. CLI subprocesses use current root package, whose existing relevant APIs are unchanged; addition is an unused martingale monitor.",
+  "checkout_commit_observed_after_run": "84fa61b678d46c9d2c4fbcabcf228cda5a82c6ef",
+  "checkout_commit_observed_before_run": null,
+  "head_stable_during_run": null
+}

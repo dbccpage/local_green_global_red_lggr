@@ -1,0 +1,42 @@
+{
+  "branch": "refunds",
+  "observed_semantics": {
+    "order_scale_to_cents": 100,
+    "refund_scale_to_cents": 1,
+    "refund_sign": 1
+  },
+  "planner": {
+    "integrator": {
+      "operation": "integrate",
+      "refund_multiplier": 1
+    },
+    "orders": {
+      "join_mode": "first",
+      "omit_last": false,
+      "operation": "orders",
+      "scale_to_cents": 100
+    },
+    "refunds": {
+      "duplicate": false,
+      "omit_last": false,
+      "operation": "refunds",
+      "scale_to_cents": 1,
+      "sign": 1
+    }
+  },
+  "source": {
+    "refunds": [
+      {
+        "amount": 300,
+        "order_id": "o0",
+        "refund_id": "r0"
+      },
+      {
+        "amount": 400,
+        "order_id": "o2",
+        "refund_id": "r2"
+      }
+    ]
+  },
+  "task": "Reconcile every original order with its first authoritative customer row and all refunds into an integer-cent ledger."
+}
