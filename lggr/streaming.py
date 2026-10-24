@@ -235,6 +235,93 @@ class StreamingFiberMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+    def synthesize_minimal_refinement(
+        self, candidate_keys: Iterable[str] | None = None
+    ) -> dict[str, Any]:
+        """Find a minimal-cardinality subset of metadata keys that resolves all report-fiber collisions."""
+        if not self.is_obstructed:
+            base_rec = self.get_receipt()
+            body: dict[str, Any] = {
+                "schema": "lggr.online_schema_refinement.v1",
+                "authority_effect": "None",
+                "scope_id": self.scope_id,
+                "status": "ALREADY_SUFFICIENT",
+                "refinement_found": True,
+                "minimal_keys": [],
+                "candidate_keys_inspected": [],
+                "refined_contract_status": "COMPOSABLE_LGGG",
+                "decoder_size": len(base_rec.get("decoder", [])),
+                "decoder": base_rec.get("decoder", []),
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        if candidate_keys is not None:
+            all_keys = sorted({text(k, "candidate_key") for k in sequence(candidate_keys, "candidate_keys")})
+        else:
+            key_set: set[str] = set()
+            for row in self.history:
+                meta = row.get("metadata")
+                if isinstance(meta, Mapping):
+                    for k in meta.keys():
+                        key_set.add(str(k))
+            all_keys = sorted(key_set)
+
+        last_collision: dict[str, Any] | None = self.collision
+        for r in range(1, len(all_keys) + 1):
+            for subset in itertools.combinations(all_keys, r):
+                fibers_map: dict[str, dict[str, Any]] = {}
+                collision_pair: dict[str, Any] | None = None
+                for row in self.history:
+                    meta = row.get("metadata")
+                    meta_dict = meta if isinstance(meta, Mapping) else {}
+                    refined_rep = {
+                        "base_report": row["report"],
+                        "refined_metadata": {k: meta_dict.get(k) for k in subset},
+                    }
+                    rep_key = canonical(refined_rep)
+                    prev = fibers_map.get(rep_key)
+                    if prev is not None and canonical(prev["query"]) != canonical(row["query"]):
+                        collision_pair = {"left": prev, "right": row}
+                        break
+                    if prev is None:
+                        fibers_map[rep_key] = {
+                            "state_id": row["state_id"],
+                            "report": refined_rep,
+                            "query": row["query"],
+                        }
+                if collision_pair is None:
+                    decoder = [
+                        {"report": fibers_map[k]["report"], "query": fibers_map[k]["query"]}
+                        for k in sorted(fibers_map)
+                    ]
+                    body = {
+                        "schema": "lggr.online_schema_refinement.v1",
+                        "authority_effect": "None",
+                        "scope_id": self.scope_id,
+                        "status": "REFINEMENT_SYNTHESIZED",
+                        "refinement_found": True,
+                        "minimal_keys": list(subset),
+                        "candidate_keys_inspected": all_keys,
+                        "refined_contract_status": "COMPOSABLE_LGGG",
+                        "decoder_size": len(decoder),
+                        "decoder": decoder,
+                    }
+                    return json_value({**body, "receipt_sha256": digest(body)})
+                last_collision = collision_pair
+
+        body = {
+            "schema": "lggr.online_schema_refinement.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": "REFINEMENT_INSUFFICIENT",
+            "refinement_found": False,
+            "minimal_keys": None,
+            "candidate_keys_inspected": all_keys,
+            "refined_contract_status": "OBSTRUCTED_LGGR",
+            "residual_collision": last_collision,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 class StreamingAuditMonitor:
     """Incremental step witness composition and evaluator defect monitor.

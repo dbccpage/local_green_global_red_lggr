@@ -785,6 +785,39 @@ class TestStreamingAuditBranchSplice(unittest.TestCase):
         self.assertTrue(fine_res["coarse_prefix_breach"])
         self.assertFalse(fine_res["hidden_excursion_masked"])
 
+    def test_synthesize_minimal_refinement_resolves_or_refuses_collision(self) -> None:
+        """Synthesize minimal metadata key subset that restores report-fiber sufficiency."""
+        fmon = StreamingFiberMonitor(scope_id="schema-refine-test")
+        # Both states share base report {"workload": "etl"}, collide on query,
+        # have identical metadata "region": "us-east", and differ on metadata "kms_tier"
+        fmon.observe(
+            "t1",
+            report={"workload": "etl"},
+            query={"approved": True},
+            metadata={"region": "us-east", "kms_tier": "tier-3"},
+        )
+        fmon.observe(
+            "t2",
+            report={"workload": "etl"},
+            query={"approved": False},
+            metadata={"region": "us-east", "kms_tier": "tier-1"},
+        )
+        self.assertTrue(fmon.is_obstructed)
+
+        # Inspecting all metadata keys finds minimal 1-key refinement ["kms_tier"]
+        syn = fmon.synthesize_minimal_refinement()
+        self.assertEqual(syn["status"], "REFINEMENT_SYNTHESIZED")
+        self.assertTrue(syn["refinement_found"])
+        self.assertEqual(syn["minimal_keys"], ["kms_tier"])
+        self.assertEqual(syn["refined_contract_status"], "COMPOSABLE_LGGG")
+
+        # Restricting candidate keys to ["region"] only -> REFINEMENT_INSUFFICIENT
+        syn_bad = fmon.synthesize_minimal_refinement(candidate_keys=["region"])
+        self.assertEqual(syn_bad["status"], "REFINEMENT_INSUFFICIENT")
+        self.assertFalse(syn_bad["refinement_found"])
+        self.assertIsNone(syn_bad["minimal_keys"])
+        self.assertEqual(syn_bad["refined_contract_status"], "OBSTRUCTED_LGGR")
+
 
 if __name__ == "__main__":
     unittest.main()

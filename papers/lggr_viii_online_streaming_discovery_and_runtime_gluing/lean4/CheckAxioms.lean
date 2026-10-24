@@ -19,3 +19,4 @@ import LggrVIII
 #print axioms LggrVIII.cross_branch_audit_splice_budget_breach
 #print axioms LggrVIII.multi_stage_gluing_associativity_and_defect_bound
 #print axioms LggrVIII.coarsened_macro_stage_masks_internal_prefix_breach
+#print axioms LggrVIII.minimal_metadata_refinement_eliminates_collision
