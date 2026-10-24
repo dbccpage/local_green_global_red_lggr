@@ -11,6 +11,7 @@ from .streaming import (
     StreamingCochainMonitor,
     StreamingFiberMonitor,
     StreamingPositiveExtensionMonitor,
+    StreamingSixRoleOverlayMonitor,
     StreamingTransportMonitor,
 )
 from .transport import verify_transport
@@ -21,4 +22,5 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "classify_cochain", "verify_l1_certificate", "verify_transport", "BudgetPolicy", "StateRef",
            "StepWitness", "audit_document", "audit_history", "history_document", "make_witness",
            "StreamingAuditMonitor", "StreamingBaselineComparator", "StreamingCochainMonitor",
-           "StreamingFiberMonitor", "StreamingPositiveExtensionMonitor", "StreamingTransportMonitor"]
+           "StreamingFiberMonitor", "StreamingPositiveExtensionMonitor", "StreamingSixRoleOverlayMonitor",
+           "StreamingTransportMonitor"]
