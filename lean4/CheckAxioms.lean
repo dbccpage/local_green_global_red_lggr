@@ -64,3 +64,4 @@ import LggrVIII
 #print axioms LggrVIII.hodge_laplacian_energy_sum_of_squares_kernel
 #print axioms LggrVIII.pairwise_compatible_three_cycle_contextual_obstruction
 #print axioms LggrVIII.discrete_regge_hinge_deficit_and_gauss_bonnet
+#print axioms LggrVIII.fibered_pullback_compatibility_and_mediator_uniqueness
