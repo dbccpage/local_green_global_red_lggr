@@ -34,6 +34,7 @@ from .streaming import (
     StreamingReplayOrderMonitor,
     StreamingSimplicialCupMonitor,
     StreamingSixRoleOverlayMonitor,
+    StreamingSkewRepairMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
     StreamingWindowedDriftMonitor,
@@ -58,5 +59,6 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingReggeDeficitCurvatureMonitor",
            "StreamingReplayOrderMonitor",
            "StreamingSimplicialCupMonitor",
-           "StreamingSixRoleOverlayMonitor", "StreamingThresholdGovernanceMonitor", "StreamingTransportMonitor",
+           "StreamingSixRoleOverlayMonitor", "StreamingSkewRepairMonitor", "StreamingThresholdGovernanceMonitor",
+           "StreamingTransportMonitor",
            "StreamingWindowedDriftMonitor"]

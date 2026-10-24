@@ -6957,6 +6957,185 @@ class StreamingProjectiveTowerMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingSkewRepairMonitor:
+    """Online skew non-diagonal exact subspace norm-attainment divergence monitor (LGGR V §4 Remark LGR-R4).
+
+    Audits candidate cochains omega = (a, b) in Q^2 against the skew non-diagonal exact subspace
+    S = {(-alpha, -2*alpha) : alpha in Q} subset Q^2, where the repaired residual is
+    r(alpha) = (a + alpha, b + 2*alpha):
+      - Computes the skew cycle discrepancy Delta_skew = 2*a - b.
+      - Computes the exact norm-minimizing parameters across l^1, l^2, and l^infty:
+          alpha_1   = -b / 2
+          alpha_2   = -(a + 2*b) / 5
+          alpha_inf = -(a + b) / 3
+        and the corresponding minimum norm values:
+          Phi_1     = |2*a - b| / 2
+          Phi_2_sq  = (2*a - b)^2 / 5
+          Phi_inf   = |2*a - b| / 3
+      - Verifies that whenever 2*a != b, alpha_1, alpha_2, and alpha_inf strictly diverge:
+          alpha_1 - alpha_2 = (2*a - b) / 10,
+          alpha_2 - alpha_inf = (2*a - b) / 15,
+          alpha_1 - alpha_inf = (2*a - b) / 6.
+      - Evaluates a selected repair parameter alpha_cand (defaulting to alpha_inf) against
+        coordinatewise l^infty bounds B_inf (defaulting to Phi_inf):
+          L = E_coord_1 * E_coord_2, where E_coord_i = 1[|r_i(alpha_cand)| <= B_inf]
+        versus the global l^1 minimum repair budget B_1 (defaulting to Phi_1):
+          E_g = 1[||r(alpha_cand)||_1 <= B_1].
+      - Separates:
+          * SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            e.g., selecting the l^infty-optimal repair alpha_inf satisfies both coordinate
+            l^infty bounds |r_i(alpha_inf)| = |2*a - b|/3 <= Phi_inf, yet incurs
+            ||r(alpha_inf)||_1 = 2*|2*a - b|/3 > |2*a - b|/2 = Phi_1),
+          * SKEW_REPAIR_BUDGET_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_COORDINATE_BOUND_REJECTED (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-skew-repair-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.probes: list[dict[str, Any]] = []
+
+    def record_probe(
+        self,
+        probe_id: str,
+        omega_a: int | str | Fraction,
+        omega_b: int | str | Fraction,
+        *,
+        candidate_alpha: int | str | Fraction | None = None,
+        l_inf_coordinate_budget: int | str | Fraction | None = None,
+        l_1_global_budget: int | str | Fraction | None = None,
+    ) -> dict[str, Any]:
+        """Record a 2-cochain probe omega = (a, b) and audit l^1, l^2, l^infty repair attainment."""
+        pid = text(probe_id, "probe_id")
+        a = rational(omega_a, "omega_a")
+        b = rational(omega_b, "omega_b")
+
+        skew_discrepancy = 2 * a - b
+        abs_skew = abs(skew_discrepancy)
+
+        alpha_1 = -b / Fraction(2)
+        alpha_2 = -(a + 2 * b) / Fraction(5)
+        alpha_inf = -(a + b) / Fraction(3)
+
+        phi_1 = abs_skew / Fraction(2)
+        phi_2_sq = (skew_discrepancy * skew_discrepancy) / Fraction(5)
+        phi_inf = abs_skew / Fraction(3)
+
+        # Verify that r(alpha_1), r(alpha_2), r(alpha_inf) attain the closed-form minima
+        r1_at_alpha1 = abs(a + alpha_1) + abs(b + 2 * alpha_1)
+        r2_sq_at_alpha2 = (a + alpha_2) ** 2 + (b + 2 * alpha_2) ** 2
+        rinf_at_alphainf = max(abs(a + alpha_inf), abs(b + 2 * alpha_inf))
+        closed_form_identities_hold = (
+            r1_at_alpha1 == phi_1
+            and r2_sq_at_alpha2 == phi_2_sq
+            and rinf_at_alphainf == phi_inf
+        )
+
+        minimizers_strictly_diverge = (
+            alpha_1 != alpha_2 and alpha_2 != alpha_inf and alpha_1 != alpha_inf
+        )
+
+        alpha_c = rational(candidate_alpha, "candidate_alpha") if candidate_alpha is not None else alpha_inf
+        b_inf = (
+            nonnegative_rational(l_inf_coordinate_budget, "l_inf_coordinate_budget")
+            if l_inf_coordinate_budget is not None
+            else phi_inf
+        )
+        b_1 = (
+            nonnegative_rational(l_1_global_budget, "l_1_global_budget")
+            if l_1_global_budget is not None
+            else phi_1
+        )
+
+        res_1 = a + alpha_c
+        res_2 = b + 2 * alpha_c
+        cand_l1 = abs(res_1) + abs(res_2)
+        cand_l2_sq = res_1 * res_1 + res_2 * res_2
+        cand_linf = max(abs(res_1), abs(res_2))
+
+        e_coord_1 = 1 if abs(res_1) <= b_inf else 0
+        e_coord_2 = 1 if abs(res_2) <= b_inf else 0
+        local_product = e_coord_1 * e_coord_2
+        global_eval = 1 if (local_product == 1 and cand_l1 <= b_1) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            probe_status = "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            probe_status = "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+        else:
+            probe_status = "LOCAL_COORDINATE_BOUND_REJECTED"
+
+        rec = {
+            "probe_id": pid,
+            "omega": [a, b],
+            "skew_discrepancy_2a_minus_b": skew_discrepancy,
+            "alpha_1": alpha_1,
+            "alpha_2": alpha_2,
+            "alpha_inf": alpha_inf,
+            "phi_1": phi_1,
+            "phi_2_squared": phi_2_sq,
+            "phi_inf": phi_inf,
+            "closed_form_identities_hold": closed_form_identities_hold,
+            "minimizers_strictly_diverge": minimizers_strictly_diverge,
+            "candidate_alpha": alpha_c,
+            "candidate_residual": [res_1, res_2],
+            "candidate_l1_cost": cand_l1,
+            "candidate_l2_squared_cost": cand_l2_sq,
+            "candidate_linf_cost": cand_linf,
+            "l_inf_coordinate_budget": b_inf,
+            "l_1_global_budget": b_1,
+            "local_coordinate_evaluators": [e_coord_1, e_coord_2],
+            "local_product_aggregator": local_product,
+            "global_l1_budget_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "probe_status": probe_status,
+        }
+        self.probes.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed skew repair norm-attainment receipt."""
+        if not self.probes:
+            raise ValidationError("At least one skew repair probe must be recorded before emitting a receipt")
+
+        divergent_ids = [
+            p["probe_id"]
+            for p in self.probes
+            if p["probe_status"] == "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        ]
+        rejected_ids = [
+            p["probe_id"]
+            for p in self.probes
+            if p["probe_status"] == "LOCAL_COORDINATE_BOUND_REJECTED"
+        ]
+        all_closed_forms_ok = all(p["closed_form_identities_hold"] for p in self.probes)
+
+        if divergent_ids:
+            status = "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_COORDINATE_BOUND_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "probe_count": len(self.probes),
+            "all_closed_form_identities_verified": all_closed_forms_ok,
+            "skew_norm_divergence_probe_ids": divergent_ids,
+            "rejected_probe_ids": rejected_ids,
+            "probes": self.probes,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
