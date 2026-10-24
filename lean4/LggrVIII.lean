@@ -608,4 +608,52 @@ theorem completion_relative_obstruction_on_carrier_extension :
   intro x
   omega
 
+/-- Indicator classification error `0` or `1` of a report-only predictor `E ∘ p` on state `x`. -/
+def statePredictionError {X A B : Type} [DecidableEq B]
+    (p : X → A) (q : X → B) (E : A → B) (x : X) : Int :=
+  if E (p x) = q x then 0 else 1
+
+/-- Lemma: On any single colliding pair `(x, y)` (`p x = p y ∧ q x ≠ q y`), any report-only
+    predictor `E : A → B` incurs at least `1` classification error across `{x, y}`. -/
+theorem single_colliding_pair_error_lower_bound {X A B : Type} [DecidableEq B]
+    (p : X → A) (q : X → B) (E : A → B) (x y : X)
+    (hcol : IsCollision p q x y) :
+    statePredictionError p q E x + statePredictionError p q E y ≥ 1 := by
+  rcases hcol with ⟨hp, hq⟩
+  dsimp [statePredictionError]
+  by_cases hx : E (p x) = q x
+  · have hy : E (p y) ≠ q y := by
+      intro hy_eq
+      apply hq
+      rw [← hx, ← hy_eq, hp]
+    simp [hx, hy]
+  · by_cases hy : E (p y) = q y <;> simp [hx, hy]
+
+/-- Theorem 26 (`disjoint_colliding_pairs_additive_error_lower_bound`):
+    Formalizes the LGGR I / V / VI Disjoint Colliding-Pairs Additive Error Ceiling
+    and Post-Processing Invariance:
+    1. Across any two colliding pairs `(x1, y1)` and `(x2, y2)`, any deterministic
+       report-only predictor `E : A → B` incurs at least `2` classification errors:
+       `(err(x1) + err(y1)) + (err(x2) + err(y2)) ≥ 2`.
+    2. For any deterministic post-processing map `f : A → A'` and downstream predictor
+       `E' : A' → B`, the post-processed predictor `E' ∘ f ∘ p` obeys the same additive
+       error lower bound `≥ 2`. -/
+theorem disjoint_colliding_pairs_additive_error_lower_bound {X A A' B : Type} [DecidableEq B]
+    (p : X → A) (q : X → B) (E : A → B) (f : A → A') (E' : A' → B)
+    (x1 y1 x2 y2 : X)
+    (hcol1 : IsCollision p q x1 y1) (hcol2 : IsCollision p q x2 y2) :
+    ((statePredictionError p q E x1 + statePredictionError p q E y1) +
+     (statePredictionError p q E x2 + statePredictionError p q E y2) ≥ 2) ∧
+    ((statePredictionError (fun z => f (p z)) q E' x1 +
+      statePredictionError (fun z => f (p z)) q E' y1) +
+     (statePredictionError (fun z => f (p z)) q E' x2 +
+      statePredictionError (fun z => f (p z)) q E' y2) ≥ 2) := by
+  have hb1 := single_colliding_pair_error_lower_bound p q E x1 y1 hcol1
+  have hb2 := single_colliding_pair_error_lower_bound p q E x2 y2 hcol2
+  have hcol1_f : IsCollision (fun z => f (p z)) q x1 y1 := ⟨congrArg f hcol1.1, hcol1.2⟩
+  have hcol2_f : IsCollision (fun z => f (p z)) q x2 y2 := ⟨congrArg f hcol2.1, hcol2.2⟩
+  have hbf1 := single_colliding_pair_error_lower_bound (fun z => f (p z)) q E' x1 y1 hcol1_f
+  have hbf2 := single_colliding_pair_error_lower_bound (fun z => f (p z)) q E' x2 y2 hcol2_f
+  exact ⟨by omega, by omega⟩
+
 end LggrVIII
