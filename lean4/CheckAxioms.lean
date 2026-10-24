@@ -44,3 +44,4 @@ import LggrVIII
 #print axioms LggrVIII.completion_relative_obstruction_on_carrier_extension
 #print axioms LggrVIII.disjoint_colliding_pairs_additive_error_lower_bound
 #print axioms LggrVIII.centered_gram_kernel_nullspace_obstruction
+#print axioms LggrVIII.path_kernel_composition_discrepancy_identity
