@@ -1372,3 +1372,90 @@ class StreamingTransportMonitor:
             "transport_certificate": transport_cert,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+    def synthesize_chain_retraction(self, F0: Any, F1: Any) -> dict[str, Any]:
+        """Solve over Q for a left-inverse chain retraction (G0, G1) satisfying:
+        G0 F0 = I_ns, G1 F1 = I_ms, and G1 D_t - D_s G0 = 0.
+        """
+        ds_rows, _ = self._extract_incidence_and_cochain(self.source_monitor)
+        dt_rows, _ = self._extract_incidence_and_cochain(self.target_monitor)
+        ds = matrix(ds_rows, "D_source")
+        dt = matrix(dt_rows, "D_target")
+        ms, ns = len(ds), len(ds[0])
+        mt, nt = len(dt), len(dt[0])
+        f0 = matrix(F0, "F0", rows=nt, cols=ns)
+        f1 = matrix(F1, "F1", rows=mt, cols=ms)
+
+        base_audit = self.audit_projection(F0, F1)
+        if not base_audit["forward_commutes"]:
+            body: dict[str, Any] = {
+                "schema": "lggr.online_retraction_synthesis.v1",
+                "authority_effect": "None",
+                "status": "INVALID_TRANSPORT",
+                "retraction_exists": False,
+                "G0": None,
+                "G1": None,
+                "audit": base_audit,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        total_vars = ns * nt + ms * mt
+        sys_rows: list[list[Fraction]] = []
+        rhs_vec: list[Fraction] = []
+
+        # 1. G0 F0 = I_ns
+        for r in range(ns):
+            for k in range(ns):
+                row = [Fraction(0)] * total_vars
+                for c in range(nt):
+                    row[r * nt + c] = f0[c][k]
+                sys_rows.append(row)
+                rhs_vec.append(Fraction(1 if r == k else 0))
+
+        # 2. G1 F1 = I_ms
+        offset_g1 = ns * nt
+        for i in range(ms):
+            for l_idx in range(ms):
+                row = [Fraction(0)] * total_vars
+                for j in range(mt):
+                    row[offset_g1 + i * mt + j] = f1[j][l_idx]
+                sys_rows.append(row)
+                rhs_vec.append(Fraction(1 if i == l_idx else 0))
+
+        # 3. G1 D_t - D_s G0 = 0
+        for i in range(ms):
+            for c in range(nt):
+                row = [Fraction(0)] * total_vars
+                for j in range(mt):
+                    row[offset_g1 + i * mt + j] += dt[j][c]
+                for r in range(ns):
+                    row[r * nt + c] -= ds[i][r]
+                sys_rows.append(row)
+                rhs_vec.append(Fraction(0))
+
+        sol = solve_exact(matrix(sys_rows, "retraction_system"), tuple(rhs_vec))
+        if sol is None:
+            body = {
+                "schema": "lggr.online_retraction_synthesis.v1",
+                "authority_effect": "None",
+                "status": "NO_RETRACTION_EXISTS",
+                "retraction_exists": False,
+                "G0": None,
+                "G1": None,
+                "audit": base_audit,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        g0_mat = [[sol[r * nt + c] for c in range(nt)] for r in range(ns)]
+        g1_mat = [[sol[offset_g1 + i * mt + j] for j in range(mt)] for i in range(ms)]
+        verified_audit = self.audit_projection(F0, F1, G0=g0_mat, G1=g1_mat)
+        body = {
+            "schema": "lggr.online_retraction_synthesis.v1",
+            "authority_effect": "None",
+            "status": "RETRACTION_SYNTHESIZED",
+            "retraction_exists": True,
+            "G0": g0_mat,
+            "G1": g1_mat,
+            "audit": verified_audit,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})

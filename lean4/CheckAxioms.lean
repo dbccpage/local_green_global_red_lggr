@@ -31,3 +31,4 @@ import LggrVIII
 #print axioms LggrVIII.boundary_insufficiency_forces_defect
 #print axioms LggrVIII.streaming_closed_nonexact_cohomology
 #print axioms LggrVIII.streaming_transport_projection_vs_retraction
+#print axioms LggrVIII.non_injective_projection_blocks_retraction

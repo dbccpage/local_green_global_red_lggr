@@ -542,6 +542,44 @@ class TestStreamingTransportMonitor(unittest.TestCase):
         self.assertFalse(res["target_repairable"])
         self.assertFalse(res["lossy_projection_lggr"])
 
+    def test_synthesize_chain_retraction_success_and_impossibility(self) -> None:
+        """Synthesize exact rational chain retraction (G0, G1) when injective, or reject when lossy."""
+        src = StreamingCochainMonitor()
+        src.add_edge("V0", "V1", 1)
+        src.add_edge("V1", "V2", 1)
+        src.add_edge("V0", "V2", 1)  # frustrated 3-cycle
+
+        # Case 1: Lossy projection onto 2-edge tree -> NO_RETRACTION_EXISTS
+        tgt_lossy = StreamingCochainMonitor()
+        tgt_lossy.add_edge("V0", "V1", 1)
+        tgt_lossy.add_edge("V1", "V2", 1)
+        tmon_lossy = StreamingTransportMonitor(src, tgt_lossy)
+        f0_lossy = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        f1_lossy = [[1, 0, 0], [0, 1, 0]]
+        syn_lossy = tmon_lossy.synthesize_chain_retraction(f0_lossy, f1_lossy)
+        self.assertEqual(syn_lossy["status"], "NO_RETRACTION_EXISTS")
+        self.assertFalse(syn_lossy["retraction_exists"])
+        self.assertIsNone(syn_lossy["G0"])
+        self.assertIsNone(syn_lossy["G1"])
+        self.assertEqual(syn_lossy["audit"]["status"], "LOSSY_PROJECTION_LGGR")
+
+        # Case 2: Faithful embedding into 4-vertex, 4-edge graph -> RETRACTION_SYNTHESIZED
+        tgt_faithful = StreamingCochainMonitor()
+        tgt_faithful.add_edge("V0", "V1", 1)
+        tgt_faithful.add_edge("V1", "V2", 1)
+        tgt_faithful.add_edge("V0", "V2", 1)
+        tgt_faithful.add_edge("V2", "V3", 0)
+        tmon_faithful = StreamingTransportMonitor(src, tgt_faithful)
+        f0_faith = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 1]]
+        f1_faith = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]]
+        syn_faith = tmon_faithful.synthesize_chain_retraction(f0_faith, f1_faith)
+        self.assertEqual(syn_faith["status"], "RETRACTION_SYNTHESIZED")
+        self.assertTrue(syn_faith["retraction_exists"])
+        self.assertIsNotNone(syn_faith["G0"])
+        self.assertIsNotNone(syn_faith["G1"])
+        self.assertEqual(syn_faith["audit"]["status"], "RETRACTION_VERIFIED")
+        self.assertEqual(syn_faith["audit"]["contract_status"], "REFLECTED_LGGR")
+
 
 if __name__ == "__main__":
     unittest.main()
