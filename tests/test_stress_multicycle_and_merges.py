@@ -2298,6 +2298,53 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertTrue(receipt["all_closed_form_identities_verified"])
         self.assertEqual(receipt["skew_norm_divergence_probe_ids"], ["omega_1_minus_1_linf_selected"])
 
+    def test_mermin_peres_magic_square_parity_obstruction(self) -> None:
+        """Verify 3x3 Mermin-Peres parity monitor separates 6-context satisfiability from global parity obstruction."""
+        from lggr import StreamingMerminPeresParityMonitor
+
+        mon = StreamingMerminPeresParityMonitor(scope_id="mermin-peres-audit")
+
+        # 1. Canonical Mermin-Peres magic square: row targets (+1, +1, +1), col targets (+1, +1, -1)
+        #    All 6 contexts are locally satisfied (L = 1), yet prod(R) = +1 != -1 = prod(C),
+        #    so max_satisfied = 5 out of 6, min_violated = 1, Eg = 0, Delta_E = -1.
+        g_mp = mon.record_grid(
+            "mermin_peres_canonical",
+            row_targets=[1, 1, 1],
+            col_targets=[1, 1, -1],
+        )
+        self.assertEqual(g_mp["row_target_product"], 1)
+        self.assertEqual(g_mp["col_target_product"], -1)
+        self.assertTrue(g_mp["parity_mismatch_obstruction"])
+        self.assertEqual(g_mp["max_satisfied_contexts_out_of_6"], 5)
+        self.assertEqual(g_mp["min_violated_contexts"], 1)
+        self.assertEqual(g_mp["global_noncontextual_witness_count"], 0)
+        self.assertFalse(g_mp["global_noncontextual_assignment_exists"])
+        self.assertEqual(g_mp["local_product_aggregator"], 1)
+        self.assertEqual(g_mp["global_noncontextual_evaluator"], 0)
+        self.assertEqual(g_mp["evaluator_defect"], -1)
+        self.assertEqual(g_mp["grid_status"], "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR")
+
+        # 2. Positive control: non-contextual parity targets (+1, +1, +1) and (+1, +1, +1)
+        #    prod(R) = +1 == +1 = prod(C), 16 global non-contextual witnesses exist -> L = 1, Eg = 1, Delta_E = 0
+        g_ok = mon.record_grid(
+            "noncontextual_even_grid",
+            row_targets=[1, 1, 1],
+            col_targets=[1, 1, 1],
+        )
+        self.assertFalse(g_ok["parity_mismatch_obstruction"])
+        self.assertEqual(g_ok["max_satisfied_contexts_out_of_6"], 6)
+        self.assertEqual(g_ok["min_violated_contexts"], 0)
+        self.assertEqual(g_ok["global_noncontextual_witness_count"], 16)
+        self.assertTrue(g_ok["global_noncontextual_assignment_exists"])
+        self.assertEqual(g_ok["evaluator_defect"], 0)
+        self.assertEqual(g_ok["grid_status"], "NONCONTEXTUAL_PARITY_COHERENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_mermin_peres_parity.v1")
+        self.assertEqual(receipt["status"], "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["parity_obstructed_grid_ids"], ["mermin_peres_canonical"])
+
 
 if __name__ == "__main__":
     unittest.main()
