@@ -7649,6 +7649,157 @@ class StreamingProductOfExpertsMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingClosedLoopRepairMonitor:
+    """Online closed-loop receipt-feedback repair convergence monitor (LGGR VIII §6 & Theorem 55).
+
+    Audits multi-round closed-loop orchestrator repair trajectories
+    R_0 (baseline obstructed) -> R_1 (single-round raw receipt feedback) -> R_2 (multi-round witness-guided feedback)
+    across frontier monitors and model families:
+      - Evaluates whether an initial NGD obstruction (L^{(0)} == 1, E_g^{(0)} == 0, Delta_E^{(0)} == -1)
+        converges to a globally coherent LGGG state (L^{(r)} == 1, E_g^{(r)} == 1, Delta_E^{(r)} == 0)
+        at Round 1 (single-round convergence) or by Round T (multi-round convergence).
+      - Separates:
+          * SINGLE_ROUND_RECEIPT_CONVERGED_LGGG (converged at Round 1 and remains coherent at Round T),
+          * MULTI_ROUND_WITNESS_CONVERGED_LGGG (obstructed at Round 1, converged by Round T via witness feedback),
+          * UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR (remains obstructed at Round T, Delta_E^{(T)} == -1 or L^{(T)} == 0).
+      - Computes exact rational single-round vs multi-round convergence rates and per-model / per-monitor breakdowns.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-closed-loop-repair-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.trajectories: list[dict[str, Any]] = []
+
+    def record_trajectory(
+        self,
+        trajectory_id: str,
+        *,
+        monitor_name: str,
+        model_id: str,
+        rounds: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Record a multi-round closed-loop receipt-feedback trajectory (R_0, R_1, ..., R_T)."""
+        tid = text(trajectory_id, "trajectory_id")
+        mon = text(monitor_name, "monitor_name")
+        mdl = text(model_id, "model_id")
+        if len(rounds) < 2:
+            raise ValidationError("A closed-loop repair trajectory requires at least 2 rounds (baseline R_0 and repair R_1)")
+
+        parsed_rounds: list[dict[str, Any]] = []
+        for idx, r in enumerate(rounds):
+            if not isinstance(r, Mapping):
+                raise ValidationError(f"rounds[{idx}] must be a mapping")
+            r_status = text(r.get("receipt_status", "UNKNOWN"), f"rounds[{idx}].receipt_status")
+            c_status = text(r.get("contract_status", "OBSTRUCTED_LGGR"), f"rounds[{idx}].contract_status")
+            l_pass = bool(r.get("local_pass", False))
+            g_pass = bool(r.get("global_pass", False))
+            defect = (1 if g_pass else 0) - (1 if l_pass else 0)
+            fb_mode = text(r.get("feedback_mode", f"round_{idx}"), f"rounds[{idx}].feedback_mode")
+            parsed_rounds.append(
+                {
+                    "round_index": idx,
+                    "feedback_mode": fb_mode,
+                    "receipt_status": r_status,
+                    "contract_status": c_status,
+                    "local_pass": l_pass,
+                    "global_pass": g_pass,
+                    "evaluator_defect": defect,
+                }
+            )
+
+        r0 = parsed_rounds[0]
+        r1 = parsed_rounds[1]
+        r_final = parsed_rounds[-1]
+
+        initial_ngd = r0["local_pass"] and (not r0["global_pass"]) and (r0["evaluator_defect"] == -1)
+        single_round_ok = r1["local_pass"] and r1["global_pass"] and (r1["evaluator_defect"] == 0)
+        multi_round_ok = r_final["local_pass"] and r_final["global_pass"] and (r_final["evaluator_defect"] == 0)
+
+        rounds_to_converge: int | None = None
+        for pr in parsed_rounds[1:]:
+            if pr["local_pass"] and pr["global_pass"] and pr["evaluator_defect"] == 0:
+                rounds_to_converge = pr["round_index"]
+                break
+
+        if single_round_ok and multi_round_ok:
+            traj_status = "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif (not single_round_ok) and multi_round_ok:
+            traj_status = "MULTI_ROUND_WITNESS_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            traj_status = "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "trajectory_id": tid,
+            "monitor_name": mon,
+            "model_id": mdl,
+            "round_count": len(parsed_rounds),
+            "initial_ngd_obstructed": initial_ngd,
+            "converged_single_round": single_round_ok,
+            "converged_multi_round": multi_round_ok,
+            "rounds_to_convergence": rounds_to_converge,
+            "defect_progression": [pr["evaluator_defect"] for pr in parsed_rounds],
+            "final_local_pass": r_final["local_pass"],
+            "final_global_pass": r_final["global_pass"],
+            "final_evaluator_defect": r_final["evaluator_defect"],
+            "trajectory_status": traj_status,
+            "contract_status": contract_status,
+            "rounds": parsed_rounds,
+        }
+        self.trajectories.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed closed-loop repair convergence receipt."""
+        if not self.trajectories:
+            raise ValidationError("At least one closed-loop trajectory must be recorded before emitting a receipt")
+
+        n = len(self.trajectories)
+        single_cnt = sum(1 for t in self.trajectories if t["converged_single_round"])
+        multi_cnt = sum(1 for t in self.trajectories if t["converged_multi_round"])
+        unrepaired_ids = [
+            t["trajectory_id"] for t in self.trajectories if not t["converged_multi_round"]
+        ]
+        multi_only_ids = [
+            t["trajectory_id"]
+            for t in self.trajectories
+            if t["converged_multi_round"] and (not t["converged_single_round"])
+        ]
+
+        r1_rate = Fraction(single_cnt, n)
+        rt_rate = Fraction(multi_cnt, n)
+        multi_gain = rt_rate - r1_rate
+        unrepaired_rate = Fraction(n - multi_cnt, n)
+
+        if len(unrepaired_ids) == 0:
+            status = "CLOSED_LOOP_REPAIR_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "trajectory_count": n,
+            "single_round_converged_count": single_cnt,
+            "multi_round_converged_count": multi_cnt,
+            "single_round_convergence_rate": r1_rate,
+            "multi_round_convergence_rate": rt_rate,
+            "multi_round_convergence_gain": multi_gain,
+            "residual_unrepaired_rate": unrepaired_rate,
+            "monotonic_convergence_verified": rt_rate >= r1_rate,
+            "multi_round_witness_rescued_ids": multi_only_ids,
+            "unrepaired_trajectory_ids": unrepaired_ids,
+            "trajectories": self.trajectories,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 

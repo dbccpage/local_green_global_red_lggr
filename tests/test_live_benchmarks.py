@@ -24,6 +24,7 @@ from lggr.benchmarks import (
 from lggr.common import digest
 from lggr.streaming import (
     StreamingAuditMonitor,
+    StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
     StreamingMerminPeresParityMonitor,
@@ -425,6 +426,96 @@ class TestOfflineTraceReplay(unittest.TestCase):
             self.assertEqual(g_pass, t["global_pass"])
             self.assertEqual(defect, t["defect"])
             self.assertEqual({-1: "NGD", 0: "ZDR", 1: "PGD"}[defect], t["classification"])
+
+    def test_closed_loop_repair_multi_model_benchmark_replay(self):
+        """F16: Replay all 25 closed-loop receipt-feedback repair trajectories across 5 model families."""
+        artifact = RECEIPTS_DIR / "closed_loop_repair_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("closed_loop_repair_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.closed_loop_repair_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("monitors_evaluated", [])), 5)
+        self.assertEqual(data.get("total_completions"), 50)
+        self.assertEqual(data.get("trajectory_count"), 25)
+
+        trajs = data.get("trajectories", [])
+        self.assertEqual(len(trajs), 25)
+
+        self.assertTrue(data["round_0_baseline_metrics"]["identity_verified"])
+        self.assertTrue(data["round_1_single_round_metrics"]["identity_verified"])
+        self.assertTrue(data["round_2_multi_round_metrics"]["identity_verified"])
+
+        # Replay all 25 trajectories through StreamingClosedLoopRepairMonitor
+        replay_cl = StreamingClosedLoopRepairMonitor(
+            scope_id=data["closed_loop_monitor_receipt"]["scope_id"]
+        )
+        for t in trajs:
+            replay_cl.record_trajectory(
+                t["trajectory_id"],
+                monitor_name=t["monitor_name"],
+                model_id=t["model_id"],
+                rounds=t["rounds"],
+            )
+            # Also replay each of the 3 rounds through its underlying frontier monitor
+            mon_name = t["monitor_name"]
+            for r_idx in range(3):
+                r_inp = t["round_inputs"][r_idx]
+                r_saved = t["round_receipts"][r_idx]
+                scope_id = r_saved["scope_id"]
+                if mon_name == "StreamingProjectiveTowerMonitor":
+                    m = StreamingProjectiveTowerMonitor(3, r_inp["const_b"], scope_id=scope_id)
+                    m.record_stage("stage_mod2", 2, r_inp["x_mod2"])
+                    m.record_stage("stage_mod4", 4, r_inp["x_mod4"])
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingSkewRepairMonitor":
+                    m = StreamingSkewRepairMonitor(scope_id=scope_id)
+                    m.record_probe(
+                        f"probe_r{r_idx}",
+                        "2",
+                        "0",
+                        candidate_alpha=r_inp["candidate_alpha"],
+                        l_inf_coordinate_budget="2",
+                        l_1_global_budget="2",
+                    )
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingMerminPeresParityMonitor":
+                    m = StreamingMerminPeresParityMonitor(scope_id=scope_id)
+                    m.record_grid(
+                        f"grid_r{r_idx}",
+                        row_targets=r_inp["row_targets"],
+                        col_targets=r_inp["col_targets"],
+                        row_context_assignments=r_inp["row_context_assignments"],
+                        col_context_assignments=r_inp["col_context_assignments"],
+                    )
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingSideInformationCapacityMonitor":
+                    m = StreamingSideInformationCapacityMonitor(scope_id=scope_id)
+                    m.record_fiber_channel(
+                        f"fiber_r{r_idx}",
+                        r_inp["states"],
+                        channel_capacity_s=r_inp["channel_capacity_s"],
+                        error_budget=0,
+                    )
+                    r_rep = m.get_receipt()
+                elif mon_name == "StreamingProductOfExpertsMonitor":
+                    m = StreamingProductOfExpertsMonitor(scope_id=scope_id)
+                    m.record_expert_scores(f"round_r{r_idx}", r_inp["expert_scores"])
+                    r_rep = m.get_receipt()
+                else:
+                    self.fail(f"Unknown monitor: {mon_name}")
+                self.assertEqual(r_rep["receipt_sha256"], r_saved["receipt_sha256"])
+
+        cl_rec = replay_cl.get_receipt()
+        self.assertEqual(
+            cl_rec["receipt_sha256"],
+            data["closed_loop_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(cl_rec["single_round_convergence_rate"], "3/5")
+        self.assertEqual(cl_rec["multi_round_convergence_rate"], "1")
+        self.assertEqual(cl_rec["multi_round_convergence_gain"], "2/5")
+        self.assertTrue(cl_rec["monotonic_convergence_verified"])
 
 
 if __name__ == "__main__":
