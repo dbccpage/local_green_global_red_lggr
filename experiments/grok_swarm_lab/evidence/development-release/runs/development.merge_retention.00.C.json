@@ -1,0 +1,4726 @@
+{
+  "action": "block",
+  "artifacts": {
+    "artifact-000-planner": {
+      "data": {
+        "integrator": {
+          "operation": "integrate",
+          "refund_multiplier": 1
+        },
+        "orders": {
+          "join_mode": "first",
+          "omit_last": false,
+          "operation": "orders",
+          "scale_to_cents": 1
+        },
+        "refunds": {
+          "duplicate": false,
+          "omit_last": false,
+          "operation": "refunds",
+          "scale_to_cents": 1,
+          "sign": 1
+        }
+      },
+      "sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+      "source": "deterministic fixture planner"
+    },
+    "artifact-001-controller-input": {
+      "data": {
+        "allowed_probes": [
+          "semantics",
+          "source_counts",
+          "obligation_evidence",
+          "migration",
+          "branch_evidence"
+        ],
+        "branches_executed": false,
+        "contract": {
+          "authority_effect": "None",
+          "baseline": 0,
+          "customer_resolution": "first",
+          "max_step": 2,
+          "max_total": 1,
+          "output_columns": [
+            "order_id",
+            "customer_id",
+            "region",
+            "gross_cents",
+            "refund_cents",
+            "net_cents"
+          ],
+          "query_id": "ledger_reconciliation",
+          "query_scope": "endpoint",
+          "required_auxiliary_queries": [
+            "auxiliary_branch_contract"
+          ],
+          "required_event_roles": [
+            "orders",
+            "refunds"
+          ],
+          "required_evidence_probes": [
+            "semantics",
+            "branch_evidence"
+          ],
+          "required_versions": {
+            "evaluator": "v1",
+            "policy": "v1",
+            "report_schema": "v1",
+            "representation": "v1",
+            "specification": "v1"
+          },
+          "resource_limit": 20,
+          "terminal_observation": "only_after_integration"
+        },
+        "event_error": null,
+        "exhausted_probes": [],
+        "global_samples": [],
+        "initial_report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "missing_branches": [],
+        "obligations": [],
+        "observations": {},
+        "plan": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "remaining_attempts": 19,
+        "state_path": [
+          0
+        ],
+        "terminal": false,
+        "transition": {
+          "dimension": "report_schema",
+          "from_version": "v1",
+          "kind": "none",
+          "to_version": "v1"
+        },
+        "unsupported_samples": []
+      },
+      "sha256": "3c28c5245e224565131483bb583a27269301361a9c3b1b201b4ecc01818fcaab",
+      "source": "explicit public controller view"
+    },
+    "artifact-002-controller-output": {
+      "data": {
+        "action": "probe",
+        "certificate_consumed": true,
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          }
+        ],
+        "findings": [
+          {
+            "code": "MISSING_EVIDENCE",
+            "detail": "semantics",
+            "status": "unknown"
+          }
+        ],
+        "probe": "semantics",
+        "reason": "certified collision triggers unit/sign observation"
+      },
+      "sha256": "b97f090ba6c570ecf61ef6d5b1fae60347f94172fb23677025c7c42ec2f7f0f6",
+      "source": "controller.decide"
+    },
+    "artifact-003-semantics": {
+      "data": {
+        "order_scale_to_cents": 1,
+        "refund_scale_to_cents": 1,
+        "refund_sign": 1
+      },
+      "sha256": "ad7194c42ca817844deeebdfc5d35ef69324bb694edf6be07bddb08a88dec711",
+      "source": "sqlite.named_probe"
+    },
+    "artifact-004-controller-input": {
+      "data": {
+        "allowed_probes": [
+          "semantics",
+          "source_counts",
+          "obligation_evidence",
+          "migration",
+          "branch_evidence"
+        ],
+        "branches_executed": false,
+        "contract": {
+          "authority_effect": "None",
+          "baseline": 0,
+          "customer_resolution": "first",
+          "max_step": 2,
+          "max_total": 1,
+          "output_columns": [
+            "order_id",
+            "customer_id",
+            "region",
+            "gross_cents",
+            "refund_cents",
+            "net_cents"
+          ],
+          "query_id": "ledger_reconciliation",
+          "query_scope": "endpoint",
+          "required_auxiliary_queries": [
+            "auxiliary_branch_contract"
+          ],
+          "required_event_roles": [
+            "orders",
+            "refunds"
+          ],
+          "required_evidence_probes": [
+            "semantics",
+            "branch_evidence"
+          ],
+          "required_versions": {
+            "evaluator": "v1",
+            "policy": "v1",
+            "report_schema": "v1",
+            "representation": "v1",
+            "specification": "v1"
+          },
+          "resource_limit": 20,
+          "terminal_observation": "only_after_integration"
+        },
+        "event_error": null,
+        "exhausted_probes": [],
+        "global_samples": [],
+        "initial_report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "missing_branches": [],
+        "obligations": [],
+        "observations": {
+          "semantics": {
+            "order_scale_to_cents": 1,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          }
+        },
+        "plan": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "remaining_attempts": 18,
+        "state_path": [
+          0
+        ],
+        "terminal": false,
+        "transition": {
+          "dimension": "report_schema",
+          "from_version": "v1",
+          "kind": "none",
+          "to_version": "v1"
+        },
+        "unsupported_samples": []
+      },
+      "sha256": "b44a0c686199692d2cc4622c97ed81830077b05b32ed5b7d10d642d575618d2c",
+      "source": "explicit public controller view"
+    },
+    "artifact-005-controller-output": {
+      "data": {
+        "action": "proceed",
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          },
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "coverage": "supplied finite table only",
+              "decoder": [
+                {
+                  "query": true,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 1,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                },
+                {
+                  "query": false,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 100,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                }
+              ],
+              "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+              "schema": "lggr.descent.v1",
+              "scope_id": "development-unit-refinement.v2",
+              "status": "DECODER_VERIFIED",
+              "table_sha256": "e6bad66c59135cfa37024a894021872ccfd4ed5aa0b7eb3cb218906ba60f4d08"
+            },
+            "coverage": "development examples only; unseen input checked separately",
+            "current_task_verdict": null,
+            "kind": "refined-development-fiber"
+          }
+        ],
+        "findings": [],
+        "reason": "complete declared contract evidence available"
+      },
+      "sha256": "115473dfe6aa399d0413b897ca16ffa29a567daff1fd36c196f7daf0c10f5374",
+      "source": "controller.decide"
+    },
+    "artifact-006-orders-input": {
+      "data": {
+        "planner": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "source": {
+          "customers": [
+            {
+              "customer_id": "c0",
+              "region": "north"
+            },
+            {
+              "customer_id": "c1",
+              "region": "south"
+            },
+            {
+              "customer_id": "c2",
+              "region": "west"
+            },
+            {
+              "customer_id": "c0",
+              "region": "east"
+            }
+          ],
+          "orders": [
+            {
+              "amount": 6800,
+              "customer_id": "c0",
+              "order_id": "o0"
+            },
+            {
+              "amount": 7500,
+              "customer_id": "c1",
+              "order_id": "o1"
+            },
+            {
+              "amount": 8300,
+              "customer_id": "c2",
+              "order_id": "o2"
+            },
+            {
+              "amount": 5200,
+              "customer_id": "c0",
+              "order_id": "o3"
+            }
+          ]
+        }
+      },
+      "sha256": "0caf5277a5d632605eea495cee010f73bf0fff8f3db9518b66e52f297106a225",
+      "source": "planner->worker"
+    },
+    "artifact-007-orders-output": {
+      "data": {
+        "branch": "orders",
+        "local_pass": true,
+        "observed_source": "sqlite.execute",
+        "operation": {
+          "join_mode": "first",
+          "omit_last": false,
+          "operation": "orders",
+          "scale_to_cents": 1
+        },
+        "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+        "rows": [
+          {
+            "customer_id": "c0",
+            "gross_cents": 6800,
+            "order_id": "o0",
+            "region": "north"
+          },
+          {
+            "customer_id": "c1",
+            "gross_cents": 7500,
+            "order_id": "o1",
+            "region": "south"
+          },
+          {
+            "customer_id": "c2",
+            "gross_cents": 8300,
+            "order_id": "o2",
+            "region": "west"
+          },
+          {
+            "customer_id": "c0",
+            "gross_cents": 5200,
+            "order_id": "o3",
+            "region": "north"
+          }
+        ],
+        "source_sha256": "7c7043262d167c9840f5580e52189981cd9851fc3443f3aba1f536bc69d089d7"
+      },
+      "sha256": "db5d60286e7b65095a9a1917d3ed30c4811499f70d63a8c0e4707e3acc2c5d2a",
+      "source": "sqlite worker"
+    },
+    "artifact-008-refunds-input": {
+      "data": {
+        "planner": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "source": {
+          "refunds": [
+            {
+              "amount": 100,
+              "order_id": "o0",
+              "refund_id": "r0"
+            },
+            {
+              "amount": 500,
+              "order_id": "o2",
+              "refund_id": "r2"
+            }
+          ]
+        }
+      },
+      "sha256": "a13c736c4cad45cc9bd316a3f28d5f306dd00cc98b16220ba314af41b4909a25",
+      "source": "planner->worker"
+    },
+    "artifact-009-refunds-output": {
+      "data": {
+        "branch": "refunds",
+        "local_pass": true,
+        "observed_source": "sqlite.execute",
+        "operation": {
+          "duplicate": false,
+          "omit_last": false,
+          "operation": "refunds",
+          "scale_to_cents": 1,
+          "sign": 1
+        },
+        "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+        "rows": [
+          {
+            "order_id": "o0",
+            "refund_cents": 100,
+            "refund_id": "r0"
+          },
+          {
+            "order_id": "o2",
+            "refund_cents": 500,
+            "refund_id": "r2"
+          }
+        ],
+        "source_sha256": "85e89dcf03c3509888fbfb6c76d6933b7f63762a78261e6d4d3a803670966c37"
+      },
+      "sha256": "a4b711bad77dbc4f3b4eb7588204b5f59deeda3aa15881715bcf447c073182e2",
+      "source": "sqlite worker"
+    },
+    "artifact-010-controller-input": {
+      "data": {
+        "allowed_probes": [
+          "semantics",
+          "source_counts",
+          "obligation_evidence",
+          "migration",
+          "branch_evidence"
+        ],
+        "branches_executed": true,
+        "contract": {
+          "authority_effect": "None",
+          "baseline": 0,
+          "customer_resolution": "first",
+          "max_step": 2,
+          "max_total": 1,
+          "output_columns": [
+            "order_id",
+            "customer_id",
+            "region",
+            "gross_cents",
+            "refund_cents",
+            "net_cents"
+          ],
+          "query_id": "ledger_reconciliation",
+          "query_scope": "endpoint",
+          "required_auxiliary_queries": [
+            "auxiliary_branch_contract"
+          ],
+          "required_event_roles": [
+            "orders",
+            "refunds"
+          ],
+          "required_evidence_probes": [
+            "semantics",
+            "branch_evidence"
+          ],
+          "required_versions": {
+            "evaluator": "v1",
+            "policy": "v1",
+            "report_schema": "v1",
+            "representation": "v1",
+            "specification": "v1"
+          },
+          "resource_limit": 20,
+          "terminal_observation": "only_after_integration"
+        },
+        "event_error": null,
+        "exhausted_probes": [],
+        "global_samples": [
+          {
+            "baseline": 0,
+            "query_id": "auxiliary_branch_contract",
+            "scope": "endpoint",
+            "source": "sqlite.branch_contract",
+            "terminal": true,
+            "verdict": false
+          }
+        ],
+        "initial_report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "missing_branches": [],
+        "obligations": [],
+        "observations": {
+          "semantics": {
+            "order_scale_to_cents": 1,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          }
+        },
+        "plan": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "remaining_attempts": 5,
+        "state_path": [
+          0,
+          0,
+          0
+        ],
+        "terminal": false,
+        "transition": {
+          "dimension": "report_schema",
+          "from_version": "v1",
+          "kind": "none",
+          "to_version": "v1"
+        },
+        "unsupported_samples": false
+      },
+      "sha256": "e509cfe89c2aceae3d32de4b2f87013ff267e99ccdbf0a25bd8c82a24c926007",
+      "source": "explicit public controller view"
+    },
+    "artifact-011-controller-output": {
+      "data": {
+        "action": "block",
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          },
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "coverage": "supplied finite table only",
+              "decoder": [
+                {
+                  "query": true,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 1,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                },
+                {
+                  "query": false,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 100,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                }
+              ],
+              "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+              "schema": "lggr.descent.v1",
+              "scope_id": "development-unit-refinement.v2",
+              "status": "DECODER_VERIFIED",
+              "table_sha256": "e6bad66c59135cfa37024a894021872ccfd4ed5aa0b7eb3cb218906ba60f4d08"
+            },
+            "coverage": "development examples only; unseen input checked separately",
+            "current_task_verdict": null,
+            "kind": "refined-development-fiber"
+          },
+          {
+            "admission_effect": "host separately enforces declared scope",
+            "certificate": {
+              "arithmetic": {
+                "baseline": 0,
+                "bound": 1,
+                "endpoint_verdict": true,
+                "every_prefix_verdict": true,
+                "final": 0,
+                "global_verdict": true,
+                "prefix_checks": [
+                  {
+                    "signed_total": 0,
+                    "within_bound": true,
+                    "witness_id": "step-0"
+                  },
+                  {
+                    "signed_total": 0,
+                    "within_bound": true,
+                    "witness_id": "step-1"
+                  }
+                ],
+                "query_scope": "endpoint",
+                "signed_deltas": [
+                  0,
+                  0
+                ],
+                "signed_total": 0
+              },
+              "authority_effect": "None",
+              "composition_certified": true,
+              "findings": [],
+              "input_sha256": "25a729666fa012193a2ad03d0a352b347fa723ad6edf3a96a2fbe98e85cd72ca",
+              "local_checks": [
+                {
+                  "claimed_local_acceptance": true,
+                  "claimed_smoke_pass": true,
+                  "protected_policy_acceptance": true,
+                  "protected_smoke_pass": true,
+                  "signed_delta": 0,
+                  "witness_id": "step-0"
+                },
+                {
+                  "claimed_local_acceptance": true,
+                  "claimed_smoke_pass": true,
+                  "protected_policy_acceptance": true,
+                  "protected_smoke_pass": true,
+                  "signed_delta": 0,
+                  "witness_id": "step-1"
+                }
+              ],
+              "policy_sha256": "2e51ee3711f7046e408688d8882437aa7b6613b244713b5c698a40e4d27551e8",
+              "query_scope": "endpoint",
+              "receipt_sha256": "c9c32fec82c20f6e7501ae58d404bbc28519db22ec84f55db56df682f89424bc",
+              "schema": "lggr.audit.v1",
+              "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+              "status": "COMPOSITION_VERIFIED",
+              "unresolved_obligations": []
+            },
+            "current_task_verdict": null,
+            "kind": "state-budget",
+            "terminal": false
+          }
+        ],
+        "findings": [
+          {
+            "code": "AUXILIARY_NEGATIVE",
+            "detail": {
+              "baseline": 0,
+              "query_id": "auxiliary_branch_contract",
+              "scope": "endpoint",
+              "source": "sqlite.branch_contract",
+              "terminal": true,
+              "verdict": false
+            },
+            "status": "obstructed"
+          },
+          {
+            "code": "MISSING_EVIDENCE",
+            "detail": "branch_evidence",
+            "status": "unknown"
+          }
+        ],
+        "reason": "AUXILIARY_NEGATIVE"
+      },
+      "sha256": "86f5fbd0da96aeb44e93cdbd4f27a97e4f445d43f44667d724718f93e0901c33",
+      "source": "controller.decide"
+    }
+  },
+  "authority_effect": "None",
+  "branch_execution": [
+    {
+      "branch": "orders",
+      "finished_ns": 610077268873700,
+      "started_ns": 610077267787700,
+      "thread_id": 10992
+    },
+    {
+      "branch": "refunds",
+      "finished_ns": 610077268653500,
+      "started_ns": 610077267692400,
+      "thread_id": 1380
+    }
+  ],
+  "candidate": null,
+  "decisions": [
+    {
+      "decision": {
+        "action": "probe",
+        "certificate_consumed": true,
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          }
+        ],
+        "findings": [
+          {
+            "code": "MISSING_EVIDENCE",
+            "detail": "semantics",
+            "status": "unknown"
+          }
+        ],
+        "probe": "semantics",
+        "reason": "certified collision triggers unit/sign observation"
+      },
+      "view": {
+        "allowed_probes": [
+          "semantics",
+          "source_counts",
+          "obligation_evidence",
+          "migration",
+          "branch_evidence"
+        ],
+        "branches_executed": false,
+        "contract": {
+          "authority_effect": "None",
+          "baseline": 0,
+          "customer_resolution": "first",
+          "max_step": 2,
+          "max_total": 1,
+          "output_columns": [
+            "order_id",
+            "customer_id",
+            "region",
+            "gross_cents",
+            "refund_cents",
+            "net_cents"
+          ],
+          "query_id": "ledger_reconciliation",
+          "query_scope": "endpoint",
+          "required_auxiliary_queries": [
+            "auxiliary_branch_contract"
+          ],
+          "required_event_roles": [
+            "orders",
+            "refunds"
+          ],
+          "required_evidence_probes": [
+            "semantics",
+            "branch_evidence"
+          ],
+          "required_versions": {
+            "evaluator": "v1",
+            "policy": "v1",
+            "report_schema": "v1",
+            "representation": "v1",
+            "specification": "v1"
+          },
+          "resource_limit": 20,
+          "terminal_observation": "only_after_integration"
+        },
+        "event_error": null,
+        "exhausted_probes": [],
+        "global_samples": [],
+        "initial_report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "missing_branches": [],
+        "obligations": [],
+        "observations": {},
+        "plan": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "remaining_attempts": 19,
+        "state_path": [
+          0
+        ],
+        "terminal": false,
+        "transition": {
+          "dimension": "report_schema",
+          "from_version": "v1",
+          "kind": "none",
+          "to_version": "v1"
+        },
+        "unsupported_samples": []
+      }
+    },
+    {
+      "decision": {
+        "action": "proceed",
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          },
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "coverage": "supplied finite table only",
+              "decoder": [
+                {
+                  "query": true,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 1,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                },
+                {
+                  "query": false,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 100,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                }
+              ],
+              "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+              "schema": "lggr.descent.v1",
+              "scope_id": "development-unit-refinement.v2",
+              "status": "DECODER_VERIFIED",
+              "table_sha256": "e6bad66c59135cfa37024a894021872ccfd4ed5aa0b7eb3cb218906ba60f4d08"
+            },
+            "coverage": "development examples only; unseen input checked separately",
+            "current_task_verdict": null,
+            "kind": "refined-development-fiber"
+          }
+        ],
+        "findings": [],
+        "reason": "complete declared contract evidence available"
+      },
+      "view": {
+        "allowed_probes": [
+          "semantics",
+          "source_counts",
+          "obligation_evidence",
+          "migration",
+          "branch_evidence"
+        ],
+        "branches_executed": false,
+        "contract": {
+          "authority_effect": "None",
+          "baseline": 0,
+          "customer_resolution": "first",
+          "max_step": 2,
+          "max_total": 1,
+          "output_columns": [
+            "order_id",
+            "customer_id",
+            "region",
+            "gross_cents",
+            "refund_cents",
+            "net_cents"
+          ],
+          "query_id": "ledger_reconciliation",
+          "query_scope": "endpoint",
+          "required_auxiliary_queries": [
+            "auxiliary_branch_contract"
+          ],
+          "required_event_roles": [
+            "orders",
+            "refunds"
+          ],
+          "required_evidence_probes": [
+            "semantics",
+            "branch_evidence"
+          ],
+          "required_versions": {
+            "evaluator": "v1",
+            "policy": "v1",
+            "report_schema": "v1",
+            "representation": "v1",
+            "specification": "v1"
+          },
+          "resource_limit": 20,
+          "terminal_observation": "only_after_integration"
+        },
+        "event_error": null,
+        "exhausted_probes": [],
+        "global_samples": [],
+        "initial_report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "missing_branches": [],
+        "obligations": [],
+        "observations": {
+          "semantics": {
+            "order_scale_to_cents": 1,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          }
+        },
+        "plan": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "remaining_attempts": 18,
+        "state_path": [
+          0
+        ],
+        "terminal": false,
+        "transition": {
+          "dimension": "report_schema",
+          "from_version": "v1",
+          "kind": "none",
+          "to_version": "v1"
+        },
+        "unsupported_samples": []
+      }
+    },
+    {
+      "decision": {
+        "action": "block",
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          },
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "coverage": "supplied finite table only",
+              "decoder": [
+                {
+                  "query": true,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 1,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                },
+                {
+                  "query": false,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 100,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                }
+              ],
+              "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+              "schema": "lggr.descent.v1",
+              "scope_id": "development-unit-refinement.v2",
+              "status": "DECODER_VERIFIED",
+              "table_sha256": "e6bad66c59135cfa37024a894021872ccfd4ed5aa0b7eb3cb218906ba60f4d08"
+            },
+            "coverage": "development examples only; unseen input checked separately",
+            "current_task_verdict": null,
+            "kind": "refined-development-fiber"
+          },
+          {
+            "admission_effect": "host separately enforces declared scope",
+            "certificate": {
+              "arithmetic": {
+                "baseline": 0,
+                "bound": 1,
+                "endpoint_verdict": true,
+                "every_prefix_verdict": true,
+                "final": 0,
+                "global_verdict": true,
+                "prefix_checks": [
+                  {
+                    "signed_total": 0,
+                    "within_bound": true,
+                    "witness_id": "step-0"
+                  },
+                  {
+                    "signed_total": 0,
+                    "within_bound": true,
+                    "witness_id": "step-1"
+                  }
+                ],
+                "query_scope": "endpoint",
+                "signed_deltas": [
+                  0,
+                  0
+                ],
+                "signed_total": 0
+              },
+              "authority_effect": "None",
+              "composition_certified": true,
+              "findings": [],
+              "input_sha256": "25a729666fa012193a2ad03d0a352b347fa723ad6edf3a96a2fbe98e85cd72ca",
+              "local_checks": [
+                {
+                  "claimed_local_acceptance": true,
+                  "claimed_smoke_pass": true,
+                  "protected_policy_acceptance": true,
+                  "protected_smoke_pass": true,
+                  "signed_delta": 0,
+                  "witness_id": "step-0"
+                },
+                {
+                  "claimed_local_acceptance": true,
+                  "claimed_smoke_pass": true,
+                  "protected_policy_acceptance": true,
+                  "protected_smoke_pass": true,
+                  "signed_delta": 0,
+                  "witness_id": "step-1"
+                }
+              ],
+              "policy_sha256": "2e51ee3711f7046e408688d8882437aa7b6613b244713b5c698a40e4d27551e8",
+              "query_scope": "endpoint",
+              "receipt_sha256": "c9c32fec82c20f6e7501ae58d404bbc28519db22ec84f55db56df682f89424bc",
+              "schema": "lggr.audit.v1",
+              "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+              "status": "COMPOSITION_VERIFIED",
+              "unresolved_obligations": []
+            },
+            "current_task_verdict": null,
+            "kind": "state-budget",
+            "terminal": false
+          }
+        ],
+        "findings": [
+          {
+            "code": "AUXILIARY_NEGATIVE",
+            "detail": {
+              "baseline": 0,
+              "query_id": "auxiliary_branch_contract",
+              "scope": "endpoint",
+              "source": "sqlite.branch_contract",
+              "terminal": true,
+              "verdict": false
+            },
+            "status": "obstructed"
+          },
+          {
+            "code": "MISSING_EVIDENCE",
+            "detail": "branch_evidence",
+            "status": "unknown"
+          }
+        ],
+        "reason": "AUXILIARY_NEGATIVE"
+      },
+      "view": {
+        "allowed_probes": [
+          "semantics",
+          "source_counts",
+          "obligation_evidence",
+          "migration",
+          "branch_evidence"
+        ],
+        "branches_executed": true,
+        "contract": {
+          "authority_effect": "None",
+          "baseline": 0,
+          "customer_resolution": "first",
+          "max_step": 2,
+          "max_total": 1,
+          "output_columns": [
+            "order_id",
+            "customer_id",
+            "region",
+            "gross_cents",
+            "refund_cents",
+            "net_cents"
+          ],
+          "query_id": "ledger_reconciliation",
+          "query_scope": "endpoint",
+          "required_auxiliary_queries": [
+            "auxiliary_branch_contract"
+          ],
+          "required_event_roles": [
+            "orders",
+            "refunds"
+          ],
+          "required_evidence_probes": [
+            "semantics",
+            "branch_evidence"
+          ],
+          "required_versions": {
+            "evaluator": "v1",
+            "policy": "v1",
+            "report_schema": "v1",
+            "representation": "v1",
+            "specification": "v1"
+          },
+          "resource_limit": 20,
+          "terminal_observation": "only_after_integration"
+        },
+        "event_error": null,
+        "exhausted_probes": [],
+        "global_samples": [
+          {
+            "baseline": 0,
+            "query_id": "auxiliary_branch_contract",
+            "scope": "endpoint",
+            "source": "sqlite.branch_contract",
+            "terminal": true,
+            "verdict": false
+          }
+        ],
+        "initial_report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "missing_branches": [],
+        "obligations": [],
+        "observations": {
+          "semantics": {
+            "order_scale_to_cents": 1,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          }
+        },
+        "plan": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "remaining_attempts": 5,
+        "state_path": [
+          0,
+          0,
+          0
+        ],
+        "terminal": false,
+        "transition": {
+          "dimension": "report_schema",
+          "from_version": "v1",
+          "kind": "none",
+          "to_version": "v1"
+        },
+        "unsupported_samples": false
+      }
+    }
+  ],
+  "defect": null,
+  "defect_kind": "UNKNOWN",
+  "development": {
+    "authority_effect": "None",
+    "certificate": {
+      "authority_effect": "None",
+      "carrier_size": 2,
+      "collision": {
+        "left": {
+          "query": true,
+          "report": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "state_id": "development.equal_reports.00"
+        },
+        "right": {
+          "query": false,
+          "report": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "state_id": "development.equal_reports.01"
+        }
+      },
+      "coverage": "supplied finite table only",
+      "meaning": "These reports cannot determine this query on the supplied carrier.",
+      "realized_history_violation": null,
+      "schema": "lggr.descent.v1",
+      "scope_id": "executed-development-ledgers.v1",
+      "status": "REPORT_INSUFFICIENT",
+      "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+    },
+    "created_utc": "2026-10-24T21:20:48.979576+00:00",
+    "executions": [
+      {
+        "branches": {
+          "orders": {
+            "branch": "orders",
+            "local_pass": true,
+            "observed_source": "sqlite.execute",
+            "operation": {
+              "join_mode": "first",
+              "omit_last": false,
+              "operation": "orders",
+              "scale_to_cents": 1
+            },
+            "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+            "rows": [
+              {
+                "customer_id": "c0",
+                "gross_cents": 3900,
+                "order_id": "o0",
+                "region": "north"
+              },
+              {
+                "customer_id": "c1",
+                "gross_cents": 3200,
+                "order_id": "o1",
+                "region": "south"
+              },
+              {
+                "customer_id": "c2",
+                "gross_cents": 6900,
+                "order_id": "o2",
+                "region": "west"
+              },
+              {
+                "customer_id": "c0",
+                "gross_cents": 2500,
+                "order_id": "o3",
+                "region": "north"
+              }
+            ],
+            "source_sha256": "21d3c5b20aa30826e99762d1f074d4b63b61d018bcf43f65f6ef8f4706d37eab"
+          },
+          "refunds": {
+            "branch": "refunds",
+            "local_pass": true,
+            "observed_source": "sqlite.execute",
+            "operation": {
+              "duplicate": false,
+              "omit_last": false,
+              "operation": "refunds",
+              "scale_to_cents": 1,
+              "sign": 1
+            },
+            "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+            "rows": [
+              {
+                "order_id": "o0",
+                "refund_cents": 300,
+                "refund_id": "r0"
+              },
+              {
+                "order_id": "o2",
+                "refund_cents": 400,
+                "refund_id": "r2"
+              }
+            ],
+            "source_sha256": "6ae0418cecc80f0dd18f62a38c655397ac6225abf327324aefc7393e40f55ee1"
+          }
+        },
+        "case_id": "development.equal_reports.00",
+        "cost_scope": "two branch transforms, integration, one semantics probe; excludes Python judge/reasoning",
+        "executed_tool_attempts": 4,
+        "execution_ns": 2113700,
+        "expected_output_sha256": "c293be78920c64be1be9d0ae283bd3da119499bc8f6c30a41e2356353565ff54",
+        "input": {
+          "case_id": "development.equal_reports.00",
+          "family": "equal_reports",
+          "public": {
+            "allowed_probes": [
+              "semantics",
+              "source_counts",
+              "obligation_evidence",
+              "migration",
+              "branch_evidence"
+            ],
+            "contract": {
+              "authority_effect": "None",
+              "baseline": 0,
+              "customer_resolution": "first",
+              "max_step": 2,
+              "max_total": 1,
+              "output_columns": [
+                "order_id",
+                "customer_id",
+                "region",
+                "gross_cents",
+                "refund_cents",
+                "net_cents"
+              ],
+              "query_id": "ledger_reconciliation",
+              "query_scope": "endpoint",
+              "required_auxiliary_queries": [],
+              "required_event_roles": [
+                "orders",
+                "refunds"
+              ],
+              "required_evidence_probes": [
+                "semantics",
+                "branch_evidence"
+              ],
+              "required_versions": {
+                "evaluator": "v1",
+                "policy": "v1",
+                "report_schema": "v1",
+                "representation": "v1",
+                "specification": "v1"
+              },
+              "resource_limit": 20,
+              "terminal_observation": "only_after_integration"
+            },
+            "task": "Reconcile every original order with its first authoritative customer row and all refunds into an integer-cent ledger."
+          },
+          "scenario": {
+            "arrival_plan": [
+              "orders",
+              "refunds"
+            ],
+            "drift_path": [
+              0,
+              0,
+              0
+            ],
+            "empty_later_obligation_report": false,
+            "extra_branch_costs": [],
+            "metadata": {},
+            "negative_evidence": [],
+            "obligations": [],
+            "probe_failures": {},
+            "transition": {
+              "dimension": "report_schema",
+              "from_version": "v1",
+              "kind": "none",
+              "to_version": "v1"
+            },
+            "worker_proposals": {
+              "integrator": {
+                "operation": "integrate",
+                "refund_multiplier": 1
+              },
+              "orders": {
+                "join_mode": "first",
+                "omit_last": false,
+                "operation": "orders",
+                "scale_to_cents": 1
+              },
+              "refunds": {
+                "duplicate": false,
+                "omit_last": false,
+                "operation": "refunds",
+                "scale_to_cents": 1,
+                "sign": 1
+              }
+            }
+          },
+          "semantics": {
+            "customer_resolution": "first",
+            "inclusion": "all_orders",
+            "order_scale_to_cents": 1,
+            "output_columns": [
+              "order_id",
+              "customer_id",
+              "region",
+              "gross_cents",
+              "refund_cents",
+              "net_cents"
+            ],
+            "refund_policy": "subtract_signed_magnitude",
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1,
+            "spec_version": "v1"
+          },
+          "source": {
+            "customers": [
+              {
+                "customer_id": "c0",
+                "region": "north"
+              },
+              {
+                "customer_id": "c1",
+                "region": "south"
+              },
+              {
+                "customer_id": "c2",
+                "region": "west"
+              },
+              {
+                "customer_id": "c0",
+                "region": "east"
+              }
+            ],
+            "orders": [
+              {
+                "amount": 3900,
+                "customer_id": "c0",
+                "order_id": "o0"
+              },
+              {
+                "amount": 3200,
+                "customer_id": "c1",
+                "order_id": "o1"
+              },
+              {
+                "amount": 6900,
+                "customer_id": "c2",
+                "order_id": "o2"
+              },
+              {
+                "amount": 2500,
+                "customer_id": "c0",
+                "order_id": "o3"
+              }
+            ],
+            "refunds": [
+              {
+                "amount": 300,
+                "order_id": "o0",
+                "refund_id": "r0"
+              },
+              {
+                "amount": 400,
+                "order_id": "o2",
+                "refund_id": "r2"
+              }
+            ]
+          },
+          "split": "development",
+          "variant": 0
+        },
+        "input_sha256": "62137ba3dc08636d541165e9b3d2db34474fef2ed8786c4ed6c7db01a7889d4c",
+        "output": [
+          {
+            "customer_id": "c0",
+            "gross_cents": 3900,
+            "net_cents": 3600,
+            "order_id": "o0",
+            "refund_cents": 300,
+            "region": "north"
+          },
+          {
+            "customer_id": "c1",
+            "gross_cents": 3200,
+            "net_cents": 3200,
+            "order_id": "o1",
+            "refund_cents": 0,
+            "region": "south"
+          },
+          {
+            "customer_id": "c2",
+            "gross_cents": 6900,
+            "net_cents": 6500,
+            "order_id": "o2",
+            "refund_cents": 400,
+            "region": "west"
+          },
+          {
+            "customer_id": "c0",
+            "gross_cents": 2500,
+            "net_cents": 2500,
+            "order_id": "o3",
+            "refund_cents": 0,
+            "region": "north"
+          }
+        ],
+        "output_sha256": "c293be78920c64be1be9d0ae283bd3da119499bc8f6c30a41e2356353565ff54",
+        "planner": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "query_label": true,
+        "query_label_source": "independent oracle after sqlite.integrate",
+        "semantics_observation": {
+          "order_scale_to_cents": 1,
+          "refund_scale_to_cents": 1,
+          "refund_sign": 1
+        }
+      },
+      {
+        "branches": {
+          "orders": {
+            "branch": "orders",
+            "local_pass": true,
+            "observed_source": "sqlite.execute",
+            "operation": {
+              "join_mode": "first",
+              "omit_last": false,
+              "operation": "orders",
+              "scale_to_cents": 1
+            },
+            "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+            "rows": [
+              {
+                "customer_id": "c0",
+                "gross_cents": 3900,
+                "order_id": "o0",
+                "region": "north"
+              },
+              {
+                "customer_id": "c1",
+                "gross_cents": 3200,
+                "order_id": "o1",
+                "region": "south"
+              },
+              {
+                "customer_id": "c2",
+                "gross_cents": 6900,
+                "order_id": "o2",
+                "region": "west"
+              },
+              {
+                "customer_id": "c0",
+                "gross_cents": 2500,
+                "order_id": "o3",
+                "region": "north"
+              }
+            ],
+            "source_sha256": "21d3c5b20aa30826e99762d1f074d4b63b61d018bcf43f65f6ef8f4706d37eab"
+          },
+          "refunds": {
+            "branch": "refunds",
+            "local_pass": true,
+            "observed_source": "sqlite.execute",
+            "operation": {
+              "duplicate": false,
+              "omit_last": false,
+              "operation": "refunds",
+              "scale_to_cents": 1,
+              "sign": 1
+            },
+            "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+            "rows": [
+              {
+                "order_id": "o0",
+                "refund_cents": 300,
+                "refund_id": "r0"
+              },
+              {
+                "order_id": "o2",
+                "refund_cents": 400,
+                "refund_id": "r2"
+              }
+            ],
+            "source_sha256": "6ae0418cecc80f0dd18f62a38c655397ac6225abf327324aefc7393e40f55ee1"
+          }
+        },
+        "case_id": "development.equal_reports.01",
+        "cost_scope": "two branch transforms, integration, one semantics probe; excludes Python judge/reasoning",
+        "executed_tool_attempts": 4,
+        "execution_ns": 1178400,
+        "expected_output_sha256": "c696f80215e7f42a4e67ad9a25853893ca0a9a5a26aaf98a09b14037eabfa4fc",
+        "input": {
+          "case_id": "development.equal_reports.01",
+          "family": "equal_reports",
+          "public": {
+            "allowed_probes": [
+              "semantics",
+              "source_counts",
+              "obligation_evidence",
+              "migration",
+              "branch_evidence"
+            ],
+            "contract": {
+              "authority_effect": "None",
+              "baseline": 0,
+              "customer_resolution": "first",
+              "max_step": 2,
+              "max_total": 1,
+              "output_columns": [
+                "order_id",
+                "customer_id",
+                "region",
+                "gross_cents",
+                "refund_cents",
+                "net_cents"
+              ],
+              "query_id": "ledger_reconciliation",
+              "query_scope": "endpoint",
+              "required_auxiliary_queries": [],
+              "required_event_roles": [
+                "orders",
+                "refunds"
+              ],
+              "required_evidence_probes": [
+                "semantics",
+                "branch_evidence"
+              ],
+              "required_versions": {
+                "evaluator": "v1",
+                "policy": "v1",
+                "report_schema": "v1",
+                "representation": "v1",
+                "specification": "v1"
+              },
+              "resource_limit": 20,
+              "terminal_observation": "only_after_integration"
+            },
+            "task": "Reconcile every original order with its first authoritative customer row and all refunds into an integer-cent ledger."
+          },
+          "scenario": {
+            "arrival_plan": [
+              "orders",
+              "refunds"
+            ],
+            "drift_path": [
+              0,
+              0,
+              0
+            ],
+            "empty_later_obligation_report": false,
+            "extra_branch_costs": [],
+            "metadata": {},
+            "negative_evidence": [],
+            "obligations": [],
+            "probe_failures": {},
+            "transition": {
+              "dimension": "report_schema",
+              "from_version": "v1",
+              "kind": "none",
+              "to_version": "v1"
+            },
+            "worker_proposals": {
+              "integrator": {
+                "operation": "integrate",
+                "refund_multiplier": 1
+              },
+              "orders": {
+                "join_mode": "first",
+                "omit_last": false,
+                "operation": "orders",
+                "scale_to_cents": 1
+              },
+              "refunds": {
+                "duplicate": false,
+                "omit_last": false,
+                "operation": "refunds",
+                "scale_to_cents": 1,
+                "sign": 1
+              }
+            }
+          },
+          "semantics": {
+            "customer_resolution": "first",
+            "inclusion": "all_orders",
+            "order_scale_to_cents": 100,
+            "output_columns": [
+              "order_id",
+              "customer_id",
+              "region",
+              "gross_cents",
+              "refund_cents",
+              "net_cents"
+            ],
+            "refund_policy": "subtract_signed_magnitude",
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1,
+            "spec_version": "v1"
+          },
+          "source": {
+            "customers": [
+              {
+                "customer_id": "c0",
+                "region": "north"
+              },
+              {
+                "customer_id": "c1",
+                "region": "south"
+              },
+              {
+                "customer_id": "c2",
+                "region": "west"
+              },
+              {
+                "customer_id": "c0",
+                "region": "east"
+              }
+            ],
+            "orders": [
+              {
+                "amount": 3900,
+                "customer_id": "c0",
+                "order_id": "o0"
+              },
+              {
+                "amount": 3200,
+                "customer_id": "c1",
+                "order_id": "o1"
+              },
+              {
+                "amount": 6900,
+                "customer_id": "c2",
+                "order_id": "o2"
+              },
+              {
+                "amount": 2500,
+                "customer_id": "c0",
+                "order_id": "o3"
+              }
+            ],
+            "refunds": [
+              {
+                "amount": 300,
+                "order_id": "o0",
+                "refund_id": "r0"
+              },
+              {
+                "amount": 400,
+                "order_id": "o2",
+                "refund_id": "r2"
+              }
+            ]
+          },
+          "split": "development",
+          "variant": 1
+        },
+        "input_sha256": "0cdb3312c8e3dc7c8ca1fedcde5a0e98aec7bbfbf150f41953ca4f9d3c7c6a13",
+        "output": [
+          {
+            "customer_id": "c0",
+            "gross_cents": 3900,
+            "net_cents": 3600,
+            "order_id": "o0",
+            "refund_cents": 300,
+            "region": "north"
+          },
+          {
+            "customer_id": "c1",
+            "gross_cents": 3200,
+            "net_cents": 3200,
+            "order_id": "o1",
+            "refund_cents": 0,
+            "region": "south"
+          },
+          {
+            "customer_id": "c2",
+            "gross_cents": 6900,
+            "net_cents": 6500,
+            "order_id": "o2",
+            "refund_cents": 400,
+            "region": "west"
+          },
+          {
+            "customer_id": "c0",
+            "gross_cents": 2500,
+            "net_cents": 2500,
+            "order_id": "o3",
+            "refund_cents": 0,
+            "region": "north"
+          }
+        ],
+        "output_sha256": "c293be78920c64be1be9d0ae283bd3da119499bc8f6c30a41e2356353565ff54",
+        "planner": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "query_label": false,
+        "query_label_source": "independent oracle after sqlite.integrate",
+        "semantics_observation": {
+          "order_scale_to_cents": 100,
+          "refund_scale_to_cents": 1,
+          "refund_sign": 1
+        }
+      }
+    ],
+    "lost_distinction": "order amount scale to cents",
+    "minimal_refinement": {
+      "authority_effect": "None",
+      "candidate_keys_inspected": [
+        "order_scale_to_cents",
+        "refund_scale_to_cents",
+        "refund_sign"
+      ],
+      "decoder": [
+        {
+          "query": false,
+          "report": {
+            "base_report": {
+              "operation": "ledger",
+              "orders": 4,
+              "refunds": 2,
+              "schema": "coarse.v1"
+            },
+            "refined_metadata": {
+              "order_scale_to_cents": 100
+            }
+          }
+        },
+        {
+          "query": true,
+          "report": {
+            "base_report": {
+              "operation": "ledger",
+              "orders": 4,
+              "refunds": 2,
+              "schema": "coarse.v1"
+            },
+            "refined_metadata": {
+              "order_scale_to_cents": 1
+            }
+          }
+        }
+      ],
+      "decoder_size": 2,
+      "minimal_keys": [
+        "order_scale_to_cents"
+      ],
+      "receipt_sha256": "0bef9a328a1cb75fc7e0c6de9012e9a5530d6ead4bb7587529bc5e57e132f0f4",
+      "refined_contract_status": "COMPOSABLE_LGGG",
+      "refinement_found": true,
+      "schema": "lggr.online_schema_refinement.v1",
+      "scope_id": "executed-development-ledgers.v1",
+      "status": "REFINEMENT_SYNTHESIZED"
+    },
+    "operational_use": "The certificate motivates acquiring named metadata. It does not reveal the current held-out answer.",
+    "query": "Does the actual proposed ledger equal the independently recomputed task answer?",
+    "receipt_sha256": "7781234b1ef34c3adba7312a34d6ed792440d41f34c3781a22cf43cccc60f035",
+    "refined_certificate": {
+      "authority_effect": "None",
+      "carrier_size": 2,
+      "coverage": "supplied finite table only",
+      "decoder": [
+        {
+          "query": true,
+          "report": {
+            "base": {
+              "operation": "ledger",
+              "orders": 4,
+              "refunds": 2,
+              "schema": "coarse.v1"
+            },
+            "semantics": {
+              "order_scale_to_cents": 1,
+              "refund_scale_to_cents": 1,
+              "refund_sign": 1
+            }
+          }
+        },
+        {
+          "query": false,
+          "report": {
+            "base": {
+              "operation": "ledger",
+              "orders": 4,
+              "refunds": 2,
+              "schema": "coarse.v1"
+            },
+            "semantics": {
+              "order_scale_to_cents": 100,
+              "refund_scale_to_cents": 1,
+              "refund_sign": 1
+            }
+          }
+        }
+      ],
+      "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+      "schema": "lggr.descent.v1",
+      "scope_id": "development-unit-refinement.v2",
+      "status": "DECODER_VERIFIED",
+      "table_sha256": "e6bad66c59135cfa37024a894021872ccfd4ed5aa0b7eb3cb218906ba60f4d08"
+    },
+    "refined_rows": [
+      {
+        "query": true,
+        "report": {
+          "base": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "semantics": {
+            "order_scale_to_cents": 1,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          }
+        },
+        "state_id": "development.equal_reports.00"
+      },
+      {
+        "query": false,
+        "report": {
+          "base": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "semantics": {
+            "order_scale_to_cents": 100,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          }
+        },
+        "state_id": "development.equal_reports.01"
+      }
+    ],
+    "rows": [
+      {
+        "query": true,
+        "report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "state_id": "development.equal_reports.00"
+      },
+      {
+        "query": false,
+        "report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "state_id": "development.equal_reports.01"
+      }
+    ],
+    "schema": "swarm-lab.development.v1",
+    "scope": "Exactly two completed development executions; no claim of general sufficiency or current-task failure.",
+    "source_bindings": {
+      "evidence/protocol-freeze.json": "260d9546df2f72f3d72b60ed4f4b24a56c0010ec3848806c0c19614eedd4b176",
+      "lggr_swarm_lab/fixtures.py": "ec171fdc5a948c31b646cfea11d3cea65538e8cd9f11cf2c7050e565678df53e",
+      "lggr_swarm_lab/oracle.py": "65f0c183c3ee0ff296ed4a8fc1a3c0dda083d4994f7aa99068a0d293333c50d4",
+      "lggr_swarm_lab/tools.py": "d83f2808d3705c1b42c9975a622edaacc66fe850779a5afcebd3352dfe5124c5",
+      "vendor/lggr/descent.py": "abbcf1cf60744b3d7cb23c4117cff38037922d5e25eabbb9dd80118de6588643",
+      "vendor/lggr/streaming.py": "127ab88222f1e7f40bf74395a8c9a08d4fcd1c7c2481a85b7bda77b5b49958e1"
+    },
+    "streaming_collision": {
+      "authority_effect": "None",
+      "carrier_size": 2,
+      "collision": {
+        "left": {
+          "metadata": {
+            "order_scale_to_cents": 1,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          },
+          "query": true,
+          "report": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "state_id": "development.equal_reports.00"
+        },
+        "right": {
+          "metadata": {
+            "order_scale_to_cents": 100,
+            "refund_scale_to_cents": 1,
+            "refund_sign": 1
+          },
+          "query": false,
+          "report": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "state_id": "development.equal_reports.01"
+        }
+      },
+      "contract_status": "OBSTRUCTED_LGGR",
+      "input_sha256": "6a9bfa92a941d1e1d014ba807adaaf0f2010d5372874a8d040b95a484030d9fa",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "e3833a98bb24dd673ea15ed139bd3f59b19fa8911a3fc270118f14e578c76a35",
+      "schema": "lggr.online_collision.v1",
+      "scope_id": "executed-development-ledgers.v1",
+      "status": "REPORT_INSUFFICIENT"
+    }
+  },
+  "evaluation_access": "judge called after terminal host decision; not in any controller view",
+  "events": [
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "host",
+      "causal_parents": [],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0000",
+      "event_sha256": "c40e516e744b3137c9fd0b48efc7b24cabceb425f41a34b82a4980616aa4cdd3",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 0,
+      "kind": "start",
+      "observed": {
+        "execution": "deterministic-fixture",
+        "initial_report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "coarse.v1",
+      "retained_obligations": [],
+      "role": "host",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 0,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "shared",
+      "causal_parents": [
+        "event-0000"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0001",
+      "event_sha256": "8453ae215ef163ba9c4bcdb4e77b67f490276855358a1441d778487104ca513f",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-001",
+          "branch": "shared",
+          "cost": 1,
+          "issued": true,
+          "kind": "planner"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "c40e516e744b3137c9fd0b48efc7b24cabceb425f41a34b82a4980616aa4cdd3",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "coarse.v1",
+      "retained_obligations": [],
+      "role": "shared",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 1,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "planner",
+      "causal_parents": [
+        "event-0001"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0002",
+      "event_sha256": "d40e75e450d8b2892cca2254a60a1f8560d37e71008aae6a99b8d0e9dc3fa647",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 0,
+      "kind": "proposal",
+      "observed": {
+        "bounded_operations": {
+          "integrator": {
+            "operation": "integrate",
+            "refund_multiplier": 1
+          },
+          "orders": {
+            "join_mode": "first",
+            "omit_last": false,
+            "operation": "orders",
+            "scale_to_cents": 1
+          },
+          "refunds": {
+            "duplicate": false,
+            "omit_last": false,
+            "operation": "refunds",
+            "scale_to_cents": 1,
+            "sign": 1
+          }
+        },
+        "original_source_access": "planner sees counts; workers receive their source slice and this artifact"
+      },
+      "output_artifacts": [
+        {
+          "id": "artifact-000-planner",
+          "sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396"
+        }
+      ],
+      "policy": "policy.v1",
+      "previous_sha256": "8453ae215ef163ba9c4bcdb4e77b67f490276855358a1441d778487104ca513f",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "coarse.v1",
+      "retained_obligations": [],
+      "role": "planner",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 2,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "controller",
+      "causal_parents": [
+        "event-0002"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0003",
+      "event_sha256": "de9300e4b956e5d1039c6aa1c5c4ef670918318517b041d2a74da3161893f01a",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [
+        {
+          "id": "artifact-001-controller-input",
+          "sha256": "3c28c5245e224565131483bb583a27269301361a9c3b1b201b4ecc01818fcaab"
+        }
+      ],
+      "irreversible_consumption": 0,
+      "kind": "decision",
+      "observed": {
+        "action": "probe",
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          }
+        ],
+        "findings": [
+          {
+            "code": "MISSING_EVIDENCE",
+            "detail": "semantics",
+            "status": "unknown"
+          }
+        ],
+        "host_decision_scope": "local laboratory only",
+        "phase": "planner-to-workers",
+        "reason": "certified collision triggers unit/sign observation"
+      },
+      "output_artifacts": [
+        {
+          "id": "artifact-002-controller-output",
+          "sha256": "b97f090ba6c570ecf61ef6d5b1fae60347f94172fb23677025c7c42ec2f7f0f6"
+        }
+      ],
+      "policy": "policy.v1",
+      "previous_sha256": "d40e75e450d8b2892cca2254a60a1f8560d37e71008aae6a99b8d0e9dc3fa647",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "coarse.v1",
+      "retained_obligations": [],
+      "role": "controller",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 3,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "shared",
+      "causal_parents": [
+        "event-0003"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0004",
+      "event_sha256": "7c3d735a8fbecff910461e4b190dff7e763219ae3deba58850327c23d306b846",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-002",
+          "branch": "shared",
+          "cost": 1,
+          "issued": true,
+          "kind": "probe:semantics"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "de9300e4b956e5d1039c6aa1c5c4ef670918318517b041d2a74da3161893f01a",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "coarse.v1",
+      "retained_obligations": [],
+      "role": "shared",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 4,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "observer",
+      "causal_parents": [
+        "event-0004"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0005",
+      "event_sha256": "7f63c157e965675e200fb3a37020917e40c97d67c6245c0099d31165d7a90b80",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 0,
+      "kind": "observation",
+      "observed": {
+        "probe": "semantics",
+        "result": {
+          "order_scale_to_cents": 1,
+          "refund_scale_to_cents": 1,
+          "refund_sign": 1
+        },
+        "source": "sqlite.named_probe"
+      },
+      "output_artifacts": [
+        {
+          "id": "artifact-003-semantics",
+          "sha256": "ad7194c42ca817844deeebdfc5d35ef69324bb694edf6be07bddb08a88dec711"
+        }
+      ],
+      "policy": "policy.v1",
+      "previous_sha256": "7c3d735a8fbecff910461e4b190dff7e763219ae3deba58850327c23d306b846",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "coarse.v1",
+      "retained_obligations": [],
+      "role": "observer",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 5,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "controller",
+      "causal_parents": [
+        "event-0005"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0006",
+      "event_sha256": "d6702eeaf93474510dd357c3faad213ff772494c3f08b6f10823150e7fb83b36",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [
+        {
+          "id": "artifact-004-controller-input",
+          "sha256": "b44a0c686199692d2cc4622c97ed81830077b05b32ed5b7d10d642d575618d2c"
+        }
+      ],
+      "irreversible_consumption": 0,
+      "kind": "decision",
+      "observed": {
+        "action": "proceed",
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          },
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "coverage": "supplied finite table only",
+              "decoder": [
+                {
+                  "query": true,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 1,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                },
+                {
+                  "query": false,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 100,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                }
+              ],
+              "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+              "schema": "lggr.descent.v1",
+              "scope_id": "development-unit-refinement.v2",
+              "status": "DECODER_VERIFIED",
+              "table_sha256": "e6bad66c59135cfa37024a894021872ccfd4ed5aa0b7eb3cb218906ba60f4d08"
+            },
+            "coverage": "development examples only; unseen input checked separately",
+            "current_task_verdict": null,
+            "kind": "refined-development-fiber"
+          }
+        ],
+        "findings": [],
+        "host_decision_scope": "local laboratory only",
+        "phase": "planner-to-workers",
+        "reason": "complete declared contract evidence available"
+      },
+      "output_artifacts": [
+        {
+          "id": "artifact-005-controller-output",
+          "sha256": "115473dfe6aa399d0413b897ca16ffa29a567daff1fd36c196f7daf0c10f5374"
+        }
+      ],
+      "policy": "policy.v1",
+      "previous_sha256": "7f63c157e965675e200fb3a37020917e40c97d67c6245c0099d31165d7a90b80",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "controller",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 6,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "orders",
+      "causal_parents": [
+        "event-0006"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0007",
+      "event_sha256": "f328930d06669901a5cbf831196c74ad50e699815a1340d786c2af35a250f3f6",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-003",
+          "branch": "orders",
+          "cost": 1,
+          "issued": true,
+          "kind": "worker"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "d6702eeaf93474510dd357c3faad213ff772494c3f08b6f10823150e7fb83b36",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "orders",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 7,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0007"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0008",
+      "event_sha256": "b79da002894fa593ef4e7ed4a18c1c852c006908dae611d80e554632ff1c0ec7",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-004",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "worker"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "f328930d06669901a5cbf831196c74ad50e699815a1340d786c2af35a250f3f6",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 8,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "orders",
+      "causal_parents": [
+        "event-0008"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0009",
+      "event_sha256": "9ebd87c49b35a29b1588ea13b9e9cf2a5ea277f987f06a995ad63b7b3542aafd",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [
+        {
+          "id": "artifact-006-orders-input",
+          "sha256": "0caf5277a5d632605eea495cee010f73bf0fff8f3db9518b66e52f297106a225"
+        }
+      ],
+      "irreversible_consumption": 0,
+      "kind": "worker-result",
+      "observed": {
+        "local_verdict": true,
+        "source": "sqlite.execute",
+        "source_slice": [
+          "customers",
+          "orders"
+        ],
+        "state": 0
+      },
+      "output_artifacts": [
+        {
+          "id": "artifact-007-orders-output",
+          "sha256": "db5d60286e7b65095a9a1917d3ed30c4811499f70d63a8c0e4707e3acc2c5d2a"
+        }
+      ],
+      "policy": "policy.v1",
+      "previous_sha256": "b79da002894fa593ef4e7ed4a18c1c852c006908dae611d80e554632ff1c0ec7",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "orders",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 9,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0009"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0010",
+      "event_sha256": "68ac882e0cd9e1b86c36176ac455c3ec3bdf6085419f58a5f90f8eef030e167d",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [
+        {
+          "id": "artifact-008-refunds-input",
+          "sha256": "a13c736c4cad45cc9bd316a3f28d5f306dd00cc98b16220ba314af41b4909a25"
+        }
+      ],
+      "irreversible_consumption": 0,
+      "kind": "worker-result",
+      "observed": {
+        "local_verdict": true,
+        "source": "sqlite.execute",
+        "source_slice": [
+          "refunds"
+        ],
+        "state": 0
+      },
+      "output_artifacts": [
+        {
+          "id": "artifact-009-refunds-output",
+          "sha256": "a4b711bad77dbc4f3b4eb7588204b5f59deeda3aa15881715bcf447c073182e2"
+        }
+      ],
+      "policy": "policy.v1",
+      "previous_sha256": "9ebd87c49b35a29b1588ea13b9e9cf2a5ea277f987f06a995ad63b7b3542aafd",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 10,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0010"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0011",
+      "event_sha256": "731e7ce88278f440f97749354dc5dfbff2d8e72f7003a1a1970351d7766893ad",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-005",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "auxiliary-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "68ac882e0cd9e1b86c36176ac455c3ec3bdf6085419f58a5f90f8eef030e167d",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 11,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "orders",
+      "causal_parents": [
+        "event-0011"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0012",
+      "event_sha256": "68a9b9f6ad5e147597ff7ac6e033abc1b450ac1eef0013bcef7c0ec87950b67b",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-006",
+          "branch": "orders",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "731e7ce88278f440f97749354dc5dfbff2d8e72f7003a1a1970351d7766893ad",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "orders",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 12,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "orders",
+      "causal_parents": [
+        "event-0012"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0013",
+      "event_sha256": "3191a4131a69ef0440651b07186cfc819e75cd3cd1642466469ed1014a48c9cf",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-007",
+          "branch": "orders",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "68a9b9f6ad5e147597ff7ac6e033abc1b450ac1eef0013bcef7c0ec87950b67b",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "orders",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 13,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "orders",
+      "causal_parents": [
+        "event-0013"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0014",
+      "event_sha256": "a558cf65a84c1477cd37526b75e94062ce0f1145fe922d24afc233f8fab3f816",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-008",
+          "branch": "orders",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "3191a4131a69ef0440651b07186cfc819e75cd3cd1642466469ed1014a48c9cf",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "orders",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 14,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0014"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0015",
+      "event_sha256": "12e7366c1b2c45dfa856344f361752789deefc4eb101375fe0886bda411f5070",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-009",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "a558cf65a84c1477cd37526b75e94062ce0f1145fe922d24afc233f8fab3f816",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 15,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0015"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0016",
+      "event_sha256": "637ee1f48f3e13cb5b8b5714b6e970837369f3c545ab90d35c126cd846cdeaca",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-010",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "12e7366c1b2c45dfa856344f361752789deefc4eb101375fe0886bda411f5070",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 16,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0016"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0017",
+      "event_sha256": "2d85e0fa4abaf8def99c7fe54e020297cd88a5dcc1fe91e7594f8c1c38d5f23f",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-011",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "637ee1f48f3e13cb5b8b5714b6e970837369f3c545ab90d35c126cd846cdeaca",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 17,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0017"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0018",
+      "event_sha256": "d2f99ce8bd38d43c32080d6255af284e7fd2c8f769e7d10fe0721bddb757e70a",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-012",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "2d85e0fa4abaf8def99c7fe54e020297cd88a5dcc1fe91e7594f8c1c38d5f23f",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 18,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0018"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0019",
+      "event_sha256": "8c9a41c2fa20e1c5fef652b9d33d42a2dcd22d33d8d027808cdd39804ae928df",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-013",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "d2f99ce8bd38d43c32080d6255af284e7fd2c8f769e7d10fe0721bddb757e70a",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 19,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0019"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0020",
+      "event_sha256": "dd8067bade027f0964fea082f89b98efb7cb546006dc665a067ca85749276de6",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-014",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "8c9a41c2fa20e1c5fef652b9d33d42a2dcd22d33d8d027808cdd39804ae928df",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 20,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "refunds",
+      "causal_parents": [
+        "event-0020"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0021",
+      "event_sha256": "98fa5bbdfe9f47839ab9444a6473a273661f48aeabcdc1bacac9b6bb78f4d022",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 1,
+      "kind": "attempt",
+      "observed": {
+        "attempt": {
+          "attempt_id": "attempt-015",
+          "branch": "refunds",
+          "cost": 1,
+          "issued": true,
+          "kind": "branch-extra-query"
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "dd8067bade027f0964fea082f89b98efb7cb546006dc665a067ca85749276de6",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "refunds",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 21,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "integrator",
+      "causal_parents": [
+        "event-0021"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0022",
+      "event_sha256": "7ff5b3ff50cc5161295fbba224c4a1210eeea3e9b31a1a9900b60d10f73808fa",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 0,
+      "kind": "branch-merge",
+      "observed": {
+        "arrival_order": [
+          "plan",
+          "orders",
+          "refunds"
+        ],
+        "global_sample_interpretation": "retained original query, scope and baseline; no ledger verdict inferred",
+        "merged": {
+          "cost": 15,
+          "deduplication_rule": "identical event/attempt ID once; conflicting reuse rejected",
+          "global_samples": [
+            {
+              "baseline": 0,
+              "query_id": "auxiliary_branch_contract",
+              "scope": "endpoint",
+              "source": "sqlite.branch_contract",
+              "terminal": true,
+              "verdict": false
+            }
+          ],
+          "mixed_scope": false,
+          "obligations": [],
+          "ordered": [
+            {
+              "event_id": "plan",
+              "parent_ids": [],
+              "payload": {
+                "attempts": [
+                  {
+                    "attempt_id": "attempt-001",
+                    "branch": "shared",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "planner"
+                  },
+                  {
+                    "attempt_id": "attempt-002",
+                    "branch": "shared",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "probe:semantics"
+                  }
+                ]
+              },
+              "payload_hash": "2d0c1595dfb5bc02d1d65777504a22a9a950da9a4672e28dd3796b7dacaacc9d",
+              "policy_version": "policy.v1",
+              "role": "planner"
+            },
+            {
+              "event_id": "orders",
+              "parent_ids": [
+                "plan"
+              ],
+              "payload": {
+                "artifact": {
+                  "branch": "orders",
+                  "local_pass": true,
+                  "observed_source": "sqlite.execute",
+                  "operation": {
+                    "join_mode": "first",
+                    "omit_last": false,
+                    "operation": "orders",
+                    "scale_to_cents": 1
+                  },
+                  "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+                  "rows": [
+                    {
+                      "customer_id": "c0",
+                      "gross_cents": 6800,
+                      "order_id": "o0",
+                      "region": "north"
+                    },
+                    {
+                      "customer_id": "c1",
+                      "gross_cents": 7500,
+                      "order_id": "o1",
+                      "region": "south"
+                    },
+                    {
+                      "customer_id": "c2",
+                      "gross_cents": 8300,
+                      "order_id": "o2",
+                      "region": "west"
+                    },
+                    {
+                      "customer_id": "c0",
+                      "gross_cents": 5200,
+                      "order_id": "o3",
+                      "region": "north"
+                    }
+                  ],
+                  "source_sha256": "7c7043262d167c9840f5580e52189981cd9851fc3443f3aba1f536bc69d089d7"
+                },
+                "attempts": [
+                  {
+                    "attempt_id": "attempt-003",
+                    "branch": "orders",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "worker"
+                  },
+                  {
+                    "attempt_id": "attempt-006",
+                    "branch": "orders",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-007",
+                    "branch": "orders",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-008",
+                    "branch": "orders",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  }
+                ],
+                "global_samples": [],
+                "obligations": []
+              },
+              "payload_hash": "ee0de1a87d27b442e7d2390f6603b7033e138d2a2ba823d92b6db4f98ef5571c",
+              "policy_version": "policy.v1",
+              "role": "orders"
+            },
+            {
+              "event_id": "refunds",
+              "parent_ids": [
+                "plan"
+              ],
+              "payload": {
+                "artifact": {
+                  "branch": "refunds",
+                  "local_pass": true,
+                  "observed_source": "sqlite.execute",
+                  "operation": {
+                    "duplicate": false,
+                    "omit_last": false,
+                    "operation": "refunds",
+                    "scale_to_cents": 1,
+                    "sign": 1
+                  },
+                  "planner_sha256": "ae240d4011a3300980048179ec89dcd3bf18a17ca235ab47eb0de3da71aa0396",
+                  "rows": [
+                    {
+                      "order_id": "o0",
+                      "refund_cents": 100,
+                      "refund_id": "r0"
+                    },
+                    {
+                      "order_id": "o2",
+                      "refund_cents": 500,
+                      "refund_id": "r2"
+                    }
+                  ],
+                  "source_sha256": "85e89dcf03c3509888fbfb6c76d6933b7f63762a78261e6d4d3a803670966c37"
+                },
+                "attempts": [
+                  {
+                    "attempt_id": "attempt-004",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "worker"
+                  },
+                  {
+                    "attempt_id": "attempt-005",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "auxiliary-query"
+                  },
+                  {
+                    "attempt_id": "attempt-009",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-010",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-011",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-012",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-013",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-014",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  },
+                  {
+                    "attempt_id": "attempt-015",
+                    "branch": "refunds",
+                    "cost": 1,
+                    "issued": true,
+                    "kind": "branch-extra-query"
+                  }
+                ],
+                "global_samples": [
+                  {
+                    "baseline": 0,
+                    "query_id": "auxiliary_branch_contract",
+                    "scope": "endpoint",
+                    "source": "sqlite.branch_contract",
+                    "terminal": true,
+                    "verdict": false
+                  }
+                ],
+                "obligations": []
+              },
+              "payload_hash": "242521d53ee7592277a300fc016534952226a28084d4466c74f67c37be6a1b96",
+              "policy_version": "policy.v1",
+              "role": "refunds"
+            }
+          ],
+          "scope_groups": [
+            {
+              "baseline": 0,
+              "query_id": "auxiliary_branch_contract",
+              "samples": [
+                {
+                  "baseline": 0,
+                  "query_id": "auxiliary_branch_contract",
+                  "scope": "endpoint",
+                  "source": "sqlite.branch_contract",
+                  "terminal": true,
+                  "verdict": false
+                }
+              ],
+              "scope": "endpoint",
+              "supported": true
+            }
+          ],
+          "unique_attempts": [
+            {
+              "attempt_id": "attempt-001",
+              "branch": "shared",
+              "cost": 1,
+              "issued": true,
+              "kind": "planner"
+            },
+            {
+              "attempt_id": "attempt-002",
+              "branch": "shared",
+              "cost": 1,
+              "issued": true,
+              "kind": "probe:semantics"
+            },
+            {
+              "attempt_id": "attempt-003",
+              "branch": "orders",
+              "cost": 1,
+              "issued": true,
+              "kind": "worker"
+            },
+            {
+              "attempt_id": "attempt-006",
+              "branch": "orders",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-007",
+              "branch": "orders",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-008",
+              "branch": "orders",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-004",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "worker"
+            },
+            {
+              "attempt_id": "attempt-005",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "auxiliary-query"
+            },
+            {
+              "attempt_id": "attempt-009",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-010",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-011",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-012",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-013",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-014",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            },
+            {
+              "attempt_id": "attempt-015",
+              "branch": "refunds",
+              "cost": 1,
+              "issued": true,
+              "kind": "branch-extra-query"
+            }
+          ],
+          "unsupported": false
+        }
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "98fa5bbdfe9f47839ab9444a6473a273661f48aeabcdc1bacac9b6bb78f4d022",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "integrator",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 22,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "controller",
+      "causal_parents": [
+        "event-0022"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0023",
+      "event_sha256": "4cee903e5b140b498d112287795e073a572931fb8dbfa0b72ac18112f78f6c16",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [
+        {
+          "id": "artifact-010-controller-input",
+          "sha256": "e509cfe89c2aceae3d32de4b2f87013ff267e99ccdbf0a25bd8c82a24c926007"
+        }
+      ],
+      "irreversible_consumption": 0,
+      "kind": "decision",
+      "observed": {
+        "action": "block",
+        "certificates": [
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "collision": {
+                "left": {
+                  "query": true,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.00"
+                },
+                "right": {
+                  "query": false,
+                  "report": {
+                    "operation": "ledger",
+                    "orders": 4,
+                    "refunds": 2,
+                    "schema": "coarse.v1"
+                  },
+                  "state_id": "development.equal_reports.01"
+                }
+              },
+              "coverage": "supplied finite table only",
+              "meaning": "These reports cannot determine this query on the supplied carrier.",
+              "realized_history_violation": null,
+              "schema": "lggr.descent.v1",
+              "scope_id": "executed-development-ledgers.v1",
+              "status": "REPORT_INSUFFICIENT",
+              "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+            },
+            "coverage": "development examples only",
+            "current_task_verdict": null,
+            "kind": "development-fiber"
+          },
+          {
+            "certificate": {
+              "authority_effect": "None",
+              "carrier_size": 2,
+              "coverage": "supplied finite table only",
+              "decoder": [
+                {
+                  "query": true,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 1,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                },
+                {
+                  "query": false,
+                  "report": {
+                    "base": {
+                      "operation": "ledger",
+                      "orders": 4,
+                      "refunds": 2,
+                      "schema": "coarse.v1"
+                    },
+                    "semantics": {
+                      "order_scale_to_cents": 100,
+                      "refund_scale_to_cents": 1,
+                      "refund_sign": 1
+                    }
+                  }
+                }
+              ],
+              "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+              "schema": "lggr.descent.v1",
+              "scope_id": "development-unit-refinement.v2",
+              "status": "DECODER_VERIFIED",
+              "table_sha256": "e6bad66c59135cfa37024a894021872ccfd4ed5aa0b7eb3cb218906ba60f4d08"
+            },
+            "coverage": "development examples only; unseen input checked separately",
+            "current_task_verdict": null,
+            "kind": "refined-development-fiber"
+          },
+          {
+            "admission_effect": "host separately enforces declared scope",
+            "certificate": {
+              "arithmetic": {
+                "baseline": 0,
+                "bound": 1,
+                "endpoint_verdict": true,
+                "every_prefix_verdict": true,
+                "final": 0,
+                "global_verdict": true,
+                "prefix_checks": [
+                  {
+                    "signed_total": 0,
+                    "within_bound": true,
+                    "witness_id": "step-0"
+                  },
+                  {
+                    "signed_total": 0,
+                    "within_bound": true,
+                    "witness_id": "step-1"
+                  }
+                ],
+                "query_scope": "endpoint",
+                "signed_deltas": [
+                  0,
+                  0
+                ],
+                "signed_total": 0
+              },
+              "authority_effect": "None",
+              "composition_certified": true,
+              "findings": [],
+              "input_sha256": "25a729666fa012193a2ad03d0a352b347fa723ad6edf3a96a2fbe98e85cd72ca",
+              "local_checks": [
+                {
+                  "claimed_local_acceptance": true,
+                  "claimed_smoke_pass": true,
+                  "protected_policy_acceptance": true,
+                  "protected_smoke_pass": true,
+                  "signed_delta": 0,
+                  "witness_id": "step-0"
+                },
+                {
+                  "claimed_local_acceptance": true,
+                  "claimed_smoke_pass": true,
+                  "protected_policy_acceptance": true,
+                  "protected_smoke_pass": true,
+                  "signed_delta": 0,
+                  "witness_id": "step-1"
+                }
+              ],
+              "policy_sha256": "2e51ee3711f7046e408688d8882437aa7b6613b244713b5c698a40e4d27551e8",
+              "query_scope": "endpoint",
+              "receipt_sha256": "c9c32fec82c20f6e7501ae58d404bbc28519db22ec84f55db56df682f89424bc",
+              "schema": "lggr.audit.v1",
+              "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+              "status": "COMPOSITION_VERIFIED",
+              "unresolved_obligations": []
+            },
+            "current_task_verdict": null,
+            "kind": "state-budget",
+            "terminal": false
+          }
+        ],
+        "findings": [
+          {
+            "code": "AUXILIARY_NEGATIVE",
+            "detail": {
+              "baseline": 0,
+              "query_id": "auxiliary_branch_contract",
+              "scope": "endpoint",
+              "source": "sqlite.branch_contract",
+              "terminal": true,
+              "verdict": false
+            },
+            "status": "obstructed"
+          },
+          {
+            "code": "MISSING_EVIDENCE",
+            "detail": "branch_evidence",
+            "status": "unknown"
+          }
+        ],
+        "host_decision_scope": "local laboratory only",
+        "phase": "workers-to-integrator",
+        "reason": "AUXILIARY_NEGATIVE"
+      },
+      "output_artifacts": [
+        {
+          "id": "artifact-011-controller-output",
+          "sha256": "86f5fbd0da96aeb44e93cdbd4f27a97e4f445d43f44667d724718f93e0901c33"
+        }
+      ],
+      "policy": "policy.v1",
+      "previous_sha256": "7ff5b3ff50cc5161295fbba224c4a1210eeea3e9b31a1a9900b60d10f73808fa",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "controller",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 23,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    },
+    {
+      "agent_execution_mode": "deterministic_fixture_or_host",
+      "authority_effect": "None",
+      "branch_attribution": "host",
+      "causal_parents": [
+        "event-0023"
+      ],
+      "coverage": "observed-so-far; application contract checked separately",
+      "deduplication_rule": "issued attempt IDs once; retries new IDs",
+      "event_id": "event-0024",
+      "event_sha256": "3c5823601e7ab1dd90812b7b75e66cbbeb75645ecabc9544e6ee00f3b1f84f44",
+      "global_verdict": null,
+      "global_verdict_source": null,
+      "input_artifacts": [],
+      "irreversible_consumption": 0,
+      "kind": "terminal-decision",
+      "observed": {
+        "action": "block",
+        "lab_only": true,
+        "residual": "AUXILIARY_NEGATIVE",
+        "status": "obstructed"
+      },
+      "output_artifacts": [],
+      "policy": "policy.v1",
+      "previous_sha256": "4cee903e5b140b498d112287795e073a572931fb8dbfa0b72ac18112f78f6c16",
+      "protected_contract_sha256": "748a1457953aa96f767af2dbe704d48b821fe62f2ca92e3cfd743a64d62f7c16",
+      "query": {
+        "baseline": 0,
+        "query_id": "ledger_reconciliation",
+        "scope": "endpoint",
+        "terminal": false
+      },
+      "report_schema": "refined.v2",
+      "retained_obligations": [],
+      "role": "host",
+      "run_id": "e5fd345c1bc7fa59",
+      "schema": "swarm-lab.event.v1",
+      "seq": 24,
+      "signed_state_change": 0,
+      "versions": {
+        "evaluator": "v1",
+        "policy": "v1",
+        "report_schema": "v1",
+        "representation": "v1",
+        "specification": "v1"
+      }
+    }
+  ],
+  "execution_mode": "deterministic-fault-injection",
+  "global_verdict": null,
+  "input": {
+    "case_id": "development.merge_retention.00",
+    "family": "merge_retention",
+    "public": {
+      "allowed_probes": [
+        "semantics",
+        "source_counts",
+        "obligation_evidence",
+        "migration",
+        "branch_evidence"
+      ],
+      "contract": {
+        "authority_effect": "None",
+        "baseline": 0,
+        "customer_resolution": "first",
+        "max_step": 2,
+        "max_total": 1,
+        "output_columns": [
+          "order_id",
+          "customer_id",
+          "region",
+          "gross_cents",
+          "refund_cents",
+          "net_cents"
+        ],
+        "query_id": "ledger_reconciliation",
+        "query_scope": "endpoint",
+        "required_auxiliary_queries": [
+          "auxiliary_branch_contract"
+        ],
+        "required_event_roles": [
+          "orders",
+          "refunds"
+        ],
+        "required_evidence_probes": [
+          "semantics",
+          "branch_evidence"
+        ],
+        "required_versions": {
+          "evaluator": "v1",
+          "policy": "v1",
+          "report_schema": "v1",
+          "representation": "v1",
+          "specification": "v1"
+        },
+        "resource_limit": 20,
+        "terminal_observation": "only_after_integration"
+      },
+      "task": "Reconcile every original order with its first authoritative customer row and all refunds into an integer-cent ledger."
+    },
+    "scenario": {
+      "arrival_plan": [
+        "orders",
+        "refunds"
+      ],
+      "drift_path": [
+        0,
+        0,
+        0
+      ],
+      "empty_later_obligation_report": false,
+      "extra_branch_costs": [
+        {
+          "branch": "orders",
+          "cost": 3
+        },
+        {
+          "branch": "refunds",
+          "cost": 7
+        }
+      ],
+      "metadata": {},
+      "negative_evidence": [
+        {
+          "baseline": 0,
+          "branch": "refunds",
+          "global_verdict": false,
+          "query_id": "auxiliary_branch_contract",
+          "scope": "endpoint",
+          "source": "deterministic_auxiliary_fixture_check",
+          "terminal": true
+        }
+      ],
+      "obligations": [],
+      "probe_failures": {},
+      "transition": {
+        "dimension": "report_schema",
+        "from_version": "v1",
+        "kind": "none",
+        "to_version": "v1"
+      },
+      "worker_proposals": {
+        "integrator": {
+          "operation": "integrate",
+          "refund_multiplier": 1
+        },
+        "orders": {
+          "join_mode": "first",
+          "omit_last": false,
+          "operation": "orders",
+          "scale_to_cents": 1
+        },
+        "refunds": {
+          "duplicate": false,
+          "omit_last": false,
+          "operation": "refunds",
+          "scale_to_cents": 1,
+          "sign": 1
+        }
+      }
+    },
+    "semantics": {
+      "customer_resolution": "first",
+      "inclusion": "all_orders",
+      "order_scale_to_cents": 1,
+      "output_columns": [
+        "order_id",
+        "customer_id",
+        "region",
+        "gross_cents",
+        "refund_cents",
+        "net_cents"
+      ],
+      "refund_policy": "subtract_signed_magnitude",
+      "refund_scale_to_cents": 1,
+      "refund_sign": 1,
+      "spec_version": "v1"
+    },
+    "source": {
+      "customers": [
+        {
+          "customer_id": "c0",
+          "region": "north"
+        },
+        {
+          "customer_id": "c1",
+          "region": "south"
+        },
+        {
+          "customer_id": "c2",
+          "region": "west"
+        },
+        {
+          "customer_id": "c0",
+          "region": "east"
+        }
+      ],
+      "orders": [
+        {
+          "amount": 6800,
+          "customer_id": "c0",
+          "order_id": "o0"
+        },
+        {
+          "amount": 7500,
+          "customer_id": "c1",
+          "order_id": "o1"
+        },
+        {
+          "amount": 8300,
+          "customer_id": "c2",
+          "order_id": "o2"
+        },
+        {
+          "amount": 5200,
+          "customer_id": "c0",
+          "order_id": "o3"
+        }
+      ],
+      "refunds": [
+        {
+          "amount": 100,
+          "order_id": "o0",
+          "refund_id": "r0"
+        },
+        {
+          "amount": 500,
+          "order_id": "o2",
+          "refund_id": "r2"
+        }
+      ]
+    },
+    "split": "development",
+    "variant": 0
+  },
+  "input_sha256": "d5e3b2b34b15477fa1855a53363d930e039876e417095bb75b94d3f48ec51d95",
+  "judgment": {
+    "admissibility_reasons": [
+      "missing_evidence:branch_evidence",
+      "terminal_endpoint_not_observed",
+      "auxiliary_requirement_false:auxiliary_branch_contract"
+    ],
+    "admissibility_status": "obstructed",
+    "admissible": false,
+    "authority_effect": "None",
+    "candidate_correct": null,
+    "consumed_cost": 15,
+    "expected_output_sha256": "4a6d53439545c6f44786945ba55c2eb36441242d1558151d125e5d8370dcbe50",
+    "expected_row_count": 4,
+    "scope": "This frozen finite synthetic fixture and declared local laboratory contract only.",
+    "task_correct": null,
+    "truth_provenance": "Independent integer Python interpretation of original source rows and protected monetary metadata; no application, SQL transform, LGGR verdict or controller imports.",
+    "unresolved_obligations": []
+  },
+  "local_verdicts": [
+    1,
+    1
+  ],
+  "metrics": {
+    "attempts": 15,
+    "canary_effects": 2,
+    "certificate_consumed_decisions": 1,
+    "controller_and_certificate_ns": 5309900,
+    "detection_step": 23,
+    "elapsed_ns": 19181900,
+    "evidence_bytes": 58185,
+    "final_report_bytes": 156,
+    "first_detecting_boundary": "workers-to-integrator",
+    "first_evidence_request_step": 3,
+    "first_faulty_handoff": null,
+    "initial_report_bytes": 66,
+    "localization_status": "detecting boundary measured; first causal fault origin unmeasured",
+    "model_cost": null,
+    "model_tokens": null,
+    "model_usage_status": "unmeasured",
+    "probe_attempts": 1,
+    "repair_attempts": 0,
+    "successful_repairs": 0
+  },
+  "mode": "C",
+  "native": null,
+  "output": null,
+  "replay_fingerprint": "e6a2ad7ec3a7d5d1c26a55e8c49286d70d78a4e3b672d0f0912752992692f93e",
+  "residual": "AUXILIARY_NEGATIVE",
+  "run_id": "e5fd345c1bc7fa59",
+  "schema": "swarm-lab.run.v1",
+  "status": "obstructed",
+  "summary": {
+    "action": "block",
+    "arrival_events": [
+      {
+        "event_id": "plan",
+        "parent_ids": [],
+        "payload_hash": "2d0c1595dfb5bc02d1d65777504a22a9a950da9a4672e28dd3796b7dacaacc9d",
+        "role": "planner"
+      },
+      {
+        "event_id": "orders",
+        "parent_ids": [
+          "plan"
+        ],
+        "payload_hash": "ee0de1a87d27b442e7d2390f6603b7033e138d2a2ba823d92b6db4f98ef5571c",
+        "role": "orders"
+      },
+      {
+        "event_id": "refunds",
+        "parent_ids": [
+          "plan"
+        ],
+        "payload_hash": "242521d53ee7592277a300fc016534952226a28084d4466c74f67c37be6a1b96",
+        "role": "refunds"
+      }
+    ],
+    "attempts": [
+      {
+        "attempt_id": "attempt-001",
+        "branch": "shared",
+        "cost": 1,
+        "issued": true,
+        "kind": "planner"
+      },
+      {
+        "attempt_id": "attempt-002",
+        "branch": "shared",
+        "cost": 1,
+        "issued": true,
+        "kind": "probe:semantics"
+      },
+      {
+        "attempt_id": "attempt-003",
+        "branch": "orders",
+        "cost": 1,
+        "issued": true,
+        "kind": "worker"
+      },
+      {
+        "attempt_id": "attempt-004",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "worker"
+      },
+      {
+        "attempt_id": "attempt-005",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "auxiliary-query"
+      },
+      {
+        "attempt_id": "attempt-006",
+        "branch": "orders",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-007",
+        "branch": "orders",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-008",
+        "branch": "orders",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-009",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-010",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-011",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-012",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-013",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-014",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      },
+      {
+        "attempt_id": "attempt-015",
+        "branch": "refunds",
+        "cost": 1,
+        "issued": true,
+        "kind": "branch-extra-query"
+      }
+    ],
+    "candidate_rows": null,
+    "negative_evidence": [
+      {
+        "baseline": 0,
+        "query_id": "auxiliary_branch_contract",
+        "scope": "endpoint",
+        "source": "sqlite.branch_contract",
+        "terminal": true,
+        "verdict": false
+      }
+    ],
+    "obligation_events": [],
+    "observations": [
+      {
+        "probe": "semantics",
+        "result": {
+          "order_scale_to_cents": 1,
+          "refund_scale_to_cents": 1,
+          "refund_sign": 1
+        },
+        "source": "sqlite.named_probe"
+      }
+    ],
+    "state_path": [
+      0,
+      0,
+      0
+    ],
+    "transitions": []
+  }
+}

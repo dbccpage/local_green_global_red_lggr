@@ -1,0 +1,15 @@
+[PASS] GHZ rnd2 (k=4, den=12): rebuilt from the seeded battery; normalized = True, fully no-signalling = True
+[PASS] N primal (Bland-only): status=optimal, N = 25/256  [0.4s]
+[PASS] N dual (Prop 4): status=optimal, value = 25/256  [13.6s]; certificate: spread(alpha.l) = 1 <= 1, beta = -max = 0, alpha.p + beta = 25/256
+[PASS] STRONG DUALITY for N at rnd2: dual == primal == 25/256
+[PASS] CF primal (Bland-only): status=optimal, w_max = 45/64  [27.0s]
+[PASS] CF dual: status=optimal, value = -45/64  [102.5s]; certificate: D^T(u+v)=0 True, v >= 0 True, match-sums <= -1 True
+[PASS] STRONG DUALITY for CF at rnd2: dual == primal optimum (CF = 19/64)
+
+VIOLATION VERDICT at GHZ rnd2 (k=4, den=12):
+  CF  = 19/64  (pinched: primal decomposition CF <= 19/64; dual certificate CF >= 19/64)
+  2N  = 25/128  (pinched: signed-extension primal N <= 25/128/2; Prop-4 dual N >= 25/128/2)
+  CF - 2N = 13/128 > 0
+[PASS] CERTIFIED COUNTEREXAMPLE: CF > 2N with both values certificate-pinned
+
+All certificates close. The §18 conjecture CF <= 2N is REFUTED on the (3,2,2) GHZ scenario by this behavior.

@@ -1,0 +1,14 @@
+{
+  "evidence_path": "evidence\\supplemental-branch-join.json",
+  "evidence_sha256": "9410fe5234ada86dc50c6560a479838dcdfcdfd174e70bfbb728853486873886",
+  "script_sha256": "94015a1271666a1e1587cf540b5fc6d075cb05e9bd927cdbb460b2359c50646f",
+  "policy_runs": 6,
+  "case_count": 2,
+  "checks_passed": true,
+  "attempts_by_mode": {
+    "A": 6,
+    "B": 8,
+    "C": 8
+  },
+  "observed_transform_overlap_all_six_runs": true
+}

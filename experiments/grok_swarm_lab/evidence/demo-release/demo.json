@@ -1,0 +1,163 @@
+{
+  "authority_effect": "None",
+  "development_certificate": {
+    "authority_effect": "None",
+    "carrier_size": 2,
+    "collision": {
+      "left": {
+        "query": true,
+        "report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "state_id": "development.equal_reports.00"
+      },
+      "right": {
+        "query": false,
+        "report": {
+          "operation": "ledger",
+          "orders": 4,
+          "refunds": 2,
+          "schema": "coarse.v1"
+        },
+        "state_id": "development.equal_reports.01"
+      }
+    },
+    "coverage": "supplied finite table only",
+    "meaning": "These reports cannot determine this query on the supplied carrier.",
+    "realized_history_violation": null,
+    "schema": "lggr.descent.v1",
+    "scope_id": "executed-development-ledgers.v1",
+    "status": "REPORT_INSUFFICIENT",
+    "table_sha256": "d58826a47e2f4c2c95691d1918777403a489736c224e18402532c62fa81472a0"
+  },
+  "examples": [
+    {
+      "action": "commit",
+      "admissibility": "admissible",
+      "case_id": "development.equal_reports.00",
+      "example": "correct",
+      "file": "correct.json",
+      "mode": "C",
+      "replay": {
+        "action": "commit",
+        "admitted": true,
+        "elapsed_ns": 51613600,
+        "meaning": "successful replay preserves negative/deferred decisions; it does not grant admission",
+        "replayed": true,
+        "run_id": "f72bf94c7af1d030"
+      },
+      "residual": "none",
+      "task_correct": true,
+      "tool_attempts": 6
+    },
+    {
+      "action": "commit",
+      "admissibility": "unknown",
+      "case_id": "development.equal_reports.01",
+      "example": "coarse-ablation",
+      "file": "coarse-ablation.json",
+      "mode": "A",
+      "replay": {
+        "action": "commit",
+        "admitted": true,
+        "elapsed_ns": 18595000,
+        "meaning": "successful replay preserves negative/deferred decisions; it does not grant admission",
+        "replayed": true,
+        "run_id": "5d30528a2b0cb396"
+      },
+      "residual": "none",
+      "task_correct": false,
+      "tool_attempts": 4
+    },
+    {
+      "action": "commit",
+      "admissibility": "admissible",
+      "case_id": "development.equal_reports.01",
+      "example": "repaired",
+      "file": "repaired.json",
+      "mode": "C",
+      "replay": {
+        "action": "commit",
+        "admitted": true,
+        "elapsed_ns": 85911900,
+        "meaning": "successful replay preserves negative/deferred decisions; it does not grant admission",
+        "replayed": true,
+        "run_id": "7c0dcfc051498a16"
+      },
+      "residual": "none",
+      "task_correct": true,
+      "tool_attempts": 7
+    },
+    {
+      "action": "defer",
+      "admissibility": "unknown",
+      "case_id": "development.evidence_resolution.01",
+      "example": "unresolved",
+      "file": "unresolved.json",
+      "mode": "C",
+      "replay": {
+        "action": "defer",
+        "admitted": false,
+        "elapsed_ns": 9285700,
+        "meaning": "successful replay preserves negative/deferred decisions; it does not grant admission",
+        "replayed": true,
+        "run_id": "abca09e4e43d875e"
+      },
+      "residual": "certified ambiguous report; resolving probe unavailable",
+      "task_correct": null,
+      "tool_attempts": 1
+    }
+  ],
+  "minimal_refinement": {
+    "authority_effect": "None",
+    "candidate_keys_inspected": [
+      "order_scale_to_cents",
+      "refund_scale_to_cents",
+      "refund_sign"
+    ],
+    "decoder": [
+      {
+        "query": false,
+        "report": {
+          "base_report": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "refined_metadata": {
+            "order_scale_to_cents": 100
+          }
+        }
+      },
+      {
+        "query": true,
+        "report": {
+          "base_report": {
+            "operation": "ledger",
+            "orders": 4,
+            "refunds": 2,
+            "schema": "coarse.v1"
+          },
+          "refined_metadata": {
+            "order_scale_to_cents": 1
+          }
+        }
+      }
+    ],
+    "decoder_size": 2,
+    "minimal_keys": [
+      "order_scale_to_cents"
+    ],
+    "receipt_sha256": "0bef9a328a1cb75fc7e0c6de9012e9a5530d6ead4bb7587529bc5e57e132f0f4",
+    "refined_contract_status": "COMPOSABLE_LGGG",
+    "refinement_found": true,
+    "schema": "lggr.online_schema_refinement.v1",
+    "scope_id": "executed-development-ledgers.v1",
+    "status": "REFINEMENT_SYNTHESIZED"
+  },
+  "scope": "Four development demonstrations; no held-out result or universal certificate."
+}

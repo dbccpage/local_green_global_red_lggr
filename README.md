@@ -29,7 +29,7 @@ The six-volume LGGR series (`001_local_green_global_red_foundational_series`) an
 
 ### 2. Bell Positive Extensions, Projection Residuals, and Embedded Task Sufficiency
 
-The companion study *Bell's Theorem as a Positive-Extension Obstruction* (`036_bell_positive_extensions_and_projection_residuals`) connects finite obstruction certificates and projection residuals to empirical behavior tables, nonlocality measures, and recursive self-improvement (RSI) under fixed evidence:
+The companion study *Bell's Theorem as a Positive-Extension Obstruction* (`003_bell_positive_extensions_and_projection_residuals`) connects finite obstruction certificates and projection residuals to empirical behavior tables, nonlocality measures, and recursive self-improvement (RSI) under fixed evidence:
 
 1. **Four Distinct Obstruction Questions:**
    - *Product-state retraction residual:* $F_\rho = \rho - \rho_A \otimes \rho_B$ and $D_{\text{prod}}(\rho) = \|F_\rho\|_1$ measure departure from a single tensor product. A classically correlated separable state such as $\rho_{\text{cl}} = \frac{1}{2}|00\rangle\langle 00| + \frac{1}{2}|11\rangle\langle 11|$ has $D_{\text{prod}}(\rho_{\text{cl}}) = 1$ yet admits a local hidden-variable model for every local measurement choice.

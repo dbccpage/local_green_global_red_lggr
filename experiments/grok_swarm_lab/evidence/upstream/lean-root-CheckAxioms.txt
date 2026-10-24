@@ -1,0 +1,65 @@
+'LggrVII.collision_blocks_factorization' does not depend on any axioms
+'LggrVII.postprocessing_preserves_collision' does not depend on any axioms
+'LggrVII.verdict_ceiling_on_collision' does not depend on any axioms
+'LggrVII.evalDefect_partition' does not depend on any axioms
+'LggrVII.two_step_telescope' depends on axioms: [propext, Quot.sound]
+'LggrVII.three_step_telescope' depends on axioms: [propext, Quot.sound]
+'LggrVII.local_steps_do_not_imply_endpoint_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LggrVII.every_prefix_strictly_stronger_than_endpoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LggrVII.unsigned_report_collision_good_vs_bad' does not depend on any axioms
+'LggrVII.triangle_l1_primal_dual_optimality' depends on axioms: [propext, Quot.sound]
+'LggrVII.filled_triangle_closure_vs_budget_exactness' depends on axioms: [propext, Quot.sound]
+'LggrVII.retraction_reflects_repair_and_obstruction' does not depend on any axioms
+'LggrVII.observer_fiber_two_point_minimax' depends on axioms: [propext, Quot.sound]
+'LggrVII.contextual_fraction_packing_mass_identity' depends on axioms: [propext, Quot.sound]
+'LggrVII.ghz_rnd2_cf_gt_two_neg_mass_and_order_reversal' does not depend on any axioms
+'LggrVIII.collision_monotonicity' does not depend on any axioms
+'LggrVIII.postprocessing_preserves_streaming_collision' does not depend on any axioms
+'LggrVIII.streaming_verdict_ceiling' does not depend on any axioms
+'LggrVIII.streaming_evalDefect_partition' does not depend on any axioms
+'LggrVIII.streaming_chain_telescoping' depends on axioms: [propext, Quot.sound]
+'LggrVIII.online_prefix_strictly_stronger_than_endpoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LggrVIII.prefix_violation_monotonicity' does not depend on any axioms
+'LggrVIII.streaming_unsigned_report_collision' does not depend on any axioms
+'LggrVIII.open_chain_exactness' depends on axioms: [propext, Quot.sound]
+'LggrVIII.incremental_cycle_closure_obstruction' depends on axioms: [propext, Quot.sound]
+'LggrVIII.boundary_sufficient_gluing_certifies_lggg' does not depend on any axioms
+'LggrVIII.boundary_insufficiency_forces_defect' does not depend on any axioms
+'LggrVIII.streaming_closed_nonexact_cohomology' depends on axioms: [propext, Quot.sound]
+'LggrVIII.streaming_transport_projection_vs_retraction' does not depend on any axioms
+'LggrVIII.non_injective_projection_blocks_retraction' depends on axioms: [propext]
+'LggrVIII.streaming_observer_fiber_minimax_monotonicity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LggrVIII.cross_branch_audit_splice_budget_breach' does not depend on any axioms
+'LggrVIII.multi_stage_gluing_associativity_and_defect_bound' depends on axioms: [propext, Quot.sound]
+'LggrVIII.coarsened_macro_stage_masks_internal_prefix_breach' does not depend on any axioms
+'LggrVIII.minimal_metadata_refinement_eliminates_collision' does not depend on any axioms
+'LggrVIII.deferred_obligation_and_scope_migration_separation' depends on axioms: [propext, Quot.sound]
+'LggrVIII.l1_dual_witness_subgradient_weight_sensitivity' depends on axioms: [propext, Quot.sound]
+'LggrVIII.cycle_bottleneck_weight_pivot_threshold' depends on axioms: [propext]
+'LggrVIII.six_role_sample_defect_and_cancellation_masking' depends on axioms: [propext, Quot.sound]
+'LggrVIII.completion_relative_obstruction_on_carrier_extension' depends on axioms: [propext, Quot.sound]
+'LggrVIII.disjoint_colliding_pairs_additive_error_lower_bound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'LggrVIII.centered_gram_kernel_nullspace_obstruction' depends on axioms: [propext, Quot.sound]
+'LggrVIII.path_kernel_composition_discrepancy_identity' depends on axioms: [propext, Quot.sound]
+'LggrVIII.boundary_sufficiency_without_quotient_factorization' does not depend on any axioms
+'LggrVIII.realizable_defect_soundness_kernel_intersection' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LggrVIII.dashboard_summary_reconstruction_and_collapsing_detector' depends on axioms: [propext, Quot.sound]
+'LggrVIII.chsh_local_polytope_bound_and_negative_mass' depends on axioms: [propext, Quot.sound]
+'LggrVIII.product_retraction_residual_vs_local_extension' depends on axioms: [propext, Quot.sound]
+'LggrVIII.evidence_preserving_rsi_invariance_bound' depends on axioms: [propext, Quot.sound]
+'LggrVIII.two_player_shapley_efficiency_and_symmetry' depends on axioms: [propext, Quot.sound]
+'LggrVIII.quorum_threshold_vs_product_defect_separation' depends on axioms: [propext, Quot.sound]
+'LggrVIII.kraus_trace_preservation_and_blindspot_residual' depends on axioms: [propext, Quot.sound]
+'LggrVIII.sliding_window_green_vs_horizon_drift_breach' depends on axioms: [propext, Quot.sound]
+'LggrVIII.arrival_order_endpoint_invariance_vs_prefix_divergence' depends on axioms: [propext, Quot.sound]
+'LggrVIII.simplicial_cup_product_and_leibniz_cocycle_identity' depends on axioms: [propext, Quot.sound]
+'LggrVIII.mayer_vietoris_local_exactness_gluing_obstruction' depends on axioms: [propext, Quot.sound]
+'LggrVIII.discrete_hodge_harmonic_orthogonality_and_decomposition' does not depend on any axioms
+'LggrVIII.dfa_concatenation_state_mismatch_obstruction' depends on axioms: [propext, Quot.sound]
+'LggrVIII.catalyst_residual_accumulation_and_cycle_ceiling' depends on axioms: [propext, Quot.sound]
+'LggrVIII.hodge_laplacian_energy_sum_of_squares_kernel' does not depend on any axioms
+'LggrVIII.pairwise_compatible_three_cycle_contextual_obstruction' depends on axioms: [propext, Quot.sound]
+'LggrVIII.discrete_regge_hinge_deficit_and_gauss_bonnet' depends on axioms: [propext, Quot.sound]
+'LggrVIII.fibered_pullback_compatibility_and_mediator_uniqueness' does not depend on any axioms

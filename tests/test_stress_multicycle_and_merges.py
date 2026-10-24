@@ -2401,6 +2401,42 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertTrue(receipt["all_pigeonhole_bounds_verified"])
         self.assertEqual(receipt["capacity_deficit_fiber_ids"], ["fiber_k4_s2_deficit"])
 
+    def test_product_of_experts_disjoint_support_collapse_vs_mixture(self) -> None:
+        """Verify LGGR I §7.2 Product-of-Experts monitor separates disjoint-support collapse from MoE."""
+        from lggr import StreamingProductOfExpertsMonitor
+
+        mon = StreamingProductOfExpertsMonitor(scope_id="poe-vs-moe-audit")
+
+        # 1. Disjoint supports: Expert 1 = [1, 0], Expert 2 = [0, 1]
+        #    Both experts have positive mass (L = 1) and D_MoE = 1 > 0,
+        #    yet D_PoE = 1*0 + 0*1 = 0 collapses (Eg = 0, Delta_E = -1).
+        r_bad = mon.record_expert_scores("disjoint_experts", [[1, 0], [0, 1]])
+        self.assertEqual(r_bad["expert_masses"], ["1", "1"])
+        self.assertEqual(r_bad["joint_support_indices"], [])
+        self.assertEqual(r_bad["poe_partition_sum"], "0")
+        self.assertIsNone(r_bad["poe_normalized_distribution"])
+        self.assertEqual(r_bad["moe_partition_sum"], "1")
+        self.assertEqual(r_bad["moe_normalized_distribution"], ["1/2", "1/2"])
+        self.assertEqual(r_bad["local_product_aggregator"], 1)
+        self.assertEqual(r_bad["global_poe_normalizable_evaluator"], 0)
+        self.assertEqual(r_bad["evaluator_defect"], -1)
+        self.assertEqual(r_bad["round_status"], "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR")
+
+        # 2. Overlapping supports: Expert 1 = [1, 1], Expert 2 = [1, 0]
+        #    D_PoE = 1 > 0 -> L = 1, Eg = 1, Delta_E = 0
+        r_ok = mon.record_expert_scores("overlapping_experts", [[1, 1], [1, 0]])
+        self.assertEqual(r_ok["joint_support_indices"], [0])
+        self.assertEqual(r_ok["poe_partition_sum"], "1")
+        self.assertEqual(r_ok["poe_normalized_distribution"], ["1", "0"])
+        self.assertEqual(r_ok["evaluator_defect"], 0)
+        self.assertEqual(r_ok["round_status"], "POE_AND_MOE_COHERENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_product_of_experts.v1")
+        self.assertEqual(receipt["status"], "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["poe_collapsed_round_ids"], ["disjoint_experts"])
+
 
 if __name__ == "__main__":
     unittest.main()

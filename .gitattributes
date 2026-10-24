@@ -5,11 +5,11 @@ receipts/paper_relocation_2026_10_24/** -text
 # Bundled Lean dependencies and standalone archives exceed ordinary Git blob limits.
 papers/012_rsi/001_contextual_prediction_and_self_certification/001_contextual_prediction_and_self_certification_2026-10-23.zip filter=lfs diff=lfs merge=lfs -text
 papers/012_rsi/001_contextual_prediction_and_self_certification/lean4/vendor/dependencies.tar.gz filter=lfs diff=lfs merge=lfs -text
-papers/012_rsi/036_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.10.0.zip filter=lfs diff=lfs merge=lfs -text
-papers/012_rsi/036_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.11.0.zip filter=lfs diff=lfs merge=lfs -text
-papers/012_rsi/036_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.12.0.zip filter=lfs diff=lfs merge=lfs -text
-papers/012_rsi/036_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.13.0.zip filter=lfs diff=lfs merge=lfs -text
-papers/012_rsi/036_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.7.1.zip filter=lfs diff=lfs merge=lfs -text
-papers/012_rsi/036_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.9.0.zip filter=lfs diff=lfs merge=lfs -text
-papers/012_rsi/036_bell_positive_extensions_and_projection_residuals/lean4/vendor/dependencies.tar.gz filter=lfs diff=lfs merge=lfs -text
+papers/012_rsi/003_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.10.0.zip filter=lfs diff=lfs merge=lfs -text
+papers/012_rsi/003_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.11.0.zip filter=lfs diff=lfs merge=lfs -text
+papers/012_rsi/003_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.12.0.zip filter=lfs diff=lfs merge=lfs -text
+papers/012_rsi/003_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.13.0.zip filter=lfs diff=lfs merge=lfs -text
+papers/012_rsi/003_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.7.1.zip filter=lfs diff=lfs merge=lfs -text
+papers/012_rsi/003_bell_positive_extensions_and_projection_residuals/dist/bell_positive_extensions_v0.9.0.zip filter=lfs diff=lfs merge=lfs -text
+papers/012_rsi/003_bell_positive_extensions_and_projection_residuals/lean4/vendor/dependencies.tar.gz filter=lfs diff=lfs merge=lfs -text
 papers/012_rsi/research/2026_10_23_contextual_review/historical_release/contextual_prediction_v1_8_2_2026-10-23.zip filter=lfs diff=lfs merge=lfs -text

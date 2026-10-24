@@ -1,0 +1,110 @@
+{
+  "protocol_version": "grok-swarm-lab.v1",
+  "phase": "preregistered_before_held_out_evaluation",
+  "authority_effect": "None",
+  "application": {
+    "selected": "SQLite orders/customers/refunds ledger reconciliation",
+    "alternatives_considered": [
+      {"application": "Specification-to-code programming chain", "tradeoff": "Useful but language execution and variable model behavior complicate an independent cheap oracle."},
+      {"application": "Calendar constraint merging", "tradeoff": "Has concrete conflicts but fewer natural unit, sign, monetary and representation handoff failures."}
+    ],
+    "selection_reason": "Real local SQL effects, exact integer reference arithmetic, natural independently scheduled branches, cheap offline reruns, and inspectable artifact dependencies.",
+    "task": "Emit one ordered row per original order, select the first customer row in source order, normalize order and refund amounts to integer cents using fixture metadata, aggregate each original refund once, and subtract its normalized magnitude.",
+    "output_columns": ["order_id", "customer_id", "region", "gross_cents", "refund_cents", "net_cents"],
+    "topology": "planner artifact -> orders worker and refunds worker -> joined artifact -> integrator -> host verifier; independent judge runs only after decisions are recorded",
+    "customer_authority": "First occurrence in original source rows. A later duplicate customer row does not replace it.",
+    "runtime_kind": "deterministic offline fixture proposals with real SQLite execution; any actual native/live agent demonstration is reported separately"
+  },
+  "hypotheses": [
+    {"id": "H1", "claim": "On identical complete evidence, complete conventional checking B and LGGR integration C should agree on admissibility. Disagreement requires inspection and is not automatically a B error."},
+    {"id": "H2", "claim": "Interactive B and C can prevent some invalid or unsupported admissions made by local-only A, while completing genuinely valid and repairable tasks."},
+    {"id": "H3", "claim": "LGGR C may improve the explicitness of collision certificates, coverage statements or evidence selection; reliability or cost superiority over B is not assumed."},
+    {"id": "H4", "claim": "No available resolving observation must terminate as a finite residual/unknown rather than become a passing development label or an endless refinement loop."}
+  ],
+  "splits": {
+    "generator": "lggr_swarm_lab.fixtures.generate_cases",
+    "development": {"seed": 271828, "cases": 24, "variants_per_family": 2},
+    "evaluation": {"seed": 161803, "cases": 48, "variants_per_family": 4},
+    "family_order": ["equal_reports", "composition", "branch_join", "units_sign", "query_scope", "obligations", "version_transition", "evidence_resolution", "event_integrity", "merge_retention", "shared_budget", "completion_controls"],
+    "interpretation": "Repeated deterministic variants are finite stress fixtures, not independent discoveries or a population estimate.",
+    "freeze": "evidence/protocol-freeze.json binds protocol, generator, independent oracle, oracle tests and canonical generated split hashes before evaluation. A change requires a newly identified protocol/run; never silently overwrite the freeze.",
+    "tuning_rule": "Controllers may be developed on the development split only. Freeze controller/source hashes before held-out evaluation; do not tune on evaluation outcomes. Evaluation bugs or limitations are retained in the report."
+  },
+  "information_boundary": {
+    "controller_input": ["public contract", "upstream planner and worker artifacts", "bounded operation proposals", "actual observations from permitted tools", "retained event and obligation evidence", "development-only verified collision certificate"],
+    "controller_exclusions": ["family", "split", "variant", "seed", "protected original semantics except through allowed tool observations", "reference rows", "oracle correctness/admissibility answers", "case ID lookup tables", "evaluation labels"],
+    "host_only_instrumentation": "scenario controls deterministic fault injection and tool availability. These controls enter the controller only as actual proposals or emitted tool results, never as family-conditioned decision logic.",
+    "truth_provenance": "Evaluation-only oracle interprets the original fixture rows and protected monetary semantics using separate Python integer arithmetic; it imports no application transform, SQLite query, controller or LGGR checker.",
+    "operational_blinding": "Explicit API/data-flow withholding within an inspectable local process. Role names or shared-model agents are not epistemic independence or cryptographic secrecy.",
+    "development_labels": "Only completed actual development SQLite executions labelled by the independent reference may populate the development collision table. A failed, deferred, or unknown final answer is never a passing label."
+  },
+  "modes": {
+    "A": "Local-only ablation: accepts local artifact stage reports subject to the host's shared attempt ceiling.",
+    "B": "Complete conventional contract controller, with all declared semantic, scope, lineage, merge, version, obligation and budget checks.",
+    "C": "Same complete contract and capabilities as B plus a thin LGGR finite-fiber/witness integration that participates in acquisition/admission decisions.",
+    "parity": "B and C receive identical initial inputs, available probes, allowed actions, contract semantics, branch scheduling possibilities and limits. Acquisition differences are measured separately from reasoning over the same information.",
+    "fixed_trace_replay": "Give B and C identical preserved complete evidence and compare findings/decisions. Labels are judge-only. A valid replay of a negative receipt does not admit the task.",
+    "interactive": "Run all three modes from the same original fixture and public contract, issuing actual observations and repairs through the bounded host. Preserve all actions and failed attempts."
+  },
+  "allowed_observations": {
+    "semantics": "Query the fixture SQLite metadata for order_scale_to_cents, refund_scale_to_cents and refund_sign. This probe is deliberately unavailable on some cases.",
+    "source_counts": "SQLite counts and unique identifiers for original orders, customers and refunds.",
+    "branch_evidence": "Actual branch row/key/negative-amount summaries together with source counts; no hidden expected ledger or correctness flag.",
+    "obligation_evidence": "SQLite fixture facts for specific declared obligation IDs; a missing/false fact does not discharge an obligation.",
+    "migration": "SQLite fixture catalog for the requested semantic version transition; validated relation and scope must be retained."
+  },
+  "allowed_operations": {
+    "orders": {"scale_to_cents": "positive integer", "join_mode": ["first", "all"], "omit_last": "boolean"},
+    "refunds": {"scale_to_cents": "positive integer", "sign": [-1, 1], "omit_last": "boolean", "duplicate": "boolean"},
+    "integrate": {"refund_multiplier": "integer; the protected task requires subtracting normalized refunds once"},
+    "repairs": "Reissue a concrete corrected operation using evidence actually acquired under this run's public contract. Count it as a new attempt and preserve previous artifacts/findings.",
+    "authorization": "All actions occur only in the local synthetic laboratory under host authority. Mathematical authority_effect remains None."
+  },
+  "budgets_and_state": {
+    "default_resource_limit": 20,
+    "per_case_overrides": "Frozen in each generated public contract; shared exhaustion fixtures include limits 4, 5, 8 and 9.",
+    "unit": "Declared tool-attempt/fixture-work units, never invented model tokens or monetary cost.",
+    "issued_attempts": "Check and reserve the shared remaining limit at issuance, including retries, repairs, observations and every branch. An actual failed attempt consumes its declared cost.",
+    "deduplication": "Repeated identical attempt/event ID and payload denotes replay of the same event and is counted once; a retry has a new ID; conflicting reuse is malformed.",
+    "signed_state": "Separate integer state path with baseline 0, max local step 2 and max total displacement 1. Signed decreases do not refund resource consumption.",
+    "terminal_scope": "Endpoint query is terminal only after integration. Intermediate excursion is recorded and can recover; every-prefix violation must block the next tool effect.",
+    "termination": "Bounded probes/repairs plus shared issuance cap; exhausting either retains a residual and terminates."
+  },
+  "schema_refinement": {
+    "coarse_report": "Ledger operation/schema and observed row counts without unit/sign metadata.",
+    "candidate_features": ["order_scale_to_cents", "refund_scale_to_cents", "refund_sign"],
+    "forbidden_sole_features": ["case ID", "random unique ID", "content hash", "expected correctness", "family label"],
+    "carrier": "Only previously executed and independently labelled development examples for a declared query.",
+    "claim_limit": "Separating the development collision proves constancy on that finite observed table only. Unseen reports require actual contract evidence; zero observed collisions is not universal sufficiency.",
+    "versions": "Preserve coarse report v1 and its original collision; version the refined report and bind its explicit carrier and feature observations."
+  },
+  "oracle": {
+    "entrypoint": "lggr_swarm_lab.oracle.judge(case, committed_artifact_or_None, factual_trace_summary)",
+    "task_correct": "Exact ordered list, schema, multiplicity and integer value equality against independent original-input reference; None when no committed output.",
+    "candidate_correct": "Separate optional comparison when a real candidate exists; supports valid-output-refused counts without turning it into a committed pass.",
+    "admissibility": "Separate reconstruction of acquired semantics, declared probes, scope, issued costs, obligations, transition catalog, arrival-role coverage, duplicate conflicts and retained required auxiliary samples.",
+    "admissibility_limit": "The compact judge checks event-fragment causal cycles and required branch roles. Full envelope hash/parent closure/restart integrity is established by the separate replay verifier and adversarial tests, not inferred from the compact summary.",
+    "auxiliary_negative_evidence": "A retained false auxiliary query can obstruct admissibility while ledger arithmetic is correct. It is never reused as a ledger correctness label."
+  },
+  "metrics": {
+    "denominators": "Report exact numerator/denominator per mode and each of the 12 families, separately for task correctness and evidence admissibility.",
+    "completion": ["committed outputs", "task-correct committed outputs", "invalid committed outputs", "admissible committed outputs", "inadmissible committed outputs", "deferred tasks", "blocked tasks", "correct candidates refused", "unresolved obligations"],
+    "runtime": ["first detection step", "first faulty handoff", "extra observations", "repair attempts", "successful repairs", "tool attempts", "consumed cost", "report/evidence bytes", "elapsed seconds", "certificate/replay cost"],
+    "defect": "Compute Delta_E=E_global-product(E_local) only for a labelled completed output with a justified ledger oracle verdict. Report local/global values and NGD/ZDR/PGD separately; zero includes joint rejection. Unknowns are excluded.",
+    "parity": ["B/C findings on identical complete traces", "B/C observation sets", "B/C acquisition and execution costs", "shared versus branch costs"],
+    "model_usage": "Measured raw API/native model usage if exposed; otherwise unmeasured. Offline fixture counts never become token usage.",
+    "interpretation": "No significance testing or population generalization from these 48 deterministic template variants. A null B/C reliability comparison is a valid result."
+  },
+  "required_tests": [
+    "actual decision change under no-LGGR ablation or explicit null result",
+    "every-prefix host stop with next-effect canary",
+    "terminal endpoint recovery",
+    "merged samples, costs, obligations and scope retained",
+    "forged pass, omitted witness, changed policy and altered artifact rejected",
+    "restart/replay decisions and input/certificate tamper detection",
+    "unknown final output never added as observed pass",
+    "successful completion and justified defer/refusal",
+    "bounded exhaustion terminates with residual",
+    "original relevant and new application test outcomes reported honestly"
+  ]
+}

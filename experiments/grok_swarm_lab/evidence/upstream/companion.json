@@ -1,0 +1,20 @@
+{
+  "schema": "grok-swarm-lab.verification.v1",
+  "suite": "companion",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-m",
+    "unittest",
+    "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/code/tests/test_lggr_viii_core.py",
+    "-v"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\lggr",
+  "exit_code": 0,
+  "elapsed_seconds": 0.570151999942027,
+  "python": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+  "log": "companion.txt",
+  "scope": "Complete checkout, no test expectations modified",
+  "checkout_commit_observed_after_run": "84fa61b678d46c9d2c4fbcabcf228cda5a82c6ef",
+  "checkout_commit_observed_before_run": null,
+  "head_stable_during_run": null
+}

@@ -1,0 +1,110 @@
+{
+  "schema": "grok-swarm-lab.lean-verification.v1",
+  "reviewed_commit": "6910e0730c44bc37a65c44d3f7a5c9f2d7bf6a85",
+  "compiler_version": "Lean (version 4.35.0, x86_64-w64-windows-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+  "artifacts": [
+    {
+      "artifact": "root",
+      "sources": [
+        {
+          "path": "lean4/LggrVII.lean",
+          "sha256": "bfa2af7f8da648ea0bd4e0a735f1f13ada50e6f25ece0ddf79fe1b2be19bfd6d",
+          "git_blob_sha1": "ebe6139075d3494ab2a4227af2a8cf11ebee83e5"
+        },
+        {
+          "path": "lean4/LggrVIII.lean",
+          "sha256": "f4e95c89530fd921f497ac48ff3bea7de18726efbba5300334c41f4d02d899ec",
+          "git_blob_sha1": "2b4cf638402fca68d29fec99d6158e1cd13466a8"
+        },
+        {
+          "path": "lean4/CheckAxioms.lean",
+          "sha256": "7faf05d6c32dae4a91a5832b69784d0a4fcde69f77e7066bbeeee901b595f8ec",
+          "git_blob_sha1": "3a269ef757df4dcd0af376cd1b5c7fac40d7d0e3"
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "c:\\Users\\a343o\\source\\repos\\.elan\\toolchains\\leanprover--lean4---v4.35.0\\bin\\lean.exe",
+            "-o",
+            "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\root\\LggrVII.olean",
+            "LggrVII.lean"
+          ],
+          "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\root",
+          "exit_code": 0,
+          "elapsed_seconds": 1.605998499901034,
+          "log": "lean-root-LggrVII.txt"
+        },
+        {
+          "command": [
+            "c:\\Users\\a343o\\source\\repos\\.elan\\toolchains\\leanprover--lean4---v4.35.0\\bin\\lean.exe",
+            "-o",
+            "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\root\\LggrVIII.olean",
+            "LggrVIII.lean"
+          ],
+          "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\root",
+          "exit_code": 0,
+          "elapsed_seconds": 4.063613700098358,
+          "log": "lean-root-LggrVIII.txt"
+        },
+        {
+          "command": [
+            "c:\\Users\\a343o\\source\\repos\\.elan\\toolchains\\leanprover--lean4---v4.35.0\\bin\\lean.exe",
+            "-o",
+            "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\root\\CheckAxioms.olean",
+            "CheckAxioms.lean"
+          ],
+          "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\root",
+          "exit_code": 0,
+          "elapsed_seconds": 2.231629900052212,
+          "log": "lean-root-CheckAxioms.txt"
+        }
+      ],
+      "all_succeeded": true
+    },
+    {
+      "artifact": "paper-local",
+      "sources": [
+        {
+          "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/LggrVIII.lean",
+          "sha256": "090edff770a9d8ec8da8654b7bbcaf43955e7765c8889084ce0c72a7a8429260",
+          "git_blob_sha1": "246337d058212bd0b3799b029129563ad7e5b572"
+        },
+        {
+          "path": "papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lean4/CheckAxioms.lean",
+          "sha256": "6a8f97850bbc2ebb32877f4edd9c778ccbd9e6a075a16695894633b0e622485f",
+          "git_blob_sha1": "57697b592f96c1bc8dccbbde60d70aacd1853f45"
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "c:\\Users\\a343o\\source\\repos\\.elan\\toolchains\\leanprover--lean4---v4.35.0\\bin\\lean.exe",
+            "-o",
+            "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\paper-local\\LggrVIII.olean",
+            "LggrVIII.lean"
+          ],
+          "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\paper-local",
+          "exit_code": 0,
+          "elapsed_seconds": 2.7403693998930976,
+          "log": "lean-paper-local-LggrVIII.txt"
+        },
+        {
+          "command": [
+            "c:\\Users\\a343o\\source\\repos\\.elan\\toolchains\\leanprover--lean4---v4.35.0\\bin\\lean.exe",
+            "-o",
+            "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\paper-local\\CheckAxioms.olean",
+            "CheckAxioms.lean"
+          ],
+          "cwd": "C:\\Users\\a343o\\source\\repos\\lggr\\experiments\\grok_swarm_lab\\evidence\\upstream\\lean\\paper-local",
+          "exit_code": 0,
+          "elapsed_seconds": 2.920244700042531,
+          "log": "lean-paper-local-CheckAxioms.txt"
+        }
+      ],
+      "all_succeeded": true
+    }
+  ],
+  "scope": "Original source modules and original axiom census compiled separately. No application-specific theorem added, no identification of the two C10 orientations, no source archive or deployment certification.",
+  "all_succeeded": true
+}

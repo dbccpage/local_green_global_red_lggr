@@ -1,0 +1,270 @@
+test_audit_receipt_replay_and_tampering (pinned_original_test_0.CliTests.test_audit_receipt_replay_and_tampering) ... ok
+test_bad_audit_exits_nonzero (pinned_original_test_0.CliTests.test_bad_audit_exits_nonzero) ... ok
+test_collision_certificate_replay (pinned_original_test_0.CliTests.test_collision_certificate_replay) ... ok
+test_collision_is_a_negative_result (pinned_original_test_0.CliTests.test_collision_is_a_negative_result) ... ok
+test_demo_runs (pinned_original_test_0.CliTests.test_demo_runs) ... ok
+test_duplicate_keys_rejected_at_parser_boundary (pinned_original_test_0.CliTests.test_duplicate_keys_rejected_at_parser_boundary) ... ok
+test_good_audit_exits_zero (pinned_original_test_0.CliTests.test_good_audit_exits_zero) ... ok
+test_invalid_input_returns_json_error_not_traceback (pinned_original_test_0.CliTests.test_invalid_input_returns_json_error_not_traceback) ... ok
+test_missing_file_is_input_error (pinned_original_test_0.CliTests.test_missing_file_is_input_error) ... ok
+test_optimized_python_does_not_disable_validation (pinned_original_test_0.CliTests.test_optimized_python_does_not_disable_validation) ... ok
+test_positive_linear_certificate (pinned_original_test_0.CliTests.test_positive_linear_certificate) ... ok
+test_reflection_passes_on_retraction (pinned_original_test_0.CliTests.test_reflection_passes_on_retraction) ... ok
+test_require_reflection_fails_on_lossy_map (pinned_original_test_0.CliTests.test_require_reflection_fails_on_lossy_map) ... ok
+test_selftest_exits_zero (pinned_original_test_0.CliTests.test_selftest_exits_zero) ... ok
+test_selftest_with_output_file (pinned_original_test_0.CliTests.test_selftest_with_output_file) ... ok
+test_stdin_and_output_file (pinned_original_test_0.CliTests.test_stdin_and_output_file) ... ok
+test_stream_audit_alert_exits_nonzero (pinned_original_test_0.CliTests.test_stream_audit_alert_exits_nonzero) ... ok
+test_stream_audit_composable_exits_zero (pinned_original_test_0.CliTests.test_stream_audit_composable_exits_zero) ... ok
+test_stream_cochain_cycle_defect_exits_nonzero (pinned_original_test_0.CliTests.test_stream_cochain_cycle_defect_exits_nonzero) ... ok
+test_stream_cochain_open_tree_exits_zero (pinned_original_test_0.CliTests.test_stream_cochain_open_tree_exits_zero) ... ok
+test_stream_fiber_collision_exits_nonzero (pinned_original_test_0.CliTests.test_stream_fiber_collision_exits_nonzero) ... ok
+test_stream_fiber_composable_exits_zero (pinned_original_test_0.CliTests.test_stream_fiber_composable_exits_zero) ... ok
+test_stream_help (pinned_original_test_0.CliTests.test_stream_help) ... ok
+test_unknown_command_fails (pinned_original_test_0.CliTests.test_unknown_command_fails) ... ok
+test_a_collision_receipt_cannot_claim_realized_failure (pinned_original_test_1.DescentTests.test_a_collision_receipt_cannot_claim_realized_failure) ... ok
+test_all_eight_defects (pinned_original_test_1.DescentTests.test_all_eight_defects) ... ok
+test_boolean_and_integer_reports_remain_distinct (pinned_original_test_1.DescentTests.test_boolean_and_integer_reports_remain_distinct) ... ok
+test_boolean_and_integer_targets_remain_distinct (pinned_original_test_1.DescentTests.test_boolean_and_integer_targets_remain_distinct) ... ok
+test_certificate_does_not_alias_mutable_input (pinned_original_test_1.DescentTests.test_certificate_does_not_alias_mutable_input) ... ok
+test_collision_is_not_a_realized_violation (pinned_original_test_1.DescentTests.test_collision_is_not_a_realized_violation) ... ok
+test_complete_216_case_census (pinned_original_test_1.DescentTests.test_complete_216_case_census) ... ok
+test_defect_rejects_non_boolean_numbers (pinned_original_test_1.DescentTests.test_defect_rejects_non_boolean_numbers) ... ok
+test_duplicate_state_ids_rejected (pinned_original_test_1.DescentTests.test_duplicate_state_ids_rejected) ... ok
+test_empty_carrier_is_explicitly_vacuous (pinned_original_test_1.DescentTests.test_empty_carrier_is_explicitly_vacuous) ... ok
+test_extra_authorization_field_cannot_be_smuggled_into_certificate (pinned_original_test_1.DescentTests.test_extra_authorization_field_cannot_be_smuggled_into_certificate) ... ok
+test_malformed_certificate_rejected (pinned_original_test_1.DescentTests.test_malformed_certificate_rejected) ... ok
+test_object_key_order_does_not_invent_distinctions (pinned_original_test_1.DescentTests.test_object_key_order_does_not_invent_distinctions) ... ok
+test_refinement_decodes_on_realized_image (pinned_original_test_1.DescentTests.test_refinement_decodes_on_realized_image) ... ok
+test_row_order_is_irrelevant (pinned_original_test_1.DescentTests.test_row_order_is_irrelevant) ... ok
+test_tampered_collision_fails_replay (pinned_original_test_1.DescentTests.test_tampered_collision_fails_replay) ... ok
+test_tampered_decoder_or_table_fails_replay (pinned_original_test_1.DescentTests.test_tampered_decoder_or_table_fails_replay) ... ok
+test_unknown_fields_and_floats_rejected (pinned_original_test_1.DescentTests.test_unknown_fields_and_floats_rejected) ... ok
+test_unverified_semantic_caption_cannot_be_substituted (pinned_original_test_1.DescentTests.test_unverified_semantic_caption_cannot_be_substituted) ... ok
+test_budget_differences_are_exact (pinned_original_test_2.LinearTests.test_budget_differences_are_exact) ... ok
+test_dual_bound_against_independent_finite_potential_search (pinned_original_test_2.LinearTests.test_dual_bound_against_independent_finite_potential_search) ... ok
+test_exact_elimination_requires_row_swap (pinned_original_test_2.LinearTests.test_exact_elimination_requires_row_swap) ... ok
+test_exact_matching_certificate_proves_phi_one (pinned_original_test_2.LinearTests.test_exact_matching_certificate_proves_phi_one) ... ok
+test_exact_repair_proves_zero_optimum (pinned_original_test_2.LinearTests.test_exact_repair_proves_zero_optimum) ... ok
+test_filled_triangle_has_closure_failure_not_H1_class (pinned_original_test_2.LinearTests.test_filled_triangle_has_closure_failure_not_H1_class) ... ok
+test_float_and_boolean_coefficients_are_rejected (pinned_original_test_2.LinearTests.test_float_and_boolean_coefficients_are_rejected) ... ok
+test_fractional_weights_are_exact (pinned_original_test_2.LinearTests.test_fractional_weights_are_exact) ... ok
+test_missing_D1_does_not_invent_a_cohomology_class (pinned_original_test_2.LinearTests.test_missing_D1_does_not_invent_a_cohomology_class) ... ok
+test_negative_lower_bound_does_not_prove_nonrepairability (pinned_original_test_2.LinearTests.test_negative_lower_bound_does_not_prove_nonrepairability) ... ok
+test_noncomplex_is_rejected (pinned_original_test_2.LinearTests.test_noncomplex_is_rejected) ... ok
+test_nonmatching_primal_proves_lower_bound_not_optimum (pinned_original_test_2.LinearTests.test_nonmatching_primal_proves_lower_bound_not_optimum) ... ok
+test_shape_and_denominator_errors_are_rejected (pinned_original_test_2.LinearTests.test_shape_and_denominator_errors_are_rejected) ... ok
+test_unbounded_dual_rejected_even_when_pairing_matches (pinned_original_test_2.LinearTests.test_unbounded_dual_rejected_even_when_pairing_matches) ... ok
+test_underdetermined_and_inconsistent_exact_systems (pinned_original_test_2.LinearTests.test_underdetermined_and_inconsistent_exact_systems) ... ok
+test_unfilled_triangle_is_closed_nonexact (pinned_original_test_2.LinearTests.test_unfilled_triangle_is_closed_nonexact) ... ok
+test_wrong_annihilator_cannot_certify_a_bound (pinned_original_test_2.LinearTests.test_wrong_annihilator_cannot_certify_a_bound) ... ok
+test_zero_and_negative_weights_are_invalid_input (pinned_original_test_2.LinearTests.test_zero_and_negative_weights_are_invalid_input) ... ok
+test_empty_traces_rate_computation (pinned_original_test_3.TestEmpiricalDefectRateComputation.test_empty_traces_rate_computation)
+F09-1: Empty traces yield zero rates and safe partition identity. ... ok
+test_homogeneous_ngd_rates (pinned_original_test_3.TestEmpiricalDefectRateComputation.test_homogeneous_ngd_rates)
+F09-3: Homogeneous NGD traces yield 1.0 NGD rate and -1.0 mean defect. ... ok
+test_homogeneous_zdr_rates (pinned_original_test_3.TestEmpiricalDefectRateComputation.test_homogeneous_zdr_rates)
+F09-2: Homogeneous ZDR traces yield 1.0 ZDR rate and 0.0 NGD rate. ... ok
+test_mixed_distribution_rates_and_identity (pinned_original_test_3.TestEmpiricalDefectRateComputation.test_mixed_distribution_rates_and_identity)
+F09-4 & F09-5: Mixed traces compute exact rational proportions and partition identity. ... ok
+test_empirical_ngd_benchmark_replay (pinned_original_test_3.TestOfflineTraceReplay.test_empirical_ngd_benchmark_replay)
+Replay empirical NGD benchmark traces and verify Volume I Section 9 metrics. ... ok
+test_f10_test1_fiber_collision_replay (pinned_original_test_3.TestOfflineTraceReplay.test_f10_test1_fiber_collision_replay)
+F10: Replay Test 1 fiber collision trace and verify online detection. ... ok
+test_f11_test2_prefix_breach_replay (pinned_original_test_3.TestOfflineTraceReplay.test_f11_test2_prefix_breach_replay)
+F11: Replay Test 2 streaming prefix drift and verify mid-flight early stop. ... ok
+test_f12_test3_cochain_cycle_replay (pinned_original_test_3.TestOfflineTraceReplay.test_f12_test3_cochain_cycle_replay)
+F12: Replay Test 3 incremental 1-cochain cycle closure and L1 repair. ... ok
+test_f13_test4_composable_lggg_replay (pinned_original_test_3.TestOfflineTraceReplay.test_f13_test4_composable_lggg_replay)
+F13: Replay Test 4 boundary-sufficient schema and composable LGGG certification. ... ok
+test_openrouter_client_budget_guard (pinned_original_test_3.TestOpenRouterCredentialLoader.test_openrouter_client_budget_guard)
+Ensures request counter guard raises exception if completion limit exceeded. ... ok
+test_openrouter_keyword_and_env_resolution (pinned_original_test_3.TestOpenRouterCredentialLoader.test_openrouter_keyword_and_env_resolution)
+F08-1: Credential resolver handles OPENROUTER environment variables. ... ok
+test_openrouter_missing_file_graceful (pinned_original_test_3.TestOpenRouterCredentialLoader.test_openrouter_missing_file_graceful)
+F08-4: Nonexistent candidate paths return None without unhandled exception. ... ok
+test_openrouter_quote_and_comment_parsing (pinned_original_test_3.TestOpenRouterCredentialLoader.test_openrouter_quote_and_comment_parsing)
+F08-2 & F08-3: Parses quotes, whitespace, comments, and export prefix. ... ok
+test_every_prefix_vs_endpoint_scope (pinned_original_test_4.TestStreamingAuditMonitor.test_every_prefix_vs_endpoint_scope) ... FAIL
+test_g1_boundary_mismatch_alert (pinned_original_test_4.TestStreamingAuditMonitor.test_g1_boundary_mismatch_alert) ... ok
+test_g3_evaluator_defect_classification (pinned_original_test_4.TestStreamingAuditMonitor.test_g3_evaluator_defect_classification) ... ok
+test_good_history_passes (pinned_original_test_4.TestStreamingAuditMonitor.test_good_history_passes) ... ok
+test_obligations_retention (pinned_original_test_4.TestStreamingAuditMonitor.test_obligations_retention) ... ok
+test_exact_cycle_closure (pinned_original_test_4.TestStreamingCochainMonitor.test_exact_cycle_closure) ... ok
+test_fractional_weights_and_bottleneck (pinned_original_test_4.TestStreamingCochainMonitor.test_fractional_weights_and_bottleneck) ... ok
+test_inconsistent_triangle_l1_repair (pinned_original_test_4.TestStreamingCochainMonitor.test_inconsistent_triangle_l1_repair) ... ok
+test_invalid_weights_rejected (pinned_original_test_4.TestStreamingCochainMonitor.test_invalid_weights_rejected) ... ok
+test_open_tree (pinned_original_test_4.TestStreamingCochainMonitor.test_open_tree) ... ok
+test_distinct_reports_pass (pinned_original_test_4.TestStreamingFiberMonitor.test_distinct_reports_pass) ... ok
+test_duplicate_state_id_idempotency_and_conflict (pinned_original_test_4.TestStreamingFiberMonitor.test_duplicate_state_id_idempotency_and_conflict) ... ok
+test_fiber_collision_detection (pinned_original_test_4.TestStreamingFiberMonitor.test_fiber_collision_detection) ... ok
+test_identical_report_and_query_pass (pinned_original_test_4.TestStreamingFiberMonitor.test_identical_report_and_query_pass) ... ok
+test_initial_state (pinned_original_test_4.TestStreamingFiberMonitor.test_initial_state) ... ok
+test_type_sensitivity_preservation (pinned_original_test_4.TestStreamingFiberMonitor.test_type_sensitivity_preservation) ... ok
+test_adversarial_forced_multi_pivot_dense_b1_30 (pinned_original_test_5.TestHigherGenusLatencyAndPivots.test_adversarial_forced_multi_pivot_dense_b1_30)
+Dense graph (b_1 = 30) where heavy spanning tree is non-optimal and forces cut pivots. ... ok
+test_k9_complete_graph_b1_28_adversarial_weight_ties (pinned_original_test_5.TestHigherGenusLatencyAndPivots.test_k9_complete_graph_b1_28_adversarial_weight_ties)
+Complete directed graph K9 (|V|=9, |E|=36, b_1=28) with 3-tier tied weights. ... ok
+test_toroidal_grid_6x6_b1_37_degenerate_chords (pinned_original_test_5.TestHigherGenusLatencyAndPivots.test_toroidal_grid_6x6_b1_37_degenerate_chords)
+6x6 torus grid (|V|=36, |E|=72, b_1=37) with uniform/degenerate rational weights. ... ok
+test_coarsened_macro_stage_masks_internal_prefix_breach (pinned_original_test_5.TestStreamingAuditBranchSplice.test_coarsened_macro_stage_masks_internal_prefix_breach)
+Grouping steps [1, 2] on trajectory (0 -> 1 -> 3 -> 1) with B=2 detects masked excursion. ... ok
+test_synthesize_minimal_refinement_resolves_or_refuses_collision (pinned_original_test_5.TestStreamingAuditBranchSplice.test_synthesize_minimal_refinement_resolves_or_refuses_collision)
+Synthesize minimal metadata key subset that restores report-fiber sufficiency. ... ok
+test_two_locally_green_stage_traces_breach_budget_on_splice (pinned_original_test_5.TestStreamingAuditBranchSplice.test_two_locally_green_stage_traces_breach_budget_on_splice)
+Two sub-traces each have |Delta| = 2 <= 3 (COMPOSABLE_LGGG) but splice to |Delta| = 4 > 3. ... ok
+test_bell_polytope_chsh_threshold_and_negative_mass (pinned_original_test_5.TestStreamingBaselineComparator.test_bell_polytope_chsh_threshold_and_negative_mass)
+Verify LGGR VII 4-context CHSH Bell polytope bound, v=1/2 threshold, and N_min / CF identity. ... ok
+test_catalyst_degradation_residual_accumulation_and_cycle_ceiling (pinned_original_test_5.TestStreamingBaselineComparator.test_catalyst_degradation_residual_accumulation_and_cycle_ceiling)
+Verify constructor catalyst degradation monitor separates bounded cycles from multi-cycle exhaustion NGD. ... ok
+test_coalitional_shapley_attribution_and_nonadditive_defect (pinned_original_test_5.TestStreamingBaselineComparator.test_coalitional_shapley_attribution_and_nonadditive_defect)
+Verify LGGR II exact rational Shapley attribution axioms and non-additive evaluator defect separation. ... ok
+test_comparative_evaluation_across_excursions_migrations_and_obligations (pinned_original_test_5.TestStreamingBaselineComparator.test_comparative_evaluation_across_excursions_migrations_and_obligations)
+Compare conventional local+endpoint checker against LGGR across 4 trace classes. ... FAIL
+test_completion_relative_obstruction_and_moving_witnesses (pinned_original_test_5.TestStreamingBaselineComparator.test_completion_relative_obstruction_and_moving_witnesses)
+Verify LGGR IV moving-witness stage collisions and 3x+1 mod 2^n completion obstruction. ... ok
+test_contextual_sheaf_three_cycle_presheaf_obstruction_vs_global_section (pinned_original_test_5.TestStreamingBaselineComparator.test_contextual_sheaf_three_cycle_presheaf_obstruction_vs_global_section)
+Verify 3-cycle empirical presheaf monitor separates Specker hollow-triangle contextuality from global joint sections. ... ok
+test_cptp_trace_preservation_blindspot_and_composition (pinned_original_test_5.TestStreamingBaselineComparator.test_cptp_trace_preservation_blindspot_and_composition)
+Verify Kraus channel R_TP = sum K_r^T K_r - I_d, state-blindspot masking, and composition identity. ... ok
+test_cycle_basis_sensitivity_and_complementary_slackness (pinned_original_test_5.TestStreamingBaselineComparator.test_cycle_basis_sensitivity_and_complementary_slackness)
+Verify fundamental cycle matrix C D0 = 0 and complementary slackness on coupled diamond. ... ok
+test_dashboard_adequacy_reconstruction_and_collapsing_detector (pinned_original_test_5.TestStreamingBaselineComparator.test_dashboard_adequacy_reconstruction_and_collapsing_detector)
+Verify LGGR I (E9-E18) and LGGR II (M6-M7) dashboard reconstruction and collapsing detector. ... ok
+test_defect_soundness_coupled_compensation_and_minkowski_repair (pinned_original_test_5.TestStreamingBaselineComparator.test_defect_soundness_coupled_compensation_and_minkowski_repair)
+Verify LGGR V realizable soundness (im(D) cap ker(Q) == {0}), stealth scaling, and Minkowski repair. ... ok
+test_dfa_grammar_gluing_boundary_state_mismatch_vs_reset_coherence (pinned_original_test_5.TestStreamingBaselineComparator.test_dfa_grammar_gluing_boundary_state_mismatch_vs_reset_coherence)
+Verify DFA tape grammar gluing separates non-reset accepting boundary NGD from reset-coherent LGGG. ... ok
+test_discrete_curvature_hodge_laplacian_dirichlet_energy_and_kernel (pinned_original_test_5.TestStreamingBaselineComparator.test_discrete_curvature_hodge_laplacian_dirichlet_energy_and_kernel)
+Verify discrete 1-form Hodge Laplacian Dirichlet energy identity and harmonic kernel separation. ... ok
+test_disjoint_colliding_pairs_and_predictor_error_ceiling (pinned_original_test_5.TestStreamingBaselineComparator.test_disjoint_colliding_pairs_and_predictor_error_ceiling)
+Verify disjoint colliding-pair packing and majority-vote error floor. ... ok
+test_gram_probe_monitor_and_nullspace_blindspot (pinned_original_test_5.TestStreamingBaselineComparator.test_gram_probe_monitor_and_nullspace_blindspot)
+Verify LGGR VI Gram kernel identity, centered two-query probe, sign-cube recovery, and ker(Q) blindspot. ... ok
+test_hodge_decomposition_exact_coexact_and_harmonic_separation (pinned_original_test_5.TestStreamingBaselineComparator.test_hodge_decomposition_exact_coexact_and_harmonic_separation)
+Verify orthogonal discrete Hodge decomposition into exact, coexact, and harmonic components. ... ok
+test_mayer_vietoris_local_exactness_and_connecting_obstruction (pinned_original_test_5.TestStreamingBaselineComparator.test_mayer_vietoris_local_exactness_and_connecting_obstruction)
+Verify Mayer-Vietoris connecting homomorphism obstruction on locally exact subcomplex covers. ... ok
+test_organizational_gluing_weak_sufficiency_and_carrier_mixing (pinned_original_test_5.TestStreamingBaselineComparator.test_organizational_gluing_weak_sufficiency_and_carrier_mixing)
+Verify LGGR II weak vs. product sufficiency (M3/M4) and carrier-mixing forced NGD (M8/M9). ... ok
+test_path_kernel_composition_and_two_channel_discrepancy (pinned_original_test_5.TestStreamingBaselineComparator.test_path_kernel_composition_and_two_channel_discrepancy)
+Verify LGGR I / III evaluated path-kernel composition and two-channel residual decomposition. ... ok
+test_product_retraction_residual_vs_local_extension (pinned_original_test_5.TestStreamingBaselineComparator.test_product_retraction_residual_vs_local_extension)
+Verify LGGR VII product-state retraction residual F_p = p - p_A x p_B vs. local LHV extension. ... ok
+test_pullback_square_compatibility_and_universal_cone_mediator (pinned_original_test_5.TestStreamingBaselineComparator.test_pullback_square_compatibility_and_universal_cone_mediator)
+Verify categorical fibered pullback monitor separates interface mismatch NGD from universal cone mediators. ... ok
+test_regge_deficit_curvature_and_discrete_gauss_bonnet (pinned_original_test_5.TestStreamingBaselineComparator.test_regge_deficit_curvature_and_discrete_gauss_bonnet)
+Verify 2D Regge hinge deficit curvature monitor separates conical apex NGD from flat 6-triangle stars. ... ok
+test_replay_order_endpoint_invariance_and_prefix_divergence (pinned_original_test_5.TestStreamingBaselineComparator.test_replay_order_endpoint_invariance_and_prefix_divergence)
+Verify LGGR VIII commutative endpoint invariance vs. arrival-masked causal prefix breach. ... ok
+test_rsi_fiber_ceiling_invariance_and_refinement (pinned_original_test_5.TestStreamingBaselineComparator.test_rsi_fiber_ceiling_invariance_and_refinement)
+Verify LGGR VII evidence-preserving RSI fiber ceiling invariance across generations and refinement. ... ok
+test_simplicial_cup_product_and_leibniz_cocycle_identity (pinned_original_test_5.TestStreamingBaselineComparator.test_simplicial_cup_product_and_leibniz_cocycle_identity)
+Verify Alexander-Whitney discrete cup product and graded Leibniz cocycle identity on 2-simplices. ... ok
+test_six_role_overlay_and_cancellation_masking (pinned_original_test_5.TestStreamingBaselineComparator.test_six_role_overlay_and_cancellation_masking)
+Verify LGGR III six-role overlay context guards and D=0 vs M>0 cancellation masking. ... ok
+test_threshold_governance_quorum_vs_product_defect (pinned_original_test_5.TestStreamingBaselineComparator.test_threshold_governance_quorum_vs_product_defect)
+Verify LGGR II k-of-n quorum threshold vs. strict product aggregator defect separation. ... ok
+test_windowed_drift_horizon_breach_and_partition_bound (pinned_original_test_5.TestStreamingBaselineComparator.test_windowed_drift_horizon_breach_and_partition_bound)
+Verify LGGR I/VIII sliding-window local green vs. full-horizon cumulative budget breach. ... ok
+test_cli_stream_minimax_mode_and_selftest (pinned_original_test_5.TestStreamingPositiveExtensionMonitor.test_cli_stream_minimax_mode_and_selftest)
+Exercise CLI stream --monitor minimax and selftest entry points. ... ok
+test_ghz_rnd2_vs_mermin_q58_order_reversal (pinned_original_test_5.TestStreamingPositiveExtensionMonitor.test_ghz_rnd2_vs_mermin_q58_order_reversal)
+Certify CF > 2 * N_min at p_* (GHZ rnd2) and strict order reversal against Q_{5/8}. ... ok
+test_online_observer_fiber_minimax_floor_monotonicity (pinned_original_test_5.TestStreamingPositiveExtensionMonitor.test_online_observer_fiber_minimax_floor_monotonicity)
+Minimax error floor and midpoint estimator update monotonically on indistinguishable fibers. ... ok
+test_faithful_retraction_reflects_source_obstruction (pinned_original_test_5.TestStreamingTransportMonitor.test_faithful_retraction_reflects_source_obstruction)
+Faithful chain retraction (G1 F1 = I, G0 F0 = I) reflects cycle nonrepairability. ... ok
+test_lossy_chord_dropping_projection_masks_cycle_obstruction (pinned_original_test_5.TestStreamingTransportMonitor.test_lossy_chord_dropping_projection_masks_cycle_obstruction)
+Dropping the closing chord maps an obstructed 3-cycle onto a repairable 2-edge tree. ... ok
+test_synthesize_chain_retraction_success_and_impossibility (pinned_original_test_5.TestStreamingTransportMonitor.test_synthesize_chain_retraction_success_and_impossibility)
+Synthesize exact rational chain retraction (G0, G1) when injective, or reject when lossy. ... ok
+test_closed_nonexact_cohomology_around_unfilled_hole (pinned_original_test_5.TestStreamingTwoCellCohomology.test_closed_nonexact_cohomology_around_unfilled_hole)
+Filled triangle (D1 h = 0) glued to unfilled loop (h not in im(D0)) -> CLOSED_NONEXACT. ... ok
+test_filled_triangle_closure_failure_vs_exact (pinned_original_test_5.TestStreamingTwoCellCohomology.test_filled_triangle_closure_failure_vs_exact)
+Filled 2-cell detects local closure failure (D1 h != 0) vs exact coboundary. ... ok
+test_invalid_two_cell_boundary_detected (pinned_original_test_5.TestStreamingTwoCellCohomology.test_invalid_two_cell_boundary_detected)
+Open path declared as a 2-cell boundary violates D1 D0 = 0 -> INVALID_COMPLEX. ... ok
+test_concurrent_branch_cochain_merge (pinned_original_test_5.TestStressCochainMultiCycleAndWeights.test_concurrent_branch_cochain_merge)
+Two locally acyclic branch cochain monitors close frustrated cycles upon merge. ... ok
+test_coupled_diamond_shared_chord_vs_outer_pivot (pinned_original_test_5.TestStressCochainMultiCycleAndWeights.test_coupled_diamond_shared_chord_vs_outer_pivot)
+Coupled 2-cycle diamond graph in both shared-bottleneck and tree-pivot regimes. ... ok
+test_coupled_k4_tetrahedral_mesh_and_arrival_permutation_invariance (pinned_original_test_5.TestStressCochainMultiCycleAndWeights.test_coupled_k4_tetrahedral_mesh_and_arrival_permutation_invariance)
+K4 complete 4-agent mesh (6 edges, b1 = 3 coupled cycles) across 20 arrival orders. ... ok
+test_eight_cycle_cactus_heterogeneous_prime_weights (pinned_original_test_5.TestStressCochainMultiCycleAndWeights.test_eight_cycle_cactus_heterogeneous_prime_weights)
+8 edge-disjoint cycles with prime-denominator weights sum exactly. ... ok
+test_parallel_multi_edge_branch_merge_and_self_loop (pinned_original_test_5.TestStressCochainMultiCycleAndWeights.test_parallel_multi_edge_branch_merge_and_self_loop)
+Parallel edges between Fork and Join with heterogeneous rational weights. ... ok
+test_six_cycle_ladder_graph_heterogeneous_weights (pinned_original_test_5.TestStressCochainMultiCycleAndWeights.test_six_cycle_ladder_graph_heterogeneous_weights)
+6-cycle multi-stage ladder graph (14 vertices, 19 edges, b1 = 6 coupled cycles). ... ok
+test_asynchronous_interleaving_permutation_invariance_and_idempotency (pinned_original_test_5.TestStressFiberConcurrentBranchMerges.test_asynchronous_interleaving_permutation_invariance_and_idempotency)
+All 24 branch arrival permutations yield identical decoder or collision status. ... ok
+test_conflicting_reobservation_across_branch_merge_rejected (pinned_original_test_5.TestStressFiberConcurrentBranchMerges.test_conflicting_reobservation_across_branch_merge_rejected)
+Conflicting state_id payload during branch merge raises ValidationError. ... ok
+test_four_locally_green_branches_discover_cross_branch_lggr_on_merge (pinned_original_test_5.TestStressFiberConcurrentBranchMerges.test_four_locally_green_branches_discover_cross_branch_lggr_on_merge)
+Four branches are each COMPOSABLE_LGGG in isolation but collide on merge. ... ok
+test_lossy_map_can_kill_source_obstruction (pinned_original_test_6.TransportTests.test_lossy_map_can_kill_source_obstruction) ... ok
+test_lossy_map_commutes_without_reflection (pinned_original_test_6.TransportTests.test_lossy_map_commutes_without_reflection) ... ok
+test_noncommuting_forward_map_is_invalid (pinned_original_test_6.TransportTests.test_noncommuting_forward_map_is_invalid) ... ok
+test_nontrivial_permutation_retraction (pinned_original_test_6.TransportTests.test_nontrivial_permutation_retraction) ... ok
+test_partial_retraction_is_invalid_input (pinned_original_test_6.TransportTests.test_partial_retraction_is_invalid_input) ... ok
+test_wrong_left_inverse_cannot_certify_reflection (pinned_original_test_6.TransportTests.test_wrong_left_inverse_cannot_certify_reflection) ... ok
+test_wrong_shape_is_invalid_input (pinned_original_test_6.TransportTests.test_wrong_shape_is_invalid_input) ... ok
+test_zero_pseudoinverse_does_not_rescue_lossy_transport (pinned_original_test_6.TransportTests.test_zero_pseudoinverse_does_not_rescue_lossy_transport) ... ok
+test_accurate_negative_local_verdict_is_local_rejection (pinned_original_test_7.WitnessTests.test_accurate_negative_local_verdict_is_local_rejection) ... ok
+test_all_363_histories_up_to_five_states_against_independent_check (pinned_original_test_7.WitnessTests.test_all_363_histories_up_to_five_states_against_independent_check) ... ok
+test_authority_changes_do_not_self_authorize (pinned_original_test_7.WitnessTests.test_authority_changes_do_not_self_authorize) ... ok
+test_bad_trace_locally_green_globally_red (pinned_original_test_7.WitnessTests.test_bad_trace_locally_green_globally_red) ... ok
+test_baseline_must_be_legal (pinned_original_test_7.WitnessTests.test_baseline_must_be_legal) ... ok
+test_baseline_must_be_observed (pinned_original_test_7.WitnessTests.test_baseline_must_be_observed) ... ok
+test_baseline_only_is_scoped_zero_step_composition (pinned_original_test_7.WitnessTests.test_baseline_only_is_scoped_zero_step_composition) ... ok
+test_bool_is_not_an_integer_state (pinned_original_test_7.WitnessTests.test_bool_is_not_an_integer_state) ... ok
+test_boundary_mismatch_is_not_called_a_global_violation (pinned_original_test_7.WitnessTests.test_boundary_mismatch_is_not_called_a_global_violation) ... ok
+test_conflicting_values_for_same_identity_are_invalid (pinned_original_test_7.WitnessTests.test_conflicting_values_for_same_identity_are_invalid) ... ok
+test_duplicate_witness_is_invalid (pinned_original_test_7.WitnessTests.test_duplicate_witness_is_invalid) ... ok
+test_early_obligation_survives_later_empty_list (pinned_original_test_7.WitnessTests.test_early_obligation_survives_later_empty_list) ... ok
+test_empty_history_constructor_rejected (pinned_original_test_7.WitnessTests.test_empty_history_constructor_rejected) ... ok
+test_endpoint_and_every_prefix_are_distinct_explicit_queries (pinned_original_test_7.WitnessTests.test_endpoint_and_every_prefix_are_distinct_explicit_queries) ... ok
+test_evaluator_and_spec_changes_require_separate_transition (pinned_original_test_7.WitnessTests.test_evaluator_and_spec_changes_require_separate_transition) ... ok
+test_forged_magnitude_is_invalid (pinned_original_test_7.WitnessTests.test_forged_magnitude_is_invalid) ... ok
+test_forged_positive_local_verdict_is_invalid (pinned_original_test_7.WitnessTests.test_forged_positive_local_verdict_is_invalid) ... ok
+test_forged_smoke_verdict_is_invalid (pinned_original_test_7.WitnessTests.test_forged_smoke_verdict_is_invalid) ... ok
+test_good_trace (pinned_original_test_7.WitnessTests.test_good_trace) ... ok
+test_invalid_policy_rejected (pinned_original_test_7.WitnessTests.test_invalid_policy_rejected) ... ok
+test_multiple_failures_are_retained_not_hidden_by_primary_status (pinned_original_test_7.WitnessTests.test_multiple_failures_are_retained_not_hidden_by_primary_status) ... ok
+test_negative_and_nonunit_bounds (pinned_original_test_7.WitnessTests.test_negative_and_nonunit_bounds) ... ok
+test_policy_hash_binds_contents_not_just_name (pinned_original_test_7.WitnessTests.test_policy_hash_binds_contents_not_just_name) ... ok
+test_prior_obligations_are_retained (pinned_original_test_7.WitnessTests.test_prior_obligations_are_retained) ... ok
+test_protected_negative_probes_still_fail (pinned_original_test_7.WitnessTests.test_protected_negative_probes_still_fail) ... ok
+test_receipt_hash_reproduces_and_input_is_unchanged (pinned_original_test_7.WitnessTests.test_receipt_hash_reproduces_and_input_is_unchanged) ... ok
+test_reports_alone_do_not_establish_violation (pinned_original_test_7.WitnessTests.test_reports_alone_do_not_establish_violation) ... ok
+test_representation_change_is_not_silently_reinterpreted (pinned_original_test_7.WitnessTests.test_representation_change_is_not_silently_reinterpreted) ... ok
+test_signed_endpoints_can_reconstruct_missing_duplicate_value (pinned_original_test_7.WitnessTests.test_signed_endpoints_can_reconstruct_missing_duplicate_value) ... ok
+test_unknown_input_field_rejected (pinned_original_test_7.WitnessTests.test_unknown_input_field_rejected) ... ok
+
+======================================================================
+FAIL: test_every_prefix_vs_endpoint_scope (pinned_original_test_4.TestStreamingAuditMonitor.test_every_prefix_vs_endpoint_scope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\a343o\source\repos\lggr\tests\test_streaming.py", line 143, in test_every_prefix_vs_endpoint_scope
+    self.assertEqual(r1_e["status"], "OK")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ALERT' != 'OK'
+- ALERT
++ OK
+
+
+======================================================================
+FAIL: test_comparative_evaluation_across_excursions_migrations_and_obligations (pinned_original_test_5.TestStreamingBaselineComparator.test_comparative_evaluation_across_excursions_migrations_and_obligations)
+Compare conventional local+endpoint checker against LGGR across 4 trace classes.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\a343o\source\repos\lggr\tests\test_stress_multicycle_and_merges.py", line 929, in test_comparative_evaluation_across_excursions_migrations_and_obligations
+    self.assertEqual(summary["conventional_false_acceptances"], 3)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 2
+
+----------------------------------------------------------------------
+Ran 179 tests in 10.599s
+
+FAILED (failures=2)

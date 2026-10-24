@@ -209,7 +209,7 @@ def mermin_chi(x: int, y: int, z: int) -> int:
 
 def build_pstar_behavior() -> List[Fraction]:
     """Construct the exact 64-entry behavior table p_* from Theorem 12 of
-    036_bell_positive_extensions_and_projection_residuals:
+    003_bell_positive_extensions_and_projection_residuals:
       p_* = (1/6) W + (1/3) l_63 + (5/12) G + (1/12) Q_{5/8}
     where:
       - W is uniform (1/4) on the 4 even-parity bit triples (a ^ b ^ c == 0) in every context;

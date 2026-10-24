@@ -1,0 +1,87 @@
+{
+  "schema": "grok-swarm-lab.upstream-source.v1",
+  "repository": "https://github.com/dbccpage/local_green_global_red_lggr",
+  "reviewed_commit": "6910e0730c44bc37a65c44d3f7a5c9f2d7bf6a85",
+  "checkout_commit_at_export": "84fa61b678d46c9d2c4fbcabcf228cda5a82c6ef",
+  "dependency_modified": false,
+  "export_scope": "Tracked lggr/*.py recursively and root LICENSE only",
+  "files": [
+    {
+      "upstream_path": "lggr/__init__.py",
+      "bundled_path": "vendor/lggr/__init__.py",
+      "size_bytes": 3023,
+      "git_blob_sha1": "42b4c30501b1d84430b568a430a4f93b1c7d7be2",
+      "sha256": "0da12e30a801da0821b3af45e827c28fe6bb7aff8a6674f747fc8d0ef69a66cd"
+    },
+    {
+      "upstream_path": "lggr/__main__.py",
+      "bundled_path": "vendor/lggr/__main__.py",
+      "size_bytes": 18193,
+      "git_blob_sha1": "49fdf6942981356d4390774976d3923e9a3ab4e3",
+      "sha256": "e521de149e15396a3009987cd25d2b59b2660b61224a66e3a78718843f1703c9"
+    },
+    {
+      "upstream_path": "lggr/benchmarks.py",
+      "bundled_path": "vendor/lggr/benchmarks.py",
+      "size_bytes": 33184,
+      "git_blob_sha1": "ce0c07fa4498c0f8a073c95c2d188144ebccef1e",
+      "sha256": "c11915b47a02cd3bdb3438c78c9c3fad44bb7312ade3cf2aa5f69b84f1b86481"
+    },
+    {
+      "upstream_path": "lggr/common.py",
+      "bundled_path": "vendor/lggr/common.py",
+      "size_bytes": 3782,
+      "git_blob_sha1": "396a74886e52a7ee4feb95ad8f68fedd61e133a6",
+      "sha256": "3d6f43da81d09798c1e26b958006a00b5fc0ee5e6c62f6223258132b38340bc9"
+    },
+    {
+      "upstream_path": "lggr/descent.py",
+      "bundled_path": "vendor/lggr/descent.py",
+      "size_bytes": 6659,
+      "git_blob_sha1": "301a617ee2b8bc8974c6317d10ddb7f6be5064e8",
+      "sha256": "abbcf1cf60744b3d7cb23c4117cff38037922d5e25eabbb9dd80118de6588643"
+    },
+    {
+      "upstream_path": "lggr/examples.py",
+      "bundled_path": "vendor/lggr/examples.py",
+      "size_bytes": 6403,
+      "git_blob_sha1": "bfb14453ce9aeeebe540c6deee2c48144d519e7b",
+      "sha256": "f0c76f16aa9e65e866fcb71f934f9f7e01a17f3853a305d0f3a5ba05554cd90f"
+    },
+    {
+      "upstream_path": "lggr/linear.py",
+      "bundled_path": "vendor/lggr/linear.py",
+      "size_bytes": 7995,
+      "git_blob_sha1": "0b2e5429df5ec8ddb6ea633355872da89c285e42",
+      "sha256": "743a523ba8a2fdd36e840df86cb887592655e754bcad11761928920ecb15ddd9"
+    },
+    {
+      "upstream_path": "lggr/streaming.py",
+      "bundled_path": "vendor/lggr/streaming.py",
+      "size_bytes": 289913,
+      "git_blob_sha1": "f3cedfa2766c1120d9285c4d4266ecd8b7f9ddab",
+      "sha256": "127ab88222f1e7f40bf74395a8c9a08d4fcd1c7c2481a85b7bda77b5b49958e1"
+    },
+    {
+      "upstream_path": "lggr/transport.py",
+      "bundled_path": "vendor/lggr/transport.py",
+      "size_bytes": 2714,
+      "git_blob_sha1": "f6d82b45c48a64577377677f2789b45f1e6c897c",
+      "sha256": "e7036ce386a0dd36618d3ea20f534eff526949c9d9538475736dc0bf755be730"
+    },
+    {
+      "upstream_path": "lggr/witnesses.py",
+      "bundled_path": "vendor/lggr/witnesses.py",
+      "size_bytes": 14984,
+      "git_blob_sha1": "97c38fb24643cfa8492de09f527df6805e17df9c",
+      "sha256": "7a8ada3328a13201ca1c891eda59e79992cf28cc82547fcf7da5eeab9813c9a4"
+    },
+    {
+      "upstream_path": "LICENSE",
+      "bundled_path": "vendor/LICENSE",
+      "size_bytes": 11366,
+      "git_blob_sha1": "636f75f4df1c09480e94ae5da4dd2b32c639d1cb",
+      "sha256": "78d430850e29228f33758f63df85047d1016367557b02238159a67e8b44b212b"
+    }
+  ]
+}

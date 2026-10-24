@@ -1,0 +1,8 @@
+{
+  "action": "commit",
+  "admitted": true,
+  "elapsed_ns": 42683900,
+  "meaning": "successful replay preserves negative/deferred decisions; it does not grant admission",
+  "replayed": true,
+  "run_id": "72f9c691c8937423"
+}

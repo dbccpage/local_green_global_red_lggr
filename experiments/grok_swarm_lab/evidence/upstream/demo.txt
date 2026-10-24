@@ -1,0 +1,589 @@
+{
+  "audits": {
+    "authority_changed": {
+      "arithmetic": {
+        "baseline": 0,
+        "bound": 1,
+        "endpoint_verdict": true,
+        "every_prefix_verdict": true,
+        "final": 0,
+        "global_verdict": true,
+        "prefix_checks": [
+          {
+            "signed_total": 1,
+            "within_bound": true,
+            "witness_id": "w001"
+          },
+          {
+            "signed_total": 0,
+            "within_bound": true,
+            "witness_id": "w002"
+          }
+        ],
+        "query_scope": "endpoint",
+        "signed_deltas": [
+          1,
+          -1
+        ],
+        "signed_total": 0
+      },
+      "authority_effect": "None",
+      "composition_certified": false,
+      "findings": [
+        {
+          "code": "SEMANTIC_SCOPE_CHANGED",
+          "evidence": {
+            "actual": "different-owner/v2",
+            "expected": "external-owner/v1",
+            "field": "authority_id"
+          },
+          "kind": "AUTHORITY_REQUIRED",
+          "message": "A changed evaluator, specification or authority needs a separately admitted transition.",
+          "witness_id": "w002"
+        }
+      ],
+      "input_sha256": "50fb0721eb3fd6457896b0910ae4d61949d391413b353449ab7b1473ba992407",
+      "local_checks": [
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": 1,
+          "witness_id": "w001"
+        },
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": -1,
+          "witness_id": "w002"
+        }
+      ],
+      "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+      "query_scope": "endpoint",
+      "receipt_sha256": "dbf764a9b03e305a8e139c35c9c190123c2f47fc3ff4177682a53b90c2ffb5e1",
+      "schema": "lggr.audit.v1",
+      "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+      "status": "AUTHORITY_REQUIRED",
+      "unresolved_obligations": []
+    },
+    "bad_history": {
+      "arithmetic": {
+        "baseline": 0,
+        "bound": 1,
+        "endpoint_verdict": false,
+        "every_prefix_verdict": false,
+        "final": 2,
+        "global_verdict": false,
+        "prefix_checks": [
+          {
+            "signed_total": 1,
+            "within_bound": true,
+            "witness_id": "w001"
+          },
+          {
+            "signed_total": 2,
+            "within_bound": false,
+            "witness_id": "w002"
+          }
+        ],
+        "query_scope": "endpoint",
+        "signed_deltas": [
+          1,
+          1
+        ],
+        "signed_total": 2
+      },
+      "authority_effect": "None",
+      "composition_certified": false,
+      "findings": [
+        {
+          "code": "PROTECTED_QUERY_FALSE",
+          "evidence": {
+            "bound": 1,
+            "query_scope": "endpoint",
+            "signed_total": 2,
+            "violated_prefixes": [
+              {
+                "signed_total": 2,
+                "within_bound": false,
+                "witness_id": "w002"
+              }
+            ]
+          },
+          "kind": "OBSTRUCTION_DETECTED",
+          "message": "The supplied endpoint evidence falsifies the declared cumulative requirement.",
+          "witness_id": null
+        }
+      ],
+      "input_sha256": "f780a827d689a08750583b29045a6377c5b0ac17c32dfc208cb9237b1651f124",
+      "local_checks": [
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": 1,
+          "witness_id": "w001"
+        },
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": 1,
+          "witness_id": "w002"
+        }
+      ],
+      "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+      "query_scope": "endpoint",
+      "receipt_sha256": "e19b9595d1f3dea13a1cf03f720d1f037787d5de0714ba1dd7e76e3c28dc86fb",
+      "schema": "lggr.audit.v1",
+      "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+      "status": "OBSTRUCTION_DETECTED",
+      "unresolved_obligations": []
+    },
+    "good_history": {
+      "arithmetic": {
+        "baseline": 0,
+        "bound": 1,
+        "endpoint_verdict": true,
+        "every_prefix_verdict": true,
+        "final": 0,
+        "global_verdict": true,
+        "prefix_checks": [
+          {
+            "signed_total": 1,
+            "within_bound": true,
+            "witness_id": "w001"
+          },
+          {
+            "signed_total": 0,
+            "within_bound": true,
+            "witness_id": "w002"
+          }
+        ],
+        "query_scope": "endpoint",
+        "signed_deltas": [
+          1,
+          -1
+        ],
+        "signed_total": 0
+      },
+      "authority_effect": "None",
+      "composition_certified": true,
+      "findings": [],
+      "input_sha256": "f06c88de351d300be059564b91a4b6f2ea87726431d61e32598d3826a42e568a",
+      "local_checks": [
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": 1,
+          "witness_id": "w001"
+        },
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": -1,
+          "witness_id": "w002"
+        }
+      ],
+      "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+      "query_scope": "endpoint",
+      "receipt_sha256": "6df1cf2759a30603ca0b8059aacc39ec4056ba02f9f4cfd9bde505d9bb0f4f68",
+      "schema": "lggr.audit.v1",
+      "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+      "status": "COMPOSITION_VERIFIED",
+      "unresolved_obligations": []
+    },
+    "open_obligation": {
+      "arithmetic": {
+        "baseline": 0,
+        "bound": 1,
+        "endpoint_verdict": true,
+        "every_prefix_verdict": true,
+        "final": 0,
+        "global_verdict": true,
+        "prefix_checks": [
+          {
+            "signed_total": 1,
+            "within_bound": true,
+            "witness_id": "w001"
+          },
+          {
+            "signed_total": 0,
+            "within_bound": true,
+            "witness_id": "w002"
+          }
+        ],
+        "query_scope": "endpoint",
+        "signed_deltas": [
+          1,
+          -1
+        ],
+        "signed_total": 0
+      },
+      "authority_effect": "None",
+      "composition_certified": false,
+      "findings": [
+        {
+          "code": "OPEN_OBLIGATIONS",
+          "evidence": {
+            "obligations": [
+              "verify-new-interface-semantics"
+            ]
+          },
+          "kind": "WITNESS_INCOMPLETE",
+          "message": "Unresolved obligations have been retained, not silently cleared.",
+          "witness_id": null
+        }
+      ],
+      "input_sha256": "2649dd61a74552f9cdf8dc539060f60c499fe0f2210b5f0f9110cc79d57754e6",
+      "local_checks": [
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": 1,
+          "witness_id": "w001"
+        },
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": true,
+          "protected_smoke_pass": true,
+          "signed_delta": -1,
+          "witness_id": "w002"
+        }
+      ],
+      "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+      "query_scope": "endpoint",
+      "receipt_sha256": "7a28b4ce0d0bf4e5918f6c39d09df4055cc15bca14faf2baeae977599c246b1a",
+      "schema": "lggr.audit.v1",
+      "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+      "status": "WITNESS_INCOMPLETE",
+      "unresolved_obligations": [
+        "verify-new-interface-semantics"
+      ]
+    },
+    "reports_only": {
+      "arithmetic": null,
+      "authority_effect": "None",
+      "composition_certified": false,
+      "findings": [
+        {
+          "code": "MISSING_ENDPOINT",
+          "evidence": {},
+          "kind": "WITNESS_INCOMPLETE",
+          "message": "Pass reports do not establish signed endpoint changes.",
+          "witness_id": "w001"
+        },
+        {
+          "code": "MISSING_ENDPOINT",
+          "evidence": {},
+          "kind": "WITNESS_INCOMPLETE",
+          "message": "Pass reports do not establish signed endpoint changes.",
+          "witness_id": "w002"
+        }
+      ],
+      "input_sha256": "cb1b6f2c3fb0ced545335c53d16d3d4f0daa9b30af06a554c55d2e6f011e4478",
+      "local_checks": [
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": null,
+          "signed_delta": null,
+          "witness_id": "w001"
+        },
+        {
+          "claimed_local_acceptance": true,
+          "claimed_smoke_pass": true,
+          "protected_policy_acceptance": null,
+          "signed_delta": null,
+          "witness_id": "w002"
+        }
+      ],
+      "policy_sha256": "11bec82f930676e31ec42450b419937e07c1c4db5b582d172098fd9c889eddbd",
+      "query_scope": "endpoint",
+      "receipt_sha256": "736e93cc917619e52f452113adb67ae14d68cb3ed81678ed68d5df24ba0d2f8b",
+      "schema": "lggr.audit.v1",
+      "scope": "Supplied finite trace under the protected budget policy; not runtime or merge authorization.",
+      "status": "WITNESS_INCOMPLETE",
+      "unresolved_obligations": []
+    }
+  },
+  "authority_effect": "None",
+  "cochains": {
+    "budget_exact_cochain": {
+      "authority_effect": "None",
+      "closure": [
+        "0"
+      ],
+      "input_sha256": "4d04a7675c1ece6938b7fdd8b117b1c794bd1fb0fd47e52d8ececa38575fbf6c",
+      "potential": [
+        "-2",
+        "-1",
+        "0"
+      ],
+      "repair_exists": true,
+      "represents_nonzero_H1": false,
+      "schema": "lggr.cochain.v1",
+      "status": "EXACT"
+    },
+    "triangle_filled": {
+      "authority_effect": "None",
+      "closure": [
+        "1"
+      ],
+      "input_sha256": "4e82e81561de1d336f9a618b28b0c76aef82488708be80fff13b6304f4ff2866",
+      "potential": null,
+      "repair_exists": false,
+      "represents_nonzero_H1": false,
+      "schema": "lggr.cochain.v1",
+      "status": "CLOSURE_FAILURE"
+    },
+    "triangle_unfilled": {
+      "authority_effect": "None",
+      "closure": [],
+      "input_sha256": "8455b4bfb398a5648588eb3adfca3f8f3ee1810b471342e0e505c6e18c6cfb2e",
+      "potential": null,
+      "repair_exists": false,
+      "represents_nonzero_H1": true,
+      "schema": "lggr.cochain.v1",
+      "status": "CLOSED_NONEXACT"
+    }
+  },
+  "comparison": {
+    "extra_detection_power_over_fixed_baseline_demonstrated": false,
+    "fixed_baseline_check_accepts_bad_history": false,
+    "previous_state_gate_accepts_bad_history": true,
+    "witness_adapter_accepts_bad_history": false
+  },
+  "descent": {
+    "refined_reports": {
+      "authority_effect": "None",
+      "carrier_size": 2,
+      "coverage": "supplied finite table only",
+      "decoder": [
+        {
+          "query": true,
+          "report": [
+            1,
+            -1
+          ]
+        },
+        {
+          "query": false,
+          "report": [
+            1,
+            1
+          ]
+        }
+      ],
+      "meaning": "The supplied query is constant on every realized report fiber in this finite table.",
+      "schema": "lggr.descent.v1",
+      "scope_id": "two-budget-histories/signed-deltas",
+      "status": "DECODER_VERIFIED",
+      "table_sha256": "81784f31da9b4103d6537ac4380bad3b9f6cbb81433eba8e75b1ca9b2d8542f9"
+    },
+    "report_collision": {
+      "authority_effect": "None",
+      "carrier_size": 2,
+      "collision": {
+        "left": {
+          "query": false,
+          "report": [
+            [
+              1,
+              true,
+              true
+            ],
+            [
+              1,
+              true,
+              true
+            ]
+          ],
+          "state_id": "bad:0,1,2"
+        },
+        "right": {
+          "query": true,
+          "report": [
+            [
+              1,
+              true,
+              true
+            ],
+            [
+              1,
+              true,
+              true
+            ]
+          ],
+          "state_id": "good:0,1,0"
+        }
+      },
+      "coverage": "supplied finite table only",
+      "meaning": "These reports cannot determine this query on the supplied carrier.",
+      "realized_history_violation": null,
+      "schema": "lggr.descent.v1",
+      "scope_id": "two-budget-histories/restricted-reports",
+      "status": "REPORT_INSUFFICIENT",
+      "table_sha256": "c531a9d2181c3a4c07c6711dbf915f66ccd2347f5ead8a077da68290d7624d08"
+    }
+  },
+  "evaluator_defect": {
+    "defect_kind": "NGD",
+    "delta": -1,
+    "global": 0,
+    "local": [
+      1,
+      1
+    ]
+  },
+  "finite_census": {
+    "boolean_verdict_cases": 8,
+    "collisions": 90,
+    "decoders": 126,
+    "factorization_cases": 216
+  },
+  "l1_certificate": {
+    "D_transpose_dual": [
+      "0",
+      "0",
+      "0"
+    ],
+    "authority_effect": "None",
+    "dual_annihilates": true,
+    "dual_bounded": true,
+    "duality_gap": "0",
+    "input_sha256": "09e03a7b8f857ba2c706d5dc892da072418b1b2abd29b99816a54502f7168599",
+    "lower_bound": "1",
+    "optimum": "1",
+    "repair_impossible": true,
+    "residual": [
+      "0",
+      "0",
+      "-1"
+    ],
+    "schema": "lggr.l1.v1",
+    "scope": "The supplied finite rational repair problem only; not an embedding of arbitrary software drift.",
+    "status": "OPTIMALITY_VERIFIED",
+    "supplied_potential_repairs": false,
+    "upper_bound": "1"
+  },
+  "limitations": [
+    "Not a native OE/QM integration or fresh Lean proof replay.",
+    "All evidence concerns explicitly supplied finite data.",
+    "A collision certifies report insufficiency, not which history occurred.",
+    "Runtime observations, owner authority and immutable storage remain external."
+  ],
+  "schema": "lggr.demo.v1",
+  "transport": {
+    "faithful_transport": {
+      "authority_effect": "None",
+      "backward_defect": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "forward_commutes": true,
+      "forward_defect": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "input_sha256": "b20ad5d942757a1ebb73612c875518dc4952f0e25ef17580fe0b35d93851600b",
+      "left_inverse_C0_defect": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "left_inverse_C1_defect": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "nonrepairability_reflection_verified": true,
+      "repair_preservation_verified": true,
+      "schema": "lggr.transport.v1",
+      "scope": "Supplied finite rational maps only. No unprovided runtime interpretation is inferred.",
+      "status": "RETRACTION_VERIFIED"
+    },
+    "lossy_transport": {
+      "authority_effect": "None",
+      "backward_defect": null,
+      "forward_commutes": true,
+      "forward_defect": [
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "input_sha256": "a7a44ebd534aa56ac6bbe2c10d20718721ddf2a32f4d8225733e6353eb2c4e68",
+      "left_inverse_C0_defect": null,
+      "left_inverse_C1_defect": null,
+      "nonrepairability_reflection_verified": false,
+      "repair_preservation_verified": true,
+      "schema": "lggr.transport.v1",
+      "scope": "Supplied finite rational maps only. No unprovided runtime interpretation is inferred.",
+      "status": "COMMUTING_TRANSPORT_VERIFIED"
+    }
+  }
+}

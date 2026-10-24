@@ -1,0 +1,17 @@
+{
+  "assumptions": [
+    "The supplied observed order_scale_to_cents=100 is the admitted monetary metadata for this branch.",
+    "The source customer row order defines authority: the first c0 row is north, so the later east row must not duplicate or replace that match.",
+    "The supplied order slice contains the orders this branch must preserve; no order is intentionally omitted."
+  ],
+  "execution_mode": "native_codex",
+  "input_sha256": "fe1bad9643fbaf275a1780612ff7318b4cafb38be6263925692335cb303f0554",
+  "operation": {
+    "join_mode": "first",
+    "omit_last": false,
+    "operation": "orders",
+    "scale_to_cents": 100
+  },
+  "response_text": "I propose the bounded orders operation with scale_to_cents=100, join_mode=first, and omit_last=false. This uses the observed unit metadata, selects the first authoritative customer row, and preserves all four supplied orders. The host should execute the operation and independently verify the final joined ledger.",
+  "role": "orders"
+}

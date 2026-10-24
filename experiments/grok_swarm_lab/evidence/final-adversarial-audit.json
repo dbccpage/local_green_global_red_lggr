@@ -1,0 +1,514 @@
+{
+  "B_C_parity": {
+    "attempt_differences": [
+      {
+        "B_probes": [
+          "probe:migration"
+        ],
+        "C_minus_B_attempts": 1,
+        "C_probes": [
+          "probe:semantics",
+          "probe:migration"
+        ],
+        "case_id": "evaluation.version_transition.03"
+      }
+    ],
+    "final_action_agreements": 48,
+    "global_outcome_agreements": 48,
+    "initial_input_agreements": 48,
+    "observation_sequence_agreements": 46,
+    "output_artifact_agreements": 48
+  },
+  "authority_effect": "None",
+  "caveats": [
+    "Forty-eight deterministic variants across twelve templates are not naturally occurring model failures, independent discoveries, or a population estimate.",
+    "The full conventional contract B and C share most checker logic by design; agreement does not independently prove the contract checker complete outside this finite operation vocabulary.",
+    "A omits required evidence probes, so all of its committed outputs are evidence-inadmissible even when ledger arithmetic is correct. Do not conflate the 46 inadmissible A outputs with the 17 incorrect ledgers.",
+    "The one correct candidate refused by B/C violates the separate endpoint state contract; this is not an arithmetic error. Refusal rates cover observed candidates only.",
+    "The fixed-trace collector performs 247 separately charged offline diagnostic effects; complete permitted evidence can still omit an unavailable required observation, and does not authorize a stopped live run to continue.",
+    "Native response bindings and three labelled role artifacts are verified, including this reviewer role's orders response. They do not authenticate an external producer, establish independent agents, or measure provider token/currency usage.",
+    "Source-freeze and trace hashes establish custody under the preserved manifest; replacing every external anchor is outside this integrity claim.",
+    "Exact first causal fault origin remains unmeasured; the detecting boundary is the measured localization field.",
+    "Recorded elapsed/certificate timings are single-machine observations, not controlled performance estimates."
+  ],
+  "check_count": 3250,
+  "conclusion": "The stored evidence supports a finite B/C reliability tie: equal final actions/outcomes/artifacts on 48 cases and equal findings/normalized decisions on 48 complete fixed traces. C performs one extra observation and uses more measured certificate time/evidence bytes; no reliability or cost superiority over B is established.",
+  "created_utc": "2026-10-24T21:29:10.078563+00:00",
+  "failures": [],
+  "fresh_replay": {
+    "diagnostic_acquisition_cost_separate": 247,
+    "fixed_traces": 48,
+    "interactive_elapsed_ns": 2280737900,
+    "interactive_traces": 144
+  },
+  "inspected_file_sha256": {
+    "evidence/evaluation/fixed-traces/evaluation.branch_join.00.json": "1d7a06aeab72c18491f84533217b75dc6489237daf2d7016329e1550adbfc15c",
+    "evidence/evaluation/fixed-traces/evaluation.branch_join.01.json": "15ae7c32bafbd9960509ca3de81def3175ad2b329ac9732114daa39a4ffefd4d",
+    "evidence/evaluation/fixed-traces/evaluation.branch_join.02.json": "6d9cc84316245df4ae01a13e38eb47d930f7aaf5b7dedcb0e6dc96049d13371c",
+    "evidence/evaluation/fixed-traces/evaluation.branch_join.03.json": "e77a3e77601475d788323a31f23ba351dad2f23a03b2fcdac63c2c140580f226",
+    "evidence/evaluation/fixed-traces/evaluation.completion_controls.00.json": "2f4b1115dd114e4fa684f83ba0c0e3dd93d2881f5401b7ccde5ce9d76222959d",
+    "evidence/evaluation/fixed-traces/evaluation.completion_controls.01.json": "60bc86c0706fea1deb5a73a8a79334e32d214e6fe175fd31bf47e3023e606368",
+    "evidence/evaluation/fixed-traces/evaluation.completion_controls.02.json": "9095711e06126eb170bb0bafcaeb575ce44e04a50588dc0115cf13d41017c530",
+    "evidence/evaluation/fixed-traces/evaluation.completion_controls.03.json": "e59ebd68782b3683daacb3a3f25ab6214c4541c3caf9d0bb0e82b0e62a53abba",
+    "evidence/evaluation/fixed-traces/evaluation.composition.00.json": "5b648c1a69d1bc6b1f9b866d4f923d9d4aa6b97af812aa2f82bea70bc6b2bd3c",
+    "evidence/evaluation/fixed-traces/evaluation.composition.01.json": "32bb28355246c5e943490bc631a7171823631c749495b75bedde49236b7058e1",
+    "evidence/evaluation/fixed-traces/evaluation.composition.02.json": "4fb139fff979396f160ee802757d9fc7cb0ca88abbcf908100d891895972c77f",
+    "evidence/evaluation/fixed-traces/evaluation.composition.03.json": "88e3b6a4e38677a5afa669561fa4c0d801ddcc77b5389cc912db60f68b0cb37e",
+    "evidence/evaluation/fixed-traces/evaluation.equal_reports.00.json": "4abd3725a962bc6720fe35969784c5d88b44a19ef95a6bc5eb2c92a8ef7d7b9c",
+    "evidence/evaluation/fixed-traces/evaluation.equal_reports.01.json": "06cb3879e8344b1a0e2926929a2406312e711a64acb316b07d41824f575d4a1b",
+    "evidence/evaluation/fixed-traces/evaluation.equal_reports.02.json": "07bf84ebfdd185ab4598886046dfe76ab189c5ecf4076a297a0703339d2e2624",
+    "evidence/evaluation/fixed-traces/evaluation.equal_reports.03.json": "483a8471bb62f9d9c396f9c90d9576651fc7cf180bd67e8e2214ba99b0157210",
+    "evidence/evaluation/fixed-traces/evaluation.event_integrity.00.json": "49197780534f3c87ddf488aa63f848a325846fe6b3329c25bdcbfb96207be1de",
+    "evidence/evaluation/fixed-traces/evaluation.event_integrity.01.json": "c04cea876fd8f7d8576a3f8f53c416f12ecbcbaa46553a862db4cacc7c90eeb1",
+    "evidence/evaluation/fixed-traces/evaluation.event_integrity.02.json": "374945dfb4ef9fde0ae731f862d8b01949949659f038908b0c09f4b1c25291b9",
+    "evidence/evaluation/fixed-traces/evaluation.event_integrity.03.json": "01624b799b7e569994fb03777b4f42ee683feb9790c926c706d292c299510651",
+    "evidence/evaluation/fixed-traces/evaluation.evidence_resolution.00.json": "ad5e90689aa31393eddb4e052266a96ebb1323c8399932ba7ca10b2eb33cdd02",
+    "evidence/evaluation/fixed-traces/evaluation.evidence_resolution.01.json": "ec3693e2ce167d5ae45e7e830ca6424c05b7d5292e5ff5c6db5c694d4f38601e",
+    "evidence/evaluation/fixed-traces/evaluation.evidence_resolution.02.json": "161e480c41d8cdf2310a83d3db9c2c8aa0f0825adc3653baa9bea033c97c198d",
+    "evidence/evaluation/fixed-traces/evaluation.evidence_resolution.03.json": "b255510de4c933d8d8263445a1af1b381f5a39b540cf03e9b07e01c2aeea78a4",
+    "evidence/evaluation/fixed-traces/evaluation.merge_retention.00.json": "87734f1b283bd4219a62f6219688e5f4d9877580a55920ebf1f68bac7b86999c",
+    "evidence/evaluation/fixed-traces/evaluation.merge_retention.01.json": "a45f6bb59fbfd39ea9b49cb0ef6df634c7b2b0d02c79970b32d6034f37a1f08f",
+    "evidence/evaluation/fixed-traces/evaluation.merge_retention.02.json": "dbd48cd66460dcce34d478c3813c8c6ccdcf0b39fdc812a34e91daaf059b952f",
+    "evidence/evaluation/fixed-traces/evaluation.merge_retention.03.json": "bebddff7873558c1e5716df5e03107c54334307d913413ec0b9e54a5bf3e4756",
+    "evidence/evaluation/fixed-traces/evaluation.obligations.00.json": "72a0092e6c9c92e5de698b4de13e388e54a08d69a24d8c9c5e22b5d2758fb66c",
+    "evidence/evaluation/fixed-traces/evaluation.obligations.01.json": "177f7b6cf210072bca1f14a80fd95e70d6f932588d39a00a9268543ec3e7948c",
+    "evidence/evaluation/fixed-traces/evaluation.obligations.02.json": "07adf1d5e9a7ff200572a416406e3ceca56723ce0577df67db86f0564e1aef14",
+    "evidence/evaluation/fixed-traces/evaluation.obligations.03.json": "aa742be4bfd56475417a9ef3923b45b6172eb6fbbafa5d43fb93642197387d13",
+    "evidence/evaluation/fixed-traces/evaluation.query_scope.00.json": "309d7539330f4052082b5164d3768cf1a58e4e89d4b4ba4a7ddd5de95b197812",
+    "evidence/evaluation/fixed-traces/evaluation.query_scope.01.json": "ee6b5ac3bc99d89d8c33732c284730301aa5d8be1152700157a7f81c8c2c8cbe",
+    "evidence/evaluation/fixed-traces/evaluation.query_scope.02.json": "358397244df82ea53af59911098697d270bf46fe91a7500b9061321f7b208d81",
+    "evidence/evaluation/fixed-traces/evaluation.query_scope.03.json": "f364e3bc06a431db17d8b340eacafe268769f230d4fd21ebbfbf3174bcd48333",
+    "evidence/evaluation/fixed-traces/evaluation.shared_budget.00.json": "70dbbf95622919bc62f557127e91015463539ad59e59ad0c6d45f1c1589ffa9c",
+    "evidence/evaluation/fixed-traces/evaluation.shared_budget.01.json": "d047491b20f1d4756dad705960a525948abb56923ee41e17c262d8d46916ad34",
+    "evidence/evaluation/fixed-traces/evaluation.shared_budget.02.json": "244346cbb32cfb8d378d32dae277e2bbd779554c16ab71c407601d458c13690b",
+    "evidence/evaluation/fixed-traces/evaluation.shared_budget.03.json": "666539ed9df08b0ed7692968e51abc6954a16e544c7a8f4faab95874e4e4659f",
+    "evidence/evaluation/fixed-traces/evaluation.units_sign.00.json": "d447172221cdfd28a4ad47cfa53abcda471b5522e87bfb85bd9997dcab0acecd",
+    "evidence/evaluation/fixed-traces/evaluation.units_sign.01.json": "b937879f5cc1c9e4a45c4266bcb39dd99a954ef0414c9b2fc00bc415df90ec0b",
+    "evidence/evaluation/fixed-traces/evaluation.units_sign.02.json": "3927f7a64b744c7a3a6d76bec516905b7d57afbbc787d75705c3505e0e13f186",
+    "evidence/evaluation/fixed-traces/evaluation.units_sign.03.json": "2039e69d46f20ef891ebb2ce7de133fbbdc5a0e16f57d68d9ac778cb0acaf5a6",
+    "evidence/evaluation/fixed-traces/evaluation.version_transition.00.json": "ee1f1758d29cf128222abc22aa0cc16fa0dbd9187197b49e513667b377153375",
+    "evidence/evaluation/fixed-traces/evaluation.version_transition.01.json": "af7ef66e47b0d4d8bc882c34f74f84b36d5d68f519d382be6dd62f2b4f6378ec",
+    "evidence/evaluation/fixed-traces/evaluation.version_transition.02.json": "f2616f89dc8ea1e07f1086346b5442b30e0cd6a6b4958643ce928cd446edc9c1",
+    "evidence/evaluation/fixed-traces/evaluation.version_transition.03.json": "84c37d6815d7a323e92f02fa468509226b1cf19e792e3c340abea92490e17c1f",
+    "evidence/evaluation/results.json": "25069ec527a69ec2f540f85d173b3300892ab0fab36599c39c0f800fc92ebc14",
+    "evidence/evaluation/runs/evaluation.branch_join.00.A.json": "8e5074da5b7edee9810b29986954635f6a135da27d786b34c8f3c823846fbda5",
+    "evidence/evaluation/runs/evaluation.branch_join.00.B.json": "da9c9b1ca56c464a67057eeb90e5458421bbc7d505e8519783bd459424fa5a28",
+    "evidence/evaluation/runs/evaluation.branch_join.00.C.json": "fbd72062211b68fee40c8993e170f5fdbe5576385230d4680edf610ea006037f",
+    "evidence/evaluation/runs/evaluation.branch_join.01.A.json": "e2ad6931f78b18b3a60d18a138b419f8558da06a0b962d1224c4cb71467b2952",
+    "evidence/evaluation/runs/evaluation.branch_join.01.B.json": "58228d35bd4112f03e74d093ef59fed2358004066783a0d991eb54c4ae3c3ea0",
+    "evidence/evaluation/runs/evaluation.branch_join.01.C.json": "8fd691a40d97e0ff061919a589d92b3f262aa74e9d68be4f74a4f23121acc7bc",
+    "evidence/evaluation/runs/evaluation.branch_join.02.A.json": "c5b79b6c0f7cfecd4166fa03d124178a770f49ba05fc52c4a95df24355ff303a",
+    "evidence/evaluation/runs/evaluation.branch_join.02.B.json": "988cab2ef76b443b27565282e6055e64c99ecc871d8da0acf50dc69873cb241a",
+    "evidence/evaluation/runs/evaluation.branch_join.02.C.json": "e4789b1ea8fec63e7747876f42a89719d7de7a4a10fdf0d98f7603852ce1fa2f",
+    "evidence/evaluation/runs/evaluation.branch_join.03.A.json": "093f481bf6ef4c2fbbda82630bdf2917927f14bfbf20f8d214e3bf18f7e4c177",
+    "evidence/evaluation/runs/evaluation.branch_join.03.B.json": "ea6d3d47a272776f3e05d7a3b0dc71af9f529c06ae753a8ca79ac3eb0626bac9",
+    "evidence/evaluation/runs/evaluation.branch_join.03.C.json": "8deb9c2a07c2201ef5562973a7f4c9dcee04a655e7ce5e01d0ec353b158b38bb",
+    "evidence/evaluation/runs/evaluation.completion_controls.00.A.json": "2b5f413249733b06032f4093aa940cb78d8a139dfaa23a143999eadc71922d1d",
+    "evidence/evaluation/runs/evaluation.completion_controls.00.B.json": "5b205d8d7508a648c2d82af0af68a8c664e85837dbae33047557274378b6e15c",
+    "evidence/evaluation/runs/evaluation.completion_controls.00.C.json": "e941cc2d3092efc8052742b0bcacbabb83722141f4347b502d326f621481339e",
+    "evidence/evaluation/runs/evaluation.completion_controls.01.A.json": "23c8d4862cfff60589f67bf06770debe4c0873e56eaca87c1aab30d557385009",
+    "evidence/evaluation/runs/evaluation.completion_controls.01.B.json": "265d0d86c4c20f4b9717ebd6ee3016abc17a3de9002df853f93af3d8729c0461",
+    "evidence/evaluation/runs/evaluation.completion_controls.01.C.json": "642ecaf7552fc29f9d9c0c2ac0c4d3c28c9f5a32a9bfa1f242940d2c9c04f9dd",
+    "evidence/evaluation/runs/evaluation.completion_controls.02.A.json": "78bb98ee3b0bfe9666f52a6de0b0c13b7d541d2bfd1ac13a88a672e381f41038",
+    "evidence/evaluation/runs/evaluation.completion_controls.02.B.json": "cf5ae067c8ad4787e88cef434251840ccb7e4e2fa3747f624b935fcc0f558f48",
+    "evidence/evaluation/runs/evaluation.completion_controls.02.C.json": "6455fed0ee5402d9300a663d2be50605a4511aa11e32c0eeb537131c313ca527",
+    "evidence/evaluation/runs/evaluation.completion_controls.03.A.json": "f85de0e9dd063321a829191908095e112877bd1dc9e09c58ba978f6a69b70801",
+    "evidence/evaluation/runs/evaluation.completion_controls.03.B.json": "c85d8669bc0b5497cd81570f142118627605100fdfcf939b460945adc40adcf9",
+    "evidence/evaluation/runs/evaluation.completion_controls.03.C.json": "698a94bae630568622c5de024b96d4917c664c981cbaf5f397378f575ff7596e",
+    "evidence/evaluation/runs/evaluation.composition.00.A.json": "e2b1d3e435501d99fb81ea07baad6942ff66cb7c356e06c695d2e9c03be6bf78",
+    "evidence/evaluation/runs/evaluation.composition.00.B.json": "426e3780071a9f0b80e13849196f4132d786331d13efe40cc9fed0b3dc8e7745",
+    "evidence/evaluation/runs/evaluation.composition.00.C.json": "c7f8e3e1b181af35fc46b7bfeef57dbfe2d645161c4fbb7b5d2c5c9e1efab2f5",
+    "evidence/evaluation/runs/evaluation.composition.01.A.json": "1c4f94bc8a8a0582533b9137e89d01d7f06d0746e1bce91e70ab6b54dfeee40c",
+    "evidence/evaluation/runs/evaluation.composition.01.B.json": "0d4c772af0dcbe1e8312a220e7f269649e97ddcd8b3b54983e495fc5fceb6f2f",
+    "evidence/evaluation/runs/evaluation.composition.01.C.json": "9081eb199e34a524970d0f18b16233793b0a6bc09dd00d10f670effa001db68d",
+    "evidence/evaluation/runs/evaluation.composition.02.A.json": "9568138645f843d96d58f4304c444d90fc2ffa825e1a54729387ff38749acf09",
+    "evidence/evaluation/runs/evaluation.composition.02.B.json": "b840effb76d321afe968ea3545b063bf8fb5c349a3d9926c50ca1c3c038f143e",
+    "evidence/evaluation/runs/evaluation.composition.02.C.json": "4ae4f510b8a727ade1554d69c8790632f2053e224808d56c99ceb597bfed362c",
+    "evidence/evaluation/runs/evaluation.composition.03.A.json": "1af9e72cdfef29f04dd06654e239d2f08ee599193813251209710687d5f8f363",
+    "evidence/evaluation/runs/evaluation.composition.03.B.json": "8e2b4d4a82f27071b0072138966addc4fd9f54bac9220e48d987ce033976cb08",
+    "evidence/evaluation/runs/evaluation.composition.03.C.json": "4881327e9a50194e756a83ca84ac088c173d0c2b00e1d785060a789f7a8c8b04",
+    "evidence/evaluation/runs/evaluation.equal_reports.00.A.json": "afd1e46a9535828bbc73f4ec993eb87dc7e4aa531b12b2970cfc049cf2f15a4a",
+    "evidence/evaluation/runs/evaluation.equal_reports.00.B.json": "7fce139adf7515f792ec5af1814a70e16d343083b32860510c7fd5852fcee2a2",
+    "evidence/evaluation/runs/evaluation.equal_reports.00.C.json": "f481d16ea4cedef5dac0c38529ab3b73fed1c3561566da1d4dc7f6a9f5e51830",
+    "evidence/evaluation/runs/evaluation.equal_reports.01.A.json": "2e129bf40092cdc5bd65092d45ba1d5be629da5db0facaa907b7023ac2fec065",
+    "evidence/evaluation/runs/evaluation.equal_reports.01.B.json": "201168fd141cc6d98f1e7febd69968a4e382da7382479ce214ef787dca778720",
+    "evidence/evaluation/runs/evaluation.equal_reports.01.C.json": "99aa000d0a66faeadcd2026bf94e4f8eb026cad90bfb8831714fefb6f40b2973",
+    "evidence/evaluation/runs/evaluation.equal_reports.02.A.json": "323385d712874b1a48f7d8e843127d74c379d57922a3b409a6f1d367f4fc11cd",
+    "evidence/evaluation/runs/evaluation.equal_reports.02.B.json": "984e6ddeede5f903d5440a2c0c58b02724fee31dfac9c2e06fb827d67346a624",
+    "evidence/evaluation/runs/evaluation.equal_reports.02.C.json": "c36ad9f180358008b81c100cfdd650d7be3be939649671ee7fe7df8aac56c44b",
+    "evidence/evaluation/runs/evaluation.equal_reports.03.A.json": "dcbf3bbf25d4b47a0aaf6ccb374d7bf17e1ab14c4570bbbe154fa2e29ff21e46",
+    "evidence/evaluation/runs/evaluation.equal_reports.03.B.json": "afb6eef7b6a232d0db668e9be874a8bae83d8235e4ab4dcba08d284c97871e93",
+    "evidence/evaluation/runs/evaluation.equal_reports.03.C.json": "a30dc681493150a1db231a8f53a811a6d5d870a6b4271bcaed0ba55bec4bd377",
+    "evidence/evaluation/runs/evaluation.event_integrity.00.A.json": "88d22101747063a09f9487851ec3908cb9dccb9fdba211ed174e99673e496af2",
+    "evidence/evaluation/runs/evaluation.event_integrity.00.B.json": "e3d790a48366fc0e55210cda914e321713ccc57196336375289d3942ad5a082e",
+    "evidence/evaluation/runs/evaluation.event_integrity.00.C.json": "790300cf768209af3c14d8455becab4e391f112ecc40d6fd64a0b5ef1a6a97d7",
+    "evidence/evaluation/runs/evaluation.event_integrity.01.A.json": "5fb8f4d57fbca4b4605ce0cae523c4887d62cc7d9f0e8414b9c579d90c970522",
+    "evidence/evaluation/runs/evaluation.event_integrity.01.B.json": "b402b5a346cd1be3f3f973c94e0cd1f9173a7009bcb5ef6e84a7e301697c304a",
+    "evidence/evaluation/runs/evaluation.event_integrity.01.C.json": "a2c4b9e281691d45dc0ebc9affe9078b75d57fb1f3f78bc3e08c42938388a29f",
+    "evidence/evaluation/runs/evaluation.event_integrity.02.A.json": "4aa5f1d9d9c167e865951de583e716f227f3dca59e3ed0d3b85d3b3f15b090fa",
+    "evidence/evaluation/runs/evaluation.event_integrity.02.B.json": "5cc203e39cb3028749a22dc079706b12f7c739f878306d7b2326ddf7a4353177",
+    "evidence/evaluation/runs/evaluation.event_integrity.02.C.json": "39211d8d971d79faa581ff3b1fe3b246a4735af840cf4de77114173b543d60e4",
+    "evidence/evaluation/runs/evaluation.event_integrity.03.A.json": "52eb38385a776cfe22e940114e677ef0b701b70ba787bf728105f5e5d0aca2cc",
+    "evidence/evaluation/runs/evaluation.event_integrity.03.B.json": "6e69e29c1f335dda89b08db2132988650e17ff2ebf73afa3d83c8fa8bc7843e0",
+    "evidence/evaluation/runs/evaluation.event_integrity.03.C.json": "3389e91fc39ed90aede1e697b1a869bd62a65ae4a9f22466dec4f8f517f6de5d",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.00.A.json": "336f5990319d7be7800736dc7771b1d1a8d5118f726f1202fcb4147af87b98dd",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.00.B.json": "8ebc4e53620f58a8e1ec6fa69271a792bc4bd7d04e472e4aa4b9665e5bfb3773",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.00.C.json": "b93d5b257ddddc7c110d26db25a7d8274321761a712a61a9f6a46d6df30aa7eb",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.01.A.json": "19a0797a3e2fdbd9467e306862d843fc450ad19aba795f2e86a38d501ead7451",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.01.B.json": "5d92cacd81d08ba56081198d8efae575590c44d34bb3a9a893bc3e02bf1765ab",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.01.C.json": "8d4031dadf46d3a118e291bd8139b35f38a2ada15be16dcb347c71fd6998c810",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.02.A.json": "805235101d4dc79a9a4d4388b3ab5db3f98e54861229d3897502170cf75580a3",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.02.B.json": "0f898a7dd4b80588e2b214b11766b68f546a5e9ee6e04a0ac2a4fa9b46b103ab",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.02.C.json": "72cceb4b6ee845bc971cfe115796f52fb30c95e1e7bedf0eb33f4a410c3875f8",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.03.A.json": "4324b0ba34829108bb7793a9348d729bc1de970bfcaab328d371198a5613ce12",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.03.B.json": "537315177525d9abe9f7af9b7957b055cd83516b7c24d93a552a234cb7b359d9",
+    "evidence/evaluation/runs/evaluation.evidence_resolution.03.C.json": "0b178d3f4c6d801fd9802fd78c4aea9fc8b582f775b6835a260ddb79621e2768",
+    "evidence/evaluation/runs/evaluation.merge_retention.00.A.json": "044424263101f5c46b5d9a7aee0b0cb6a1482fd05fb8b349a4a6d23e56e12809",
+    "evidence/evaluation/runs/evaluation.merge_retention.00.B.json": "52dd7a9d8af2d56aff05b6a463e64b0a1a22a6925be0df2170f4aec8f28b7adf",
+    "evidence/evaluation/runs/evaluation.merge_retention.00.C.json": "84b4863ab548a173cb08b0c6cef972102623ac376ac684fa5647b1ca9b21bc4b",
+    "evidence/evaluation/runs/evaluation.merge_retention.01.A.json": "f7d0b4aaa4fd61312fb27c7e5a404b32b2f34bc5eee29e9866980093f3beb6ab",
+    "evidence/evaluation/runs/evaluation.merge_retention.01.B.json": "835a4c59af36ebfb905d0ae7ca27e60602cec9fcc9cb4b4f04a13a8a63ed2361",
+    "evidence/evaluation/runs/evaluation.merge_retention.01.C.json": "422664a04c7b5e24ba30db2e204f3d274bc13f29b9d933e702b3cd2b28bf3af9",
+    "evidence/evaluation/runs/evaluation.merge_retention.02.A.json": "055f0e9d62aeaa1b35f3a31ab6bceed637cc9b711d42e306a32af5253f03f2ae",
+    "evidence/evaluation/runs/evaluation.merge_retention.02.B.json": "3d2e96d6589bcfe751e3d4c5328c25d67e5537f0b4d741d7fea087e4b6c54add",
+    "evidence/evaluation/runs/evaluation.merge_retention.02.C.json": "44a83d183c934fb8bdf26208c6ae8ba747ae5f6f0aeb6682b1e9ebfe638f3b1e",
+    "evidence/evaluation/runs/evaluation.merge_retention.03.A.json": "3c997b8949501cbef0b94d7875aa0842640393618ada04dfe460f6a051d34915",
+    "evidence/evaluation/runs/evaluation.merge_retention.03.B.json": "288e6cdbd0f863d9b8acfc30d44915beac3f1b898c0502165b71953e9ea95fa6",
+    "evidence/evaluation/runs/evaluation.merge_retention.03.C.json": "16fc8544abf8e377643f6ad1704a49c88d2d9fa3f80ae4672c2f0f23cffcead3",
+    "evidence/evaluation/runs/evaluation.obligations.00.A.json": "b44809bd020adfd5a320ebc152d49c0f670e176c793fcc9b1fd262fb5d99cf2b",
+    "evidence/evaluation/runs/evaluation.obligations.00.B.json": "d9094cb5f2f6b20dca5ed1a35869162709e6eea1ff8f55b044d82a99331bd906",
+    "evidence/evaluation/runs/evaluation.obligations.00.C.json": "fc151bc0eace33abc319816753ca92f7e0b9fc700728f6d1e9e98da33f19da7d",
+    "evidence/evaluation/runs/evaluation.obligations.01.A.json": "3ba57260a71ec9cc23e3727cc0fc0cae4653603eb31eb179eb5613f4ce6cfd48",
+    "evidence/evaluation/runs/evaluation.obligations.01.B.json": "4df43c8baa696f74354c4679973bf18ecdf5021ab773626b2c282241b6a18a80",
+    "evidence/evaluation/runs/evaluation.obligations.01.C.json": "1c81bd4148fb2cc1e8377824b7277035d0fb503b8dd464c64730e7eba857ca68",
+    "evidence/evaluation/runs/evaluation.obligations.02.A.json": "539f76f8f651041472372ce9f72ec4eef63b32796a96a25e91907df1d1db0af8",
+    "evidence/evaluation/runs/evaluation.obligations.02.B.json": "64a0f29dbdce176803633156e402d3b240621988dd07a808575fb9fd7a8a2612",
+    "evidence/evaluation/runs/evaluation.obligations.02.C.json": "36adbddc8760c74f45ce4727937242ade70f9da8874c92309fae380196edf532",
+    "evidence/evaluation/runs/evaluation.obligations.03.A.json": "d93e5c989a60bff2c2152c7a86155e8289f05d8d122f0e1befe3d426462d4ff7",
+    "evidence/evaluation/runs/evaluation.obligations.03.B.json": "5096d63f2865b8c5bc8a91ba5e610eb52ed486bef32fb17ad146de2a5c7a7c32",
+    "evidence/evaluation/runs/evaluation.obligations.03.C.json": "e938153201be1c76f045293b5aebaf3ca687be3bf88e1895e51650764795f630",
+    "evidence/evaluation/runs/evaluation.query_scope.00.A.json": "70063754e289874515892071c0dba64462e2338eda032fffa01d97694aeadbd8",
+    "evidence/evaluation/runs/evaluation.query_scope.00.B.json": "3831cdce30a96618636e7d6e05d24d17b10ee1505cfa0f2592255c8fa071b76f",
+    "evidence/evaluation/runs/evaluation.query_scope.00.C.json": "ffe392cbd71c15bd44eb0bbbe0b99664e5c8cbe88a3378dc165ef6d144612601",
+    "evidence/evaluation/runs/evaluation.query_scope.01.A.json": "d3509f38d51c4ac1dfccd3a9350b53001c9807afdf1f018a33413a183f82c1fb",
+    "evidence/evaluation/runs/evaluation.query_scope.01.B.json": "72d9e69ac4e88c762f61ad856f4a287af4b3bc803171bce0e672134c87740ba6",
+    "evidence/evaluation/runs/evaluation.query_scope.01.C.json": "ac206e028d2fc98212fa5fbd69103b821f797fdd532302aefc974c0febab3e2a",
+    "evidence/evaluation/runs/evaluation.query_scope.02.A.json": "4fd7d59db752e22685714cdd7f5c5c75f3e7ecfd11709ab807c782d336cc4ccb",
+    "evidence/evaluation/runs/evaluation.query_scope.02.B.json": "c2a46e8b1c9c8029ab7b8c82a68b18c19aff3e91add7a6d01e0b50a2701959ee",
+    "evidence/evaluation/runs/evaluation.query_scope.02.C.json": "e70286e7cc413a9f31750896819b008d2d99364627ee55716b5d1d3c768aa669",
+    "evidence/evaluation/runs/evaluation.query_scope.03.A.json": "d5b39724cf549b679c209d9792d8f61e07141fd628d387326dde7787df291939",
+    "evidence/evaluation/runs/evaluation.query_scope.03.B.json": "cdf4a29aee2eae8531f72bd5c2cc7f4b0125b5d830e04a894789698709e108b6",
+    "evidence/evaluation/runs/evaluation.query_scope.03.C.json": "a9ccf92fdb69a386a2d14057b20f11ea95d8704d01e9c752f55067a95033147d",
+    "evidence/evaluation/runs/evaluation.shared_budget.00.A.json": "9568eeba766c40cc49237b8307270e6a629ddcb445f7b95bc3ab179d35ff51eb",
+    "evidence/evaluation/runs/evaluation.shared_budget.00.B.json": "8f2b794de215d26a78607374a61852388363e43138332679da5f7029f203f598",
+    "evidence/evaluation/runs/evaluation.shared_budget.00.C.json": "6786c09cfa2dc67572b36820a59a7ca814121704682346febcc04812ffa677a7",
+    "evidence/evaluation/runs/evaluation.shared_budget.01.A.json": "4201980d6f594e65432d77ce3bb65a91bb4c86dfbee3ce205d34281f14b4fe80",
+    "evidence/evaluation/runs/evaluation.shared_budget.01.B.json": "26e2d3b56c9ab9635476d74931987f5ade1af8854929c43e95bf44c4881b5ff5",
+    "evidence/evaluation/runs/evaluation.shared_budget.01.C.json": "8b786375356f5f850e29c5f0a9b80940c1e42a22fa78d38bb4fe7b906aef949c",
+    "evidence/evaluation/runs/evaluation.shared_budget.02.A.json": "6fbe0dfb7e89e611e2d190c998cc849ef080fc5e5bb1dc933762334dd6092d88",
+    "evidence/evaluation/runs/evaluation.shared_budget.02.B.json": "6a51b53152028fe5b65d0a78f9ce8a20141cb2ff3e3dedeb91964950fa4e87ed",
+    "evidence/evaluation/runs/evaluation.shared_budget.02.C.json": "471f12c38e99ab6349c0fa63b7e69e23a56b8024b6c3298fab9e7fe46d71762f",
+    "evidence/evaluation/runs/evaluation.shared_budget.03.A.json": "eb81bdeca7ffe7ac25b1dd5649f52981baca51004dd6e2efe69e71e97b00541a",
+    "evidence/evaluation/runs/evaluation.shared_budget.03.B.json": "7a74b7cb211ed50e8006e6cb0b80382e2ad3e9bcbb243141562c3f179a14e84a",
+    "evidence/evaluation/runs/evaluation.shared_budget.03.C.json": "a11fa7a26ff96f2ec605a208cad336fd1b035c085d0eee2ec471bf2d878fa9a8",
+    "evidence/evaluation/runs/evaluation.units_sign.00.A.json": "ec2287251f135b8da7a3971d437a23f2aaed35cd73016735763cbd243bd9ab00",
+    "evidence/evaluation/runs/evaluation.units_sign.00.B.json": "41d95d5bab1eb4aa0c469742279761c0dc2047b2e3c99e90f0c8673cd76cdc6a",
+    "evidence/evaluation/runs/evaluation.units_sign.00.C.json": "f8b4781550cd50132e5b21c6e9b4ac7dd5297026b5329209b70c7fd8f19ef5ac",
+    "evidence/evaluation/runs/evaluation.units_sign.01.A.json": "842e3a697671ba349b625bf9020953368d41bacb2367b1c287801400d5b072d8",
+    "evidence/evaluation/runs/evaluation.units_sign.01.B.json": "6898ac161bec5cf97de8da028f21fce457e7082c403cdbabc8aedd3f9aa0d24e",
+    "evidence/evaluation/runs/evaluation.units_sign.01.C.json": "2a5b59093315076fbdf42d8d5fbef4a70b2dd61d5e839a8de2606eac28ccf319",
+    "evidence/evaluation/runs/evaluation.units_sign.02.A.json": "6791cb0abda585dcad8c84c712b97b40953675852075f330140ee23c494b654d",
+    "evidence/evaluation/runs/evaluation.units_sign.02.B.json": "a1b1cb3709c9440355572002631e333235e59a3288d81fc2efc3aebf625e901c",
+    "evidence/evaluation/runs/evaluation.units_sign.02.C.json": "c9d13b878211406a04e8625ab489ea89ba3dc941c69dab97585f6e9a5b823c44",
+    "evidence/evaluation/runs/evaluation.units_sign.03.A.json": "9f35fec9741f463b7a0d0cb3135a6a4f24f13b7055a92a419dcb03dec960d35e",
+    "evidence/evaluation/runs/evaluation.units_sign.03.B.json": "9bd827e1a4560861f07c946bdb7597fecfd9624164b26e8bf05519fb78522c15",
+    "evidence/evaluation/runs/evaluation.units_sign.03.C.json": "9978840577248b50a419ecb421d088d3d6a550c2f7c6ce2ca08c66ebc4847907",
+    "evidence/evaluation/runs/evaluation.version_transition.00.A.json": "4f08be886fea0bc8e3894ab0832b7c9a3297592470506d2ce0acfd77b66d2c2b",
+    "evidence/evaluation/runs/evaluation.version_transition.00.B.json": "353fb1dbc65bfd4846e932d6b56715b6b7ea2a9365cca424214d8cc194a6d8fd",
+    "evidence/evaluation/runs/evaluation.version_transition.00.C.json": "14a0936af700f6e200d4af981cecfc354af3e600d0cb4f38410420608df2c6ea",
+    "evidence/evaluation/runs/evaluation.version_transition.01.A.json": "22a6b4a9a5dbd729533d4f5f28defa4fef73c37dba7229a12cd7335412ea844d",
+    "evidence/evaluation/runs/evaluation.version_transition.01.B.json": "c67d8c36bccf624b892dbb9ddfa7b4fb2d87071efb61592b335c0f403a4c81aa",
+    "evidence/evaluation/runs/evaluation.version_transition.01.C.json": "b39208099b85ee25757c96fc55f5af0305fda92d9ecc317ae0835d66f024bab0",
+    "evidence/evaluation/runs/evaluation.version_transition.02.A.json": "2727aab0d4500784a34dc71cf41f2e637c8df14ed1c138ee5d1c634e6b9a34ae",
+    "evidence/evaluation/runs/evaluation.version_transition.02.B.json": "21ac1ef82a1ebcaceb27773dd50121a414b5b379fbb67520b79afc06ca017861",
+    "evidence/evaluation/runs/evaluation.version_transition.02.C.json": "460e666c0a264b7e1c9fda58584fa687eb5a675bedf8c7acbac9206e94705682",
+    "evidence/evaluation/runs/evaluation.version_transition.03.A.json": "0460eec96863a9711657338c0894c6cf112930a8558df7a72a66e3d8236af15d",
+    "evidence/evaluation/runs/evaluation.version_transition.03.B.json": "a81c25d9572234a1b16b07a55f6a28c9eea04d1c1c09f16a3e1b4c1e5653d32b",
+    "evidence/evaluation/runs/evaluation.version_transition.03.C.json": "f01347a043b4f936d03a543f8fd3714296419123d6584b0b596e1aa1c2562025",
+    "evidence/native/orders-input.json": "d69912ca406939a637130975205928ee1ef83b0d65f0aae66b35a91c7a4d6dbe",
+    "evidence/native/orders-response.json": "1ddc57e9214bdd8e0a5e334dbda0ba5b90adeef5ffa3ca42fe4a32a6a0b63ccc",
+    "evidence/native/planner-input.json": "c46279e1cc357324111a4feb8f6329e99569bffe582fe89710572aa3ba90beef",
+    "evidence/native/planner-response.json": "ffe131b60c9aba32a2bf47380ec1e3cb80ea86d626416bde2017434a280ea68c",
+    "evidence/native/refunds-input.json": "a91836d065c9438e7b7edc00814bbaac7456b6becea227b01706fb9566fe0b53",
+    "evidence/native/refunds-response.json": "d0bacd973072fce8e67147db2a9eefa304b66c2f5f8b56815975793337d249b6",
+    "evidence/native/run.json": "76231fa5aa04a8d9985fdbbbdc1ac5b205baac0b0891c2b6530a6f93a0d7e6a3"
+  },
+  "native": {
+    "action": "commit",
+    "admissible": true,
+    "fingerprint": "81927e44d4019d7aed563aab03a9fc5ce8aeaf8d721234efdc440406975c29d0",
+    "model_cost": null,
+    "model_tokens": null,
+    "response_events": [
+      [
+        "native-planner-response",
+        "planner"
+      ],
+      [
+        "native-worker-proposal",
+        "orders"
+      ],
+      [
+        "native-worker-proposal",
+        "refunds"
+      ]
+    ],
+    "role_response_artifacts": 3,
+    "task_correct": true,
+    "tool_attempts": 7,
+    "worker_overlap_ns": 727300
+  },
+  "passed": true,
+  "recomputed_summary": {
+    "A": {
+      "counts": {
+        "blocked": 0,
+        "cases": 48,
+        "committed": 46,
+        "correct_candidate_refused": 0,
+        "correct_committed": 29,
+        "deferred": 2,
+        "invalid_committed": 17,
+        "unknown_global": 2,
+        "unresolved_obligations": 5
+      },
+      "defects": {
+        "NGD": 17,
+        "UNKNOWN": 2,
+        "ZDR": 29
+      },
+      "totals": {
+        "controller_and_certificate_ns": 7245000,
+        "elapsed_ns": 336265400,
+        "evidence_bytes": 1494025,
+        "issued_probe_attempts": 0,
+        "issued_repair_attempts": 0,
+        "issued_tool_attempts": 230
+      }
+    },
+    "B": {
+      "counts": {
+        "blocked": 6,
+        "cases": 48,
+        "committed": 33,
+        "correct_candidate_refused": 1,
+        "correct_committed": 33,
+        "deferred": 9,
+        "invalid_committed": 0,
+        "unknown_global": 15,
+        "unresolved_obligations": 3
+      },
+      "defects": {
+        "UNKNOWN": 15,
+        "ZDR": 33
+      },
+      "totals": {
+        "controller_and_certificate_ns": 17002600,
+        "elapsed_ns": 413774200,
+        "evidence_bytes": 2067317,
+        "issued_probe_attempts": 94,
+        "issued_repair_attempts": 14,
+        "issued_tool_attempts": 309
+      }
+    },
+    "C": {
+      "counts": {
+        "blocked": 6,
+        "cases": 48,
+        "committed": 33,
+        "correct_candidate_refused": 1,
+        "correct_committed": 33,
+        "deferred": 9,
+        "invalid_committed": 0,
+        "unknown_global": 15,
+        "unresolved_obligations": 3
+      },
+      "defects": {
+        "UNKNOWN": 15,
+        "ZDR": 33
+      },
+      "totals": {
+        "controller_and_certificate_ns": 414775100,
+        "elapsed_ns": 906049300,
+        "evidence_bytes": 3068040,
+        "issued_probe_attempts": 95,
+        "issued_repair_attempts": 14,
+        "issued_tool_attempts": 310
+      }
+    }
+  },
+  "representative_traces": {
+    "evaluation.evidence_resolution.01": {
+      "action": "defer",
+      "attempts": 1,
+      "canary_effects": 0,
+      "global_verdict": null,
+      "limit": 20,
+      "negative_samples": [],
+      "state_path": [
+        0
+      ],
+      "status": "unknown",
+      "unresolved_obligations": []
+    },
+    "evaluation.merge_retention.00": {
+      "action": "block",
+      "attempts": 15,
+      "canary_effects": 2,
+      "global_verdict": null,
+      "limit": 20,
+      "negative_samples": [
+        {
+          "baseline": 0,
+          "query_id": "auxiliary_branch_contract",
+          "scope": "endpoint",
+          "source": "sqlite.branch_contract",
+          "terminal": true,
+          "verdict": false
+        }
+      ],
+      "state_path": [
+        0,
+        0,
+        0
+      ],
+      "status": "obstructed",
+      "unresolved_obligations": []
+    },
+    "evaluation.merge_retention.02": {
+      "action": "block",
+      "attempts": 15,
+      "canary_effects": 2,
+      "global_verdict": null,
+      "limit": 20,
+      "negative_samples": [
+        {
+          "baseline": 0,
+          "query_id": "auxiliary_branch_contract",
+          "scope": "endpoint",
+          "source": "sqlite.branch_contract",
+          "terminal": true,
+          "verdict": false
+        }
+      ],
+      "state_path": [
+        0,
+        0,
+        0
+      ],
+      "status": "obstructed",
+      "unresolved_obligations": [
+        "merge-negative-evidence"
+      ]
+    },
+    "evaluation.obligations.02": {
+      "action": "defer",
+      "attempts": 6,
+      "canary_effects": 2,
+      "global_verdict": null,
+      "limit": 20,
+      "negative_samples": [],
+      "state_path": [
+        0,
+        0,
+        0
+      ],
+      "status": "unknown",
+      "unresolved_obligations": [
+        "refund-evidence"
+      ]
+    },
+    "evaluation.query_scope.00": {
+      "action": "commit",
+      "attempts": 6,
+      "canary_effects": 3,
+      "global_verdict": true,
+      "limit": 20,
+      "negative_samples": [],
+      "state_path": [
+        0,
+        2,
+        1
+      ],
+      "status": "verified-on-declared-domain",
+      "unresolved_obligations": []
+    },
+    "evaluation.query_scope.01": {
+      "action": "block",
+      "attempts": 3,
+      "canary_effects": 1,
+      "global_verdict": null,
+      "limit": 20,
+      "negative_samples": [],
+      "state_path": [
+        0,
+        2
+      ],
+      "status": "obstructed",
+      "unresolved_obligations": []
+    },
+    "evaluation.query_scope.02": {
+      "action": "block",
+      "attempts": 6,
+      "canary_effects": 3,
+      "global_verdict": null,
+      "limit": 20,
+      "negative_samples": [],
+      "state_path": [
+        0,
+        2,
+        2
+      ],
+      "status": "obstructed",
+      "unresolved_obligations": []
+    },
+    "evaluation.shared_budget.00": {
+      "action": "defer",
+      "attempts": 4,
+      "canary_effects": 0,
+      "global_verdict": null,
+      "limit": 4,
+      "negative_samples": [],
+      "state_path": [
+        0
+      ],
+      "status": "unknown",
+      "unresolved_obligations": []
+    },
+    "evaluation.shared_budget.02": {
+      "action": "defer",
+      "attempts": 5,
+      "canary_effects": 1,
+      "global_verdict": null,
+      "limit": 5,
+      "negative_samples": [],
+      "state_path": [
+        0,
+        0
+      ],
+      "status": "unknown",
+      "unresolved_obligations": []
+    }
+  },
+  "role": "adversarial review after evaluation; same collaboration model, not a claim of epistemic independence",
+  "schema": "swarm-lab.final-adversarial-audit.v1",
+  "scope": "Read-only saved evidence audit and fresh offline replays. No production/test/controller tuning or new evaluation variants.",
+  "source_binding": {
+    "controller_files_checked": 25,
+    "controller_frozen_at": "2026-10-24T21:25:32.412201+00:00",
+    "evaluation_created_at": "2026-10-24T21:25:39.736022+00:00",
+    "mismatches": {},
+    "protocol_files_checked": 4,
+    "source_set_sha256": "f0ed9ad350a88b64366b184c03f844bf697d13ff5677df2a065fbc0c2099508c"
+  }
+}

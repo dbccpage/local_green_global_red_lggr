@@ -1,0 +1,6 @@
+{
+  "complete": true,
+  "decisions_equal": true,
+  "meaning": "Offline identical-evidence interpretation check; original interactive host decision is preserved.",
+  "replayed": true
+}
