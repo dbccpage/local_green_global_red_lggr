@@ -1,1 +1,0 @@
-PASS: 609 package-local declarations; 8 modules; approved axioms only

@@ -28,20 +28,27 @@ from lggr.streaming import (
     StreamingBaselineComparator,
     StreamingBellPolytopeMonitor,
     StreamingCPTPTraceMonitor,
+    StreamingCatalystDegradationMonitor,
     StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
+    StreamingContextualSheafMonitor,
     StreamingDFAGrammarGluingMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDefectSoundnessMonitor,
+    StreamingDiscreteCurvatureMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
     StreamingHodgeDecompositionMonitor,
+    StreamingMartingaleOptionalStoppingMonitor,
     StreamingMayerVietorisMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
+    StreamingProjectiveTowerMonitor,
+    StreamingPullbackSquareMonitor,
     StreamingRSIFiberCeilingMonitor,
+    StreamingReggeDeficitCurvatureMonitor,
     StreamingReplayOrderMonitor,
     StreamingSimplicialCupMonitor,
     StreamingSixRoleOverlayMonitor,
@@ -921,7 +928,8 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["traces_evaluated"], 4)
         self.assertEqual(summary["conventional_false_acceptances"], 3)
         self.assertEqual(summary["conventional_false_refusals"], 0)
-        self.assertEqual(summary["faults_localized_online"], 2)
+        # Open obligations are now localized online as well as in batch replay.
+        self.assertEqual(summary["faults_localized_online"], 3)
         self.assertEqual(summary["traces_with_retained_obligations"], 1)
 
     def test_cycle_basis_sensitivity_and_complementary_slackness(self) -> None:
@@ -1920,6 +1928,514 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(r_ok["evaluator_defect"], 0)
         self.assertTrue(r_ok["all_monoid_homomorphisms_verified"])
+
+    def test_catalyst_degradation_residual_accumulation_and_cycle_ceiling(self) -> None:
+        """Verify constructor catalyst degradation monitor separates bounded cycles from multi-cycle exhaustion NGD."""
+        # 1. Multi-cycle exhaustion NGD: tau_cat = 5, per_cycle_local_tolerance = 2, wear = +2 per cycle
+        #    Cycle ceiling = floor(5 / 2) = 2; cycle 3 reaches cumulative wear 6 > 5 -> NGD (L=1, Eg=0, Delta_E=-1)
+        cat_ngd = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=10,
+            catalyst_tolerance=5,
+            per_cycle_local_tolerance=2,
+            scope_id="catalyst-exhaustion-test",
+        )
+        c1 = cat_ngd.record_cycle("cyc_1", "S0", "S1", True, 2)
+        c2 = cat_ngd.record_cycle("cyc_2", "S0", "S1", True, 2)
+        c3 = cat_ngd.record_cycle("cyc_3", "S0", "S1", True, 2)
+
+        self.assertEqual(c1["uniform_wear_cycle_ceiling"], 2)
+        self.assertTrue(c1["within_global_catalyst_tolerance"])
+        self.assertTrue(c2["within_global_catalyst_tolerance"])
+        self.assertFalse(c3["within_global_catalyst_tolerance"])
+
+        r_ngd = cat_ngd.get_receipt()
+        self.assertEqual(r_ngd["schema"], "lggr.online_catalyst_degradation.v1")
+        self.assertEqual(r_ngd["status"], "CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR")
+        self.assertEqual(r_ngd["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_ngd["local_product_aggregator"], 1)
+        self.assertEqual(r_ngd["global_evaluator"], 0)
+        self.assertEqual(r_ngd["evaluator_defect"], -1)
+        self.assertEqual(r_ngd["cumulative_catalyst_drift"], "6")
+        self.assertEqual(r_ngd["exhausted_cycle_ids"], ["cyc_3"])
+        self.assertTrue(r_ngd["all_telescoping_identities_verified"])
+
+        # 2. Ideal exact catalyst restoration: wear +1 followed by regeneration -1 -> terminal drift 0, max dev 1 <= 5
+        cat_bounded = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=10,
+            catalyst_tolerance=5,
+            per_cycle_local_tolerance=2,
+            scope_id="catalyst-bounded-test",
+        )
+        cat_bounded.record_cycle("cyc_1", "S0", "S1", True, 1)
+        cat_bounded.record_cycle("cyc_2", "S0", "S1", True, -1)
+        r_bounded = cat_bounded.get_receipt()
+        self.assertEqual(r_bounded["status"], "BOUNDED_APPROXIMATE_CATALYST_LGGG")
+        self.assertEqual(r_bounded["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_bounded["cumulative_catalyst_drift"], "0")
+        self.assertEqual(r_bounded["max_catalyst_deviation"], "1")
+        self.assertEqual(r_bounded["evaluator_defect"], 0)
+
+    def test_discrete_curvature_hodge_laplacian_dirichlet_energy_and_kernel(self) -> None:
+        """Verify discrete 1-form Hodge Laplacian Dirichlet energy identity and harmonic kernel separation."""
+        mon = StreamingDiscreteCurvatureMonitor(scope_id="curvature-test")
+        d0_tri = [
+            [-1, 1, 0],
+            [0, -1, 1],
+            [1, 0, -1],
+        ]
+
+        # 1. Exact gradient flow h = (1, 2, -3) = D0([0, 1, 3]) -> curl = 0, div = (-4, -1, 5), E_div = 16+1+25 = 42
+        r_grad = mon.record_laplacian_probe("tri_gradient", d0_tri, [1, 2, -3], D1=[[1, 1, 1]])
+        self.assertEqual(r_grad["classification"], "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG")
+        self.assertEqual(r_grad["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_grad["divergence_energy"], "42")
+        self.assertEqual(r_grad["curl_energy"], "0")
+        self.assertEqual(r_grad["dirichlet_energy"], "42")
+        self.assertFalse(r_grad["in_laplacian_kernel"])
+        self.assertTrue(r_grad["dirichlet_energy_identity_verified"])
+        self.assertTrue(r_grad["operator_orthogonality_verified"])
+
+        # 2. Unfilled triangle with h = (1, 1, 1) -> D0^T h = (0, 0, 0), D1 = None -> E_Dir = 0, in ker(L1)
+        r_harm = mon.record_laplacian_probe("tri_unfilled_harmonic", d0_tri, [1, 1, 1], D1=None)
+        self.assertEqual(r_harm["classification"], "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR")
+        self.assertEqual(r_harm["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_harm["dirichlet_energy"], "0")
+        self.assertTrue(r_harm["in_laplacian_kernel"])
+        self.assertFalse(r_harm["is_exact_coboundary"])
+        self.assertTrue(r_harm["kernel_equivalence_verified"])
+
+        # 3. Filled triangle D1 = [[1, 1, 1]] with h = (1, 1, 1) -> D0^T h = (0, 0, 0), D1 h = (3) -> E_Dir = 9
+        r_curl = mon.record_laplacian_probe("tri_filled_curl", d0_tri, [1, 1, 1], D1=[[1, 1, 1]])
+        self.assertEqual(r_curl["classification"], "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR")
+        self.assertEqual(r_curl["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_curl["divergence_energy"], "0")
+        self.assertEqual(r_curl["curl_energy"], "9")
+        self.assertEqual(r_curl["dirichlet_energy"], "9")
+        self.assertFalse(r_curl["in_laplacian_kernel"])
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_discrete_curvature.v1")
+        self.assertEqual(receipt["status"], "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["harmonic_kernel_probe_ids"], ["tri_unfilled_harmonic"])
+        self.assertEqual(receipt["curl_obstructed_probe_ids"], ["tri_filled_curl"])
+        self.assertTrue(receipt["all_dirichlet_energy_identities_verified"])
+        self.assertTrue(receipt["all_operator_orthogonalities_verified"])
+        self.assertTrue(receipt["all_kernel_equivalences_verified"])
+
+    def test_contextual_sheaf_three_cycle_presheaf_obstruction_vs_global_section(self) -> None:
+        """Verify 3-cycle empirical presheaf monitor separates Specker hollow-triangle contextuality from global joint sections."""
+        mon = StreamingContextualSheafMonitor(scope_id="contextual-sheaf-test")
+
+        # 1. Specker / anti-correlated 3-cycle: p_XY = (0, 1/2, 1/2, 0) on AB, BC, CA
+        #    Pairwise marginals all equal 1/2 (no-signaling), yet d000 + d111 = -1/2 < 0 -> no global section!
+        anti = ["0", "1/2", "1/2", "0"]
+        r_ctx = mon.record_three_cycle_model("specker_hollow_triangle", anti, anti, anti)
+        self.assertEqual(r_ctx["classification"], "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR")
+        self.assertEqual(r_ctx["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(r_ctx["no_signaling_verified"])
+        self.assertEqual(r_ctx["d000_plus_d111_invariant"], "-1/2")
+        self.assertEqual(r_ctx["alpha_min"], "0")
+        self.assertEqual(r_ctx["alpha_max"], "-1/2")
+        self.assertEqual(r_ctx["infeasibility_gap"], "1/2")
+        self.assertFalse(r_ctx["global_section_exists"])
+        self.assertIsNone(r_ctx["witness_global_joint"])
+        self.assertTrue(r_ctx["affine_marginal_recovery_verified"])
+
+        # 2. Positively correlated 3-cycle: p_XY = (1/2, 0, 0, 1/2) on AB, BC, CA -> global GHZ-like mixture 1/2|000> + 1/2|111>
+        corr = ["1/2", "0", "0", "1/2"]
+        r_ok = mon.record_three_cycle_model("correlated_global_section", corr, corr, corr)
+        self.assertEqual(r_ok["classification"], "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(r_ok["no_signaling_verified"])
+        self.assertTrue(r_ok["global_section_exists"])
+        self.assertEqual(r_ok["witness_global_joint"]["000"], "1/2")
+        self.assertEqual(r_ok["witness_global_joint"]["111"], "1/2")
+        self.assertTrue(r_ok["affine_marginal_recovery_verified"])
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_contextual_sheaf.v1")
+        self.assertEqual(receipt["status"], "PRESHEAF_SECTION_OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["contextual_obstructed_model_ids"], ["specker_hollow_triangle"])
+        self.assertEqual(receipt["signaling_obstructed_model_ids"], [])
+        self.assertTrue(receipt["all_affine_marginal_recoveries_verified"])
+
+    def test_regge_deficit_curvature_and_discrete_gauss_bonnet(self) -> None:
+        """Verify 2D Regge hinge deficit curvature monitor separates conical apex NGD from flat 6-triangle stars."""
+        # 1. Conical 4-equilateral-triangle pyramid around interior apex 'v0' with boundary 'b1..b4'
+        #    Each equilateral triangle has angles (1/6, 1/6, 1/6) summing to 1/2 -> L = 1
+        #    Interior deficit at v0: 1 - 4*(1/6) = 1/3 != 0 -> E_g = 0, Delta_E = -1
+        #    Boundary turns at b1..b4: 1/2 - 2*(1/6) = 1/6 each -> Gauss-Bonnet sum = 1/3 + 4*(1/6) = 1 = chi
+        cone = StreamingReggeDeficitCurvatureMonitor(
+            interior_vertices=["v0"],
+            boundary_vertices=["b1", "b2", "b3", "b4"],
+            scope_id="regge-cone-test",
+        )
+        eq_angles = ["1/6", "1/6", "1/6"]
+        cone.record_triangle("t1", ["v0", "b1", "b2"], eq_angles)
+        cone.record_triangle("t2", ["v0", "b2", "b3"], eq_angles)
+        cone.record_triangle("t3", ["v0", "b3", "b4"], eq_angles)
+        cone.record_triangle("t4", ["v0", "b4", "b1"], eq_angles)
+
+        r_cone = cone.get_receipt()
+        self.assertEqual(r_cone["schema"], "lggr.online_regge_deficit_curvature.v1")
+        self.assertEqual(r_cone["status"], "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR")
+        self.assertEqual(r_cone["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_cone["euler_characteristic"], 1)
+        self.assertEqual(r_cone["interior_deficits"], {"v0": "1/3"})
+        self.assertEqual(r_cone["sum_boundary_turn"], "2/3")
+        self.assertEqual(r_cone["total_gauss_bonnet_curvature"], "1")
+        self.assertEqual(r_cone["local_product_aggregator"], 1)
+        self.assertEqual(r_cone["global_flatness_evaluator"], 0)
+        self.assertEqual(r_cone["evaluator_defect"], -1)
+        self.assertTrue(r_cone["angle_balance_identity_verified"])
+        self.assertTrue(r_cone["gauss_bonnet_euler_identity_verified"])
+
+        # 2. Flat 6-equilateral-triangle hexagonal wheel around interior vertex 'v0' with boundary 'b1..b6'
+        #    Interior deficit at v0: 1 - 6*(1/6) = 0 -> E_g = 1, Delta_E = 0
+        #    Boundary turns at b1..b6: 1/2 - 2*(1/6) = 1/6 each -> Gauss-Bonnet sum = 0 + 6*(1/6) = 1 = chi
+        flat = StreamingReggeDeficitCurvatureMonitor(
+            interior_vertices=["v0"],
+            boundary_vertices=["b1", "b2", "b3", "b4", "b5", "b6"],
+            scope_id="regge-flat-test",
+        )
+        for i in range(6):
+            u = f"b{i + 1}"
+            w = f"b{((i + 1) % 6) + 1}"
+            flat.record_triangle(f"hex_{i + 1}", ["v0", u, w], eq_angles)
+
+        r_flat = flat.get_receipt()
+        self.assertEqual(r_flat["status"], "FLAT_EUCLIDEAN_LATTICE_LGGG")
+        self.assertEqual(r_flat["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_flat["interior_deficits"], {"v0": "0"})
+        self.assertEqual(r_flat["total_gauss_bonnet_curvature"], "1")
+        self.assertEqual(r_flat["evaluator_defect"], 0)
+        self.assertTrue(r_flat["gauss_bonnet_euler_identity_verified"])
+
+    def test_pullback_square_compatibility_and_universal_cone_mediator(self) -> None:
+        """Verify categorical fibered pullback monitor separates interface mismatch NGD from universal cone mediators."""
+        # Cospan A -f-> C <-g- B:
+        # f(a0) = c0, f(a1) = c1, f(a2) = c1
+        # g(b0) = c0, g(b1) = c1
+        # Pullback carrier P = {(a0, b0, c0), (a1, b1, c1), (a2, b1, c1)}
+        f_map = {"a0": "c0", "a1": "c1", "a2": "c1"}
+        g_map = {"b0": "c0", "b1": "c1"}
+
+        mon = StreamingPullbackSquareMonitor(f_map, g_map, scope_id="pullback-test")
+
+        # 1. Compatible pair (a0, b0) over singleton fiber c0
+        p1 = mon.record_branch_pair("pair_c0_unique", "a0", "b0")
+        self.assertTrue(p1["in_pullback_square"])
+        self.assertEqual(p1["evaluator_defect"], 0)
+        self.assertTrue(p1["interface_uniquely_identifies_pair"])
+
+        # 2. Compatible pair (a1, b1) over size-2 fiber c1
+        p2 = mon.record_branch_pair("pair_c1_ambiguous", "a1", "b1")
+        self.assertTrue(p2["in_pullback_square"])
+        self.assertEqual(p2["interface_fiber_size"], 2)
+        self.assertFalse(p2["interface_uniquely_identifies_pair"])
+
+        # 3. Interface mismatch NGD pair (a2, b0): f(a2) = c1 != c0 = g(b0)
+        p3 = mon.record_branch_pair("pair_mismatch_ngd", "a2", "b0")
+        self.assertFalse(p3["in_pullback_square"])
+        self.assertEqual(p3["local_product"], 1)
+        self.assertEqual(p3["global_pullback_evaluator"], 0)
+        self.assertEqual(p3["evaluator_defect"], -1)
+
+        # 4. Commuting cone W = {w0, w1} vs non-commuting cone
+        c_ok = mon.verify_cone_mediator("cone_valid", {"w0": "a0", "w1": "a2"}, {"w0": "b0", "w1": "b1"})
+        self.assertTrue(c_ok["commutes_over_c"])
+        self.assertEqual(c_ok["universal_mediator"], {"w0": ["a0", "b0"], "w1": ["a2", "b1"]})
+        self.assertTrue(c_ok["mediator_uniqueness_and_projection_verified"])
+
+        c_bad = mon.verify_cone_mediator("cone_invalid", {"w0": "a0", "w1": "a2"}, {"w0": "b0", "w1": "b0"})
+        self.assertFalse(c_bad["commutes_over_c"])
+        self.assertEqual(c_bad["mismatched_apex_states"], ["w1"])
+        self.assertIsNone(c_bad["universal_mediator"])
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_pullback_square.v1")
+        self.assertEqual(receipt["status"], "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["pullback_carrier_size"], 3)
+        self.assertEqual(receipt["ngd_mismatch_pair_ids"], ["pair_mismatch_ngd"])
+        self.assertEqual(receipt["ambiguous_fiber_pair_ids"], ["pair_c1_ambiguous"])
+
+    def test_martingale_optional_stopping_expectation_conservation_vs_tail_drawdown_ngd(self) -> None:
+        """Verify bounded-horizon martingale optional stopping conservation vs asymmetric tail drawdown NGD."""
+        mon = StreamingMartingaleOptionalStoppingMonitor(
+            max_tail_drawdown_budget=1,
+            scope_id="martingale-ost-test",
+        )
+
+        # 1. Double-or-nothing asymmetric stopping on fair martingale:
+        #    x0 = 0; step 1: (+1, -1); step 2 from -1: (+1, -3)
+        #    Stop at step 1 if up (+1, prob 1/2), continue to step 2 if down (+1 prob 1/4, -3 prob 1/4)
+        #    Stopped expectation = 1/2*(1) + 1/4*(1) + 1/4*(-3) = 0 == x0, win prob = 3/4,
+        #    but tail drawdown = 0 - (-3) = 3 > 1 -> NGD (L=1, Eg=0, Delta_E=-1)
+        r_skew = mon.record_stopped_tree(
+            "double_or_nothing_skew",
+            x0=0,
+            x_u=1,
+            x_d=-1,
+            x_uu=2,
+            x_ud=0,
+            x_du=1,
+            x_dd=-3,
+            stop_on_step1_up=True,
+            stop_on_step1_down=False,
+        )
+        self.assertEqual(r_skew["classification"], "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR")
+        self.assertEqual(r_skew["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_skew["stopped_expectation"], "0")
+        self.assertEqual(r_skew["horizon2_expectation"], "0")
+        self.assertEqual(r_skew["stopped_win_probability"], "3/4")
+        self.assertEqual(r_skew["tail_drawdown"], "3")
+        self.assertEqual(r_skew["local_martingale_product"], 1)
+        self.assertEqual(r_skew["global_drawdown_evaluator"], 0)
+        self.assertEqual(r_skew["evaluator_defect"], -1)
+        self.assertTrue(r_skew["optional_stopping_conservation_verified"])
+
+        # 2. Immediate stop at t=1 on both branches: (+1, -1) -> tail drawdown = 1 <= 1 -> LGGG
+        r_ok = mon.record_stopped_tree(
+            "bounded_step1_stop",
+            x0=0,
+            x_u=1,
+            x_d=-1,
+            x_uu=2,
+            x_ud=0,
+            x_du=0,
+            x_dd=-2,
+            stop_on_step1_up=True,
+            stop_on_step1_down=True,
+        )
+        self.assertEqual(r_ok["classification"], "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_ok["stopped_expectation"], "0")
+        self.assertEqual(r_ok["tail_drawdown"], "1")
+        self.assertEqual(r_ok["evaluator_defect"], 0)
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_martingale_optional_stopping.v1")
+        self.assertEqual(receipt["status"], "OPTIONAL_STOPPING_DRAWDOWN_OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["tail_drawdown_ngd_tree_ids"], ["double_or_nothing_skew"])
+        self.assertTrue(receipt["all_optional_stopping_conservations_verified"])
+
+    def test_projective_tower_derived_limit_r1_lifting_obstruction(self) -> None:
+        """Verify LGGR IV projective tower monitor separates 3x+1=0 mod 2^n R^1 lim^1 obstruction from integer lifts."""
+        # 1. Obstructed 3x + 1 = 0 (mod 2^n) tower: x1 = 1 (mod 2), x2 = 1 (mod 4), x3 = 5 (mod 8)
+        #    Every finite stage is solvable and compatible (L = 1), yet x_inf = -1/3 not in Z -> Eg = 0, Delta_E = -1
+        tower_bad = StreamingProjectiveTowerMonitor(3, 1, scope_id="tower-3x-plus-1")
+        tower_bad.record_stage("stage_mod_2", 2, 1)
+        tower_bad.record_stage("stage_mod_4", 4, 1)
+        tower_bad.record_stage("stage_mod_8", 8, 5)
+
+        r_bad = tower_bad.get_receipt()
+        self.assertEqual(r_bad["schema"], "lggr.online_projective_tower.v1")
+        self.assertEqual(r_bad["status"], "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR")
+        self.assertEqual(r_bad["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_bad["rational_completion_root"], "-1/3")
+        self.assertIsNone(r_bad["integral_global_root"])
+        self.assertEqual(r_bad["r1_lim_coset_residual_mod_z"], "2/3")
+        self.assertEqual(r_bad["local_product_aggregator"], 1)
+        self.assertEqual(r_bad["global_integral_lift_evaluator"], 0)
+        self.assertEqual(r_bad["evaluator_defect"], -1)
+
+        # 2. Positive control: 3x - 6 = 0 (mod 2^n) with x1 = 0 (mod 2), x2 = 2 (mod 4), x3 = 2 (mod 8)
+        #    Global integer root x_* = 2 in Z lifts all stages -> L = 1, Eg = 1, Delta_E = 0
+        tower_ok = StreamingProjectiveTowerMonitor(3, -6, scope_id="tower-3x-minus-6")
+        tower_ok.record_stage("stage_mod_2", 2, 0)
+        tower_ok.record_stage("stage_mod_4", 4, 2)
+        tower_ok.record_stage("stage_mod_8", 8, 2)
+
+        r_ok = tower_ok.get_receipt()
+        self.assertEqual(r_ok["status"], "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_ok["integral_global_root"], 2)
+        self.assertEqual(r_ok["r1_lim_coset_residual_mod_z"], "0")
+        self.assertEqual(r_ok["evaluator_defect"], 0)
+
+    def test_skew_repair_norm_attainment_divergence_and_l1_budget_breach(self) -> None:
+        """Verify LGGR V Remark LGR-R4 skew repair monitor separates l^infty attainment from l^1 budget."""
+        from lggr import StreamingSkewRepairMonitor
+
+        mon = StreamingSkewRepairMonitor(scope_id="skew-repair-audit")
+
+        # 1. Non-exact probe omega = (1, -1) with 2a - b = 3 != 0:
+        #    alpha_1 = 1/2 (Phi_1 = 3/2), alpha_2 = 1/5 (Phi_2^2 = 9/5), alpha_inf = 0 (Phi_inf = 1).
+        #    Selecting candidate_alpha = alpha_inf = 0 passes coordinatewise l^infty bounds <= 1 (L = 1),
+        #    but incurs ||r(0)||_1 = 2 > 3/2 = Phi_1 (Eg = 0, Delta_E = -1).
+        p_div = mon.record_probe("omega_1_minus_1_linf_selected", 1, -1)
+        self.assertEqual(p_div["skew_discrepancy_2a_minus_b"], "3")
+        self.assertEqual(p_div["alpha_1"], "1/2")
+        self.assertEqual(p_div["alpha_2"], "1/5")
+        self.assertEqual(p_div["alpha_inf"], "0")
+        self.assertEqual(p_div["phi_1"], "3/2")
+        self.assertEqual(p_div["phi_2_squared"], "9/5")
+        self.assertEqual(p_div["phi_inf"], "1")
+        self.assertTrue(p_div["closed_form_identities_hold"])
+        self.assertTrue(p_div["minimizers_strictly_diverge"])
+        self.assertEqual(p_div["candidate_l1_cost"], "2")
+        self.assertEqual(p_div["local_product_aggregator"], 1)
+        self.assertEqual(p_div["global_l1_budget_evaluator"], 0)
+        self.assertEqual(p_div["evaluator_defect"], -1)
+        self.assertEqual(p_div["probe_status"], "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR")
+
+        # 2. Exact probe omega = (1, 2) with 2a - b = 0:
+        #    alpha_1 = alpha_2 = alpha_inf = -1, Phi_1 = Phi_2^2 = Phi_inf = 0 -> L = 1, Eg = 1, Delta_E = 0
+        p_exact = mon.record_probe("omega_1_2_exact", 1, 2)
+        self.assertEqual(p_exact["skew_discrepancy_2a_minus_b"], "0")
+        self.assertEqual(p_exact["alpha_1"], "-1")
+        self.assertEqual(p_exact["alpha_2"], "-1")
+        self.assertEqual(p_exact["alpha_inf"], "-1")
+        self.assertFalse(p_exact["minimizers_strictly_diverge"])
+        self.assertEqual(p_exact["evaluator_defect"], 0)
+        self.assertEqual(p_exact["probe_status"], "SKEW_REPAIR_BUDGET_COHERENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_skew_repair.v1")
+        self.assertEqual(receipt["status"], "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(receipt["all_closed_form_identities_verified"])
+        self.assertEqual(receipt["skew_norm_divergence_probe_ids"], ["omega_1_minus_1_linf_selected"])
+
+    def test_mermin_peres_magic_square_parity_obstruction(self) -> None:
+        """Verify 3x3 Mermin-Peres parity monitor separates 6-context satisfiability from global parity obstruction."""
+        from lggr import StreamingMerminPeresParityMonitor
+
+        mon = StreamingMerminPeresParityMonitor(scope_id="mermin-peres-audit")
+
+        # 1. Canonical Mermin-Peres magic square: row targets (+1, +1, +1), col targets (+1, +1, -1)
+        #    All 6 contexts are locally satisfied (L = 1), yet prod(R) = +1 != -1 = prod(C),
+        #    so max_satisfied = 5 out of 6, min_violated = 1, Eg = 0, Delta_E = -1.
+        g_mp = mon.record_grid(
+            "mermin_peres_canonical",
+            row_targets=[1, 1, 1],
+            col_targets=[1, 1, -1],
+        )
+        self.assertEqual(g_mp["row_target_product"], 1)
+        self.assertEqual(g_mp["col_target_product"], -1)
+        self.assertTrue(g_mp["parity_mismatch_obstruction"])
+        self.assertEqual(g_mp["max_satisfied_contexts_out_of_6"], 5)
+        self.assertEqual(g_mp["min_violated_contexts"], 1)
+        self.assertEqual(g_mp["global_noncontextual_witness_count"], 0)
+        self.assertFalse(g_mp["global_noncontextual_assignment_exists"])
+        self.assertEqual(g_mp["local_product_aggregator"], 1)
+        self.assertEqual(g_mp["global_noncontextual_evaluator"], 0)
+        self.assertEqual(g_mp["evaluator_defect"], -1)
+        self.assertEqual(g_mp["grid_status"], "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR")
+
+        # 2. Positive control: non-contextual parity targets (+1, +1, +1) and (+1, +1, +1)
+        #    prod(R) = +1 == +1 = prod(C), 16 global non-contextual witnesses exist -> L = 1, Eg = 1, Delta_E = 0
+        g_ok = mon.record_grid(
+            "noncontextual_even_grid",
+            row_targets=[1, 1, 1],
+            col_targets=[1, 1, 1],
+        )
+        self.assertFalse(g_ok["parity_mismatch_obstruction"])
+        self.assertEqual(g_ok["max_satisfied_contexts_out_of_6"], 6)
+        self.assertEqual(g_ok["min_violated_contexts"], 0)
+        self.assertEqual(g_ok["global_noncontextual_witness_count"], 16)
+        self.assertTrue(g_ok["global_noncontextual_assignment_exists"])
+        self.assertEqual(g_ok["evaluator_defect"], 0)
+        self.assertEqual(g_ok["grid_status"], "NONCONTEXTUAL_PARITY_COHERENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_mermin_peres_parity.v1")
+        self.assertEqual(receipt["status"], "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["parity_obstructed_grid_ids"], ["mermin_peres_canonical"])
+
+    def test_side_information_channel_capacity_and_fiber_error_floor(self) -> None:
+        """Verify 012_rsi/002 IK-04/IK-05 side-information capacity monitor enforces K - S error floor."""
+        from lggr import StreamingSideInformationCapacityMonitor
+
+        mon = StreamingSideInformationCapacityMonitor(scope_id="side-info-capacity-audit")
+
+        # 1. Capacity-deficient 1-bit channel (S = 2) on a 4-value report fiber (K = 4):
+        #    Every state emits a valid symbol in {0, 1} (L = 1), yet K - S = 4 - 2 = 2
+        #    forces at least 2 distinct-target collisions (Eg = 0, Delta_E = -1).
+        f_bad = mon.record_fiber_channel(
+            "fiber_k4_s2_deficit",
+            [
+                {"state_id": "x0", "query_value": 10, "side_symbol": 0},
+                {"state_id": "x1", "query_value": 20, "side_symbol": 0},
+                {"state_id": "x2", "query_value": 30, "side_symbol": 1},
+                {"state_id": "x3", "query_value": 40, "side_symbol": 1},
+            ],
+            channel_capacity_s=2,
+            error_budget=0,
+        )
+        self.assertEqual(f_bad["distinct_query_values_k"], 4)
+        self.assertEqual(f_bad["channel_capacity_s"], 2)
+        self.assertEqual(f_bad["capacity_error_floor_k_minus_s"], 2)
+        self.assertEqual(f_bad["realized_subfiber_error_floor"], 2)
+        self.assertEqual(f_bad["realized_sample_error_floor"], 2)
+        self.assertTrue(f_bad["pigeonhole_bound_verified"])
+        self.assertEqual(f_bad["local_product_aggregator"], 1)
+        self.assertEqual(f_bad["global_decodability_evaluator"], 0)
+        self.assertEqual(f_bad["evaluator_defect"], -1)
+        self.assertEqual(f_bad["fiber_status"], "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR")
+
+        # 2. Positive control: 2-bit channel (S = 4 >= K = 4) with injective side symbols:
+        #    Each sub-fiber has 1 distinct query value -> error floor = 0, L = 1, Eg = 1, Delta_E = 0
+        f_ok = mon.record_fiber_channel(
+            "fiber_k4_s4_sufficient",
+            [
+                {"state_id": "x0", "query_value": 10, "side_symbol": 0},
+                {"state_id": "x1", "query_value": 20, "side_symbol": 1},
+                {"state_id": "x2", "query_value": 30, "side_symbol": 2},
+                {"state_id": "x3", "query_value": 40, "side_symbol": 3},
+            ],
+            channel_capacity_s=4,
+            error_budget=0,
+        )
+        self.assertEqual(f_ok["capacity_error_floor_k_minus_s"], 0)
+        self.assertEqual(f_ok["realized_subfiber_error_floor"], 0)
+        self.assertEqual(f_ok["evaluator_defect"], 0)
+        self.assertEqual(f_ok["fiber_status"], "SIDE_INFORMATION_SUFFICIENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_side_information_capacity.v1")
+        self.assertEqual(receipt["status"], "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(receipt["all_pigeonhole_bounds_verified"])
+        self.assertEqual(receipt["capacity_deficit_fiber_ids"], ["fiber_k4_s2_deficit"])
+
+    def test_product_of_experts_disjoint_support_collapse_vs_mixture(self) -> None:
+        """Verify LGGR I §7.2 Product-of-Experts monitor separates disjoint-support collapse from MoE."""
+        from lggr import StreamingProductOfExpertsMonitor
+
+        mon = StreamingProductOfExpertsMonitor(scope_id="poe-vs-moe-audit")
+
+        # 1. Disjoint supports: Expert 1 = [1, 0], Expert 2 = [0, 1]
+        #    Both experts have positive mass (L = 1) and D_MoE = 1 > 0,
+        #    yet D_PoE = 1*0 + 0*1 = 0 collapses (Eg = 0, Delta_E = -1).
+        r_bad = mon.record_expert_scores("disjoint_experts", [[1, 0], [0, 1]])
+        self.assertEqual(r_bad["expert_masses"], ["1", "1"])
+        self.assertEqual(r_bad["joint_support_indices"], [])
+        self.assertEqual(r_bad["poe_partition_sum"], "0")
+        self.assertIsNone(r_bad["poe_normalized_distribution"])
+        self.assertEqual(r_bad["moe_partition_sum"], "1")
+        self.assertEqual(r_bad["moe_normalized_distribution"], ["1/2", "1/2"])
+        self.assertEqual(r_bad["local_product_aggregator"], 1)
+        self.assertEqual(r_bad["global_poe_normalizable_evaluator"], 0)
+        self.assertEqual(r_bad["evaluator_defect"], -1)
+        self.assertEqual(r_bad["round_status"], "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR")
+
+        # 2. Overlapping supports: Expert 1 = [1, 1], Expert 2 = [1, 0]
+        #    D_PoE = 1 > 0 -> L = 1, Eg = 1, Delta_E = 0
+        r_ok = mon.record_expert_scores("overlapping_experts", [[1, 1], [1, 0]])
+        self.assertEqual(r_ok["joint_support_indices"], [0])
+        self.assertEqual(r_ok["poe_partition_sum"], "1")
+        self.assertEqual(r_ok["poe_normalized_distribution"], ["1", "0"])
+        self.assertEqual(r_ok["evaluator_defect"], 0)
+        self.assertEqual(r_ok["round_status"], "POE_AND_MOE_COHERENT_LGGG")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_product_of_experts.v1")
+        self.assertEqual(receipt["status"], "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR")
+        self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["poe_collapsed_round_ids"], ["disjoint_experts"])
 
 
 if __name__ == "__main__":

@@ -41,7 +41,10 @@ def _flexible_step_witness_init(self: Any, *args: Any, **kwargs: Any) -> None:
         kwargs["smoke_passed"] = kwargs.pop("smoke_test_passed")
     if "policy_hash" in kwargs and "policy_sha256" not in kwargs:
         kwargs["policy_sha256"] = kwargs.pop("policy_hash")
-    kwargs.pop("prior_obligations_satisfied", None)
+    if "prior_obligations_satisfied" in kwargs:
+        satisfied = boolean(kwargs.pop("prior_obligations_satisfied"), "prior_obligations_satisfied")
+        if not satisfied:
+            kwargs["obligations"] = tuple(kwargs.get("obligations", ())) + ("prior_obligations_unsatisfied",)
     if "witness_id" not in kwargs and len(args) < 1:
         kwargs["witness_id"] = f"w_auto_{next(_witness_counter)}"
     if "evaluator_id" not in kwargs and len(args) < 5:
@@ -75,6 +78,7 @@ class StreamingFiberMonitor:
         self.scope_id = text(scope_id, "scope_id")
         self.fibers: dict[str, dict[str, Any]] = {}
         self.observed_states: dict[str, dict[str, Any]] = {}
+        self.observation_indices: dict[str, int] = {}
         self.history: list[dict[str, Any]] = []
         self.collision: dict[str, Any] | None = None
         self.status: str = "COMPOSABLE_LGGG"
@@ -100,12 +104,13 @@ class StreamingFiberMonitor:
             if metadata:
                 row["metadata"] = json.loads(canonical(metadata))
             self.observed_states[sid] = row
+            self.observation_indices[sid] = len(self.history)
             self.history.append(row)
 
         report_key = canonical(rep_clean)
         first_rep = self.fibers.get(report_key)
 
-        step_idx = len(self.history) - 1
+        step_idx = self.observation_indices[sid]
 
         if first_rep is not None and canonical(first_rep["query"]) != canonical(qry_clean):
             # Report collision detected
@@ -613,6 +618,9 @@ class StreamingAuditMonitor:
         self.obligations: set[str] = set()
         self.seen_witness_ids: set[str] = set()
         self.prefix_records: list[dict[str, Any]] = []
+        self.state_values: dict[str, int] = {}
+        if baseline is not None and baseline.value is not None:
+            self.state_values[baseline.state_id] = baseline.value
 
     def step(self, witness: StepWitness, *,
              global_evaluator_sample: int | bool | None = None,
@@ -650,6 +658,13 @@ class StreamingAuditMonitor:
                 "message": "Witness identities must be unique.", "witness_id": wid
             })
         self.seen_witness_ids.add(wid)
+
+        for state in (witness.source, witness.target):
+            if state.value is not None:
+                if state.state_id in self.state_values and self.state_values[state.state_id] != state.value:
+                    g1_ok = False
+                    g1_reasons.append("CONFLICTING_STATE")
+                self.state_values[state.state_id] = state.value
 
         if witness.source.state_id != self.expected_source:
             g1_ok = False
@@ -694,6 +709,17 @@ class StreamingAuditMonitor:
         # G2: Cost & Delta Tracking
         self.running_cost += step_cost
         val_a, val_b = witness.source.value, witness.target.value
+        if val_a is None or val_b is None:
+            g1_ok = False
+            g1_reasons.append("MISSING_ENDPOINT")
+        if self.obligations:
+            g1_ok = False
+            g1_reasons.append("OPEN_OBLIGATIONS")
+        if (val_a is not None and val_b is not None and rep_ok
+                and witness.observed_magnitude is not None
+                and witness.observed_magnitude != abs(val_b - val_a)):
+            g1_ok = False
+            g1_reasons.append("MAGNITUDE_MISMATCH")
         signed_delta: int | None = None
         if val_a is not None and val_b is not None:
             signed_delta = val_b - val_a
@@ -759,6 +785,8 @@ class StreamingAuditMonitor:
                 "bound": self.policy.max_total
             })
 
+        if self.policy.query_scope == "endpoint" and not prefix_within_bound:
+            alert_reasons.append("ENDPOINT_BUDGET_EXCEEDED")
         has_alert = len(alert_reasons) > 0
         if has_alert:
             self.status = "OBSTRUCTED_LGGR"
@@ -802,20 +830,19 @@ class StreamingAuditMonitor:
 
     def get_receipt(self) -> dict[str, Any]:
         """Emit comprehensive audit receipt."""
-        if abs(self.cumulative_delta) > self.policy.max_total:
-            if not any(f.get("code") == "PROTECTED_QUERY_FALSE" for f in self.findings):
-                self.findings.append({
-                    "kind": "OBSTRUCTION_DETECTED",
-                    "code": "PROTECTED_QUERY_FALSE",
-                    "message": "Cumulative delta exceeds bound under declared query scope.",
-                    "cumulative_delta": self.cumulative_delta,
-                    "bound": self.policy.max_total,
-                })
+        baseline = self.baseline or StateRef("unobserved-baseline", None)
+        replay = audit_history(self.policy, baseline, self.steps,
+                               prior_obligations=tuple(sorted(self.obligations)))
+        self.findings = list(replay["findings"])
+        if any(a.get("defect") == -1 for a in self.alerts):
+            self.findings.append({"kind": "OBSTRUCTION_DETECTED", "code": "NGD_DEFECT_DETECTED",
+                                  "message": "A supplied global sample disagreed with the local product."})
 
         priority = ["INVALID_WITNESS", "AUTHORITY_REQUIRED", "UNSUPPORTED", "LOCAL_REJECTED",
                     "OBSTRUCTION_DETECTED", "WITNESS_INCOMPLETE"]
         kinds = {f["kind"] for f in self.findings}
         status = next((k for k in priority if k in kinds), "COMPOSITION_VERIFIED")
+        self.status = "COMPOSABLE_LGGG" if status == "COMPOSITION_VERIFIED" else "OBSTRUCTED_LGGR"
 
         body = {
             "schema": "lggr.audit.v1",
@@ -4915,7 +4942,6 @@ class StreamingWindowedDriftMonitor:
         partition_sum = sum(block_sums, Fraction(0))
         block_partition_verified = (
             partition_sum == self.cumulative_drift
-            and all(b_sum <= self.max_window_sum for b_sum in block_sums)
             and (
                 n_steps == 0
                 or self.cumulative_drift <= Fraction(k_blocks) * self.max_window_sum
@@ -5741,6 +5767,1897 @@ class StreamingDFAGrammarGluingMonitor:
             "segments": self.segments,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCatalystDegradationMonitor:
+    """Online constructor-task catalyst residual wear and cycle-ceiling monitor.
+
+    Audits multi-cycle constructor tasks (S_t, C_t) -> (S_{t+1}, C_{t+1}) over Q:
+      - Tracks initial catalyst state C_0, catalyst tolerance threshold tau_cat >= 0,
+        and per-cycle local step wear tolerance eps_local >= 0.
+      - On each cycle t, records substrate task completion E_sub(t) in {0, 1} and
+        catalyst residual wear delta_C_t = C_t - C_{t-1}.
+      - Evaluates the single-cycle local gate:
+          E_local(t) = 1[E_sub(t) == 1 and |delta_C_t| <= eps_local]
+        and local product aggregator L = prod_{t=1}^N E_local(t).
+      - Evaluates cumulative catalyst deviation |C_t - C_0| = |sum_{k=1}^t delta_C_k|
+        against tau_cat and global multi-cycle task evaluator:
+          E_g = 1[(prod_{t=1}^N E_sub(t) == 1) and (max_{1<=t<=N} |C_t - C_0| <= tau_cat)].
+      - Computes the exact uniform-wear cycle ceiling floor(tau_cat / |delta_C_t|)
+        when delta_C_t != 0, and separates:
+          * IDEAL_EXACT_CATALYST_LGGG (L == 1, E_g == 1, max |C_t - C_0| == 0),
+          * BOUNDED_APPROXIMATE_CATALYST_LGGG (L == 1, E_g == 1, 0 < max |C_t - C_0| <= tau_cat),
+          * CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR (L == 1, E_g == 0, Delta_E = -1),
+          * LOCAL_CYCLE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        initial_catalyst_state: Fraction | int | str = 0,
+        catalyst_tolerance: Fraction | int | str = 1,
+        *,
+        per_cycle_local_tolerance: Fraction | int | str | None = None,
+        scope_id: str = "streaming-catalyst-degradation-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.initial_catalyst = rational(initial_catalyst_state)
+        self.catalyst_tolerance = rational(catalyst_tolerance)
+        if self.catalyst_tolerance < 0:
+            raise ValidationError("catalyst_tolerance must be non-negative")
+        if per_cycle_local_tolerance is None:
+            self.per_cycle_local_tolerance = self.catalyst_tolerance
+        else:
+            self.per_cycle_local_tolerance = rational(per_cycle_local_tolerance)
+            if self.per_cycle_local_tolerance < 0:
+                raise ValidationError("per_cycle_local_tolerance must be non-negative")
+
+        self.current_catalyst = self.initial_catalyst
+        self.cumulative_wear = Fraction(0)
+        self.cumulative_abs_wear = Fraction(0)
+        self.max_catalyst_deviation = Fraction(0)
+        self.cycles: list[dict[str, Any]] = []
+
+    def record_cycle(
+        self,
+        cycle_id: str,
+        substrate_in: str,
+        substrate_out: str,
+        substrate_target_met: bool,
+        catalyst_wear_delta: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Record a single constructor cycle and evaluate local vs cumulative catalyst bounds."""
+        cid = text(cycle_id, "cycle_id")
+        s_in = text(substrate_in, "substrate_in")
+        s_out = text(substrate_out, "substrate_out")
+        boolean(substrate_target_met, "substrate_target_met")
+        wear = rational(catalyst_wear_delta)
+
+        c_prev = self.current_catalyst
+        c_next = c_prev + wear
+        self.current_catalyst = c_next
+        self.cumulative_wear += wear
+        self.cumulative_abs_wear += abs(wear)
+
+        deviation = abs(c_next - self.initial_catalyst)
+        if deviation > self.max_catalyst_deviation:
+            self.max_catalyst_deviation = deviation
+
+        telescoping_ok = (c_next - self.initial_catalyst) == self.cumulative_wear
+        sub_ok = 1 if substrate_target_met else 0
+        step_wear_ok = abs(wear) <= self.per_cycle_local_tolerance
+        local_eval = 1 if (substrate_target_met and step_wear_ok) else 0
+        within_global_tolerance = deviation <= self.catalyst_tolerance
+
+        uniform_cycle_ceiling: int | None = None
+        if wear != Fraction(0):
+            uniform_cycle_ceiling = int(self.catalyst_tolerance // abs(wear))
+
+        rec = {
+            "cycle_index": len(self.cycles),
+            "cycle_id": cid,
+            "substrate_in": s_in,
+            "substrate_out": s_out,
+            "substrate_target_met": sub_ok,
+            "catalyst_state_before": c_prev,
+            "catalyst_wear_delta": wear,
+            "catalyst_state_after": c_next,
+            "cumulative_catalyst_drift": self.cumulative_wear,
+            "cumulative_abs_wear": self.cumulative_abs_wear,
+            "catalyst_deviation_from_initial": deviation,
+            "local_cycle_evaluator": local_eval,
+            "within_global_catalyst_tolerance": within_global_tolerance,
+            "uniform_wear_cycle_ceiling": uniform_cycle_ceiling,
+            "telescoping_identity_verified": telescoping_ok,
+        }
+        self.cycles.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed multi-cycle constructor catalyst degradation receipt."""
+        if not self.cycles:
+            raise ValidationError("At least one constructor cycle must be recorded before emitting a receipt")
+
+        local_product = 1
+        all_sub_ok = True
+        for cyc in self.cycles:
+            local_product *= cyc["local_cycle_evaluator"]
+            if cyc["substrate_target_met"] != 1:
+                all_sub_ok = False
+
+        catalyst_viable_all_cycles = self.max_catalyst_deviation <= self.catalyst_tolerance
+        global_eval = 1 if (all_sub_ok and catalyst_viable_all_cycles) else 0
+        defect = global_eval - local_product
+        exhausted_cycle_ids = [
+            cyc["cycle_id"] for cyc in self.cycles if not cyc["within_global_catalyst_tolerance"]
+        ]
+        all_telescoping = all(cyc["telescoping_identity_verified"] for cyc in self.cycles)
+
+        if local_product == 1 and global_eval == 1:
+            if self.max_catalyst_deviation == Fraction(0):
+                status = "IDEAL_EXACT_CATALYST_LGGG"
+            else:
+                status = "BOUNDED_APPROXIMATE_CATALYST_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            status = "CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_CYCLE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_catalyst_degradation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "initial_catalyst_state": self.initial_catalyst,
+            "terminal_catalyst_state": self.current_catalyst,
+            "catalyst_tolerance": self.catalyst_tolerance,
+            "per_cycle_local_tolerance": self.per_cycle_local_tolerance,
+            "cycle_count": len(self.cycles),
+            "cumulative_catalyst_drift": self.cumulative_wear,
+            "cumulative_abs_wear": self.cumulative_abs_wear,
+            "max_catalyst_deviation": self.max_catalyst_deviation,
+            "local_product_aggregator": local_product,
+            "global_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "exhausted_cycle_ids": exhausted_cycle_ids,
+            "all_telescoping_identities_verified": all_telescoping,
+            "cycles": self.cycles,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingDiscreteCurvatureMonitor:
+    """Online discrete Bochner-Dirichlet curvature and 1-form Hodge Laplacian energy monitor.
+
+    Audits the discrete 1-form Hodge Laplacian on a finite 2-complex (D_0, D_1) over Q:
+      L_down = D_0 D_0^T,   L_up = D_1^T D_1,   L_1 = L_down + L_up.
+    For each recorded 1-cochain h in C^1(K; Q):
+      - Evaluates the quadratic Dirichlet energy identity:
+          <h, L_1 h> = <h, L_down h> + <h, L_up h> = ||D_0^T h||_2^2 + ||D_1 h||_2^2 >= 0.
+      - Verifies the nilpotent operator orthogonality L_down * L_up == 0 and L_up * L_down == 0
+        induced by D_1 * D_0 == 0.
+      - Verifies the kernel equivalence:
+          L_1 h == 0  <=>  <h, L_1 h> == 0  <=>  (D_0^T h == 0 and D_1 h == 0).
+      - Separates:
+          * ZERO_COCHAIN_TRIVIAL_LGGG (h == 0),
+          * HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR (h != 0 and L_1 h == 0),
+          * PURE_DIVERGENCE_GRADIENT_FLOW_LGGG (D_1 h == 0 and h in im(D_0) with h != 0),
+          * CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR (D_1 h != 0 or non-exact divergence flow).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-discrete-curvature-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _dot(u: tuple[Fraction, ...], v: tuple[Fraction, ...]) -> Fraction:
+        return sum((a * b for a, b in zip(u, v)), Fraction(0))
+
+    def record_laplacian_probe(
+        self,
+        probe_id: str,
+        D0: Any,
+        h: Any,
+        D1: Any | None = None,
+    ) -> dict[str, Any]:
+        """Evaluate L_down, L_up, L_1, and the Dirichlet energy identity on 1-cochain h."""
+        pid = text(probe_id, "probe_id")
+        d0 = matrix(D0, "D0")
+        m, _ = len(d0), len(d0[0])
+        hv = vector(h, "h", m)
+        d0_t = transpose(d0)
+        l_down = matmul(d0, d0_t)
+
+        has_d1 = False
+        d1: tuple[tuple[Fraction, ...], ...] = ()
+        d1_t: tuple[tuple[Fraction, ...], ...] = ()
+        if D1 is not None:
+            raw_d1 = sequence(D1, "D1")
+            if raw_d1:
+                d1 = matrix(raw_d1, "D1", cols=m)
+                d1_t = transpose(d1)
+                has_d1 = True
+                if not is_zero(matmul(d1, d0)):
+                    raise ValidationError("Invalid 2-complex: D1 * D0 must be zero")
+
+        if has_d1:
+            l_up = matmul(d1_t, d1)
+            operator_orthogonality_ok = is_zero(matmul(l_down, l_up)) and is_zero(matmul(l_up, l_down))
+        else:
+            l_up = tuple(tuple(Fraction(0) for _ in range(m)) for _ in range(m))
+            operator_orthogonality_ok = True
+
+        div_h = matvec(d0_t, hv)
+        curl_h = matvec(d1, hv) if has_d1 else ()
+        l_down_h = matvec(l_down, hv)
+        l_up_h = matvec(l_up, hv)
+        l1_h = tuple(l_down_h[i] + l_up_h[i] for i in range(m))
+
+        norm2_h = self._dot(hv, hv)
+        energy_div = self._dot(div_h, div_h)
+        energy_curl = self._dot(curl_h, curl_h) if has_d1 else Fraction(0)
+        energy_dirichlet = self._dot(hv, l1_h)
+        energy_identity_ok = (
+            self._dot(hv, l_down_h) == energy_div
+            and self._dot(hv, l_up_h) == energy_curl
+            and energy_dirichlet == (energy_div + energy_curl)
+        )
+
+        l1_h_zero = all(v == Fraction(0) for v in l1_h)
+        div_zero = all(v == Fraction(0) for v in div_h)
+        curl_zero = all(v == Fraction(0) for v in curl_h)
+        kernel_equivalence_ok = (
+            l1_h_zero == (energy_dirichlet == Fraction(0))
+            and l1_h_zero == (div_zero and curl_zero)
+        )
+
+        exact_sol = solve_exact(d0, hv)
+        is_exact = exact_sol is not None
+
+        if norm2_h == Fraction(0):
+            classification = "ZERO_COCHAIN_TRIVIAL_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l1_h_zero:
+            classification = "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif curl_zero and is_exact:
+            classification = "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            classification = "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "probe_id": pid,
+            "h": list(hv),
+            "divergence_d0_transpose_h": list(div_h),
+            "curl_d1_h": list(curl_h),
+            "l_down_h": list(l_down_h),
+            "l_up_h": list(l_up_h),
+            "l1_h": list(l1_h),
+            "norm2_h": norm2_h,
+            "divergence_energy": energy_div,
+            "curl_energy": energy_curl,
+            "dirichlet_energy": energy_dirichlet,
+            "in_laplacian_kernel": l1_h_zero,
+            "is_exact_coboundary": is_exact,
+            "dirichlet_energy_identity_verified": energy_identity_ok,
+            "operator_orthogonality_verified": operator_orthogonality_ok,
+            "kernel_equivalence_verified": kernel_equivalence_ok,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed discrete curvature and Hodge Laplacian energy audit receipt."""
+        if not self.records:
+            raise ValidationError("At least one Laplacian probe must be recorded before emitting a receipt")
+
+        harmonic_kernel_ids = [
+            r["probe_id"]
+            for r in self.records
+            if r["classification"] == "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+        ]
+        curl_obstructed_ids = [
+            r["probe_id"]
+            for r in self.records
+            if r["classification"] == "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR"
+        ]
+        all_energy_id = all(r["dirichlet_energy_identity_verified"] for r in self.records)
+        all_op_orth = all(r["operator_orthogonality_verified"] for r in self.records)
+        all_ker_eq = all(r["kernel_equivalence_verified"] for r in self.records)
+
+        if harmonic_kernel_ids or curl_obstructed_ids:
+            status = "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EXACT_GRADIENT_ENERGY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_discrete_curvature.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "probe_count": len(self.records),
+            "harmonic_kernel_probe_ids": sorted(harmonic_kernel_ids),
+            "curl_obstructed_probe_ids": sorted(curl_obstructed_ids),
+            "all_dirichlet_energy_identities_verified": all_energy_id,
+            "all_operator_orthogonalities_verified": all_op_orth,
+            "all_kernel_equivalences_verified": all_ker_eq,
+            "records": self.records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingContextualSheafMonitor:
+    """Online 3-cycle empirical presheaf marginal-compatibility and global section monitor.
+
+    Audits 3-variable hollow-triangle empirical models over contexts
+    C_AB = {A, B}, C_BC = {B, C}, C_CA = {C, A} with binary outcomes {0, 1}^2:
+      - Each context table specifies (p_00, p_01, p_10, p_11) in Q_{>=0}^4 with sum == 1.
+      - Verifies pairwise single-variable marginal compatibility (no-signaling / presheaf
+        restriction agreement):
+          p_AB^A(1) == p_CA^A(1),   p_AB^B(1) == p_BC^B(1),   p_BC^C(1) == p_CA^C(1).
+      - Solves the exact 1-parameter affine family d_alpha(a, b, c) parameterized by
+        alpha = d(1, 1, 1) in Q:
+          alpha_min = max(0, q_AB + q_CA - p_A, q_AB + q_BC - p_B, q_BC + q_CA - p_C),
+          alpha_max = min(q_AB, q_BC, q_CA, 1 - p_A - p_B - p_C + q_AB + q_BC + q_CA).
+      - A nonnegative global joint distribution d >= 0 on {0, 1}^3 exists iff
+        pairwise marginals agree and alpha_min <= alpha_max.
+      - Separates:
+          * GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG (no-signaling and alpha_min <= alpha_max),
+          * CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR (no-signaling holds on all
+            single-variable overlaps, yet alpha_min > alpha_max blocks global gluing),
+          * SIGNALING_MARGINAL_MISMATCH_LGGR (single-variable overlap marginals disagree).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-contextual-sheaf-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.models: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _parse_context_table(table: Any, name: str) -> tuple[Fraction, Fraction, Fraction, Fraction]:
+        vals = vector(table, name, 4)
+        if any(v < 0 for v in vals):
+            raise ValidationError(f"{name} probabilities must be non-negative")
+        if sum(vals, Fraction(0)) != Fraction(1):
+            raise ValidationError(f"{name} probabilities must sum to 1")
+        return vals[0], vals[1], vals[2], vals[3]
+
+    def record_three_cycle_model(
+        self,
+        model_id: str,
+        table_ab: Iterable[Fraction | int | str],
+        table_bc: Iterable[Fraction | int | str],
+        table_ca: Iterable[Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Audit a 3-cycle empirical model (p_AB, p_BC, p_CA) for marginal compatibility and global section existence."""
+        mid = text(model_id, "model_id")
+        ab00, ab01, ab10, ab11 = self._parse_context_table(table_ab, "table_ab")
+        bc00, bc01, bc10, bc11 = self._parse_context_table(table_bc, "table_bc")
+        ca00, ca01, ca10, ca11 = self._parse_context_table(table_ca, "table_ca")
+
+        # Single-variable marginals for outcome 1
+        p_a_from_ab = ab10 + ab11
+        p_a_from_ca = ca01 + ca11
+        p_b_from_ab = ab01 + ab11
+        p_b_from_bc = bc10 + bc11
+        p_c_from_bc = bc01 + bc11
+        p_c_from_ca = ca10 + ca11
+
+        no_signaling_ok = (
+            p_a_from_ab == p_a_from_ca
+            and p_b_from_ab == p_b_from_bc
+            and p_c_from_bc == p_c_from_ca
+        )
+
+        p_a = p_a_from_ab
+        p_b = p_b_from_bc
+        p_c = p_c_from_ca
+        q_ab, q_bc, q_ca = ab11, bc11, ca11
+
+        alpha_min = max(
+            Fraction(0),
+            q_ab + q_ca - p_a,
+            q_ab + q_bc - p_b,
+            q_bc + q_ca - p_c,
+        )
+        d000_plus_d111 = Fraction(1) - p_a - p_b - p_c + q_ab + q_bc + q_ca
+        alpha_max = min(q_ab, q_bc, q_ca, d000_plus_d111)
+
+        interval_gap = max(Fraction(0), alpha_min - alpha_max)
+        global_section_exists = no_signaling_ok and (alpha_min <= alpha_max)
+
+        witness_joint: dict[str, Fraction] | None = None
+        marginal_recovery_verified = False
+        if no_signaling_ok:
+            alpha = (alpha_min + alpha_max) / Fraction(2)
+            d111 = alpha
+            d110 = q_ab - alpha
+            d011 = q_bc - alpha
+            d101 = q_ca - alpha
+            d100 = p_a - q_ab - q_ca + alpha
+            d010 = p_b - q_ab - q_bc + alpha
+            d001 = p_c - q_bc - q_ca + alpha
+            d000 = d000_plus_d111 - alpha
+            marginal_recovery_verified = (
+                (d000 + d001 == ab00)
+                and (d010 + d011 == ab01)
+                and (d100 + d101 == ab10)
+                and (d110 + d111 == ab11)
+                and (d000 + d100 == bc00)
+                and (d001 + d101 == bc01)
+                and (d010 + d110 == bc10)
+                and (d011 + d111 == bc11)
+                and (d000 + d010 == ca00)
+                and (d100 + d110 == ca01)
+                and (d001 + d011 == ca10)
+                and (d101 + d111 == ca11)
+            )
+            if global_section_exists:
+                witness_joint = {
+                    "000": d000,
+                    "001": d001,
+                    "010": d010,
+                    "011": d011,
+                    "100": d100,
+                    "101": d101,
+                    "110": d110,
+                    "111": d111,
+                }
+
+        if not no_signaling_ok:
+            classification = "SIGNALING_MARGINAL_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not global_section_exists:
+            classification = "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            classification = "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        rec = {
+            "model_id": mid,
+            "no_signaling_verified": no_signaling_ok,
+            "marginals_one": {"A": p_a, "B": p_b, "C": p_c},
+            "joint_ones": {"AB": q_ab, "BC": q_bc, "CA": q_ca},
+            "d000_plus_d111_invariant": d000_plus_d111,
+            "alpha_min": alpha_min,
+            "alpha_max": alpha_max,
+            "infeasibility_gap": interval_gap,
+            "global_section_exists": global_section_exists,
+            "witness_global_joint": witness_joint,
+            "affine_marginal_recovery_verified": marginal_recovery_verified,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.models.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed 3-cycle contextual presheaf audit receipt."""
+        if not self.models:
+            raise ValidationError("At least one 3-cycle empirical model must be recorded before emitting a receipt")
+
+        contextual_ids = [
+            m["model_id"]
+            for m in self.models
+            if m["classification"] == "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR"
+        ]
+        signaling_ids = [
+            m["model_id"]
+            for m in self.models
+            if m["classification"] == "SIGNALING_MARGINAL_MISMATCH_LGGR"
+        ]
+        all_affine_ok = all(
+            m["affine_marginal_recovery_verified"]
+            for m in self.models
+            if m["no_signaling_verified"]
+        )
+
+        if contextual_ids or signaling_ids:
+            status = "PRESHEAF_SECTION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PRESHEAF_SECTION_EXTENSIBLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_contextual_sheaf.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "model_count": len(self.models),
+            "contextual_obstructed_model_ids": sorted(contextual_ids),
+            "signaling_obstructed_model_ids": sorted(signaling_ids),
+            "all_affine_marginal_recoveries_verified": all_affine_ok,
+            "models": self.models,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingReggeDeficitCurvatureMonitor:
+    """Online 2D piecewise-flat Regge hinge deficit curvature and Gauss-Bonnet monitor.
+
+    Audits a 2D triangulation K = (V, E, F) with interior vertices V_int, boundary
+    vertices V_bnd, and normalized turn-angle assignments theta_{v, f} in Q_{>0}
+    (where 1 full turn = 1 and 1 Euclidean triangle angle sum = 1/2):
+      - Evaluates each triangle f = (v_0, v_1, v_2) locally for Euclidean closure:
+          E_tri(f) = 1[theta_{v_0, f} + theta_{v_1, f} + theta_{v_2, f} == 1/2],
+          L = prod_{f in F} E_tri(f).
+      - Computes interior hinge deficit curvature at each v in V_int:
+          eps_v = 1 - sum_{f ni v} theta_{v, f}
+        and boundary geodesic turn at each v in V_bnd:
+          kappa_v = 1/2 - sum_{f ni v} theta_{v, f}.
+      - Evaluates global interior flatness:
+          E_g = 1[L == 1 and all(eps_v == 0 for v in V_int)].
+      - Verifies the discrete Gauss-Bonnet angle-deficit identity:
+          sum_{v in V_int} eps_v + sum_{v in V_bnd} kappa_v == |V_int| + (1/2)|V_bnd| - sum_{f, v} theta_{v, f}
+        and when 2|E| == 3|F| + |V_bnd| and all triangles close (sum_v theta_{v, f} == 1/2),
+        verifies equality with the Euler characteristic chi(K) = |V| - |E| + |F|.
+      - Separates:
+          * FLAT_EUCLIDEAN_LATTICE_LGGG (L == 1 and E_g == 1),
+          * REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR (L == 1 and E_g == 0, Delta_E = -1),
+          * LOCAL_TRIANGLE_CLOSURE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        interior_vertices: Iterable[str],
+        boundary_vertices: Iterable[str] = (),
+        *,
+        scope_id: str = "streaming-regge-deficit-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        int_v = [text(v, "interior_vertex") for v in sequence(interior_vertices, "interior_vertices")]
+        bnd_v = [text(v, "boundary_vertex") for v in sequence(boundary_vertices, "boundary_vertices")]
+        if not int_v and not bnd_v:
+            raise ValidationError("At least one vertex must be declared")
+        if set(int_v) & set(bnd_v):
+            raise ValidationError("interior_vertices and boundary_vertices must be disjoint")
+
+        self.interior_vertices = sorted(set(int_v))
+        self.boundary_vertices = sorted(set(bnd_v))
+        self.all_vertices = set(self.interior_vertices) | set(self.boundary_vertices)
+        self.vertex_angle_sums: dict[str, Fraction] = {v: Fraction(0) for v in self.all_vertices}
+        self.edges: set[tuple[str, str]] = set()
+        self.triangles: list[dict[str, Any]] = []
+
+    def record_triangle(
+        self,
+        triangle_id: str,
+        vertices: Iterable[str],
+        angles: Iterable[Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Record a triangle with 3 vertices and 3 normalized turn angles."""
+        tid = text(triangle_id, "triangle_id")
+        v_list = [text(v, "vertex") for v in sequence(vertices, "vertices")]
+        if len(v_list) != 3 or len(set(v_list)) != 3:
+            raise ValidationError("Each triangle must have exactly 3 distinct vertices")
+        for v in v_list:
+            if v not in self.all_vertices:
+                raise ValidationError(f"Triangle vertex {v!r} was not declared in monitor")
+
+        ang_vec = vector(angles, "angles", 3)
+        if any(a <= 0 for a in ang_vec):
+            raise ValidationError("Triangle interior angles must be strictly positive")
+
+        for i in range(3):
+            u, w = sorted((v_list[i], v_list[(i + 1) % 3]))
+            self.edges.add((u, w))
+            self.vertex_angle_sums[v_list[i]] += ang_vec[i]
+
+        ang_sum = sum(ang_vec, Fraction(0))
+        local_flat_ok = 1 if ang_sum == Fraction(1, 2) else 0
+
+        rec = {
+            "triangle_index": len(self.triangles),
+            "triangle_id": tid,
+            "vertices": v_list,
+            "angles": list(ang_vec),
+            "angle_sum": ang_sum,
+            "local_euclidean_closure": local_flat_ok,
+        }
+        self.triangles.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed Regge hinge deficit curvature and Gauss-Bonnet audit receipt."""
+        if not self.triangles:
+            raise ValidationError("At least one triangle must be recorded before emitting a receipt")
+
+        local_product = 1
+        total_angle_sum = Fraction(0)
+        for tri in self.triangles:
+            local_product *= tri["local_euclidean_closure"]
+            total_angle_sum += tri["angle_sum"]
+
+        interior_deficits: dict[str, Fraction] = {}
+        curved_interior_hinges: list[str] = []
+        sum_interior_deficit = Fraction(0)
+        for v in self.interior_vertices:
+            eps_v = Fraction(1) - self.vertex_angle_sums[v]
+            interior_deficits[v] = eps_v
+            sum_interior_deficit += eps_v
+            if eps_v != Fraction(0):
+                curved_interior_hinges.append(v)
+
+        boundary_turns: dict[str, Fraction] = {}
+        sum_boundary_turn = Fraction(0)
+        for v in self.boundary_vertices:
+            kap_v = Fraction(1, 2) - self.vertex_angle_sums[v]
+            boundary_turns[v] = kap_v
+            sum_boundary_turn += kap_v
+
+        total_gauss_bonnet_curvature = sum_interior_deficit + sum_boundary_turn
+        expected_angle_balance = (
+            Fraction(len(self.interior_vertices))
+            + Fraction(len(self.boundary_vertices), 2)
+            - total_angle_sum
+        )
+        angle_balance_identity_ok = total_gauss_bonnet_curvature == expected_angle_balance
+
+        v_count = len(self.all_vertices)
+        e_count = len(self.edges)
+        f_count = len(self.triangles)
+        euler_characteristic = v_count - e_count + f_count
+        manifold_edge_incidence = (2 * e_count) == (3 * f_count + len(self.boundary_vertices))
+        gauss_bonnet_equals_euler = (
+            not (local_product == 1 and manifold_edge_incidence)
+            or (total_gauss_bonnet_curvature == Fraction(euler_characteristic))
+        )
+
+        global_flat = 1 if (local_product == 1 and len(curved_interior_hinges) == 0) else 0
+        defect = global_flat - local_product
+
+        if local_product == 1 and global_flat == 1:
+            status = "FLAT_EUCLIDEAN_LATTICE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_flat == 0:
+            status = "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_TRIANGLE_CLOSURE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_regge_deficit_curvature.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "vertex_count": v_count,
+            "edge_count": e_count,
+            "triangle_count": f_count,
+            "euler_characteristic": euler_characteristic,
+            "interior_deficits": interior_deficits,
+            "boundary_geodesic_turns": boundary_turns,
+            "curved_interior_hinge_ids": curved_interior_hinges,
+            "sum_interior_deficit": sum_interior_deficit,
+            "sum_boundary_turn": sum_boundary_turn,
+            "total_gauss_bonnet_curvature": total_gauss_bonnet_curvature,
+            "local_product_aggregator": local_product,
+            "global_flatness_evaluator": global_flat,
+            "evaluator_defect": defect,
+            "angle_balance_identity_verified": angle_balance_identity_ok,
+            "gauss_bonnet_euler_identity_verified": gauss_bonnet_equals_euler,
+            "triangles": self.triangles,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingPullbackSquareMonitor:
+    """Online categorical fibered pullback square and canonical cone mediator monitor.
+
+    Audits a finite cospan A -f-> C <-g- B and its fibered pullback
+    A x_C B = {(a, b) in A x B | f(a) == g(b)}:
+      - Computes the exact fibered pullback carrier P = A x_C B and fiber cardinalities
+        |f^{-1}(c) x g^{-1}(c)| for each shared interface value c in C.
+      - For each recorded branch pair (a, b) with local branch indicators E_A, E_B in {0, 1}:
+          * Evaluates local product L = E_A * E_B,
+          * Checks pullback compatibility f(a) == g(b) and global fibered evaluator
+            E_g = 1[L == 1 and f(a) == g(b)],
+          * Flags fiber ambiguity when |f^{-1}(f(a)) x g^{-1}(g(b))| > 1 (where the
+            interface value c alone does not uniquely identify the pair in A x_C B).
+      - Audits candidate cones W -p_A-> A, W -p_B-> B for cone commutativity
+        f(p_A(w)) == g(p_B(w)) and constructs the unique mediating map
+        u: W -> A x_C B, u(w) = (p_A(w), p_B(w)).
+      - Separates:
+          * PULLBACK_FIBER_GLUED_LGGG (all recorded pairs have L == 1 and E_g == 1),
+          * PULLBACK_INTERFACE_MISMATCH_NGD_LGGR (at least one pair has L == 1 and f(a) != g(b)),
+          * LOCAL_BRANCH_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        f_map: Mapping[str, str],
+        g_map: Mapping[str, str],
+        *,
+        scope_id: str = "streaming-pullback-square-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        if not isinstance(f_map, Mapping) or not f_map:
+            raise ValidationError("f_map must be a non-empty mapping A -> C")
+        if not isinstance(g_map, Mapping) or not g_map:
+            raise ValidationError("g_map must be a non-empty mapping B -> C")
+
+        self.f_map: dict[str, str] = {
+            text(k, "a_state"): text(v, "c_state") for k, v in sorted(f_map.items())
+        }
+        self.g_map: dict[str, str] = {
+            text(k, "b_state"): text(v, "c_state") for k, v in sorted(g_map.items())
+        }
+
+        self.pullback_carrier: list[tuple[str, str, str]] = []
+        self.fiber_counts: dict[str, int] = {}
+        for a, ca in self.f_map.items():
+            for b, cb in self.g_map.items():
+                if ca == cb:
+                    self.pullback_carrier.append((a, b, ca))
+                    self.fiber_counts[ca] = self.fiber_counts.get(ca, 0) + 1
+
+        self.pair_records: list[dict[str, Any]] = []
+        self.cone_records: list[dict[str, Any]] = []
+
+    def record_branch_pair(
+        self,
+        pair_id: str,
+        a_state: str,
+        b_state: str,
+        *,
+        local_a_pass: bool = True,
+        local_b_pass: bool = True,
+    ) -> dict[str, Any]:
+        """Record a candidate branch pair (a, b) and test fibered pullback compatibility."""
+        pid = text(pair_id, "pair_id")
+        a = text(a_state, "a_state")
+        b = text(b_state, "b_state")
+        boolean(local_a_pass, "local_a_pass")
+        boolean(local_b_pass, "local_b_pass")
+        if a not in self.f_map:
+            raise ValidationError(f"a_state {a!r} not in domain of f_map")
+        if b not in self.g_map:
+            raise ValidationError(f"b_state {b!r} not in domain of g_map")
+
+        fa = self.f_map[a]
+        gb = self.g_map[b]
+        in_pullback = fa == gb
+        ea = 1 if local_a_pass else 0
+        eb = 1 if local_b_pass else 0
+        l_prod = ea * eb
+        eg = 1 if (l_prod == 1 and in_pullback) else 0
+        defect = eg - l_prod
+        fiber_size = self.fiber_counts.get(fa, 0) if in_pullback else 0
+
+        rec = {
+            "pair_index": len(self.pair_records),
+            "pair_id": pid,
+            "a_state": a,
+            "b_state": b,
+            "f_a": fa,
+            "g_b": gb,
+            "in_pullback_square": in_pullback,
+            "local_a_evaluator": ea,
+            "local_b_evaluator": eb,
+            "local_product": l_prod,
+            "global_pullback_evaluator": eg,
+            "evaluator_defect": defect,
+            "interface_fiber_size": fiber_size,
+            "interface_uniquely_identifies_pair": fiber_size == 1,
+        }
+        self.pair_records.append(rec)
+        return json_value(rec)
+
+    def verify_cone_mediator(
+        self,
+        cone_id: str,
+        p_a_map: Mapping[str, str],
+        p_b_map: Mapping[str, str],
+    ) -> dict[str, Any]:
+        """Verify canonical pullback mediator existence and uniqueness for a cone W -> A, W -> B."""
+        cid = text(cone_id, "cone_id")
+        if not isinstance(p_a_map, Mapping) or not isinstance(p_b_map, Mapping):
+            raise ValidationError("p_a_map and p_b_map must be mappings")
+        if set(p_a_map.keys()) != set(p_b_map.keys()) or not p_a_map:
+            raise ValidationError("p_a_map and p_b_map must share the same non-empty apex domain W")
+
+        mediator: dict[str, list[str]] = {}
+        mismatched_apex_states: list[str] = []
+        projection_recovery_ok = True
+
+        for w_raw in sorted(p_a_map.keys()):
+            w = text(w_raw, "apex_state")
+            a = text(p_a_map[w_raw], "a_target")
+            b = text(p_b_map[w_raw], "b_target")
+            if a not in self.f_map or b not in self.g_map:
+                raise ValidationError(f"Cone target ({a!r}, {b!r}) outside cospan domains")
+            if self.f_map[a] == self.g_map[b]:
+                mediator[w] = [a, b]
+                if mediator[w][0] != a or mediator[w][1] != b:
+                    projection_recovery_ok = False
+            else:
+                mismatched_apex_states.append(w)
+
+        commutes = len(mismatched_apex_states) == 0
+        rec = {
+            "cone_id": cid,
+            "commutes_over_c": commutes,
+            "mismatched_apex_states": mismatched_apex_states,
+            "universal_mediator": mediator if commutes else None,
+            "mediator_uniqueness_and_projection_verified": commutes and projection_recovery_ok,
+        }
+        self.cone_records.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed categorical pullback square and cone mediator audit receipt."""
+        if not self.pair_records:
+            raise ValidationError("At least one branch pair must be recorded before emitting a receipt")
+
+        ngd_pair_ids = [r["pair_id"] for r in self.pair_records if r["evaluator_defect"] == -1]
+        rejected_pair_ids = [r["pair_id"] for r in self.pair_records if r["local_product"] == 0]
+        ambiguous_fiber_pair_ids = [
+            r["pair_id"]
+            for r in self.pair_records
+            if r["in_pullback_square"] and not r["interface_uniquely_identifies_pair"]
+        ]
+
+        if ngd_pair_ids:
+            status = "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_pair_ids:
+            status = "LOCAL_BRANCH_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PULLBACK_FIBER_GLUED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_pullback_square.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "pullback_carrier_size": len(self.pullback_carrier),
+            "interface_fiber_counts": self.fiber_counts,
+            "pair_count": len(self.pair_records),
+            "ngd_mismatch_pair_ids": ngd_pair_ids,
+            "ambiguous_fiber_pair_ids": ambiguous_fiber_pair_ids,
+            "cone_records": self.cone_records,
+            "pair_records": self.pair_records,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingMartingaleOptionalStoppingMonitor:
+    """Online two-step martingale optional stopping and terminal-loss monitor over Q.
+
+    Audits 2-step rational binary trees with root X_0, step-1 states (X_u, X_d)
+    under probabilities (p_1, 1 - p_1), and step-2 states (X_uu, X_ud) under
+    (p_u, 1 - p_u) and (X_du, X_dd) under (p_d, 1 - p_d):
+      - Evaluates the three local conditional martingale zero-drift equations:
+          E_mart,1 = 1[p_1 X_u + (1 - p_1) X_d == X_0],
+          E_mart,u = 1[p_u X_uu + (1 - p_u) X_ud == X_u],
+          E_mart,d = 1[p_d X_du + (1 - p_d) X_dd == X_d],
+          L = E_mart,1 * E_mart,u * E_mart,d.
+      - For an adapted stopping rule tau in {1, 2} (stop_on_step1_up, stop_on_step1_down):
+          * Computes the stopped expectation E[X_tau] and full-horizon expectation E[X_2],
+          * Checks the actual equality E[X_tau] == E[X_2] == X_0, separately
+            from applicability of bounded optional stopping (L == 1).
+          * Computes the stopped win probability P(X_tau > X_0) and worst
+            stopped terminal loss Delta_tail = max(0, X_0 - min_omega X_tau(omega))
+            against max_tail_drawdown_budget. This is not peak-to-trough drawdown.
+          * Evaluates the loss budget independently: E_g = 1[Delta_tail <= budget].
+            Joint admission additionally requires L == 1.
+      - Separates:
+          * MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG (L == 1 and Delta_tail <= budget),
+          * MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR (L == 1 and E[X_tau] == X_0,
+            yet Delta_tail > max_tail_drawdown_budget, so E_g = 0, Delta_E = -1),
+          * NON_MARTINGALE_DRIFT_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        max_tail_drawdown_budget: Fraction | int | str,
+        *,
+        scope_id: str = "streaming-martingale-stopping-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.max_tail_drawdown_budget = rational(max_tail_drawdown_budget)
+        if self.max_tail_drawdown_budget < 0:
+            raise ValidationError("max_tail_drawdown_budget must be non-negative")
+        self.trees: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _prob(val: Fraction | int | str, name: str) -> Fraction:
+        q = rational(val)
+        if q <= 0 or q >= 1:
+            raise ValidationError(f"{name} must lie strictly inside (0, 1)")
+        return q
+
+    def record_stopped_tree(
+        self,
+        tree_id: str,
+        x0: Fraction | int | str,
+        x_u: Fraction | int | str,
+        x_d: Fraction | int | str,
+        x_uu: Fraction | int | str,
+        x_ud: Fraction | int | str,
+        x_du: Fraction | int | str,
+        x_dd: Fraction | int | str,
+        *,
+        p_1: Fraction | int | str = "1/2",
+        p_u: Fraction | int | str = "1/2",
+        p_d: Fraction | int | str = "1/2",
+        stop_on_step1_up: bool = True,
+        stop_on_step1_down: bool = False,
+    ) -> dict[str, Any]:
+        """Audit a 2-step branching tree and adapted stopping rule tau."""
+        tid = text(tree_id, "tree_id")
+        v0 = rational(x0)
+        vu, vd = rational(x_u), rational(x_d)
+        vuu, vud, vdu, vdd = rational(x_uu), rational(x_ud), rational(x_du), rational(x_dd)
+        q1 = self._prob(p_1, "p_1")
+        qu = self._prob(p_u, "p_u")
+        qd = self._prob(p_d, "p_d")
+        boolean(stop_on_step1_up, "stop_on_step1_up")
+        boolean(stop_on_step1_down, "stop_on_step1_down")
+
+        exp_step1 = q1 * vu + (Fraction(1) - q1) * vd
+        exp_u = qu * vuu + (Fraction(1) - qu) * vud
+        exp_d = qd * vdu + (Fraction(1) - qd) * vdd
+
+        e_m1 = 1 if exp_step1 == v0 else 0
+        e_mu = 1 if exp_u == vu else 0
+        e_md = 1 if exp_d == vd else 0
+        local_product = e_m1 * e_mu * e_md
+
+        exp_horizon2 = (
+            q1 * qu * vuu
+            + q1 * (Fraction(1) - qu) * vud
+            + (Fraction(1) - q1) * qd * vdu
+            + (Fraction(1) - q1) * (Fraction(1) - qd) * vdd
+        )
+
+        # Build stopped terminal outcome distribution {(value, prob)}
+        stopped_outcomes: list[tuple[Fraction, Fraction]] = []
+        if stop_on_step1_up:
+            stopped_outcomes.append((vu, q1))
+        else:
+            stopped_outcomes.append((vuu, q1 * qu))
+            stopped_outcomes.append((vud, q1 * (Fraction(1) - qu)))
+
+        if stop_on_step1_down:
+            stopped_outcomes.append((vd, Fraction(1) - q1))
+        else:
+            stopped_outcomes.append((vdu, (Fraction(1) - q1) * qd))
+            stopped_outcomes.append((vdd, (Fraction(1) - q1) * (Fraction(1) - qd)))
+
+        exp_stopped = sum((val * prob for val, prob in stopped_outcomes), Fraction(0))
+        win_prob = sum((prob for val, prob in stopped_outcomes if val > v0), Fraction(0))
+        min_stopped_val = min(val for val, _ in stopped_outcomes)
+        tail_drawdown = max(Fraction(0), v0 - min_stopped_val)
+        within_drawdown_budget = tail_drawdown <= self.max_tail_drawdown_budget
+
+        # Verify the equality itself; a false martingale premise is not evidence
+        # of conservation. Accidental equality on a non-martingale is possible,
+        # so theorem applicability is a separate fact.
+        optional_stopping_applicable = local_product == 1
+        optional_stopping_conserved = exp_stopped == v0 and exp_horizon2 == v0
+
+        global_eval = 1 if within_drawdown_budget else 0
+        joint_admission = local_product * global_eval
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 1:
+            classification = "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            classification = "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            classification = "NON_MARTINGALE_DRIFT_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "tree_id": tid,
+            "x0": v0,
+            "step1_expectation": exp_step1,
+            "horizon2_expectation": exp_horizon2,
+            "stopped_expectation": exp_stopped,
+            "stopped_win_probability": win_prob,
+            "min_stopped_value": min_stopped_val,
+            "tail_drawdown": tail_drawdown,
+            "max_tail_drawdown_budget": self.max_tail_drawdown_budget,
+            "local_martingale_product": local_product,
+            "global_drawdown_evaluator": global_eval,
+            "joint_admission_evaluator": joint_admission,
+            "evaluator_defect": defect,
+            "optional_stopping_theorem_applicable": optional_stopping_applicable,
+            "optional_stopping_conservation_verified": optional_stopping_conserved,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.trees.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a hash-bound two-step martingale optional stopping audit receipt."""
+        if not self.trees:
+            raise ValidationError("At least one stopped tree must be recorded before emitting a receipt")
+
+        ngd_tree_ids = [
+            t["tree_id"]
+            for t in self.trees
+            if t["classification"] == "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR"
+        ]
+        non_martingale_ids = [
+            t["tree_id"]
+            for t in self.trees
+            if t["classification"] == "NON_MARTINGALE_DRIFT_REJECTED"
+        ]
+        all_ost_ok = all(t["optional_stopping_conservation_verified"] for t in self.trees)
+
+        if ngd_tree_ids or non_martingale_ids:
+            status = "OPTIONAL_STOPPING_DRAWDOWN_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "OPTIONAL_STOPPING_BOUNDED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_martingale_optional_stopping.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "max_tail_drawdown_budget": self.max_tail_drawdown_budget,
+            "tree_count": len(self.trees),
+            "tail_drawdown_ngd_tree_ids": sorted(ngd_tree_ids),
+            "non_martingale_tree_ids": sorted(non_martingale_ids),
+            "all_optional_stopping_theorems_applicable": not non_martingale_ids,
+            "all_optional_stopping_conservations_verified": all_ost_ok,
+            "trees": self.trees,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingProjectiveTowerMonitor:
+    """Online projective tower and R^1 lim^1 derived-limit integer lifting monitor (LGGR IV).
+
+    Audits finite-stage modular congruence threads (x_n, m_n) for a linear equation
+    a * x + b == 0 along a divisibility tower m_1 | m_2 | ... | m_N:
+      - Evaluates each stage n locally for modular root satisfaction:
+          E_mod(n) = 1[(a * x_n + b) % m_n == 0]
+        and inverse-limit transition compatibility with the prior stage:
+          E_proj(n) = 1[(x_n - x_{n-1}) % m_{n-1} == 0]  (for n >= 2).
+      - Computes the step-lift coboundary differences d_n = x_{n+1} - x_n in m_n Z
+        and the rational completion root x_inf = -b / a in Q.
+      - Evaluates global integral lifting E_g in {0, 1}:
+          E_g = 1 iff there exists x_* in Z such that a * x_* + b == 0 and
+          (x_* - x_n) % m_n == 0 for all recorded stages n.
+      - Separates:
+          * INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR (L == 1 and E_g == 0,
+            Delta_E = -1: every finite modular stage is solvable and compatible in
+            lim Z/m_n Z, yet x_inf = -b / a not in Z leaves a non-zero coset
+            obstruction [-b/a] != 0 in Q/Z),
+          * LOCAL_TOWER_STAGE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        coeff_a: int,
+        const_b: int,
+        *,
+        scope_id: str = "streaming-projective-tower-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.coeff_a = exact_int(coeff_a, "coeff_a")
+        self.const_b = exact_int(const_b, "const_b")
+        if self.coeff_a == 0:
+            raise ValidationError("coeff_a must be non-zero")
+        self.rational_completion_root = Fraction(-self.const_b, self.coeff_a)
+        self.integral_root: int | None = (
+            -self.const_b // self.coeff_a if (-self.const_b) % self.coeff_a == 0 else None
+        )
+        self.stages: list[dict[str, Any]] = []
+
+    def record_stage(
+        self,
+        stage_id: str,
+        modulus: int,
+        candidate_x: int,
+    ) -> dict[str, Any]:
+        """Record a finite presentation stage (m_n, x_n) and check modular and projection compatibility."""
+        sid = text(stage_id, "stage_id")
+        mod_n = exact_int(modulus, "modulus", minimum=2)
+        x_n = exact_int(candidate_x, "candidate_x")
+
+        if self.stages:
+            prev_mod = self.stages[-1]["modulus"]
+            prev_x = self.stages[-1]["candidate_x"]
+            if mod_n % prev_mod != 0 or mod_n <= prev_mod:
+                raise ValidationError("Each stage modulus must strictly divide the next stage modulus")
+            step_diff = x_n - prev_x
+            proj_ok = 1 if (step_diff % prev_mod == 0) else 0
+        else:
+            step_diff = 0
+            proj_ok = 1
+
+        mod_residual = (self.coeff_a * x_n + self.const_b) % mod_n
+        mod_ok = 1 if mod_residual == 0 else 0
+        local_stage_pass = mod_ok * proj_ok
+
+        rec = {
+            "stage_index": len(self.stages),
+            "stage_id": sid,
+            "modulus": mod_n,
+            "candidate_x": x_n,
+            "modular_residual": mod_residual,
+            "local_modular_pass": mod_ok,
+            "step_lift_difference": step_diff,
+            "inverse_limit_projection_compatible": proj_ok,
+            "local_stage_evaluator": local_stage_pass,
+        }
+        self.stages.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed projective tower and R^1 lim^1 lifting obstruction receipt."""
+        if not self.stages:
+            raise ValidationError("At least one projective tower stage must be recorded before emitting a receipt")
+
+        local_product = 1
+        for st in self.stages:
+            local_product *= st["local_stage_evaluator"]
+
+        if self.integral_root is not None:
+            all_stages_lift = all(
+                (self.integral_root - st["candidate_x"]) % st["modulus"] == 0
+                for st in self.stages
+            )
+            global_eval = 1 if (local_product == 1 and all_stages_lift) else 0
+        else:
+            global_eval = 0
+
+        defect = global_eval - local_product
+        fractional_coset_residual = self.rational_completion_root - Fraction(
+            self.rational_completion_root.numerator // self.rational_completion_root.denominator
+        )
+
+        if local_product == 1 and global_eval == 1:
+            status = "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            status = "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_TOWER_STAGE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "coeff_a": self.coeff_a,
+            "const_b": self.const_b,
+            "stage_count": len(self.stages),
+            "rational_completion_root": self.rational_completion_root,
+            "integral_global_root": self.integral_root,
+            "r1_lim_coset_residual_mod_z": fractional_coset_residual,
+            "local_product_aggregator": local_product,
+            "global_integral_lift_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "stages": self.stages,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingSkewRepairMonitor:
+    """Online skew non-diagonal exact subspace norm-attainment divergence monitor (LGGR V §4 Remark LGR-R4).
+
+    Audits candidate cochains omega = (a, b) in Q^2 against the skew non-diagonal exact subspace
+    S = {(-alpha, -2*alpha) : alpha in Q} subset Q^2, where the repaired residual is
+    r(alpha) = (a + alpha, b + 2*alpha):
+      - Computes the skew cycle discrepancy Delta_skew = 2*a - b.
+      - Computes the exact norm-minimizing parameters across l^1, l^2, and l^infty:
+          alpha_1   = -b / 2
+          alpha_2   = -(a + 2*b) / 5
+          alpha_inf = -(a + b) / 3
+        and the corresponding minimum norm values:
+          Phi_1     = |2*a - b| / 2
+          Phi_2_sq  = (2*a - b)^2 / 5
+          Phi_inf   = |2*a - b| / 3
+      - Verifies that whenever 2*a != b, alpha_1, alpha_2, and alpha_inf strictly diverge:
+          alpha_1 - alpha_2 = (2*a - b) / 10,
+          alpha_2 - alpha_inf = (2*a - b) / 15,
+          alpha_1 - alpha_inf = (2*a - b) / 6.
+      - Evaluates a selected repair parameter alpha_cand (defaulting to alpha_inf) against
+        coordinatewise l^infty bounds B_inf (defaulting to Phi_inf):
+          L = E_coord_1 * E_coord_2, where E_coord_i = 1[|r_i(alpha_cand)| <= B_inf]
+        versus the global l^1 minimum repair budget B_1 (defaulting to Phi_1):
+          E_g = 1[||r(alpha_cand)||_1 <= B_1].
+      - Separates:
+          * SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            e.g., selecting the l^infty-optimal repair alpha_inf satisfies both coordinate
+            l^infty bounds |r_i(alpha_inf)| = |2*a - b|/3 <= Phi_inf, yet incurs
+            ||r(alpha_inf)||_1 = 2*|2*a - b|/3 > |2*a - b|/2 = Phi_1),
+          * SKEW_REPAIR_BUDGET_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_COORDINATE_BOUND_REJECTED (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-skew-repair-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.probes: list[dict[str, Any]] = []
+
+    def record_probe(
+        self,
+        probe_id: str,
+        omega_a: int | str | Fraction,
+        omega_b: int | str | Fraction,
+        *,
+        candidate_alpha: int | str | Fraction | None = None,
+        l_inf_coordinate_budget: int | str | Fraction | None = None,
+        l_1_global_budget: int | str | Fraction | None = None,
+    ) -> dict[str, Any]:
+        """Record a 2-cochain probe omega = (a, b) and audit l^1, l^2, l^infty repair attainment."""
+        pid = text(probe_id, "probe_id")
+        a = rational(omega_a)
+        b = rational(omega_b)
+
+        skew_discrepancy = 2 * a - b
+        abs_skew = abs(skew_discrepancy)
+
+        alpha_1 = -b / Fraction(2)
+        alpha_2 = -(a + 2 * b) / Fraction(5)
+        alpha_inf = -(a + b) / Fraction(3)
+
+        phi_1 = abs_skew / Fraction(2)
+        phi_2_sq = (skew_discrepancy * skew_discrepancy) / Fraction(5)
+        phi_inf = abs_skew / Fraction(3)
+
+        # Verify that r(alpha_1), r(alpha_2), r(alpha_inf) attain the closed-form minima
+        r1_at_alpha1 = abs(a + alpha_1) + abs(b + 2 * alpha_1)
+        r2_sq_at_alpha2 = (a + alpha_2) ** 2 + (b + 2 * alpha_2) ** 2
+        rinf_at_alphainf = max(abs(a + alpha_inf), abs(b + 2 * alpha_inf))
+        closed_form_identities_hold = (
+            r1_at_alpha1 == phi_1
+            and r2_sq_at_alpha2 == phi_2_sq
+            and rinf_at_alphainf == phi_inf
+        )
+
+        minimizers_strictly_diverge = (
+            alpha_1 != alpha_2 and alpha_2 != alpha_inf and alpha_1 != alpha_inf
+        )
+
+        alpha_c = rational(candidate_alpha) if candidate_alpha is not None else alpha_inf
+        b_inf = (
+            rational(l_inf_coordinate_budget)
+            if l_inf_coordinate_budget is not None
+            else phi_inf
+        )
+        b_1 = (
+            rational(l_1_global_budget)
+            if l_1_global_budget is not None
+            else phi_1
+        )
+        if b_inf < 0 or b_1 < 0:
+            raise ValidationError("Repair budgets must be non-negative")
+
+        res_1 = a + alpha_c
+        res_2 = b + 2 * alpha_c
+        cand_l1 = abs(res_1) + abs(res_2)
+        cand_l2_sq = res_1 * res_1 + res_2 * res_2
+        cand_linf = max(abs(res_1), abs(res_2))
+
+        e_coord_1 = 1 if abs(res_1) <= b_inf else 0
+        e_coord_2 = 1 if abs(res_2) <= b_inf else 0
+        local_product = e_coord_1 * e_coord_2
+        global_eval = 1 if (local_product == 1 and cand_l1 <= b_1) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            probe_status = "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            probe_status = "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+        else:
+            probe_status = "LOCAL_COORDINATE_BOUND_REJECTED"
+
+        rec = {
+            "probe_id": pid,
+            "omega": [a, b],
+            "skew_discrepancy_2a_minus_b": skew_discrepancy,
+            "alpha_1": alpha_1,
+            "alpha_2": alpha_2,
+            "alpha_inf": alpha_inf,
+            "phi_1": phi_1,
+            "phi_2_squared": phi_2_sq,
+            "phi_inf": phi_inf,
+            "closed_form_identities_hold": closed_form_identities_hold,
+            "minimizers_strictly_diverge": minimizers_strictly_diverge,
+            "candidate_alpha": alpha_c,
+            "candidate_residual": [res_1, res_2],
+            "candidate_l1_cost": cand_l1,
+            "candidate_l2_squared_cost": cand_l2_sq,
+            "candidate_linf_cost": cand_linf,
+            "l_inf_coordinate_budget": b_inf,
+            "l_1_global_budget": b_1,
+            "local_coordinate_evaluators": [e_coord_1, e_coord_2],
+            "local_product_aggregator": local_product,
+            "global_l1_budget_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "probe_status": probe_status,
+        }
+        self.probes.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed skew repair norm-attainment receipt."""
+        if not self.probes:
+            raise ValidationError("At least one skew repair probe must be recorded before emitting a receipt")
+
+        divergent_ids = [
+            p["probe_id"]
+            for p in self.probes
+            if p["probe_status"] == "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        ]
+        rejected_ids = [
+            p["probe_id"]
+            for p in self.probes
+            if p["probe_status"] == "LOCAL_COORDINATE_BOUND_REJECTED"
+        ]
+        all_closed_forms_ok = all(p["closed_form_identities_hold"] for p in self.probes)
+
+        if divergent_ids:
+            status = "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_COORDINATE_BOUND_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "probe_count": len(self.probes),
+            "all_closed_form_identities_verified": all_closed_forms_ok,
+            "skew_norm_divergence_probe_ids": divergent_ids,
+            "rejected_probe_ids": rejected_ids,
+            "probes": self.probes,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingMerminPeresParityMonitor:
+    """Online 3x3 Mermin-Peres magic-square parity contextuality monitor (012_rsi/003 BELL-08 & LGGR VII §5.2).
+
+    Audits 3x3 parity grids of {-1, +1}-valued observables across 3 row contexts and 3 column contexts:
+      - Row product targets R = (R_0, R_1, R_2) in {-1, +1}^3 (defaulting to (+1, +1, +1))
+        and column product targets C = (C_0, C_1, C_2) in {-1, +1}^3 (defaulting to (+1, +1, -1)).
+      - Evaluates each of the 6 contexts locally:
+          E_row,i = 1[prod_{j=0}^2 r_{i,j} == R_i],  i in {0, 1, 2}
+          E_col,j = 1[prod_{i=0}^2 c_{i,j} == C_j],  j in {0, 1, 2}
+        and forms the local product aggregator:
+          L = (prod_{i=0}^2 E_row,i) * (prod_{j=0}^2 E_col,j) in {0, 1}.
+      - Computes the row target parity product Pi_R = R_0 * R_1 * R_2 and column target
+        parity product Pi_C = C_0 * C_1 * C_2, and checks all 2^9 = 512 global non-contextual
+        assignments A in {-1, +1}^{3x3} to determine:
+          * max_satisfied_contexts_out_of_6 (5 when Pi_R != Pi_C, 6 when Pi_R == Pi_C),
+          * min_violated_contexts (1 when Pi_R != Pi_C, 0 when Pi_R == Pi_C),
+          * global evaluator E_g in {0, 1}, where E_g = 1 iff L == 1, Pi_R == Pi_C, and
+            any supplied global grid (or the target parity system) admits a non-contextual
+            {-1, +1}^{3x3} assignment satisfying all 6 contexts simultaneously.
+      - Separates:
+          * MERMIN_PERES_PARITY_OBSTRUCTION_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            all 6 row/column contexts are locally satisfiable, yet Pi_R != Pi_C obstructs
+            every global non-contextual assignment),
+          * NONCONTEXTUAL_PARITY_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_CONTEXT_PARITY_REJECTED (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-mermin-peres-parity-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.grids: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _validate_sign(val: int, name: str) -> int:
+        v = exact_int(val, name)
+        if v not in (-1, 1):
+            raise ValidationError(f"{name} must be in {{-1, +1}}, got {v}")
+        return v
+
+    def record_grid(
+        self,
+        grid_id: str,
+        *,
+        row_targets: Sequence[int] = (1, 1, 1),
+        col_targets: Sequence[int] = (1, 1, -1),
+        row_context_assignments: Sequence[Sequence[int]] | None = None,
+        col_context_assignments: Sequence[Sequence[int]] | None = None,
+    ) -> dict[str, Any]:
+        """Record a 3x3 Mermin-Peres parity grid and audit context-local vs global non-contextual satisfiability."""
+        gid = text(grid_id, "grid_id")
+        if len(row_targets) != 3 or len(col_targets) != 3:
+            raise ValidationError("row_targets and col_targets must each have length 3")
+
+        r_targets = [self._validate_sign(x, f"row_targets[{i}]") for i, x in enumerate(row_targets)]
+        c_targets = [self._validate_sign(x, f"col_targets[{j}]") for j, x in enumerate(col_targets)]
+
+        if row_context_assignments is not None:
+            if len(row_context_assignments) != 3 or any(len(r) != 3 for r in row_context_assignments):
+                raise ValidationError("row_context_assignments must be a 3x3 sequence of {-1, +1}")
+            r_assign = [
+                [self._validate_sign(row_context_assignments[i][j], f"row_assign[{i}][{j}]") for j in range(3)]
+                for i in range(3)
+            ]
+        else:
+            r_assign = [[1, 1, r_targets[i]] for i in range(3)]
+
+        if col_context_assignments is not None:
+            if len(col_context_assignments) != 3 or any(len(c) != 3 for c in col_context_assignments):
+                raise ValidationError("col_context_assignments must be a 3x3 sequence of {-1, +1}")
+            c_assign = [
+                [self._validate_sign(col_context_assignments[j][i], f"col_assign[{j}][{i}]") for i in range(3)]
+                for j in range(3)
+            ]
+        else:
+            c_assign = [[1, 1, c_targets[j]] for j in range(3)]
+
+        row_evals = [
+            1 if (r_assign[i][0] * r_assign[i][1] * r_assign[i][2] == r_targets[i]) else 0
+            for i in range(3)
+        ]
+        col_evals = [
+            1 if (c_assign[j][0] * c_assign[j][1] * c_assign[j][2] == c_targets[j]) else 0
+            for j in range(3)
+        ]
+
+        local_product = 1
+        for ev in row_evals + col_evals:
+            local_product *= ev
+
+        row_target_product = r_targets[0] * r_targets[1] * r_targets[2]
+        col_target_product = c_targets[0] * c_targets[1] * c_targets[2]
+        parity_obstruction = row_target_product != col_target_product
+
+        # Exhaustively evaluate all 2^9 = 512 global non-contextual grids A in {-1, +1}^{3x3}
+        max_satisfied = 0
+        witness_count = 0
+        for bits in range(512):
+            a = [
+                [-1 if ((bits >> (3 * i + j)) & 1) else 1 for j in range(3)]
+                for i in range(3)
+            ]
+            sat = 0
+            for i in range(3):
+                if a[i][0] * a[i][1] * a[i][2] == r_targets[i]:
+                    sat += 1
+            for j in range(3):
+                if a[0][j] * a[1][j] * a[2][j] == c_targets[j]:
+                    sat += 1
+            if sat > max_satisfied:
+                max_satisfied = sat
+            if sat == 6:
+                witness_count += 1
+
+        global_noncontextual_exists = witness_count > 0
+        min_violated_contexts = 6 - max_satisfied
+        global_eval = 1 if (local_product == 1 and global_noncontextual_exists) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            grid_status = "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            grid_status = "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+        else:
+            grid_status = "LOCAL_CONTEXT_PARITY_REJECTED"
+
+        rec = {
+            "grid_id": gid,
+            "row_targets": r_targets,
+            "col_targets": c_targets,
+            "row_context_evaluators": row_evals,
+            "col_context_evaluators": col_evals,
+            "row_target_product": row_target_product,
+            "col_target_product": col_target_product,
+            "parity_mismatch_obstruction": parity_obstruction,
+            "max_satisfied_contexts_out_of_6": max_satisfied,
+            "min_violated_contexts": min_violated_contexts,
+            "global_noncontextual_witness_count": witness_count,
+            "global_noncontextual_assignment_exists": global_noncontextual_exists,
+            "local_product_aggregator": local_product,
+            "global_noncontextual_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "grid_status": grid_status,
+        }
+        self.grids.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed Mermin-Peres parity contextuality audit receipt."""
+        if not self.grids:
+            raise ValidationError("At least one Mermin-Peres parity grid must be recorded before emitting a receipt")
+
+        obstructed_ids = [
+            g["grid_id"]
+            for g in self.grids
+            if g["grid_status"] == "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+        ]
+        rejected_ids = [
+            g["grid_id"]
+            for g in self.grids
+            if g["grid_status"] == "LOCAL_CONTEXT_PARITY_REJECTED"
+        ]
+
+        if obstructed_ids:
+            status = "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_CONTEXT_PARITY_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_mermin_peres_parity.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "grid_count": len(self.grids),
+            "parity_obstructed_grid_ids": obstructed_ids,
+            "rejected_grid_ids": rejected_ids,
+            "grids": self.grids,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingSideInformationCapacityMonitor:
+    """Online side-information channel capacity and report-fiber error floor monitor (012_rsi/002 IK-04/IK-05 & LGGR I §5).
+
+    Audits finite report fibers X_a = p^{-1}(a) equipped with an auxiliary side-information
+    channel s: X_a -> {0, ..., S - 1} of finite alphabet capacity S >= 1:
+      - Evaluates each state x in X_a locally for side-channel alphabet compliance:
+          E_chan(x) = 1[0 <= s(x) < S],   L = prod_{x in X_a} E_chan(x) in {0, 1}.
+      - Computes the number of distinct query values K = |q(X_a)| on the fiber,
+        the active side-channel alphabet size S_used = |s(X_a)| <= S, and the
+        capacity-induced distinct-value error floor:
+          E_cap_floor(K, S) = max(0, K - S).
+      - Partitions X_a into side-information sub-fibers X_{a, sigma} = {x in X_a : s(x) == sigma}
+        with k_sigma = |q(X_{a, sigma})| distinct query values and computes:
+          * realized_subfiber_error_floor = sum_{sigma in s(X_a)} (k_sigma - 1) >= max(0, K - S),
+          * realized_sample_error_floor = sum_{sigma in s(X_a)} (|X_{a, sigma}| - max_y count(sigma, y)).
+      - Evaluates global decodability E_g = 1[L == 1 and realized_subfiber_error_floor <= error_budget]
+        and separates:
+          * SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            every state emits a valid side-channel symbol in {0, ..., S - 1}, yet S < K
+            forces at least K - S distinct query values on the fiber to collide under s),
+          * SIDE_INFORMATION_SUFFICIENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-side-information-capacity-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.fibers: list[dict[str, Any]] = []
+
+    def record_fiber_channel(
+        self,
+        fiber_id: str,
+        states: Sequence[dict[str, Any]],
+        *,
+        channel_capacity_s: int,
+        error_budget: int = 0,
+    ) -> dict[str, Any]:
+        """Record a report fiber X_a with side-channel symbols s(x) and audit capacity vs K = |q(X_a)|."""
+        fid = text(fiber_id, "fiber_id")
+        cap_s = exact_int(channel_capacity_s, "channel_capacity_s", minimum=1)
+        budget = exact_int(error_budget, "error_budget", minimum=0)
+        if not states:
+            raise ValidationError("states must be a non-empty sequence of fiber state records")
+
+        parsed_states: list[dict[str, Any]] = []
+        distinct_queries: set[str] = set()
+        subfiber_queries: dict[int, set[str]] = {}
+        subfiber_counts: dict[int, dict[str, int]] = {}
+        local_product = 1
+
+        for idx, st in enumerate(states):
+            if not isinstance(st, Mapping):
+                raise ValidationError(f"states[{idx}] must be a mapping")
+            sid = text(st.get("state_id", f"state_{idx}"), f"states[{idx}].state_id")
+            q_val = canonical(st.get("query_value"))
+            sym = exact_int(st.get("side_symbol"), f"states[{idx}].side_symbol")
+
+            in_range = 1 if (0 <= sym < cap_s) else 0
+            local_product *= in_range
+            distinct_queries.add(q_val)
+
+            if in_range == 1:
+                subfiber_queries.setdefault(sym, set()).add(q_val)
+                counts = subfiber_counts.setdefault(sym, {})
+                counts[q_val] = counts.get(q_val, 0) + 1
+
+            parsed_states.append(
+                {
+                    "state_id": sid,
+                    "query_value": st.get("query_value"),
+                    "side_symbol": sym,
+                    "local_channel_evaluator": in_range,
+                }
+            )
+
+        k_distinct = len(distinct_queries)
+        used_symbols = len(subfiber_queries)
+        capacity_floor = max(0, k_distinct - cap_s)
+
+        subfiber_error_floor = sum(max(0, len(qs) - 1) for qs in subfiber_queries.values())
+        sample_error_floor = sum(
+            sum(cnts.values()) - max(cnts.values())
+            for cnts in subfiber_counts.values()
+        )
+        pigeonhole_bound_verified = (local_product == 0) or (subfiber_error_floor >= capacity_floor)
+
+        global_eval = 1 if (local_product == 1 and subfiber_error_floor <= budget) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            fiber_status = "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            fiber_status = "SIDE_INFORMATION_SUFFICIENT_LGGG"
+        else:
+            fiber_status = "LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE"
+
+        rec = {
+            "fiber_id": fid,
+            "state_count": len(parsed_states),
+            "distinct_query_values_k": k_distinct,
+            "channel_capacity_s": cap_s,
+            "used_symbols_count": used_symbols,
+            "error_budget": budget,
+            "capacity_error_floor_k_minus_s": capacity_floor,
+            "realized_subfiber_error_floor": subfiber_error_floor,
+            "realized_sample_error_floor": sample_error_floor,
+            "pigeonhole_bound_verified": pigeonhole_bound_verified,
+            "local_product_aggregator": local_product,
+            "global_decodability_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "fiber_status": fiber_status,
+            "states": parsed_states,
+        }
+        self.fibers.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed side-information channel capacity audit receipt."""
+        if not self.fibers:
+            raise ValidationError("At least one fiber channel must be recorded before emitting a receipt")
+
+        deficit_ids = [
+            f["fiber_id"]
+            for f in self.fibers
+            if f["fiber_status"] == "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR"
+        ]
+        rejected_ids = [
+            f["fiber_id"]
+            for f in self.fibers
+            if f["fiber_status"] == "LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE"
+        ]
+        all_bounds_ok = all(f["pigeonhole_bound_verified"] for f in self.fibers)
+
+        if deficit_ids:
+            status = "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_CHANNEL_SYMBOL_OUT_OF_RANGE"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SIDE_INFORMATION_SUFFICIENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_side_information_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "fiber_count": len(self.fibers),
+            "all_pigeonhole_bounds_verified": all_bounds_ok,
+            "capacity_deficit_fiber_ids": deficit_ids,
+            "rejected_fiber_ids": rejected_ids,
+            "fibers": self.fibers,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingProductOfExpertsMonitor:
+    """Online Product-of-Experts (PoE) vs Mixture-of-Experts (MoE) disjoint-support collapse monitor (LGGR I §7.2 & II §2.2).
+
+    Audits finite K-expert score tables p_k in Q_{>=0}^m over m candidate actions W = {w_0, ..., w_{m-1}}:
+      - Evaluates each expert k in {0, ..., K-1} locally for positive total score mass:
+          M_k = sum_{j=0}^{m-1} p_k(w_j),   E_expert(k) = 1[M_k > 0],
+        and forms the local product aggregator:
+          L = prod_{k=0}^{K-1} E_expert(k) in {0, 1}.
+      - Computes the unnormalized Product-of-Experts score vector:
+          P_PoE(w_j) = prod_{k=0}^{K-1} p_k(w_j)
+        and the PoE partition sum (normalizing denominator):
+          D_PoE = sum_{j=0}^{m-1} P_PoE(w_j).
+      - Computes the weighted Mixture-of-Experts score vector (under positive weights alpha_k > 0,
+        sum_k alpha_k = 1, defaulting to uniform 1/K):
+          P_MoE(w_j) = sum_{k=0}^{K-1} alpha_k * p_k(w_j)
+        and the MoE partition sum:
+          D_MoE = sum_{j=0}^{m-1} P_MoE(w_j) = sum_{k=0}^{K-1} alpha_k * M_k.
+      - Identifies the joint support intersection:
+          supp_intersection = {j in {0, ..., m-1} : forall k, p_k(w_j) > 0},
+        where D_PoE > 0 iff supp_intersection is non-empty.
+      - Evaluates global PoE normalizability E_g = 1[L == 1 and D_PoE > 0] and separates:
+          * POE_DISJOINT_SUPPORT_COLLAPSE_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            every expert has positive score mass M_k > 0 and D_MoE > 0, yet disjoint expert
+            supports cause D_PoE == 0 so PoE normalization collapses),
+          * POE_AND_MOE_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_EXPERT_ZERO_MASS_REJECTED (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-product-of-experts-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.rounds: list[dict[str, Any]] = []
+
+    def record_expert_scores(
+        self,
+        round_id: str,
+        expert_scores: Sequence[Sequence[int | str | Fraction]],
+        *,
+        mixture_weights: Sequence[int | str | Fraction] | None = None,
+    ) -> dict[str, Any]:
+        """Record a K x m table of non-negative rational expert scores and audit PoE vs MoE partition sums."""
+        rid = text(round_id, "round_id")
+        if not expert_scores:
+            raise ValidationError("expert_scores must contain at least one expert row")
+        num_experts = len(expert_scores)
+        num_candidates = len(expert_scores[0])
+        if num_candidates == 0:
+            raise ValidationError("expert_scores must have at least one candidate column")
+
+        parsed_scores: list[list[Fraction]] = []
+        for k, row in enumerate(expert_scores):
+            if len(row) != num_candidates:
+                raise ValidationError("All expert score rows must have the same number of candidates")
+            parsed_row = [rational(val) for val in row]
+            if any(v < 0 for v in parsed_row):
+                raise ValidationError(f"expert_scores[{k}] entries must be non-negative")
+            parsed_scores.append(parsed_row)
+
+        if mixture_weights is not None:
+            if len(mixture_weights) != num_experts:
+                raise ValidationError("mixture_weights length must match number of experts")
+            weights = [rational(w) for w in mixture_weights]
+            if any(w <= 0 for w in weights) or sum(weights, Fraction(0)) != Fraction(1):
+                raise ValidationError("mixture_weights must be strictly positive and sum to 1")
+        else:
+            weights = [Fraction(1, num_experts) for _ in range(num_experts)]
+
+        expert_masses = [sum(row, Fraction(0)) for row in parsed_scores]
+        expert_evals = [1 if m > 0 else 0 for m in expert_masses]
+        local_product = 1
+        for ev in expert_evals:
+            local_product *= ev
+
+        poe_vector: list[Fraction] = []
+        moe_vector: list[Fraction] = []
+        joint_support_indices: list[int] = []
+
+        for j in range(num_candidates):
+            prod_j = Fraction(1)
+            mix_j = Fraction(0)
+            for k in range(num_experts):
+                prod_j *= parsed_scores[k][j]
+                mix_j += weights[k] * parsed_scores[k][j]
+            poe_vector.append(prod_j)
+            moe_vector.append(mix_j)
+            if prod_j > 0:
+                joint_support_indices.append(j)
+
+        d_poe = sum(poe_vector, Fraction(0))
+        d_moe = sum(moe_vector, Fraction(0))
+        normalized_poe = [val / d_poe for val in poe_vector] if d_poe > 0 else None
+        normalized_moe = [val / d_moe for val in moe_vector] if d_moe > 0 else None
+
+        global_eval = 1 if (local_product == 1 and d_poe > 0) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            round_status = "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            round_status = "POE_AND_MOE_COHERENT_LGGG"
+        else:
+            round_status = "LOCAL_EXPERT_ZERO_MASS_REJECTED"
+
+        rec = {
+            "round_id": rid,
+            "expert_count": num_experts,
+            "candidate_count": num_candidates,
+            "expert_masses": expert_masses,
+            "local_expert_evaluators": expert_evals,
+            "joint_support_indices": joint_support_indices,
+            "poe_unnormalized_vector": poe_vector,
+            "poe_partition_sum": d_poe,
+            "poe_normalized_distribution": normalized_poe,
+            "moe_unnormalized_vector": moe_vector,
+            "moe_partition_sum": d_moe,
+            "moe_normalized_distribution": normalized_moe,
+            "local_product_aggregator": local_product,
+            "global_poe_normalizable_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "round_status": round_status,
+        }
+        self.rounds.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed Product-of-Experts vs Mixture-of-Experts support-collapse receipt."""
+        if not self.rounds:
+            raise ValidationError("At least one expert score round must be recorded before emitting a receipt")
+
+        collapsed_ids = [
+            r["round_id"]
+            for r in self.rounds
+            if r["round_status"] == "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        ]
+        rejected_ids = [
+            r["round_id"]
+            for r in self.rounds
+            if r["round_status"] == "LOCAL_EXPERT_ZERO_MASS_REJECTED"
+        ]
+
+        if collapsed_ids:
+            status = "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_EXPERT_ZERO_MASS_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "POE_AND_MOE_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_product_of_experts.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "round_count": len(self.rounds),
+            "poe_collapsed_round_ids": collapsed_ids,
+            "rejected_round_ids": rejected_ids,
+            "rounds": self.rounds,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
+
+
+
+
+
+
+
+
 
 
 
