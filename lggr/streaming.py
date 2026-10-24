@@ -7135,6 +7135,192 @@ class StreamingSkewRepairMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingMerminPeresParityMonitor:
+    """Online 3x3 Mermin-Peres magic-square parity contextuality monitor (012_rsi/036 BELL-08 & LGGR VII §5.2).
+
+    Audits 3x3 parity grids of {-1, +1}-valued observables across 3 row contexts and 3 column contexts:
+      - Row product targets R = (R_0, R_1, R_2) in {-1, +1}^3 (defaulting to (+1, +1, +1))
+        and column product targets C = (C_0, C_1, C_2) in {-1, +1}^3 (defaulting to (+1, +1, -1)).
+      - Evaluates each of the 6 contexts locally:
+          E_row,i = 1[prod_{j=0}^2 r_{i,j} == R_i],  i in {0, 1, 2}
+          E_col,j = 1[prod_{i=0}^2 c_{i,j} == C_j],  j in {0, 1, 2}
+        and forms the local product aggregator:
+          L = (prod_{i=0}^2 E_row,i) * (prod_{j=0}^2 E_col,j) in {0, 1}.
+      - Computes the row target parity product Pi_R = R_0 * R_1 * R_2 and column target
+        parity product Pi_C = C_0 * C_1 * C_2, and checks all 2^9 = 512 global non-contextual
+        assignments A in {-1, +1}^{3x3} to determine:
+          * max_satisfied_contexts_out_of_6 (5 when Pi_R != Pi_C, 6 when Pi_R == Pi_C),
+          * min_violated_contexts (1 when Pi_R != Pi_C, 0 when Pi_R == Pi_C),
+          * global evaluator E_g in {0, 1}, where E_g = 1 iff L == 1, Pi_R == Pi_C, and
+            any supplied global grid (or the target parity system) admits a non-contextual
+            {-1, +1}^{3x3} assignment satisfying all 6 contexts simultaneously.
+      - Separates:
+          * MERMIN_PERES_PARITY_OBSTRUCTION_LGGR (L == 1 and E_g == 0, Delta_E = -1:
+            all 6 row/column contexts are locally satisfiable, yet Pi_R != Pi_C obstructs
+            every global non-contextual assignment),
+          * NONCONTEXTUAL_PARITY_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * LOCAL_CONTEXT_PARITY_REJECTED (L == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-mermin-peres-parity-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.grids: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _validate_sign(val: int, name: str) -> int:
+        v = exact_int(val, name)
+        if v not in (-1, 1):
+            raise ValidationError(f"{name} must be in {{-1, +1}}, got {v}")
+        return v
+
+    def record_grid(
+        self,
+        grid_id: str,
+        *,
+        row_targets: Sequence[int] = (1, 1, 1),
+        col_targets: Sequence[int] = (1, 1, -1),
+        row_context_assignments: Sequence[Sequence[int]] | None = None,
+        col_context_assignments: Sequence[Sequence[int]] | None = None,
+    ) -> dict[str, Any]:
+        """Record a 3x3 Mermin-Peres parity grid and audit context-local vs global non-contextual satisfiability."""
+        gid = text(grid_id, "grid_id")
+        if len(row_targets) != 3 or len(col_targets) != 3:
+            raise ValidationError("row_targets and col_targets must each have length 3")
+
+        r_targets = [self._validate_sign(x, f"row_targets[{i}]") for i, x in enumerate(row_targets)]
+        c_targets = [self._validate_sign(x, f"col_targets[{j}]") for j, x in enumerate(col_targets)]
+
+        if row_context_assignments is not None:
+            if len(row_context_assignments) != 3 or any(len(r) != 3 for r in row_context_assignments):
+                raise ValidationError("row_context_assignments must be a 3x3 sequence of {-1, +1}")
+            r_assign = [
+                [self._validate_sign(row_context_assignments[i][j], f"row_assign[{i}][{j}]") for j in range(3)]
+                for i in range(3)
+            ]
+        else:
+            r_assign = [[1, 1, r_targets[i]] for i in range(3)]
+
+        if col_context_assignments is not None:
+            if len(col_context_assignments) != 3 or any(len(c) != 3 for c in col_context_assignments):
+                raise ValidationError("col_context_assignments must be a 3x3 sequence of {-1, +1}")
+            c_assign = [
+                [self._validate_sign(col_context_assignments[j][i], f"col_assign[{j}][{i}]") for i in range(3)]
+                for j in range(3)
+            ]
+        else:
+            c_assign = [[1, 1, c_targets[j]] for j in range(3)]
+
+        row_evals = [
+            1 if (r_assign[i][0] * r_assign[i][1] * r_assign[i][2] == r_targets[i]) else 0
+            for i in range(3)
+        ]
+        col_evals = [
+            1 if (c_assign[j][0] * c_assign[j][1] * c_assign[j][2] == c_targets[j]) else 0
+            for j in range(3)
+        ]
+
+        local_product = 1
+        for ev in row_evals + col_evals:
+            local_product *= ev
+
+        row_target_product = r_targets[0] * r_targets[1] * r_targets[2]
+        col_target_product = c_targets[0] * c_targets[1] * c_targets[2]
+        parity_obstruction = row_target_product != col_target_product
+
+        # Exhaustively evaluate all 2^9 = 512 global non-contextual grids A in {-1, +1}^{3x3}
+        max_satisfied = 0
+        witness_count = 0
+        for bits in range(512):
+            a = [
+                [-1 if ((bits >> (3 * i + j)) & 1) else 1 for j in range(3)]
+                for i in range(3)
+            ]
+            sat = 0
+            for i in range(3):
+                if a[i][0] * a[i][1] * a[i][2] == r_targets[i]:
+                    sat += 1
+            for j in range(3):
+                if a[0][j] * a[1][j] * a[2][j] == c_targets[j]:
+                    sat += 1
+            if sat > max_satisfied:
+                max_satisfied = sat
+            if sat == 6:
+                witness_count += 1
+
+        global_noncontextual_exists = witness_count > 0
+        min_violated_contexts = 6 - max_satisfied
+        global_eval = 1 if (local_product == 1 and global_noncontextual_exists) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 0:
+            grid_status = "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+        elif local_product == 1 and global_eval == 1:
+            grid_status = "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+        else:
+            grid_status = "LOCAL_CONTEXT_PARITY_REJECTED"
+
+        rec = {
+            "grid_id": gid,
+            "row_targets": r_targets,
+            "col_targets": c_targets,
+            "row_context_evaluators": row_evals,
+            "col_context_evaluators": col_evals,
+            "row_target_product": row_target_product,
+            "col_target_product": col_target_product,
+            "parity_mismatch_obstruction": parity_obstruction,
+            "max_satisfied_contexts_out_of_6": max_satisfied,
+            "min_violated_contexts": min_violated_contexts,
+            "global_noncontextual_witness_count": witness_count,
+            "global_noncontextual_assignment_exists": global_noncontextual_exists,
+            "local_product_aggregator": local_product,
+            "global_noncontextual_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "grid_status": grid_status,
+        }
+        self.grids.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed Mermin-Peres parity contextuality audit receipt."""
+        if not self.grids:
+            raise ValidationError("At least one Mermin-Peres parity grid must be recorded before emitting a receipt")
+
+        obstructed_ids = [
+            g["grid_id"]
+            for g in self.grids
+            if g["grid_status"] == "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+        ]
+        rejected_ids = [
+            g["grid_id"]
+            for g in self.grids
+            if g["grid_status"] == "LOCAL_CONTEXT_PARITY_REJECTED"
+        ]
+
+        if obstructed_ids:
+            status = "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif rejected_ids:
+            status = "LOCAL_CONTEXT_PARITY_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_mermin_peres_parity.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "grid_count": len(self.grids),
+            "parity_obstructed_grid_ids": obstructed_ids,
+            "rejected_grid_ids": rejected_ids,
+            "grids": self.grids,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

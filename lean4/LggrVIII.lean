@@ -1469,4 +1469,46 @@ theorem skew_repair_norm_attainment_divergence_and_obstruction
   refine ⟨⟨by omega, by omega, by omega, by omega, by omega, by omega⟩,
           ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
 
+/-- Theorem 52 (`mermin_peres_magic_square_parity_obstruction`):
+    Formalizes the 3×3 Mermin-Peres Magic Square Parity Obstruction
+    (`012_rsi/036` Claim BELL-08 & LGGR VII §5.2):
+    1. (Context-Wise Satisfiability & Target Product Discrepancy):
+       For row targets `(R₁, R₂, R₃) = (1, 1, 1)` and column targets `(C₁, C₂, C₃) = (1, 1, -1)`
+       over `{-1, +1}`, each of the 6 contexts admits a local `{-1, +1}³` assignment
+       (`1 * 1 * 1 = R₁`, `1 * 1 * 1 = R₂`, `1 * 1 * 1 = R₃`, `1 * 1 * 1 = C₁`,
+       `1 * 1 * 1 = C₂`, `1 * 1 * (-1) = C₃`, giving `L = 1`), yet
+       `R₁ * R₂ * R₃ = 1 ≠ -1 = C₁ * C₂ * C₃` (`Eg = 0`, `Δ_E = Eg - L = -1`).
+    2. (Universal Non-Contextual Parity Obstruction):
+       In additive `ℤ/2ℤ` exponent coordinates `x_{ij} ∈ ℤ` (representing `(-1)^{x_{ij}}`),
+       no global 3×3 assignment can simultaneously satisfy all 3 even row-sum parities
+       (`(x_{i1} + x_{i2} + x_{i3}) % 2 = 0`) together with two even column-sum parities
+       and one odd column-sum parity (`(x_{13} + x_{23} + x_{33}) % 2 = 1`). -/
+theorem mermin_peres_magic_square_parity_obstruction :
+    (let r1 : Int := 1; let r2 : Int := 1; let r3 : Int := 1;
+     let c1 : Int := 1; let c2 : Int := 1; let c3 : Int := -1;
+     let e_r1 := if (1 : Int) * 1 * 1 = r1 then (1 : Int) else 0;
+     let e_r2 := if (1 : Int) * 1 * 1 = r2 then (1 : Int) else 0;
+     let e_r3 := if (1 : Int) * 1 * 1 = r3 then (1 : Int) else 0;
+     let e_c1 := if (1 : Int) * 1 * 1 = c1 then (1 : Int) else 0;
+     let e_c2 := if (1 : Int) * 1 * 1 = c2 then (1 : Int) else 0;
+     let e_c3 := if (1 : Int) * 1 * (-1) = c3 then (1 : Int) else 0;
+     let l_prod := e_r1 * e_r2 * e_r3 * e_c1 * e_c2 * e_c3;
+     let e_global := if r1 * r2 * r3 = c1 * c2 * c3 then (1 : Int) else 0;
+     r1 * r2 * r3 = 1 ∧
+     c1 * c2 * c3 = -1 ∧
+     r1 * r2 * r3 ≠ c1 * c2 * c3 ∧
+     l_prod = 1 ∧
+     e_global = 0 ∧
+     e_global - l_prod = -1) ∧
+    (∀ x11 x12 x13 x21 x22 x23 x31 x32 x33 : Int,
+      ¬ ((x11 + x12 + x13) % 2 = 0 ∧
+         (x21 + x22 + x23) % 2 = 0 ∧
+         (x31 + x32 + x33) % 2 = 0 ∧
+         (x11 + x21 + x31) % 2 = 0 ∧
+         (x12 + x22 + x32) % 2 = 0 ∧
+         (x13 + x23 + x33) % 2 = 1)) := by
+  refine ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide⟩, ?_⟩
+  intro x11 x12 x13 x21 x22 x23 x31 x32 x33 h
+  omega
+
 end LggrVIII

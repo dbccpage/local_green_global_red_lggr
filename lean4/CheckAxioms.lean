@@ -68,3 +68,4 @@ import LggrVIII
 #print axioms LggrVIII.optional_stopping_expectation_conservation_vs_skew
 #print axioms LggrVIII.derived_limit_projective_tower_lifting_obstruction
 #print axioms LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction
+#print axioms LggrVIII.mermin_peres_magic_square_parity_obstruction
