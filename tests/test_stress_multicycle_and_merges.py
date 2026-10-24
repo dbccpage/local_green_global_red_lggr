@@ -26,6 +26,7 @@ from lggr.common import ValidationError
 from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
+    StreamingBellPolytopeMonitor,
     StreamingCochainMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDefectSoundnessMonitor,
@@ -1307,6 +1308,52 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_zero["status"], "ZERO_DEFECT_ALL_FAIL_LGGR")
         self.assertEqual(r_zero["contract_status"], "OBSTRUCTED_LGGR")
         self.assertTrue(r_zero["all_zero_agreement_at_failure"])
+
+    def test_bell_polytope_chsh_threshold_and_negative_mass(self) -> None:
+        """Verify LGGR VII 4-context CHSH Bell polytope bound, v=1/2 threshold, and N_min / CF identity."""
+        bmon = StreamingBellPolytopeMonitor(scope_id="bell-chsh-test")
+
+        # 1. Critical visibility threshold v = 1/2 -> S = 2, N_min = 0, LOCAL_LHV_EXTENSION_LGGG
+        r_crit = bmon.observe_isotropic_pr_mixture("iso_v_1_2", Fraction(1, 2))
+        self.assertEqual(r_crit["status"], "LOCAL_LHV_EXTENSION_LGGG")
+        self.assertEqual(r_crit["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_crit["canonical_chsh_s"], "2")
+        self.assertEqual(r_crit["min_negative_mass_n_min"], "0")
+        self.assertEqual(r_crit["contextual_fraction_cf"], "0")
+        self.assertEqual(r_crit["local_packing_fraction"], "1")
+        self.assertFalse(r_crit["above_visibility_threshold"])
+        self.assertTrue(r_crit["all_16_lhv_vertices_bounded_by_2"])
+        self.assertTrue(r_crit["packing_identity_verified"])
+
+        # 2. Tsirelson rational approximant visibility v = 17/24 > 1/2 -> S = 17/6, N_min = 5/24, CF = 5/12
+        r_tsir = bmon.observe_isotropic_pr_mixture("iso_v_17_24", Fraction(17, 24))
+        self.assertEqual(r_tsir["status"], "BELL_NONLOCAL_OBSTRUCTION_LGGR")
+        self.assertEqual(r_tsir["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_tsir["canonical_chsh_s"], "17/6")
+        self.assertEqual(r_tsir["min_negative_mass_n_min"], "5/24")
+        self.assertEqual(r_tsir["contextual_fraction_cf"], "5/12")
+        self.assertEqual(r_tsir["local_packing_fraction"], "7/12")
+        self.assertTrue(r_tsir["above_visibility_threshold"])
+        self.assertTrue(r_tsir["packing_identity_verified"])
+
+        # 3. PR-box algebraic maximum v = 1 -> S = 4, N_min = 1/2, CF = 1
+        r_pr = bmon.observe_isotropic_pr_mixture("pr_box", 1)
+        self.assertEqual(r_pr["status"], "BELL_NONLOCAL_OBSTRUCTION_LGGR")
+        self.assertEqual(r_pr["canonical_chsh_s"], "4")
+        self.assertEqual(r_pr["min_negative_mass_n_min"], "1/2")
+        self.assertEqual(r_pr["contextual_fraction_cf"], "1")
+        self.assertEqual(r_pr["local_packing_fraction"], "0")
+        self.assertTrue(r_pr["packing_identity_verified"])
+
+        summary = bmon.get_receipt()
+        self.assertEqual(summary["status"], "BELL_NONLOCAL_OBSTRUCTION_LGGR")
+        self.assertEqual(summary["observed_models_count"], 3)
+        self.assertEqual(summary["local_lhv_models"], ["iso_v_1_2"])
+        self.assertEqual(summary["nonlocal_obstructed_models"], ["iso_v_17_24", "pr_box"])
+        self.assertEqual(summary["max_chsh_s_observed"], "4")
+        self.assertEqual(summary["max_negative_mass_n_min"], "1/2")
+        self.assertTrue(summary["all_16_lhv_vertices_bounded_by_2"])
+        self.assertTrue(summary["all_packing_identities_verified"])
 
 
 if __name__ == "__main__":

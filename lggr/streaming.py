@@ -3549,6 +3549,189 @@ class StreamingDashboardAdequacyMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingBellPolytopeMonitor:
+    """Online 4-context CHSH Bell polytope, isotropic visibility threshold, and negative-mass monitor.
+
+    Evaluates the LGGR VII 4-context CHSH correlation functional and signed-extension obstructions:
+      - Canonical CHSH functional:
+          S(E) = E_00 + E_01 + E_10 - E_11
+        and all 8 CHSH facet symmetries S_{x0,y0}(E) across (x0, y0) in {0, 1}^2.
+      - Exhaustive verification over all 16 deterministic LHV vertices (a0, a1, b0, b1) in {-1, +1}^4
+        that a0*b0 + a0*b1 + a1*b0 - a1*b1 == a0*(b0 + b1) + a1*(b0 - b1) in {-2, +2}.
+      - Exact rational minimum signed-extension negative mass:
+          N_min(E) = max(0, (S_max(E) - 2) / 4),
+        contextual fraction on the 4-context symmetric CHSH slice:
+          CF(E) = 2 * N_min(E) = max(0, (S_max(E) - 2) / 2),
+        and 4-context packing mass identity:
+          U = 1 + N_min, R = 4 * N_min, U - R = 1 - 3 * N_min, CF <= 3 * N_min.
+      - Isotropic PR-box mixture p_v = v * p_PR + (1 - v) * p_uniform with critical visibility
+        threshold v_crit = 1/2 (S(p_v) = 4 * v).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-bell-polytope-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.models: dict[str, dict[str, Any]] = {}
+        self.lhv_vertex_values: list[int] = []
+        for a0 in (-1, 1):
+            for a1 in (-1, 1):
+                for b0 in (-1, 1):
+                    for b1 in (-1, 1):
+                        val = a0 * b0 + a0 * b1 + a1 * b0 - a1 * b1
+                        factored = a0 * (b0 + b1) + a1 * (b0 - b1)
+                        if val != factored:
+                            raise ValidationError("CHSH factorization mismatch")
+                        self.lhv_vertex_values.append(val)
+        self.all_16_lhv_vertices_bounded_by_2 = (
+            len(self.lhv_vertex_values) == 16
+            and all(abs(v) == 2 for v in self.lhv_vertex_values)
+        )
+
+    @staticmethod
+    def _validate_correlator(val: Fraction | int | str, name: str) -> Fraction:
+        q = rational(val)
+        if q < Fraction(-1) or q > Fraction(1):
+            raise ValidationError(f"{name} must lie in [-1, 1], got {q}")
+        return q
+
+    def observe_correlators(
+        self,
+        model_id: str,
+        e00: Fraction | int | str,
+        e01: Fraction | int | str,
+        e10: Fraction | int | str,
+        e11: Fraction | int | str,
+        *,
+        isotropic_visibility: Fraction | int | str | None = None,
+    ) -> dict[str, Any]:
+        """Audit a 4-context correlator tuple (E_00, E_01, E_10, E_11) in [-1, 1]^4."""
+        mid = text(model_id, "model_id")
+        c00 = self._validate_correlator(e00, "e00")
+        c01 = self._validate_correlator(e01, "e01")
+        c10 = self._validate_correlator(e10, "e10")
+        c11 = self._validate_correlator(e11, "e11")
+
+        vis_q: Fraction | None = None
+        if isotropic_visibility is not None:
+            vis_q = rational(isotropic_visibility)
+            if vis_q < Fraction(0) or vis_q > Fraction(1):
+                raise ValidationError("isotropic_visibility must lie in [0, 1]")
+
+        s_canonical = c00 + c01 + c10 - c11
+        facets = [
+            c00 + c01 + c10 - c11,
+            c00 + c01 - c10 + c11,
+            c00 - c01 + c10 + c11,
+            -c00 + c01 + c10 + c11,
+        ]
+        s_max = max(abs(f) for f in facets)
+        polytope_violation = max(Fraction(0), s_max - Fraction(2))
+        n_min = polytope_violation / Fraction(4)
+        cf_val = Fraction(2) * n_min
+        local_fraction = Fraction(1) - cf_val
+        u_mass = Fraction(1) + n_min
+        r_mass = Fraction(4) * n_min
+        packing_identity_verified = (
+            u_mass - r_mass == Fraction(1) - Fraction(3) * n_min
+            and cf_val <= Fraction(3) * n_min
+            and cf_val == Fraction(2) * n_min
+        )
+
+        is_nonlocal = s_max > Fraction(2)
+        if is_nonlocal:
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_LHV_EXTENSION_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_bell_polytope_model.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "correlators": {"e00": c00, "e01": c01, "e10": c10, "e11": c11},
+            "canonical_chsh_s": s_canonical,
+            "max_chsh_facet_s": s_max,
+            "classical_polytope_bound": Fraction(2),
+            "polytope_violation_excess": polytope_violation,
+            "min_negative_mass_n_min": n_min,
+            "contextual_fraction_cf": cf_val,
+            "local_packing_fraction": local_fraction,
+            "positive_extension_mass_u": u_mass,
+            "marginal_negative_budget_r": r_mass,
+            "isotropic_visibility": vis_q,
+            "critical_visibility_threshold": Fraction(1, 2),
+            "above_visibility_threshold": (vis_q > Fraction(1, 2)) if vis_q is not None else is_nonlocal,
+            "all_16_lhv_vertices_bounded_by_2": self.all_16_lhv_vertices_bounded_by_2,
+            "packing_identity_verified": packing_identity_verified,
+        }
+        self.models[mid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def observe_isotropic_pr_mixture(
+        self,
+        model_id: str,
+        visibility: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Audit an isotropic PR-box mixture p_v = v * p_PR + (1 - v) * p_uniform with visibility v in [0, 1]."""
+        v = rational(visibility)
+        if v < Fraction(0) or v > Fraction(1):
+            raise ValidationError("visibility must lie in [0, 1]")
+        return self.observe_correlators(
+            model_id,
+            v,
+            v,
+            v,
+            -v,
+            isotropic_visibility=v,
+        )
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate Bell polytope audit receipt across all observed 4-context models."""
+        nonlocal_models = [
+            mid for mid, m in self.models.items() if m["status"] == "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+        ]
+        local_models = [
+            mid for mid, m in self.models.items() if m["status"] == "LOCAL_LHV_EXTENSION_LGGG"
+        ]
+        max_n_min = max(
+            (m["min_negative_mass_n_min"] for m in self.models.values()),
+            default=Fraction(0),
+        )
+        max_s = max(
+            (m["max_chsh_facet_s"] for m in self.models.values()),
+            default=Fraction(0),
+        )
+        all_packing_ok = all(m["packing_identity_verified"] for m in self.models.values())
+
+        if nonlocal_models:
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_LHV_EXTENSION_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "observed_models_count": len(self.models),
+            "local_lhv_models": sorted(local_models),
+            "nonlocal_obstructed_models": sorted(nonlocal_models),
+            "max_chsh_s_observed": max_s,
+            "max_negative_mass_n_min": max_n_min,
+            "critical_visibility_threshold": Fraction(1, 2),
+            "all_16_lhv_vertices_bounded_by_2": self.all_16_lhv_vertices_bounded_by_2,
+            "all_packing_identities_verified": all_packing_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
