@@ -434,4 +434,25 @@ theorem multi_stage_gluing_associativity_and_defect_bound :
   · intro e1 e2 e3
     cases e1 <;> cases e2 <;> cases e3 <;> rfl
 
+/-- Theorem 19 (`coarsened_macro_stage_masks_internal_prefix_breach`):
+    For a 3-step state trajectory `x0 → x1 → x2 → x3` with cumulative budget `B`,
+    coarsening steps 2 and 3 into a single macro-step `x1 → x3` checks only `|x1 - x0| ≤ B`
+    and `|x3 - x0| ≤ B`. Every fine-grained prefix-bounded trajectory satisfies the coarsened
+    check, whereas the trajectory `(0, 1, 3, 1)` with `B = 2` passes the coarsened check
+    (`|1 - 0| ≤ 2` and `|1 - 0| ≤ 2`) while violating the internal prefix `|3 - 0| = 3 > 2`. -/
+theorem coarsened_macro_stage_masks_internal_prefix_breach :
+    (∀ B x0 x1 x2 x3 : Int,
+      (absInt (x1 - x0) ≤ B ∧ absInt (x2 - x0) ≤ B ∧ absInt (x3 - x0) ≤ B) →
+      (absInt (x1 - x0) ≤ B ∧ absInt (x3 - x0) ≤ B)) ∧
+    (let B : Int := 2
+     let x0 : Int := 0
+     let x1 : Int := 1
+     let x2 : Int := 3
+     let x3 : Int := 1
+     (absInt (x1 - x0) ≤ B ∧ absInt (x3 - x0) ≤ B) ∧
+     absInt (x2 - x0) > B) := by
+  refine ⟨?_, by decide⟩
+  intro B x0 x1 x2 x3 ⟨h1, _, h3⟩
+  exact ⟨h1, h3⟩
+
 end LggrVIII

@@ -534,6 +534,62 @@ class StreamingAuditMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+    def audit_coarsened_partition(self, partition_sizes: Iterable[int]) -> dict[str, Any]:
+        """Compare fine-grained step prefixes against macro-stage coarsened boundaries.
+
+        Detects COARSENED_EXCURSION_MASKED when grouping adjacent steps into macro-stages
+        hides an internal intermediate prefix budget breach (|Delta_k| > max_total).
+        """
+        sizes = [exact_int(s, "partition_size", minimum=1) for s in sequence(partition_sizes, "partition_sizes")]
+        if sum(sizes) != len(self.steps):
+            raise ValidationError("Sum of partition_sizes must equal total number of steps in monitor")
+
+        fine_breach_indices = [
+            rec["step_index"] for rec in self.prefix_records if not rec["within_bound"]
+        ]
+        fine_prefix_breach = len(fine_breach_indices) > 0
+
+        macro_boundaries: list[dict[str, Any]] = []
+        cursor = 0
+        coarse_prefix_breach = False
+        for m_idx, sz in enumerate(sizes):
+            cursor += sz
+            end_rec = self.prefix_records[cursor - 1]
+            within_b = bool(end_rec["within_bound"])
+            if not within_b:
+                coarse_prefix_breach = True
+            macro_boundaries.append({
+                "macro_stage_index": m_idx,
+                "end_step_index": cursor - 1,
+                "cumulative_delta": end_rec["cumulative_delta"],
+                "within_bound": within_b,
+            })
+
+        hidden_excursion_masked = fine_prefix_breach and not coarse_prefix_breach
+        status = (
+            "COARSENED_EXCURSION_MASKED"
+            if hidden_excursion_masked
+            else "COARSENING_PRESERVES_VERDICT"
+        )
+        contract_status = (
+            "OBSTRUCTED_LGGR"
+            if (fine_prefix_breach or coarse_prefix_breach)
+            else "COMPOSABLE_LGGG"
+        )
+        body = {
+            "schema": "lggr.online_coarsening_audit.v1",
+            "authority_effect": "None",
+            "status": status,
+            "contract_status": contract_status,
+            "fine_prefix_breach": fine_prefix_breach,
+            "coarse_prefix_breach": coarse_prefix_breach,
+            "hidden_excursion_masked": hidden_excursion_masked,
+            "fine_breach_step_indices": fine_breach_indices,
+            "macro_boundaries": macro_boundaries,
+            "bound": self.policy.max_total,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 class StreamingCochainMonitor:
     """Incremental 1-cochain cycle and exact rational L1 repair monitor.
