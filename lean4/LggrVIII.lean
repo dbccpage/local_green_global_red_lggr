@@ -1192,4 +1192,33 @@ theorem dfa_concatenation_state_mismatch_obstruction
     unfold dfaAccepts
     rw [h_comp, h_reset]
 
+/-- Theorem 44 (`catalyst_residual_accumulation_and_cycle_ceiling`):
+    Formalizes Constructor Catalyst Residual Wear Telescoping, Uniform-Wear Cycle
+    Ceiling, and Multi-Cycle Catalyst Exhaustion `NGD`:
+    1. (Catalyst State Telescoping): For catalyst trajectory `c₀, c₁, c₂, c₃ : Int`
+       with single-cycle wear increments `δ₁ = c₁ - c₀, δ₂ = c₂ - c₁, δ₃ = c₃ - c₂`,
+       the cumulative catalyst drift equals `(c₃ - c₀) = δ₁ + δ₂ + δ₃`.
+    2. (Uniform-Wear Cycle Ceiling): For per-cycle wear `δ = 2` and catalyst tolerance
+       `τ_cat = 5`, the cycle ceiling is `τ_cat / δ = 2`: after `n = 2` cycles,
+       `2 * δ = 4 ≤ 5 = τ_cat` remains within tolerance, whereas on cycle `n = 3`,
+       each single cycle satisfies `δ = 2 ≤ 2 = ε_local` locally (`L = 1`), yet
+       cumulative wear `3 * δ = 6 > 5 = τ_cat` breaches the catalyst threshold
+       (`E_g = 0`, `Δ_E = E_g - L = -1`). -/
+theorem catalyst_residual_accumulation_and_cycle_ceiling
+    (c₀ c₁ c₂ c₃ : Int) :
+    (let d1 := c₁ - c₀; let d2 := c₂ - c₁; let d3 := c₃ - c₂;
+     c₃ - c₀ = d1 + d2 + d3) ∧
+    (let delta := (2 : Int);
+     let tau_cat := (5 : Int);
+     let n_ceil := tau_cat / delta;
+     let l_prod := (if delta ≤ 2 then (1 : Int) else 0) *
+                   (if delta ≤ 2 then 1 else 0) *
+                   (if delta ≤ 2 then 1 else 0);
+     let e_global := if 3 * delta ≤ tau_cat then (1 : Int) else 0;
+     n_ceil = 2 ∧
+     n_ceil * delta ≤ tau_cat ∧
+     (n_ceil + 1) * delta > tau_cat ∧
+     l_prod = 1 ∧ e_global = 0 ∧ e_global - l_prod = -1) := by
+  refine ⟨by omega, ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩⟩
+
 end LggrVIII
