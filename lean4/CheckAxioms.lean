@@ -50,3 +50,4 @@ import LggrVIII
 #print axioms LggrVIII.dashboard_summary_reconstruction_and_collapsing_detector
 #print axioms LggrVIII.chsh_local_polytope_bound_and_negative_mass
 #print axioms LggrVIII.product_retraction_residual_vs_local_extension
+#print axioms LggrVIII.evidence_preserving_rsi_invariance_bound
