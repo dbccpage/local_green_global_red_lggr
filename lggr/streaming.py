@@ -7006,8 +7006,8 @@ class StreamingSkewRepairMonitor:
     ) -> dict[str, Any]:
         """Record a 2-cochain probe omega = (a, b) and audit l^1, l^2, l^infty repair attainment."""
         pid = text(probe_id, "probe_id")
-        a = rational(omega_a, "omega_a")
-        b = rational(omega_b, "omega_b")
+        a = rational(omega_a)
+        b = rational(omega_b)
 
         skew_discrepancy = 2 * a - b
         abs_skew = abs(skew_discrepancy)
@@ -7034,7 +7034,7 @@ class StreamingSkewRepairMonitor:
             alpha_1 != alpha_2 and alpha_2 != alpha_inf and alpha_1 != alpha_inf
         )
 
-        alpha_c = rational(candidate_alpha, "candidate_alpha") if candidate_alpha is not None else alpha_inf
+        alpha_c = rational(candidate_alpha) if candidate_alpha is not None else alpha_inf
         b_inf = (
             nonnegative_rational(l_inf_coordinate_budget, "l_inf_coordinate_budget")
             if l_inf_coordinate_budget is not None
