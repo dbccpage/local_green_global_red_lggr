@@ -1,2 +1,2 @@
-# Preserve frozen source, reports and replay receipts byte for byte.
+# Preserve publication metadata and archive checksums byte for byte.
 ** -text

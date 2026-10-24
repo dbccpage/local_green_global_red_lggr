@@ -6455,7 +6455,7 @@ class StreamingReggeDeficitCurvatureMonitor:
 
 
 class StreamingPullbackSquareMonitor:
-    """Online categorical fibered pullback square and universal cone mediator monitor.
+    """Online categorical fibered pullback square and canonical cone mediator monitor.
 
     Audits a finite cospan A -f-> C <-g- B and its fibered pullback
     A x_C B = {(a, b) in A x B | f(a) == g(b)}:
@@ -6562,7 +6562,7 @@ class StreamingPullbackSquareMonitor:
         p_a_map: Mapping[str, str],
         p_b_map: Mapping[str, str],
     ) -> dict[str, Any]:
-        """Verify universal pullback mediator existence and uniqueness for a cone W -> A, W -> B."""
+        """Verify canonical pullback mediator existence and uniqueness for a cone W -> A, W -> B."""
         cid = text(cone_id, "cone_id")
         if not isinstance(p_a_map, Mapping) or not isinstance(p_b_map, Mapping):
             raise ValidationError("p_a_map and p_b_map must be mappings")

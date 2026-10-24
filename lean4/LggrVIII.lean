@@ -767,7 +767,7 @@ def deleteCoord2 (v : Int × Int × Int) : Int × Int := (v.1, v.2.1)
 /-- Theorem 30 (`realizable_defect_soundness_kernel_intersection`):
     Explicit integer defect-vector, coupled-coordinate, and Minkowski fixtures
     from LGGR V. Realization by the paper's restriction maps is a separate
-    obligation; this declaration proves the displayed finite vector claims.
+    obligation; this declaration establishes the displayed finite vector claims.
     1. (Stealth Defect Scaling — Theorem 3): For any amplitude `lam ≥ 0`, the 6-edge
        stealth defect with per-edge L1 norm `lam` has total inconsistency `6 * lam`
        while each coordinate-deleting watcher scores `0`.
@@ -1335,9 +1335,9 @@ theorem discrete_regge_hinge_deficit_and_gauss_bonnet
   refine ⟨by omega, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
 
 /-- Theorem 48 (`fibered_pullback_compatibility_and_mediator_uniqueness`):
-    Formalizes the Categorical Fibered Pullback Universal Mediator Uniqueness
+    Formalizes the Categorical Fibered Pullback Canonical Mediator Uniqueness
     and Interface Mismatch `NGD`:
-    1. (Universal Mediator Existence & Uniqueness): For any cospan `f : A → C`,
+    1. (Canonical Mediator Existence & Uniqueness): For any cospan `f : A → C`,
        `g : B → C` and cone `pA : W → A`, `pB : W → B` with `f (pA w) = g (pB w)`,
        the mediator `u w = (pA w, pB w)` satisfies `(u w).1 = pA w ∧ (u w).2 = pB w`
        and `f (u w).1 = g (u w).2`, and any map `u' : W → A × B` satisfying
@@ -1477,7 +1477,7 @@ theorem skew_repair_norm_attainment_divergence_and_obstruction
        (`1 * 1 * 1 = R₁`, `1 * 1 * 1 = R₂`, `1 * 1 * 1 = R₃`, `1 * 1 * 1 = C₁`,
        `1 * 1 * 1 = C₂`, `1 * 1 * (-1) = C₃`, giving `L = 1`), yet
        `R₁ * R₂ * R₃ = 1 ≠ -1 = C₁ * C₂ * C₃` (`Eg = 0`, `Δ_E = Eg - L = -1`).
-    2. (Universal Non-Contextual Parity Obstruction):
+    2. (All-Assignment Non-Contextual Parity Obstruction):
        In additive `ℤ/2ℤ` exponent coordinates `x_{ij} ∈ ℤ` (representing `(-1)^{x_{ij}}`),
        no global 3×3 assignment can simultaneously satisfy all 3 even row-sum parities
        (`(x_{i1} + x_{i2} + x_{i3}) % 2 = 0`) together with two even column-sum parities
@@ -1513,7 +1513,7 @@ theorem mermin_peres_magic_square_parity_obstruction :
 /-- Theorem 53 (`side_information_channel_capacity_and_fiber_error_floor`):
     Formalizes the Side-Information Channel Capacity & Fiber Error Floor
     (`012_rsi/002` Claims IK-04/IK-05 & LGGR I §5):
-    1. (Universal 4-State Fiber Error Floor under 1-Bit Side Channel `S = 2 < K = 4`):
+    1. (All-Assignment 4-State Fiber Error Floor under 1-Bit Side Channel `S = 2 < K = 4`):
        For any 4 pairwise distinct target query values `v₀, v₁, v₂, v₃ : Int`,
        any 2-symbol side-channel assignment `b₀, b₁, b₂, b₃ : Bool`, and any deterministic
        2-symbol decoder outputs `d₀, d₁ : Int`, the number of misclassified fiber states
@@ -1550,7 +1550,7 @@ theorem side_information_channel_capacity_and_fiber_error_floor
 /-- Theorem 54 (`product_of_experts_disjoint_support_collapse_vs_mixture`):
     Formalizes the Product-of-Experts Disjoint-Support Collapse vs. Mixture-of-Experts
     Positivity (LGGR I §7.2 & LGGR II §2.2):
-    1. (Universal Positivity of Mixture vs. Vanishing Product on Disjoint Supports):
+    1. (All-Assignment Positivity of Mixture vs. Vanishing Product on Disjoint Supports):
        For any non-negative expert scores `p1_1, p1_2, p2_1, p2_2 : Int` with `p1_1 ≥ 0`,
        `p1_2 ≥ 0`, `p2_1 ≥ 0`, `p2_2 ≥ 0`, if Expert 1 has positive mass (`p1_1 + p1_2 > 0`)
        and Expert 2 has positive mass (`p2_1 + p2_2 > 0`), the unnormalized symmetric mixture
