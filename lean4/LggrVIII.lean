@@ -528,4 +528,24 @@ theorem l1_dual_witness_subgradient_weight_sensitivity
   have h3 : (w3 + dw3) * absInt r3 = w3 * absInt r3 + dw3 * absInt r3 := Int.add_mul w3 dw3 (absInt r3)
   omega
 
+/-- Theorem 23 (`cycle_bottleneck_weight_pivot_threshold`):
+    Consider a frustrated cycle (or coupled cycle cut) with nonzero defect magnitude `d > 0`,
+    where breaking the active chord `e` incurs cost `w_e * d` while breaking the alternative
+    tree cut incurs cost `C_alt * d`:
+    1. Below the critical weight (`w_e < C_alt`), breaking `e` is strictly cheaper (`w_e * d < C_alt * d`),
+    2. At the critical weight (`w_e = C_alt`), both bases achieve identical repair cost (`w_e * d = C_alt * d`),
+    3. Above the critical weight (`w_e > C_alt`), pivoting `e` into the spanning tree and breaking the
+       alternative cut is strictly cheaper (`C_alt * d < w_e * d`). -/
+theorem cycle_bottleneck_weight_pivot_threshold (w_e C_alt d : Int) (hd : d > 0) :
+    (w_e < C_alt → w_e * d < C_alt * d) ∧
+    (w_e = C_alt → w_e * d = C_alt * d) ∧
+    (w_e > C_alt → C_alt * d < w_e * d) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro h_lt
+    exact Int.mul_lt_mul_of_pos_right h_lt hd
+  · intro h_eq
+    rw [h_eq]
+  · intro h_gt
+    exact Int.mul_lt_mul_of_pos_right h_gt hd
+
 end LggrVIII
