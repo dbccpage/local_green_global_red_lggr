@@ -36,6 +36,7 @@ from lggr.streaming import (
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
+    StreamingRSIFiberCeilingMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingTransportMonitor,
 )
@@ -1417,6 +1418,60 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["classical_correlation_lhv_models"], ["classical_shared_coin"])
         self.assertEqual(summary["bell_nonlocal_models"], ["pr_box_tables"])
         self.assertTrue(summary["all_retraction_identities_verified"])
+
+    def test_rsi_fiber_ceiling_invariance_and_refinement(self) -> None:
+        """Verify LGGR VII evidence-preserving RSI fiber ceiling invariance across generations and refinement."""
+        rmon = StreamingRSIFiberCeilingMonitor(scope_id="rsi-ceiling-test")
+
+        # Colliding states x1, x2 share coarse report "rep_A" with target values 1 and 6
+        # -> spread W = 5, half-spread ceiling = 5/2, midpoint = 7/2
+        rmon.observe_state("x1", "rep_A", 1, refined_report="rep_A_low")
+        rmon.observe_state("x2", "rep_A", 6, refined_report="rep_A_high")
+        # Non-colliding state x3 on "rep_B" with target value 4
+        rmon.observe_state("x3", "rep_B", 4, refined_report="rep_B_exact")
+
+        # Generation 0: initial coarse predictor -> rep_A: 1, rep_B: 4 (error on x2 is |6 - 1| = 5 >= 5/2)
+        g0 = rmon.evaluate_generation("gen_0", {"rep_A": 1, "rep_B": 4})
+        self.assertEqual(g0["status"], "RSI_FIBER_CEILING_LOCKED_LGGR")
+        self.assertEqual(g0["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(g0["worst_case_error"], "5")
+        self.assertEqual(g0["coarse_half_spread_ceiling"], "5/2")
+        self.assertFalse(g0["attains_minimax_midpoint_floor"])
+        self.assertTrue(g0["invariance_lower_bound_verified"])
+
+        # Generation 1: recursive update shifts rep_A -> 4 (error on x1 is |1 - 4| = 3 >= 5/2)
+        g1 = rmon.evaluate_generation("gen_1", {"rep_A": 4, "rep_B": 4})
+        self.assertEqual(g1["status"], "RSI_FIBER_CEILING_LOCKED_LGGR")
+        self.assertEqual(g1["worst_case_error"], "3")
+        self.assertTrue(g1["invariance_lower_bound_verified"])
+
+        # Generation 2: optimal midpoint predictor rep_A -> 7/2 attains the exact minimax floor 5/2
+        g2 = rmon.evaluate_generation("gen_2_midpoint", {"rep_A": Fraction(7, 2), "rep_B": 4})
+        self.assertEqual(g2["status"], "RSI_FIBER_CEILING_LOCKED_LGGR")
+        self.assertEqual(g2["worst_case_error"], "5/2")
+        self.assertTrue(g2["attains_minimax_midpoint_floor"])
+        self.assertTrue(g2["invariance_lower_bound_verified"])
+
+        # Generation 3 (with sensor refinement p'): splits rep_A into rep_A_low and rep_A_high -> error = 0
+        g3 = rmon.evaluate_generation(
+            "gen_3_refined",
+            {"rep_A_low": 1, "rep_A_high": 6, "rep_B_exact": 4},
+            use_refined_report=True,
+        )
+        self.assertEqual(g3["status"], "EVIDENCE_REFINEMENT_RESOLVED_LGGG")
+        self.assertEqual(g3["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(g3["worst_case_error"], "0")
+        self.assertTrue(g3["broke_coarse_ceiling_via_refinement"])
+        self.assertTrue(g3["invariance_lower_bound_verified"])
+
+        summary = rmon.get_receipt()
+        self.assertEqual(summary["status"], "EVIDENCE_REFINEMENT_RESOLVED_LGGG")
+        self.assertEqual(summary["coarse_half_spread_ceiling"], "5/2")
+        self.assertEqual(summary["refined_half_spread_ceiling"], "0")
+        self.assertEqual(summary["evidence_preserving_generations_count"], 3)
+        self.assertEqual(summary["refined_generations_count"], 1)
+        self.assertTrue(summary["all_invariance_lower_bounds_verified"])
+        self.assertTrue(summary["refinement_resolved"])
 
 
 if __name__ == "__main__":

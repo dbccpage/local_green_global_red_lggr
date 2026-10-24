@@ -3976,6 +3976,244 @@ class StreamingProductRetractionMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingRSIFiberCeilingMonitor:
+    """Online LGGR VII evidence-preserving Recursive Self-Improvement (RSI) fiber ceiling monitor.
+
+    Audits multi-generation recursive predictor updates g^(0), g^(1), ..., g^(T) that factor
+    through a fixed coarse observation map p: X -> A (g^(t) = h^(t) o p):
+      - Tracks coarse observation fibers F(r) = {x in X : p(x) = r}, fiber width
+        W_f(r) = max_{x in F(r)} f(x) - min_{x in F(r)} f(x), and minimax half-spread
+        ceiling epsilon_min(r) = W_f(r) / 2.
+      - Verifies across every evidence-preserving recursive update generation t >= 0 that
+        worst-case fiber error satisfies:
+          max_{x in F(r)} |f(x) - g^(t)(x)| >= W_f(r) / 2,
+        demonstrating in this model that recursive post-processing of a fixed report channel
+        cannot reduce worst-case error below half the fiber spread.
+      - Verifies that an informative sensor/evidence refinement p': X -> A' splitting colliding
+        states into zero-spread refined fibers reduces worst-case error below the coarse ceiling.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-rsi-fiber-ceiling-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.states: dict[str, dict[str, Any]] = {}
+        self.coarse_fibers: dict[str, dict[str, Any]] = {}
+        self.refined_fibers: dict[str, dict[str, Any]] = {}
+        self.generations: list[dict[str, Any]] = []
+
+    def observe_state(
+        self,
+        state_id: str,
+        coarse_report: Any,
+        target_value: Fraction | int | str,
+        *,
+        refined_report: Any = None,
+    ) -> dict[str, Any]:
+        """Register a state with its coarse report p(x), rational target f(x), and optional refined report p'(x)."""
+        sid = text(state_id, "state_id")
+        c_clean = json.loads(canonical(coarse_report))
+        c_key = canonical(c_clean)
+        r_clean = json.loads(canonical(refined_report if refined_report is not None else coarse_report))
+        r_key = canonical(r_clean)
+        f_val = rational(target_value)
+
+        prev = self.states.get(sid)
+        if prev is not None:
+            if (
+                prev["coarse_key"] != c_key
+                or prev["refined_key"] != r_key
+                or prev["target_value"] != f_val
+            ):
+                raise ValidationError(f"Conflicting state observation for state_id: {sid}")
+        else:
+            self.states[sid] = {
+                "state_id": sid,
+                "coarse_report": c_clean,
+                "coarse_key": c_key,
+                "refined_report": r_clean,
+                "refined_key": r_key,
+                "target_value": f_val,
+            }
+
+        self._update_fiber_dict(self.coarse_fibers, c_key, c_clean, sid, f_val)
+        self._update_fiber_dict(self.refined_fibers, r_key, r_clean, sid, f_val)
+        return self.get_receipt()
+
+    @staticmethod
+    def _update_fiber_dict(
+        fiber_dict: dict[str, dict[str, Any]],
+        key: str,
+        report_obj: Any,
+        sid: str,
+        f_val: Fraction,
+    ) -> None:
+        fb = fiber_dict.get(key)
+        if fb is None:
+            fiber_dict[key] = {
+                "report": report_obj,
+                "state_ids": [sid],
+                "min_target": f_val,
+                "max_target": f_val,
+                "spread_width": Fraction(0),
+                "half_spread_ceiling": Fraction(0),
+                "midpoint_prediction": f_val,
+            }
+        else:
+            if sid not in fb["state_ids"]:
+                fb["state_ids"].append(sid)
+                fb["state_ids"].sort()
+            if f_val < fb["min_target"]:
+                fb["min_target"] = f_val
+            if f_val > fb["max_target"]:
+                fb["max_target"] = f_val
+            spread = fb["max_target"] - fb["min_target"]
+            fb["spread_width"] = spread
+            fb["half_spread_ceiling"] = spread / Fraction(2)
+            fb["midpoint_prediction"] = (fb["max_target"] + fb["min_target"]) / Fraction(2)
+
+    def evaluate_generation(
+        self,
+        generation_id: str,
+        predictor_by_report: dict[str, Fraction | int | str],
+        *,
+        use_refined_report: bool = False,
+    ) -> dict[str, Any]:
+        """Evaluate a generation-t predictor mapping report keys (or canonical JSON strings) to rational predictions."""
+        gid = text(generation_id, "generation_id")
+        boolean(use_refined_report, "use_refined_report")
+        if not self.states:
+            raise ValidationError("Cannot evaluate generation before observing states")
+        if not isinstance(predictor_by_report, dict):
+            raise ValidationError("predictor_by_report must be a dict")
+
+        norm_map: dict[str, Fraction] = {}
+        for k, v in predictor_by_report.items():
+            q_v = rational(v)
+            norm_map[str(k)] = q_v
+            norm_map[canonical(k)] = q_v
+
+        per_coarse_fiber_max_err: dict[str, Fraction] = {
+            ck: Fraction(0) for ck in self.coarse_fibers
+        }
+        max_err = Fraction(0)
+
+        for sid, st in sorted(self.states.items()):
+            lookup_key = st["refined_key"] if use_refined_report else st["coarse_key"]
+            raw_rep = st["refined_report"] if use_refined_report else st["coarse_report"]
+            if lookup_key in norm_map:
+                pred = norm_map[lookup_key]
+            elif str(raw_rep) in norm_map:
+                pred = norm_map[str(raw_rep)]
+            else:
+                raise ValidationError(f"Missing prediction for report {raw_rep} in generation {gid}")
+            err = abs(st["target_value"] - pred)
+            if err > max_err:
+                max_err = err
+            ck = st["coarse_key"]
+            if err > per_coarse_fiber_max_err[ck]:
+                per_coarse_fiber_max_err[ck] = err
+
+        coarse_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.coarse_fibers.values()),
+            default=Fraction(0),
+        )
+        refined_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.refined_fibers.values()),
+            default=Fraction(0),
+        )
+
+        if not use_refined_report:
+            invariance_verified = all(
+                per_coarse_fiber_max_err[ck] >= fb["half_spread_ceiling"]
+                for ck, fb in self.coarse_fibers.items()
+            ) and (max_err >= coarse_ceiling)
+            broke_coarse_ceiling = False
+        else:
+            invariance_verified = (max_err >= refined_ceiling)
+            broke_coarse_ceiling = (max_err < coarse_ceiling)
+
+        if use_refined_report and broke_coarse_ceiling and max_err == Fraction(0):
+            status = "EVIDENCE_REFINEMENT_RESOLVED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif coarse_ceiling > Fraction(0) and not broke_coarse_ceiling:
+            status = "RSI_FIBER_CEILING_LOCKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ZERO_SPREAD_FIBER_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        gen_entry = {
+            "schema": "lggr.online_rsi_generation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "generation_id": gid,
+            "status": status,
+            "contract_status": contract_status,
+            "use_refined_report": use_refined_report,
+            "worst_case_error": max_err,
+            "coarse_half_spread_ceiling": coarse_ceiling,
+            "refined_half_spread_ceiling": refined_ceiling,
+            "attains_minimax_midpoint_floor": (not use_refined_report and max_err == coarse_ceiling),
+            "invariance_lower_bound_verified": invariance_verified,
+            "broke_coarse_ceiling_via_refinement": broke_coarse_ceiling,
+        }
+        self.generations.append(gen_entry)
+        return json_value({**gen_entry, "receipt_sha256": digest(gen_entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate RSI fiber ceiling receipt across all observed states and recursive generations."""
+        coarse_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.coarse_fibers.values()),
+            default=Fraction(0),
+        )
+        refined_ceiling = max(
+            (fb["half_spread_ceiling"] for fb in self.refined_fibers.values()),
+            default=Fraction(0),
+        )
+        evidence_preserving_gens = [
+            g for g in self.generations if not g["use_refined_report"]
+        ]
+        refined_gens = [
+            g for g in self.generations if g["use_refined_report"]
+        ]
+        all_invariance_ok = all(
+            g["invariance_lower_bound_verified"] for g in self.generations
+        )
+        refinement_resolved = any(
+            g["broke_coarse_ceiling_via_refinement"] and g["worst_case_error"] == Fraction(0)
+            for g in refined_gens
+        )
+
+        if refinement_resolved:
+            status = "EVIDENCE_REFINEMENT_RESOLVED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif coarse_ceiling > Fraction(0):
+            status = "RSI_FIBER_CEILING_LOCKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ZERO_SPREAD_FIBER_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_rsi_fiber_ceiling.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "observed_states_count": len(self.states),
+            "coarse_fibers_count": len(self.coarse_fibers),
+            "refined_fibers_count": len(self.refined_fibers),
+            "coarse_half_spread_ceiling": coarse_ceiling,
+            "refined_half_spread_ceiling": refined_ceiling,
+            "evaluated_generations_count": len(self.generations),
+            "evidence_preserving_generations_count": len(evidence_preserving_gens),
+            "refined_generations_count": len(refined_gens),
+            "all_invariance_lower_bounds_verified": all_invariance_ok,
+            "refinement_resolved": refinement_resolved,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

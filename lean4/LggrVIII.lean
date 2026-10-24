@@ -877,4 +877,43 @@ theorem product_retraction_residual_vs_local_extension (d : Int) :
           ⟨by decide, by decide, by decide, by decide⟩⟩
   split <;> split <;> omega
 
+/-- Theorem 34 (`evidence_preserving_rsi_invariance_bound`):
+    Formalizes the LGGR VII Evidence-Preserving Recursive Self-Improvement (RSI)
+    Invariance and Half-Spread Ceiling Law:
+    1. (Recursive Update Factorization Invariance): For any coarse report map `p : X → A`,
+       initial report-space predictor `h0 : A → Int`, and recursive self-improvement
+       update operators `U1 U2 : (A → Int) → (A → Int)`, any colliding pair `p x1 = p x2`
+       remains indistinguishable across all generations `g0 x = h0 (p x)`,
+       `g1 x = U1 h0 (p x)`, and `g2 x = U2 (U1 h0) (p x)`.
+    2. (Generation-Uniform Half-Spread Ceiling): For any colliding states `x1, x2` with
+       `p x1 = p x2` and target values `a ≤ b`, every recursive generation `h : A → Int`
+       satisfies `|a - h (p x1)| + |b - h (p x2)| ≥ b - a` and
+       `2 * |a - h (p x1)| ≥ b - a ∨ 2 * |b - h (p x2)| ≥ b - a`.
+    3. (Refinement Breakthrough): Under a refined observation map `p' : X → A'` and
+       refined predictor `h' : A' → Int` achieving `h' (p' x1) = a` and `h' (p' x2) = b`,
+       both branch errors vanish: `|a - h' (p' x1)| = 0 ∧ |b - h' (p' x2)| = 0`. -/
+theorem evidence_preserving_rsi_invariance_bound {X A A' : Type}
+    (p : X → A) (h0 : A → Int) (U1 U2 : (A → Int) → (A → Int))
+    (p' : X → A') (h' : A' → Int)
+    (x1 x2 : X) (a b : Int)
+    (hcoll : p x1 = p x2) (_hab : a ≤ b)
+    (href1 : h' (p' x1) = a) (href2 : h' (p' x2) = b) :
+    (h0 (p x1) = h0 (p x2) ∧
+     U1 h0 (p x1) = U1 h0 (p x2) ∧
+     U2 (U1 h0) (p x1) = U2 (U1 h0) (p x2)) ∧
+    (let z := U2 (U1 h0) (p x1);
+     absInt (a - z) + absInt (b - U2 (U1 h0) (p x2)) ≥ b - a ∧
+     (2 * absInt (a - z) ≥ b - a ∨ 2 * absInt (b - U2 (U1 h0) (p x2)) ≥ b - a)) ∧
+    (absInt (a - h' (p' x1)) = 0 ∧ absInt (b - h' (p' x2)) = 0) := by
+  have hz : U2 (U1 h0) (p x2) = U2 (U1 h0) (p x1) := by rw [hcoll]
+  refine ⟨⟨by rw [hcoll], by rw [hcoll], by rw [hcoll]⟩, ?_, ?_⟩
+  · rw [hz]
+    dsimp [absInt]
+    constructor
+    · split <;> split <;> omega
+    · split <;> split <;> omega
+  · rw [href1, href2]
+    dsimp [absInt]
+    constructor <;> omega
+
 end LggrVIII
