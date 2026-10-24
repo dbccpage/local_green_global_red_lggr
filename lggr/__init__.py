@@ -24,6 +24,7 @@ from .streaming import (
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
+    StreamingWindowedDriftMonitor,
 )
 from .transport import verify_transport
 from .witnesses import BudgetPolicy, StateRef, StepWitness, audit_document, audit_history, history_document, make_witness
@@ -37,4 +38,5 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingDashboardAdequacyMonitor", "StreamingDefectSoundnessMonitor", "StreamingFiberMonitor",
            "StreamingGramProbeMonitor", "StreamingOrganizationalGluingMonitor", "StreamingPathKernelMonitor",
            "StreamingPositiveExtensionMonitor", "StreamingProductRetractionMonitor", "StreamingRSIFiberCeilingMonitor",
-           "StreamingSixRoleOverlayMonitor", "StreamingThresholdGovernanceMonitor", "StreamingTransportMonitor"]
+           "StreamingSixRoleOverlayMonitor", "StreamingThresholdGovernanceMonitor", "StreamingTransportMonitor",
+           "StreamingWindowedDriftMonitor"]

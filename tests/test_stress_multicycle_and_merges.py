@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
+    StreamingWindowedDriftMonitor,
 )
 from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
 
@@ -1613,6 +1614,40 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["blindspot_state_ids"], ["rho_half_id"])
         self.assertTrue(summary["all_state_discrepancy_identities_verified"])
         self.assertTrue(summary["all_composition_identities_verified"])
+
+    def test_windowed_drift_horizon_breach_and_partition_bound(self) -> None:
+        """Verify LGGR I/VIII sliding-window local green vs. full-horizon cumulative budget breach."""
+        # Window size W = 2, window budget B_W = 2, global budget B_global = 3
+        wmon = StreamingWindowedDriftMonitor(2, 2, 3, scope_id="window-drift-test")
+
+        # Steps 1..3 with drift 1 each: window sum <= 2, cumulative drift <= 3 -> within both budgets
+        wmon.record_step("s1", 1)
+        wmon.record_step("s2", 1)
+        r3 = wmon.record_step("s3", 1)
+        self.assertEqual(r3["status"], "WINDOW_AND_HORIZON_WITHIN_BUDGET_LGGG")
+        self.assertEqual(r3["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r3["current_window_sum"], "2")
+        self.assertEqual(r3["cumulative_horizon_drift"], "3")
+        self.assertTrue(r3["block_partition_bound_verified"])
+
+        # Step 4 with drift 1: contiguous 2-step window is still 1 + 1 = 2 <= B_W,
+        # but cumulative horizon drift is 4 > 3 = B_global -> SLIDING_WINDOW_HORIZON_BREACH_LGGR
+        r4 = wmon.record_step("s4", 1)
+        self.assertEqual(r4["status"], "SLIDING_WINDOW_HORIZON_BREACH_LGGR")
+        self.assertEqual(r4["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r4["current_window_sum"], "2")
+        self.assertEqual(r4["max_window_sum"], "2")
+        self.assertEqual(r4["cumulative_horizon_drift"], "4")
+        self.assertTrue(r4["all_windows_within_budget"])
+        self.assertFalse(r4["horizon_within_budget"])
+        self.assertTrue(r4["sliding_window_masked_breach"])
+        self.assertTrue(r4["block_partition_bound_verified"])
+
+        # Step 5 with drift 2: contiguous 2-step window is 1 + 2 = 3 > 2 = B_W -> LOCAL_WINDOW_BUDGET_BREACH
+        r5 = wmon.record_step("s5", 2)
+        self.assertEqual(r5["status"], "LOCAL_WINDOW_BUDGET_BREACH")
+        self.assertFalse(r5["all_windows_within_budget"])
+        self.assertTrue(r5["block_partition_bound_verified"])
 
 
 if __name__ == "__main__":
