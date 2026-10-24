@@ -46,3 +46,4 @@ import LggrVIII
 #print axioms LggrVIII.centered_gram_kernel_nullspace_obstruction
 #print axioms LggrVIII.path_kernel_composition_discrepancy_identity
 #print axioms LggrVIII.boundary_sufficiency_without_quotient_factorization
+#print axioms LggrVIII.realizable_defect_soundness_kernel_intersection

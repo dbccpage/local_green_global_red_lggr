@@ -27,6 +27,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingCochainMonitor,
+    StreamingDefectSoundnessMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
     StreamingOrganizationalGluingMonitor,
@@ -1223,6 +1224,43 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["carrier_mixing_collisions_count"], 1)
         self.assertEqual(summary["weak_nonfactored_count"], 2)
         self.assertTrue(summary["all_m4_equivalences_verified"])
+
+    def test_defect_soundness_coupled_compensation_and_minkowski_repair(self) -> None:
+        """Verify LGGR V realizable soundness (im(D) cap ker(Q) == {0}), stealth scaling, and Minkowski repair."""
+        # 1. Theorem 6 Coupled Soundness: D maps (v1, v2) -> (-v1, -v2, -v1, -v2)
+        #    Q measures coord 0 on interface 0 and coord 1 on interface 1 -> dim(ker Q)=2, but im(D) cap ker(Q)={0}
+        d_coupled = [[-1, 0], [0, -1], [-1, 0], [0, -1]]
+        q_coupled = [[1, 0, 0, 0], [0, 0, 0, 1]]
+        smon_coup = StreamingDefectSoundnessMonitor(d_coupled, q_coupled, scope_id="coupled-sound")
+        r_coup = smon_coup.audit_soundness()
+        self.assertEqual(r_coup["status"], "COUPLED_SOUNDNESS_VERIFIED_LGGG")
+        self.assertEqual(r_coup["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(r_coup["soundness_holds"])
+        self.assertEqual(r_coup["ambient_blindspot_dimension"], 2)
+        self.assertEqual(r_coup["realizable_blindspot_dimension"], 0)
+        self.assertTrue(r_coup["coupled_compensation_active"])
+
+        # 2. Theorem 3 Stealth Realizable Defect at prescribed severity R = 7/2
+        d_unsound = [[1, 0], [0, 1], [0, 1]]
+        q_unsound = [[1, 0, 0]]
+        smon_uns = StreamingDefectSoundnessMonitor(d_unsound, q_unsound, scope_id="stealth-unsound")
+        r_uns = smon_uns.audit_soundness(target_severity=Fraction(7, 2))
+        self.assertEqual(r_uns["status"], "STEALTH_REALIZABLE_DEFECT_LGGR")
+        self.assertEqual(r_uns["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertFalse(r_uns["soundness_holds"])
+        self.assertEqual(r_uns["realizable_blindspot_dimension"], 1)
+        self.assertEqual(r_uns["stealth_global_inconsistency"], "7/2")
+        self.assertEqual(r_uns["stealth_evaluator_score"], "0")
+
+        # 3. Minkowski coupled repair lemma on omega = (1, -1)
+        mink = smon_coup.evaluate_coupled_minkowski_repair(1, -1)
+        self.assertEqual(mink["status"], "NONEXACT_QUOTIENT_DEFECT")
+        self.assertEqual(mink["phi_1_repair_distance"], "2")
+        self.assertEqual(mink["phi_2_squared_repair_distance"], "2")
+        self.assertEqual(mink["phi_inf_repair_distance"], "1")
+        self.assertEqual(mink["unique_l2_linf_minimizer_alpha"], "0")
+        self.assertEqual(mink["l1_minimizer_interval"], ["-1", "1"])
+        self.assertTrue(mink["chain_inequality_verified"])
 
 
 if __name__ == "__main__":

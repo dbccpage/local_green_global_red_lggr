@@ -9,6 +9,7 @@ from .streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingCochainMonitor,
+    StreamingDefectSoundnessMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
     StreamingOrganizationalGluingMonitor,
@@ -25,6 +26,6 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "classify_cochain", "verify_l1_certificate", "verify_transport", "BudgetPolicy", "StateRef",
            "StepWitness", "audit_document", "audit_history", "history_document", "make_witness",
            "StreamingAuditMonitor", "StreamingBaselineComparator", "StreamingCochainMonitor",
-           "StreamingFiberMonitor", "StreamingGramProbeMonitor", "StreamingOrganizationalGluingMonitor",
-           "StreamingPathKernelMonitor", "StreamingPositiveExtensionMonitor", "StreamingSixRoleOverlayMonitor",
-           "StreamingTransportMonitor"]
+           "StreamingDefectSoundnessMonitor", "StreamingFiberMonitor", "StreamingGramProbeMonitor",
+           "StreamingOrganizationalGluingMonitor", "StreamingPathKernelMonitor",
+           "StreamingPositiveExtensionMonitor", "StreamingSixRoleOverlayMonitor", "StreamingTransportMonitor"]

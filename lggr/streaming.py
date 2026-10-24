@@ -3216,5 +3216,171 @@ class StreamingOrganizationalGluingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDefectSoundnessMonitor:
+    """Online LGGR V realizable defect soundness and coupled Minkowski repair monitor.
+
+    Given a linear defect operator D in Q^{m x n} (mapping site assignments s in C^0
+    to interface defects omega = D s in C^1) and a stacked measurement operator
+    Q in Q^{p x m} (with blind spot K = ker(Q)):
+      - Evaluates the Soundness Criterion: im(D) cap ker(Q) == {0} iff rank(Q D) == rank(D).
+      - Separates:
+          * TRIVIAL_BLINDSPOT_SOUND_LGGG (Theorem 5: ker(Q) == {0})
+          * COUPLED_SOUNDNESS_VERIFIED_LGGG (Theorem 6: ker(Q) != {0}, yet im(D) cap ker(Q) == {0})
+          * STEALTH_REALIZABLE_DEFECT_LGGR (Theorem 3 & 4: im(D) cap ker(Q) != {0},
+            exhibiting a stealth assignment s_R with ||D s_R||_1 = R > 0 and Q D s_R = 0).
+      - Evaluates exact rational Minkowski repair distances Phi_1, Phi_2^2, Phi_inf
+        on the coupled diagonal repair line {( -alpha, -alpha )}.
+    """
+
+    def __init__(
+        self,
+        defect_matrix: Any,
+        measurement_matrix: Any,
+        *,
+        scope_id: str = "streaming-defect-soundness-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.d_mat = matrix(defect_matrix, "defect_matrix")
+        self.m_defects = len(self.d_mat)
+        self.n_sites = len(self.d_mat[0])
+        self.q_mat = matrix(measurement_matrix, "measurement_matrix", cols=self.m_defects)
+        self.p_meas = len(self.q_mat)
+        self.qd_mat = matmul(self.q_mat, self.d_mat)
+
+    @staticmethod
+    def _rref_and_nullspace(
+        mat: tuple[tuple[Fraction, ...], ...],
+    ) -> tuple[int, list[tuple[Fraction, ...]]]:
+        rows = len(mat)
+        cols = len(mat[0])
+        work = [[ val for val in row ] for row in mat]
+        pivot_cols: list[int] = []
+        r = 0
+        for c in range(cols):
+            if r >= rows:
+                break
+            piv = next((i for i in range(r, rows) if work[i][c] != 0), None)
+            if piv is None:
+                continue
+            work[r], work[piv] = work[piv], work[r]
+            scale = work[r][c]
+            work[r] = [v / scale for v in work[r]]
+            for i in range(rows):
+                if i != r and work[i][c] != 0:
+                    factor = work[i][c]
+                    work[i] = [work[i][j] - factor * work[r][j] for j in range(cols)]
+            pivot_cols.append(c)
+            r += 1
+
+        free_cols = [c for c in range(cols) if c not in pivot_cols]
+        basis: list[tuple[Fraction, ...]] = []
+        for fc in free_cols:
+            vec = [Fraction(0)] * cols
+            vec[fc] = Fraction(1)
+            for row_idx, pc in enumerate(pivot_cols):
+                vec[pc] = -work[row_idx][fc]
+            basis.append(tuple(vec))
+        return len(pivot_cols), basis
+
+    def audit_soundness(self, target_severity: Fraction | int | str = 1) -> dict[str, Any]:
+        """Audit realizable soundness im(D) cap ker(Q) == {0} and synthesize stealth witness if unsound."""
+        r_sev = rational(target_severity)
+        if r_sev <= 0:
+            raise ValidationError("target_severity must be strictly positive")
+
+        rank_d, _ = self._rref_and_nullspace(self.d_mat)
+        rank_q, null_q = self._rref_and_nullspace(self.q_mat)
+        rank_qd, null_qd = self._rref_and_nullspace(self.qd_mat)
+
+        ambient_blindspot_dim = len(null_q)
+        intersection_dim = rank_d - rank_qd
+        soundness_holds = (intersection_dim == 0)
+
+        stealth_assignment: list[Fraction] | None = None
+        stealth_defect: list[Fraction] | None = None
+        stealth_inconsistency: Fraction | None = None
+        stealth_measured_score: Fraction | None = None
+
+        if not soundness_holds:
+            for s_cand in null_qd:
+                ds_cand = matvec(self.d_mat, s_cand)
+                l1_norm = sum((abs(v) for v in ds_cand), Fraction(0))
+                if l1_norm > 0:
+                    scale = r_sev / l1_norm
+                    s_scaled = tuple(v * scale for v in s_cand)
+                    ds_scaled = matvec(self.d_mat, s_scaled)
+                    qds_scaled = matvec(self.q_mat, ds_scaled)
+                    stealth_assignment = list(s_scaled)
+                    stealth_defect = list(ds_scaled)
+                    stealth_inconsistency = sum((abs(v) for v in ds_scaled), Fraction(0))
+                    stealth_measured_score = sum((abs(v) for v in qds_scaled), Fraction(0))
+                    break
+
+        if soundness_holds and ambient_blindspot_dim == 0:
+            status = "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif soundness_holds:
+            status = "COUPLED_SOUNDNESS_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "STEALTH_REALIZABLE_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_defect_soundness.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "soundness_holds": soundness_holds,
+            "rank_d": rank_d,
+            "rank_q": rank_q,
+            "rank_qd": rank_qd,
+            "ambient_blindspot_dimension": ambient_blindspot_dim,
+            "realizable_blindspot_dimension": intersection_dim,
+            "coupled_compensation_active": (soundness_holds and ambient_blindspot_dim > 0),
+            "target_severity": r_sev,
+            "stealth_assignment": stealth_assignment,
+            "stealth_defect": stealth_defect,
+            "stealth_global_inconsistency": stealth_inconsistency,
+            "stealth_evaluator_score": stealth_measured_score,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def evaluate_coupled_minkowski_repair(
+        self,
+        a: Fraction | int | str,
+        b: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Compute exact rational Minkowski repair distances on the coupled diagonal image {(-alpha, -alpha)}."""
+        va = rational(a)
+        vb = rational(b)
+        diff = abs(va - vb)
+        phi_1 = diff
+        phi_2_sq = (diff * diff) / Fraction(2)
+        phi_inf = diff / Fraction(2)
+        alpha_star = -(va + vb) / Fraction(2)
+        interval_min = -max(va, vb)
+        interval_max = -min(va, vb)
+        is_exact = (va == vb)
+
+        body = {
+            "schema": "lggr.online_minkowski_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": "EXACT_COUPLED_SECTION" if is_exact else "NONEXACT_QUOTIENT_DEFECT",
+            "contract_status": "COMPOSABLE_LGGG" if is_exact else "OBSTRUCTED_LGGR",
+            "cochain": [va, vb],
+            "phi_1_repair_distance": phi_1,
+            "phi_2_squared_repair_distance": phi_2_sq,
+            "phi_inf_repair_distance": phi_inf,
+            "unique_l2_linf_minimizer_alpha": alpha_star,
+            "l1_minimizer_interval": [interval_min, interval_max],
+            "chain_inequality_verified": (phi_inf <= phi_1 and phi_inf * phi_inf <= phi_2_sq <= phi_1 * phi_1),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
