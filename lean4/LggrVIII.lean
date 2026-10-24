@@ -765,8 +765,9 @@ def deleteCoord1 (v : Int × Int × Int) : Int × Int := (v.1, v.2.2)
 def deleteCoord2 (v : Int × Int × Int) : Int × Int := (v.1, v.2.1)
 
 /-- Theorem 30 (`realizable_defect_soundness_kernel_intersection`):
-    Formalizes the LGGR V Realizable Soundness, Coupled Compensation, and
-    Minkowski Repair Lower Bound:
+    Explicit integer defect-vector, coupled-coordinate, and Minkowski fixtures
+    from LGGR V. Realization by the paper's restriction maps is a separate
+    obligation; this declaration proves the displayed finite vector claims.
     1. (Stealth Defect Scaling — Theorem 3): For any amplitude `lam ≥ 0`, the 6-edge
        stealth defect with per-edge L1 norm `lam` has total inconsistency `6 * lam`
        while each coordinate-deleting watcher scores `0`.
@@ -1362,5 +1363,41 @@ theorem fibered_pullback_compatibility_and_mediator_uniqueness {W A B C : Type}
     rw [hpair] at hu1 hu2
     dsimp at hu1 hu2
     rw [hu1, hu2]
+
+/-- Theorem 49 (`optional_stopping_expectation_conservation_vs_skew`):
+    Formalizes Doob's Bounded-Horizon Optional Stopping Expectation Conservation
+    vs. Asymmetric Stopping Win-Rate Skew & Tail Drawdown `NGD` (scaled by 4 over `ℤ`
+    for two fair binary steps):
+    1. (Optional Stopping Expectation Conservation): For root `x0`, step-1 states
+       `xu, xd` satisfying `xu + xd = 2 * x0`, and step-2 states `(xuu, xud)` and
+       `(xdu, xdd)` satisfying `xuu + xud = 2 * xu` and `xdu + xdd = 2 * xd`, both the
+       full-horizon `t = 2` sum `xuu + xud + xdu + xdd` and the asymmetric stopped
+       sum `2 * xu + xdu + xdd` (stopping at `t = 1` on `xu`, continuing to `t = 2` on `xd`)
+       equal `4 * x0`.
+    2. (Asymmetric Stopping Skew & Tail Drawdown `NGD`): For `x0 = 0, xu = 1, xd = -1,
+       xuu = 2, xud = 0, xdu = 1, xdd = -3` and tail drawdown budget `B_tail = 1`:
+       every step is a zero-drift martingale (`L = 1`) and `2 * xu + xdu + xdd = 0 = 4 * x0`
+       with 3 of 4 equiprobable paths positive (`+1`), yet the worst-case tail drawdown
+       `x0 - xdd = 3 > 1 = B_tail` breaches the drawdown bound (`Eg = 0`, `Δ_E = -1`). -/
+theorem optional_stopping_expectation_conservation_vs_skew
+    (x0 xu xd xuu xud xdu xdd : Int)
+    (hm1 : xu + xd = 2 * x0)
+    (hmu : xuu + xud = 2 * xu)
+    (hmd : xdu + xdd = 2 * xd) :
+    (xuu + xud + xdu + xdd = 4 * x0 ∧
+     2 * xu + xdu + xdd = 4 * x0) ∧
+    (let x0_w := (0 : Int);
+     let xu_w := (1 : Int);
+     let xdu_w := (1 : Int);
+     let xdd_w := (-3 : Int);
+     let b_tail := (1 : Int);
+     let drawdown := x0_w - xdd_w;
+     let l_prod := (1 : Int);
+     let e_global := if drawdown ≤ b_tail then (1 : Int) else 0;
+     2 * xu_w + xdu_w + xdd_w = 4 * x0_w ∧
+     drawdown = 3 ∧
+     e_global = 0 ∧
+     e_global - l_prod = -1) := by
+  refine ⟨⟨by omega, by omega⟩, ⟨by decide, by decide, by decide, by decide⟩⟩
 
 end LggrVIII

@@ -6637,6 +6637,193 @@ class StreamingPullbackSquareMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingMartingaleOptionalStoppingMonitor:
+    """Online bounded-horizon martingale optional stopping and tail-drawdown monitor over Q.
+
+    Audits 2-step rational binary trees with root X_0, step-1 states (X_u, X_d)
+    under probabilities (p_1, 1 - p_1), and step-2 states (X_uu, X_ud) under
+    (p_u, 1 - p_u) and (X_du, X_dd) under (p_d, 1 - p_d):
+      - Evaluates the three local conditional martingale zero-drift equations:
+          E_mart,1 = 1[p_1 X_u + (1 - p_1) X_d == X_0],
+          E_mart,u = 1[p_u X_uu + (1 - p_u) X_ud == X_u],
+          E_mart,d = 1[p_d X_du + (1 - p_d) X_dd == X_d],
+          L = E_mart,1 * E_mart,u * E_mart,d.
+      - For an adapted stopping rule tau in {1, 2} (stop_on_step1_up, stop_on_step1_down):
+          * Computes the stopped expectation E[X_tau] and full-horizon expectation E[X_2],
+          * Verifies Doob's optional stopping conservation:
+              L == 1  =>  E[X_tau] == E[X_2] == X_0,
+          * Computes the stopped win probability P(X_tau > X_0) and worst-case
+            tail drawdown Delta_tail = max(0, X_0 - min_omega X_tau(omega))
+            against max_tail_drawdown_budget.
+      - Separates:
+          * MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG (L == 1 and Delta_tail <= budget),
+          * MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR (L == 1 and E[X_tau] == X_0,
+            yet asymmetric stopping inflates P(X_tau > X_0) while breaching
+            Delta_tail > max_tail_drawdown_budget, so E_g = 0, Delta_E = -1),
+          * NON_MARTINGALE_DRIFT_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        max_tail_drawdown_budget: Fraction | int | str,
+        *,
+        scope_id: str = "streaming-martingale-stopping-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.max_tail_drawdown_budget = rational(max_tail_drawdown_budget)
+        if self.max_tail_drawdown_budget < 0:
+            raise ValidationError("max_tail_drawdown_budget must be non-negative")
+        self.trees: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _prob(val: Fraction | int | str, name: str) -> Fraction:
+        q = rational(val)
+        if q <= 0 or q >= 1:
+            raise ValidationError(f"{name} must lie strictly inside (0, 1)")
+        return q
+
+    def record_stopped_tree(
+        self,
+        tree_id: str,
+        x0: Fraction | int | str,
+        x_u: Fraction | int | str,
+        x_d: Fraction | int | str,
+        x_uu: Fraction | int | str,
+        x_ud: Fraction | int | str,
+        x_du: Fraction | int | str,
+        x_dd: Fraction | int | str,
+        *,
+        p_1: Fraction | int | str = "1/2",
+        p_u: Fraction | int | str = "1/2",
+        p_d: Fraction | int | str = "1/2",
+        stop_on_step1_up: bool = True,
+        stop_on_step1_down: bool = False,
+    ) -> dict[str, Any]:
+        """Audit a 2-step branching tree and adapted stopping rule tau."""
+        tid = text(tree_id, "tree_id")
+        v0 = rational(x0)
+        vu, vd = rational(x_u), rational(x_d)
+        vuu, vud, vdu, vdd = rational(x_uu), rational(x_ud), rational(x_du), rational(x_dd)
+        q1 = self._prob(p_1, "p_1")
+        qu = self._prob(p_u, "p_u")
+        qd = self._prob(p_d, "p_d")
+        boolean(stop_on_step1_up, "stop_on_step1_up")
+        boolean(stop_on_step1_down, "stop_on_step1_down")
+
+        exp_step1 = q1 * vu + (Fraction(1) - q1) * vd
+        exp_u = qu * vuu + (Fraction(1) - qu) * vud
+        exp_d = qd * vdu + (Fraction(1) - qd) * vdd
+
+        e_m1 = 1 if exp_step1 == v0 else 0
+        e_mu = 1 if exp_u == vu else 0
+        e_md = 1 if exp_d == vd else 0
+        local_product = e_m1 * e_mu * e_md
+
+        exp_horizon2 = (
+            q1 * qu * vuu
+            + q1 * (Fraction(1) - qu) * vud
+            + (Fraction(1) - q1) * qd * vdu
+            + (Fraction(1) - q1) * (Fraction(1) - qd) * vdd
+        )
+
+        # Build stopped terminal outcome distribution {(value, prob)}
+        stopped_outcomes: list[tuple[Fraction, Fraction]] = []
+        if stop_on_step1_up:
+            stopped_outcomes.append((vu, q1))
+        else:
+            stopped_outcomes.append((vuu, q1 * qu))
+            stopped_outcomes.append((vud, q1 * (Fraction(1) - qu)))
+
+        if stop_on_step1_down:
+            stopped_outcomes.append((vd, Fraction(1) - q1))
+        else:
+            stopped_outcomes.append((vdu, (Fraction(1) - q1) * qd))
+            stopped_outcomes.append((vdd, (Fraction(1) - q1) * (Fraction(1) - qd)))
+
+        exp_stopped = sum((val * prob for val, prob in stopped_outcomes), Fraction(0))
+        win_prob = sum((prob for val, prob in stopped_outcomes if val > v0), Fraction(0))
+        min_stopped_val = min(val for val, _ in stopped_outcomes)
+        tail_drawdown = max(Fraction(0), v0 - min_stopped_val)
+        within_drawdown_budget = tail_drawdown <= self.max_tail_drawdown_budget
+
+        optional_stopping_conserved = (local_product == 0) or (
+            exp_stopped == v0 and exp_horizon2 == v0
+        )
+
+        global_eval = 1 if (local_product == 1 and within_drawdown_budget) else 0
+        defect = global_eval - local_product
+
+        if local_product == 1 and global_eval == 1:
+            classification = "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            classification = "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            classification = "NON_MARTINGALE_DRIFT_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = {
+            "tree_id": tid,
+            "x0": v0,
+            "step1_expectation": exp_step1,
+            "horizon2_expectation": exp_horizon2,
+            "stopped_expectation": exp_stopped,
+            "stopped_win_probability": win_prob,
+            "min_stopped_value": min_stopped_val,
+            "tail_drawdown": tail_drawdown,
+            "max_tail_drawdown_budget": self.max_tail_drawdown_budget,
+            "local_martingale_product": local_product,
+            "global_drawdown_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "optional_stopping_conservation_verified": optional_stopping_conserved,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.trees.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed bounded-horizon martingale optional stopping audit receipt."""
+        if not self.trees:
+            raise ValidationError("At least one stopped tree must be recorded before emitting a receipt")
+
+        ngd_tree_ids = [
+            t["tree_id"]
+            for t in self.trees
+            if t["classification"] == "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR"
+        ]
+        non_martingale_ids = [
+            t["tree_id"]
+            for t in self.trees
+            if t["classification"] == "NON_MARTINGALE_DRIFT_REJECTED"
+        ]
+        all_ost_ok = all(t["optional_stopping_conservation_verified"] for t in self.trees)
+
+        if ngd_tree_ids or non_martingale_ids:
+            status = "OPTIONAL_STOPPING_DRAWDOWN_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "OPTIONAL_STOPPING_BOUNDED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_martingale_optional_stopping.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "max_tail_drawdown_budget": self.max_tail_drawdown_budget,
+            "tree_count": len(self.trees),
+            "tail_drawdown_ngd_tree_ids": sorted(ngd_tree_ids),
+            "non_martingale_tree_ids": sorted(non_martingale_ids),
+            "all_optional_stopping_conservations_verified": all_ost_ok,
+            "trees": self.trees,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
