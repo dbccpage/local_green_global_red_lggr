@@ -13,3 +13,4 @@ import LggrVIII
 #print axioms LggrVIII.boundary_sufficient_gluing_certifies_lggg
 #print axioms LggrVIII.boundary_insufficiency_forces_defect
 #print axioms LggrVIII.streaming_closed_nonexact_cohomology
+#print axioms LggrVIII.streaming_transport_projection_vs_retraction

@@ -23,7 +23,8 @@ from .common import (
     text,
 )
 from .descent import _scope
-from .linear import Vector, classify_cochain, matrix, rational, solve_exact, vector, verify_l1_certificate
+from .linear import Vector, classify_cochain, matvec, matrix, rational, solve_exact, vector, verify_l1_certificate
+from .transport import verify_transport
 from .witnesses import BudgetPolicy, StateRef, StepWitness, local_accepts
 import itertools
 
@@ -1264,5 +1265,110 @@ class StreamingCochainMonitor:
             ),
             "cycles": self.cycles,
             "scope": "Supplied streaming cochain graph.",
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingTransportMonitor:
+    """Online chain-retraction and coarse-graining transport monitor.
+
+    Evaluates whether a coarse-grained target cochain monitor (D_target, h_target = F1 h_source)
+    preserves or masks nonrepairability of a source cochain monitor (D_source, h_source).
+    Separates:
+      - RETRACTION_VERIFIED: G1 F1 = I and G0 F0 = I certify that target repairability
+        reflects source repairability (no hidden LGGR masking).
+      - LOSSY_PROJECTION_LGGR: forward transport commutes (F1 D_s = D_t F0), source cochain
+        is nonrepairable (h_s not in im(D_s)), yet projected target cochain is repairable
+        (F1 h_s in im(D_t)), masking the source cycle obstruction.
+      - COMMUTING_TRANSPORT_VERIFIED: forward transport commutes without observed masking.
+      - INVALID_TRANSPORT / RETRACTION_REJECTED: chain map or retraction equations fail.
+    """
+
+    def __init__(
+        self,
+        source_monitor: StreamingCochainMonitor,
+        target_monitor: StreamingCochainMonitor,
+    ) -> None:
+        if not isinstance(source_monitor, StreamingCochainMonitor):
+            raise ValidationError("source_monitor must be a StreamingCochainMonitor instance")
+        if not isinstance(target_monitor, StreamingCochainMonitor):
+            raise ValidationError("target_monitor must be a StreamingCochainMonitor instance")
+        self.source_monitor = source_monitor
+        self.target_monitor = target_monitor
+
+    @staticmethod
+    def _extract_incidence_and_cochain(
+        mon: StreamingCochainMonitor,
+    ) -> tuple[list[list[Fraction]], list[Fraction]]:
+        if not mon.edges:
+            raise ValidationError("Cochain monitor must have at least one edge for transport audit")
+        node_list = sorted(mon.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        d_rows: list[list[Fraction]] = []
+        h_vec: list[Fraction] = []
+        for e in mon.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d_rows.append(row)
+            h_vec.append(e["value"])
+        return d_rows, h_vec
+
+    def audit_projection(
+        self,
+        F0: Any,
+        F1: Any,
+        *,
+        G0: Any | None = None,
+        G1: Any | None = None,
+    ) -> dict[str, Any]:
+        """Audit forward transport (F0, F1) and optional retraction (G0, G1) on live monitors."""
+        ds_rows, hs_vec = self._extract_incidence_and_cochain(self.source_monitor)
+        dt_rows, _ = self._extract_incidence_and_cochain(self.target_monitor)
+
+        transport_cert = verify_transport(ds_rows, dt_rows, F0, F1, G0=G0, G1=G1)
+        f1_mat = matrix(F1, "F1", rows=len(dt_rows), cols=len(ds_rows))
+        ht_projected = matvec(f1_mat, tuple(hs_vec))
+
+        ds_mat = matrix(ds_rows, "D_source")
+        dt_mat = matrix(dt_rows, "D_target")
+        source_sol = solve_exact(ds_mat, tuple(hs_vec))
+        target_sol = solve_exact(dt_mat, ht_projected)
+
+        source_repairable = source_sol is not None
+        target_repairable = target_sol is not None
+
+        forward_ok = bool(transport_cert.get("forward_commutes"))
+        retraction_ok = bool(transport_cert.get("nonrepairability_reflection_verified"))
+
+        lossy_lggr_masked = forward_ok and (not source_repairable) and target_repairable
+        if not forward_ok:
+            status = "INVALID_TRANSPORT"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif G0 is not None and not retraction_ok:
+            status = "RETRACTION_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif lossy_lggr_masked:
+            status = "LOSSY_PROJECTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif retraction_ok:
+            status = "RETRACTION_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG" if source_repairable else "REFLECTED_LGGR"
+        else:
+            status = "COMMUTING_TRANSPORT_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG" if source_repairable else "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_transport.v1",
+            "authority_effect": "None",
+            "status": status,
+            "contract_status": contract_status,
+            "forward_commutes": forward_ok,
+            "nonrepairability_reflection_verified": retraction_ok,
+            "source_repairable": source_repairable,
+            "target_repairable": target_repairable,
+            "lossy_projection_lggr": lossy_lggr_masked,
+            "projected_target_cochain": ht_projected,
+            "transport_certificate": transport_cert,
         }
         return json_value({**body, "receipt_sha256": digest(body)})

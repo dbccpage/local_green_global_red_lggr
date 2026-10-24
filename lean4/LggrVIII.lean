@@ -325,4 +325,27 @@ theorem streaming_closed_nonexact_cohomology :
   · rintro ⟨x0, x1, x2, x3, h01, h12, h02, h23, h03⟩
     omega
 
+/-- Lossy coarse-graining projection that drops the closing chord `h3` of a 3-cycle. -/
+def lossyChordDrop (h1 h2 _h3 : Int) : Int × Int :=
+  (h1, h2)
+
+/-- Theorem 14 (`streaming_transport_projection_vs_retraction`):
+    1. (Lossy Projection Masking): The frustrated 3-cycle cochain `(1, 1, 1)` is nonrepairable in
+       the source (`cycleD1 1 1 1 ≠ 0`), yet its image `lossyChordDrop 1 1 1 = (1, 1)` under the
+       chord-dropping projection is repairable on the open 2-edge tree (`openChainD0 0 1 2 = (1, 1)`).
+    2. (Retraction Reflection): For any chain map `F1 : α → β` with a left inverse `G1 : β → α`
+       (`∀ h, G1 (F1 h) = h`) and target coboundary operator `Dt : γ → β` commuting with `G1`
+       via `G0 : γ → δ` (`∀ y, G1 (Dt y) = Ds (G0 y)`), target repairability (`∃ y, Dt y = F1 h`)
+       implies source repairability (`∃ x, Ds x = h`). -/
+theorem streaming_transport_projection_vs_retraction :
+    (cycleD1 1 1 1 ≠ 0 ∧ openChainD0 0 1 2 = lossyChordDrop 1 1 1) ∧
+    (∀ {α β γ δ : Type} (Ds : δ → α) (Dt : γ → β) (F1 : α → β) (G1 : β → α) (G0 : γ → δ),
+      (∀ h : α, G1 (F1 h) = h) →
+      (∀ y : γ, G1 (Dt y) = Ds (G0 y)) →
+      ∀ h : α, (∃ y : γ, Dt y = F1 h) → (∃ x : δ, Ds x = h)) := by
+  refine ⟨⟨by decide, rfl⟩, ?_⟩
+  intro α β γ δ Ds Dt F1 G1 G0 h_left h_comm h ⟨y, hy⟩
+  refine ⟨G0 y, ?_⟩
+  rw [← h_comm y, hy, h_left h]
+
 end LggrVIII
