@@ -35,6 +35,7 @@ from lggr.streaming import (
     StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
+    StreamingProductRetractionMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingTransportMonitor,
 )
@@ -1354,6 +1355,68 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["max_negative_mass_n_min"], "1/2")
         self.assertTrue(summary["all_16_lhv_vertices_bounded_by_2"])
         self.assertTrue(summary["all_packing_identities_verified"])
+
+    def test_product_retraction_residual_vs_local_extension(self) -> None:
+        """Verify LGGR VII product-state retraction residual F_p = p - p_A x p_B vs. local LHV extension."""
+        pmon = StreamingProductRetractionMonitor(scope_id="prod-retraction-test")
+
+        # 1. Single bivariate table for shared coin 1/2 [00] + 1/2 [11]:
+        #    det = 1/4, F_p = [[1/4, -1/4], [-1/4, 1/4]], ||F_p||_1 = 1
+        t_coin = pmon.observe_bivariate_table("shared_coin", Fraction(1, 2), 0, 0, Fraction(1, 2))
+        self.assertEqual(t_coin["status"], "CORRELATED_NONPRODUCT_TABLE")
+        self.assertFalse(t_coin["is_product_state"])
+        self.assertEqual(t_coin["determinant"], "1/4")
+        self.assertEqual(t_coin["l1_product_residual"], "1")
+        self.assertTrue(t_coin["determinant_identity_verified"])
+        self.assertTrue(t_coin["zero_row_marginals_verified"])
+        self.assertTrue(t_coin["zero_col_marginals_verified"])
+        self.assertTrue(t_coin["retraction_idempotence_verified"])
+
+        # 2. 4-context product state: uniform 1/4 everywhere -> ||F_p||_1 = 0, N_min = 0
+        unif = (Fraction(1, 4), Fraction(1, 4), Fraction(1, 4), Fraction(1, 4))
+        m_prod = pmon.observe_four_context_tables(
+            "product_uniform",
+            {"00": unif, "01": unif, "10": unif, "11": unif},
+        )
+        self.assertEqual(m_prod["status"], "PRODUCT_FACTORIZED_LGGG")
+        self.assertEqual(m_prod["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(m_prod["max_l1_product_residual"], "0")
+        self.assertEqual(m_prod["min_negative_mass_n_min"], "0")
+        self.assertFalse(m_prod["classical_correlation_without_nonlocality"])
+
+        # 3. 4-context classical shared coin: ||F_p||_1 = 1 > 0 in every context, yet S = 2 and N_min = 0
+        coin = (Fraction(1, 2), 0, 0, Fraction(1, 2))
+        m_corr = pmon.observe_four_context_tables(
+            "classical_shared_coin",
+            {"00": coin, "01": coin, "10": coin, "11": coin},
+        )
+        self.assertEqual(m_corr["status"], "CLASSICAL_CORRELATION_LHV_LGGG")
+        self.assertEqual(m_corr["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(m_corr["max_l1_product_residual"], "1")
+        self.assertEqual(m_corr["canonical_chsh_s"], "2")
+        self.assertEqual(m_corr["min_negative_mass_n_min"], "0")
+        self.assertTrue(m_corr["classical_correlation_without_nonlocality"])
+        self.assertTrue(m_corr["all_retraction_identities_verified"])
+
+        # 4. 4-context PR-box: ||F_p||_1 = 1 in every context AND S = 4 -> N_min = 1/2 > 0
+        anticoin = (0, Fraction(1, 2), Fraction(1, 2), 0)
+        m_pr = pmon.observe_four_context_tables(
+            "pr_box_tables",
+            {"00": coin, "01": coin, "10": coin, "11": anticoin},
+        )
+        self.assertEqual(m_pr["status"], "BELL_NONLOCAL_OBSTRUCTION_LGGR")
+        self.assertEqual(m_pr["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(m_pr["max_l1_product_residual"], "1")
+        self.assertEqual(m_pr["canonical_chsh_s"], "4")
+        self.assertEqual(m_pr["min_negative_mass_n_min"], "1/2")
+        self.assertFalse(m_pr["classical_correlation_without_nonlocality"])
+
+        summary = pmon.get_receipt()
+        self.assertEqual(summary["status"], "BELL_NONLOCAL_OBSTRUCTION_LGGR")
+        self.assertEqual(summary["product_factorized_models"], ["product_uniform"])
+        self.assertEqual(summary["classical_correlation_lhv_models"], ["classical_shared_coin"])
+        self.assertEqual(summary["bell_nonlocal_models"], ["pr_box_tables"])
+        self.assertTrue(summary["all_retraction_identities_verified"])
 
 
 if __name__ == "__main__":

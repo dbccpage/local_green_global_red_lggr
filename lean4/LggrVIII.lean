@@ -831,4 +831,50 @@ theorem chsh_local_polytope_bound_and_negative_mass
   rcases hb1 with rfl | rfl <;>
   decide
 
+/-- Scaled 2x2 product-retraction residual entry `S * p_ij - r_i * c_j`. -/
+def scaledProdRes (p00 p01 p10 p11 : Int) : Int × Int × Int × Int :=
+  let s := p00 + p01 + p10 + p11
+  let r0 := p00 + p01
+  let r1 := p10 + p11
+  let c0 := p00 + p10
+  let c1 := p01 + p11
+  (s * p00 - r0 * c0, s * p01 - r0 * c1, s * p10 - r1 * c0, s * p11 - r1 * c1)
+
+/-- Scaled L1 norm of the 2x2 product-retraction residual. -/
+def scaledProdResL1 (p00 p01 p10 p11 : Int) : Int :=
+  let (f00, f01, f10, f11) := scaledProdRes p00 p01 p10 p11
+  absInt f00 + absInt f01 + absInt f10 + absInt f11
+
+/-- Theorem 33 (`product_retraction_residual_vs_local_extension`):
+    Formalizes the LGGR VII Separation between Product-State Retraction Residuals
+    `F_p = p - p_A ⊗ p_B` and Bell Nonlocality:
+    1. (Zero Row & Column Marginals of the 2x2 Determinant Pattern `(d, -d, -d, d)`):
+       For any determinant value `d : Int`, `d + (-d) = 0` and `(-d) + d = 0`, and
+       `|d| + |-d| + |-d| + |d| = 4 * |d|`.
+    2. (Product Factorization vs. Classical Shared Randomness):
+       - The uniform product table `(1, 1, 1, 1)` (scaled by 4) has `scaledProdRes 1 1 1 1 = (0, 0, 0, 0)`
+         and `scaledProdResL1 1 1 1 1 = 0`.
+       - The classical shared-randomness coin `(1, 0, 0, 1)` (scaled by `S = 2`, representing
+         `1/2 [00] + 1/2 [11]`) has `scaledProdRes 1 0 0 1 = (1, -1, -1, 1)` and
+         `scaledProdResL1 1 0 0 1 = 4 > 0` (so `‖F_p‖_1 = 4 / S^2 = 1 > 0`), yet assigning
+         this correlated table across all 4 CHSH contexts (`E_xy = 1`) yields
+         `chshForm 1 1 1 1 = 2 ≤ 2` (zero Bell polytope violation, `N_min = 0`).
+    3. (PR-Box Nonlocal Contexts): Replacing context `(1, 1)` by the anti-correlated coin
+       `(0, 1, 1, 0)` (`scaledProdRes 0 1 1 0 = (-1, 1, 1, -1)`, `scaledProdResL1 0 1 1 0 = 4`,
+       `E_11 = -1`) keeps every single-context product residual at `‖F_p‖_1 = 1` while driving
+       `chshForm 1 1 1 (-1) = 4 > 2`. -/
+theorem product_retraction_residual_vs_local_extension (d : Int) :
+    (d + (-d) = 0 ∧ (-d) + d = 0 ∧
+     absInt d + absInt (-d) + absInt (-d) + absInt d = 4 * absInt d) ∧
+    (scaledProdRes 1 1 1 1 = (0, 0, 0, 0) ∧ scaledProdResL1 1 1 1 1 = 0) ∧
+    (scaledProdRes 1 0 0 1 = (1, -1, -1, 1) ∧ scaledProdResL1 1 0 0 1 = 4 ∧
+     chshForm 1 1 1 1 = 2 ∧ chshForm 1 1 1 1 ≤ 2) ∧
+    (scaledProdRes 0 1 1 0 = (-1, 1, 1, -1) ∧ scaledProdResL1 0 1 1 0 = 4 ∧
+     chshForm 1 1 1 (-1) = 4 ∧ chshForm 1 1 1 (-1) > 2) := by
+  dsimp [absInt]
+  refine ⟨⟨by omega, by omega, ?_⟩, ⟨by decide, by decide⟩,
+          ⟨by decide, by decide, by decide, by decide⟩,
+          ⟨by decide, by decide, by decide, by decide⟩⟩
+  split <;> split <;> omega
+
 end LggrVIII

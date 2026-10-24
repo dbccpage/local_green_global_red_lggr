@@ -3731,6 +3731,252 @@ class StreamingBellPolytopeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingProductRetractionMonitor:
+    """Online LGGR VII product-state retraction residual vs. separable LHV extension monitor.
+
+    Evaluates on 2x2 joint probability tables p = [[p00, p01], [p10, p11]] (and 4-context CHSH
+    families of 2x2 tables):
+      - Marginals p_A = (p00 + p01, p10 + p11) and p_B = (p00 + p10, p01 + p11).
+      - Product retraction Pi(p) = p_A x p_B and residual F_p = p - p_A x p_B.
+      - Exact 2x2 determinant identity:
+          F_p == det(p) * [[1, -1], [-1, 1]],   ||F_p||_1 == 4 * |p00 * p11 - p01 * p10|.
+      - Zero row and column marginals of F_p and idempotence Pi(Pi(p)) == Pi(p) (F_{Pi(p)} == 0).
+      - Separation of three regimes across 4-context CHSH tables:
+          1. PRODUCT_FACTORIZED_LGGG (COMPOSABLE_LGGG): max ||F_p||_1 == 0 and N_min == 0.
+          2. CLASSICAL_CORRELATION_LHV_LGGG (COMPOSABLE_LGGG): max ||F_p||_1 > 0 while N_min == 0
+             (shared randomness / separable correlation without Bell nonlocality).
+          3. BELL_NONLOCAL_OBSTRUCTION_LGGR (OBSTRUCTED_LGGR): max ||F_p||_1 > 0 and N_min > 0.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-product-retraction-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.tables: dict[str, dict[str, Any]] = {}
+        self.models: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _audit_2x2_table(
+        p00: Fraction | int | str,
+        p01: Fraction | int | str,
+        p10: Fraction | int | str,
+        p11: Fraction | int | str,
+    ) -> dict[str, Any]:
+        q00 = rational(p00)
+        q01 = rational(p01)
+        q10 = rational(p10)
+        q11 = rational(p11)
+        for name, val in (("p00", q00), ("p01", q01), ("p10", q10), ("p11", q11)):
+            if val < Fraction(0):
+                raise ValidationError(f"{name} must be nonnegative, got {val}")
+        total = q00 + q01 + q10 + q11
+        if total != Fraction(1):
+            raise ValidationError(f"2x2 probability table must sum to 1, got {total}")
+
+        pa0 = q00 + q01
+        pa1 = q10 + q11
+        pb0 = q00 + q10
+        pb1 = q01 + q11
+
+        pi00 = pa0 * pb0
+        pi01 = pa0 * pb1
+        pi10 = pa1 * pb0
+        pi11 = pa1 * pb1
+
+        f00 = q00 - pi00
+        f01 = q01 - pi01
+        f10 = q10 - pi10
+        f11 = q11 - pi11
+
+        det_p = q00 * q11 - q01 * q10
+        l1_residual = abs(f00) + abs(f01) + abs(f10) + abs(f11)
+        det_identity_ok = (
+            f00 == det_p
+            and f01 == -det_p
+            and f10 == -det_p
+            and f11 == det_p
+            and l1_residual == Fraction(4) * abs(det_p)
+        )
+        zero_row_marginals = (f00 + f01 == Fraction(0)) and (f10 + f11 == Fraction(0))
+        zero_col_marginals = (f00 + f10 == Fraction(0)) and (f01 + f11 == Fraction(0))
+
+        # Idempotence check: marginals of Pi(p) equal (pa0, pa1) and (pb0, pb1), so F_{Pi(p)} == 0
+        pi_pa0 = pi00 + pi01
+        pi_pa1 = pi10 + pi11
+        pi_pb0 = pi00 + pi10
+        pi_pb1 = pi01 + pi11
+        idempotence_ok = (
+            pi_pa0 == pa0
+            and pi_pa1 == pa1
+            and pi_pb0 == pb0
+            and pi_pb1 == pb1
+            and (pi00 - pi_pa0 * pi_pb0 == Fraction(0))
+            and (pi01 - pi_pa0 * pi_pb1 == Fraction(0))
+            and (pi10 - pi_pa1 * pi_pb0 == Fraction(0))
+            and (pi11 - pi_pa1 * pi_pb1 == Fraction(0))
+        )
+
+        # Parity correlator E = P(a == b) - P(a != b) = (p00 + p11) - (p01 + p10)
+        correlator_e = (q00 + q11) - (q01 + q10)
+
+        return {
+            "table": [[q00, q01], [q10, q11]],
+            "marginal_a": [pa0, pa1],
+            "marginal_b": [pb0, pb1],
+            "product_retraction": [[pi00, pi01], [pi10, pi11]],
+            "residual_f": [[f00, f01], [f10, f11]],
+            "determinant": det_p,
+            "l1_product_residual": l1_residual,
+            "correlator_e": correlator_e,
+            "determinant_identity_verified": det_identity_ok,
+            "zero_row_marginals_verified": zero_row_marginals,
+            "zero_col_marginals_verified": zero_col_marginals,
+            "retraction_idempotence_verified": idempotence_ok,
+        }
+
+    def observe_bivariate_table(
+        self,
+        table_id: str,
+        p00: Fraction | int | str,
+        p01: Fraction | int | str,
+        p10: Fraction | int | str,
+        p11: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Audit a single 2x2 bivariate probability table for product factorization vs correlation."""
+        tid = text(table_id, "table_id")
+        info = self._audit_2x2_table(p00, p01, p10, p11)
+        is_product = info["l1_product_residual"] == Fraction(0)
+        status = "PRODUCT_FACTORIZED_LGGG" if is_product else "CORRELATED_NONPRODUCT_TABLE"
+        entry = {
+            "schema": "lggr.online_product_retraction_table.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "table_id": tid,
+            "status": status,
+            "is_product_state": is_product,
+            **info,
+        }
+        self.tables[tid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def observe_four_context_tables(
+        self,
+        model_id: str,
+        contexts: dict[str, tuple[Any, Any, Any, Any] | list[Any]],
+    ) -> dict[str, Any]:
+        """Audit a 4-context CHSH family of 2x2 tables keyed by ('00', '01', '10', '11')."""
+        mid = text(model_id, "model_id")
+        required_keys = ("00", "01", "10", "11")
+        if not isinstance(contexts, dict) or any(k not in contexts for k in required_keys):
+            raise ValidationError("contexts must be a dict containing keys '00', '01', '10', '11'")
+
+        ctx_audits: dict[str, dict[str, Any]] = {}
+        for k in required_keys:
+            vals = contexts[k]
+            if not isinstance(vals, (tuple, list)) or len(vals) != 4:
+                raise ValidationError(f"Context {k} must provide 4 probabilities (p00, p01, p10, p11)")
+            ctx_audits[k] = self._audit_2x2_table(vals[0], vals[1], vals[2], vals[3])
+
+        e00 = ctx_audits["00"]["correlator_e"]
+        e01 = ctx_audits["01"]["correlator_e"]
+        e10 = ctx_audits["10"]["correlator_e"]
+        e11 = ctx_audits["11"]["correlator_e"]
+
+        facets = [
+            e00 + e01 + e10 - e11,
+            e00 + e01 - e10 + e11,
+            e00 - e01 + e10 + e11,
+            -e00 + e01 + e10 + e11,
+        ]
+        s_canonical = facets[0]
+        s_max = max(abs(f) for f in facets)
+        n_min = max(Fraction(0), s_max - Fraction(2)) / Fraction(4)
+        cf_val = Fraction(2) * n_min
+        max_l1_prod = max(ctx_audits[k]["l1_product_residual"] for k in required_keys)
+
+        all_identities_ok = all(
+            ctx_audits[k]["determinant_identity_verified"]
+            and ctx_audits[k]["zero_row_marginals_verified"]
+            and ctx_audits[k]["zero_col_marginals_verified"]
+            and ctx_audits[k]["retraction_idempotence_verified"]
+            for k in required_keys
+        )
+
+        if n_min > Fraction(0):
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif max_l1_prod > Fraction(0):
+            status = "CLASSICAL_CORRELATION_LHV_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "PRODUCT_FACTORIZED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_product_retraction_model.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "max_l1_product_residual": max_l1_prod,
+            "canonical_chsh_s": s_canonical,
+            "max_chsh_facet_s": s_max,
+            "min_negative_mass_n_min": n_min,
+            "contextual_fraction_cf": cf_val,
+            "classical_correlation_without_nonlocality": (
+                max_l1_prod > Fraction(0) and n_min == Fraction(0)
+            ),
+            "all_retraction_identities_verified": all_identities_ok,
+            "contexts": ctx_audits,
+        }
+        self.models[mid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate receipt separating product states, classical LHV correlations, and Bell nonlocality."""
+        product_models = [
+            mid for mid, m in self.models.items() if m["status"] == "PRODUCT_FACTORIZED_LGGG"
+        ]
+        classical_corr_models = [
+            mid for mid, m in self.models.items() if m["status"] == "CLASSICAL_CORRELATION_LHV_LGGG"
+        ]
+        nonlocal_models = [
+            mid for mid, m in self.models.items() if m["status"] == "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+        ]
+        all_ok = all(
+            t["determinant_identity_verified"]
+            and t["zero_row_marginals_verified"]
+            and t["zero_col_marginals_verified"]
+            and t["retraction_idempotence_verified"]
+            for t in self.tables.values()
+        ) and all(m["all_retraction_identities_verified"] for m in self.models.values())
+
+        if nonlocal_models:
+            status = "BELL_NONLOCAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif classical_corr_models:
+            status = "CLASSICAL_CORRELATION_LHV_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "PRODUCT_FACTORIZED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_product_retraction.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "observed_tables_count": len(self.tables),
+            "observed_models_count": len(self.models),
+            "product_factorized_models": sorted(product_models),
+            "classical_correlation_lhv_models": sorted(classical_corr_models),
+            "bell_nonlocal_models": sorted(nonlocal_models),
+            "all_retraction_identities_verified": all_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
