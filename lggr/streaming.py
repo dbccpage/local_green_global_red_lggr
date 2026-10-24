@@ -4826,6 +4826,146 @@ class StreamingCPTPTraceMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingWindowedDriftMonitor:
+    """Online LGGR I/VIII sliding-window local budget vs. full-horizon cumulative drift monitor.
+
+    Audits a stream of rational step drifts d_1, d_2, ..., d_N under a fixed sliding window
+    of length W >= 1 with window budget B_W >= 0 and full-horizon global budget B_global >= 0:
+      - Tracks contiguous W-step window sums S_W(t) = sum_{j=max(1, t-W+1)}^t d_j and
+        cumulative horizon sum S_cum(t) = sum_{j=1}^t d_j.
+      - Verifies the disjoint block-partition bound: partitioning {1, ..., N} into
+        K = ceil(N / W) disjoint contiguous windows of length <= W gives
+          S_cum(N) == sum_{b=1}^K S_{block,b} <= K * max_{1 <= t <= N} S_W(t).
+      - Separates:
+          1. LOCAL_WINDOW_BUDGET_BREACH (OBSTRUCTED_LGGR): max S_W(t) > B_W.
+          2. SLIDING_WINDOW_HORIZON_BREACH_LGGR (OBSTRUCTED_LGGR): max S_W(t) <= B_W
+             (every contiguous W-step window is locally within budget), yet
+             max S_cum(t) > B_global (sliding-window horizon truncation masks cumulative breach).
+          3. WINDOW_AND_HORIZON_WITHIN_BUDGET_LGGG (COMPOSABLE_LGGG):
+             max S_W(t) <= B_W and max S_cum(t) <= B_global.
+    """
+
+    def __init__(
+        self,
+        window_size: int,
+        window_budget: Fraction | int | str,
+        global_budget: Fraction | int | str,
+        *,
+        scope_id: str = "streaming-windowed-drift-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        w_val = exact_int(window_size, "window_size")
+        if w_val < 1:
+            raise ValidationError("window_size must be >= 1")
+        bw_val = rational(window_budget)
+        bg_val = rational(global_budget)
+        if bw_val < Fraction(0):
+            raise ValidationError("window_budget must be >= 0")
+        if bg_val < Fraction(0):
+            raise ValidationError("global_budget must be >= 0")
+
+        self.window_size = w_val
+        self.window_budget = bw_val
+        self.global_budget = bg_val
+        self.steps: list[dict[str, Any]] = []
+        self.recent_window: deque[Fraction] = deque(maxlen=w_val)
+        self.cumulative_drift: Fraction = Fraction(0)
+        self.max_window_sum: Fraction = Fraction(0)
+        self.max_prefix_drift: Fraction = Fraction(0)
+
+    def record_step(
+        self,
+        step_id: str,
+        step_drift: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Ingest a rational step drift d_t and update sliding-window vs. cumulative horizon state."""
+        sid = text(step_id, "step_id")
+        d_val = rational(step_drift)
+        self.recent_window.append(d_val)
+        win_sum = sum(self.recent_window, Fraction(0))
+        self.cumulative_drift += d_val
+
+        if len(self.steps) == 0 or win_sum > self.max_window_sum:
+            self.max_window_sum = win_sum
+        if len(self.steps) == 0 or self.cumulative_drift > self.max_prefix_drift:
+            self.max_prefix_drift = self.cumulative_drift
+
+        self.steps.append(
+            {
+                "step_id": sid,
+                "step_drift": d_val,
+                "window_sum": win_sum,
+                "cumulative_drift": self.cumulative_drift,
+            }
+        )
+        return self.get_receipt()
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit sliding-window vs. full-horizon drift audit receipt."""
+        n_steps = len(self.steps)
+        w = self.window_size
+        k_blocks = (n_steps + w - 1) // w if n_steps > 0 else 0
+
+        block_sums: list[Fraction] = []
+        for idx in range(0, n_steps, w):
+            blk = self.steps[idx : idx + w]
+            b_sum = sum((s["step_drift"] for s in blk), Fraction(0))
+            block_sums.append(b_sum)
+
+        partition_sum = sum(block_sums, Fraction(0))
+        block_partition_verified = (
+            partition_sum == self.cumulative_drift
+            and all(b_sum <= self.max_window_sum for b_sum in block_sums)
+            and (
+                n_steps == 0
+                or self.cumulative_drift <= Fraction(k_blocks) * self.max_window_sum
+            )
+        )
+
+        all_windows_green = (n_steps == 0) or (self.max_window_sum <= self.window_budget)
+        horizon_within_budget = (
+            (n_steps == 0)
+            or (
+                self.max_prefix_drift <= self.global_budget
+                and self.cumulative_drift <= self.global_budget
+            )
+        )
+        sliding_window_masked_breach = (all_windows_green and not horizon_within_budget)
+
+        if not all_windows_green:
+            status = "LOCAL_WINDOW_BUDGET_BREACH"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif sliding_window_masked_breach:
+            status = "SLIDING_WINDOW_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "WINDOW_AND_HORIZON_WITHIN_BUDGET_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_windowed_drift.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "window_size": self.window_size,
+            "window_budget": self.window_budget,
+            "global_budget": self.global_budget,
+            "observed_steps_count": n_steps,
+            "disjoint_window_blocks_count": k_blocks,
+            "current_window_sum": sum(self.recent_window, Fraction(0)),
+            "max_window_sum": self.max_window_sum,
+            "cumulative_horizon_drift": self.cumulative_drift,
+            "max_prefix_horizon_drift": self.max_prefix_drift,
+            "all_windows_within_budget": all_windows_green,
+            "horizon_within_budget": horizon_within_budget,
+            "sliding_window_masked_breach": sliding_window_masked_breach,
+            "block_partition_bound_verified": block_partition_verified,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

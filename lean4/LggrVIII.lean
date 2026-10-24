@@ -1015,4 +1015,28 @@ theorem kraus_trace_preservation_and_blindspot_residual
      tpStateDisc 1 (-1) 1 0 = 1) := by
   refine ⟨⟨by omega, by omega⟩, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
 
+/-- Theorem 38 (`sliding_window_green_vs_horizon_drift_breach`):
+    Formalizes the LGGR I/VIII Sliding-Window Horizon Truncation vs. Full-Horizon
+    Cumulative Drift Law:
+    1. (Disjoint Window Partition Identity & Bound): For any 4-step drift sequence
+       `d1, d2, d3, d4` and window size `W = 2` with window budget `bW`, if the
+       disjoint 2-step windows satisfy `d1 + d2 ≤ bW` and `d3 + d4 ≤ bW`, then
+       `(d1 + d2 + d3 + d4) = (d1 + d2) + (d3 + d4)` and `d1 + d2 + d3 + d4 ≤ 2 * bW`.
+    2. (Sliding-Window Local Green vs. Global Horizon Breach): For the constant step
+       drift sequence `(1, 1, 1, 1)` with window size `W = 2`, window budget `bW = 2`,
+       and global horizon budget `bGlobal = 3`, every contiguous 2-step window satisfies
+       `1 + 1 ≤ 2`, yet the 4-step cumulative horizon drift `1 + 1 + 1 + 1 = 4 > 3`
+       breaches `bGlobal`. -/
+theorem sliding_window_green_vs_horizon_drift_breach
+    (d1 d2 d3 d4 bW : Int)
+    (hw1 : d1 + d2 ≤ bW) (hw2 : d3 + d4 ≤ bW) :
+    ((d1 + d2 + d3 + d4) = (d1 + d2) + (d3 + d4) ∧
+     d1 + d2 + d3 + d4 ≤ 2 * bW) ∧
+    (let wSum := (1 : Int) + 1;
+     let hSum := (1 : Int) + 1 + 1 + 1;
+     let bWin := (2 : Int);
+     let bGlob := (3 : Int);
+     wSum ≤ bWin ∧ hSum = 4 ∧ hSum > bGlob) := by
+  refine ⟨⟨by omega, by omega⟩, ⟨by decide, by decide, by decide⟩⟩
+
 end LggrVIII
