@@ -203,6 +203,11 @@ The source report's query is `abs(final - baseline) <= bound`. That is the defau
 
 Under this query, `0 -> 1 -> 2 -> 1` has a valid final endpoint despite an earlier violation. The receipt exposes both the endpoint and every-prefix answers; it does not pretend they are the same proposition.
 
+`StreamingAuditMonitor.step()` records these excursions in `g4_prefix_ok` without
+raising an endpoint-budget alert. `get_receipt()` evaluates the supplied trace's
+final endpoint and rejects any breach still present there. An empty audit stream
+without an observed baseline remains `WITNESS_INCOMPLETE` (CLI exit code 1).
+
 For a requirement that must hold after **every** accepted update, explicitly use:
 
 ```python
@@ -434,3 +439,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+
+### Reviewed laboratory and benchmark evidence
+
+The [swarm laboratory review revision](experiments/grok_swarm_lab/current/README.md) ships runnable offline source and regression evidence. The [original v1 archive](experiments/grok_swarm_lab/dist/lggr-swarm-lab-2026-10-24.zip) remains unchanged. v2 requires known scoped auxiliary evidence before admission and replays deterministic labels and counters. Its rerun uses already published fixtures; it is not a new held-out experiment.
+
+`lggr.benchmarks.verify_frontier_benchmark(receipt)` checks the outer and monitor receipt hashes, regenerates inputs from the saved model responses, checks the prompts, and compares complete traces and metrics. The original 50-trace artifact remains unchanged and is covered by `MANIFEST.sha256`. New live runs reject malformed output explicitly and honor an explicitly requested model over environment defaults. Recorded model names identify client configuration, not independent authentication of the provider.
+
+The frontier prompts often supply exact answers or impose incompatible requirements. The published 24/50 NGD count describes that selected fixture mixture, not a general swarm failure rate or an advantage over conventional checking. Theorem 54 proves an integer positivity statement and a fixed collapse example; the Python monitor's general rational, arbitrary-expert support calculation is not formalized by that theorem.
+
+[Historical RSI research records](papers/012_rsi/research/) and all seven research links in the RSI index have been restored from commit `103daa366d4cd9ef06fc0def10edee497f547d8e`. Their [restoration receipt](receipts/pr51_research_restoration.json) binds the original Git bytes without upgrading their historical verification claims.

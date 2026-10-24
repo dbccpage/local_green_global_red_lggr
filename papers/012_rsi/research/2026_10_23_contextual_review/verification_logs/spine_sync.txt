@@ -1,0 +1,1 @@
+{"status": "PASS", "operation": "sync", "paper_id": "3c52a632-07f9-441e-912f-c6180ce94ab6", "truth_status": "not_assessed"}

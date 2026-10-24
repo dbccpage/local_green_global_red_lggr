@@ -1,0 +1,15 @@
+{
+  "label": "clean_deposit",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "verify_deposit.py",
+    "--lean"
+  ],
+  "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\rsi_review_20261023\\clean_v1.2.3\\000_relational_reasoning_and_rsi_impossibility",
+  "exit_code": 0,
+  "seconds": 15.65426754951477,
+  "log": "clean_deposit.txt",
+  "log_sha256": "e7e8faa2a64395079323f559dc96ce93fc16285cd4220b26f79b450adc7d0bd5"
+}

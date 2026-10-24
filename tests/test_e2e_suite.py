@@ -334,10 +334,14 @@ class TestTier1FeatureCoverage(unittest.TestCase):
 
     def test_f05_03_stream_audit_mode(self):
         """F05-3: stream --monitor audit accepts stream of witnesses."""
-        res = run_cli("stream", "--monitor", "audit", input_text="")
-        if res.returncode == 2 and "invalid choice" in res.stderr:
-            self.skipTest("stream CLI subcommand pending Milestone M1")
+        policy = BudgetPolicy()
+        witness = make_witness(policy, StateRef("s0", 0), StateRef("s1", 1), witness_id="w1")
+        input_data = json.dumps(json_value(witness)) + "\n"
+        res = run_cli("stream", "--monitor", "audit", input_text=input_data)
         self.assertEqual(res.returncode, 0, res.stderr)
+        data = json.loads(res.stdout)
+        self.assertEqual(data["events_processed"], 1)
+        self.assertEqual(data["final_receipt"]["status"], "COMPOSITION_VERIFIED")
 
     def test_f05_04_stream_cochain_mode(self):
         """F05-4: stream --monitor cochain accepts edge inputs."""

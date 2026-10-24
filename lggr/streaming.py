@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections import deque
 from fractions import Fraction
 import json
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, Sequence
 
 from .common import (
     ValidationError,
@@ -785,8 +785,9 @@ class StreamingAuditMonitor:
                 "bound": self.policy.max_total
             })
 
-        if self.policy.query_scope == "endpoint" and not prefix_within_bound:
-            alert_reasons.append("ENDPOINT_BUDGET_EXCEEDED")
+        # Endpoint scope is evaluated by get_receipt() on the supplied trace.
+        # A temporary excursion may recover before its final endpoint, so it
+        # must not create a persistent early-stopping alert here.
         has_alert = len(alert_reasons) > 0
         if has_alert:
             self.status = "OBSTRUCTED_LGGR"
@@ -809,6 +810,11 @@ class StreamingAuditMonitor:
             }
             self.alerts.append(alert_entry)
             return json_value(alert_entry)
+
+        if self.policy.query_scope == "endpoint" and self.status == "OBSTRUCTED_LGGR":
+            # Recheck the current endpoint after a prior receipt observed an
+            # excursion. Full replay retains independent structural/NGD faults.
+            self.get_receipt()
 
         receipt = {
             "schema": "lggr.online_step.v1",

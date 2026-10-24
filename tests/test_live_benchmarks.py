@@ -23,6 +23,7 @@ from lggr.benchmarks import (
     _eval_pair3_tower_and_mermin_peres,
     compute_empirical_defect_rates,
     load_openrouter_credentials,
+    verify_frontier_benchmark,
 )
 from lggr.common import digest
 from lggr.streaming import (
@@ -328,6 +329,7 @@ class TestOfflineTraceReplay(unittest.TestCase):
         if not artifact.is_file():
             self.skipTest("frontier_monitors_benchmark.json not generated yet")
         data = json.loads(artifact.read_text(encoding="utf-8"))
+        self.assertTrue(verify_frontier_benchmark(data)["replayed"])
 
         self.assertEqual(data.get("schema"), "lggr.frontier_benchmark_replay.v1")
         self.assertEqual(len(data.get("models_evaluated", [])), 5)

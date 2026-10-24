@@ -1,0 +1,23 @@
+{
+  "schema": "institutions.source-custody.v1",
+  "received_edition": "0.1",
+  "date": "2026-10-23",
+  "source_manifest_entries_verified": 10,
+  "source_execution_receipt_bindings_verified": true,
+  "supplied_files": {
+    "anomalon_institutional_reasoning.contract.yaml": "b108e0515674b65d09e4a392f53069e656d8181accf7bc251eca5a957d32883d",
+    "execution_receipt.json": "12e1080c0c098e802f29234a90bbafe5579bcec08c0622cd054bb502b12b95f3",
+    "institutional_reasoning.py": "4de979a8906a50f677229e1f44d469b5c7508370b3ff626f3eebea1483904ee2",
+    "institutions_that_can_know.docx": "b5882b061db8101394b26a6757b0407f79fa833a5b252622300cbf12c0c49277",
+    "institutions_that_can_know.md": "0bc622494d814aaee348f102173ec0bb42ee9fee2f6e0390926e0d371992629a",
+    "institutions_that_can_know.pdf": "1f0e62195d66909a1de55e3481cf236f11d369367dd56b730466bbf7991dda70",
+    "manifest.sha256": "1b9cda3181f15db30b8fc13a65ff0ce5a5535c27506c8783d4f0b4ebe92f50df",
+    "README.md": "59e258d9b00d24a6fed7f758b7839817f0807f58a06e19eed56a24b4978ae0b3",
+    "source_register.json": "167ec137ed7250654f43598c3a24518d12816e6b52d35a8c5c72be741f1854b4",
+    "test_institutional_reasoning.py": "03fa09fa59070ef6af3e94dab78edb1d8c69d31b005a692347a33a8fd9d82066",
+    "test_run.txt": "541d8e3e4dc13849eaa25c02d5587c59d6b1d6b040a1166fb52234b22012d80f"
+  },
+  "cover_note_sha256": "caead904f52f4bdddfa3fbebeb12f5f798e8ca01ba9c61b2de9e2553b9b4034d",
+  "scope": "Byte custody and stated receipt bindings, not independent validation of historical execution.",
+  "archive_location": "../research/2026_10_23_institutions/supplied_packet (repository only)"
+}

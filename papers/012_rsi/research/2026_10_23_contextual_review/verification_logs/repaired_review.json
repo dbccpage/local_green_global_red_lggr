@@ -1,0 +1,16 @@
+{
+  "label": "repaired_review",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "C:/Users/a343o/Downloads/contextual_prediction_review_2026-10-23/independent_review.py",
+    ".",
+    "C:/Users/a343o/.codex/visualizations/2026/10/21/01a15f49-0b77-7152-8513-136fd3bd1071/contextual_review_20261023/repaired_results.json"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\012_rsi\\001_contextual_prediction_and_self_certification",
+  "timestamp_utc": "2026-10-23T21:03:56.417383+00:00",
+  "seconds": 15.719035148620605,
+  "exit_code": 0,
+  "log": "repaired_review.txt"
+}

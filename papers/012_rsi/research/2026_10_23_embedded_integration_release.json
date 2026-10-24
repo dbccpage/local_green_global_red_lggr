@@ -1,0 +1,50 @@
+{
+  "schema": "rsi.paired-embedded-release.v1",
+  "date": "2026-10-23",
+  "result": "PASS",
+  "packages": [
+    {
+      "paper": "000_relational_reasoning_and_rsi_impossibility",
+      "version": "1.1.0",
+      "archive": "000_relational_reasoning_and_rsi_impossibility/000_relational_reasoning_and_rsi_impossibility_2026-10-23.zip",
+      "archive_sha256": "67b4b1e63446edbd44c0b822bcd870c2178c233a26eac8d10719f541ea331770",
+      "payload_files": 73,
+      "zip_members": 75,
+      "named_theorems": 101,
+      "full_declarations": 560,
+      "test_executions": {
+        "tests": 190,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "clean_extraction_tests": "PASS; exact source bytes match final release",
+      "source_receipt": "000_relational_reasoning_and_rsi_impossibility/docs/embedded_verification.json",
+      "source_receipt_sha256": "35098614a140f2f2e5ea65170fd5c636f4133c4e9bc454e51f3cfcd3d49b7fee"
+    },
+    {
+      "paper": "001_contextual_prediction_and_self_certification",
+      "version": "1.7.0",
+      "archive": "001_contextual_prediction_and_self_certification/001_contextual_prediction_and_self_certification_2026-10-23.zip",
+      "archive_sha256": "7a02088857f438402924af9583b2f5d33009d3942b8989f623047283cdbf2c33",
+      "payload_files": 167,
+      "zip_members": 169,
+      "named_theorems": 153,
+      "full_declarations": 924,
+      "test_executions": {
+        "tests": 156,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "clean_extraction_tests": "PASS; exact source bytes match final release",
+      "source_receipt": "001_contextual_prediction_and_self_certification/docs/embedded_verification.json",
+      "source_receipt_sha256": "da19ca7c3189341df66d94fc70e02a372c936ed8c4f91fdc8d51db7e1322afd1"
+    }
+  ],
+  "lean_scope": "Both source trees built under Lean 4.35.0 and passed fresh named and full declaration axiom censuses. Only standard foundational axioms are permitted. The Mathlib package was not built a second time cold from its extracted ZIP.",
+  "conversion_scope": "Fresh source-bound PDFs: paper 000 has 6 pages and 6 formula occurrences; paper 001 has 16 pages and 50 formula occurrences. Zero missing glyphs and zero overfull boxes. Source/canonical-expression agreement is not a mathematical proof.",
+  "execution_scope": "Python suites pass in their source trees and clean extracted copies. Counts include legacy aggregator re-exports. No universal Python-to-Lean refinement or live-agent memory integration is asserted.",
+  "audit_runtime": "The first full census attempt for paper 001 exceeded 600 seconds. Its identified orphaned child was stopped; a subsequent complete replay passed with a longer permitted time budget. Failed-attempt evidence was not promoted.",
+  "history": "Original proof modules and the dated October 22 research dossier are preserved. The separate historical recovery-edition attribution is not used as current proof custody."
+}

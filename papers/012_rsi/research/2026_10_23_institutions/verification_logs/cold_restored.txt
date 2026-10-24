@@ -1,0 +1,3 @@
+PASS: 8 named theorems, complete source coverage, approved axioms only
+PASS: 62 sealed entries unchanged; bindings and requested profiles verified
+

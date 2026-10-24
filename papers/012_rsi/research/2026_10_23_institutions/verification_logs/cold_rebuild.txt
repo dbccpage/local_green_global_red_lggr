@@ -1,0 +1,2 @@
+OK 002_institutions_that_can_know: manifests and deterministic ZIP agree
+

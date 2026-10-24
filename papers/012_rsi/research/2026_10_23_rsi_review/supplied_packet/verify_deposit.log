@@ -1,0 +1,22 @@
+FAIL: Manifest checks failed (3 issues):
+  - Hash mismatch: README.md
+  - Hash mismatch: lean4/RelationalRsiNoGo.lean
+  - Hash mismatch: lean4/lean-toolchain
+FAIL: Release archive checks failed (1 issues):
+  - Release archive check failed:
+FAIL 000_relational_reasoning_and_rsi_impossibility: local hash mismatch: README.md
+FAIL 000_relational_reasoning_and_rsi_impossibility: local hash mismatch: lean4/RelationalRsiNoGo.lean
+FAIL 000_relational_reasoning_and_rsi_impossibility: local hash mismatch: lean4/lean-toolchain
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: MANIFEST.sha256
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: README.md
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: SHA256SUMS
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: docs/descriptions.md
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: docs/references.md
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: relational_reasoning_and_rsi_impossibility_change_log.md
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: relational_reasoning_and_rsi_impossibility_claim_ledger.md
+FAIL 000_relational_reasoning_and_rsi_impossibility: ZIP member hash mismatch: relational_reasoning_and_rsi_impossibility_monograph.md
+FAIL 000_relational_reasoning_and_rsi_impossibility: hash changed while building archive: README.md
+OK: selected test files passed.
+OK: Lean proofs and axiom census verified.
+
+Verification FAILED with 4 errors.

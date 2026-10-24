@@ -1,0 +1,1 @@
+OK 001_contextual_prediction_and_self_certification: manifests and deterministic ZIP agree

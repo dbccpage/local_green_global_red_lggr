@@ -6,7 +6,8 @@ import sys
 import tempfile
 import unittest
 
-from lggr.common import ValidationError, loads_strict
+from lggr.common import ValidationError, json_value, loads_strict
+from lggr.witnesses import BudgetPolicy, StateRef, make_witness
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -181,6 +182,31 @@ class CliTests(unittest.TestCase):
             self.assertEqual(data['status'], 'COMPOSABLE_LGGG')
             self.assertEqual(data['final_receipt']['status'], 'COMPOSITION_VERIFIED')
 
+    def test_stream_audit_endpoint_recovery_exits_zero(self):
+        policy = BudgetPolicy()
+        states = [StateRef(f"s{i}", value) for i, value in enumerate((0, 1, 2, 1))]
+        witnesses = [make_witness(policy, a, b, witness_id=f"w{i}")
+                     for i, (a, b) in enumerate(zip(states, states[1:]))]
+        lines = "\n".join(json.dumps(json_value(w)) for w in witnesses) + "\n"
+        result = run('stream', '--monitor', 'audit', '-', input_text=lines)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['events_processed'], 3)
+        self.assertEqual([r['status'] for r in data['step_receipts']], ['OK'] * 3)
+        self.assertFalse(data['step_receipts'][1]['g4_prefix_ok'])
+        self.assertEqual(data['final_receipt']['status'], 'COMPOSITION_VERIFIED')
+        self.assertEqual(data['final_receipt']['alerts_count'], 0)
+
+    def test_stream_audit_empty_without_baseline_is_incomplete(self):
+        result = run('stream', '--monitor', 'audit', '-', input_text='')
+        self.assertEqual(result.returncode, 1, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(data['status'], 'OBSTRUCTED_LGGR')
+        self.assertEqual(data['events_processed'], 0)
+        self.assertEqual(data['final_receipt']['status'], 'WITNESS_INCOMPLETE')
+        self.assertFalse(data['final_receipt']['composition_certified'])
+        self.assertIn('BASELINE_UNOBSERVED', {f['code'] for f in data['final_receipt']['findings']})
+
     def test_stream_audit_alert_exits_nonzero(self):
         bad_raw = json.loads((ROOT / 'examples/bad_history.json').read_text(encoding='utf-8'))
         policy = bad_raw['policy']
@@ -197,6 +223,9 @@ class CliTests(unittest.TestCase):
             self.assertEqual(result.returncode, 1, result.stderr)
             data = json.loads(result.stdout)
             self.assertEqual(data['status'], 'OBSTRUCTED_LGGR')
+            self.assertEqual(data['final_receipt']['status'], 'OBSTRUCTION_DETECTED')
+            self.assertEqual(data['final_receipt']['alerts_count'], 0)
+            self.assertFalse(data['final_receipt']['composition_certified'])
 
     def test_stream_cochain_open_tree_exits_zero(self):
         lines = (

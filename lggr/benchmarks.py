@@ -10,6 +10,7 @@ from __future__ import annotations
 import ast
 from fractions import Fraction
 import json
+import re
 import math
 import os
 import sys
@@ -90,14 +91,14 @@ class OpenRouterClient:
     def __init__(
         self,
         api_key: str | None = None,
-        model: str = "openai/gpt-4o-mini",
+        model: str | None = None,
         max_completions: int = 40,
     ) -> None:
-        if not api_key:
+        if not api_key or model is None:
             loaded_key, loaded_model = load_openrouter_credentials()
-            api_key = loaded_key
-            if model == "openai/gpt-4o-mini" and loaded_model:
-                model = loaded_model
+            api_key = api_key or loaded_key
+            if model is None:
+                model = loaded_model or "openai/gpt-4o-mini"
 
         self.api_key = api_key
         self.model = model
@@ -780,6 +781,70 @@ JSON_ONLY_SYSTEM_PROMPT: str = (
 )
 
 
+class FrontierInputError(ValueError):
+    """A saved model response has no exact input of the requested shape."""
+
+
+def _frontier_json(response: str, fields: dict[str, str], *, modulus: int | None = None) -> dict:
+    # Historical responses include a single Markdown JSON fence. No prose,
+    # duplicate keys, coercion, missing-value defaults or inferred answers.
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise FrontierInputError("duplicate JSON field: " + key)
+            result[key] = value
+        return result
+    text = response.strip()
+    fenced = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
+    try:
+        obj = json.loads(fenced.group(1) if fenced else text, object_pairs_hook=unique)
+    except (ValueError, TypeError) as error:
+        raise FrontierInputError("response must contain one JSON object") from error
+    if not isinstance(obj, dict):
+        raise FrontierInputError("response must contain one JSON object")
+    def rational(value):
+        if type(value) not in (int, str):
+            return False
+        try:
+            Fraction(value)
+            return True
+        except (ValueError, ZeroDivisionError):
+            return False
+    for key, kind in fields.items():
+        value = obj.get(key)
+        if kind == "integer":
+            valid = type(value) is int
+        elif kind == "rational":
+            valid = rational(value)
+        elif kind == "scores":
+            valid = (isinstance(value, list) and len(value) == 3
+                     and all(rational(x) and Fraction(x) >= 0 for x in value))
+        elif kind == "matrix":
+            valid = isinstance(value, list) and len(value) == 3 and all(
+                isinstance(row, list) and len(row) == 3
+                and all(type(x) is int and x in (-1, 1) for x in row) for row in value)
+        else:
+            valid = False
+        if key not in obj or not valid:
+            raise FrontierInputError("missing or malformed field: " + key)
+    if modulus is not None and obj["modulus"] != modulus:
+        raise FrontierInputError("reported modulus differs from requested stage")
+    return obj
+
+
+class _FrontierRecordingClient:
+    def __init__(self, client, requested_model):
+        if client.model != requested_model:
+            raise ValueError("configured model differs from requested benchmark model")
+        self.client, self.model, self.exchanges = client, requested_model, []
+
+    def complete(self, prompt, **kwargs):
+        response = self.client.complete(prompt, **kwargs)
+        self.exchanges.append({"prompt": prompt, "response": response, **kwargs})
+        return response
+
+
 def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, Any]]:
     """Run 10 live multi-agent orchestration traces (2 per frontier monitor) for one model."""
     model_traces: list[dict[str, Any]] = []
@@ -791,8 +856,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"modulus\": 2, \"candidate_x\": 1}"
     )
     pt_obs_c1 = client.complete(pt_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    pt_obs_j1 = _extract_json(pt_obs_c1)
-    x1_obs = int(pt_obs_j1.get("candidate_x", -1)) if "candidate_x" in pt_obs_j1 else -1
+    pt_obs_j1 = _frontier_json(pt_obs_c1, {"modulus": "integer", "candidate_x": "integer"}, modulus=2)
+    x1_obs = pt_obs_j1["candidate_x"]
 
     pt_obs_p2 = (
         f"You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x + 1 == 0 (mod 4), "
@@ -801,8 +866,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         f"Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
     )
     pt_obs_c2 = client.complete(pt_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    pt_obs_j2 = _extract_json(pt_obs_c2)
-    x2_obs = int(pt_obs_j2.get("candidate_x", -1)) if "candidate_x" in pt_obs_j2 else -1
+    pt_obs_j2 = _frontier_json(pt_obs_c2, {"modulus": "integer", "candidate_x": "integer"}, modulus=4)
+    x2_obs = pt_obs_j2["candidate_x"]
 
     mon_pt_obs = StreamingProjectiveTowerMonitor(
         3, 1, scope_id=f"frontier_pt_obs_{client.model}"
@@ -847,8 +912,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON with keys 'modulus' (2) and 'candidate_x' (integer)."
     )
     pt_coh_c1 = client.complete(pt_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    pt_coh_j1 = _extract_json(pt_coh_c1)
-    x1_coh = int(pt_coh_j1.get("candidate_x", -1)) if "candidate_x" in pt_coh_j1 else -1
+    pt_coh_j1 = _frontier_json(pt_coh_c1, {"modulus": "integer", "candidate_x": "integer"}, modulus=2)
+    x1_coh = pt_coh_j1["candidate_x"]
 
     pt_coh_p2 = (
         f"You are Stage-2 Modular Verification Agent (modulus m_2 = 4) auditing equation 3*x - 6 == 0 (mod 4), "
@@ -857,8 +922,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         f"Output ONLY valid JSON with keys 'modulus' (4) and 'candidate_x' (integer)."
     )
     pt_coh_c2 = client.complete(pt_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    pt_coh_j2 = _extract_json(pt_coh_c2)
-    x2_coh = int(pt_coh_j2.get("candidate_x", -1)) if "candidate_x" in pt_coh_j2 else -1
+    pt_coh_j2 = _frontier_json(pt_coh_c2, {"modulus": "integer", "candidate_x": "integer"}, modulus=4)
+    x2_coh = pt_coh_j2["candidate_x"]
 
     mon_pt_coh = StreamingProjectiveTowerMonitor(
         3, -6, scope_id=f"frontier_pt_coh_{client.model}"
@@ -903,9 +968,9 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}"
     )
     sr_obs_c1 = client.complete(sr_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    sr_obs_j1 = _extract_json(sr_obs_c1)
-    oa_obs = str(sr_obs_j1.get("omega_a", "1"))
-    ob_obs = str(sr_obs_j1.get("omega_b", "0"))
+    sr_obs_j1 = _frontier_json(sr_obs_c1, {'omega_a': 'rational', 'omega_b': 'rational'})
+    oa_obs = str(sr_obs_j1["omega_a"])
+    ob_obs = str(sr_obs_j1["omega_b"])
 
     sr_obs_p2 = (
         f"You are a Peak-Latency (l_infinity) Repair Planner Agent for residual r(alpha) = ({oa_obs} + alpha, {ob_obs} + 2*alpha). "
@@ -914,12 +979,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         f"Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
     )
     sr_obs_c2 = client.complete(sr_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    sr_obs_j2 = _extract_json(sr_obs_c2)
-    alpha_obs = str(sr_obs_j2.get("candidate_alpha", "1"))
-    try:
-        Fraction(alpha_obs)
-    except Exception:
-        alpha_obs = "1"
+    sr_obs_j2 = _frontier_json(sr_obs_c2, {'candidate_alpha': 'rational'})
+    alpha_obs = str(sr_obs_j2["candidate_alpha"])
 
     mon_sr_obs = StreamingSkewRepairMonitor(scope_id=f"frontier_sr_obs_{client.model}")
     probe_sr_obs = mon_sr_obs.record_probe(
@@ -967,9 +1028,9 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"omega_a\": \"1\", \"omega_b\": \"0\"}"
     )
     sr_coh_c1 = client.complete(sr_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    sr_coh_j1 = _extract_json(sr_coh_c1)
-    oa_coh = str(sr_coh_j1.get("omega_a", "1"))
-    ob_coh = str(sr_coh_j1.get("omega_b", "0"))
+    sr_coh_j1 = _frontier_json(sr_coh_c1, {'omega_a': 'rational', 'omega_b': 'rational'})
+    oa_coh = str(sr_coh_j1["omega_a"])
+    ob_coh = str(sr_coh_j1["omega_b"])
 
     sr_coh_p2 = (
         f"You are a Cumulative-Cost (l_1) Repair Planner Agent for residual r(alpha) = ({oa_coh} + alpha, {ob_coh} + 2*alpha). "
@@ -978,12 +1039,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         f"Output ONLY valid JSON with key 'candidate_alpha' (string fraction)."
     )
     sr_coh_c2 = client.complete(sr_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    sr_coh_j2 = _extract_json(sr_coh_c2)
-    alpha_coh = str(sr_coh_j2.get("candidate_alpha", "2"))
-    try:
-        Fraction(alpha_coh)
-    except Exception:
-        alpha_coh = "2"
+    sr_coh_j2 = _frontier_json(sr_coh_c2, {'candidate_alpha': 'rational'})
+    alpha_coh = str(sr_coh_j2["candidate_alpha"])
 
     mon_sr_coh = StreamingSkewRepairMonitor(scope_id=f"frontier_sr_coh_{client.model}")
     probe_sr_coh = mon_sr_coh.record_probe(
@@ -1031,14 +1088,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}"
     )
     mp_obs_c1 = client.complete(mp_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    mp_obs_j1 = _extract_json(mp_obs_c1)
-    r_assign_obs = mp_obs_j1.get("row_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, 1]])
-    if not (
-        isinstance(r_assign_obs, list)
-        and len(r_assign_obs) == 3
-        and all(isinstance(r, list) and len(r) == 3 and all(x in (-1, 1) for x in r) for r in r_assign_obs)
-    ):
-        r_assign_obs = [[1, 1, -1], [1, 1, 1], [1, 1, 1]]
+    mp_obs_j1 = _frontier_json(mp_obs_c1, {"row_context_assignments": "matrix"})
+    r_assign_obs = mp_obs_j1["row_context_assignments"]
 
     mp_obs_p2 = (
         "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. "
@@ -1046,14 +1097,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
     )
     mp_obs_c2 = client.complete(mp_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    mp_obs_j2 = _extract_json(mp_obs_c2)
-    c_assign_obs = mp_obs_j2.get("col_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, -1]])
-    if not (
-        isinstance(c_assign_obs, list)
-        and len(c_assign_obs) == 3
-        and all(isinstance(c, list) and len(c) == 3 and all(x in (-1, 1) for x in c) for c in c_assign_obs)
-    ):
-        c_assign_obs = [[1, 1, -1], [1, 1, 1], [1, 1, -1]]
+    mp_obs_j2 = _frontier_json(mp_obs_c2, {"col_context_assignments": "matrix"})
+    c_assign_obs = mp_obs_j2["col_context_assignments"]
 
     mon_mp_obs = StreamingMerminPeresParityMonitor(scope_id=f"frontier_mp_obs_{client.model}")
     grid_mp_obs = mon_mp_obs.record_grid(
@@ -1099,14 +1144,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"row_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
     )
     mp_coh_c1 = client.complete(mp_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    mp_coh_j1 = _extract_json(mp_coh_c1)
-    r_assign_coh = mp_coh_j1.get("row_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, -1]])
-    if not (
-        isinstance(r_assign_coh, list)
-        and len(r_assign_coh) == 3
-        and all(isinstance(r, list) and len(r) == 3 and all(x in (-1, 1) for x in r) for r in r_assign_coh)
-    ):
-        r_assign_coh = [[1, 1, -1], [1, 1, 1], [1, 1, -1]]
+    mp_coh_j1 = _frontier_json(mp_coh_c1, {"row_context_assignments": "matrix"})
+    r_assign_coh = mp_coh_j1["row_context_assignments"]
 
     mp_coh_p2 = (
         "You are the Column-Context Parity Coordinator for a 3x3 grid of {-1, 1} variables with column product targets C = [1, 1, -1]. "
@@ -1114,14 +1153,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"col_context_assignments\": [[1, 1, 1], [1, 1, 1], [1, 1, -1]]}"
     )
     mp_coh_c2 = client.complete(mp_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    mp_coh_j2 = _extract_json(mp_coh_c2)
-    c_assign_coh = mp_coh_j2.get("col_context_assignments", [[1, 1, -1], [1, 1, 1], [1, 1, -1]])
-    if not (
-        isinstance(c_assign_coh, list)
-        and len(c_assign_coh) == 3
-        and all(isinstance(c, list) and len(c) == 3 and all(x in (-1, 1) for x in c) for c in c_assign_coh)
-    ):
-        c_assign_coh = [[1, 1, -1], [1, 1, 1], [1, 1, -1]]
+    mp_coh_j2 = _frontier_json(mp_coh_c2, {"col_context_assignments": "matrix"})
+    c_assign_coh = mp_coh_j2["col_context_assignments"]
 
     mon_mp_coh = StreamingMerminPeresParityMonitor(scope_id=f"frontier_mp_coh_{client.model}")
     grid_mp_coh = mon_mp_coh.record_grid(
@@ -1167,9 +1200,9 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}"
     )
     si_obs_c1 = client.complete(si_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    si_obs_j1 = _extract_json(si_obs_c1)
-    sym_s0_obs = int(si_obs_j1.get("s0_symbol", -1)) if "s0_symbol" in si_obs_j1 else -1
-    sym_s1_obs = int(si_obs_j1.get("s1_symbol", -1)) if "s1_symbol" in si_obs_j1 else -1
+    si_obs_j1 = _frontier_json(si_obs_c1, {'s0_symbol': 'integer', 's1_symbol': 'integer'})
+    sym_s0_obs = si_obs_j1["s0_symbol"]
+    sym_s1_obs = si_obs_j1["s1_symbol"]
 
     si_obs_p2 = (
         "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') "
@@ -1177,9 +1210,9 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"s2_symbol\": 0, \"s3_symbol\": 1}"
     )
     si_obs_c2 = client.complete(si_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    si_obs_j2 = _extract_json(si_obs_c2)
-    sym_s2_obs = int(si_obs_j2.get("s2_symbol", -1)) if "s2_symbol" in si_obs_j2 else -1
-    sym_s3_obs = int(si_obs_j2.get("s3_symbol", -1)) if "s3_symbol" in si_obs_j2 else -1
+    si_obs_j2 = _frontier_json(si_obs_c2, {'s2_symbol': 'integer', 's3_symbol': 'integer'})
+    sym_s2_obs = si_obs_j2["s2_symbol"]
+    sym_s3_obs = si_obs_j2["s3_symbol"]
 
     states_si_obs = [
         {"state_id": "s0", "query_value": "ROLLBACK", "side_symbol": sym_s0_obs},
@@ -1226,9 +1259,9 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Assign s0_symbol = 0 and s1_symbol = 1. Output ONLY valid JSON: {\"s0_symbol\": 0, \"s1_symbol\": 1}"
     )
     si_coh_c1 = client.complete(si_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    si_coh_j1 = _extract_json(si_coh_c1)
-    sym_s0_coh = int(si_coh_j1.get("s0_symbol", -1)) if "s0_symbol" in si_coh_j1 else -1
-    sym_s1_coh = int(si_coh_j1.get("s1_symbol", -1)) if "s1_symbol" in si_coh_j1 else -1
+    si_coh_j1 = _frontier_json(si_coh_c1, {'s0_symbol': 'integer', 's1_symbol': 'integer'})
+    sym_s0_coh = si_coh_j1["s0_symbol"]
+    sym_s1_coh = si_coh_j1["s1_symbol"]
 
     si_coh_p2 = (
         "You are Triage Subagent 2 handling two incident states ('s2' requiring 'ROTATE_KEYS' and 's3' requiring 'ISOLATE_NODE') "
@@ -1236,9 +1269,9 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Assign s2_symbol = 2 and s3_symbol = 3. Output ONLY valid JSON: {\"s2_symbol\": 2, \"s3_symbol\": 3}"
     )
     si_coh_c2 = client.complete(si_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    si_coh_j2 = _extract_json(si_coh_c2)
-    sym_s2_coh = int(si_coh_j2.get("s2_symbol", -1)) if "s2_symbol" in si_coh_j2 else -1
-    sym_s3_coh = int(si_coh_j2.get("s3_symbol", -1)) if "s3_symbol" in si_coh_j2 else -1
+    si_coh_j2 = _frontier_json(si_coh_c2, {'s2_symbol': 'integer', 's3_symbol': 'integer'})
+    sym_s2_coh = si_coh_j2["s2_symbol"]
+    sym_s3_coh = si_coh_j2["s3_symbol"]
 
     states_si_coh = [
         {"state_id": "s0", "query_value": "ROLLBACK", "side_symbol": sym_s0_coh},
@@ -1286,10 +1319,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"scores\": [\"1\", \"0\", \"0\"]}"
     )
     poe_obs_c1 = client.complete(poe_obs_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    poe_obs_j1 = _extract_json(poe_obs_c1)
-    sc1_obs = poe_obs_j1.get("scores", ["0", "0", "0"])
-    if not (isinstance(sc1_obs, list) and len(sc1_obs) == 3):
-        sc1_obs = ["0", "0", "0"]
+    poe_obs_j1 = _frontier_json(poe_obs_c1, {"scores": "scores"})
+    sc1_obs = poe_obs_j1["scores"]
 
     poe_obs_p2 = (
         "You are Expert Agent 2 (Strict Sub-Millisecond Latency Auditor) scoring the same 3 candidate actions "
@@ -1298,10 +1329,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"scores\": [\"0\", \"0\", \"1\"]}"
     )
     poe_obs_c2 = client.complete(poe_obs_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    poe_obs_j2 = _extract_json(poe_obs_c2)
-    sc2_obs = poe_obs_j2.get("scores", ["0", "0", "0"])
-    if not (isinstance(sc2_obs, list) and len(sc2_obs) == 3):
-        sc2_obs = ["0", "0", "0"]
+    poe_obs_j2 = _frontier_json(poe_obs_c2, {"scores": "scores"})
+    sc2_obs = poe_obs_j2["scores"]
 
     mon_poe_obs = StreamingProductOfExpertsMonitor(scope_id=f"frontier_poe_obs_{client.model}")
     rnd_poe_obs = mon_poe_obs.record_expert_scores(
@@ -1341,10 +1370,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"scores\": [\"3/4\", \"1/4\", \"0\"]}"
     )
     poe_coh_c1 = client.complete(poe_coh_p1, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    poe_coh_j1 = _extract_json(poe_coh_c1)
-    sc1_coh = poe_coh_j1.get("scores", ["0", "0", "0"])
-    if not (isinstance(sc1_coh, list) and len(sc1_coh) == 3):
-        sc1_coh = ["0", "0", "0"]
+    poe_coh_j1 = _frontier_json(poe_coh_c1, {"scores": "scores"})
+    sc1_coh = poe_coh_j1["scores"]
 
     poe_coh_p2 = (
         "You are Expert Agent 2 (Latency Auditor) scoring the same 3 candidate actions "
@@ -1353,10 +1380,8 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
         "Output ONLY valid JSON: {\"scores\": [\"0\", \"1/4\", \"3/4\"]}"
     )
     poe_coh_c2 = client.complete(poe_coh_p2, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
-    poe_coh_j2 = _extract_json(poe_coh_c2)
-    sc2_coh = poe_coh_j2.get("scores", ["0", "0", "0"])
-    if not (isinstance(sc2_coh, list) and len(sc2_coh) == 3):
-        sc2_coh = ["0", "0", "0"]
+    poe_coh_j2 = _frontier_json(poe_coh_c2, {"scores": "scores"})
+    sc2_coh = poe_coh_j2["scores"]
 
     mon_poe_coh = StreamingProductOfExpertsMonitor(scope_id=f"frontier_poe_coh_{client.model}")
     rnd_poe_coh = mon_poe_coh.record_expert_scores(
@@ -1391,6 +1416,70 @@ def _run_frontier_traces_for_model(client: OpenRouterClient) -> list[dict[str, A
     return model_traces
 
 
+def verify_frontier_benchmark(receipt: Mapping[str, Any]) -> dict[str, Any]:
+    """Offline replay of saved responses, prompts, both hash layers and summaries.
+
+    Hashes establish internal consistency, not external authenticity. Original
+    v1 records have no transport-attempt ledger; counts cover saved responses.
+    """
+    def check(condition, message):
+        if not condition:
+            raise ValueError(message)
+    def signed(value):
+        check(value.get("receipt_sha256") == digest({k: v for k, v in value.items() if k != "receipt_sha256"}),
+              "receipt hash mismatch")
+    signed(receipt)
+    check(receipt.get("schema") in ("lggr.frontier_benchmark_replay.v1", "lggr.frontier_benchmark_replay.v2"), "unsupported frontier schema")
+    models = receipt["models_evaluated"]
+    check(isinstance(models, list) and all(isinstance(m, str) and m for m in models) and len(set(models)) == len(models), "invalid model identities")
+    failures = receipt.get("model_failures", {})
+    check(set(failures) <= set(models), "unknown failed model identity")
+    regenerated, per_model, groups = [], {}, {}
+    total = 0
+    for model in models:
+        stored = [t for t in receipt["traces"] if t["model"] == model]
+        for trace in stored:
+            signed(trace["monitor_receipt"])
+            check(len(trace["prompts"]) == 2 and len(trace["completions"]) == 2, "trace requires two recorded exchanges")
+        exchanges = failures[model]["exchanges"] if model in failures else [
+            {"prompt": prompt, "response": response, "system_prompt": JSON_ONLY_SYSTEM_PROMPT, "max_tokens": 200}
+            for trace in stored for prompt, response in zip(trace["prompts"], trace["completions"])]
+        class ReplayClient:
+            def __init__(self):
+                self.model, self.index = model, 0
+            def complete(self, prompt, **kwargs):
+                check(self.index < len(exchanges), "missing recorded response")
+                exchange = exchanges[self.index]
+                self.index += 1
+                check(exchange == {"prompt": prompt, "response": exchange["response"], **kwargs}, "recorded prompt or request differs")
+                check(isinstance(exchange["response"], str), "response must be text")
+                return exchange["response"]
+        client = ReplayClient()
+        try:
+            traces = _run_frontier_traces_for_model(client)
+        except FrontierInputError as error:
+            check(model in failures and not stored, "malformed response was certified")
+            check(failures[model] == {"status": "MALFORMED_INPUT", "reason": str(error), "exchanges": exchanges}, "malformed result differs")
+            traces = []
+        else:
+            check(model not in failures, "false malformed result")
+        check(client.index == len(exchanges), "unused recorded responses")
+        check(digest(stored) == digest(traces), "complete regenerated traces differ")
+        total += len(exchanges)
+        per_model[model] = {"completion_count": len(exchanges), "metrics": compute_empirical_defect_rates(traces)}
+        regenerated.extend(traces)
+        for trace in traces:
+            groups.setdefault(trace["monitor"], []).append(trace)
+    expected = {"traces": regenerated, "total_completions": total, "per_model_metrics": per_model,
+                "overall_metrics": compute_empirical_defect_rates(regenerated),
+                "per_monitor_metrics": {name: compute_empirical_defect_rates(traces) for name, traces in groups.items()},
+                "monitors_evaluated": ["StreamingProjectiveTowerMonitor", "StreamingSkewRepairMonitor", "StreamingMerminPeresParityMonitor", "StreamingSideInformationCapacityMonitor", "StreamingProductOfExpertsMonitor"]}
+    for key, value in expected.items():
+        check(digest(receipt[key]) == digest(value), "recomputed frontier field differs: " + key)
+    return {"replayed": True, "trace_count": len(regenerated), "completion_count": total,
+            "malformed_models": sorted(failures), "authority_effect": "None"}
+
+
 def run_frontier_monitors_benchmark(
     models: Sequence[str] | None = None,
     receipts_dir: str | None = None,
@@ -1403,15 +1492,23 @@ def run_frontier_monitors_benchmark(
     per_model_metrics: dict[str, Any] = {}
     per_monitor_traces: dict[str, list[dict[str, Any]]] = {}
     total_completions = 0
+    model_failures = {}
+    if len(set(models)) != len(models):
+        raise ValueError("benchmark models must be unique")
 
     for model_id in models:
         print(f"Running frontier monitors live orchestration traces on {model_id}...")
-        client = OpenRouterClient(model=model_id, max_completions=40)
-        traces = _run_frontier_traces_for_model(client)
-        total_completions += client.completion_count
+        client = _FrontierRecordingClient(OpenRouterClient(model=model_id, max_completions=40), model_id)
+        try:
+            traces = _run_frontier_traces_for_model(client)
+        except FrontierInputError as error:
+            traces = []
+            model_failures[model_id] = {"status": "MALFORMED_INPUT", "reason": str(error),
+                                        "exchanges": client.exchanges}
+        total_completions += len(client.exchanges)
         all_traces.extend(traces)
         per_model_metrics[model_id] = {
-            "completion_count": client.completion_count,
+            "completion_count": len(client.exchanges),
             "metrics": compute_empirical_defect_rates(traces),
         }
         for tr in traces:
@@ -1424,7 +1521,10 @@ def run_frontier_monitors_benchmark(
     overall_metrics = compute_empirical_defect_rates(all_traces)
 
     body = {
-        "schema": "lggr.frontier_benchmark_replay.v1",
+        "schema": "lggr.frontier_benchmark_replay.v2",
+        "model_failures": model_failures,
+        "completion_count_scope": "Recorded responses, excluding transport retries",
+        "model_identity_scope": "Requested and configured client model; not independent provider identity authentication",
         "authority_effect": "None",
         "benchmark_name": "frontier_monitors_benchmark",
         "models_evaluated": list(models),
@@ -1442,7 +1542,8 @@ def run_frontier_monitors_benchmark(
         "traces": all_traces,
         "meaning": (
             "Live multi-agent OpenRouter benchmark of the 5 frontier monitors (Theorems 50-54) "
-            "across 4 model families, measuring empirical LPR, GPR, NGD, ZDR, PGD, and LRGR rates."
+            "on a scripted fixture mixture. Prompts often supply answers or incompatible requirements; "
+            "rates describe these fixtures, not population failure rates or an advantage over conventional checking."
         ),
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})

@@ -1,0 +1,22 @@
+test_access_cut_preserves_records_but_loses_reachability (test_institutional_reasoning.InstitutionalReasoningTests.test_access_cut_preserves_records_but_loses_reachability) ... ok
+test_alternative_route_repairs_access (test_institutional_reasoning.InstitutionalReasoningTests.test_alternative_route_repairs_access) ... ok
+test_failed_search_is_not_non_equivalence (test_institutional_reasoning.InstitutionalReasoningTests.test_failed_search_is_not_non_equivalence) ... ok
+test_joint_action_does_not_merge_reasons (test_institutional_reasoning.InstitutionalReasoningTests.test_joint_action_does_not_merge_reasons) ... ok
+test_local_projections_match_but_joint_constraints_fail (test_institutional_reasoning.InstitutionalReasoningTests.test_local_projections_match_but_joint_constraints_fail) ... ok
+test_mandate_scope_executor_and_expiry (test_institutional_reasoning.InstitutionalReasoningTests.test_mandate_scope_executor_and_expiry) ... ok
+test_no_joint_action_can_be_reported_honestly (test_institutional_reasoning.InstitutionalReasoningTests.test_no_joint_action_can_be_reported_honestly) ... ok
+test_nonempty_unique_domain_validation (test_institutional_reasoning.InstitutionalReasoningTests.test_nonempty_unique_domain_validation) ... ok
+test_order_is_not_recoverable_from_sum (test_institutional_reasoning.InstitutionalReasoningTests.test_order_is_not_recoverable_from_sum) ... ok
+test_proposal_does_not_authorize_execution (test_institutional_reasoning.InstitutionalReasoningTests.test_proposal_does_not_authorize_execution) ... ok
+test_recoverability_exhaustive_against_decoder_search (test_institutional_reasoning.InstitutionalReasoningTests.test_recoverability_exhaustive_against_decoder_search) ... ok
+test_relative_invariant_requires_preservation (test_institutional_reasoning.InstitutionalReasoningTests.test_relative_invariant_requires_preservation) ... ok
+test_side_bound_exhaustive_against_assignment_search (test_institutional_reasoning.InstitutionalReasoningTests.test_side_bound_exhaustive_against_assignment_search) ... ok
+test_side_information_bound_and_construction (test_institutional_reasoning.InstitutionalReasoningTests.test_side_information_bound_and_construction) ... ok
+test_source_dependency_is_lost_by_vote_count (test_institutional_reasoning.InstitutionalReasoningTests.test_source_dependency_is_lost_by_vote_count) ... ok
+test_sum_is_recoverable_from_sum (test_institutional_reasoning.InstitutionalReasoningTests.test_sum_is_recoverable_from_sum) ... ok
+test_zero_bits_when_profile_survives (test_institutional_reasoning.InstitutionalReasoningTests.test_zero_bits_when_profile_survives) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.006s
+
+OK

@@ -1,0 +1,31 @@
+{
+  "schema": "rsi.embedded-limits.research-verification.v1",
+  "status": "PASS",
+  "date": "2026-10-22",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "actual_lean_version": "Lean (version 4.35.0, x86_64-w64-windows-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+  "named_theorems": 20,
+  "axiom_free": 20,
+  "tests": 13,
+  "future_pair_comparisons": 65536,
+  "semantic_knowledge_cases": 16384,
+  "primary_sources": 23,
+  "sources": {
+    "EmbeddedLimits.lean": "a0221842897133947fc3bd6f8bae9caf216a7f93f376ba96af96f3ca2ea6187b",
+    "Census.lean": "e613d35ad77aebdbae5c4b9163ffe9041f3a24ce430cb5eea6f76c83488ef01e",
+    "lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+    "finite_limits.py": "fe215a8a941fd04f18807efec5a8b629acfac78d3400646d2f1a01d4241906b6",
+    "test_finite_limits.py": "328ecb0d182af5ec82077291179d1b88cefd58305ca0ad4999a40e4041a80519",
+    "verify.py": "23ce199e5a316ccbeb39fa5efb7797940586fa1c99e9ea900bfa38e000d210e4",
+    "README.md": "ad05668a30eda19396014793d64690027cbb8de7d70ac26dee7a963955c06b10",
+    "research_note.md": "a4995ced7b0f0513a8fcfe009fcf3f4ca037a9d0297c7bb4ade6ad62169b39c6",
+    "extension_plan.md": "f9a8e0bf2d4230f800b4d2668621a4a2a8f195d335f03ffb96c817c2a9a91d5d",
+    "sources.json": "653385bd8f6961d15a82aa82b3fe0b1b126304929ada462e3505473f2e3f9eb5",
+    "baseline_inventory.json": "08635e618b274406b37e4007fb38eaecc91bc6092b34eb3de8a294e22848ed3b",
+    "axiom_report.txt": "4ef2c66a2f518fa174383d6aabc6f8ea5295711c6b01f69a52e1ea64fde58c52"
+  },
+  "lean_build_output": "",
+  "census_output": "'EmbeddedLimits.determined_is_true' does not depend on any axioms\n'EmbeddedLimits.positive_introspection' does not depend on any axioms\n'EmbeddedLimits.own_record_is_determined' does not depend on any axioms\n'EmbeddedLimits.refinement_preserves_determination' does not depend on any axioms\n'EmbeddedLimits.decoder_implies_fiber_constant' does not depend on any axioms\n'EmbeddedLimits.section_constructs_decoder' does not depend on any axioms\n'EmbeddedLimits.recoverable_iff_fiber_constant' does not depend on any axioms\n'EmbeddedLimits.postprocessing_cannot_separate' does not depend on any axioms\n'EmbeddedLimits.collision_excludes_exact_decoder' does not depend on any axioms\n'EmbeddedLimits.added_task_requires_refinement' does not depend on any axioms\n'EmbeddedLimits.future_eq_refl' does not depend on any axioms\n'EmbeddedLimits.future_eq_symm' does not depend on any axioms\n'EmbeddedLimits.future_eq_trans' does not depend on any axioms\n'EmbeddedLimits.future_eq_preserves_readout' does not depend on any axioms\n'EmbeddedLimits.future_eq_stable' does not depend on any axioms\n'EmbeddedLimits.stable_relation_refines_future_eq' does not depend on any axioms\n'EmbeddedLimits.implemented_memory_preserves_future' does not depend on any axioms\n'EmbeddedLimits.bool_cannot_equal_its_negation' does not depend on any axioms\n'EmbeddedLimits.anti_prediction_not_universal' does not depend on any axioms\n'EmbeddedLimits.fiber_soundness_is_maximal' does not depend on any axioms\n",
+  "test_output": "test_adaptive_two_queries_versus_fixed_three (test_finite_limits.ExactLimitsTests.test_adaptive_two_queries_versus_fixed_three) ... ok\ntest_all_four_state_binary_one_action_models (test_finite_limits.ExactLimitsTests.test_all_four_state_binary_one_action_models) ... ok\ntest_certificate_mutations_are_rejected (test_finite_limits.ExactLimitsTests.test_certificate_mutations_are_rejected) ... ok\ntest_checked_update_does_not_erase_earlier_observations (test_finite_limits.ExactLimitsTests.test_checked_update_does_not_erase_earlier_observations) ... ok\ntest_exact_input_and_scope_limits_refuse (test_finite_limits.ExactLimitsTests.test_exact_input_and_scope_limits_refuse) ... ok\ntest_finite_alphabet_is_not_a_finite_unbounded_history (test_finite_limits.ExactLimitsTests.test_finite_alphabet_is_not_a_finite_unbounded_history) ... ok\ntest_memory_extension_for_new_actions (test_finite_limits.ExactLimitsTests.test_memory_extension_for_new_actions) ... ok\ntest_scalar_minimax_and_explicit_decoder (test_finite_limits.ExactLimitsTests.test_scalar_minimax_and_explicit_decoder) ... ok\ntest_semantic_self_knowledge_is_not_diagonal_prediction (test_finite_limits.ExactLimitsTests.test_semantic_self_knowledge_is_not_diagonal_prediction) ... ok\ntest_sound_but_nonoptimal_tree_is_rejected (test_finite_limits.ExactLimitsTests.test_sound_but_nonoptimal_tree_is_rejected) ... ok\ntest_tolerance_changes_the_declared_task (test_finite_limits.ExactLimitsTests.test_tolerance_changes_the_declared_task) ... ok\ntest_tree_cost_wrong_leaf_and_missing_outcome_are_rejected (test_finite_limits.ExactLimitsTests.test_tree_cost_wrong_leaf_and_missing_outcome_are_rejected) ... ok\ntest_unavailable_discriminating_query_refuses (test_finite_limits.ExactLimitsTests.test_unavailable_discriminating_query_refuses) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.947s\n\nOK\n",
+  "evidence_scope": "Generic conditional Lean proofs and finite research checks; no live agent integration or model-performance claim."
+}
