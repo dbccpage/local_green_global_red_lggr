@@ -26,6 +26,8 @@ from .streaming import (
     StreamingAuditMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingPositiveExtensionMonitor,
+    StreamingTransportMonitor,
 )
 from .transport import verify_transport
 from .witnesses import (
@@ -159,6 +161,20 @@ def run_selftest() -> dict[str, Any]:
                 c_res["l1_repair_distance"] != Fraction(1)):
             raise RuntimeError("Cochain monitor cycle closure failed")
 
+        cm_tgt = StreamingCochainMonitor()
+        cm_tgt.add_edge("0", "1", 1, 1)
+        cm_tgt.add_edge("1", "2", 1, 1)
+        tm = StreamingTransportMonitor(cm, cm_tgt)
+        syn = tm.synthesize_chain_retraction([[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[1, 0, 0], [0, 1, 0]])
+        if syn["status"] != "NO_RETRACTION_EXISTS" or syn["audit"]["status"] != "LOSSY_PROJECTION_LGGR":
+            raise RuntimeError("Transport monitor retraction synthesis check failed")
+
+        pm = StreamingPositiveExtensionMonitor(scope_id="selftest")
+        pm.observe_target("s1", {"rep": 1}, 2)
+        p_step = pm.observe_target("s2", {"rep": 1}, 6)
+        if p_step["fiber_minimax_error_floor"] != "2" or p_step["fiber_midpoint_estimator"] != "4":
+            raise RuntimeError("Positive extension minimax monitor check failed")
+
         details["streaming"] = "PASS"
     except Exception as exc:
         details["streaming"] = f"FAIL: {exc}"
@@ -240,6 +256,27 @@ def _handle_stream(args: argparse.Namespace) -> tuple[dict[str, Any], bool]:
         }
         return summary, success
 
+    elif args.monitor == "minimax":
+        monitor_minimax = StreamingPositiveExtensionMonitor(scope_id=args.scope_id)
+        for ev in events:
+            fields(ev, {"state_id", "report", "target_value"})
+            step_res = monitor_minimax.observe_target(
+                ev["state_id"], ev["report"], ev["target_value"]
+            )
+            step_receipts.append(step_res)
+        final_receipt = monitor_minimax.get_receipt()
+        success = final_receipt["global_minimax_error_floor"] == "0"
+        summary = {
+            "schema": "lggr.stream.v1",
+            "authority_effect": "None",
+            "monitor": "minimax",
+            "status": "COMPOSABLE_LGGG" if success else "OBSTRUCTED_LGGR",
+            "events_processed": len(step_receipts),
+            "step_receipts": step_receipts,
+            "final_receipt": final_receipt,
+        }
+        return summary, success
+
     else:  # cochain
         monitor_cochain = StreamingCochainMonitor()
         for ev in events:
@@ -285,7 +322,7 @@ def main(argv: list[str] | None = None) -> int:
             sub.add_argument("--output", "-o", help="Write JSON to this path instead of stdout")
         elif name == "stream":
             sub.add_argument("input", nargs="?", default="-", help="Line-delimited JSON file, or '-' for stdin")
-            sub.add_argument("--monitor", "-m", choices=["fiber", "audit", "cochain"], required=True,
+            sub.add_argument("--monitor", "-m", choices=["fiber", "audit", "cochain", "minimax"], required=True,
                              help="Streaming monitor type")
             sub.add_argument("--scope-id", default="online-stream", help="Scope identifier for fiber monitor")
             sub.add_argument("--policy", help="Path to JSON BudgetPolicy for audit monitor")

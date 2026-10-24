@@ -410,4 +410,28 @@ theorem cross_branch_audit_splice_budget_breach :
   refine ⟨2, 2, 3, ?_⟩
   decide
 
+/-- Theorem 18 (`multi_stage_gluing_associativity_and_defect_bound`):
+    1. (Associativity of G2 Signed Delta & Multiplicative Local Acceptance):
+       Across three stages with signed deltas `(d1, d2, d3)` and local acceptance bits `(e1, e2, e3)`,
+       both `(d1 + d2) + d3 = d1 + (d2 + d3)` and `(e1 && e2) && e3 = e1 && (e2 && e3)` hold.
+    2. (Non-Associativity of Thresholded Budget Gluing):
+       For budget threshold `B = 2` and stage deltas `(2, 2, -2)`, grouping `d1 + (d2 + d3)` yields
+       intermediate sum `|2 + (-2)| = 0 ≤ 2` and total `|2 + 0| = 2 ≤ 2`, whereas the left-prefix
+       grouping `(d1 + d2) + d3` hits intermediate prefix `|2 + 2| = 4 > 2`. -/
+theorem multi_stage_gluing_associativity_and_defect_bound :
+    (∀ d1 d2 d3 : Int, (d1 + d2) + d3 = d1 + (d2 + d3)) ∧
+    (∀ e1 e2 e3 : Bool, ((e1 && e2) && e3) = (e1 && (e2 && e3))) ∧
+    (let B : Int := 2
+     let d1 : Int := 2
+     let d2 : Int := 2
+     let d3 : Int := -2
+     absInt (d2 + d3) ≤ B ∧
+     absInt (d1 + (d2 + d3)) ≤ B ∧
+     absInt (d1 + d2) > B) := by
+  refine ⟨?_, ?_, by decide⟩
+  · intro d1 d2 d3
+    omega
+  · intro e1 e2 e3
+    cases e1 <;> cases e2 <;> cases e3 <;> rfl
+
 end LggrVIII
