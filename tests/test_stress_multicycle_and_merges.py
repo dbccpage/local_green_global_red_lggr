@@ -45,6 +45,7 @@ from lggr.streaming import (
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
     StreamingRSIFiberCeilingMonitor,
+    StreamingReggeDeficitCurvatureMonitor,
     StreamingReplayOrderMonitor,
     StreamingSimplicialCupMonitor,
     StreamingSixRoleOverlayMonitor,
@@ -2053,6 +2054,58 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contextual_obstructed_model_ids"], ["specker_hollow_triangle"])
         self.assertEqual(receipt["signaling_obstructed_model_ids"], [])
         self.assertTrue(receipt["all_affine_marginal_recoveries_verified"])
+
+    def test_regge_deficit_curvature_and_discrete_gauss_bonnet(self) -> None:
+        """Verify 2D Regge hinge deficit curvature monitor separates conical apex NGD from flat 6-triangle stars."""
+        # 1. Conical 4-equilateral-triangle pyramid around interior apex 'v0' with boundary 'b1..b4'
+        #    Each equilateral triangle has angles (1/6, 1/6, 1/6) summing to 1/2 -> L = 1
+        #    Interior deficit at v0: 1 - 4*(1/6) = 1/3 != 0 -> E_g = 0, Delta_E = -1
+        #    Boundary turns at b1..b4: 1/2 - 2*(1/6) = 1/6 each -> Gauss-Bonnet sum = 1/3 + 4*(1/6) = 1 = chi
+        cone = StreamingReggeDeficitCurvatureMonitor(
+            interior_vertices=["v0"],
+            boundary_vertices=["b1", "b2", "b3", "b4"],
+            scope_id="regge-cone-test",
+        )
+        eq_angles = ["1/6", "1/6", "1/6"]
+        cone.record_triangle("t1", ["v0", "b1", "b2"], eq_angles)
+        cone.record_triangle("t2", ["v0", "b2", "b3"], eq_angles)
+        cone.record_triangle("t3", ["v0", "b3", "b4"], eq_angles)
+        cone.record_triangle("t4", ["v0", "b4", "b1"], eq_angles)
+
+        r_cone = cone.get_receipt()
+        self.assertEqual(r_cone["schema"], "lggr.online_regge_deficit_curvature.v1")
+        self.assertEqual(r_cone["status"], "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR")
+        self.assertEqual(r_cone["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_cone["euler_characteristic"], 1)
+        self.assertEqual(r_cone["interior_deficits"], {"v0": "1/3"})
+        self.assertEqual(r_cone["sum_boundary_turn"], "2/3")
+        self.assertEqual(r_cone["total_gauss_bonnet_curvature"], "1")
+        self.assertEqual(r_cone["local_product_aggregator"], 1)
+        self.assertEqual(r_cone["global_flatness_evaluator"], 0)
+        self.assertEqual(r_cone["evaluator_defect"], -1)
+        self.assertTrue(r_cone["angle_balance_identity_verified"])
+        self.assertTrue(r_cone["gauss_bonnet_euler_identity_verified"])
+
+        # 2. Flat 6-equilateral-triangle hexagonal wheel around interior vertex 'v0' with boundary 'b1..b6'
+        #    Interior deficit at v0: 1 - 6*(1/6) = 0 -> E_g = 1, Delta_E = 0
+        #    Boundary turns at b1..b6: 1/2 - 2*(1/6) = 1/6 each -> Gauss-Bonnet sum = 0 + 6*(1/6) = 1 = chi
+        flat = StreamingReggeDeficitCurvatureMonitor(
+            interior_vertices=["v0"],
+            boundary_vertices=["b1", "b2", "b3", "b4", "b5", "b6"],
+            scope_id="regge-flat-test",
+        )
+        for i in range(6):
+            u = f"b{i + 1}"
+            w = f"b{((i + 1) % 6) + 1}"
+            flat.record_triangle(f"hex_{i + 1}", ["v0", u, w], eq_angles)
+
+        r_flat = flat.get_receipt()
+        self.assertEqual(r_flat["status"], "FLAT_EUCLIDEAN_LATTICE_LGGG")
+        self.assertEqual(r_flat["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_flat["interior_deficits"], {"v0": "0"})
+        self.assertEqual(r_flat["total_gauss_bonnet_curvature"], "1")
+        self.assertEqual(r_flat["evaluator_defect"], 0)
+        self.assertTrue(r_flat["gauss_bonnet_euler_identity_verified"])
 
 
 if __name__ == "__main__":

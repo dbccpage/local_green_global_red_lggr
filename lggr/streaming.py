@@ -6258,6 +6258,177 @@ class StreamingContextualSheafMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingReggeDeficitCurvatureMonitor:
+    """Online 2D piecewise-flat Regge hinge deficit curvature and Gauss-Bonnet monitor.
+
+    Audits a 2D triangulation K = (V, E, F) with interior vertices V_int, boundary
+    vertices V_bnd, and normalized turn-angle assignments theta_{v, f} in Q_{>0}
+    (where 1 full turn = 1 and 1 Euclidean triangle angle sum = 1/2):
+      - Evaluates each triangle f = (v_0, v_1, v_2) locally for Euclidean closure:
+          E_tri(f) = 1[theta_{v_0, f} + theta_{v_1, f} + theta_{v_2, f} == 1/2],
+          L = prod_{f in F} E_tri(f).
+      - Computes interior hinge deficit curvature at each v in V_int:
+          eps_v = 1 - sum_{f ni v} theta_{v, f}
+        and boundary geodesic turn at each v in V_bnd:
+          kappa_v = 1/2 - sum_{f ni v} theta_{v, f}.
+      - Evaluates global interior flatness:
+          E_g = 1[L == 1 and all(eps_v == 0 for v in V_int)].
+      - Verifies the discrete Gauss-Bonnet angle-deficit identity:
+          sum_{v in V_int} eps_v + sum_{v in V_bnd} kappa_v == |V_int| + (1/2)|V_bnd| - sum_{f, v} theta_{v, f}
+        and when 2|E| == 3|F| + |V_bnd| and all triangles close (sum_v theta_{v, f} == 1/2),
+        verifies equality with the Euler characteristic chi(K) = |V| - |E| + |F|.
+      - Separates:
+          * FLAT_EUCLIDEAN_LATTICE_LGGG (L == 1 and E_g == 1),
+          * REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR (L == 1 and E_g == 0, Delta_E = -1),
+          * LOCAL_TRIANGLE_CLOSURE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        interior_vertices: Iterable[str],
+        boundary_vertices: Iterable[str] = (),
+        *,
+        scope_id: str = "streaming-regge-deficit-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        int_v = [text(v, "interior_vertex") for v in sequence(interior_vertices, "interior_vertices")]
+        bnd_v = [text(v, "boundary_vertex") for v in sequence(boundary_vertices, "boundary_vertices")]
+        if not int_v and not bnd_v:
+            raise ValidationError("At least one vertex must be declared")
+        if set(int_v) & set(bnd_v):
+            raise ValidationError("interior_vertices and boundary_vertices must be disjoint")
+
+        self.interior_vertices = sorted(set(int_v))
+        self.boundary_vertices = sorted(set(bnd_v))
+        self.all_vertices = set(self.interior_vertices) | set(self.boundary_vertices)
+        self.vertex_angle_sums: dict[str, Fraction] = {v: Fraction(0) for v in self.all_vertices}
+        self.edges: set[tuple[str, str]] = set()
+        self.triangles: list[dict[str, Any]] = []
+
+    def record_triangle(
+        self,
+        triangle_id: str,
+        vertices: Iterable[str],
+        angles: Iterable[Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Record a triangle with 3 vertices and 3 normalized turn angles."""
+        tid = text(triangle_id, "triangle_id")
+        v_list = [text(v, "vertex") for v in sequence(vertices, "vertices")]
+        if len(v_list) != 3 or len(set(v_list)) != 3:
+            raise ValidationError("Each triangle must have exactly 3 distinct vertices")
+        for v in v_list:
+            if v not in self.all_vertices:
+                raise ValidationError(f"Triangle vertex {v!r} was not declared in monitor")
+
+        ang_vec = vector(angles, "angles", 3)
+        if any(a <= 0 for a in ang_vec):
+            raise ValidationError("Triangle interior angles must be strictly positive")
+
+        for i in range(3):
+            u, w = sorted((v_list[i], v_list[(i + 1) % 3]))
+            self.edges.add((u, w))
+            self.vertex_angle_sums[v_list[i]] += ang_vec[i]
+
+        ang_sum = sum(ang_vec, Fraction(0))
+        local_flat_ok = 1 if ang_sum == Fraction(1, 2) else 0
+
+        rec = {
+            "triangle_index": len(self.triangles),
+            "triangle_id": tid,
+            "vertices": v_list,
+            "angles": list(ang_vec),
+            "angle_sum": ang_sum,
+            "local_euclidean_closure": local_flat_ok,
+        }
+        self.triangles.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed Regge hinge deficit curvature and Gauss-Bonnet audit receipt."""
+        if not self.triangles:
+            raise ValidationError("At least one triangle must be recorded before emitting a receipt")
+
+        local_product = 1
+        total_angle_sum = Fraction(0)
+        for tri in self.triangles:
+            local_product *= tri["local_euclidean_closure"]
+            total_angle_sum += tri["angle_sum"]
+
+        interior_deficits: dict[str, Fraction] = {}
+        curved_interior_hinges: list[str] = []
+        sum_interior_deficit = Fraction(0)
+        for v in self.interior_vertices:
+            eps_v = Fraction(1) - self.vertex_angle_sums[v]
+            interior_deficits[v] = eps_v
+            sum_interior_deficit += eps_v
+            if eps_v != Fraction(0):
+                curved_interior_hinges.append(v)
+
+        boundary_turns: dict[str, Fraction] = {}
+        sum_boundary_turn = Fraction(0)
+        for v in self.boundary_vertices:
+            kap_v = Fraction(1, 2) - self.vertex_angle_sums[v]
+            boundary_turns[v] = kap_v
+            sum_boundary_turn += kap_v
+
+        total_gauss_bonnet_curvature = sum_interior_deficit + sum_boundary_turn
+        expected_angle_balance = (
+            Fraction(len(self.interior_vertices))
+            + Fraction(len(self.boundary_vertices), 2)
+            - total_angle_sum
+        )
+        angle_balance_identity_ok = total_gauss_bonnet_curvature == expected_angle_balance
+
+        v_count = len(self.all_vertices)
+        e_count = len(self.edges)
+        f_count = len(self.triangles)
+        euler_characteristic = v_count - e_count + f_count
+        manifold_edge_incidence = (2 * e_count) == (3 * f_count + len(self.boundary_vertices))
+        gauss_bonnet_equals_euler = (
+            not (local_product == 1 and manifold_edge_incidence)
+            or (total_gauss_bonnet_curvature == Fraction(euler_characteristic))
+        )
+
+        global_flat = 1 if (local_product == 1 and len(curved_interior_hinges) == 0) else 0
+        defect = global_flat - local_product
+
+        if local_product == 1 and global_flat == 1:
+            status = "FLAT_EUCLIDEAN_LATTICE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_flat == 0:
+            status = "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_TRIANGLE_CLOSURE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_regge_deficit_curvature.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "vertex_count": v_count,
+            "edge_count": e_count,
+            "triangle_count": f_count,
+            "euler_characteristic": euler_characteristic,
+            "interior_deficits": interior_deficits,
+            "boundary_geodesic_turns": boundary_turns,
+            "curved_interior_hinge_ids": curved_interior_hinges,
+            "sum_interior_deficit": sum_interior_deficit,
+            "sum_boundary_turn": sum_boundary_turn,
+            "total_gauss_bonnet_curvature": total_gauss_bonnet_curvature,
+            "local_product_aggregator": local_product,
+            "global_flatness_evaluator": global_flat,
+            "evaluator_defect": defect,
+            "angle_balance_identity_verified": angle_balance_identity_ok,
+            "gauss_bonnet_euler_identity_verified": gauss_bonnet_equals_euler,
+            "triangles": self.triangles,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
