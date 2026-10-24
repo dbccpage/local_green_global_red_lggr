@@ -62,3 +62,4 @@ import LggrVIII
 #print axioms LggrVIII.dfa_concatenation_state_mismatch_obstruction
 #print axioms LggrVIII.catalyst_residual_accumulation_and_cycle_ceiling
 #print axioms LggrVIII.hodge_laplacian_energy_sum_of_squares_kernel
+#print axioms LggrVIII.pairwise_compatible_three_cycle_contextual_obstruction

@@ -6070,6 +6070,195 @@ class StreamingDiscreteCurvatureMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingContextualSheafMonitor:
+    """Online 3-cycle empirical presheaf marginal-compatibility and global section monitor.
+
+    Audits 3-variable hollow-triangle empirical models over contexts
+    C_AB = {A, B}, C_BC = {B, C}, C_CA = {C, A} with binary outcomes {0, 1}^2:
+      - Each context table specifies (p_00, p_01, p_10, p_11) in Q_{>=0}^4 with sum == 1.
+      - Verifies pairwise single-variable marginal compatibility (no-signaling / presheaf
+        restriction agreement):
+          p_AB^A(1) == p_CA^A(1),   p_AB^B(1) == p_BC^B(1),   p_BC^C(1) == p_CA^C(1).
+      - Solves the exact 1-parameter affine family d_alpha(a, b, c) parameterized by
+        alpha = d(1, 1, 1) in Q:
+          alpha_min = max(0, q_AB + q_CA - p_A, q_AB + q_BC - p_B, q_BC + q_CA - p_C),
+          alpha_max = min(q_AB, q_BC, q_CA, 1 - p_A - p_B - p_C + q_AB + q_BC + q_CA).
+      - A nonnegative global joint distribution d >= 0 on {0, 1}^3 exists iff
+        pairwise marginals agree and alpha_min <= alpha_max.
+      - Separates:
+          * GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG (no-signaling and alpha_min <= alpha_max),
+          * CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR (no-signaling holds on all
+            single-variable overlaps, yet alpha_min > alpha_max blocks global gluing),
+          * SIGNALING_MARGINAL_MISMATCH_LGGR (single-variable overlap marginals disagree).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-contextual-sheaf-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.models: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _parse_context_table(table: Any, name: str) -> tuple[Fraction, Fraction, Fraction, Fraction]:
+        vals = vector(table, name, 4)
+        if any(v < 0 for v in vals):
+            raise ValidationError(f"{name} probabilities must be non-negative")
+        if sum(vals, Fraction(0)) != Fraction(1):
+            raise ValidationError(f"{name} probabilities must sum to 1")
+        return vals[0], vals[1], vals[2], vals[3]
+
+    def record_three_cycle_model(
+        self,
+        model_id: str,
+        table_ab: Iterable[Fraction | int | str],
+        table_bc: Iterable[Fraction | int | str],
+        table_ca: Iterable[Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Audit a 3-cycle empirical model (p_AB, p_BC, p_CA) for marginal compatibility and global section existence."""
+        mid = text(model_id, "model_id")
+        ab00, ab01, ab10, ab11 = self._parse_context_table(table_ab, "table_ab")
+        bc00, bc01, bc10, bc11 = self._parse_context_table(table_bc, "table_bc")
+        ca00, ca01, ca10, ca11 = self._parse_context_table(table_ca, "table_ca")
+
+        # Single-variable marginals for outcome 1
+        p_a_from_ab = ab10 + ab11
+        p_a_from_ca = ca01 + ca11
+        p_b_from_ab = ab01 + ab11
+        p_b_from_bc = bc10 + bc11
+        p_c_from_bc = bc01 + bc11
+        p_c_from_ca = ca10 + ca11
+
+        no_signaling_ok = (
+            p_a_from_ab == p_a_from_ca
+            and p_b_from_ab == p_b_from_bc
+            and p_c_from_bc == p_c_from_ca
+        )
+
+        p_a = p_a_from_ab
+        p_b = p_b_from_bc
+        p_c = p_c_from_ca
+        q_ab, q_bc, q_ca = ab11, bc11, ca11
+
+        alpha_min = max(
+            Fraction(0),
+            q_ab + q_ca - p_a,
+            q_ab + q_bc - p_b,
+            q_bc + q_ca - p_c,
+        )
+        d000_plus_d111 = Fraction(1) - p_a - p_b - p_c + q_ab + q_bc + q_ca
+        alpha_max = min(q_ab, q_bc, q_ca, d000_plus_d111)
+
+        interval_gap = max(Fraction(0), alpha_min - alpha_max)
+        global_section_exists = no_signaling_ok and (alpha_min <= alpha_max)
+
+        witness_joint: dict[str, Fraction] | None = None
+        marginal_recovery_verified = False
+        if no_signaling_ok:
+            alpha = (alpha_min + alpha_max) / Fraction(2)
+            d111 = alpha
+            d110 = q_ab - alpha
+            d011 = q_bc - alpha
+            d101 = q_ca - alpha
+            d100 = p_a - q_ab - q_ca + alpha
+            d010 = p_b - q_ab - q_bc + alpha
+            d001 = p_c - q_bc - q_ca + alpha
+            d000 = d000_plus_d111 - alpha
+            marginal_recovery_verified = (
+                (d000 + d001 == ab00)
+                and (d010 + d011 == ab01)
+                and (d100 + d101 == ab10)
+                and (d110 + d111 == ab11)
+                and (d000 + d100 == bc00)
+                and (d001 + d101 == bc01)
+                and (d010 + d110 == bc10)
+                and (d011 + d111 == bc11)
+                and (d000 + d010 == ca00)
+                and (d100 + d110 == ca01)
+                and (d001 + d011 == ca10)
+                and (d101 + d111 == ca11)
+            )
+            if global_section_exists:
+                witness_joint = {
+                    "000": d000,
+                    "001": d001,
+                    "010": d010,
+                    "011": d011,
+                    "100": d100,
+                    "101": d101,
+                    "110": d110,
+                    "111": d111,
+                }
+
+        if not no_signaling_ok:
+            classification = "SIGNALING_MARGINAL_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not global_section_exists:
+            classification = "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            classification = "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        rec = {
+            "model_id": mid,
+            "no_signaling_verified": no_signaling_ok,
+            "marginals_one": {"A": p_a, "B": p_b, "C": p_c},
+            "joint_ones": {"AB": q_ab, "BC": q_bc, "CA": q_ca},
+            "d000_plus_d111_invariant": d000_plus_d111,
+            "alpha_min": alpha_min,
+            "alpha_max": alpha_max,
+            "infeasibility_gap": interval_gap,
+            "global_section_exists": global_section_exists,
+            "witness_global_joint": witness_joint,
+            "affine_marginal_recovery_verified": marginal_recovery_verified,
+            "classification": classification,
+            "contract_status": contract_status,
+        }
+        self.models.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed 3-cycle contextual presheaf audit receipt."""
+        if not self.models:
+            raise ValidationError("At least one 3-cycle empirical model must be recorded before emitting a receipt")
+
+        contextual_ids = [
+            m["model_id"]
+            for m in self.models
+            if m["classification"] == "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR"
+        ]
+        signaling_ids = [
+            m["model_id"]
+            for m in self.models
+            if m["classification"] == "SIGNALING_MARGINAL_MISMATCH_LGGR"
+        ]
+        all_affine_ok = all(
+            m["affine_marginal_recovery_verified"]
+            for m in self.models
+            if m["no_signaling_verified"]
+        )
+
+        if contextual_ids or signaling_ids:
+            status = "PRESHEAF_SECTION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PRESHEAF_SECTION_EXTENSIBLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_contextual_sheaf.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "model_count": len(self.models),
+            "contextual_obstructed_model_ids": sorted(contextual_ids),
+            "signaling_obstructed_model_ids": sorted(signaling_ids),
+            "all_affine_marginal_recoveries_verified": all_affine_ok,
+            "models": self.models,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

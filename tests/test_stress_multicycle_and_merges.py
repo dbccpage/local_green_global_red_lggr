@@ -31,6 +31,7 @@ from lggr.streaming import (
     StreamingCatalystDegradationMonitor,
     StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
+    StreamingContextualSheafMonitor,
     StreamingDFAGrammarGluingMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDefectSoundnessMonitor,
@@ -2015,6 +2016,43 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertTrue(receipt["all_dirichlet_energy_identities_verified"])
         self.assertTrue(receipt["all_operator_orthogonalities_verified"])
         self.assertTrue(receipt["all_kernel_equivalences_verified"])
+
+    def test_contextual_sheaf_three_cycle_presheaf_obstruction_vs_global_section(self) -> None:
+        """Verify 3-cycle empirical presheaf monitor separates Specker hollow-triangle contextuality from global joint sections."""
+        mon = StreamingContextualSheafMonitor(scope_id="contextual-sheaf-test")
+
+        # 1. Specker / anti-correlated 3-cycle: p_XY = (0, 1/2, 1/2, 0) on AB, BC, CA
+        #    Pairwise marginals all equal 1/2 (no-signaling), yet d000 + d111 = -1/2 < 0 -> no global section!
+        anti = ["0", "1/2", "1/2", "0"]
+        r_ctx = mon.record_three_cycle_model("specker_hollow_triangle", anti, anti, anti)
+        self.assertEqual(r_ctx["classification"], "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR")
+        self.assertEqual(r_ctx["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(r_ctx["no_signaling_verified"])
+        self.assertEqual(r_ctx["d000_plus_d111_invariant"], "-1/2")
+        self.assertEqual(r_ctx["alpha_min"], "0")
+        self.assertEqual(r_ctx["alpha_max"], "-1/2")
+        self.assertEqual(r_ctx["infeasibility_gap"], "1/2")
+        self.assertFalse(r_ctx["global_section_exists"])
+        self.assertIsNone(r_ctx["witness_global_joint"])
+        self.assertTrue(r_ctx["affine_marginal_recovery_verified"])
+
+        # 2. Positively correlated 3-cycle: p_XY = (1/2, 0, 0, 1/2) on AB, BC, CA -> global GHZ-like mixture 1/2|000> + 1/2|111>
+        corr = ["1/2", "0", "0", "1/2"]
+        r_ok = mon.record_three_cycle_model("correlated_global_section", corr, corr, corr)
+        self.assertEqual(r_ok["classification"], "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(r_ok["no_signaling_verified"])
+        self.assertTrue(r_ok["global_section_exists"])
+        self.assertEqual(r_ok["witness_global_joint"]["000"], "1/2")
+        self.assertEqual(r_ok["witness_global_joint"]["111"], "1/2")
+        self.assertTrue(r_ok["affine_marginal_recovery_verified"])
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_contextual_sheaf.v1")
+        self.assertEqual(receipt["status"], "PRESHEAF_SECTION_OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["contextual_obstructed_model_ids"], ["specker_hollow_triangle"])
+        self.assertEqual(receipt["signaling_obstructed_model_ids"], [])
+        self.assertTrue(receipt["all_affine_marginal_recoveries_verified"])
 
 
 if __name__ == "__main__":
