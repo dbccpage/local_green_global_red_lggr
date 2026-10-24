@@ -55,3 +55,4 @@ import LggrVIII
 #print axioms LggrVIII.quorum_threshold_vs_product_defect_separation
 #print axioms LggrVIII.kraus_trace_preservation_and_blindspot_residual
 #print axioms LggrVIII.sliding_window_green_vs_horizon_drift_breach
+#print axioms LggrVIII.arrival_order_endpoint_invariance_vs_prefix_divergence

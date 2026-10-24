@@ -1039,4 +1039,30 @@ theorem sliding_window_green_vs_horizon_drift_breach
      wSum ≤ bWin ∧ hSum = 4 ∧ hSum > bGlob) := by
   refine ⟨⟨by omega, by omega⟩, ⟨by decide, by decide, by decide⟩⟩
 
+/-- Theorem 39 (`arrival_order_endpoint_invariance_vs_prefix_divergence`):
+    Formalizes the LGGR VIII Commutative Endpoint Invariance vs. Non-Commutative
+    Prefix Excursion Law across Reordered Asynchronous Step Arrivals:
+    1. (Commutative Endpoint Invariance over Permutations): For any 3-step integer
+       deltas `d1, d2, d3`, permuting arrival order preserves the endpoint sum:
+       `d1 + d2 + d3 = d2 + d1 + d3` and `d1 + d2 + d3 = d3 + d2 + d1`.
+    2. (Arrival-Order Masked Causal Prefix Breach): For the 2-step causal sequence
+       `(3, -2)` under prefix budget `bPref = 2`:
+       - In causal order `(3, -2)`, the first prefix is `3 > 2` (breaches `bPref`)
+         while the endpoint sum is `3 + (-2) = 1 ≤ 2`.
+       - In reordered arrival sequence `(-2, 3)` (credit arrives before spike),
+         both prefixes satisfy `-2 ≤ 2` and `(-2) + 3 = 1 ≤ 2`, with identical
+         endpoint `(-2) + 3 = 3 + (-2)`. -/
+theorem arrival_order_endpoint_invariance_vs_prefix_divergence
+    (d1 d2 d3 : Int) :
+    (d1 + d2 + d3 = d2 + d1 + d3 ∧ d1 + d2 + d3 = d3 + d2 + d1) ∧
+    (let bPref := (2 : Int);
+     let causP1 := (3 : Int);
+     let causP2 := (3 : Int) + (-2);
+     let arrP1 := (-2 : Int);
+     let arrP2 := (-2 : Int) + 3;
+     causP1 > bPref ∧ causP2 ≤ bPref ∧
+     arrP1 ≤ bPref ∧ arrP2 ≤ bPref ∧
+     causP2 = arrP2) := by
+  refine ⟨⟨by omega, by omega⟩, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩
+
 end LggrVIII

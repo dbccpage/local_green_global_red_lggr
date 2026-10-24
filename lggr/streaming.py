@@ -4965,6 +4965,137 @@ class StreamingWindowedDriftMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingReplayOrderMonitor:
+    """Online LGGR VIII permutation-sensitive prefix budget vs. commutative endpoint monitor.
+
+    Audits reordered asynchronous step arrivals (event_id, delta_value, causal_index) under a
+    prefix budget B_prefix >= 0:
+      - Verifies commutative endpoint invariance across arrival order, causal order, and
+        worst/best permutations:
+          sum_{t=1}^N d_{arrival(t)} == sum_{t=1}^N d_{causal(t)} == sum_{t=1}^N d_{pi_max(t)}.
+      - Verifies that the positive-first permutation pi_max attains the exact positive-mass
+        prefix ceiling:
+          max_{0 <= k <= N} sum_{t=1}^k d_{pi_max(t)} == sum_{i : d_i > 0} d_i.
+      - Separates:
+          1. CAUSAL_AND_ARRIVAL_PREFIX_BREACH (OBSTRUCTED_LGGR): both arrival and causal orders
+             exceed B_prefix.
+          2. ARRIVAL_MASKED_CAUSAL_BREACH_LGGR (OBSTRUCTED_LGGR): arrival order stays within
+             B_prefix (because negative credits arrived ahead of positive spikes), while the
+             causal order exceeds B_prefix.
+          3. REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR (OBSTRUCTED_LGGR): causal order stays within
+             B_prefix while arrival order or worst-case permutation pi_max exceeds B_prefix.
+          4. PERMUTATION_ROBUST_PREFIX_LGGG (COMPOSABLE_LGGG): sum_{d_i > 0} d_i <= B_prefix,
+             so every arrival permutation stays within B_prefix.
+    """
+
+    def __init__(
+        self,
+        prefix_budget: Fraction | int | str,
+        *,
+        scope_id: str = "streaming-replay-order-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        bp = rational(prefix_budget)
+        if bp < Fraction(0):
+            raise ValidationError("prefix_budget must be >= 0")
+        self.prefix_budget = bp
+        self.events: list[dict[str, Any]] = []
+
+    def register_event(
+        self,
+        event_id: str,
+        delta_value: Fraction | int | str,
+        *,
+        causal_index: int,
+    ) -> dict[str, Any]:
+        """Record an asynchronous event with its arrival position and causal index."""
+        eid = text(event_id, "event_id")
+        if any(e["event_id"] == eid for e in self.events):
+            raise ValidationError(f"Duplicate event_id: {eid}")
+        c_idx = exact_int(causal_index, "causal_index")
+        d_val = rational(delta_value)
+
+        self.events.append(
+            {
+                "event_id": eid,
+                "arrival_index": len(self.events),
+                "causal_index": c_idx,
+                "delta_value": d_val,
+            }
+        )
+        return self.get_receipt()
+
+    @staticmethod
+    def _prefix_profile(deltas: list[Fraction]) -> tuple[Fraction, Fraction, list[Fraction]]:
+        running = Fraction(0)
+        max_pref = Fraction(0)
+        prefs: list[Fraction] = []
+        for d in deltas:
+            running += d
+            prefs.append(running)
+            if running > max_pref:
+                max_pref = running
+        return running, max_pref, prefs
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit replay-order audit receipt comparing arrival, causal, and extremal permutations."""
+        arrival_deltas = [e["delta_value"] for e in self.events]
+        causal_events = sorted(self.events, key=lambda e: (e["causal_index"], e["arrival_index"]))
+        causal_deltas = [e["delta_value"] for e in causal_events]
+        worst_deltas = sorted(arrival_deltas, reverse=True)
+        best_deltas = sorted(arrival_deltas)
+
+        end_arr, max_arr, _ = self._prefix_profile(arrival_deltas)
+        end_caus, max_caus, _ = self._prefix_profile(causal_deltas)
+        end_worst, max_worst, _ = self._prefix_profile(worst_deltas)
+        end_best, max_best, _ = self._prefix_profile(best_deltas)
+
+        pos_sum = sum((d for d in arrival_deltas if d > Fraction(0)), Fraction(0))
+        endpoint_invariance_ok = (end_arr == end_caus == end_worst == end_best)
+        worst_perm_identity_ok = (max_worst == pos_sum)
+
+        arr_breach = max_arr > self.prefix_budget
+        caus_breach = max_caus > self.prefix_budget
+        worst_breach = max_worst > self.prefix_budget
+
+        if arr_breach and caus_breach:
+            status = "CAUSAL_AND_ARRIVAL_PREFIX_BREACH"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif caus_breach and not arr_breach:
+            status = "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif arr_breach or worst_breach:
+            status = "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PERMUTATION_ROBUST_PREFIX_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_replay_order.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "prefix_budget": self.prefix_budget,
+            "observed_events_count": len(self.events),
+            "common_endpoint_sum": end_arr,
+            "arrival_max_prefix": max_arr,
+            "causal_max_prefix": max_caus,
+            "worst_permutation_max_prefix": max_worst,
+            "best_permutation_max_prefix": max_best,
+            "positive_delta_mass": pos_sum,
+            "arrival_within_budget": not arr_breach,
+            "causal_within_budget": not caus_breach,
+            "arrival_masked_causal_breach": (caus_breach and not arr_breach),
+            "prefix_order_diverged": (max_arr != max_caus),
+            "endpoint_permutation_invariance_verified": endpoint_invariance_ok,
+            "positive_sum_equals_worst_permutation_max_verified": worst_perm_identity_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
