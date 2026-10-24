@@ -71,3 +71,4 @@ import LggrVIII
 #print axioms LggrVIII.mermin_peres_magic_square_parity_obstruction
 #print axioms LggrVIII.side_information_channel_capacity_and_fiber_error_floor
 #print axioms LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture
+#print axioms LggrVIII.closed_loop_receipt_feedback_repair_convergence_vs_uninformed_retry
