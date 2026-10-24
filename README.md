@@ -8,6 +8,16 @@
 
 This is a standalone, tested adapter. It does **not** modify the Omega Engine or finite-QM repositories, execute a hosted model, authenticate an owner, or authorize a merge. The source report and companion papers supply the mathematical formulations; this package implements scoped checks on explicit finite data.
 
+## Wiring a harness
+
+If you are adding these checks to your own agent loop or swarm, start with [`learn/README.md`](learn/README.md). Ten lessons show which object is the report, which is the query, and which extra generation cannot shrink a fiber. From the repository root:
+
+```console
+python learn/check.py
+```
+
+**AuthorityEffect: None.** The course calls the monitors in this package. It does not admit an authority.
+
 ## Foundational Context: LGGR Series & Positive-Extension / Projection Residuals
 
 This repository synthesizes executable finite verification rules from two related lines of work:

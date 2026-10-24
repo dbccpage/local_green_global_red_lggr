@@ -1,0 +1,7 @@
+{
+  "bound": 1,
+  "allowed_states": [0, 1, 2],
+  "max_step": 1,
+  "obstruction": [0, 1, 2],
+  "round_trip": [0, 1, 2, 1]
+}

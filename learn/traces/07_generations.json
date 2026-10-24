@@ -1,0 +1,19 @@
+{
+  "scope_id": "learn-07-fiber-ceiling",
+  "states": [
+    {
+      "state_id": "h0",
+      "coarse_report": {"channel": "summary"},
+      "target": "0",
+      "refined_report": {"channel": "summary", "bit": 0}
+    },
+    {
+      "state_id": "h1",
+      "coarse_report": {"channel": "summary"},
+      "target": "1",
+      "refined_report": {"channel": "summary", "bit": 1}
+    }
+  ],
+  "coarse_predictions": ["0", "1/2", "1"],
+  "refined_predictions": {"0": "0", "1": "1"}
+}
