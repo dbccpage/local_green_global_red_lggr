@@ -2765,3 +2765,270 @@ class StreamingGramProbeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingPathKernelMonitor:
+    """Online LGGR I / III evaluated path-kernel and two-channel residual monitor.
+
+    Records finite stage-1 path segments gamma_1 in Omega(a, b), stage-2 path
+    segments gamma_2 in Omega(b, c), and composite paths gamma = gamma_2 * gamma_1
+    in Omega(a, c) with rational weights and binary verdicts in {0, 1}.
+
+    Verifies:
+      - G1 boundary-slice bijection between compatible segment pairs and composites.
+      - Exact four-term two-channel expansion on every composite path (LGGR I Sec 4):
+          E_g w_g == E_1 E_2 w_1 w_2 + Delta_E w_1 w_2 + E_1 E_2 Delta_w + Delta_E Delta_w
+        where Delta_E = E_g - E_1 E_2 in {-1, 0, 1} and Delta_w = w_g - w_1 w_2.
+      - Exact evaluated partition-function discrepancy identity (LGGR I Thm 1 / Sec 4):
+          Z_E(c | a) - sum_{b in B} Z_{E_2}(c | b) Z_{E_1}(b | a) == R_E(c, a) + R_w(c, a).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-path-kernel-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.stage1_segments: dict[str, dict[str, Any]] = {}
+        self.stage2_segments: dict[str, dict[str, Any]] = {}
+        self.composites: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _binary_verdict(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def add_stage1_segment(
+        self,
+        segment_id: str,
+        source: str,
+        boundary: str,
+        weight: Fraction | int | str,
+        verdict: int | bool,
+    ) -> dict[str, Any]:
+        """Register a stage-1 trajectory gamma_1 : a -> b with weight w_1 >= 0 and verdict E_1 in {0,1}."""
+        sid = text(segment_id, "segment_id")
+        src = text(source, "source")
+        bnd = text(boundary, "boundary")
+        wt = rational(weight)
+        if wt < 0:
+            raise ValidationError("weight must be non-negative")
+        v1 = self._binary_verdict(verdict, "verdict")
+        if sid in self.stage1_segments:
+            raise ValidationError(f"Duplicate stage1 segment_id: {sid}")
+        rec = {
+            "segment_id": sid,
+            "source": src,
+            "boundary": bnd,
+            "weight": wt,
+            "verdict": v1,
+            "evaluated_weight": wt * Fraction(v1),
+        }
+        self.stage1_segments[sid] = rec
+        return json_value(rec)
+
+    def add_stage2_segment(
+        self,
+        segment_id: str,
+        boundary: str,
+        target: str,
+        weight: Fraction | int | str,
+        verdict: int | bool,
+    ) -> dict[str, Any]:
+        """Register a stage-2 trajectory gamma_2 : b -> c with weight w_2 >= 0 and verdict E_2 in {0,1}."""
+        sid = text(segment_id, "segment_id")
+        bnd = text(boundary, "boundary")
+        tgt = text(target, "target")
+        wt = rational(weight)
+        if wt < 0:
+            raise ValidationError("weight must be non-negative")
+        v2 = self._binary_verdict(verdict, "verdict")
+        if sid in self.stage2_segments:
+            raise ValidationError(f"Duplicate stage2 segment_id: {sid}")
+        rec = {
+            "segment_id": sid,
+            "boundary": bnd,
+            "target": tgt,
+            "weight": wt,
+            "verdict": v2,
+            "evaluated_weight": wt * Fraction(v2),
+        }
+        self.stage2_segments[sid] = rec
+        return json_value(rec)
+
+    def observe_composite(
+        self,
+        composite_id: str,
+        stage1_id: str,
+        stage2_id: str,
+        global_verdict: int | bool,
+        *,
+        global_weight: Fraction | int | str | None = None,
+    ) -> dict[str, Any]:
+        """Record a composite trajectory gamma_2 * gamma_1 and check two-channel expansion."""
+        cid = text(composite_id, "composite_id")
+        s1_id = text(stage1_id, "stage1_id")
+        s2_id = text(stage2_id, "stage2_id")
+        if cid in self.composites:
+            raise ValidationError(f"Duplicate composite_id: {cid}")
+        if s1_id not in self.stage1_segments:
+            raise ValidationError(f"Unknown stage1_id: {s1_id}")
+        if s2_id not in self.stage2_segments:
+            raise ValidationError(f"Unknown stage2_id: {s2_id}")
+
+        s1 = self.stage1_segments[s1_id]
+        s2 = self.stage2_segments[s2_id]
+        if s1["boundary"] != s2["boundary"]:
+            raise ValidationError(
+                f"Boundary mismatch between stage1 ({s1['boundary']}) and stage2 ({s2['boundary']})"
+            )
+
+        vg = self._binary_verdict(global_verdict, "global_verdict")
+        w1 = s1["weight"]
+        w2 = s2["weight"]
+        w_prod = w1 * w2
+        wg = rational(global_weight) if global_weight is not None else w_prod
+        if wg < 0:
+            raise ValidationError("global_weight must be non-negative")
+
+        e1 = s1["verdict"]
+        e2 = s2["verdict"]
+        local_prod = e1 * e2
+        delta_e = vg - local_prod
+        delta_w = wg - w_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[delta_e]
+
+        lhs = Fraction(vg) * wg
+        term_factored = Fraction(local_prod) * w_prod
+        term_eval_defect = Fraction(delta_e) * w_prod
+        term_weight_defect = Fraction(local_prod) * delta_w
+        term_cross_defect = Fraction(delta_e) * delta_w
+        rhs = term_factored + term_eval_defect + term_weight_defect + term_cross_defect
+
+        rec = {
+            "composite_id": cid,
+            "stage1_id": s1_id,
+            "stage2_id": s2_id,
+            "source": s1["source"],
+            "boundary": s1["boundary"],
+            "target": s2["target"],
+            "e1": e1,
+            "e2": e2,
+            "eg": vg,
+            "local_product": local_prod,
+            "delta_e": delta_e,
+            "classification": classification,
+            "w1": w1,
+            "w2": w2,
+            "w_product": w_prod,
+            "w_global": wg,
+            "delta_w": delta_w,
+            "evaluated_global_weight": lhs,
+            "two_channel_identity_verified": (lhs == rhs),
+        }
+        self.composites[cid] = rec
+        return json_value(rec)
+
+    def audit_kernel_composition(self, source: str, target: str) -> dict[str, Any]:
+        """Audit evaluated path-kernel composition Z_E(target | source) across intermediate boundaries."""
+        src = text(source, "source")
+        tgt = text(target, "target")
+
+        s1_list = [s for s in self.stage1_segments.values() if s["source"] == src]
+        s2_list = [s for s in self.stage2_segments.values() if s["target"] == tgt]
+        boundaries = sorted({s["boundary"] for s in s1_list} | {s["boundary"] for s in s2_list})
+
+        # Expected compatible pairs under G1
+        expected_pairs: set[tuple[str, str]] = set()
+        factored_kernel_sum = Fraction(0)
+        boundary_slice_kernels: list[dict[str, Any]] = []
+
+        for b in boundaries:
+            b_s1 = [s for s in s1_list if s["boundary"] == b]
+            b_s2 = [s for s in s2_list if s["boundary"] == b]
+            z1_b = sum((s["evaluated_weight"] for s in b_s1), Fraction(0))
+            z2_b = sum((s["evaluated_weight"] for s in b_s2), Fraction(0))
+            factored_kernel_sum += z2_b * z1_b
+            boundary_slice_kernels.append({
+                "boundary": b,
+                "z_stage1": z1_b,
+                "z_stage2": z2_b,
+                "slice_product": z2_b * z1_b,
+            })
+            for seg1 in b_s1:
+                for seg2 in b_s2:
+                    expected_pairs.add((seg1["segment_id"], seg2["segment_id"]))
+
+        comp_list = [
+            c for c in self.composites.values() if c["source"] == src and c["target"] == tgt
+        ]
+        observed_pairs_list = [(c["stage1_id"], c["stage2_id"]) for c in comp_list]
+        g1_bijection_holds = (
+            len(observed_pairs_list) == len(expected_pairs)
+            and set(observed_pairs_list) == expected_pairs
+        )
+
+        global_kernel_z = sum((c["evaluated_global_weight"] for c in comp_list), Fraction(0))
+        residual_re = sum((Fraction(c["delta_e"]) * c["w_product"] for c in comp_list), Fraction(0))
+        residual_rw = sum(
+            (
+                Fraction(c["local_product"]) * c["delta_w"]
+                + Fraction(c["delta_e"]) * c["delta_w"]
+                for c in comp_list
+            ),
+            Fraction(0),
+        )
+        abs_eval_disagreement = sum(
+            (abs(Fraction(c["delta_e"])) * c["w_product"] for c in comp_list),
+            Fraction(0),
+        )
+        abs_weight_disagreement = sum((abs(c["delta_w"]) for c in comp_list), Fraction(0))
+        ngd_count = sum(1 for c in comp_list if c["delta_e"] == -1)
+        pgd_count = sum(1 for c in comp_list if c["delta_e"] == 1)
+
+        discrepancy_lhs = global_kernel_z - factored_kernel_sum
+        discrepancy_rhs = residual_re + residual_rw
+        discrepancy_identity_verified = g1_bijection_holds and (discrepancy_lhs == discrepancy_rhs)
+        cancellation_masked = (
+            g1_bijection_holds
+            and discrepancy_lhs == 0
+            and (abs_eval_disagreement > 0 or abs_weight_disagreement > 0)
+        )
+
+        if not g1_bijection_holds:
+            status = "G1_BIJECTION_VIOLATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif cancellation_masked:
+            status = "CANCELLATION_MASKED_KERNEL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif ngd_count > 0 or residual_re < 0:
+            status = "NGD_KERNEL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif abs_eval_disagreement > 0 or abs_weight_disagreement > 0:
+            status = "POINTWISE_KERNEL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "KERNEL_COMPOSITION_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_path_kernel.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "source": src,
+            "target": tgt,
+            "status": status,
+            "contract_status": contract_status,
+            "g1_bijection_verified": g1_bijection_holds,
+            "global_evaluated_kernel": global_kernel_z,
+            "factored_boundary_kernel_sum": factored_kernel_sum,
+            "kernel_discrepancy": discrepancy_lhs,
+            "evaluator_residual_re": residual_re,
+            "weight_residual_rw": residual_rw,
+            "abs_evaluator_disagreement": abs_eval_disagreement,
+            "abs_weight_disagreement": abs_weight_disagreement,
+            "ngd_composites_count": ngd_count,
+            "pgd_composites_count": pgd_count,
+            "cancellation_masked": cancellation_masked,
+            "discrepancy_identity_verified": discrepancy_identity_verified,
+            "boundary_slice_kernels": boundary_slice_kernels,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+

@@ -29,6 +29,7 @@ from lggr.streaming import (
     StreamingCochainMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
+    StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingTransportMonitor,
@@ -1142,6 +1143,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_det["observation_qx"], ["1/4"])
         self.assertEqual(r_det["gram_response_hx"], ["1/4", "1/16"])
         self.assertEqual(r_det["sign_cube_recovered_hx"], ["1/4", "1/16"])
+
+    def test_path_kernel_composition_and_two_channel_discrepancy(self) -> None:
+        """Verify LGGR I / III evaluated path-kernel composition and two-channel residual decomposition."""
+        # 1. Exact G1-G3 composition across two boundary slices B1, B2
+        kmon_ok = StreamingPathKernelMonitor(scope_id="kernel-ok")
+        kmon_ok.add_stage1_segment("g1_b1", "A", "B1", Fraction(3, 2), 1)
+        kmon_ok.add_stage2_segment("g2_b1", "B1", "C", Fraction(2, 1), 1)
+        kmon_ok.add_stage1_segment("g1_b2", "A", "B2", Fraction(5, 2), 1)
+        kmon_ok.add_stage2_segment("g2_b2", "B2", "C", Fraction(4, 5), 1)
+        c1 = kmon_ok.observe_composite("comp_b1", "g1_b1", "g2_b1", 1)
+        c2 = kmon_ok.observe_composite("comp_b2", "g1_b2", "g2_b2", 1)
+        self.assertTrue(c1["two_channel_identity_verified"])
+        self.assertTrue(c2["two_channel_identity_verified"])
+
+        aud_ok = kmon_ok.audit_kernel_composition("A", "C")
+        self.assertEqual(aud_ok["status"], "KERNEL_COMPOSITION_VERIFIED")
+        self.assertEqual(aud_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(aud_ok["g1_bijection_verified"])
+        self.assertEqual(aud_ok["global_evaluated_kernel"], "5")
+        self.assertEqual(aud_ok["factored_boundary_kernel_sum"], "5")
+        self.assertEqual(aud_ok["kernel_discrepancy"], "0")
+        self.assertTrue(aud_ok["discrepancy_identity_verified"])
+
+        # 2. Two-channel NGD + weight defect: B1 has NGD (1,1,0) with w1*w2=3,
+        #    B2 has PGD (0,1,1) with w1*w2=2 and global_weight=7/2 (delta_w = 3/2)
+        kmon_def = StreamingPathKernelMonitor(scope_id="kernel-defect")
+        kmon_def.add_stage1_segment("s1_b1", "A", "B1", Fraction(3, 2), 1)
+        kmon_def.add_stage2_segment("s2_b1", "B1", "C", Fraction(2, 1), 1)
+        kmon_def.add_stage1_segment("s1_b2", "A", "B2", Fraction(2, 1), 0)
+        kmon_def.add_stage2_segment("s2_b2", "B2", "C", Fraction(1, 1), 1)
+        d1 = kmon_def.observe_composite("c_b1", "s1_b1", "s2_b1", 0, global_weight=Fraction(4, 1))
+        d2 = kmon_def.observe_composite("c_b2", "s1_b2", "s2_b2", 1, global_weight=Fraction(7, 2))
+        self.assertTrue(d1["two_channel_identity_verified"])
+        self.assertTrue(d2["two_channel_identity_verified"])
+
+        aud_def = kmon_def.audit_kernel_composition("A", "C")
+        self.assertEqual(aud_def["status"], "NGD_KERNEL_DEFECT_LGGR")
+        self.assertEqual(aud_def["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(aud_def["discrepancy_identity_verified"])
+        # Factored sum = 3 + 0 = 3; global Z = 0*4 + 1*(7/2) = 7/2 -> discrepancy = 1/2
+        # R_E = -1*3 + 1*2 = -1; R_w = (1*1 + (-1)*1) + (0*(3/2) + 1*(3/2)) = 3/2 -> R_E + R_w = 1/2
+        self.assertEqual(aud_def["kernel_discrepancy"], "1/2")
+        self.assertEqual(aud_def["evaluator_residual_re"], "-1")
+        self.assertEqual(aud_def["weight_residual_rw"], "3/2")
 
 
 if __name__ == "__main__":

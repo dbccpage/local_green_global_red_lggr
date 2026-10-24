@@ -700,4 +700,29 @@ theorem centered_gram_kernel_nullspace_obstruction {V : Type}
   · intro h
     rw [h]
 
+/-- Theorem 28 (`path_kernel_composition_discrepancy_identity`):
+    Formalizes the LGGR I / III Evaluated Path-Kernel Composition & Two-Channel
+    Residual Identity:
+    1. (Two-Channel Four-Term Expansion): For any local product `L`, global verdict `Eg`,
+       factored weight `wProd`, global weight `wg`, evaluator defect `dE = Eg - L`, and
+       weight defect `dw = wg - wProd`,
+       `Eg * wg = L * wProd + dE * wProd + L * dw + dE * dw`.
+    2. (Two-Slice Evaluated Kernel Discrepancy): Across two boundary slices `a` and `b`
+       with factored path weights `wa, wb` and defects `dEa = Ega - La`, `dEb = Egb - Lb`,
+       `(Ega * wa + Egb * wb) - (La * wa + Lb * wb) = dEa * wa + dEb * wb`. -/
+theorem path_kernel_composition_discrepancy_identity
+    (L Eg wProd wg Ega La wa Egb Lb wb : Int) :
+    (Eg * wg =
+      L * wProd + (Eg - L) * wProd + L * (wg - wProd) + (Eg - L) * (wg - wProd)) ∧
+    ((Ega * wa + Egb * wb) - (La * wa + Lb * wb) =
+      (Ega - La) * wa + (Egb - Lb) * wb) := by
+  have h1 : (Eg - L) * wProd = Eg * wProd - L * wProd := Int.sub_mul Eg L wProd
+  have h2 : L * (wg - wProd) = L * wg - L * wProd := Int.mul_sub L wg wProd
+  have h3 : (Eg - L) * (wg - wProd) = Eg * (wg - wProd) - L * (wg - wProd) :=
+    Int.sub_mul Eg L (wg - wProd)
+  have h4 : Eg * (wg - wProd) = Eg * wg - Eg * wProd := Int.mul_sub Eg wg wProd
+  have h5 : (Ega - La) * wa = Ega * wa - La * wa := Int.sub_mul Ega La wa
+  have h6 : (Egb - Lb) * wb = Egb * wb - Lb * wb := Int.sub_mul Egb Lb wb
+  exact ⟨by omega, by omega⟩
+
 end LggrVIII
