@@ -425,5 +425,63 @@ class TestHigherGenusLatencyAndPivots(unittest.TestCase):
         self.assertLess(elapsed_ms, 5000.0)
 
 
+class TestStreamingTwoCellCohomology(unittest.TestCase):
+    """Online 2-cell coboundary vs. first cohomology H^1 classification."""
+
+    def test_filled_triangle_closure_failure_vs_exact(self) -> None:
+        """Filled 2-cell detects local closure failure (D1 h != 0) vs exact coboundary."""
+        mon = StreamingCochainMonitor()
+        # Register 2-cell before all edges arrive -> PENDING_EDGES
+        r_pending = mon.add_two_cell(
+            "face_012",
+            [("V0", "V1", 1), ("V1", "V2", 1), ("V0", "V2", -1)],
+        )
+        self.assertEqual(r_pending["status"], "PENDING_EDGES")
+        self.assertFalse(r_pending["complete_edges"])
+
+        mon.add_edge("V0", "V1", "1/2")
+        mon.add_edge("V1", "V2", "1/2")
+        mon.add_edge("V0", "V2", "1/3")  # D1 h = 1/2 + 1/2 - 1/3 = 2/3 != 0
+
+        coh = mon.classify_streaming_cohomology()
+        self.assertEqual(coh["status"], "CLOSURE_FAILURE")
+        self.assertFalse(coh["repair_exists"])
+        self.assertFalse(coh["represents_nonzero_H1"])
+
+    def test_closed_nonexact_cohomology_around_unfilled_hole(self) -> None:
+        """Filled triangle (D1 h = 0) glued to unfilled loop (h not in im(D0)) -> CLOSED_NONEXACT."""
+        mon = StreamingCochainMonitor()
+        # Triangle (V0, V1, V2) has exact/closed values: h01 = 0, h12 = 0, h02 = 0
+        mon.add_edge("V0", "V1", 0)
+        mon.add_edge("V1", "V2", 0)
+        mon.add_edge("V0", "V2", 0)
+        # Unfilled loop (V0, V2, V3) has nonzero circulation: h23 = 1, h03 = 0
+        mon.add_edge("V2", "V3", 1)
+        mon.add_edge("V0", "V3", 0)
+
+        # Declare the filled 2-cell on Triangle (V0, V1, V2) ONLY; loop (V0, V2, V3) is unfilled
+        r_cell = mon.add_two_cell(
+            "filled_triangle_012",
+            [("V0", "V1", 1), ("V1", "V2", 1), ("V0", "V2", -1)],
+        )
+        self.assertEqual(r_cell["status"], "CELL_CLOSED")
+        self.assertEqual(r_cell["coboundary_value"], "0")
+
+        coh = mon.classify_streaming_cohomology()
+        self.assertEqual(coh["status"], "CLOSED_NONEXACT")
+        self.assertFalse(coh["repair_exists"])
+        self.assertTrue(coh["represents_nonzero_H1"])
+        self.assertEqual(coh["closure"], ["0"])
+
+    def test_invalid_two_cell_boundary_detected(self) -> None:
+        """Open path declared as a 2-cell boundary violates D1 D0 = 0 -> INVALID_COMPLEX."""
+        mon = StreamingCochainMonitor()
+        mon.add_edge("V0", "V1", 1)
+        mon.add_edge("V1", "V2", 1)
+        r_bad = mon.add_two_cell("open_path", [("V0", "V1", 1), ("V1", "V2", 1)])
+        self.assertEqual(r_bad["status"], "INVALID_COMPLEX")
+        self.assertEqual(mon.classify_streaming_cohomology()["status"], "INVALID_COMPLEX")
+
+
 if __name__ == "__main__":
     unittest.main()

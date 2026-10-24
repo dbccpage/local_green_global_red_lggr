@@ -23,7 +23,7 @@ from .common import (
     text,
 )
 from .descent import _scope
-from .linear import Vector, matrix, rational, solve_exact, vector, verify_l1_certificate
+from .linear import Vector, classify_cochain, matrix, rational, solve_exact, vector, verify_l1_certificate
 from .witnesses import BudgetPolicy, StateRef, StepWitness, local_accepts
 import itertools
 
@@ -507,6 +507,7 @@ class StreamingCochainMonitor:
         self.forest_edge_indices: list[int] = []
         self.adj_forest: dict[str, list[tuple[str, int, int]]] = {}
         self.cycles: list[dict[str, Any]] = []
+        self.two_cells: list[dict[str, Any]] = []
         self.status: str = "OPEN_TREE"
 
     def add_edge(self, u: str, v: str, value: Fraction | int | str,
@@ -1056,6 +1057,190 @@ class StreamingCochainMonitor:
             "status": self.get_receipt()["status"],
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+    def add_two_cell(
+        self,
+        cell_id: str,
+        boundary: Iterable[tuple[str, str, int] | dict[str, Any]],
+    ) -> dict[str, Any]:
+        """Declare a 2-cell (filled plaquette/face) with oriented 1-edge boundary.
+
+        Each boundary item is either (source, target, orientation) or
+        {"source": u, "target": v, "orientation": +/-1}.
+        Checks boundary closure (D_1 D_0 = 0 on vertices) and evaluates (D_1 h)_cell
+        when all boundary 1-edges have been observed.
+        """
+        cid = text(cell_id, "cell_id")
+        raw_items = list(sequence(boundary, "boundary"))
+        if not raw_items:
+            raise ValidationError("2-cell boundary must be non-empty")
+
+        parsed_boundary: list[dict[str, Any]] = []
+        vertex_balance: dict[str, int] = {}
+        for item in raw_items:
+            if isinstance(item, Mapping):
+                u = text(item.get("source"), "boundary source")
+                v = text(item.get("target"), "boundary target")
+                orient = exact_int(item.get("orientation", 1), "orientation")
+            else:
+                seq_item = sequence(item, "boundary tuple")
+                if len(seq_item) != 3:
+                    raise ValidationError("boundary tuple must be (source, target, orientation)")
+                u = text(seq_item[0], "boundary source")
+                v = text(seq_item[1], "boundary target")
+                orient = exact_int(seq_item[2], "orientation")
+            if orient == 0:
+                raise ValidationError("2-cell boundary orientation must be nonzero")
+            parsed_boundary.append({"source": u, "target": v, "orientation": orient})
+            vertex_balance[u] = vertex_balance.get(u, 0) - orient
+            vertex_balance[v] = vertex_balance.get(v, 0) + orient
+
+        is_closed_boundary = all(bal == 0 for bal in vertex_balance.values())
+        cell_record: dict[str, Any] = {
+            "cell_id": cid,
+            "boundary": parsed_boundary,
+            "valid_complex_boundary": is_closed_boundary,
+            "vertex_balance": vertex_balance,
+        }
+        self.two_cells.append(cell_record)
+
+        if not is_closed_boundary:
+            body: dict[str, Any] = {
+                "schema": "lggr.online_twocell.v1",
+                "authority_effect": "None",
+                "cell_id": cid,
+                "status": "INVALID_COMPLEX",
+                "complete_edges": False,
+                "coboundary_value": None,
+                "vertex_balance": vertex_balance,
+                "meaning": "Declared 2-cell boundary does not have zero 0-boundary (D_1 D_0 != 0).",
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        # Check if all boundary edges exist in self.edges
+        coboundary_val = Fraction(0)
+        missing_edges: list[str] = []
+        for b_item in parsed_boundary:
+            u, v, orient = b_item["source"], b_item["target"], b_item["orientation"]
+            match_edge = next(
+                (e for e in self.edges if e["source"] == u and e["target"] == v),
+                None,
+            )
+            if match_edge is not None:
+                coboundary_val += Fraction(orient) * match_edge["value"]
+            else:
+                rev_edge = next(
+                    (e for e in self.edges if e["source"] == v and e["target"] == u),
+                    None,
+                )
+                if rev_edge is not None:
+                    coboundary_val -= Fraction(orient) * rev_edge["value"]
+                else:
+                    missing_edges.append(f"{u}->{v}")
+
+        if missing_edges:
+            body = {
+                "schema": "lggr.online_twocell.v1",
+                "authority_effect": "None",
+                "cell_id": cid,
+                "status": "PENDING_EDGES",
+                "complete_edges": False,
+                "missing_edges": missing_edges,
+                "coboundary_value": None,
+                "meaning": "2-cell registered; awaiting arrival of remaining boundary 1-edges.",
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        status = "CELL_CLOSED" if coboundary_val == 0 else "CLOSURE_FAILURE"
+        body = {
+            "schema": "lggr.online_twocell.v1",
+            "authority_effect": "None",
+            "cell_id": cid,
+            "status": status,
+            "complete_edges": True,
+            "missing_edges": [],
+            "coboundary_value": coboundary_val,
+            "meaning": (
+                "1-cochain is closed on this filled 2-cell ((D_1 h)_cell = 0)."
+                if coboundary_val == 0
+                else "1-cochain has nonzero coboundary on this filled 2-cell ((D_1 h)_cell != 0)."
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def classify_streaming_cohomology(self) -> dict[str, Any]:
+        """Classify the current streaming 1-cochain against declared 2-cells via classify_cochain.
+
+        Separates:
+          - EXACT: h in im(D_0) and D_1 h = 0
+          - CLOSURE_FAILURE: D_1 h != 0 on at least one filled 2-cell
+          - CLOSED_NONEXACT: D_1 h = 0 on all filled 2-cells, yet h not in im(D_0)
+            (nonzero first cohomology class [h] in H^1 around an unfilled hole)
+          - INVALID_COMPLEX: D_1 D_0 != 0
+        """
+        if not self.edges:
+            body: dict[str, Any] = {
+                "schema": "lggr.cochain.v1",
+                "authority_effect": "None",
+                "status": "EXACT",
+                "repair_exists": True,
+                "potential": [],
+                "closure": [],
+                "represents_nonzero_H1": False,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        if any(not c["valid_complex_boundary"] for c in self.two_cells):
+            body = {
+                "schema": "lggr.cochain.v1",
+                "authority_effect": "None",
+                "status": "INVALID_COMPLEX",
+                "repair_exists": False,
+                "potential": None,
+                "closure": None,
+                "represents_nonzero_H1": None,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        node_list = sorted(self.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        m = len(self.edges)
+
+        d0_rows: list[list[Fraction]] = []
+        h_vec: list[Fraction] = []
+        for e in self.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d0_rows.append(row)
+            h_vec.append(e["value"])
+
+        d1_rows: list[list[Fraction]] = []
+        for cell in self.two_cells:
+            row_d1 = [Fraction(0)] * m
+            complete = True
+            for b_item in cell["boundary"]:
+                u, v, orient = b_item["source"], b_item["target"], b_item["orientation"]
+                match_idx = next(
+                    (i for i, e in enumerate(self.edges) if e["source"] == u and e["target"] == v),
+                    None,
+                )
+                if match_idx is not None:
+                    row_d1[match_idx] += Fraction(orient)
+                else:
+                    rev_idx = next(
+                        (i for i, e in enumerate(self.edges) if e["source"] == v and e["target"] == u),
+                        None,
+                    )
+                    if rev_idx is not None:
+                        row_d1[rev_idx] -= Fraction(orient)
+                    else:
+                        complete = False
+                        break
+            if complete:
+                d1_rows.append(row_d1)
+
+        return classify_cochain(d0_rows, h_vec, d1_rows)
 
     def get_receipt(self) -> dict[str, Any]:
         """Emit comprehensive summary receipt for cochain monitor."""
