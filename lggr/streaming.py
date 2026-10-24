@@ -4213,6 +4213,227 @@ class StreamingRSIFiberCeilingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCoalitionalAttributionMonitor:
+    """Online LGGR II coalitional Shapley attribution vs. non-additive raw defect monitor.
+
+    Computes exact rational Shapley attributions phi_i(v) for finite n-player evaluator
+    coalitions and verifies:
+      - Efficiency: sum_{i in N} phi_i(v) == v(N) - v(emptyset).
+      - Symmetry: if v(S U {i}) == v(S U {j}) for all S subseteq N \\ {i, j}, then phi_i(v) == phi_j(v).
+      - Dummy-player axiom: if v(S U {i}) == v(S) for all S subseteq N \\ {i}, then phi_i(v) == 0.
+      - Separation between exact coalitional attribution (phi_1 + phi_2 == Delta_E) and
+        non-additive raw singleton defect sums (v({1}) + v({2}) != v({1, 2}) when interaction
+        synergy I_12 = v({1, 2}) - v({1}) - v({2}) + v(emptyset) != 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-coalitional-attribution-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.games: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _factorial(k: int) -> int:
+        res = 1
+        for i in range(2, k + 1):
+            res *= i
+        return res
+
+    @staticmethod
+    def _normalize_coalition_key(coalition: Any, players_set: set[str]) -> frozenset[str]:
+        if isinstance(coalition, str):
+            raw = coalition.strip()
+            if not raw:
+                items: list[str] = []
+            else:
+                items = [part.strip() for part in raw.split(",") if part.strip()]
+        elif isinstance(coalition, (set, frozenset, list, tuple)):
+            items = [text(p, "player") for p in coalition]
+        else:
+            raise ValidationError(f"Unsupported coalition key type: {type(coalition).__name__}")
+        for item in items:
+            if item not in players_set:
+                raise ValidationError(f"Unknown player {item!r} in coalition key")
+        return frozenset(items)
+
+    def observe_coalition_game(
+        self,
+        game_id: str,
+        players: Iterable[str],
+        characteristic_values: Mapping[Any, Fraction | int | str],
+    ) -> dict[str, Any]:
+        """Compute exact rational Shapley attributions and audit axioms for an n-player game."""
+        gid = text(game_id, "game_id")
+        player_list = [text(p, "player") for p in sequence(players, "players")]
+        if not player_list:
+            raise ValidationError("players must be non-empty")
+        if len(set(player_list)) != len(player_list):
+            raise ValidationError("players must be distinct")
+        n = len(player_list)
+        if n > 8:
+            raise ValidationError("StreamingCoalitionalAttributionMonitor supports 1 <= n <= 8 players")
+
+        players_set = set(player_list)
+        val_map: dict[frozenset[str], Fraction] = {}
+        for k, v in characteristic_values.items():
+            c_key = self._normalize_coalition_key(k, players_set)
+            val_map[c_key] = rational(v)
+
+        # Default missing subsets to 0 if not provided, or require all 2^n subsets?
+        # Populate missing empty set as 0 if omitted; require all other subsets to be present or default to 0.
+        all_subsets: list[frozenset[str]] = []
+        for r in range(n + 1):
+            for comb in itertools.combinations(player_list, r):
+                sub = frozenset(comb)
+                all_subsets.append(sub)
+                if sub not in val_map:
+                    raise ValidationError(
+                        f"Missing characteristic value for coalition {sorted(sub)}"
+                    )
+
+        n_fact = Fraction(self._factorial(n))
+        shapley: dict[str, Fraction] = {}
+        dummy_players: list[str] = []
+
+        for p in player_list:
+            others = [q for q in player_list if q != p]
+            total_phi = Fraction(0)
+            is_dummy = True
+            for r in range(n):
+                weight = Fraction(self._factorial(r) * self._factorial(n - r - 1)) / n_fact
+                for comb in itertools.combinations(others, r):
+                    s_set = frozenset(comb)
+                    s_with_p = s_set | {p}
+                    marginal = val_map[s_with_p] - val_map[s_set]
+                    if marginal != Fraction(0):
+                        is_dummy = False
+                    total_phi += weight * marginal
+            shapley[p] = total_phi
+            if is_dummy:
+                dummy_players.append(p)
+
+        v_empty = val_map[frozenset()]
+        v_grand = val_map[frozenset(player_list)]
+        total_Gain = v_grand - v_empty
+        shapley_sum = sum(shapley.values(), Fraction(0))
+        efficiency_ok = (shapley_sum == total_Gain)
+        dummy_ok = all(shapley[p] == Fraction(0) for p in dummy_players)
+
+        symmetric_pairs: list[list[str]] = []
+        symmetry_ok = True
+        for i_idx in range(n):
+            for j_idx in range(i_idx + 1, n):
+                pi, pj = player_list[i_idx], player_list[j_idx]
+                rem = [q for q in player_list if q not in (pi, pj)]
+                pair_sym = True
+                for r in range(len(rem) + 1):
+                    for comb in itertools.combinations(rem, r):
+                        base = frozenset(comb)
+                        if val_map[base | {pi}] != val_map[base | {pj}]:
+                            pair_sym = False
+                            break
+                    if not pair_sym:
+                        break
+                if pair_sym:
+                    symmetric_pairs.append([pi, pj])
+                    if shapley[pi] != shapley[pj]:
+                        symmetry_ok = False
+
+        singleton_sum = sum(
+            (val_map[frozenset([p])] - v_empty for p in player_list),
+            Fraction(0),
+        )
+        synergy_term = total_Gain - singleton_sum
+        non_additive_synergy = (synergy_term != Fraction(0))
+
+        if non_additive_synergy and total_Gain < Fraction(0):
+            status = "NONADDITIVE_COALITIONAL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif non_additive_synergy:
+            status = "NONADDITIVE_SYNERGY_ATTRIBUTION"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_coalitional_game.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "game_id": gid,
+            "status": status,
+            "contract_status": contract_status,
+            "players": player_list,
+            "v_empty": v_empty,
+            "v_grand_coalition": v_grand,
+            "net_coalitional_value": total_Gain,
+            "shapley_attributions": shapley,
+            "shapley_sum": shapley_sum,
+            "naive_singleton_marginal_sum": singleton_sum,
+            "synergy_interaction_term": synergy_term,
+            "raw_singleton_sum_equals_grand_value": (singleton_sum == total_Gain),
+            "symmetric_player_pairs": symmetric_pairs,
+            "dummy_players": dummy_players,
+            "efficiency_verified": efficiency_ok,
+            "symmetry_verified": symmetry_ok,
+            "dummy_player_axiom_verified": dummy_ok,
+        }
+        self.games[gid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def audit_evaluator_defect_game(
+        self,
+        game_id: str,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+    ) -> dict[str, Any]:
+        """Construct and audit the 2-evaluator coalitional defect game for binary verdicts (e1, e2, eg)."""
+        for name, val in (("e1", e1), ("e2", e2), ("eg", eg)):
+            if type(val) not in (int, bool) or int(val) not in (0, 1):
+                raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        v1 = int(e1)
+        v2 = int(e2)
+        vg = int(eg)
+        char_map = {
+            frozenset(): Fraction(0),
+            frozenset(["E1"]): Fraction(vg - v1),
+            frozenset(["E2"]): Fraction(vg - v2),
+            frozenset(["E1", "E2"]): Fraction(vg - v1 * v2),
+        }
+        return self.observe_coalition_game(game_id, ["E1", "E2"], char_map)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate coalitional attribution receipt across all audited games."""
+        all_eff = all(g["efficiency_verified"] for g in self.games.values())
+        all_sym = all(g["symmetry_verified"] for g in self.games.values())
+        all_dum = all(g["dummy_player_axiom_verified"] for g in self.games.values())
+        defect_games = [
+            gid for gid, g in self.games.items()
+            if g["status"] == "NONADDITIVE_COALITIONAL_DEFECT_LGGR"
+        ]
+
+        if defect_games:
+            status = "NONADDITIVE_COALITIONAL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "COALITIONAL_ATTRIBUTION_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_coalitional_attribution.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "audited_games_count": len(self.games),
+            "nonadditive_defect_games": sorted(defect_games),
+            "all_efficiency_verified": all_eff,
+            "all_symmetry_verified": all_sym,
+            "all_dummy_player_axioms_verified": all_dum,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
