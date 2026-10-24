@@ -1,0 +1,39 @@
+{
+  "authority_effect": "None",
+  "benchmarks": [
+    {
+      "betti_1": 28,
+      "certificate_status": "OPTIMALITY_VERIFIED",
+      "duality_gap": "0",
+      "edges": 36,
+      "global_l1_repair_distance": "61/12",
+      "latency_ms": 5.701,
+      "pivots_count": 2,
+      "topology": "K9_complete_tied_weights",
+      "vertices": 9
+    },
+    {
+      "betti_1": 37,
+      "certificate_status": "OPTIMALITY_VERIFIED",
+      "duality_gap": "0",
+      "edges": 72,
+      "global_l1_repair_distance": "29/20",
+      "latency_ms": 27.874,
+      "pivots_count": 5,
+      "topology": "torus_6x6_degenerate_chords",
+      "vertices": 36
+    },
+    {
+      "betti_1": 30,
+      "certificate_status": "OPTIMALITY_VERIFIED",
+      "duality_gap": "0",
+      "edges": 39,
+      "global_l1_repair_distance": "25/4",
+      "latency_ms": 4.432,
+      "pivots_count": 1,
+      "topology": "dense_spine_chords_forced_pivots",
+      "vertices": 10
+    }
+  ],
+  "schema": "lggr.higher_genus_benchmark.v1"
+}

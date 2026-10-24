@@ -789,141 +789,118 @@ class StreamingCochainMonitor:
                     queue.append((neighbor, path + [(e_idx, orient)]))
         return None
 
-    @staticmethod
-    def _solve_bounded_linear_feasibility(
-        var_bounds: list[tuple[Fraction, Fraction]],
-        constraints: list[tuple[list[Fraction], Fraction, Fraction]],
-    ) -> list[Fraction] | None:
-        """Exact rational Fourier-Motzkin elimination for L_j <= a_j^T y <= U_j with l_i <= y_i <= u_i."""
-        k = len(var_bounds)
-        if k == 0:
-            for coeffs, lo, hi in constraints:
-                if not (lo <= 0 <= hi):
-                    return None
-            return []
+    def _maxflow_dual_or_descent_cut(
+        self, node_list: list[str], residuals: list[Fraction]
+    ) -> tuple[list[Fraction] | None, set[str] | None]:
+        """Solve exact rational circulation on zero-residual edges via Edmonds-Karp max-flow.
 
-        # Convert to inequalities: sum_i c_i y_i <= rhs
-        ineqs: list[tuple[list[Fraction], Fraction]] = []
-        for i, (lo, hi) in enumerate(var_bounds):
-            row_hi = [Fraction(0)] * k
-            row_hi[i] = Fraction(1)
-            ineqs.append((row_hi, hi))
-            row_lo = [Fraction(0)] * k
-            row_lo[i] = Fraction(-1)
-            ineqs.append((row_lo, -lo))
-
-        for coeffs, lo, hi in constraints:
-            ineqs.append((list(coeffs), hi))
-            ineqs.append(([-c for c in coeffs], -lo))
-
-        history: list[list[tuple[list[Fraction], Fraction]]] = []
-        curr_ineqs = ineqs
-        for var_idx in range(k - 1, -1, -1):
-            history.append(curr_ineqs)
-            pos: list[tuple[list[Fraction], Fraction]] = []
-            neg: list[tuple[list[Fraction], Fraction]] = []
-            zero: list[tuple[list[Fraction], Fraction]] = []
-            for coeffs, rhs in curr_ineqs:
-                c = coeffs[var_idx]
-                if c > 0:
-                    pos.append(([x / c for x in coeffs[:var_idx]], rhs / c))
-                elif c < 0:
-                    neg_c = -c
-                    neg.append(([x / neg_c for x in coeffs[:var_idx]], rhs / neg_c))
-                else:
-                    zero.append((coeffs[:var_idx], rhs))
-            next_ineqs: list[tuple[list[Fraction], Fraction]] = list(zero)
-            for p_coeffs, p_rhs in pos:
-                for n_coeffs, n_rhs in neg:
-                    comb = [p + n for p, n in zip(p_coeffs, n_coeffs)]
-                    next_ineqs.append((comb, p_rhs + n_rhs))
-            curr_ineqs = next_ineqs
-
-        for _, rhs in curr_ineqs:
-            if rhs < 0:
-                return None
-
-        sol: list[Fraction] = []
-        for var_idx in range(k):
-            step_ineqs = history[k - 1 - var_idx]
-            lo_val: Fraction | None = None
-            hi_val: Fraction | None = None
-            for coeffs, rhs in step_ineqs:
-                c = coeffs[var_idx]
-                if c == 0:
-                    continue
-                rem = rhs - sum((coeffs[j] * sol[j] for j in range(var_idx)), Fraction(0))
-                bound = rem / c
-                if c > 0:
-                    hi_val = bound if hi_val is None else min(hi_val, bound)
-                else:
-                    lo_val = bound if lo_val is None else max(lo_val, bound)
-            if lo_val is not None and hi_val is not None and lo_val > hi_val:
-                return None
-            chosen = Fraction(0)
-            if lo_val is not None and chosen < lo_val:
-                chosen = lo_val
-            if hi_val is not None and chosen > hi_val:
-                chosen = hi_val
-            sol.append(chosen)
-        return sol
-
-    def _try_construct_dual_for_forest(
-        self, tree_indices: set[int], residuals: list[Fraction]
-    ) -> list[Fraction] | None:
-        """Attempt to build a dual circulation z in ker(D_0^T) with |z_e| <= w_e matching tree_indices."""
+        Returns (dual_witness, None) if all vertex supplies are saturated (optimal),
+        or (None, reachable_vertex_cut_U) if unsaturated, where U is a strict descent cut.
+        """
         m = len(self.edges)
-        chords = [i for i in range(m) if i not in tree_indices]
-        cycle_vecs: dict[int, list[Fraction]] = {}
-        for c_idx in chords:
-            e = self.edges[c_idx]
-            vec = [Fraction(0)] * m
-            vec[c_idx] = Fraction(1)
-            path = self._find_tree_path_for_indices(tree_indices, e["target"], e["source"])
-            if path is None:
-                return None
-            for t_idx, orient in path:
-                vec[t_idx] += Fraction(orient)
-            cycle_vecs[c_idx] = vec
+        z_fixed = [Fraction(0)] * m
+        zero_edges: list[int] = []
+        s_supply: dict[str, Fraction] = {v: Fraction(0) for v in node_list}
 
-        z_base = [Fraction(0)] * m
-        zero_chords: list[int] = []
-        for c_idx in chords:
-            r_c = residuals[c_idx]
-            w_c = self.edges[c_idx]["weight"]
-            if r_c > 0:
-                for i in range(m):
-                    z_base[i] += w_c * cycle_vecs[c_idx][i]
-            elif r_c < 0:
-                for i in range(m):
-                    z_base[i] -= w_c * cycle_vecs[c_idx][i]
+        for idx, e in enumerate(self.edges):
+            r_e = residuals[idx]
+            w_e = e["weight"]
+            u, v = e["source"], e["target"]
+            if r_e > 0:
+                z_fixed[idx] = w_e
+            elif r_e < 0:
+                z_fixed[idx] = -w_e
             else:
-                zero_chords.append(c_idx)
+                zero_edges.append(idx)
+            # (D_0^T z_fixed)_w: +z_e at target v, -z_e at source u
+            if z_fixed[idx] != 0:
+                s_supply[u] -= z_fixed[idx]
+                s_supply[v] += z_fixed[idx]
 
-        if all(abs(z_base[i]) <= self.edges[i]["weight"] for i in range(m)):
-            return z_base
+        # We need outflow(v) - inflow(v) = s_supply[v] on zero_edges
+        total_pos_supply = sum((val for val in s_supply.values() if val > 0), Fraction(0))
+        if total_pos_supply == 0:
+            return z_fixed, None
 
-        if not zero_chords:
-            return None
+        src_node = "__super_source__"
+        sink_node = "__super_sink__"
+        all_nodes = [src_node, sink_node] + node_list
+        # Directed residual graph: adj[u] = list of [v, cap, rev_idx, zero_edge_idx, sign]
+        adj: dict[str, list[list[Any]]] = {n: [] for n in all_nodes}
 
-        var_bounds = [(-self.edges[c_idx]["weight"], self.edges[c_idx]["weight"]) for c_idx in zero_chords]
-        constraints: list[tuple[list[Fraction], Fraction, Fraction]] = []
-        for t_idx in sorted(tree_indices):
-            w_t = self.edges[t_idx]["weight"]
-            coeffs = [cycle_vecs[c_idx][t_idx] for c_idx in zero_chords]
-            constraints.append((coeffs, -w_t - z_base[t_idx], w_t - z_base[t_idx]))
+        def add_arc(u: str, v: str, cap_fwd: Fraction, cap_rev: Fraction,
+                    e_idx: int = -1) -> None:
+            fwd_idx = len(adj[u])
+            rev_idx = len(adj[v])
+            adj[u].append([v, cap_fwd, rev_idx, e_idx, +1])
+            adj[v].append([u, cap_rev, fwd_idx, e_idx, -1])
 
-        y_zero = self._solve_bounded_linear_feasibility(var_bounds, constraints)
-        if y_zero is None:
-            return None
+        for v in node_list:
+            sv = s_supply[v]
+            if sv > 0:
+                add_arc(src_node, v, sv, Fraction(0))
+            elif sv < 0:
+                add_arc(v, sink_node, -sv, Fraction(0))
 
-        z_full = list(z_base)
-        for val_y, c_idx in zip(y_zero, zero_chords):
-            for i in range(m):
-                z_full[i] += val_y * cycle_vecs[c_idx][i]
-        if all(abs(z_full[i]) <= self.edges[i]["weight"] for i in range(m)):
-            return z_full
-        return None
+        for idx in zero_edges:
+            e = self.edges[idx]
+            u, v = e["source"], e["target"]
+            if u != v:
+                w_e = e["weight"]
+                # Flow f_e in [-w_e, +w_e] -> residual capacity w_e in both directions
+                add_arc(u, v, w_e, w_e, idx)
+
+        flow_total = Fraction(0)
+        while flow_total < total_pos_supply:
+            parent_map: dict[str, tuple[str, int]] = {}
+            queue: deque[str] = deque([src_node])
+            visited = {src_node}
+            found = False
+            while queue:
+                curr = queue.popleft()
+                if curr == sink_node:
+                    found = True
+                    break
+                for arc_i, arc in enumerate(adj[curr]):
+                    nxt, cap = arc[0], arc[1]
+                    if cap > 0 and nxt not in visited:
+                        visited.add(nxt)
+                        parent_map[nxt] = (curr, arc_i)
+                        queue.append(nxt)
+            if not found:
+                cut_u = {v for v in node_list if v in visited}
+                return None, cut_u
+
+            # Bottleneck capacity along shortest augmenting path
+            bottleneck: Fraction | None = None
+            curr = sink_node
+            while curr != src_node:
+                prev_n, arc_i = parent_map[curr]
+                cap = adj[prev_n][arc_i][1]
+                bottleneck = cap if bottleneck is None else min(bottleneck, cap)
+                curr = prev_n
+
+            assert bottleneck is not None and bottleneck > 0
+            curr = sink_node
+            while curr != src_node:
+                prev_n, arc_i = parent_map[curr]
+                arc = adj[prev_n][arc_i]
+                rev_arc = adj[curr][arc[2]]
+                arc[1] -= bottleneck
+                rev_arc[1] += bottleneck
+                curr = prev_n
+            flow_total += bottleneck
+
+        # Reconstruct f_e on zero_edges from residual capacities
+        z_full = list(z_fixed)
+        for u in node_list:
+            for arc in adj[u]:
+                e_idx, sign = arc[3], arc[4]
+                if e_idx >= 0 and sign == +1:
+                    w_e = self.edges[e_idx]["weight"]
+                    # Initial forward cap was w_e; remaining cap is arc[1], so net flow u->v is w_e - arc[1]
+                    z_full[e_idx] = w_e - arc[1]
+        return z_full, None
 
     def solve_global_l1_repair(self) -> dict[str, Any]:
         """Compute exact rational global multi-cycle L1 repair distance and primal-dual certificate."""
@@ -932,6 +909,7 @@ class StreamingCochainMonitor:
                 "schema": "lggr.global_cochain_l1.v1",
                 "authority_effect": "None",
                 "status": "OPEN_TREE",
+                "pivots_count": 0,
                 "global_l1_repair_distance": Fraction(0),
                 "potential": {},
                 "dual_witness": [],
@@ -943,7 +921,7 @@ class StreamingCochainMonitor:
         node_to_idx = {name: i for i, name in enumerate(node_list)}
         m = len(self.edges)
 
-        # Build initial Maximum-Weight Spanning Forest via Kruskal's algorithm
+        # Stage 1: Build initial Maximum-Weight Spanning Forest via Kruskal's algorithm
         parent = {v: v for v in node_list}
 
         def find(v: str) -> str:
@@ -961,55 +939,60 @@ class StreamingCochainMonitor:
                 parent[ru] = rv
                 initial_forest.add(idx)
 
-        best_forest = frozenset(initial_forest)
-        best_pot, best_res, best_cost = self._forest_potential_and_residuals(set(best_forest), node_list)
-        best_dual = self._try_construct_dual_for_forest(set(best_forest), best_res)
+        curr_pot, curr_res, curr_cost = self._forest_potential_and_residuals(initial_forest, node_list)
+        pivots_count = 0
+
+        # Stage 2: Exact rational Max-Flow / Min-Cut steepest-descent line search
+        best_dual: list[Fraction] | None = None
+        while True:
+            dual_cand, cut_u = self._maxflow_dual_or_descent_cut(node_list, curr_res)
+            if dual_cand is not None:
+                best_dual = dual_cand
+                break
+            if not cut_u:
+                break
+
+            # Candidate positive step sizes theta where an edge crossing cut_u hits zero residual
+            # Under x(theta) = x + theta * 1_{cut_u}:
+            # d_e = (D_0 1_{cut_u})_e = 1_{v in cut_u} - 1_{u in cut_u} in {-1, 0, +1}
+            # r_e(theta) = r_e - theta * d_e
+            candidate_thetas: set[Fraction] = set()
+            delta_dirs: list[int] = []
+            for idx, e in enumerate(self.edges):
+                u_in = 1 if e["source"] in cut_u else 0
+                v_in = 1 if e["target"] in cut_u else 0
+                d_e = v_in - u_in
+                delta_dirs.append(d_e)
+                if d_e != 0:
+                    theta_hit = curr_res[idx] * d_e
+                    if theta_hit > 0:
+                        candidate_thetas.add(theta_hit)
+
+            if not candidate_thetas:
+                break
+
+            best_theta = Fraction(0)
+            best_theta_cost = curr_cost
+            for theta in sorted(candidate_thetas):
+                cost_t = Fraction(0)
+                for idx, e in enumerate(self.edges):
+                    cost_t += e["weight"] * abs(curr_res[idx] - theta * delta_dirs[idx])
+                if cost_t < best_theta_cost:
+                    best_theta_cost = cost_t
+                    best_theta = theta
+
+            if best_theta <= 0:
+                break
+
+            for v in cut_u:
+                curr_pot[v] += best_theta
+            for idx in range(m):
+                curr_res[idx] -= best_theta * delta_dirs[idx]
+            curr_cost = best_theta_cost
+            pivots_count += 1
 
         if best_dual is None:
-            queue: deque[frozenset[int]] = deque([best_forest])
-            visited_forests: set[frozenset[int]] = {best_forest}
-            while queue and best_dual is None:
-                curr_forest = queue.popleft()
-                curr_set = set(curr_forest)
-                curr_pot, curr_res, curr_cost = self._forest_potential_and_residuals(curr_set, node_list)
-                if curr_cost == best_cost:
-                    cand_dual = self._try_construct_dual_for_forest(curr_set, curr_res)
-                    if cand_dual is not None:
-                        best_forest = curr_forest
-                        best_pot, best_res, best_cost = curr_pot, curr_res, curr_cost
-                        best_dual = cand_dual
-                        break
-
-                chords = [i for i in range(m) if i not in curr_set]
-                improved = False
-                for c_idx in chords:
-                    e = self.edges[c_idx]
-                    path = self._find_tree_path_for_indices(curr_set, e["target"], e["source"])
-                    if not path:
-                        continue
-                    for t_idx, _ in path:
-                        next_set = (curr_set - {t_idx}) | {c_idx}
-                        next_frozen = frozenset(next_set)
-                        if next_frozen in visited_forests:
-                            continue
-                        _, next_res, next_cost = self._forest_potential_and_residuals(next_set, node_list)
-                        if next_cost < best_cost:
-                            best_cost = next_cost
-                            best_forest = next_frozen
-                            visited_forests.add(next_frozen)
-                            queue.clear()
-                            queue.append(next_frozen)
-                            improved = True
-                            break
-                        elif next_cost == best_cost:
-                            visited_forests.add(next_frozen)
-                            queue.append(next_frozen)
-                    if improved:
-                        break
-
-        if best_dual is None:
-            best_pot, best_res, best_cost = self._forest_potential_and_residuals(set(best_forest), node_list)
-            best_dual = self._try_construct_dual_for_forest(set(best_forest), best_res) or [Fraction(0)] * m
+            best_dual = [Fraction(0)] * m
 
         d_rows: list[list[Fraction]] = []
         h_vec: list[Fraction] = []
@@ -1022,13 +1005,13 @@ class StreamingCochainMonitor:
             h_vec.append(e["value"])
             w_vec.append(e["weight"])
 
-        x_vec = [best_pot.get(v, Fraction(0)) for v in node_list]
+        x_vec = [curr_pot.get(v, Fraction(0)) for v in node_list]
         cert = verify_l1_certificate(d_rows, h_vec, w_vec, x_vec, best_dual)
         status = (
             "OPEN_TREE"
             if not self.cycles
             else "EXACT_REPAIR"
-            if best_cost == 0
+            if curr_cost == 0
             else "OBSTRUCTED_MULTI_CYCLE"
         )
         body = {
@@ -1038,8 +1021,9 @@ class StreamingCochainMonitor:
             "total_edges": m,
             "total_vertices": len(node_list),
             "cycles_detected": len(self.cycles),
-            "global_l1_repair_distance": best_cost,
-            "potential": best_pot,
+            "pivots_count": pivots_count,
+            "global_l1_repair_distance": curr_cost,
+            "potential": curr_pot,
             "dual_witness": best_dual,
             "certificate_status": cert.get("status"),
             "certificate": cert,
