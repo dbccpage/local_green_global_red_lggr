@@ -24,10 +24,13 @@ import unittest
 
 from lggr.common import ValidationError
 from lggr.streaming import (
+    StreamingAuditMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingPositiveExtensionMonitor,
     StreamingTransportMonitor,
 )
+from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
 
 
 class TestStressCochainMultiCycleAndWeights(unittest.TestCase):
@@ -579,6 +582,126 @@ class TestStreamingTransportMonitor(unittest.TestCase):
         self.assertIsNotNone(syn_faith["G1"])
         self.assertEqual(syn_faith["audit"]["status"], "RETRACTION_VERIFIED")
         self.assertEqual(syn_faith["audit"]["contract_status"], "REFLECTED_LGGR")
+
+
+class TestStreamingPositiveExtensionMonitor(unittest.TestCase):
+    """Online observer-fiber minimax error floor and positive-extension order reversal tests."""
+
+    def test_online_observer_fiber_minimax_floor_monotonicity(self) -> None:
+        """Minimax error floor and midpoint estimator update monotonically on indistinguishable fibers."""
+        pmon = StreamingPositiveExtensionMonitor()
+
+        r1 = pmon.observe_target("s1", {"report_tag": "green"}, Fraction(2))
+        self.assertEqual(r1["fiber_minimax_error_floor"], "0")
+        self.assertEqual(r1["fiber_midpoint_estimator"], "2")
+        self.assertEqual(r1["status"], "EXACT_FIBER_DECODER")
+        self.assertEqual(r1["contract_status"], "COMPOSABLE_LGGG")
+
+        r2 = pmon.observe_target("s2", {"report_tag": "green"}, Fraction(8))
+        self.assertEqual(r2["fiber_minimax_error_floor"], "3")
+        self.assertEqual(r2["fiber_midpoint_estimator"], "5")
+        self.assertEqual(r2["global_minimax_error_floor"], "3")
+        self.assertEqual(r2["status"], "NONZERO_MINIMAX_FLOOR")
+        self.assertEqual(r2["contract_status"], "OBSTRUCTED_LGGR")
+
+        # Interior state s3 with target 5 preserves the minimax floor at 3
+        r3 = pmon.observe_target("s3", {"report_tag": "green"}, Fraction(5))
+        self.assertEqual(r3["fiber_minimax_error_floor"], "3")
+        self.assertEqual(r3["fiber_midpoint_estimator"], "5")
+
+        # Wider state s4 with target 11 increases the minimax floor to (11 - 2) / 2 = 9/2
+        r4 = pmon.observe_target("s4", {"report_tag": "green"}, Fraction(11))
+        self.assertEqual(r4["fiber_minimax_error_floor"], "9/2")
+        self.assertEqual(r4["fiber_midpoint_estimator"], "13/2")
+        self.assertEqual(pmon.get_receipt()["global_minimax_error_floor"], "9/2")
+
+    def test_ghz_rnd2_vs_mermin_q58_order_reversal(self) -> None:
+        """Certify CF > 2 * N_min at p_* (GHZ rnd2) and strict order reversal against Q_{5/8}."""
+        pmon = StreamingPositiveExtensionMonitor()
+
+        # p_* (GHZ rnd2, 8 contexts): local packing = 540/768 = 45/64 -> CF = 19/64, N_min = 75/768 = 25/256
+        res_pstar = pmon.audit_signed_extension(
+            "ghz_rnd2_pstar",
+            num_contexts=8,
+            local_packing_mass=Fraction(540, 768),
+            negative_mass=Fraction(75, 768),
+        )
+        self.assertEqual(res_pstar["status"], "CF_EXCEEDS_TWO_NEG_MASS")
+        self.assertEqual(res_pstar["contextual_fraction"], "19/64")
+        self.assertEqual(res_pstar["negative_mass"], "25/256")
+        self.assertTrue(res_pstar["excess_identity_verified"])
+        self.assertTrue(res_pstar["m_context_bound_verified"])
+        self.assertTrue(res_pstar["exceeds_two_negative_mass"])
+
+        # Mermin isotropic state Q_{5/8} (4 contexts): local packing = 3/4 -> CF = 1/4, N_min = 1/8
+        res_q58 = pmon.audit_signed_extension(
+            "mermin_q58",
+            num_contexts=4,
+            local_packing_mass=Fraction(576, 768),
+            negative_mass=Fraction(96, 768),
+        )
+        self.assertEqual(res_q58["status"], "EXTENSION_BOUND_VERIFIED")
+        self.assertEqual(res_q58["contextual_fraction"], "1/4")
+        self.assertEqual(res_q58["negative_mass"], "1/8")
+
+        cmp_res = pmon.compare_extension_order("mermin_q58", "ghz_rnd2_pstar")
+        self.assertEqual(cmp_res["status"], "ORDER_REVERSAL_DETECTED")
+        self.assertTrue(cmp_res["order_reversal_detected"])
+
+
+class TestStreamingAuditBranchSplice(unittest.TestCase):
+    """Cross-branch witness splicing tests for StreamingAuditMonitor.merge()."""
+
+    def test_two_locally_green_stage_traces_breach_budget_on_splice(self) -> None:
+        """Two sub-traces each have |Delta| = 2 <= 3 (COMPOSABLE_LGGG) but splice to |Delta| = 4 > 3."""
+        policy = BudgetPolicy(
+            policy_id="splice-policy",
+            max_step=2,
+            max_total=3,
+            allowed_states=tuple(range(-10, 11)),
+            query_scope="every_prefix",
+            evaluator_id="bounded-step/v1",
+            spec_id="cumulative-budget/v1",
+            representation_id="integer-state/v1",
+            authority_id="external-owner/v1",
+        )
+        s0 = StateRef("S0", 0)
+        s1 = StateRef("S1", 2)
+        s2 = StateRef("S2", 4)
+
+        w1 = StepWitness(
+            witness_id="w_stage1",
+            source=s0,
+            target=s1,
+            observed_magnitude=2,
+            local_accepted=True,
+            smoke_passed=True,
+            policy_sha256=policy.sha256,
+        )
+        w2 = StepWitness(
+            witness_id="w_stage2",
+            source=s1,
+            target=s2,
+            observed_magnitude=2,
+            local_accepted=True,
+            smoke_passed=True,
+            policy_sha256=policy.sha256,
+        )
+
+        mon_upstream = StreamingAuditMonitor(policy, baseline=s0)
+        mon_upstream.step(w1)
+        self.assertEqual(mon_upstream.get_receipt()["contract_status"], "COMPOSABLE_LGGG")
+
+        mon_downstream = StreamingAuditMonitor(policy, baseline=s1)
+        mon_downstream.step(w2)
+        self.assertEqual(mon_downstream.get_receipt()["contract_status"], "COMPOSABLE_LGGG")
+
+        merge_res = mon_upstream.merge(mon_downstream)
+        self.assertFalse(merge_res["target_was_obstructed"])
+        self.assertFalse(merge_res["source_was_obstructed"])
+        self.assertTrue(merge_res["cross_branch_lggr_discovered"])
+        self.assertEqual(merge_res["cumulative_delta"], 4)
+        self.assertEqual(merge_res["contract_status"], "OBSTRUCTED_LGGR")
 
 
 if __name__ == "__main__":

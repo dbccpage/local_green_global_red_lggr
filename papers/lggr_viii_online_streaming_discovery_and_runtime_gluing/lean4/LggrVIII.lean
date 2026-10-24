@@ -377,4 +377,37 @@ theorem non_injective_projection_blocks_retraction :
     rw [h1] at h2
     nomatch h2
 
+/-- Integer maximum and minimum helpers for online observer-fiber diameter tracking. -/
+def maxInt (a b : Int) : Int :=
+  if a ≥ b then a else b
+
+def minInt (a b : Int) : Int :=
+  if a ≤ b then a else b
+
+/-- Theorem 16 (`streaming_observer_fiber_minimax_monotonicity`):
+    When an observer fiber already contains target values `q_min ≤ q_max` (with twice-minimax
+    error floor `q_max - q_min`), observing an additional state with target value `q_new` on the
+    same fiber updates the fiber bounds to `minInt q_min q_new` and `maxInt q_max q_new`, and the
+    twice-minimax error floor is monotonically non-decreasing:
+    `maxInt q_max q_new - minInt q_min q_new ≥ q_max - q_min ≥ 0`. -/
+theorem streaming_observer_fiber_minimax_monotonicity (q_min q_max q_new : Int)
+    (h_ord : q_min ≤ q_max) :
+    maxInt q_max q_new - minInt q_min q_new ≥ q_max - q_min ∧
+    q_max - q_min ≥ 0 := by
+  dsimp [maxInt, minInt]
+  split <;> split <;> omega
+
+/-- Theorem 17 (`cross_branch_audit_splice_budget_breach`):
+    Two stage traces with cumulative deltas `d1` and `d2` can each satisfy the budget bound
+    `|d1| ≤ B` and `|d2| ≤ B` in isolation (`COMPOSABLE_LGGG`), while their spliced composition
+    has cumulative delta `d1 + d2` violating `|d1 + d2| > B` (`cross_branch_lggr_discovered`). -/
+theorem cross_branch_audit_splice_budget_breach :
+    ∃ d1 d2 B : Int,
+      B > 0 ∧
+      absInt d1 ≤ B ∧
+      absInt d2 ≤ B ∧
+      absInt (d1 + d2) > B := by
+  refine ⟨2, 2, 3, ?_⟩
+  decide
+
 end LggrVIII
