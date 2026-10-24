@@ -906,6 +906,24 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["faults_localized_online"], 2)
         self.assertEqual(summary["traces_with_retained_obligations"], 1)
 
+    def test_cycle_basis_sensitivity_and_complementary_slackness(self) -> None:
+        """Verify fundamental cycle matrix C D0 = 0 and complementary slackness on coupled diamond."""
+        mon = StreamingCochainMonitor()
+        mon.add_edge("A", "C", 0, weight=Fraction(3, 2))
+        mon.add_edge("A", "B", 1, weight=Fraction(5, 1))
+        mon.add_edge("B", "C", 1, weight=Fraction(5, 1))
+        mon.add_edge("A", "D", 1, weight=Fraction(5, 1))
+        mon.add_edge("D", "C", 1, weight=Fraction(5, 1))
+
+        sens = mon.analyze_cycle_basis_sensitivity()
+        self.assertEqual(sens["betti_1"], 2)
+        self.assertTrue(sens["cycle_annihilates_coboundary"])
+        self.assertTrue(sens["complementary_slackness_verified"])
+        self.assertEqual(sens["global_l1_repair_distance"], "3")
+        # Shared diagonal edge 0 (A->C) carries residual |r_0| = 2, while outer edges have 0 residual
+        self.assertEqual(sens["active_repair_edges"], [0])
+        self.assertEqual(sens["marginal_weight_sensitivity"], ["2", "0", "0", "0", "0"])
+
 
 if __name__ == "__main__":
     unittest.main()
