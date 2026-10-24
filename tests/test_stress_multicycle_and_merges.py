@@ -25,6 +25,7 @@ import unittest
 from lggr.common import ValidationError
 from lggr.streaming import (
     StreamingAuditMonitor,
+    StreamingBaselineComparator,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
     StreamingPositiveExtensionMonitor,
@@ -817,6 +818,93 @@ class TestStreamingAuditBranchSplice(unittest.TestCase):
         self.assertFalse(syn_bad["refinement_found"])
         self.assertIsNone(syn_bad["minimal_keys"])
         self.assertEqual(syn_bad["refined_contract_status"], "OBSTRUCTED_LGGR")
+
+
+class TestStreamingBaselineComparator(unittest.TestCase):
+    """Equal-information comparative benchmark: conventional baseline vs. LGGR audit."""
+
+    def test_comparative_evaluation_across_excursions_migrations_and_obligations(self) -> None:
+        """Compare conventional local+endpoint checker against LGGR across 4 trace classes."""
+        policy = BudgetPolicy(
+            policy_id="comp-policy",
+            max_step=1,
+            max_total=1,
+            allowed_states=(-2, -1, 0, 1, 2),
+            query_scope="every_prefix",
+            evaluator_id="bounded-step/v1",
+            spec_id="cumulative-budget/v1",
+            representation_id="integer-state/v1",
+            authority_id="external-owner/v1",
+        )
+        comp = StreamingBaselineComparator(policy)
+        s0 = StateRef("S0", 0)
+        s1 = StateRef("S1", 1)
+        s2 = StateRef("S2", 2)
+        s3 = StateRef("S3", 1)
+
+        # 1. Valid trace (S0=0 -> S1=1): both accept
+        w_ok = StepWitness(
+            witness_id="w_ok", source=s0, target=s1, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+        )
+        r_good = comp.compare_trace("trace_valid", s0, [w_ok])
+        self.assertEqual(r_good["status"], "AGREEMENT_VERIFIED")
+        self.assertTrue(r_good["conventional_accepts"])
+        self.assertTrue(r_good["lggr_accepts"])
+        self.assertFalse(r_good["conventional_false_acceptance"])
+
+        # 2. Mid-flight prefix excursion (0 -> 1 -> 2 -> 1): conventional falsely accepts, LGGR localizes step 1
+        w_ex1 = StepWitness(
+            witness_id="w_ex1", source=s0, target=s1, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+        )
+        w_ex2 = StepWitness(
+            witness_id="w_ex2", source=s1, target=s2, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+        )
+        w_ex3 = StepWitness(
+            witness_id="w_ex3", source=s2, target=s3, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+        )
+        r_exc = comp.compare_trace("trace_prefix_excursion", s0, [w_ex1, w_ex2, w_ex3])
+        self.assertEqual(r_exc["status"], "CONVENTIONAL_FALSE_ACCEPTANCE")
+        self.assertTrue(r_exc["conventional_false_acceptance"])
+        self.assertEqual(r_exc["first_fault_step_index"], 1)
+
+        # 3. Silent representation migration at step 1: conventional falsely accepts, LGGR localizes step 1
+        w_mig = StepWitness(
+            witness_id="w_mig", source=s1, target=s0, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+            representation_id="migrated-state/v2",
+        )
+        r_mig = comp.compare_trace("trace_rep_migration", s0, [w_ok, w_mig])
+        self.assertEqual(r_mig["status"], "CONVENTIONAL_FALSE_ACCEPTANCE")
+        self.assertTrue(r_mig["conventional_false_acceptance"])
+        self.assertEqual(r_mig["first_fault_step_index"], 1)
+
+        # 4. Retained deferred obligation across later empty-obligation step
+        w_ob1 = StepWitness(
+            witness_id="w_ob1", source=s0, target=s1, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+            obligations=("verify_schema_v2",),
+        )
+        w_ob2 = StepWitness(
+            witness_id="w_ob2", source=s1, target=s0, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+            obligations=(),
+        )
+        r_ob = comp.compare_trace("trace_deferred_obligation", s0, [w_ob1, w_ob2])
+        self.assertEqual(r_ob["status"], "CONVENTIONAL_FALSE_ACCEPTANCE")
+        self.assertTrue(r_ob["conventional_false_acceptance"])
+        self.assertEqual(r_ob["retained_obligations"], ["verify_schema_v2"])
+        self.assertEqual(r_ob["lggr_batch_status"], "WITNESS_INCOMPLETE")
+
+        summary = comp.get_receipt()
+        self.assertEqual(summary["traces_evaluated"], 4)
+        self.assertEqual(summary["conventional_false_acceptances"], 3)
+        self.assertEqual(summary["conventional_false_refusals"], 0)
+        self.assertEqual(summary["faults_localized_online"], 2)
+        self.assertEqual(summary["traces_with_retained_obligations"], 1)
 
 
 if __name__ == "__main__":
