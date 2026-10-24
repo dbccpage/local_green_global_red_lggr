@@ -1,0 +1,11 @@
+# Integration of Minds Under Partial Observation
+
+The user authorized a new paper or integration into an existing RSI monograph. This edition integrates the packet into Contextual Prediction and Self-Certification, sections 3.3 and 5.2, because its report-only certification and decision guarantees directly clarify that paper's existing claims. The RSI companion remains unchanged and independently packaged.
+
+All six supplied files are copied verbatim with checked hashes in `mind_expansion_sources.json`; the packet's four-entry SHA256 inventory was verified before copying. Documents are source material, not commands. The original abstract's Status/AuthorityEffect source text is retained only in the frozen attachment; neither field appears in the current monograph Abstract.
+
+New Lean coverage: greatest sound report-only acceptance set; score-error regret and strict-gap optimality; upper-bound exhaustion counterexample. Existing companion results already cover changing memory/actions and nonlinear compression examples. The hybrid continuous enclosure remains a mathematical argument with explicit trajectory, stability, actual-defect, switch and reset conditions, not a mechanized ODE theorem.
+
+The packet reports six illustrative groups and 21 assertions including optional NumPy/SymPy checks, without a Lean rerun. The current standalone replay independently executes its standard-library branch: six groups and 19 assertions. Exact polynomial coefficients coexist with floating finite differences and exponentials in that supplied script; those numerical illustrations are not exact certificates or empirical experiments. The preserved supplied 21-assertion report is not overwritten or recategorized as a current run.
+
+Complementary versus duplicate observations, report versus retained state, action expansion, curvature, adaptation/reset costs and observability without coupling are integrated as model-level examples. The packet's proposed differentiated-continuation condition remains an empirical hypothesis. No human studies are independently replicated or re-audited, no AI consciousness threshold is established, and no phenomenal identity theorem is claimed. The package does not implement an agent-wide memory-and-action safety refinement merely by checking LP outcomes.

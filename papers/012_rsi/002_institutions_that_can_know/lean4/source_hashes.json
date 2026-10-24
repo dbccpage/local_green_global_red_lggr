@@ -1,0 +1,8 @@
+{
+  "lean4/Core.lean": "4a5a109a1aa8ebc4d1a4842437360db71865e3d3c17782b6fd810127d92032d4",
+  "lean4/lake-manifest.json": "d755f748a79bdf705b69373650730d1e41ef50ee23384fe94c0e4980b70d070b",
+  "lean4/lakefile.lean": "4f9962cf1414deb6a822e144e21ad064f2bb7a9ba1e321bcd2c7a06593375d68",
+  "lean4/lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+  "tools/replay_full_axiom_census.py": "06902d8e84f6fc9dbb54d128a12986e44a05d0272b6e203fe76131908a0f1c4e",
+  "tools/replay_lean_axiom_census.py": "b267fe4bf69b9e01e2888349b157768d32ebe4495cb23c6bcacd7306efb750dd"
+}

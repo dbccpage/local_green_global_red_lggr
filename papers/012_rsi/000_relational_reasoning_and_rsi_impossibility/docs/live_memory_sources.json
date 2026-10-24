@@ -1,0 +1,13 @@
+{
+  "schema": "rsi.live-memory-source-map.v1",
+  "version": "1.2.0",
+  "runtime_sources": {
+    "omega_engine_woland/infrastructure/providers/residual_memory.py": "be997d8c28570e925738c2e0176c25ee962d57c013555779c1d25cd17802734b",
+    "omega_engine_woland/infrastructure/providers/memory_cli.py": "1e6abf77782cf4fe2a2f4edfae8b5694b5be2a0a47e79fe0afc8a06ef4f78365",
+    "omega_engine_woland/infrastructure/providers/llm_gateway.py": "77499fd7dd45e280b196280faf3202648b7bf534395a057d2afb00b6a4a71661",
+    "omega_engine_woland/entrypoints/synthetic_memory_experiment.py": "aee4dc6c202a916f4c9cfd02482b6b16585b62a68266202e0ed292550ad823ff",
+    "omega_engine_woland/tests/providers/test_residual_memory.py": "17004d77eca3e67598fd377385dcd3e2e5bd4659df52fe10902f66c504737837"
+  },
+  "lean": "3c86417f7ae9b66ac119276bebdc450c1b76fd3c6d56c843730b937ddb5caf12",
+  "standalone_test_note": "Identical core tests with package-local imports; the repository facade test remains in the runtime snapshot."
+}

@@ -1,0 +1,10 @@
+{
+  "command": [
+    "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "omega_engine_operads/skills/governance-exact-solvers/scripts/check_exact_solvers.py"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game",
+  "exit_code": 0,
+  "seconds": 0.12616658210754395
+}

@@ -1,0 +1,15 @@
+{
+  "label": "package_build",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "tools/package.py",
+    "--build"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+  "timestamp_utc": "2026-10-23T16:16:10.678947+00:00",
+  "seconds": 22.205522298812866,
+  "exit_code": 0,
+  "log": "package_build.txt"
+}

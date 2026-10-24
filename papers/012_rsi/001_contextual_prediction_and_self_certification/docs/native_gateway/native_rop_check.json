@@ -1,0 +1,10 @@
+{
+  "command": [
+    "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "omega_engine_operads/skills/governance-rop-runtime/scripts/check_rop_runtime.py"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game",
+  "exit_code": 0,
+  "seconds": 0.1522064208984375
+}

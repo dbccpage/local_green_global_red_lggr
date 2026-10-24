@@ -1,0 +1,8 @@
+{
+  "version": "0.11.0",
+  "archive": "bell_positive_extensions_v0.11.0.zip",
+  "sha256": "82540e1ac96e36440714f4aa3d21acdb1ec6c4be8039688d3a8b36e82306e1a5",
+  "bytes": 708526677,
+  "result": "byte-identical",
+  "method": "Independent canonical ZIP reconstruction to a seekable comparing sink; all final bytes and continuous write coverage matched"
+}

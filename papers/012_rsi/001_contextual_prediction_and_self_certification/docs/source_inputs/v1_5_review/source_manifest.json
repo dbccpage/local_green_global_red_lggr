@@ -1,0 +1,181 @@
+{
+  "edition": "1.5.0",
+  "review_date": "2026-10-21",
+  "sources": [
+    {
+      "original_filename": "contextuality_lp(1).py",
+      "packet_path": "code/contextuality_lp.py",
+      "source_group": "current attachment",
+      "sha256": "69035671b73fa2c416db928d6b766a4c9b8f2b3b5c55fb94b91af3116f09048b",
+      "size_bytes": 11467
+    },
+    {
+      "original_filename": "epistemic_kernel(1).py",
+      "packet_path": "code/epistemic_kernel.py",
+      "source_group": "current attachment",
+      "sha256": "0c8aaa013dbecc2590256024c8b5bd1480b9937db4661d13d25098bc58809bfd",
+      "size_bytes": 9729
+    },
+    {
+      "original_filename": "future_observation(1).py",
+      "packet_path": "code/future_observation.py",
+      "source_group": "current attachment",
+      "sha256": "4480b0240d68b229f61ca94c356dcfc370623f0de04d6528f69e4f13d5b0a872",
+      "size_bytes": 1268
+    },
+    {
+      "original_filename": "deposit_paths(10).py",
+      "packet_path": "deposit_paths.py",
+      "source_group": "current attachment",
+      "sha256": "5787aa7752dddaf56b3342d482b04692fe8ef94b2c4e7e649f07c1903745a1ef",
+      "size_bytes": 4325
+    },
+    {
+      "original_filename": "test_companion_bridge.py",
+      "packet_path": "code/tests/test_companion_bridge.py",
+      "source_group": "current attachment",
+      "sha256": "eee6b336fd5686f7f5480a5f049a5559f6979140511117faf878900b4f583628",
+      "size_bytes": 3393
+    },
+    {
+      "original_filename": "test_contextuality_lp.py",
+      "packet_path": "code/tests/test_contextuality_lp.py",
+      "source_group": "current attachment",
+      "sha256": "beee6ec5f73737d272dd214eac276b07f3088872dabdebf82106b23bf8164614",
+      "size_bytes": 8131
+    },
+    {
+      "original_filename": "test_epistemic_kernel.py",
+      "packet_path": "code/tests/test_epistemic_kernel.py",
+      "source_group": "current attachment",
+      "sha256": "6aab085ac21421db3996fe56874debf2eaaaf1ee5a1a53eaceae38f868baabd9",
+      "size_bytes": 5235
+    },
+    {
+      "original_filename": "Simplex.lean",
+      "packet_path": "lean4/Simplex.lean",
+      "source_group": "current attachment",
+      "sha256": "181f35f2185f167bc5d79ecd1b4ef3cff287973c0fbc9f91e2a3273d588b0f1f",
+      "size_bytes": 14489
+    },
+    {
+      "original_filename": "SimplexDriver.lean",
+      "packet_path": "lean4/SimplexDriver.lean",
+      "source_group": "current attachment",
+      "sha256": "c834bd86320f9f31cb8c6f8425755b1e6e56928f65e24c11c55ba0dff40435f9",
+      "size_bytes": 1910
+    },
+    {
+      "original_filename": "ErrorBudget.lean",
+      "packet_path": "lean4/ErrorBudget.lean",
+      "source_group": "current attachment",
+      "sha256": "c26ccfdc7727c14189f250923d1bfee1662a63ac294d0bcc041009945727dc43",
+      "size_bytes": 6511
+    },
+    {
+      "original_filename": "Core(10).lean",
+      "packet_path": "lean4/Core.lean",
+      "source_group": "current attachment",
+      "sha256": "b2c20ee36c8ba598585e2db840fac719f6ac318ce72067738b1fe24de2c30223",
+      "size_bytes": 1931
+    },
+    {
+      "original_filename": "ContextualDuality(1).lean",
+      "packet_path": "lean4/ContextualDuality.lean",
+      "source_group": "current attachment",
+      "sha256": "b7f1c89e83ded9794d921e5ed7e5a64523e5af59092839ad1f9e255a314f0f4a",
+      "size_bytes": 18054
+    },
+    {
+      "original_filename": "RationalCertificates(1).lean",
+      "packet_path": "lean4/RationalCertificates.lean",
+      "source_group": "current attachment",
+      "sha256": "4cca82f3f9ddf27d5064ff78886078b7c97abf3ec07d31c062f815bdf316297f",
+      "size_bytes": 11137
+    },
+    {
+      "original_filename": "Census(8).lean",
+      "packet_path": "lean4/Census.lean",
+      "source_group": "current attachment",
+      "sha256": "bbd8111e1d450eb9e22e876fe35b26aa9a515a058c7b1ed570574218b52cd3d1",
+      "size_bytes": 6404
+    },
+    {
+      "original_filename": "FullCensus(2).lean",
+      "packet_path": "lean4/FullCensus.lean",
+      "source_group": "current attachment",
+      "sha256": "6874c7da1781dcfa68e69fbe6cc6751ea9c53297e92c06980ca81be6396f9672",
+      "size_bytes": 911
+    },
+    {
+      "original_filename": "ResultI.lean",
+      "packet_path": "lean4/ResultI.lean",
+      "source_group": "earlier attachment",
+      "sha256": "56a8821a5ffccd1324b5ffa72a2fa51257345e9d50da1aedb6ac2bff77e3e7be",
+      "size_bytes": 4795
+    },
+    {
+      "original_filename": "ResultII.lean",
+      "packet_path": "lean4/ResultII.lean",
+      "source_group": "earlier attachment",
+      "sha256": "e2582a0396d5e83b836d4a49c7026dd0f94518d5ea73e6157283eaa6cd924801",
+      "size_bytes": 3157
+    },
+    {
+      "original_filename": "ResultIII.lean",
+      "packet_path": "lean4/ResultIII.lean",
+      "source_group": "earlier attachment",
+      "sha256": "b3307cde62179f8d2147b7edd16b34a78559da4301dcb5d5d3b10d05b1a2ece2",
+      "size_bytes": 4881
+    },
+    {
+      "original_filename": "ResultIV.lean",
+      "packet_path": "lean4/ResultIV.lean",
+      "source_group": "earlier attachment",
+      "sha256": "61fbc497a019bf9a8565e6bbcc18560f270a45ac6d41b229a2ddd0607ebe5614",
+      "size_bytes": 8504
+    },
+    {
+      "original_filename": "Bridge.lean",
+      "packet_path": "lean4/Bridge.lean",
+      "source_group": "earlier attachment",
+      "sha256": "8cfe2598ae5d3e1ca26071cd72a5b63713a62a3a2fea98824e5c9e3e429c640b",
+      "size_bytes": 2884
+    },
+    {
+      "original_filename": "contextual_prediction_monograph(1).md",
+      "packet_path": "manuscript/contextual_prediction_monograph.md",
+      "source_group": "current attachment",
+      "sha256": "782e2d6fa44321db8f4c9479dba35136d618931a87ee3daa1ce06a19b0dc1841",
+      "size_bytes": 33273
+    },
+    {
+      "original_filename": "contextual_prediction_monograph(1).txt",
+      "packet_path": "manuscript/contextual_prediction_monograph.txt",
+      "source_group": "current attachment",
+      "sha256": "8681c8a512e50621f1e40c2908302861d28f8138f9b9163454cd3600e7830b73",
+      "size_bytes": 33081
+    },
+    {
+      "original_filename": "contextual_prediction_change_log(1).md",
+      "packet_path": "manuscript/contextual_prediction_change_log.md",
+      "source_group": "current attachment",
+      "sha256": "4ec6e7ddbb3be9ed3f72be5a6cb959360027be1fb073b429dd840c499bf80d31",
+      "size_bytes": 4158
+    },
+    {
+      "original_filename": "contextual_prediction_math_spine(1).md",
+      "packet_path": "manuscript/contextual_prediction_math_spine.md",
+      "source_group": "current attachment",
+      "sha256": "ffd65383f40c24705049cf6b8d147c9dd5484d5a0b5a616591f9ee21689936c0",
+      "size_bytes": 3742
+    },
+    {
+      "original_filename": "contextual_prediction_math_spine(1).json",
+      "packet_path": "manuscript/contextual_prediction_math_spine.json",
+      "source_group": "current attachment",
+      "sha256": "4b0dc4765352466ae661b3c62b5378e379667a4d476beb169d80314930d16795",
+      "size_bytes": 2638
+    }
+  ]
+}

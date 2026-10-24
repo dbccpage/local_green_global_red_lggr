@@ -1,0 +1,38 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand*\HyPL@Entry[1]{}
+\HyPL@Entry{0<</S/D>>}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{Abstract}{1}{section*.1}\protected@file@percent }
+\newlabel{abstract}{{}{1}{Abstract}{section*.1}{}}
+\@writefile{toc}{\contentsline {subsection}{1. The world-internal starting point}{1}{section*.2}\protected@file@percent }
+\newlabel{the-world-internal-starting-point}{{}{1}{1. The world-internal starting point}{section*.2}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{1.1 Constructive self-knowledge}{2}{section*.3}\protected@file@percent }
+\newlabel{constructive-self-knowledge}{{}{2}{1.1 Constructive self-knowledge}{section*.3}{}}
+\@writefile{toc}{\contentsline {subsection}{2. Recovery depends on the task}{2}{section*.4}\protected@file@percent }
+\newlabel{recovery-depends-on-the-task}{{}{2}{2. Recovery depends on the task}{section*.4}{}}
+\@writefile{toc}{\contentsline {subsection}{3. What a memory transformation is}{2}{section*.5}\protected@file@percent }
+\newlabel{what-a-memory-transformation-is}{{}{2}{3. What a memory transformation is}{section*.5}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{3.1 A sufficient implementation contract}{3}{section*.6}\protected@file@percent }
+\newlabel{a-sufficient-implementation-contract}{{}{3}{3.1 A sufficient implementation contract}{section*.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{3.2 Capacity and constructive refinement}{3}{section*.7}\protected@file@percent }
+\newlabel{capacity-and-constructive-refinement}{{}{3}{3.2 Capacity and constructive refinement}{section*.7}{}}
+\@writefile{toc}{\contentsline {subsection}{4. Enforced updates, recall and safety}{3}{section*.8}\protected@file@percent }
+\newlabel{enforced-updates-recall-and-safety}{{}{3}{4. Enforced updates, recall and safety}{section*.8}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{5. What the earlier finite RSI theorem actually bounds}{4}{section*.9}\protected@file@percent }
+\newlabel{what-the-earlier-finite-rsi-theorem-actually-bounds}{{}{4}{5. What the earlier finite RSI theorem actually bounds}{section*.9}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{6. Learning and intelligence as resource-dependent capabilities}{5}{section*.10}\protected@file@percent }
+\newlabel{learning-and-intelligence-as-resource-dependent-capabilities}{{}{5}{6. Learning and intelligence as resource-dependent capabilities}{section*.10}{}}
+\@writefile{toc}{\contentsline {subsection}{7. Mechanization and reproducibility}{5}{section*.11}\protected@file@percent }
+\newlabel{mechanization-and-reproducibility}{{}{5}{7. Mechanization and reproducibility}{section*.11}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{8. Persistent memory in the live agent}{6}{section*.12}\protected@file@percent }
+\newlabel{persistent-memory-in-the-live-agent}{{}{6}{8. Persistent memory in the live agent}{section*.12}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{References}{7}{section*.13}\protected@file@percent }
+\newlabel{references}{{}{7}{References}{section*.13}{}}
+\gdef \@abspage@last{7}

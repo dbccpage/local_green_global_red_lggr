@@ -1,0 +1,29 @@
+--- a/contextuality_lp.py
++++ b/contextuality_lp.py
+@@ -205,11 +205,23 @@
+ 
+ 
+ def contextual_matrix(model, *, max_assignments=1048576, max_entries=2000000):
++    # Validate containers and elements before sorting, hashing or indexing.
++    # Accept ordinary tuples/lists, then canonicalize contexts for duplicate checks.
++    if not isinstance(model, Scenario):
++        raise Refusal("SHAPE")
+     sizes, contexts, tables = model.outcome_sizes, model.contexts, model.tables
+-    if (not sizes or any(type(n) is not int or n <= 0 for n in sizes)
++    if (any(type(v) not in (tuple, list) for v in (sizes, contexts, tables))
++            or not sizes or any(type(n) is not int or n <= 0 for n in sizes)
+             or not contexts or len(contexts) != len(tables)
+-            or any(tuple(sorted(set(c))) != tuple(c) or any(type(i) is not int or i < 0 or i >= len(sizes) for i in c)
+-                   for c in contexts) or len(set(contexts)) != len(contexts)):
++            or any(type(c) not in (tuple, list) for c in contexts)
++            or any(type(row) not in (tuple, list) for row in tables)):
++        raise Refusal("SHAPE")
++    if any(any(type(i) is not int or i < 0 or i >= len(sizes) for i in c)
++           for c in contexts):
++        raise Refusal("SHAPE")
++    contexts = tuple(tuple(c) for c in contexts)
++    if (any(tuple(sorted(set(c))) != c for c in contexts)
++            or len(set(contexts)) != len(contexts)):
+         raise Refusal("SHAPE")
+     if set().union(*map(set, contexts)) != set(range(len(sizes))):
+         raise Refusal("UNCOVERED_MEASUREMENT")

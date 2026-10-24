@@ -1,0 +1,617 @@
+Full package-local Lean axiom census
+Verification date: 2026-10-23
+Scope: all environment declarations defined in the listed package-local modules, including private and generated declarations.
+Modules: Core, EmbeddedLimits, LiveMemory, MemoryImplementation, PrefixBounds, RelationalRsiNoGo, ReviewCountermodels, RsiImpossible
+Declarations listed: 609
+Approved axioms: propext, Quot.sound, Classical.choice
+Execution: lake env lean FullCensus.lean exited 0.
+
+'EmbeddedLimits.Determined' does not depend on any axioms
+'EmbeddedLimits.FiberConstant' does not depend on any axioms
+'EmbeddedLimits.FutureEq' does not depend on any axioms
+'EmbeddedLimits.added_task_requires_refinement' does not depend on any axioms
+'EmbeddedLimits.anti_prediction_not_universal' does not depend on any axioms
+'EmbeddedLimits.bool_cannot_equal_its_negation' does not depend on any axioms
+'EmbeddedLimits.collision_excludes_exact_decoder' does not depend on any axioms
+'EmbeddedLimits.collision_excludes_exact_decoder.match_1_1' does not depend on any axioms
+'EmbeddedLimits.decoder_implies_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.determined_is_true' does not depend on any axioms
+'EmbeddedLimits.fiber_soundness_is_maximal' does not depend on any axioms
+'EmbeddedLimits.future_eq_preserves_readout' does not depend on any axioms
+'EmbeddedLimits.future_eq_refl' does not depend on any axioms
+'EmbeddedLimits.future_eq_stable' does not depend on any axioms
+'EmbeddedLimits.future_eq_symm' does not depend on any axioms
+'EmbeddedLimits.future_eq_trans' does not depend on any axioms
+'EmbeddedLimits.implemented_memory_preserves_future' does not depend on any axioms
+'EmbeddedLimits.own_record_is_determined' does not depend on any axioms
+'EmbeddedLimits.positive_introspection' does not depend on any axioms
+'EmbeddedLimits.postprocessing_cannot_separate' does not depend on any axioms
+'EmbeddedLimits.recoverable_iff_fiber_constant' does not depend on any axioms
+'EmbeddedLimits.recoverable_iff_fiber_constant.match_1_1' does not depend on any axioms
+'EmbeddedLimits.refinement_preserves_determination' does not depend on any axioms
+'EmbeddedLimits.runWord' does not depend on any axioms
+'EmbeddedLimits.runWord._f' does not depend on any axioms
+'EmbeddedLimits.runWord._sunfold' does not depend on any axioms
+'EmbeddedLimits.runWord._unsafe_rec' does not depend on any axioms
+'EmbeddedLimits.runWord.match_1' does not depend on any axioms
+'EmbeddedLimits.section_constructs_decoder' does not depend on any axioms
+'EmbeddedLimits.stable_relation_refines_future_eq' does not depend on any axioms
+'LiveMemory.changed_binding_refuses' depends on axioms: [propext]
+'LiveMemory.checkedRecall' depends on axioms: [propext]
+'LiveMemory.checkedRecall._proof_1' depends on axioms: [propext]
+'LiveMemory.checkedRecall.eq_1' depends on axioms: [propext]
+'LiveMemory.commit' does not depend on any axioms
+'LiveMemory.conflict_refused' does not depend on any axioms
+'LiveMemory.consistent' does not depend on any axioms
+'LiveMemory.exact_reload_preserves_recall' depends on axioms: [propext]
+'LiveMemory.instDecidableConsistentOfDecidableEq' does not depend on any axioms
+'LiveMemory.instDecidableSupportedOfDecidablePredProd' does not depend on any axioms
+'LiveMemory.missing_support_refuses' depends on axioms: [propext]
+'LiveMemory.recall_sound' depends on axioms: [propext]
+'LiveMemory.refused_update_preserves' does not depend on any axioms
+'LiveMemory.supported' does not depend on any axioms
+'LiveMemory.update' does not depend on any axioms
+'LiveMemory.update_retains' does not depend on any axioms
+'LiveMemory.update_sound' does not depend on any axioms
+'MemoryImplementation.Compatible' does not depend on any axioms
+'MemoryImplementation.accepted_append_compatible' does not depend on any axioms
+'MemoryImplementation.accepted_append_retains' does not depend on any axioms
+'MemoryImplementation.accepted_recall_sound' depends on axioms: [propext]
+'MemoryImplementation.admissible' does not depend on any axioms
+'MemoryImplementation.appendChecked' does not depend on any axioms
+'MemoryImplementation.concrete_gate_preserves_every_word' does not depend on any axioms
+'MemoryImplementation.conflicting_append_refused' does not depend on any axioms
+'MemoryImplementation.encode' does not depend on any axioms
+'MemoryImplementation.first_bit_memory_fails_after_swap' does not depend on any axioms
+'MemoryImplementation.gated' does not depend on any axioms
+'MemoryImplementation.gated_preserves' does not depend on any axioms
+'MemoryImplementation.gated_run_preserves' does not depend on any axioms
+'MemoryImplementation.instDecidableAdmissible' does not depend on any axioms
+'MemoryImplementation.instDecidableAdmissible._proof_1' does not depend on any axioms
+'MemoryImplementation.instDecidableCompatibleOfDecidableEq' does not depend on any axioms
+'MemoryImplementation.overwrite' does not depend on any axioms
+'MemoryImplementation.pair_memory_commutes' does not depend on any axioms
+'MemoryImplementation.pair_memory_preserves_all_words' does not depend on any axioms
+'MemoryImplementation.recallChecked' depends on axioms: [propext]
+'MemoryImplementation.recallChecked._proof_1' depends on axioms: [propext]
+'MemoryImplementation.run_updates_commute' does not depend on any axioms
+'MemoryImplementation.stale_recall_refused' depends on axioms: [propext]
+'MemoryImplementation.swap' does not depend on any axioms
+'MemoryImplementation.unsafe_overwrite_is_blocked' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.grounded' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.mk' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.mk.inj' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.mk.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.mk.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.mk.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.rec' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.recOn' does not depend on any axioms
+'OmegaRelationalRsi.AdmissibleRsiInUniverse.traj' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.iota' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.kappa' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.mk' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.mk.inj' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.mk.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.BoundaryChannel.mk.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.mk.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.pi_A' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.rec' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.recOn' does not depend on any axioms
+'OmegaRelationalRsi.BoundaryChannel.tau' does not depend on any axioms
+'OmegaRelationalRsi.FiberConstant' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.carrier' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.complete' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.mk' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.mk.inj' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.mk.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.FiniteRelationalUniverse.mk.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.mk.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.rec' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.recOn' does not depend on any axioms
+'OmegaRelationalRsi.FiniteRelationalUniverse.report' does not depend on any axioms
+'OmegaRelationalRsi.InPrivateFiber' does not depend on any axioms
+'OmegaRelationalRsi.IsCausalDeliverySchedule' does not depend on any axioms
+'OmegaRelationalRsi.IsIndependentVerifier' does not depend on any axioms
+'OmegaRelationalRsi.NodupL' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.below' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.below.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.below.cons' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.below.nil' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.below.rec' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.brecOn' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.cons' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.nil' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.rec' does not depend on any axioms
+'OmegaRelationalRsi.NodupL.recOn' does not depend on any axioms
+'OmegaRelationalRsi.OverlapCompatible' does not depend on any axioms
+'OmegaRelationalRsi.PanelEquiv' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.admit' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.admit.elim' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.admit.inj' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.admit.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.PreGenesisOp.admit.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.admit.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.ctorElim' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.ctorElimType' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.designate' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.designate.elim' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.designate.inj' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.designate.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.PreGenesisOp.designate.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.designate.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.mention' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.mention.elim' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.mention.inj' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.mention.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.PreGenesisOp.mention.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.mention.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.operate' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.operate.elim' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.operate.inj' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.operate.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.PreGenesisOp.operate.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.operate.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.rec' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.recOn' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.retain' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.retain.elim' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.retain.inj' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.retain.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.PreGenesisOp.retain.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.retain.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.supply' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.supply.elim' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.supply.inj' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.supply.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.PreGenesisOp.supply.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PreGenesisOp.supply.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.PreservesZeroRel' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.diff' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.mk' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.mk.inj' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.mk.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.PrimitiveDifference.mk.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.mk.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.rec' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.recOn' does not depend on any axioms
+'OmegaRelationalRsi.PrimitiveDifference.zero' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.boundary_coherent' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.mk' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.preserves_sheaf' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.preserves_zero' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.rec' does not depend on any axioms
+'OmegaRelationalRsi.RelationallyAligned.recOn' does not depend on any axioms
+'OmegaRelationalRsi.ReportGroundedDominance' does not depend on any axioms
+'OmegaRelationalRsi.ReportGroundedDominance.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.ReportGroundedDominance.mk' does not depend on any axioms
+'OmegaRelationalRsi.ReportGroundedDominance.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.ReportGroundedDominance.rec' does not depend on any axioms
+'OmegaRelationalRsi.ReportGroundedDominance.recOn' does not depend on any axioms
+'OmegaRelationalRsi.ReportGroundedDominance.respects_report' does not depend on any axioms
+'OmegaRelationalRsi.RestrictsTo' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.dom_of_lt' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.mk' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.mk.inj' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.mk.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.RsiTrajectory.mk.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.mk.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.ord' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.phi' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.rec' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.recOn' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.seq' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.step_eq' does not depend on any axioms
+'OmegaRelationalRsi.RsiTrajectory.strictly_improves' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.dom' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.irrefl' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.mk' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.mk._flat_ctor' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.mk.inj' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.mk.injEq' depends on axioms: [propext]
+'OmegaRelationalRsi.StrictDominance.mk.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.mk.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.rec' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.recOn' does not depend on any axioms
+'OmegaRelationalRsi.StrictDominance.trans' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus._sizeOf_1' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus._sizeOf_inst' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.authorized' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.authorized.elim' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.authorized.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.casesOn' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.ctorElim' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.ctorElimType' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.evidence_only' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.evidence_only.elim' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.evidence_only.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.noConfusion' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.noConfusionType' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.not_admitted' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.not_admitted.elim' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.not_admitted.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.ofNat' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.ofNat_ctorIdx' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.rec' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.recOn' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.refused' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.refused.elim' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.refused.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.rejected' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.rejected.elim' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.rejected.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.unresolved' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.unresolved.elim' does not depend on any axioms
+'OmegaRelationalRsi.TerminalStatus.unresolved.sizeOf_spec' does not depend on any axioms
+'OmegaRelationalRsi.ZeroRel' does not depend on any axioms
+'OmegaRelationalRsi.ZeroRel.eq_1' does not depend on any axioms
+'OmegaRelationalRsi.admissible_rsi_pairwise_report_ne' does not depend on any axioms
+'OmegaRelationalRsi.asynchronous_delayed_joint_horizon_bound' does not depend on any axioms
+'OmegaRelationalRsi.cartesianProductList' does not depend on any axioms
+'OmegaRelationalRsi.cartesianProductList._f' does not depend on any axioms
+'OmegaRelationalRsi.cartesianProductList._sunfold' does not depend on any axioms
+'OmegaRelationalRsi.cartesianProductList._unsafe_rec' does not depend on any axioms
+'OmegaRelationalRsi.cartesianProductList.eq_def' does not depend on any axioms
+'OmegaRelationalRsi.cartesianProductList.match_1' does not depend on any axioms
+'OmegaRelationalRsi.coupled_coadaptation_joint_horizon_bound' does not depend on any axioms
+'OmegaRelationalRsi.coupled_product_carrier_capacity' does not depend on any axioms
+'OmegaRelationalRsi.coupled_rsi_impossible' does not depend on any axioms
+'OmegaRelationalRsi.d0' does not depend on any axioms
+'OmegaRelationalRsi.d1' does not depend on any axioms
+'OmegaRelationalRsi.d2' does not depend on any axioms
+'OmegaRelationalRsi.dynamic_rewiring_higher_cochain_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.eraseOne' does not depend on any axioms
+'OmegaRelationalRsi.eraseOne._f' does not depend on any axioms
+'OmegaRelationalRsi.eraseOne._sunfold' does not depend on any axioms
+'OmegaRelationalRsi.eraseOne._unsafe_rec' does not depend on any axioms
+'OmegaRelationalRsi.eraseOne.eq_def' does not depend on any axioms
+'OmegaRelationalRsi.eraseOne.match_1' does not depend on any axioms
+'OmegaRelationalRsi.eraseOne.match_3' does not depend on any axioms
+'OmegaRelationalRsi.exists_lt_of_mem_prefixList' does not depend on any axioms
+'OmegaRelationalRsi.exists_lt_of_mem_prefixList._f' does not depend on any axioms
+'OmegaRelationalRsi.exists_lt_of_mem_prefixList.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.exists_lt_of_mem_prefixList.match_1_3' does not depend on any axioms
+'OmegaRelationalRsi.higher_cochain_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_1' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_10' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_11' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_12' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_13' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_14' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_15' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_16' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_17' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_18' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_19' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_2' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_20' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_21' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_22' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_23' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_24' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_25' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_26' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_27' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_28' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_29' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_3' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_30' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_31' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_32' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_33' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_34' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_35' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_36' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_37' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_38' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_39' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_4' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_40' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_41' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_42' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_43' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_5' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_6' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_7' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_8' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq._proof_9' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqPreGenesisOp.decEq.match_1' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqTerminalStatus' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqTerminalStatus._proof_1' does not depend on any axioms
+'OmegaRelationalRsi.instDecidableEqTerminalStatus._proof_2' does not depend on any axioms
+'OmegaRelationalRsi.instReprPreGenesisOp' does not depend on any axioms
+'OmegaRelationalRsi.instReprPreGenesisOp.repr' does not depend on any axioms
+'OmegaRelationalRsi.instReprPreGenesisOp.repr.match_1' does not depend on any axioms
+'OmegaRelationalRsi.instReprTerminalStatus' does not depend on any axioms
+'OmegaRelationalRsi.instReprTerminalStatus.repr' does not depend on any axioms
+'OmegaRelationalRsi.instReprTerminalStatus.repr.match_1' does not depend on any axioms
+'OmegaRelationalRsi.lemma1a_self_critique_non_verification' does not depend on any axioms
+'OmegaRelationalRsi.lemma1b_godel_diagonal_self_reference_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.lemma1c_goodhart_metric_collapse_on_collision' does not depend on any axioms
+'OmegaRelationalRsi.lemma2a_nodup_length_le' does not depend on any axioms
+'OmegaRelationalRsi.lemma2a_nodup_length_le._f' does not depend on any axioms
+'OmegaRelationalRsi.lemma2a_nodup_length_le.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.lemma2b_epistemic_horizon_refinement_bound' does not depend on any axioms
+'OmegaRelationalRsi.lemma2c_licensed_lift_budget_bound' does not depend on any axioms
+'OmegaRelationalRsi.lemma3a_no_intersubjective_improvement_in_private_fiber' does not depend on any axioms
+'OmegaRelationalRsi.lemma3a_private_fiber_channel_invisibility' does not depend on any axioms
+'OmegaRelationalRsi.lemma3b_overlap_conflict_refuses_sheaf_descent' does not depend on any axioms
+'OmegaRelationalRsi.length_append_eq' does not depend on any axioms
+'OmegaRelationalRsi.length_append_eq._f' does not depend on any axioms
+'OmegaRelationalRsi.length_append_eq.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.length_cartesianProductList' does not depend on any axioms
+'OmegaRelationalRsi.length_cartesianProductList._f' does not depend on any axioms
+'OmegaRelationalRsi.length_cartesianProductList.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.length_eraseOne_of_mem' does not depend on any axioms
+'OmegaRelationalRsi.length_eraseOne_of_mem._f' does not depend on any axioms
+'OmegaRelationalRsi.length_eraseOne_of_mem.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.length_eraseOne_of_mem.match_1_3' does not depend on any axioms
+'OmegaRelationalRsi.length_pairWithAll' does not depend on any axioms
+'OmegaRelationalRsi.length_pairWithAll._f' does not depend on any axioms
+'OmegaRelationalRsi.length_pairWithAll.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.length_prefixList' does not depend on any axioms
+'OmegaRelationalRsi.length_prefixList._f' does not depend on any axioms
+'OmegaRelationalRsi.length_prefixList.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_left_of_mem' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_left_of_mem._f' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_left_of_mem.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_right_of_mem' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_right_of_mem._f' does not depend on any axioms
+'OmegaRelationalRsi.mem_append_right_of_mem.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.mem_cartesianProductList' does not depend on any axioms
+'OmegaRelationalRsi.mem_cartesianProductList.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.mem_cartesianProductList.match_1_7' does not depend on any axioms
+'OmegaRelationalRsi.mem_eraseOne_of_ne' does not depend on any axioms
+'OmegaRelationalRsi.mem_eraseOne_of_ne._f' does not depend on any axioms
+'OmegaRelationalRsi.mem_eraseOne_of_ne.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.mem_eraseOne_of_ne.match_1_3' does not depend on any axioms
+'OmegaRelationalRsi.mem_pairWithAll' does not depend on any axioms
+'OmegaRelationalRsi.mem_pairWithAll.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.mem_pairWithAll.match_1_7' does not depend on any axioms
+'OmegaRelationalRsi.nodup_prefixList_of_pairwise_ne' does not depend on any axioms
+'OmegaRelationalRsi.nodup_prefixList_of_pairwise_ne._f' does not depend on any axioms
+'OmegaRelationalRsi.nodup_prefixList_of_pairwise_ne.match_1_1' does not depend on any axioms
+'OmegaRelationalRsi.non_monotonic_rewired_joint_horizon_bound' does not depend on any axioms
+'OmegaRelationalRsi.pairWithAll' does not depend on any axioms
+'OmegaRelationalRsi.pairWithAll._f' does not depend on any axioms
+'OmegaRelationalRsi.pairWithAll._sunfold' does not depend on any axioms
+'OmegaRelationalRsi.pairWithAll._unsafe_rec' does not depend on any axioms
+'OmegaRelationalRsi.pairWithAll.match_1' does not depend on any axioms
+'OmegaRelationalRsi.panelEquiv_refl' does not depend on any axioms
+'OmegaRelationalRsi.panelEquiv_symm' does not depend on any axioms
+'OmegaRelationalRsi.panelEquiv_trans' does not depend on any axioms
+'OmegaRelationalRsi.prefixList' does not depend on any axioms
+'OmegaRelationalRsi.prefixList._f' does not depend on any axioms
+'OmegaRelationalRsi.prefixList._sunfold' does not depend on any axioms
+'OmegaRelationalRsi.prefixList._unsafe_rec' does not depend on any axioms
+'OmegaRelationalRsi.prefixList.match_1' does not depend on any axioms
+'OmegaRelationalRsi.productUniverse' does not depend on any axioms
+'OmegaRelationalRsi.productUniverse._proof_1' does not depend on any axioms
+'OmegaRelationalRsi.rsi_impossible' does not depend on any axioms
+'OmegaRelationalRsi.rsi_trilemma_obstruction' does not depend on any axioms
+'OmegaRelationalRsi.witness_holonomy_obstruction' does not depend on any axioms
+'PrefixBounds.interleaved_lift_event_bound' depends on axioms: [Quot.sound, propext]
+'PrefixBounds.interleaved_lift_event_bound._proof_1_1' depends on axioms: [Quot.sound, propext]
+'PrefixBounds.lift_prefix_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'PrefixBounds.lift_prefix_bound._proof_1_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'PrefixBounds.refinement_prefix_bound' depends on axioms: [Classical.choice, Quot.sound, propext]
+'PrefixBounds.refinement_prefix_bound._proof_1_1' depends on axioms: [Classical.choice, Quot.sound, propext]
+'PrefixBounds.spending_prefix_invariant' depends on axioms: [Quot.sound, propext]
+'PrefixBounds.spending_prefix_invariant._proof_1_4' depends on axioms: [Quot.sound, propext]
+'PrefixBounds.spent' does not depend on any axioms
+'PrefixBounds.spent._f' does not depend on any axioms
+'PrefixBounds.spent._sunfold' does not depend on any axioms
+'PrefixBounds.spent._unsafe_rec' does not depend on any axioms
+'PrefixBounds.spent.eq_1' does not depend on any axioms
+'PrefixBounds.spent.eq_2' does not depend on any axioms
+'PrefixBounds.spent.eq_def' does not depend on any axioms
+'PrefixBounds.spent.match_1' does not depend on any axioms
+'PrefixBounds.unit_spending' depends on axioms: [propext]
+'RelationalRSI.BudgetedLift' does not depend on any axioms
+'RelationalRSI.BudgetedLift._sizeOf_1' does not depend on any axioms
+'RelationalRSI.BudgetedLift._sizeOf_inst' does not depend on any axioms
+'RelationalRSI.BudgetedLift.casesOn' does not depend on any axioms
+'RelationalRSI.BudgetedLift.ctorIdx' does not depend on any axioms
+'RelationalRSI.BudgetedLift.liftBudget' does not depend on any axioms
+'RelationalRSI.BudgetedLift.mk' does not depend on any axioms
+'RelationalRSI.BudgetedLift.mk._flat_ctor' does not depend on any axioms
+'RelationalRSI.BudgetedLift.mk.inj' does not depend on any axioms
+'RelationalRSI.BudgetedLift.mk.injEq' depends on axioms: [propext]
+'RelationalRSI.BudgetedLift.mk.noConfusion' does not depend on any axioms
+'RelationalRSI.BudgetedLift.mk.sizeOf_spec' does not depend on any axioms
+'RelationalRSI.BudgetedLift.noConfusion' does not depend on any axioms
+'RelationalRSI.BudgetedLift.noConfusionType' does not depend on any axioms
+'RelationalRSI.BudgetedLift.rec' does not depend on any axioms
+'RelationalRSI.BudgetedLift.recOn' does not depend on any axioms
+'RelationalRSI.CarrierLift' does not depend on any axioms
+'RelationalRSI.CarrierLift.budget_drops' does not depend on any axioms
+'RelationalRSI.CarrierLift.carrier_expands' does not depend on any axioms
+'RelationalRSI.CarrierLift.casesOn' does not depend on any axioms
+'RelationalRSI.CarrierLift.mk' does not depend on any axioms
+'RelationalRSI.CarrierLift.mk._flat_ctor' does not depend on any axioms
+'RelationalRSI.CarrierLift.rec' does not depend on any axioms
+'RelationalRSI.CarrierLift.recOn' does not depend on any axioms
+'RelationalRSI.InternalBudgetPreservation' does not depend on any axioms
+'RelationalRSI.IsAsyncDelayedTrajectory' does not depend on any axioms
+'RelationalRSI.IsGoodhartDecoupled' does not depend on any axioms
+'RelationalRSI.IsNonMonotonicRewiredTrajectory' does not depend on any axioms
+'RelationalRSI.IsRSIAlignmentStep' does not depend on any axioms
+'RelationalRSI.IsRSICarrierStep' does not depend on any axioms
+'RelationalRSI.IsTrajectory' does not depend on any axioms
+'RelationalRSI.RSIStep' does not depend on any axioms
+'RelationalRSI.RelationalAlignment' does not depend on any axioms
+'RelationalRSI.RelationalCarrier' does not depend on any axioms
+'RelationalRSI.RelationalCarrier._sizeOf_1' does not depend on any axioms
+'RelationalRSI.RelationalCarrier._sizeOf_inst' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.admittedGround' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.admittedGround._default' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.carrierBound' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.carrierBound_pos' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.casesOn' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.ctorIdx' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.mk' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.mk._flat_ctor' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.mk.inj' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.mk.injEq' depends on axioms: [propext]
+'RelationalRSI.RelationalCarrier.mk.noConfusion' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.mk.sizeOf_spec' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.noConfusion' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.noConfusionType' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.rec' does not depend on any axioms
+'RelationalRSI.RelationalCarrier.recOn' does not depend on any axioms
+'RelationalRSI.RelationalModel' does not depend on any axioms
+'RelationalRSI.RelationalModel._sizeOf_1' does not depend on any axioms
+'RelationalRSI.RelationalModel._sizeOf_inst' does not depend on any axioms
+'RelationalRSI.RelationalModel.casesOn' does not depend on any axioms
+'RelationalRSI.RelationalModel.communicativeSignature' does not depend on any axioms
+'RelationalRSI.RelationalModel.ctorIdx' does not depend on any axioms
+'RelationalRSI.RelationalModel.internalEvaluation' does not depend on any axioms
+'RelationalRSI.RelationalModel.isRefused' does not depend on any axioms
+'RelationalRSI.RelationalModel.mk' does not depend on any axioms
+'RelationalRSI.RelationalModel.mk._flat_ctor' does not depend on any axioms
+'RelationalRSI.RelationalModel.mk.inj' does not depend on any axioms
+'RelationalRSI.RelationalModel.mk.injEq' depends on axioms: [propext]
+'RelationalRSI.RelationalModel.mk.noConfusion' does not depend on any axioms
+'RelationalRSI.RelationalModel.mk.sizeOf_spec' does not depend on any axioms
+'RelationalRSI.RelationalModel.noConfusion' does not depend on any axioms
+'RelationalRSI.RelationalModel.noConfusionType' does not depend on any axioms
+'RelationalRSI.RelationalModel.rec' does not depend on any axioms
+'RelationalRSI.RelationalModel.recOn' does not depend on any axioms
+'RelationalRSI.RelationalModel.stateIndex' does not depend on any axioms
+'RelationalRSI.StrictCarrierDominance' does not depend on any axioms
+'RelationalRSI.StrictInternalDominance' does not depend on any axioms
+'RelationalRSI.admittedGroundModel' does not depend on any axioms
+'RelationalRSI.admittedGroundModel_aligned' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.admittedGroundModel_aligned._proof_1_1' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.asynchronous_coupled_rsi_decouples_within_product_bound' does not depend on any axioms
+'RelationalRSI.asynchronous_coupled_rsi_impossible' does not depend on any axioms
+'RelationalRSI.counterexample_agent_cannot_be_aligned' does not depend on any axioms
+'RelationalRSI.coupled_rsi_decouples_within_product_bound' does not depend on any axioms
+'RelationalRSI.coupled_rsi_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.fin_strict_chain_bounded' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.fin_strict_chain_bounded._proof_1_1' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.instReprBudgetedLift' does not depend on any axioms
+'RelationalRSI.instReprBudgetedLift.repr' does not depend on any axioms
+'RelationalRSI.instReprRelationalCarrier' does not depend on any axioms
+'RelationalRSI.instReprRelationalCarrier.repr' does not depend on any axioms
+'RelationalRSI.instReprRelationalModel' does not depend on any axioms
+'RelationalRSI.instReprRelationalModel.repr' does not depend on any axioms
+'RelationalRSI.interleaved_budgeted_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.interleaved_carrier_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.nat_strict_chain_growth' does not depend on any axioms
+'RelationalRSI.nat_weak_descent_diff' does not depend on any axioms
+'RelationalRSI.nat_weak_descent_le' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.nat_weak_descent_le._proof_1_1' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.non_monotonic_rewired_rsi_decouples_within_product_bound' does not depend on any axioms
+'RelationalRSI.non_monotonic_rewired_rsi_impossible' does not depend on any axioms
+'RelationalRSI.obstruction_goodhart_decoherence' does not depend on any axioms
+'RelationalRSI.obstruction_intersubjective_decoherence' does not depend on any axioms
+'RelationalRSI.obstruction_metric_collapse' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.obstruction_refusal_terminal' does not depend on any axioms
+'RelationalRSI.obstruction_relational_finitude' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.partial_lift_requires_budget_drop' does not depend on any axioms
+'RelationalRSI.productCarrier' does not depend on any axioms
+'RelationalRSI.productCarrier._proof_1' does not depend on any axioms
+'RelationalRSI.rsi_alignment_lost_within_carrier_bound' does not depend on any axioms
+'RelationalRSI.rsi_alignment_step_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_carrier_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_carrier_step_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_decouples_within_carrier_bound' does not depend on any axioms
+'RelationalRSI.rsi_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_internal_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.rsi_step_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.stepTrajectory' does not depend on any axioms
+'RelationalRSI.stepTrajectory._f' does not depend on any axioms
+'RelationalRSI.stepTrajectory._sunfold' does not depend on any axioms
+'RelationalRSI.stepTrajectory._unsafe_rec' does not depend on any axioms
+'RelationalRSI.stepTrajectory.match_1' does not depend on any axioms
+'RelationalRSI.stepTrajectory_isTrajectory' does not depend on any axioms
+'RelationalRSI.unbounded_budgeted_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.unbounded_budgeted_lifting_impossible._proof_1_1' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.unbounded_budgeted_lifting_impossible._proof_1_2' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.unbounded_carrier_lifting_impossible' depends on axioms: [Quot.sound, propext]
+'RelationalRSI.zero_budget_carrier_lift_impossible' does not depend on any axioms
+'ReviewCountermodels.equalityDifference' does not depend on any axioms
+'ReviewCountermodels.equalityDifference.eq_1' does not depend on any axioms
+'ReviewCountermodels.growingTrajectory' does not depend on any axioms
+'ReviewCountermodels.growingTrajectory._proof_1' does not depend on any axioms
+'ReviewCountermodels.growing_trajectory_is_not_report_grounded' does not depend on any axioms
+'ReviewCountermodels.natDominance' does not depend on any axioms
+'ReviewCountermodels.no_total_budget_satisfies_drop' does not depend on any axioms
+'ReviewCountermodels.no_total_refinement_satisfies_drop' does not depend on any axioms
+'ReviewCountermodels.oneReport' does not depend on any axioms
+'ReviewCountermodels.oneReport._proof_1' does not depend on any axioms
+'ReviewCountermodels.succ_is_structurally_aligned' depends on axioms: [propext]
+'_private.PrefixBounds.0.PrefixBounds.spent.match_1.eq_1' does not depend on any axioms
+'_private.PrefixBounds.0.PrefixBounds.spent.match_1.eq_2' does not depend on any axioms
+'_private.PrefixBounds.0.PrefixBounds.spent.match_1.splitter' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.cartesianProductList.match_1.eq_1' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.cartesianProductList.match_1.eq_2' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.cartesianProductList.match_1.splitter' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.eraseOne.match_1.eq_1' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.eraseOne.match_1.eq_2' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.eraseOne.match_1.splitter' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.eraseOne.match_3.eq_1' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.eraseOne.match_3.eq_2' does not depend on any axioms
+'_private.RelationalRsiNoGo.0.OmegaRelationalRsi.eraseOne.match_3.splitter' does not depend on any axioms

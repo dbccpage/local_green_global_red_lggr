@@ -1,0 +1,175 @@
+{
+  "schema": "rsi.live-memory-edition-verification.v1",
+  "date": "2026-10-23",
+  "version": "1.8.1",
+  "package_tests": {
+    "tests": 170,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "named_theorems": 161,
+  "full_package_local_declarations": 941,
+  "new_memory_theorems": 0,
+  "audited_live_memory_theorems": 8,
+  "axiom_allowlist": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "python": "3.12.14",
+  "lean": "4.35.0",
+  "offline_trial_replay": {
+    "offline_replay": "PASS",
+    "arithmetic_trial": [
+      {
+        "stage": "baseline",
+        "passed": true,
+        "answer": "UNKNOWN",
+        "expected": "UNKNOWN"
+      },
+      {
+        "stage": "learn",
+        "passed": true,
+        "answer": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-5532d34bfa549e9d7e4d34ecd3bf9507",
+              "value": "5054245"
+            }
+          ]
+        },
+        "expected": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-5532d34bfa549e9d7e4d34ecd3bf9507",
+              "value": "5054245"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "recall",
+        "passed": false,
+        "answer": "10104857",
+        "expected": "10108497"
+      }
+    ],
+    "exact_use_trial": [
+      {
+        "stage": "baseline",
+        "passed": true,
+        "answer": "UNKNOWN",
+        "expected": "UNKNOWN"
+      },
+      {
+        "stage": "learn",
+        "passed": true,
+        "answer": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-f6f4902ec0aa0be9f3dad65f58dbe7ea",
+              "value": "6514365"
+            }
+          ]
+        },
+        "expected": {
+          "facts": [
+            {
+              "key": "synthetic-calibration-f6f4902ec0aa0be9f3dad65f58dbe7ea",
+              "value": "6514365"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "recall",
+        "passed": true,
+        "answer": "6514365/ready",
+        "expected": "6514365/ready"
+      },
+      {
+        "stage": "reuse",
+        "passed": true,
+        "answer": "6514365/checked",
+        "expected": "6514365/checked"
+      }
+    ],
+    "scope": "Captured finite evidence; no new network calls or provider attestation."
+  },
+  "runtime_tests": {
+    "passed": 24,
+    "failed": 0,
+    "excluded": 0,
+    "previously_blocked_rerun": {
+      "passed": 2,
+      "failed": 0
+    },
+    "evidence": "docs/native_gateway_verification.json"
+  },
+  "native_gateway_receipt_sha256": "970f2f1d948b2b4076c36af15b7815faa662cfafedd7c8b312bbfe0ed3746b62",
+  "simplex_cross_language_replay": {
+    "passed": 95,
+    "date": "2026-10-23"
+  },
+  "prior_attempts": [
+    "The first transport-guard trial refused before provider response.",
+    "Arithmetic trial failed after correct recall; retained in evidence.",
+    "Paper A first test run hit sandbox temp ACL failures; normal-temp rerun passed."
+  ],
+  "source_bindings": {
+    "code/contextuality_lp.py": "d3e51a6dc4919da0fbebd1099d0fd1234d73ef96dae731459f2e21373b211bf0",
+    "code/deposit_paths.py": "dad8f0308995b974c20cedc4bbb9de9c41487e8fbd7f0829ee65ed7e163b4171",
+    "code/epistemic_kernel.py": "8211a3d7e61688c21de6a4a4d1e1e2e3a4501ccdb67aaef21024744be8a1fa5e",
+    "code/finite_limits.py": "fe215a8a941fd04f18807efec5a8b629acfac78d3400646d2f1a01d4241906b6",
+    "code/future_observation.py": "4480b0240d68b229f61ca94c356dcfc370623f0de04d6528f69e4f13d5b0a872",
+    "code/memory_cli.py": "1e6abf77782cf4fe2a2f4edfae8b5694b5be2a0a47e79fe0afc8a06ef4f78365",
+    "code/residual_memory.py": "be997d8c28570e925738c2e0176c25ee962d57c013555779c1d25cd17802734b",
+    "code/tests/test_certified_outcomes.py": "615a85cb36a6b97e6d3a5c3c680f4ea65821bb89db339bb0027777dbf1bd8985",
+    "code/tests/test_companion_bridge.py": "eee6b336fd5686f7f5480a5f049a5559f6979140511117faf878900b4f583628",
+    "code/tests/test_contextuality_lp.py": "beee6ec5f73737d272dd214eac276b07f3088872dabdebf82106b23bf8164614",
+    "code/tests/test_epistemic_kernel.py": "6aab085ac21421db3996fe56874debf2eaaaf1ee5a1a53eaceae38f868baabd9",
+    "code/tests/test_finite_limits.py": "328ecb0d182af5ec82077291179d1b88cefd58305ca0ad4999a40e4041a80519",
+    "code/tests/test_residual_memory.py": "ee27d045fabae0be2fe2ced31c8b6712b237b2fa8ec4384af14ac62fc983fc76",
+    "code/tests/test_uncertain_observations.py": "de0f01a7e021c92e49883ac1455c0cb70846892bec6c597965d74b6955ea0e78",
+    "code/uncertain_observation_example.py": "0ec683f8746e9770583e8faab0d4cd0e45b36ef4a0009487c336dfc0ef5f4f32",
+    "docs/live_memory_trials/trial1/baseline.json": "c7b91e784ab275022685afe84e233868be4b57986ba7d92ce4f5c84a73f13f54",
+    "docs/live_memory_trials/trial1/result.json": "8760b63f41093ac80bf1d781761c1dbca2891e8c81976d0606f2d7f5774152fb",
+    "docs/live_memory_trials/trial1/specimen.json": "d301f9a056fc50ef8a6f2553d313dd0b1eed1774b6d535559c3e9e31c61f4761",
+    "docs/live_memory_trials/trial1/synthetic_source.json": "2cd7575973e1ef3bdced35e82e532874178723db42c71332874c5c676f143991",
+    "docs/live_memory_trials/trial2/baseline.json": "43ea74f23238a3691ee8e80d3b6a1ce2e3e96c30eed94967d1d62c0783c99d30",
+    "docs/live_memory_trials/trial2/learn.json": "95a46e07759b7495bd8c7599b9e0328f003060fbbe80d82b8e6e2cdf36a1bfc2",
+    "docs/live_memory_trials/trial2/recall.json": "d0d0c8ef3bf19cc6c6b65e844b2ad21a3bcecf31d7c64ddfe4b5e7315665b843",
+    "docs/live_memory_trials/trial2/result.json": "f0610fa5bcf02af2cec8114dbc55176e45e69ae8ec6ce5cdc629ccd2968b634a",
+    "docs/live_memory_trials/trial2/specimen.json": "a905bb08dcf823a8d80dec4feec3e0fe67f54115c4ec915408965b26dd1517ba",
+    "docs/live_memory_trials/trial2/synthetic_source.json": "c163639969011de59c79a9165c65fcd10ead9521d4934b2273a019874a627263",
+    "docs/live_memory_trials/trial3/baseline.json": "752138cce825e8ad9602d97ee512b2b3e73aff4e30e3f92b099b8ebfedae76b3",
+    "docs/live_memory_trials/trial3/learn.json": "a1ef190b80b8ba2efce1c4650a0813db62937d2ac786e3fcc161dc6f34556e62",
+    "docs/live_memory_trials/trial3/recall.json": "09e1c9aabd3a56bdd635ceb2f59e52b9eff528f1da9b339e6e7f50f52393bcd5",
+    "docs/live_memory_trials/trial3/result.json": "44e7bd242f6312ebcce48e7972e88a353370e87e6de4e5a1e0963278302afde7",
+    "docs/live_memory_trials/trial3/reuse.json": "660fd2ef3fc7c714150a8f822cb17c8d4003256063130e13ec6cd0f815d5a199",
+    "docs/live_memory_trials/trial3/specimen.json": "6b2a0800c5c02bdebedfa3ea68dc3bd913e7cd6c90f4026a44beff7d7d9253b4",
+    "docs/live_memory_trials/trial3/synthetic_source.json": "fcacab61f68adcb22bd693f6dab2e3adf1f1f0663eba9ce9936befa07493fa5e",
+    "docs/runtime_snapshot/llm_gateway.py": "77499fd7dd45e280b196280faf3202648b7bf534395a057d2afb00b6a4a71661",
+    "docs/runtime_snapshot/memory_cli.py": "1e6abf77782cf4fe2a2f4edfae8b5694b5be2a0a47e79fe0afc8a06ef4f78365",
+    "docs/runtime_snapshot/residual_memory.py": "be997d8c28570e925738c2e0176c25ee962d57c013555779c1d25cd17802734b",
+    "docs/runtime_snapshot/synthetic_memory_experiment.py": "aee4dc6c202a916f4c9cfd02482b6b16585b62a68266202e0ed292550ad823ff",
+    "docs/runtime_snapshot/test_residual_memory.py": "17004d77eca3e67598fd377385dcd3e2e5bd4659df52fe10902f66c504737837",
+    "tools/generate_lp_certificates.py": "b91a162d60d0991c95f7a31922b5529032239aa0d7f688b245e8099720b91b75",
+    "tools/rebuild_release.py": "e30952640a1dc507e1c8ebeebfd6cd3b003e99191903ace3856db7d484260df7",
+    "tools/replay_full_axiom_census.py": "e99864c0630907f21c8d710155bca594fe355c9bedcd8bd71ce888a47e7f434f",
+    "tools/replay_lean_axiom_census.py": "5ca18bb9a3a3e0482a378d368e2c1f6239590821b3d647710c43e4cfed0caa68",
+    "tools/replay_live_memory_evidence.py": "6144d812a6563e7a85b824ff62a7c21311f2ed0d0ecf23574fa196d4a8b85fdb",
+    "tools/replay_mind_expansion.py": "afda57a89d1bcf36d6defabd7505a2b4b50744d4472d030a6579252d4ee45316",
+    "tools/replay_review_corrections.py": "d1f4df83a7f024a75ebfedf5f405c48380fe6c8d1a2644cc073e84f474f830d3",
+    "tools/replay_simplex_implementation.py": "b1f544b724c0c49c8b193cfa7621dbc0f2e652ef0620b3d52f77a2f877999ee7",
+    "tools/vendor_evidence.py": "541f0f9e212800a4b54be2e160ba9df85cc7914fd04f2b57b61f0e44621dc4ae"
+  },
+  "limits": [
+    "Finite captured model trials; no statistical generalization.",
+    "Abstract Lean gate proofs are not universal Python or SQLite refinement.",
+    "Source truth and model adequacy are assumptions.",
+    "Explicit repository agent configuration; no global Codex memory hook.",
+    "The native gateway replay requires the monorepo; standalone memory-core tests execute from this archive."
+  ]
+}

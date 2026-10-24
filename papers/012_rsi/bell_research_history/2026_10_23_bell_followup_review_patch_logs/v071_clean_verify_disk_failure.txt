@@ -1,0 +1,1278 @@
+PASS Bell payload and source custody 68 files
+Fresh Bell proof build; using packaged offline dependencies
+Traceback (most recent call last):
+  File "C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell_integral_quantum\clean_release_v0.7.1\036_bell_positive_extensions_and_projection_residuals\verify_deposit.py", line 9, in <module>
+    replay()
+  File "C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell_integral_quantum\clean_release_v0.7.1\036_bell_positive_extensions_and_projection_residuals\tools\replay_lean.py", line 98, in replay
+    raise ValueError(logs[-1])
+ValueError: info: bell_positive_extensions: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+warning: rsi_mathlib_vendor: ignoring missing manifest:
+  C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell_integral_quantum\clean_release_v0.7.1\036_bell_positive_extensions_and_projection_residuals\lean4\vendor\lake-manifest.json
+error: C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell_integral_quantum\clean_release_v0.7.1\036_bell_positive_extensions_and_projection_residuals\lean4\vendor\lakefile.lean:7:14: Offline Lean cache extraction failed: lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Metrizable.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Order.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Order.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Order.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Order.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\BorelSpace\\Order.olean.private': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Order.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\BorelSpace\\Order.olean.server': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Real.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\BorelSpace\\Real.ilean': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Real.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Real.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\BorelSpace\\Real.ir.sig': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Real.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\BorelSpace\\Real.olean': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Real.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\BorelSpace\\Real.olean.private': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/BorelSpace/Real.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\BorelSpace\\Real.olean.server': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/Pi.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Constructions/Pi.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Constructions/Pi.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Pi.ir.sig': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/Pi.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Pi.olean': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/Pi.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Pi.olean.private': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/Pi.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Pi.olean.server': No space left on device
+lib/Mathlib/MeasureTheory/Constructions/Polish/Basic.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\Basic.ilean': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/Basic.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\Basic.ir': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/Basic.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\Basic.ir.sig': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/Basic.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\Basic.olean': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/Basic.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\Basic.olean.private': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/Basic.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\Basic.olean.server': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/StronglyMeasurable.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\StronglyMeasurable.ilean': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/StronglyMeasurable.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\StronglyMeasurable.ir': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/StronglyMeasurable.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\StronglyMeasurable.ir.sig': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/StronglyMeasurable.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\StronglyMeasurable.olean': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/StronglyMeasurable.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\StronglyMeasurable.olean.private': No such file or directory
+lib/Mathlib/MeasureTheory/Constructions/Polish/StronglyMeasurable.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Constructions\\Polish\\StronglyMeasurable.olean.server': No such file or directory
+lib/Mathlib/MeasureTheory/Function/AEEqFun.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/AEEqFun.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/AEEqFun.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/AEEqFun.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/AEEqFun.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/AEMeasurableSequence.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/AEMeasurableSequence.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/AEMeasurableSequence.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/ConvergenceInMeasure.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/ConvergenceInMeasure.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/ConvergenceInMeasure.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/ConvergenceInMeasure.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/Egorov.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/Egorov.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/Egorov.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/Egorov.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/EssSup.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/EssSup.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/EssSup.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/EssSup.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/AEEqFun.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/AEEqFun.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/HasFiniteIntegral.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/HasFiniteIntegral.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/HasFiniteIntegral.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/HasFiniteIntegral.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/Integrable.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/Integrable.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/Integrable.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/L1Space/Integrable.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Function\\L1Space\\Integrable.olean.server': No space left on device
+lib/Mathlib/MeasureTheory/Function/LpOrder.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/ChebyshevMarkov.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/ChebyshevMarkov.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/CompareExp.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/CompareExp.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/CompareExp.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Defs.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Indicator.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Indicator.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Monotonicity.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/Monotonicity.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/SMul.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/TriangleInequality.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/TriangleInequality.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSeminorm/TriangleInequality.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Basic.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Complete.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Complete.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Indicator.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Indicator.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/LpSpace/Indicator.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/SimpleFunc.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/SimpleFunc.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/SimpleFuncDense.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/SimpleFuncDenseLp.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/SimpleFuncDenseLp.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/SpecialFunctions/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/SpecialFunctions/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/StronglyMeasurable/AEStronglyMeasurable.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/StronglyMeasurable/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/StronglyMeasurable/Basic.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/StronglyMeasurable/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/StronglyMeasurable/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Function/StronglyMeasurable/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Arithmetic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Arithmetic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Arithmetic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Convolution.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Convolution.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Convolution.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Convolution.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Measure.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Measure.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Pointwise.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Pointwise.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Group/Pointwise.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Group\\Pointwise.olean': No space left on device
+lib/Mathlib/MeasureTheory/Group/Pointwise.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Group\\Pointwise.olean.private': No space left on device
+lib/Mathlib/MeasureTheory/Group/Pointwise.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Group\\Pointwise.olean.server': No space left on device
+lib/Mathlib/MeasureTheory/Group/Prod.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Group\\Prod.ilean': No space left on device
+lib/Mathlib/MeasureTheory/Group/Prod.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Group\\Prod.ir.sig': No space left on device
+lib/Mathlib/MeasureTheory/Group/Prod.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Group\\Prod.olean': No space left on device
+lib/Mathlib/MeasureTheory/Group/Prod.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/Basic.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/L1.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/L1.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/L1.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/L1.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Bochner/L1.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/FinMeasAdditive.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/FinMeasAdditive.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/FinMeasAdditive.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/FinMeasAdditive.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Add.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Add.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Add.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Add.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Basic.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Countable.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Countable.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Countable.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Countable.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/DominatedConvergence.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/DominatedConvergence.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/DominatedConvergence.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/DominatedConvergence.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Map.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Map.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Map.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Norm.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Norm.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Sub.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Sub.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Sub.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/Lebesgue/Sub.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/MeanInequalities.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/MeanInequalities.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/MeanInequalities.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/ChangeMeasure.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/ChangeMeasure.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/ChangeMeasure.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/DominatedConvergence.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/DominatedConvergence.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/DominatedConvergence.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/Function.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/Function.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/Function.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/Function.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\Integral\\SetToL1\\Function.olean.server': No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/L1.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/L1.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/L1.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/L1.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/SimpleFunc.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/SimpleFunc.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Integral/SetToL1/SimpleFunc.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Basic.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\MeasurableSpace\\Basic.ilean': No such file or directory
+lib/Mathlib/MeasureTheory/MeasurableSpace/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/CountablyGenerated.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/CountablyGenerated.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/CountablyGenerated.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/CountablyGenerated.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Defs.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Defs.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Defs.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Defs.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/EventuallyMeasurable.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/EventuallyMeasurable.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/EventuallyMeasurable.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Instances.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Instances.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Instances.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Instances.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/MeasurablyGenerated.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/MeasurablyGenerated.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/MeasurablyGenerated.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Pi.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Pi.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Pi.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Prod.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\MeasurableSpace\\Prod.ilean': No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Prod.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Prod.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/MeasurableSpace/Prod.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEDisjoint.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEDisjoint.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEDisjoint.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEDisjoint.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEMeasurable.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEMeasurable.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEMeasurable.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AEMeasurable.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AbsolutelyContinuous.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AbsolutelyContinuous.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AbsolutelyContinuous.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AbsolutelyContinuous.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/AbsolutelyContinuous.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Comap.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Comap.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Comap.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/CompleteLattice.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/CompleteLattice.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/CompleteLattice.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/CompleteLattice.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/CompleteLattice.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Continuity.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Continuity.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Continuity.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Count.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Count.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Count.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Decomposition/Exhaustion.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Decomposition/Exhaustion.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Decomposition/Exhaustion.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Decomposition/Exhaustion.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Decomposition/Exhaustion.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Dirac/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Dirac/Basic.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Dirac/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Dirac/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Dirac/Def.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Dirac/Def.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Dirac/Def.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Doubling.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Doubling.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Filter.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Filter.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Filter.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Filter.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/GiryMonad.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/GiryMonad.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/GiryMonad.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/GiryMonad.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Interval.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Interval.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Interval.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Interval.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Map.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Map.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Map.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Map.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MeasureSpaceDef.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MeasureSpaceDef.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MeasureSpaceDef.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MeasureSpaceDef.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MeasureSpaceDef.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Module.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Module.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Module.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MutuallySingular.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MutuallySingular.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MutuallySingular.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MutuallySingular.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/MutuallySingular.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/NullMeasurable.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/NullMeasurable.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/NullMeasurable.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/NullMeasurable.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/NullMeasurable.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OpenPos.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OpenPos.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OpenPos.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OpenPos.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OuterMeasure.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OuterMeasure.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OuterMeasure.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/OuterMeasure.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Prod.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Prod.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Prod.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Prod.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/QuasiMeasurePreserving.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/QuasiMeasurePreserving.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/QuasiMeasurePreserving.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/QuasiMeasurePreserving.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/QuasiMeasurePreserving.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Real.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Regular.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Regular.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Restrict.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Restrict.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Sum.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Sum.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Trim.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Trim.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Trim.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Trim.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/Finite.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/Finite.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/Finite.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/NullSingletonClass.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/Probability.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/Probability.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/Probability.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/SFinite.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/SFinite.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/SFinite.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/Typeclasses/SFinite.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/WithDensity.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/WithDensity.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/WithDensity.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Measure/WithDensity.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Order/Lattice.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Order/Lattice.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Order/Lattice.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/Order/Lattice.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/AE.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/AE.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/AE.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/BorelCantelli.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Caratheodory.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Caratheodory.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Caratheodory.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Caratheodory.olean.server: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Defs.ilean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Defs.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Defs.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Defs.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\OuterMeasure\\Defs.olean.private': No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Defs.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\OuterMeasure\\Defs.olean.server': No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Induced.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\MeasureTheory\\OuterMeasure\\Induced.ilean': No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Induced.ir: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Induced.olean: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/Induced.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/OuterMeasure/OfFunction.olean.private: Write failed: No space left on device
+lib/Mathlib/MeasureTheory/PiSystem.olean.private: Write failed: No space left on device
+lib/Mathlib/NumberTheory/Divisors.ilean: Write failed: No space left on device
+lib/Mathlib/NumberTheory/Divisors.ir: Write failed: No space left on device
+lib/Mathlib/NumberTheory/Divisors.olean: Write failed: No space left on device
+lib/Mathlib/NumberTheory/Divisors.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Antichain.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Antisymmetrization.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Antisymmetrization.ir: Write failed: No space left on device
+lib/Mathlib/Order/Antisymmetrization.olean: Write failed: No space left on device
+lib/Mathlib/Order/Antisymmetrization.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Atoms.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Atoms.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Atoms.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\Atoms.olean.server': No space left on device
+lib/Mathlib/Order/Atoms/Finite.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Order/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Defs.olean: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Defs.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Set.ilean: Write failed: No space left on device
+lib/Mathlib/Order/BooleanAlgebra/Set.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/BoundedOrder/Basic.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\BoundedOrder\\Basic.olean': No space left on device
+lib/Mathlib/Order/BoundedOrder/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/BoundedOrder/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/BoundedOrder/Lattice.olean: Write failed: No space left on device
+lib/Mathlib/Order/BoundedOrder/Lattice.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/BoundedOrder/Monotone.olean: Write failed: No space left on device
+lib/Mathlib/Order/BoundedOrder/Monotone.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Defs.olean: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Defs.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Image.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Image.olean: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Image.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/Image.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/OrderIso.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/OrderIso.olean: Write failed: No space left on device
+lib/Mathlib/Order/Bounds/OrderIso.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/BourbakiWitt.ilean: Write failed: No space left on device
+lib/Mathlib/Order/BourbakiWitt.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\BourbakiWitt.ir': No space left on device
+lib/Mathlib/Order/BourbakiWitt.olean: Write failed: No space left on device
+lib/Mathlib/Order/BourbakiWitt.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Circular.olean: Write failed: No space left on device
+lib/Mathlib/Order/Circular.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Circular.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Closure.olean: Write failed: No space left on device
+lib/Mathlib/Order/Closure.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Closure.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Cofinal.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Cofinal.olean: Write failed: No space left on device
+lib/Mathlib/Order/Cofinal.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompactlyGenerated/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompactlyGenerated/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompactlyGenerated/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompactlyGenerated/Intervals.ilean: Write failed: No space left on device
+lib/Mathlib/Order/CompactlyGenerated/Intervals.ir: Write failed: No space left on device
+lib/Mathlib/Order/CompactlyGenerated/Intervals.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompactlyGenerated/Intervals.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Compare.ir: Write failed: No space left on device
+lib/Mathlib/Order/Compare.olean: Write failed: No space left on device
+lib/Mathlib/Order/Compare.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Compare.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompleteBooleanAlgebra.ilean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteBooleanAlgebra.ir: Write failed: No space left on device
+lib/Mathlib/Order/CompleteBooleanAlgebra.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteBooleanAlgebra.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompleteBooleanAlgebra.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Chain.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Chain.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Chain.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Defs.ilean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Defs.ir: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Defs.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Defs.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Finset.ilean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Finset.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Finset.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Finset.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Group.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Group.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Lemmas.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Lemmas.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLattice/Lemmas.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLatticeIntervals.ilean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLatticeIntervals.olean: Write failed: No space left on device
+lib/Mathlib/Order/CompleteLatticeIntervals.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompleteLattice/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompleteLattice/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompleteLattice/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompleteLattice/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompleteLattice/Defs.ir: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompleteLattice/Indexed.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompleteLattice/Indexed.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompletePartialOrder/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompletePartialOrder/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompletePartialOrder/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompletePartialOrder/Defs.ir: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompletePartialOrder/Indexed.olean: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompletePartialOrder/Indexed.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/ConditionallyCompletePartialOrder/Indexed.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Copy.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Copy.ir: Write failed: No space left on device
+lib/Mathlib/Order/Copy.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\Copy.ir.sig': No space left on device
+lib/Mathlib/Order/Copy.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\Copy.olean': No space left on device
+lib/Mathlib/Order/Copy.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\Copy.olean.private': No space left on device
+lib/Mathlib/Order/Copy.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\Copy.olean.server': No space left on device
+lib/Mathlib/Order/Cover.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Cover.ir: Write failed: No space left on device
+lib/Mathlib/Order/Cover.olean: Write failed: No space left on device
+lib/Mathlib/Order/Cover.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Defs/Lattice.olean: Write failed: No space left on device
+lib/Mathlib/Order/Defs/Lattice.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Defs/Lattice.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Defs/LinearOrder.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Defs/LinearOrder.ir: Write failed: No space left on device
+lib/Mathlib/Order/Defs/LinearOrder.olean: Write failed: No space left on device
+lib/Mathlib/Order/Defs/LinearOrder.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Defs/PartialOrder.ir: Write failed: No space left on device
+lib/Mathlib/Order/Defs/PartialOrder.olean: Write failed: No space left on device
+lib/Mathlib/Order/Defs/PartialOrder.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Defs/PartialOrder.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Defs/Unbundled.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Defs/Unbundled.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/DirSupClosed.ilean: Write failed: No space left on device
+lib/Mathlib/Order/DirSupClosed.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Directed.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Directed.olean: Write failed: No space left on device
+lib/Mathlib/Order/Directed.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Disjoint.olean: Write failed: No space left on device
+lib/Mathlib/Order/Disjoint.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Disjointed.olean: Write failed: No space left on device
+lib/Mathlib/Order/Disjointed.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Disjointed.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/BigOperators.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/BigOperators.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/CompleteLattice.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/CompleteLattice.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/CompleteLattice.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/CountablyGenerated.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/CountablyGenerated.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Defs.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Disjoint.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\Filter\\AtTopBot\\Disjoint.ilean': No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Disjoint.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Disjoint.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Field.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Field.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Order\\Filter\\AtTopBot\\Field.olean.server': No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Finite.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Finite.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Finset.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Finset.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Group.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Group.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Map.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/AtTopBot/Map.ir: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Defs.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Defs.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/ENNReal.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/ENNReal.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/ENNReal.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/ENNReal.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/EventuallyConst.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/EventuallyConst.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/EventuallyConst.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Extr.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Extr.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Extr.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Extr.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Finite.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Finite.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Finite.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Finite.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Germ/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Germ/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Germ/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Germ/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Germ/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/IndicatorFunction.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/IndicatorFunction.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Interval.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Interval.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Interval.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/IsBounded.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/IsBounded.ir: Write failed: No space left on device
+lib/Mathlib/Order/Filter/IsBounded.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/IsBounded.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Ker.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Ker.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Ker.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Lift.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Lift.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Lift.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Map.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Map.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Map.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Map.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/NAry.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/NAry.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pi.ir: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pi.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pi.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pointwise.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pointwise.ir: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pointwise.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pointwise.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Pointwise.olean.server: Write failed: No space left on device
+lib/Mathlib/Order/Filter/Prod.ilean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/SmallSets.olean: Write failed: No space left on device
+lib/Mathlib/Order/Filter/SmallSets.olean.private: Write failed: No space left on device
+lib/Mathlib/Order/Filter/SmallSets.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/DeprecateTo.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/DeprecateTo.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/DeprecateTo.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/DeriveFintype.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/DeriveFintype.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/DeriveFintype.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/DeriveFintype.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/DeriveFintype.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Eqns.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Eqns.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/ErwQuestion.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ErwQuestion.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/ExistsI.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/ExistsI.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ExistsI.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtendDoc.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtendDoc.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtendDoc.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtendDoc.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtractGoal.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtractGoal.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtractGoal.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ExtractGoal.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FBinop.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FBinop.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FBinop.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FBinop.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/FailIfNoProgress.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/FailIfNoProgress.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FailIfNoProgress.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FailIfNoProgress.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FastInstance.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FastInstance.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FastInstance.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FastInstance.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Field.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Field.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Field.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Field.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp/Discharger.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp/Discharger.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp/Discharger.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp/Lemmas.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp/Lemmas.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp/Lemmas.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FieldSimp/Lemmas.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FinCases.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FinCases.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FinCases.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Find.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Find.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Find.ir': No space left on device
+lib/Mathlib/Tactic/Find.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Find.ir.sig': No space left on device
+lib/Mathlib/Tactic/Find.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Find.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Find.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Finiteness.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Finiteness.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Finiteness.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Finiteness.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Core.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Core.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Core.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Decl.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Decl.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Decl.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Decl.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Elab.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Elab.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Elab.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Elab.ir.sig': No space left on device
+lib/Mathlib/Tactic/FunProp/Elab.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Elab.olean': No space left on device
+lib/Mathlib/Tactic/FunProp/Elab.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Elab.olean.private': No space left on device
+lib/Mathlib/Tactic/FunProp/Elab.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Elab.olean.server': No space left on device
+lib/Mathlib/Tactic/FunProp/FunctionData.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\FunctionData.ilean': No space left on device
+lib/Mathlib/Tactic/FunProp/FunctionData.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\FunctionData.ir': No space left on device
+lib/Mathlib/Tactic/FunProp/FunctionData.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\FunctionData.ir.sig': No space left on device
+lib/Mathlib/Tactic/FunProp/FunctionData.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\FunctionData.olean': No space left on device
+lib/Mathlib/Tactic/FunProp/FunctionData.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\FunctionData.olean.private': No space left on device
+lib/Mathlib/Tactic/FunProp/FunctionData.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\FunctionData.olean.server': No space left on device
+lib/Mathlib/Tactic/FunProp/Mor.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Mor.ilean': No space left on device
+lib/Mathlib/Tactic/FunProp/Mor.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Mor.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Mor.ir.sig': No space left on device
+lib/Mathlib/Tactic/FunProp/Mor.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Mor.olean': No space left on device
+lib/Mathlib/Tactic/FunProp/Mor.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Mor.olean.private': No space left on device
+lib/Mathlib/Tactic/FunProp/Mor.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Mor.olean.server': No space left on device
+lib/Mathlib/Tactic/FunProp/Theorems.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\FunProp\\Theorems.ilean': No space left on device
+lib/Mathlib/Tactic/FunProp/Theorems.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Theorems.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Theorems.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/ToBatteries.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/ToBatteries.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/ToBatteries.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Types.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Types.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/FunProp/Types.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/GCongr/Core.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/GCongr/Core.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\GCongr\\Core.olean': No space left on device
+lib/Mathlib/Tactic/GCongr/Core.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/GCongr/Core.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/GCongr/ForwardAttr.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/GCongr/ForwardAttr.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Core.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Core.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Core.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Core.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Elab.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Elab.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Elab.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/GRewrite/Elab.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/GrindAttrs.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/GrindAttrs.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/GrindAttrs.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Group.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Group.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Group.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Group.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/GuardGoalNums.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/GuardGoalNums.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/GuardGoalNums.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/GuardGoalNums.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/GuardHypNums.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/HaveI.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/HaveI.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/HaveI.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/HaveI.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/HaveI.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/HigherOrder.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/HigherOrder.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/HigherOrder.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/HigherOrder.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/HigherOrder.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\HigherOrder.olean.server': No space left on device
+lib/Mathlib/Tactic/Hint.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Hint.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Hint.ir': No space left on device
+lib/Mathlib/Tactic/Hint.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Hint.ir.sig': No space left on device
+lib/Mathlib/Tactic/Hint.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Hint.olean': No space left on device
+lib/Mathlib/Tactic/Hint.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Hint.olean.private': No space left on device
+lib/Mathlib/Tactic/Hint.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Hint.olean.server': No space left on device
+lib/Mathlib/Tactic/InferParam.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\InferParam.ilean': No space left on device
+lib/Mathlib/Tactic/InferParam.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\InferParam.ir': No space left on device
+lib/Mathlib/Tactic/InferParam.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\InferParam.ir.sig': No space left on device
+lib/Mathlib/Tactic/InferParam.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\InferParam.olean': No space left on device
+lib/Mathlib/Tactic/InferParam.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Inhabit.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/IntervalCases.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/IntervalCases.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/IntervalCases.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/IrreducibleDef.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/IrreducibleDef.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/IrreducibleDef.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Lift.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Lift.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Lift.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Datatypes.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Datatypes.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Frontend.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Frontend.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Frontend.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Frontend.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Frontend.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Lemmas.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Lemmas.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Lemmas.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Lemmas.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/Datatypes.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/Datatypes.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/Datatypes.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/Datatypes.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/Gauss.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/Gauss.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/PositiveVector.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/PositiveVector.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/PositiveVector.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/PositiveVector.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linarith\\Oracle\\SimplexAlgorithm\\PositiveVector.olean.server': No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/SimplexAlgorithm.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Oracle/SimplexAlgorithm/SimplexAlgorithm.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Parsing.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Parsing.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Parsing.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Preprocessing.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Preprocessing.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Preprocessing.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Verification.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Verification.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linarith/Verification.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/LinearCombination.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/LinearCombination.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/LinearCombination.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/LinearCombination.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/LinearCombination/Lemmas.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/LinearCombination/Lemmas.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/LinearCombination/Lemmas.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/AuxLemma.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/AuxLemma.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DeclType.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DeprecatedSyntaxLinter.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DeprecatedSyntaxLinter.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DeprecatedSyntaxLinter.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DirectoryDependency.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DirectoryDependency.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DirectoryDependency.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DirectoryDependency.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DocPrime.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DocString.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DocString.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/DocString.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/EmptyLine.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/EmptyLine.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/EmptyLine.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/FlexibleLinter.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/FlexibleLinter.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/FlexibleLinter.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/FlexibleLinter.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HashCommandLinter.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HashCommandLinter.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HashCommandLinter.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HaveILetI.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HaveILetI.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HaveLetLinter.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HaveLetLinter.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/HaveLetLinter.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linter\\HaveLetLinter.ir.sig': No space left on device
+lib/Mathlib/Tactic/Linter/HaveLetLinter.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linter\\HaveLetLinter.olean': No space left on device
+lib/Mathlib/Tactic/Linter/HaveLetLinter.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Header.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Header.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Header.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Header.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/InternalConstructor.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/InternalConstructor.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Lint.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Lint.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Lint.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Lint.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/MinImports.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/MinImports.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/MinImports.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/MinImports.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/MinImports.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Multigoal.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Multigoal.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linter\\Multigoal.ir': No space left on device
+lib/Mathlib/Tactic/Linter/Multigoal.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linter\\Multigoal.ir.sig': No space left on device
+lib/Mathlib/Tactic/Linter/Multigoal.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linter\\Multigoal.olean': No space left on device
+lib/Mathlib/Tactic/Linter/Multigoal.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linter\\Multigoal.olean.private': No space left on device
+lib/Mathlib/Tactic/Linter/OldObtain.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/OldObtain.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/OverlappingInstances.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/OverlappingInstances.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/OverlappingInstances.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/OverlappingInstances.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PPRoundtrip.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PPRoundtrip.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PPRoundtrip.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Linter\\PPRoundtrip.olean.private': No space left on device
+lib/Mathlib/Tactic/Linter/PPRoundtrip.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PrivateModule.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PrivateModule.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PrivateModule.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PrivateModule.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/PrivateModule.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Style.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Style.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Style.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Style.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Style.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/TacticDocumentation.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/TacticDocumentation.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/TacticDocumentation.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/TacticDocumentation.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedInstancesInType.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedInstancesInType.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedInstancesInType.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedTactic.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedTactic.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedTactic.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedTacticExtension.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UnusedTacticExtension.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UpstreamableDecl.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UpstreamableDecl.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/UpstreamableDecl.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Whitespace.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Whitespace.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Whitespace.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Linter/Whitespace.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Measurability.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Measurability.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/MinImports.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/MinImports.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/MkIffOfInductiveProp.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/MkIffOfInductiveProp.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/MkIffOfInductiveProp.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Module.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Module.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Module.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/BigOperators.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/BigOperators.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Core.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Core.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Core.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Core.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/DivMod.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/DivMod.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\NormNum\\DivMod.olean.server': No space left on device
+lib/Mathlib/Tactic/NormNum/Eq.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/GCD.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Ineq.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Ineq.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Inv.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/NatFactorial.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/NatFactorial.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/OfScientific.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/OfScientific.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Pow.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Pow.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Pow.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\NormNum\\Pow.olean': No space left on device
+lib/Mathlib/Tactic/NormNum/Pow.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\NormNum\\Pow.olean.private': No space left on device
+lib/Mathlib/Tactic/NormNum/Result.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Result.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/NormNum/Result.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Observe.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/OfNat.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Order.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Order.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Order.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Order.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Order/CollectFacts.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Order/CollectFacts.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Order/ToInt.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/PPWithUniv.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/PPWithUniv.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Peel.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Peel.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Peel.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Peel.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Basic.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Positivity\\Basic.olean': No space left on device
+lib/Mathlib/Tactic/Positivity/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Core.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Core.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Core.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Core.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Core.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Finset.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Finset.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Finset.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Finset.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Positivity/Finset.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/ProxyType.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/ProxyType.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/ProxyType.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ProxyType.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Push.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Push.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Push.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Push.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Push/Attr.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Push/Attr.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Push/Attr.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Push/Attr.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Recover.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Recover.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Relation/Rfl.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Rename.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/RenameBVar.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/RenameBVar.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Rify.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Common.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Common.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Common.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Common.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Compare.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Compare.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/Compare.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/PNat.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Ring/PNat.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\PNat.ir.sig': No space left on device
+lib/Mathlib/Tactic/Ring/PNat.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\PNat.olean': No space left on device
+lib/Mathlib/Tactic/Ring/PNat.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\PNat.olean.private': No space left on device
+lib/Mathlib/Tactic/Ring/PNat.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\PNat.olean.server': No space left on device
+lib/Mathlib/Tactic/Ring/RingNF.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\RingNF.ilean': No space left on device
+lib/Mathlib/Tactic/Ring/RingNF.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\RingNF.ir': No space left on device
+lib/Mathlib/Tactic/Ring/RingNF.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\RingNF.ir.sig': No space left on device
+lib/Mathlib/Tactic/Ring/RingNF.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\RingNF.olean': No space left on device
+lib/Mathlib/Tactic/Ring/RingNF.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Ring\\RingNF.olean.private': No space left on device
+lib/Mathlib/Tactic/Says.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Says.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/ScopedNS.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/ScopedNS.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ScopedNS.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Set.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/SetNotationForOrder.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\SetNotationForOrder.ir.sig': No space left on device
+lib/Mathlib/Tactic/SetNotationForOrder.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/SetNotationForOrder.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Setm.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Setm.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Setm.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/SimpIntro.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/SimpIntro.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/SimpRw.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/SimpRw.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/SimpRw.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Simproc/ExistsAndEq.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Simproc/ExistsAndEq.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Simproc/ExistsAndEq.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Simps.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Simps/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Simps/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Simps/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Simps/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Simps/NotationClass.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/SplitIfs.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/SplitIfs.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/SplitIfs.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/SplitIfs.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Spread.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Spread.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Subsingleton.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Substs.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Substs.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Substs.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Substs.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/SuccessIfFailWithMsg.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/SuccessIfFailWithMsg.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/SudoSetOption.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/SudoSetOption.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/SudoSetOption.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/SudoSetOption.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/SuppressCompilation.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/SuppressCompilation.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/SuppressCompilation.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/TFAE.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/TFAE.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/TFAE.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/TFAE.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/TFAE.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/TacticAnalysis.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/TacticAnalysis.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/TacticAnalysis.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/TacticAnalysis.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/TacticAnalysis/Declarations.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/TacticAnalysis/Declarations.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/TacticAnalysis/Declarations.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Tauto.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Tauto.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Tauto.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/TautoSet.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/TautoSet.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/TautoSet.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/TermCongr.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/TermCongr.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/TermCongr.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/TermCongr.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/ToExpr.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ToExpr.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/ToFun.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/ToFun.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Core.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Core.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Core.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Core.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Expr.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Expr.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Expr.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Expr.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/GuessName.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/GuessName.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/GuessName.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Reorder.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Reorder.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/Reorder.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/TagUnfoldBoundary.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/TagUnfoldBoundary.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/TagUnfoldBoundary.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/TagUnfoldBoundary.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/ToAdditive.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Tactic\\Translate\\ToAdditive.ir': No space left on device
+lib/Mathlib/Tactic/Translate/ToAdditive.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/ToAdditive.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/ToDual.ilean: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/ToDual.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/ToDual.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/UnfoldBoundary.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Translate/UnfoldBoundary.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Use.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Variable.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Variable.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Variable.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/Calc.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/CongrM.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/CongrM.olean.server: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/Conv.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/Conv.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/Conv.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/LibraryRewrite.ir: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/LibraryRewrite.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/LibraryRewrite.olean.private: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/SelectPanelUtils.olean: Write failed: No space left on device
+lib/Mathlib/Tactic/Widget/SelectPanelUtils.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Algebra.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Algebra.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Algebra/Equiv.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/ConstMulAction.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Constructions.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Constructions.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/ContinuousAffineEquiv.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/ContinuousAffineEquiv.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\ContinuousAffineEquiv.olean.private': No space left on device
+lib/Mathlib/Topology/Algebra/ContinuousAffineEquiv.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\ContinuousAffineEquiv.olean.server': No space left on device
+lib/Mathlib/Topology/Algebra/ContinuousAffineMap.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\ContinuousAffineMap.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/ContinuousAffineMap.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/ContinuousAffineMap.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/ContinuousAffineMap.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/ContinuousDiv.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/ContinuousInv.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Pointwise.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Pointwise.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Quotient.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Quotient.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Quotient.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Quotient.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Quotient.olean.private': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Quotient.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Quotient.olean.server': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Subgroup.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Subgroup.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Subgroup.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Subgroup.ir': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Subgroup.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Subgroup.ir.sig': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Subgroup.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Subgroup.olean': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Subgroup.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Subgroup.olean.private': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Subgroup.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Subgroup.olean.server': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Torsor.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Torsor.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Torsor.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Torsor.ir': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Torsor.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\Torsor.ir.sig': No space left on device
+lib/Mathlib/Topology/Algebra/Group/Torsor.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Torsor.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Torsor.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Units.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Units.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Units.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Units.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/Units.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/ZPow.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\ZPow.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/Group/ZPow.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Group/ZPow.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\ZPow.ir.sig': No space left on device
+lib/Mathlib/Topology/Algebra/Group/ZPow.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\ZPow.olean': No space left on device
+lib/Mathlib/Topology/Algebra/Group/ZPow.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\ZPow.olean.private': No space left on device
+lib/Mathlib/Topology/Algebra/Group/ZPow.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Group\\ZPow.olean.server': No space left on device
+lib/Mathlib/Topology/Algebra/GroupCompletion.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/GroupCompletion.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/GroupCompletion.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/GroupCompletion.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/GroupCompletion.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/GroupWithZero.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\GroupWithZero.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/GroupWithZero.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\GroupWithZero.ir': No space left on device
+lib/Mathlib/Topology/Algebra/GroupWithZero.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\GroupWithZero.ir.sig': No space left on device
+lib/Mathlib/Topology/Algebra/GroupWithZero.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\GroupWithZero.olean': No space left on device
+lib/Mathlib/Topology/Algebra/GroupWithZero.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\GroupWithZero.olean.private': No space left on device
+lib/Mathlib/Topology/Algebra/GroupWithZero.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\GroupWithZero.olean.server': No space left on device
+lib/Mathlib/Topology/Algebra/Indicator.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Indicator.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/Indicator.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Indicator.ir': No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Constructions.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Constructions.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Defs.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Defs.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/ENNReal.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/ENNReal.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/ENNReal.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Group.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\InfiniteSum\\Group.olean.server': No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Module.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\InfiniteSum\\Module.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Module.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\InfiniteSum\\Module.ir': No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Module.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\InfiniteSum\\Module.ir.sig': No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Module.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\InfiniteSum\\Module.olean': No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Module.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/NatInt.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Order.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Order.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/Ring.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/SummationFilter.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/InfiniteSum/SummationFilter.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/IsUniformGroup/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/IsUniformGroup/Defs.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/LinearMapCompletion.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/LinearMapCompletion.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/LinearMapCompletion.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/LinearMapCompletion.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Alternating/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Alternating/Topology.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Alternating/Topology.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ClosedSubmodule.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ClosedSubmodule.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Complement.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Complement.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ContinuousLinearMap/Basic.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Module\\ContinuousLinearMap\\Basic.olean': No space left on device
+lib/Mathlib/Topology/Algebra/Module/ContinuousLinearMap/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ContinuousLinearMap/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ContinuousLinearMap/PiProd.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ContinuousLinearMap/PiProd.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Pi.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Pi.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Pi.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Pi.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Pi.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Prod.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Prod.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Prod.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Prod.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Equiv/Prod.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/FiniteDimension.ilean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Module\\FiniteDimension.ilean': No space left on device
+lib/Mathlib/Topology/Algebra/Module/FiniteDimension.ir: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Module\\FiniteDimension.ir': No space left on device
+lib/Mathlib/Topology/Algebra/Module/FiniteDimension.ir.sig: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Module\\FiniteDimension.ir.sig': No space left on device
+lib/Mathlib/Topology/Algebra/Module/FiniteDimension.olean: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Module\\FiniteDimension.olean': No space left on device
+lib/Mathlib/Topology/Algebra/Module/FiniteDimension.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Module\\FiniteDimension.olean.private': No space left on device
+lib/Mathlib/Topology/Algebra/Module/LocallyConvex.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/LocallyConvex.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ModuleTopology.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ModuleTopology.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/ModuleTopology.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Basic.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Basic.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Basic.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Basic.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Bounded.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Bounded.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Bounded.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Bounded.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Bounded.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Topology.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Topology.ir: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Topology.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Multilinear/Topology.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Spaces/CharacterSpace.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Spaces/CharacterSpace.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Spaces/ContinuousLinearMap.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Spaces/ContinuousLinearMap.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Spaces/ContinuousLinearMap.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Spaces/UniformConvergenceCLM.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Module/Spaces/UniformConvergenceCLM.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Monoid.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Monoid.olean.private: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Monoid.olean.private': No space left on device
+lib/Mathlib/Topology/Algebra/Monoid.olean.server: Can't create '\\\\?\\C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals\\lean4\\.lake\\vendor\\lib\\Mathlib\\Topology\\Algebra\\Monoid.olean.server': No space left on device
+lib/Mathlib/Topology/Algebra/Monoid/Defs.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/Monoid/Defs.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/NonUnitalAlgebra.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/NonUnitalStarAlgebra.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/NonUnitalStarAlgebra.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/OpenSubgroup.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/OpenSubgroup.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/UniformConvergence.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Algebra/UniformField.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Connected/Basic.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Connected/LocallyConnected.olean.private: Write failed: No space left on device
+lib/Mathlib/Topology/Connected/LocallyConnected.olean.server: Write failed: No space left on device
+lib/Mathlib/Topology/Connected/LocallyPathConnected.ilean: Write failed: No space left on device
+lib/Mathlib/Topology/Connected/LocallyPathConnected.olean: Write failed: No space left on device
+lib/Mathlib/Topology/Connected/LocallyPathConnected.olean.private: Write failed: No space left on device
+tar: Error exit delayed from previous errors
+error: C:\Users\a343o\.codex\visualizations\2026\10\21\01a15f49-0b77-7152-8513-136fd3bd1071\bell_integral_quantum\clean_release_v0.7.1\036_bell_positive_extensions_and_projection_residuals\lean4\vendor\lakefile.lean: package configuration has errors
+

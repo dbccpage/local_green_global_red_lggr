@@ -1,0 +1,18 @@
+{
+  "command": [
+    "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "omega_engine_woland/tests/providers/test_llm_gateway_pfp.py::test_key_only_bare_gateway_and_conflicting_budget_never_dispatch",
+    "omega_engine_woland/tests/providers/test_llm_gateway_pfp.py::test_hard_pending_completion_preserves_admission_fields_and_model_override",
+    "-q",
+    "--basetemp",
+    "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\native_gateway_two_tmp",
+    "--junitxml",
+    "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\native_gateway_two.xml"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game",
+  "exit_code": 0,
+  "seconds": 8.923631191253662
+}

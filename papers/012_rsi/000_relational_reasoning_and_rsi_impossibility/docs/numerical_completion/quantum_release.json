@@ -1,0 +1,17 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--release",
+    "--locked",
+    "--offline",
+    "-p",
+    "omega_quantum_physics",
+    "--lib",
+    "--",
+    "--test-threads=4"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+  "exit_code": 0,
+  "seconds": 990.1397867202759
+}

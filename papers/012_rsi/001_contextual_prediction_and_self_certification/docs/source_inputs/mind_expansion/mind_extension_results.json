@@ -1,0 +1,239 @@
+{
+  "status": "passed",
+  "test_groups": 6,
+  "assertions_passed": 21,
+  "caveat": "Constructed deterministic examples only: no human or LLM experiments, no consciousness measurement or empirical claims.",
+  "results": {
+    "distributed_xor": {
+      "individual_report_ambiguities": [
+        {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            0,
+            1
+          ]
+        },
+        {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            0,
+            1
+          ]
+        }
+      ],
+      "joint_sufficient": true,
+      "duplicate_sufficient": false,
+      "scope": "Information complementarity only; no integration or phenomenology inference."
+    },
+    "report_vs_whole_agent": {
+      "report_sufficient": false,
+      "report_plus_retained_state_sufficient": true,
+      "scope": "Retained state is an abstract embodied-state coordinate, not an empirical model."
+    },
+    "action_expansion": {
+      "identity_respects_first_bit_quotient": true,
+      "swap_respects_first_bit_quotient": false,
+      "witness": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    "nonlinear_retraction": {
+      "P": [
+        [
+          -1,
+          1
+        ],
+        [
+          -2,
+          2
+        ]
+      ],
+      "a": [
+        1,
+        1
+      ],
+      "n": [
+        1,
+        1
+      ],
+      "v": [
+        0,
+        0
+      ],
+      "P_A_n": [
+        0,
+        0
+      ],
+      "hessian_a_n": [
+        -2,
+        -4
+      ],
+      "exact_mixed_coefficient": [
+        -2,
+        -4
+      ],
+      "finite_differences": [
+        {
+          "h": 0.01,
+          "coefficient": [
+            -2.000566698387718,
+            -4.000332663310346
+          ],
+          "max_abs_error": 0.0005666983877179455
+        },
+        {
+          "h": 0.003,
+          "coefficient": [
+            -2.0000510002523195,
+            -4.000029994563306
+          ],
+          "max_abs_error": 5.100025231952188e-05
+        },
+        {
+          "h": 0.001,
+          "coefficient": [
+            -2.0000056667468513,
+            -4.000003333420876
+          ],
+          "max_abs_error": 5.666746851318294e-06
+        },
+        {
+          "h": 0.0003,
+          "coefficient": [
+            -2.0000005111918564,
+            -4.000000302280723
+          ],
+          "max_abs_error": 5.111918564004725e-07
+        }
+      ],
+      "optional_sympy_exponential_check": [
+        -2,
+        -4
+      ],
+      "defect_convention": "F_(t+s)(m) - F_t(F_s(m)), F_t(x)=Pi(exp(t)*x)",
+      "exact_polynomial_variables": "h=exp(t)-1, k=exp(s)-1; hk coefficient equals ts coefficient",
+      "scope": "Pi is a nonlinear retraction, not the Euclidean nearest-point projection."
+    },
+    "certificates": {
+      "accumulation": [
+        {
+          "step": 1,
+          "certificate_bound": 0.1,
+          "actual_error": 0.0
+        },
+        {
+          "step": 2,
+          "certificate_bound": 0.2,
+          "actual_error": 0.0
+        },
+        {
+          "step": 3,
+          "certificate_bound": 0.30000000000000004,
+          "actual_error": 0.0
+        },
+        {
+          "step": 4,
+          "certificate_bound": 0.4,
+          "actual_error": 0.0
+        },
+        {
+          "step": 5,
+          "certificate_bound": 0.5,
+          "actual_error": 0.0
+        },
+        {
+          "step": 6,
+          "certificate_bound": 0.6,
+          "actual_error": 0.0
+        }
+      ],
+      "budget": 0.5,
+      "actual_error_zero_despite_exhaustion": true,
+      "decision_example": {
+        "score_margin": 0.3,
+        "per_score_L": 2.0,
+        "state_error_bound": 0.05,
+        "worst_margin_loss": 0.2,
+        "robust": true
+      },
+      "reset_example": {
+        "pre_reset_bound": 0.05,
+        "reset_L": 1.0,
+        "jump_bound": 0.4,
+        "post_reset_bound": 0.45,
+        "possible_actual_reset_error": 0.4
+      }
+    },
+    "independent_memory_bank": {
+      "A": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "C": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "observability_rank_exact": 4,
+      "optional_numpy_rank": 4,
+      "cross_coordinate_coupling": false,
+      "scope": "Full observability is a linear-algebra property, not evidence of causal integration or phenomenology."
+    }
+  }
+}

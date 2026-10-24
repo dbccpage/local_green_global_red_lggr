@@ -1,0 +1,2 @@
+Built bell_positive_extensions_v0.3.0.zip 0164dfe963c6f68ee09d217191e6c64a3a37d54efce5da9be01dc2ef61413029
+PASS Bell payload and source custody 44 files

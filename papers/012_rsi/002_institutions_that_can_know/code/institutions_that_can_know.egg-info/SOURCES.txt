@@ -1,0 +1,10 @@
+LICENSE
+LICENSE-CODE
+README.md
+pyproject.toml
+code/institutional_reasoning.py
+code/institutions_that_can_know.egg-info/PKG-INFO
+code/institutions_that_can_know.egg-info/SOURCES.txt
+code/institutions_that_can_know.egg-info/dependency_links.txt
+code/institutions_that_can_know.egg-info/requires.txt
+code/institutions_that_can_know.egg-info/top_level.txt

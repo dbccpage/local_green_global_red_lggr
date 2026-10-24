@@ -1,0 +1,9 @@
+{
+  "version": "0.9.0",
+  "archive": "bell_positive_extensions_v0.9.0.zip",
+  "sha256": "63944bdf236a72ce57bfbfc36b56a071898b805d1361518b5f1603d817f87fe0",
+  "bytes": 708334177,
+  "result": "byte-identical",
+  "method": "Independent canonical ZIP reconstruction to a seekable comparing sink; all final bytes and continuous write coverage matched",
+  "prior_attempt": "Ordinary second-file rebuild exhausted available disk; the valid archive was preserved and the partial file removed"
+}

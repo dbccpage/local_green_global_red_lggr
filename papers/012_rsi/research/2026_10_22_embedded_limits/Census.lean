@@ -1,0 +1,22 @@
+import EmbeddedLimits
+
+#print axioms EmbeddedLimits.determined_is_true
+#print axioms EmbeddedLimits.positive_introspection
+#print axioms EmbeddedLimits.own_record_is_determined
+#print axioms EmbeddedLimits.refinement_preserves_determination
+#print axioms EmbeddedLimits.decoder_implies_fiber_constant
+#print axioms EmbeddedLimits.section_constructs_decoder
+#print axioms EmbeddedLimits.recoverable_iff_fiber_constant
+#print axioms EmbeddedLimits.postprocessing_cannot_separate
+#print axioms EmbeddedLimits.collision_excludes_exact_decoder
+#print axioms EmbeddedLimits.added_task_requires_refinement
+#print axioms EmbeddedLimits.future_eq_refl
+#print axioms EmbeddedLimits.future_eq_symm
+#print axioms EmbeddedLimits.future_eq_trans
+#print axioms EmbeddedLimits.future_eq_preserves_readout
+#print axioms EmbeddedLimits.future_eq_stable
+#print axioms EmbeddedLimits.stable_relation_refines_future_eq
+#print axioms EmbeddedLimits.implemented_memory_preserves_future
+#print axioms EmbeddedLimits.bool_cannot_equal_its_negation
+#print axioms EmbeddedLimits.anti_prediction_not_universal
+#print axioms EmbeddedLimits.fiber_soundness_is_maximal

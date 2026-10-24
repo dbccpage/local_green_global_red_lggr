@@ -1,0 +1,395 @@
+    Checking libm v0.2.16
+    Checking serde_core v1.0.229
+    Checking num-traits v0.2.19
+    Checking cfg-if v1.0.4
+    Checking num-integer v0.1.47
+    Checking serde v1.0.229
+    Checking typenum v1.20.1
+    Checking num-bigint v0.4.8
+    Checking generic-array v0.14.7
+    Checking num-complex v0.4.6
+    Checking bytemuck v1.25.2
+    Checking rawpointer v0.2.1
+    Checking safe_arch v0.7.4
+    Checking matrixmultiply v0.3.11
+    Checking num-rational v0.4.2
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking thiserror v2.0.20
+    Checking itoa v1.0.18
+    Checking digest v0.10.7
+    Checking wide v0.7.33
+    Checking zmij v1.0.23
+    Checking approx v0.5.1
+    Checking cpufeatures v0.2.17
+    Checking memchr v2.8.3
+    Checking serde_json v1.0.151
+    Checking simba v0.9.1
+    Checking sha2 v0.10.9
+    Checking anyhow v1.0.104
+    Checking hex v0.4.3
+    Checking omega_category_theory v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_category_theory)
+    Checking nalgebra v0.33.3
+    Checking omega_combinatorics v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_combinatorics)
+    Checking omega_kernel v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_kernel)
+    Checking linear_algebra v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_linear_algebra)
+    Checking omega_number_theory v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_number_theory)
+    Checking cpufeatures v0.3.1
+    Checking arrayvec v0.7.8
+    Checking constant_time_eq v0.4.2
+    Checking blake3 v1.8.7
+    Checking omega_functional v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_functional)
+warning: struct `SimplexCertificate` is never constructed
+  --> omega_functional\src\wire.rs:34:12
+   |
+34 | pub struct SimplexCertificate {
+   |            ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: enum `SimplexError` is never used
+  --> omega_functional\src\wire.rs:41:10
+   |
+41 | pub enum SimplexError {
+   |          ^^^^^^^^^^^^
+
+warning: function `zero` is never used
+  --> omega_functional\src\wire.rs:62:4
+   |
+62 | fn zero() -> BigRational {
+   |    ^^^^
+
+warning: function `one` is never used
+  --> omega_functional\src\wire.rs:66:4
+   |
+66 | fn one() -> BigRational {
+   |    ^^^
+
+warning: function `try_simplex` is never used
+  --> omega_functional\src\wire.rs:70:8
+   |
+70 | pub fn try_simplex(values: &[String]) -> Result<SimplexCertificate, SimplexError> {
+   |        ^^^^^^^^^^^
+
+warning: methods `mass_count`, `even_mass`, and `odd_mass` are never used
+   --> omega_functional\src\wire.rs:103:12
+    |
+102 | impl SimplexCertificate {
+    | ----------------------- methods in this implementation
+103 |     pub fn mass_count(&self) -> usize {
+    |            ^^^^^^^^^^
+...
+107 |     pub fn even_mass(&self) -> &BigRational {
+    |            ^^^^^^^^^
+...
+111 |     pub fn odd_mass(&self) -> &BigRational {
+    |            ^^^^^^^^
+
+warning: `omega_functional` (lib) generated 6 warnings
+    Checking tinyvec v1.13.3
+    Checking unicode-normalization v0.1.25
+    Checking getrandom v0.4.3
+    Checking uuid v1.26.0
+    Checking omega_policy v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_policy)
+warning: enum `GateLimitError` is never used
+  --> omega_policy\src\jcs.rs:12:17
+   |
+12 | pub(crate) enum GateLimitError {
+   |                 ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `certify_gate_limits` is never used
+  --> omega_policy\src\jcs.rs:33:15
+   |
+33 | pub(crate) fn certify_gate_limits(limits: Limits) -> Result<(), GateLimitError> {
+   |               ^^^^^^^^^^^^^^^^^^^
+
+warning: `omega_policy` (lib) generated 2 warnings
+    Checking crossbeam-utils v0.8.23
+   Compiling hashbrown v0.17.1
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.14.2
+    Checking crossbeam-epoch v0.9.21
+    Checking omega_types v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_types)
+warning: `omega_functional` (lib) generated 6 warnings (6 duplicates)
+warning: enum `CaseTableError` is never used
+    --> omega_types\src\python_case_v1.rs:3565:17
+     |
+3565 | pub(crate) enum CaseTableError {
+     |                 ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `mapping_strictly_increasing` is never used
+    --> omega_types\src\python_case_v1.rs:3589:4
+     |
+3589 | fn mapping_strictly_increasing(
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `ranges_strictly_separated` is never used
+    --> omega_types\src\python_case_v1.rs:3612:4
+     |
+3612 | fn ranges_strictly_separated(table: &[(u32, u32)], name: &'static str) -> Result<(), CaseTableError> {
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `certify_case_tables` is never used
+    --> omega_types\src\python_case_v1.rs:3639:15
+     |
+3639 | pub(crate) fn certify_case_tables() -> Result<(), CaseTableError> {
+     |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `upper_of` is never used
+    --> omega_types\src\python_case_v1.rs:3646:15
+     |
+3646 | pub(crate) fn upper_of(code: u32) -> Option<&'static str> {
+     |               ^^^^^^^^
+
+warning: enum `UnicodeTableError` is never used
+    --> omega_types\src\python_unicode_v1.rs:2252:10
+     |
+2252 | pub enum UnicodeTableError {
+     |          ^^^^^^^^^^^^^^^^^
+
+warning: function `certify_unicode_tables` is never used
+    --> omega_types\src\python_unicode_v1.rs:2274:8
+     |
+2274 | pub fn certify_unicode_tables() -> Result<(usize, usize), UnicodeTableError> {
+     |        ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: methods `rank` and `max` are never used
+   --> omega_types\src\q_continuum.rs:105:8
+    |
+104 | impl AuthorityStrength {
+    | ---------------------- methods in this implementation
+105 |     fn rank(self) -> u8 {
+    |        ^^^^
+...
+116 |     fn max(self, other: Self) -> Self {
+    |        ^^^
+
+warning: `omega_types` (lib) generated 8 warnings
+    Checking zerocopy v0.8.56
+warning: `omega_policy` (lib) generated 2 warnings (2 duplicates)
+    Checking omega_homotopy_type_theory v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_homotopy_type_theory)
+    Checking getrandom v0.2.17
+   Compiling ryu v1.0.23
+    Checking unicode-ident v1.0.24
+   Compiling unsafe-libyaml v0.2.11
+   Compiling serde_yaml v0.9.34+deprecated
+    Checking ppv-lite86 v0.2.21
+    Checking proc-macro2 v1.0.107
+    Checking rand_core v0.6.4
+    Checking omega_homology v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_homology)
+    Checking crossbeam-deque v0.8.8
+    Checking rayon-core v1.13.0
+    Checking omega_holonomy v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_holonomy)
+    Checking rand_chacha v0.3.1
+    Checking num-complex v0.2.4
+    Checking quote v1.0.47
+warning: `omega_types` (lib) generated 8 warnings (8 duplicates)
+   Compiling omega_contracts v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_contracts)
+    Checking typeid v1.0.3
+    Checking approx v0.3.2
+    Checking either v1.18.0
+    Checking rayon v1.12.0
+    Checking alga v0.9.3
+    Checking erased-serde v0.4.10
+    Checking syn v2.0.119
+    Checking rand v0.8.8
+    Checking omega_replay v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_replay)
+    Checking omega_lie_theory v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_lie_theory)
+    Checking ndarray v0.17.2
+    Checking num_cpus v1.17.0
+    Checking smallvec v1.16.0
+    Checking sprs v0.11.5
+    Checking omega_epk v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_local_green_global_red_lggr)
+    Checking rand_distr v0.4.3
+    Checking omega_solvers v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_solvers)
+    Checking omega_majorana v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_majorana)
+    Checking omega_general_relativity v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_general_relativity)
+warning: struct `Lex4Census` is never constructed
+  --> omega_general_relativity\src\exact_regge\permute.rs:43:19
+   |
+43 | pub(super) struct Lex4Census {
+   |                   ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: enum `Lex4Error` is never used
+  --> omega_general_relativity\src\exact_regge\permute.rs:49:17
+   |
+49 | pub(super) enum Lex4Error {
+   |                 ^^^^^^^^^
+
+warning: function `factorial_u32` is never used
+  --> omega_general_relativity\src\exact_regge\permute.rs:68:4
+   |
+68 | fn factorial_u32(n: u32) -> Result<u32, Lex4Error> {
+   |    ^^^^^^^^^^^^^
+
+warning: function `certify_lex4` is never used
+  --> omega_general_relativity\src\exact_regge\permute.rs:77:15
+   |
+77 | pub(super) fn certify_lex4(items: [usize; 4]) -> Result<Lex4Census, Lex4Error> {
+   |               ^^^^^^^^^^^^
+
+warning: `omega_general_relativity` (lib) generated 4 warnings
+    Checking omega_finite_probability v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_finite_probability)
+    Checking omega_fusion_categories v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_fusion_categories)
+    Checking constants v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\constants)
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: auto_p: 0/35 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: constants: 0/2 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_atlas_reconciliation: 0/22 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_biology: 0/47 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_category_theory: 16/171 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_certifiers: 1/11 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_chemistry: 0/51 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_combinatorics: 1/8 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_contracts: 1/85 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_economics: 0/63 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_engines: 1/36 compiled source files named by a contract; 1 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_epistemic_immune_system: 0/17 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_finite_probability: 7/15 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_functional: 18/37 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_fusion_categories: 7/11 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_general_relativity: 4/47 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_higher_category_theory: 15/19 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_holonomy: 3/12 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_homology: 17/123 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_homotopy_type_theory: 1/23 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_id_run: 2/5 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_intelligence: 0/6 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_kernel: 6/12 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_lie_theory: 11/19 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_lifts: 0/7 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_linear_algebra: 24/79 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_local_green_global_red_lggr: 0/20 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_machine_learning: 0/40 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_majorana: 1/19 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_measurement: 0/8 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_mub: 0/122 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_number_theory: 23/36 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_ooutwire_primitives: 0/68 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_operad_theory: 0/34 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_operads: 0/10 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_pipelines: 5/10 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_policy: 3/11 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_prompt_civilization: 0/31 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_quantum_physics: 121/201 compiled source files named by a contract; 1 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_replay: 9/15 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_sandbox: 0/4 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_search: 0/26 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_sheaf_theory: 0/22 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_solvers: 9/46 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_state: 0/23 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_symbol_game: 1/85 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_symbol_game_runtime: 1/41 compiled source files named by a contract; 1 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_task_harness: 0/5 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_terminalizers: 0/2 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_types: 5/94 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_wdp: 0/158 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: omega_woland: 0/97 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_COVERAGE: tests: 0/0 compiled source files named by a contract; 0 .rs files not compiled
+warning: omega_contracts@0.1.0: CONTRACT_BINDING_AUDIT: 401 bindings declared, 0 unresolved, 0 resolve to uncompiled files, 0 malformed, 0 retired skipped; 313/2191 compiled source files named by a contract; report: C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\target\debug\build\omega_contracts-f13e462021c77c37\out\contract_binding_audit.txt
+warning: omega_contracts@0.1.0: PROJECTION_RECONCILIATION_INCOMPLETE: 83 reviewed, 262 unreconciled; no operational-validation credit
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\authority_minting.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:authority_minting:v1.2.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\certificate_boundary.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:certificate_boundary:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\certifiers_lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:lib:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\checked_packet.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:checked_packet:v1.2.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\closure_certificate.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:closure_certificate:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\closure_defect.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:closure_defect:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\closure_regime.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:closure_regime:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\contract_descriptors.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:contract_descriptors:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\contract_property_witnesses.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:contract_property_witnesses:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\counterfeit_detection.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_certifiers:counterfeit_detection:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\deposit.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:deposit:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\diagnostic_vector.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:diagnostic_vector:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\dual_witness.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:dual_witness:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\complex_quantum_density_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:complex_quantum_density_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\cycle_aware_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:cycle_aware_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\cycle_space_projector.contract.yaml [omega.file_contract.v1] urn:omega:qm:cycle_space_projector:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\density_from_h1.contract.yaml [omega.file_contract.v1] urn:omega:qm:density_from_h1:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\multipath_iterator_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:multipath_iterator_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\obstruction_branch_search_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:obstruction_branch_search_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\obstruction_runtime_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:obstruction_runtime_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\operator_algebra_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:operator_algebra_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\process_matrix_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:process_matrix_engine:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\prompt_intake_engine.contract.yaml [omega.file_contract.v1] urn:omega:engine:prompt_intake_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\quantum_channel.contract.yaml [omega.file_contract.v1] urn:omega:qm:quantum_channel:file:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\quantum_density_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:quantum_density_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\quantum_information_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:quantum_information_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\engines\reasoning_density_engine.contract.yaml [omega.file_contract.v1] urn:omega:qm:reasoning_density_engine:file:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\evaluation_hierarchy.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:evaluation_hierarchy:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\exact_repair.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:exact_repair:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\finite_qm_contract_v1.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:finite_qm_types:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\functional_lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:lib:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\gamma2.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:gamma2:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\hashes.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:hashes:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:lib:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\observer.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:observer:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\observer_family.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:observer_family:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\observer_quotient.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:observer_quotient:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\obstruction_mass.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:obstruction_mass:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_discrete_deformation_algebra\discrete_deformation_algebra.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_discrete_deformation_algebra:discrete_deformation_algebra:v1.13.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_discrete_deformation_algebra\mub_cochain.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_discrete_deformation_algebra:mub_cochain:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_id_run.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:omega_id_run:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\digest.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:digest:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\exact.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:exact:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\obligation.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:obligation:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\observer.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:observer:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_kernel\residual.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_kernel:residual:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_admission.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:admission:v0.2.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_descent.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:descent:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_ledger.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:ledger:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_lib.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:lib:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_q_packet.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_q:packet:v0.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\cdcl_sat_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:cdcl_sat_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\l1_obstruction_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:l1_obstruction_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\mcts_obstruction_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:mcts_obstruction_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\network_simplex_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:network_simplex_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\omega_solvers.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:crate:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\sheaf_cohomology_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:sheaf_cohomology_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_solvers\yang_mills_solver.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_solvers:yang_mills_solver:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_types\packet.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_types:packet:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_types\terminal_status.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_types:terminal_status:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\omega_types\tolerant_float.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_types:tolerant_float:v1.0.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\phi1.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:phi1:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\quotient_mass.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:quotient_mass:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\run.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:run:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\seed.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_id_run:seed:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\trichotomy.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:trichotomy:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\xi_diagnostic.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:xi_diagnostic:v1.1.0
+warning: omega_contracts@0.1.0: NON_V1_CONTRACT_ACCOUNTED_NOT_VALIDATED: C:\Users\a343o\source\repos\the_symbol_game\omega_engine_governance/contracts/contract_canonical_definitions\rust\xi_tiebreak.contract.yaml [omega.file_contract.v1] urn:omega:rust:omega_functional:xi_tiebreak:v1.1.0
+warning: type `ImageStatusRow<'_>` is more private than the item `ContractImageCensus::try_from_rows`
+  --> omega_contracts\src\contract_images.rs:67:5
+   |
+67 |     pub fn try_from_rows(rows: &[ImageStatusRow<'_>]) -> Result<Self, ContractImageCensusError> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ associated function `ContractImageCensus::try_from_rows` is reachable at visibility `pub`
+   |
+note: but type `ImageStatusRow<'_>` is only usable at visibility `pub(self)`
+  --> omega_contracts\src\contract_images.rs:48:1
+   |
+48 | struct ImageStatusRow<'a> {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^
+   = note: `#[warn(private_interfaces)]` on by default
+
+warning: `omega_contracts` (lib) generated 1 warning
+    Checking omega_certifiers v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_certifiers)
+    Checking omega_quantum_physics v0.1.0 (C:\Users\a343o\source\repos\the_symbol_game\omega_engine\crates_rs\omega_quantum_physics)
+warning: unused import: `exact_operator::ExactOperator`
+   --> omega_quantum_physics\src\bipartite_operator.rs:764:57
+    |
+764 |         use crate::{density_matrix::ExactDensityMatrix, exact_operator::ExactOperator};
+    |                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Rational`
+  --> omega_quantum_physics\src\quantum_correlation.rs:32:45
+   |
+32 | use omega_number_theory::rational::{ri, rq, Rational};
+   |                                             ^^^^^^^^
+
+warning: `omega_quantum_physics` (lib) generated 2 warnings (run `cargo fix --lib -p omega_quantum_physics` to apply 2 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3m 52s

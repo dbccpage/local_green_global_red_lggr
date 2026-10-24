@@ -1,0 +1,25 @@
+PASS Bell payload and source custody 40 files
+Fresh Bell proof build; using packaged offline dependencies
+Proofs compiled; checking every extracted dependency file
+PASS fresh Bell census: 48 theorems; no custom axioms
+.....................                                                    [100%]
+21 passed in 0.10s
+{
+  "status": "passed",
+  "exact_CHSH_parameters": [
+    "0",
+    "1/4",
+    "1/2",
+    "3/4",
+    "1"
+  ],
+  "floating_LP_parameters": 7,
+  "max_LP_absolute_error": 1.1102230246251565e-16,
+  "two_qubit_times_checked": 5,
+  "max_state_absolute_error": 8.881784197001252e-16,
+  "Mermin_assignments_checked": 64,
+  "phase_fiber_and_finite_inference_checks": "passed"
+}
+Rejected invalid witness: dual norm exceeds one
+PASS Bell payload and source custody 40 files
+PASS fresh Bell Lean census, exact tests, numerical examples, and direct notebook-cell replay

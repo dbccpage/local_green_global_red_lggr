@@ -1,0 +1,336 @@
+{
+  "scope": "Three exact mathematical groups from preserved review; source literals are not Lean execution. The supplied path/symlink record is retained separately.",
+  "review_groups": {
+    "fixture_bindings": {
+      "classical": {
+        "defect": "0",
+        "pivot_count": 21,
+        "six_numeric_fields_match_Lean_source": true
+      },
+      "pr": {
+        "defect": "2",
+        "pivot_count": 19,
+        "six_numeric_fields_match_Lean_source": true
+      },
+      "near": {
+        "defect": "4/5",
+        "pivot_count": 19,
+        "six_numeric_fields_match_Lean_source": true
+      },
+      "boundary": {
+        "defect": "1/25000000",
+        "pivot_count": 19,
+        "six_numeric_fields_match_Lean_source": true
+      },
+      "triangle": {
+        "defect": "2",
+        "pivot_count": 15,
+        "six_numeric_fields_match_Lean_source": true
+      }
+    },
+    "noisy_boundary": {
+      "public_evaluate": "SIGNALLING",
+      "raw_LP_defect": "1/50",
+      "known_l1_noise_radius": "1/50",
+      "certified_positive_margin": "0"
+    },
+    "cycling_fixture": {
+      "value": "-1",
+      "pivots": 5,
+      "one_short_budget": "BUDGET_EXHAUSTED",
+      "Lean_execution": false
+    }
+  },
+  "new_api_example": {
+    "scope": "exact fixture with known truth; not a statistical coverage calculation",
+    "exact_evaluator": "SIGNALLING",
+    "truth": [
+      "1/2",
+      "0",
+      "0",
+      "1/2",
+      "1/2",
+      "0",
+      "0",
+      "1/2",
+      "1/2",
+      "0",
+      "0",
+      "1/2",
+      "1/2",
+      "0",
+      "0",
+      "1/2"
+    ],
+    "observed": [
+      "49/100",
+      "0",
+      "1/100",
+      "1/2",
+      "1/2",
+      "0",
+      "0",
+      "1/2",
+      "1/2",
+      "0",
+      "0",
+      "1/2",
+      "1/2",
+      "0",
+      "0",
+      "1/2"
+    ],
+    "actual_raw_l1_error": "1/50",
+    "bound": {
+      "assignments": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "observed": [
+        "49/100",
+        "0",
+        "1/100",
+        "1/2",
+        "1/2",
+        "0",
+        "0",
+        "1/2",
+        "1/2",
+        "0",
+        "0",
+        "1/2",
+        "1/2",
+        "0",
+        "0",
+        "1/2"
+      ],
+      "radius": "1/50",
+      "certificate": {
+        "coefficients": [
+          "1/2",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1/2"
+        ],
+        "residual": [
+          "1/100",
+          "0",
+          "-1/100",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "witness": [
+          "-1",
+          "-1",
+          "1",
+          "1",
+          "1",
+          "-1",
+          "-1",
+          "-1",
+          "-1",
+          "-1",
+          "-1",
+          "-1",
+          "-1",
+          "-1",
+          "-1",
+          "-1"
+        ],
+        "offset": "2",
+        "defect": "1/50",
+        "lp": {
+          "primal": [
+            "1/2",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1/2",
+            "1/100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1/100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+          ],
+          "dual": [
+            "-1",
+            "-1",
+            "1",
+            "1",
+            "1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "-1",
+            "2"
+          ],
+          "value": "1/50",
+          "pivots": 26
+        }
+      },
+      "guaranteed_margin": "0"
+    }
+  }
+}

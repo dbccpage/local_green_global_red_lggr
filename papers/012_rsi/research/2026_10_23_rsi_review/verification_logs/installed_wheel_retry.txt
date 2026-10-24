@@ -1,0 +1,788 @@
+Processing c:\users\a343o\source\repos\the_symbol_game\omega_engine_atlas\coda_atlas\f004_papers\012_rsi\000_relational_reasoning_and_rsi_impossibility
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: relational-reasoning-and-rsi-impossibility
+  Building wheel for relational-reasoning-and-rsi-impossibility (pyproject.toml): started
+  Building wheel for relational-reasoning-and-rsi-impossibility (pyproject.toml): finished with status 'done'
+  Created wheel for relational-reasoning-and-rsi-impossibility: filename=relational_reasoning_and_rsi_impossibility-1.2.3-py3-none-any.whl size=74742 sha256=4ffc51a6b432a6e68e29e8b8358757c3598c645465ee18c8f86e381559e25703
+  Stored in directory: C:\Users\a343o\AppData\Local\Temp\pip-ephem-wheel-cache-nekj6ato\wheels\c3\02\97\2f5f79a3b6dbdd245688cd989223ac9e8ca8d63f083ddb80e1
+Successfully built relational-reasoning-and-rsi-impossibility
+Processing c:\users\a343o\appdata\local\temp\rsi_wheel_6f07j7yz\wheels\relational_reasoning_and_rsi_impossibility-1.2.3-py3-none-any.whl
+Collecting numpy>=1.24 (from relational-reasoning-and-rsi-impossibility==1.2.3)
+  Using cached numpy-2.5.4-cp312-cp312-win_amd64.whl.metadata (6.6 kB)
+Collecting scipy>=1.10 (from relational-reasoning-and-rsi-impossibility==1.2.3)
+  Using cached scipy-1.18.1-cp312-cp312-win_amd64.whl.metadata (61 kB)
+Using cached numpy-2.5.4-cp312-cp312-win_amd64.whl (12.6 MB)
+Using cached scipy-1.18.1-cp312-cp312-win_amd64.whl (36.7 MB)
+Installing collected packages: numpy, scipy, relational-reasoning-and-rsi-impossibility
+Successfully installed numpy-2.5.4 relational-reasoning-and-rsi-impossibility-1.2.3 scipy-1.18.1
+{
+  "installed_modules": 15,
+  "parity": {
+    "metadata_record_count": 1,
+    "rust_companion_executed": true,
+    "scope": "EIS_METADATA_ONLY",
+    "obstruction_predicates_checked": false,
+    "identity_contract": "ascii-identifiers-v2",
+    "eis_fixture_vectors": 55,
+    "eis_digest_vectors": 7
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "relational-reasoning-and-rsi-impossibility": "1.2.3"
+  }
+}
+{
+  "eis_cross_check": {
+    "eis_digest_vectors": 7,
+    "eis_fixture_vectors": 55,
+    "identity_contract": "ascii-identifiers-v2",
+    "metadata_record_count": 7,
+    "obstruction_predicates_checked": false,
+    "rust_companion_executed": true,
+    "scope": "EIS_METADATA_ONLY"
+  },
+  "higher_cell_async_scenarios": [
+    {
+      "agent_capacities": [
+        3,
+        4
+      ],
+      "async_exchange_trace": [
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            0,
+            0
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            0,
+            0
+          ],
+          "delivered_source_steps": [
+            0,
+            0
+          ],
+          "effective_lags": [
+            0,
+            0
+          ],
+          "emitted_boundary_projections": [
+            0,
+            0
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 20,
+          "step": 0
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            1,
+            0
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            0,
+            0
+          ],
+          "delivered_source_steps": [
+            0,
+            0
+          ],
+          "effective_lags": [
+            1,
+            1
+          ],
+          "emitted_boundary_projections": [
+            1,
+            0
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 19,
+          "step": 1
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            2,
+            0
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            0,
+            0
+          ],
+          "delivered_source_steps": [
+            0,
+            0
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            2,
+            0
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 18,
+          "step": 2
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            0,
+            2
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            1,
+            0
+          ],
+          "delivered_source_steps": [
+            1,
+            1
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            0,
+            2
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 17,
+          "step": 3
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            1,
+            2
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            2,
+            0
+          ],
+          "delivered_source_steps": [
+            2,
+            2
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            1,
+            2
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 16,
+          "step": 4
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            2,
+            3
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            0,
+            2
+          ],
+          "delivered_source_steps": [
+            3,
+            3
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            2,
+            3
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 15,
+          "step": 5
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            0,
+            1
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            1,
+            2
+          ],
+          "delivered_source_steps": [
+            4,
+            4
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            0,
+            1
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 14,
+          "step": 6
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            1,
+            1
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            2,
+            3
+          ],
+          "delivered_source_steps": [
+            5,
+            5
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            1,
+            1
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 13,
+          "step": 7
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            2,
+            2
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            0,
+            1
+          ],
+          "delivered_source_steps": [
+            6,
+            6
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            2,
+            2
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 12,
+          "step": 8
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "agent_states": [
+            0,
+            0
+          ],
+          "cochain_degree": 2,
+          "delivered_boundary_projections": [
+            1,
+            1
+          ],
+          "delivered_source_steps": [
+            7,
+            7
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            0,
+            0
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 11,
+          "step": 9
+        }
+      ],
+      "channel_mode": "fifo",
+      "cochain_degree": 2,
+      "colliding_joint_report": [
+        0,
+        0
+      ],
+      "colliding_prior_step": 0,
+      "delayed_beyond_single_agent": true,
+      "eis_independence_verdict": {
+        "ok": "host observer host.higher_cell_async_obstruction_gate reported REPLAY_FAILURE (1 defect(s), evidence sha256:b58697ae3ebf0296...), distinct from matcher detector.higher_cell_async_rsi_scanner and its matches"
+      },
+      "eis_vector": {
+        "agent_capacities": [
+          3,
+          4
+        ],
+        "context": {
+          "detector_id": "detector.higher_cell_async_rsi_scanner",
+          "detector_predicates": [
+            "UNREGISTERED_SELF_PROXY"
+          ],
+          "offsets_are_content": true
+        },
+        "danger": {
+          "danger_type": "REPLAY_FAILURE",
+          "defect_count": 1,
+          "evidence_digest": "sha256:b58697ae3ebf029655c41eea410a212ac8058809a0b5a35876e2f111a2ad73f6",
+          "evidence_spans": [
+            [
+              128,
+              192
+            ]
+          ],
+          "observer_id": "host.higher_cell_async_obstruction_gate"
+        },
+        "matches": [
+          {
+            "epitope_name": "rsi.higher_cell_c2.report_collision",
+            "offset": 0,
+            "pattern_matched": "higher_cell_c2_step_9_collision_with_0"
+          }
+        ],
+        "signal1_digest": "sha256:2d6f94530ba1a3be0a3424533416ac9d6799642a886e384c025ec13faf57d8bc"
+      },
+      "halted": true,
+      "horizon_bound": 13,
+      "last_repair_l1_cost": null,
+      "latency_steps": [
+        2,
+        2
+      ],
+      "non_monotonic_inversions": 0,
+      "obstruction_kind": "REPORT_COLLISION",
+      "phi1_holonomy": "0/1",
+      "product_carrier_capacity": 12,
+      "remaining_budget": 11,
+      "repair_events_count": 0,
+      "single_agent_max_capacity": 4,
+      "termination_step": 9,
+      "topology_rewiring_events": 0,
+      "total_repair_budget_expended": 0
+    },
+    {
+      "agent_capacities": [
+        3,
+        4
+      ],
+      "async_exchange_trace": [
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "agent_states": [
+            0,
+            0
+          ],
+          "cochain_degree": 3,
+          "delivered_boundary_projections": [
+            0,
+            0
+          ],
+          "delivered_source_steps": [
+            0,
+            0
+          ],
+          "effective_lags": [
+            0,
+            0
+          ],
+          "emitted_boundary_projections": [
+            0,
+            0
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 20,
+          "step": 0
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "agent_states": [
+            1,
+            0
+          ],
+          "cochain_degree": 3,
+          "delivered_boundary_projections": [
+            0,
+            0
+          ],
+          "delivered_source_steps": [
+            0,
+            0
+          ],
+          "effective_lags": [
+            1,
+            1
+          ],
+          "emitted_boundary_projections": [
+            1,
+            0
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "0/1",
+          "remaining_budget": 19,
+          "step": 1
+        },
+        {
+          "active_k_plus_1_cells": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "agent_states": [
+            2,
+            0
+          ],
+          "cochain_degree": 3,
+          "delivered_boundary_projections": [
+            0,
+            0
+          ],
+          "delivered_source_steps": [
+            0,
+            0
+          ],
+          "effective_lags": [
+            2,
+            2
+          ],
+          "emitted_boundary_projections": [
+            2,
+            0
+          ],
+          "is_non_monotonic_delivery": false,
+          "is_topology_rewired": false,
+          "phi1_holonomy": "1/12",
+          "remaining_budget": 18,
+          "step": 2
+        }
+      ],
+      "channel_mode": "fifo",
+      "cochain_degree": 3,
+      "colliding_joint_report": null,
+      "colliding_prior_step": null,
+      "delayed_beyond_single_agent": false,
+      "eis_independence_verdict": {
+        "ok": "host observer host.higher_cell_async_obstruction_gate reported PROTECTED_FIELD_VIOLATION (1 defect(s), evidence sha256:e246f0782237116f...), distinct from matcher detector.higher_cell_async_rsi_scanner and its matches"
+      },
+      "eis_vector": {
+        "agent_capacities": [
+          3,
+          4
+        ],
+        "context": {
+          "detector_id": "detector.higher_cell_async_rsi_scanner",
+          "detector_predicates": [
+            "UNREGISTERED_SELF_PROXY"
+          ],
+          "offsets_are_content": true
+        },
+        "danger": {
+          "danger_type": "PROTECTED_FIELD_VIOLATION",
+          "defect_count": 1,
+          "evidence_digest": "sha256:e246f0782237116f1cd602d26c7e736e736652e1aa3c3456966bbcb6d3d7b320",
+          "evidence_spans": [
+            [
+              128,
+              192
+            ]
+          ],
+          "observer_id": "host.higher_cell_async_obstruction_gate"
+        },
+        "matches": [
+          {
+            "epitope_name": "rsi.higher_cell_c3.overlap_gluing_refusal",
+            "offset": 0,
+            "pattern_matched": "higher_cell_c3_step_2_gluing_refusal"
+          }
+        ],
+        "signal1_digest": "sha256:8e3053865364581e1d799393643b759597568fa3ddad9089f72bd4d3b7b8a96f"
+      },
+      "halted": true,
+      "horizon_bound": 13,
+      "last_repair_l1_cost": null,
+      "latency_steps": [
+        2,
+        2
+      ],
+      "non_monotonic_inversions": 0,
+      "obstruction_kind": "OVERLAP_GLUING_REFUSAL",
+      "phi1_holonomy": "1/12",
+      "product_carrier_capacity": 12,
+      "remaining_budget": 18,
+      "repair_events_count": 0,
+      "single_agent_max_capacity": 4,
+      "termination_step": 2,
+      "topology_rewiring_events": 0,
+      "total_repair_budget_expended": 0
+    }
+  ],
+  "multi_agent_hypergraph_count": 2,
+  "non_monotonic_rewiring_distribution": {
+    "agent_capacities": [
+      3,
+      4
+    ],
+    "cochain_degree": 2,
+    "distribution_shift_verified": true,
+    "eis_cross_check": {
+      "eis_digest_vectors": 7,
+      "eis_fixture_vectors": 55,
+      "identity_contract": "ascii-identifiers-v2",
+      "metadata_record_count": 16,
+      "obstruction_predicates_checked": false,
+      "rust_companion_executed": true,
+      "scope": "EIS_METADATA_ONLY"
+    },
+    "experiment_scope": "CONTROLLED_SYNTHETIC_DEFECT_INJECTION",
+    "horizon_bound": 13,
+    "product_carrier_capacity": 12,
+    "regimes": {
+      "dynamic_simplicial_rewiring": {
+        "all_within_product_horizon": true,
+        "counts": {
+          "CAPACITY_THRESHOLD_EXCEEDED": 0,
+          "LIFT_BUDGET_EXHAUSTION": 0,
+          "OVERLAP_GLUING_REFUSAL": 2,
+          "REPORT_COLLISION": 2
+        },
+        "gluing_refusal_fraction": "2/4",
+        "max_step": 12,
+        "min_step": 1,
+        "report_collision_fraction": "2/4",
+        "termination_steps": [
+          12,
+          9,
+          1,
+          1
+        ],
+        "total_runs": 4
+      },
+      "monotonic_fifo_static": {
+        "all_within_product_horizon": true,
+        "counts": {
+          "CAPACITY_THRESHOLD_EXCEEDED": 0,
+          "LIFT_BUDGET_EXHAUSTION": 0,
+          "OVERLAP_GLUING_REFUSAL": 0,
+          "REPORT_COLLISION": 4
+        },
+        "gluing_refusal_fraction": "0/4",
+        "max_step": 12,
+        "min_step": 9,
+        "report_collision_fraction": "4/4",
+        "termination_steps": [
+          12,
+          9,
+          9,
+          9
+        ],
+        "total_runs": 4
+      },
+      "out_of_order_permutation_static": {
+        "all_within_product_horizon": true,
+        "counts": {
+          "CAPACITY_THRESHOLD_EXCEEDED": 0,
+          "LIFT_BUDGET_EXHAUSTION": 0,
+          "OVERLAP_GLUING_REFUSAL": 4,
+          "REPORT_COLLISION": 0
+        },
+        "gluing_refusal_fraction": "4/4",
+        "max_step": 6,
+        "min_step": 3,
+        "report_collision_fraction": "0/4",
+        "termination_steps": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "total_runs": 4
+      },
+      "packet_loss_static": {
+        "all_within_product_horizon": true,
+        "counts": {
+          "CAPACITY_THRESHOLD_EXCEEDED": 0,
+          "LIFT_BUDGET_EXHAUSTION": 0,
+          "OVERLAP_GLUING_REFUSAL": 4,
+          "REPORT_COLLISION": 0
+        },
+        "gluing_refusal_fraction": "4/4",
+        "max_step": 5,
+        "min_step": 2,
+        "report_collision_fraction": "0/4",
+        "termination_steps": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "total_runs": 4
+      }
+    },
+    "total_ensemble_runs": 16
+  },
+  "single_agent_count": 3
+}
+{
+  "status": "PASS",
+  "wheel_sha256": "4ffc51a6b432a6e68e29e8b8358757c3598c645465ee18c8f86e381559e25703",
+  "wheel_name": "relational_reasoning_and_rsi_impossibility-1.2.3-py3-none-any.whl",
+  "isolated_interpreter": true,
+  "system_site_packages": false,
+  "smoke": {
+    "installed_modules": 15,
+    "parity": {
+      "metadata_record_count": 1,
+      "rust_companion_executed": true,
+      "scope": "EIS_METADATA_ONLY",
+      "obstruction_predicates_checked": false,
+      "identity_contract": "ascii-identifiers-v2",
+      "eis_fixture_vectors": 55,
+      "eis_digest_vectors": 7
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "relational-reasoning-and-rsi-impossibility": "1.2.3"
+    }
+  },
+  "cli_executed": true
+}

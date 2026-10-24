@@ -1,0 +1,115 @@
+{
+  "schema": "rsi.companion-lineage.v1",
+  "precursor_package": "001_finite_obstruction_calculus/002_asi_no_go_theorem_epistemic_contextuality",
+  "precursor_version": "1.2.0",
+  "successor_version": "1.6.1",
+  "precursor_files_sha256": {
+    "002_asi_no_go_theorem_epistemic_contextuality_2026-10-17.zip": "bf4ac47710a9f651bc25e5e45defc7a13b9bb4a9ddf5ac631ebb683fbe2dd8c6",
+    "epistemic_no_go_change_log.md": "feee65e812f9e150d77cc0d5c8b0f6dcfe3868038f53de578e08205d159c383f",
+    "epistemic_no_go_monograph.md": "ca49d82f9afc0dec2e9a8f3e0569295150218f269b61666e1e5d0296271faef1",
+    "LICENSE": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+    "LICENSE-CODE": "fdc1b580085fb2812b93559cd3d5568149dc027d2616b6c636eaee6126a82bb4",
+    "MANIFEST.sha256": "6094216425d62de289413d253c13b37cc33d820392c3511ad9e789eacd2b4d60",
+    "pyproject.toml": "ecf49fb091d02e5acd1e77b4c6a88f0b06454b104ef38e98824c3d2c4b4f9c22",
+    "README.md": "7398be73c4d7c0093384ea1281cf33e3d0b674f6f3a72c50c8709606d612492c",
+    "SHA256SUMS": "83eddaf9cc2e44eee7e2c494a3b3c7fd59ce8aa29b7149b901262f069af94ee2",
+    "verify_deposit.py": "1c5807bbc9ed9e717739bee6538430c6e5693255586ebcb1981232648565c79a",
+    "zenodo_metadata.json": "765530bc64ebf469482203566cc94870c9c385a26d02276a8bbdbf662aff31b9",
+    "code/deposit_paths.py": "37c4f3b5da608d38bffd5315ef73a79e066d2fd96b219325e818941e1b3dac62",
+    "code/epistemic_kernel.py": "2e8a1afaf2ba0ffcd6c27f354c02e4cf7c6d26994b652ab6728e7476ba6ac078",
+    "docs/descriptions.md": "7aa67997f80391baea8a5c36731b885dc7c1c2cf4fd7ee78183896617201892b",
+    "docs/keywords.md": "055c270d5f69d1bc4c63641c66bfd5233dcca61370721d241672ed64cabc77e7",
+    "docs/legacy_float_kernel_listings.md": "94fff4a8e362dca37092758b06aacf1a1a373ab2e7277e593f60a6fbba33085c",
+    "docs/mechanization_map.md": "4cab91a7203c35fea05ffee0f7bf5039938ed34d68edb2498f9f5a068e32b670",
+    "docs/quick_start.md": "8ec1800fbd149f306662d86ba7bbf5cd3d1892568c565969abb249a34ebd3e39",
+    "docs/references.md": "6964a020ed8e9d6deeac5ff7b287ae1fde888681bebfa0fa8d1ee4a87d5da845",
+    "lean4/axiom_report.txt": "69b94ca2fe95ef8862419b00581d212a8d3445392c20ff0acba19266c7661d4e",
+    "lean4/Census.lean": "31ddd2e5dd129a383467188e329edd13eaccb78e052f483828d3a063b6d2b757",
+    "lean4/Core.lean": "5d98e8dd3cb4a780c4b70c24cae1aec3238edb802651743d7bef948230d346df",
+    "lean4/lake-manifest.json": "8a7c879547da26af01335c4624773af7060f946b05833ba0c7a535437c991824",
+    "lean4/lakefile.lean": "678455679625170e738126d7d39b3c4ea064a10f3e480d14d402e9bde74c733b",
+    "lean4/lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+    "lean4/ResultI.lean": "56a8821a5ffccd1324b5ffa72a2fa51257345e9d50da1aedb6ac2bff77e3e7be",
+    "lean4/ResultII.lean": "e2582a0396d5e83b836d4a49c7026dd0f94518d5ea73e6157283eaa6cd924801",
+    "lean4/ResultIII.lean": "b3307cde62179f8d2147b7edd16b34a78559da4301dcb5d5d3b10d05b1a2ece2",
+    "lean4/ResultIV.lean": "61fbc497a019bf9a8565e6bbcc18560f270a45ac6d41b229a2ddd0607ebe5614",
+    "scripts/build_deposit_zip.py": "fc21f6119be966f4c3acfce58164e4d5b22360c0603081727cf5c6639a604675",
+    "scripts/regen_sha256sums.py": "2ec060492be0f7af01f4bf2b719da5076af7e3a0858182282c274fbaefb0731f",
+    "tools/rebuild_release.py": "e30952640a1dc507e1c8ebeebfd6cd3b003e99191903ace3856db7d484260df7",
+    "tools/replay_full_axiom_census.py": "10e67d6e6e33f51deb60466da1d5172b31c2613b18d01c8276eaa701282c69a1",
+    "tools/replay_lean_axiom_census.py": "c73bf94a0b15a3c7017578f4983a9044f3896609325bda2a7e7ddfba6c44f00d",
+    "code/tests/test_epistemic_kernel.py": "6aab085ac21421db3996fe56874debf2eaaaf1ee5a1a53eaceae38f868baabd9"
+  },
+  "copied_source_paths": [
+    "code/deposit_paths.py",
+    "code/epistemic_kernel.py",
+    "code/tests/test_epistemic_kernel.py",
+    "lean4/axiom_report.txt",
+    "lean4/Census.lean",
+    "lean4/Core.lean",
+    "lean4/lake-manifest.json",
+    "lean4/lakefile.lean",
+    "lean4/lean-toolchain",
+    "lean4/ResultI.lean",
+    "lean4/ResultII.lean",
+    "lean4/ResultIII.lean",
+    "lean4/ResultIV.lean",
+    "scripts/build_deposit_zip.py",
+    "scripts/regen_sha256sums.py",
+    "tools/rebuild_release.py",
+    "tools/replay_full_axiom_census.py",
+    "tools/replay_lean_axiom_census.py",
+    "LICENSE",
+    "LICENSE-CODE",
+    "pyproject.toml",
+    "zenodo_metadata.json",
+    "verify_deposit.py"
+  ],
+  "verbatim_archival_documents": {
+    "docs/precursor_monograph.md": "epistemic_no_go_monograph.md",
+    "docs/precursor_readme.md": "README.md",
+    "docs/precursor_mechanization_map.md": "docs/mechanization_map.md",
+    "docs/precursor_references.md": "docs/references.md",
+    "docs/precursor_change_log.md": "epistemic_no_go_change_log.md",
+    "docs/precursor_legacy_float_kernel_listings.md": "docs/legacy_float_kernel_listings.md"
+  },
+  "rsi_companion_package": "000_relational_reasoning_and_rsi_impossibility",
+  "rsi_companion_release": "000_relational_reasoning_and_rsi_impossibility_2026-10-21.zip",
+  "rsi_companion_release_sha256": "630c84b11560b820bf922d2f4b403d25ab570b758a2e857d5bbda31db4f0a4f3",
+  "scope": "Source lineage and byte identity only; no promotion of historical claims.",
+  "previous_edition": {
+    "version": "1.6.0",
+    "release_sha256": "f187426b0151e5598fccae29680ea5a4366494962268cfc23f8270d0fc2b8c1d"
+  },
+  "edition_history": [
+    {
+      "version": "1.4.0",
+      "release_sha256": "f89900aba04b190e2646ce817055cf3422cbbc9a6324d96306d031634cd75ccc"
+    },
+    {
+      "version": "1.5.0",
+      "release_sha256": "3245226627367ded81d23bf9f68a2cdf35da7f22e0af28c6c82cbe18d403b87f"
+    },
+    {
+      "version": "1.5.1",
+      "release_sha256": "2fc69a12e546b2ee5b62f36ca8ecbd6d82d9f87b74cec3f2a902abe0cb3b6c8d"
+    }
+  ],
+  "previous_rsi_companion_release": {
+    "version": "1.3.0",
+    "sha256": "45605137e3a55422ec08c47e3e701d8c1c39942289697aac16124ab3bf8b8dff"
+  },
+  "rsi_companion_cited_version": "1.4.0",
+  "precursor_retirement": {
+    "date": "2026-10-22",
+    "source_inventory": "docs/source_consolidation.json",
+    "explanation": "docs/source_consolidation.md",
+    "original_directory_retained": false
+  },
+  "current_paired_editions": {
+    "date": "2026-10-23",
+    "paper_000": "1.2.1",
+    "paper_001": "1.8.1",
+    "note": "The separate 1.4.0 recovery-edition attribution above is historical. Current proof statements are in these editions; no historical hash is reassigned."
+  }
+}

@@ -1,0 +1,1 @@
+PASS rendered source-bound Bell PDF and TeX

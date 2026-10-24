@@ -1,0 +1,13 @@
+{"version": "1.2.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"type": "path",
+   "scope": "",
+   "name": "rsi_mathlib_vendor",
+   "manifestFile": "lake-manifest.json",
+   "inherited": false,
+   "dir": "vendor",
+   "configFile": "lakefile.lean"}],
+ "name": "epistemic_no_go",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

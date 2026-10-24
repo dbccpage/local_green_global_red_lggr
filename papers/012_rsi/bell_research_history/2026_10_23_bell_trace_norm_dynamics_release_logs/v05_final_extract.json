@@ -1,0 +1,14 @@
+{
+  "label": "v05_final_extract",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\extract_v05_final.py"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game",
+  "timestamp_utc": "2026-10-23T17:59:56.507368+00:00",
+  "seconds": 8.823554515838623,
+  "exit_code": 0,
+  "log": "v05_final_extract.txt"
+}

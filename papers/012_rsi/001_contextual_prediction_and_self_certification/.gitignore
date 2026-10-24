@@ -1,0 +1,6 @@
+.pytest_cache/
+__pycache__/
+*.pyc
+lean4/.lake/
+!lean4/vendor/
+!lean4/vendor/**

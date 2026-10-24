@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-24",
+  "version": "0.13.0",
+  "pages": 33,
+  "visually_reviewed_pages": [
+    1,
+    22,
+    31,
+    33
+  ],
+  "xelatex_passes": 3,
+  "overfull_boxes": 0,
+  "missing_glyphs": 0,
+  "bindings": {
+    "036_bell_positive_extensions_and_projection_residuals.md": "63266b6c5b0462bf0936f00c41199fb84acdb42d29d15d785dd47da26d53e63a",
+    "036_bell_positive_extensions_and_projection_residuals.tex": "7120d98cf5ef34871b1cfff84b90cc45679df0169657c6ebdbc969b14dfddb03",
+    "036_bell_positive_extensions_and_projection_residuals.pdf": "8e11def7886791cd6f23b7e90f3e0c205661bf49d007421c95aabb8adcb02eed",
+    "036_bell_positive_extensions_and_projection_residuals.log": "86fbb45b0937e91707708b95b5ea2256bca9ccbc2ed0fb9ce6e13071d7ff4cdb",
+    "036_bell_positive_extensions_and_projection_residuals.aux": "49a5cd15dc201375c01db536140e232fb03efe0c4c9deb64cecd3f299019a3dd",
+    "docs/pdf_build.log": "a874be121644a29b92b7ace2ae09a47b1d5e1ce1483f231eb25b184b68b5f905"
+  },
+  "scope": "Source binding, three XeLaTeX passes, zero missing glyphs/overfull boxes and sampled visual layout. Proof and release verification are separate.",
+  "title_details": "Centered title, subtitle, author, date, and version; version is the last detail."
+}

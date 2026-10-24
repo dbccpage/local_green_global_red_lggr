@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-23",
+  "repository_sources": [
+    {
+      "commit": "e15a9d4ac6298524ce370cae679314aa0fef7585",
+      "path": "omega_engine_product_planning_office/plans/epics/plan_anomalon_councils_engine_integration.md",
+      "sha256": "213725952c9855ed9b56a01120bc65bde874fb5f8181a6e02c72ebf3dbe058fb",
+      "scope": "design document, not runtime validation"
+    },
+    {
+      "commit": "e15a9d4ac6298524ce370cae679314aa0fef7585",
+      "path": "omega_engine_governance/anomalon_councils/documentation/council_model_reconciliation.md",
+      "sha256": "766ae6ea2640f7bc60e9767e103a3a18de67d6bae7b06807463b8bc54808c449",
+      "scope": "design document, not runtime validation"
+    }
+  ],
+  "primary_arxiv_records_checked": [
+    "https://arxiv.org/abs/1102.0264",
+    "https://arxiv.org/abs/2305.14325",
+    "https://arxiv.org/abs/2509.05396",
+    "https://arxiv.org/abs/2610.02702"
+  ],
+  "scope": "Title, authors, version history, and abstract checked for these four records. Other supplied references retain their historical inspection descriptions; no systematic literature review or experiment replay.",
+  "missing_supplied_lineage_sources": [
+    "002_gtmur.md",
+    "general_theory_of_meta_and_universal_representation_v001(4).md"
+  ]
+}

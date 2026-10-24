@@ -1,0 +1,17 @@
+{
+  "command": [
+    "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "code/tests",
+    "-q",
+    "--basetemp",
+    "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\native_source_tmp_b",
+    "--junitxml",
+    "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\native_source_tests_b.xml"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\012_rsi\\001_contextual_prediction_and_self_certification",
+  "exit_code": 0,
+  "seconds": 9.56599473953247
+}

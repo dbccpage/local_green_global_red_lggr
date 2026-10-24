@@ -1,0 +1,164 @@
+{
+  "schema": "institutions.claim-map.v1",
+  "version": "0.1.0",
+  "claims": [
+    {
+      "id": "IK-01",
+      "claim": "Relative non-identification",
+      "manuscript_section": "3.1.2",
+      "evidence": "LEAN4_PROOF",
+      "lean_theorems": [
+        "InstitutionalReasoning.relative_non_identification"
+      ],
+      "premises": "An admitted relation preserves J; endpoint J values differ.",
+      "limit": "invariant_separates is a Boolean-premise fixture, not an invariant verifier."
+    },
+    {
+      "id": "IK-02",
+      "claim": "Exact question recovery",
+      "manuscript_section": "3.2.1",
+      "evidence": "LEAN4_PROOF",
+      "lean_theorems": [
+        "InstitutionalReasoning.recoverable_iff_fiber_constant"
+      ],
+      "premises": "Functions C and q on a declared source domain; decoder on the image.",
+      "limit": "Python checked on finite domains; no universal implementation refinement."
+    },
+    {
+      "id": "IK-03",
+      "claim": "Question-profile preservation",
+      "manuscript_section": "3.2.1",
+      "evidence": "LEAN4_PROOF",
+      "lean_theorems": [
+        "InstitutionalReasoning.profile_fiber_constant_iff",
+        "InstitutionalReasoning.profile_recoverable_iff"
+      ],
+      "premises": "Declared indexed family of questions; equality of answer profiles.",
+      "limit": "Not preservation of every possible future question."
+    },
+    {
+      "id": "IK-04",
+      "claim": "Recovery with a side record",
+      "manuscript_section": "3.2.2",
+      "evidence": "LEAN4_PROOF",
+      "lean_theorems": [
+        "InstitutionalReasoning.side_recovery_iff",
+        "InstitutionalReasoning.distinct_answers_require_distinct_side_codes"
+      ],
+      "premises": "Decoder from the pair of summary and side code.",
+      "limit": "Formalized separation step; not the full cardinality bound."
+    },
+    {
+      "id": "IK-05",
+      "claim": "Exact fixed-length side-bit bound",
+      "manuscript_section": "3.2.2",
+      "evidence": "PROSE_PROOF",
+      "lean_theorems": [],
+      "premises": "Finite nonempty domain; deterministic unrestricted encoder; shared codebook; fixed length.",
+      "limit": "Counting proof and 216 exhaustive cases; codebook, specification and verification costs excluded; general bound not Lean-formalized."
+    },
+    {
+      "id": "IK-06",
+      "claim": "Matching local projections need not admit a global assignment",
+      "manuscript_section": "4.1",
+      "evidence": "WORKED_EXAMPLE",
+      "lean_theorems": [
+        "InstitutionalReasoning.joint_constraint_obstruction"
+      ],
+      "premises": "Binary variables with a=b, b=c, c!=a.",
+      "limit": "Lean proves the contradiction; Python establishes nonempty locals and pairwise consistency."
+    },
+    {
+      "id": "IK-07",
+      "claim": "Joint acceptability respects every participant constraint",
+      "manuscript_section": "4.2",
+      "evidence": "LEAN4_PROOF",
+      "lean_theorems": [
+        "InstitutionalReasoning.joint_action_respects_each_constraint"
+      ],
+      "premises": "Membership in the intersection of declared predicates.",
+      "limit": "Does not grant execution authority or merge explanations."
+    },
+    {
+      "id": "IK-08",
+      "claim": "Evidence-access cuts can remove answerability",
+      "manuscript_section": "4.3",
+      "evidence": "CODE_DEMO_PYTHON",
+      "lean_theorems": [],
+      "premises": "Fixed graph, evidence corpus and admitted procedures.",
+      "limit": "Reachability examples only; no claim about actual institutional collapse."
+    },
+    {
+      "id": "IK-09",
+      "claim": "Variance and effective sample size",
+      "manuscript_section": "4.4",
+      "evidence": "PROSE_PROOF",
+      "lean_theorems": [],
+      "premises": "Equal unbiased variances, feasible common correlation, positive denominator for finite effective count.",
+      "limit": "Conditional variance expansion; no measured council correlation; no Lean proof."
+    },
+    {
+      "id": "IK-10",
+      "claim": "Five institutional capacities",
+      "manuscript_section": "2.1",
+      "evidence": "PROPOSED_FRAMEWORK",
+      "lean_theorems": [],
+      "premises": "Declared task, constituency and resources.",
+      "limit": "Requires construct validation and empirical case studies."
+    },
+    {
+      "id": "IK-11",
+      "claim": "Belonging and failed mediation",
+      "manuscript_section": "6.1",
+      "evidence": "EMPIRICAL_HYPOTHESIS",
+      "lean_theorems": [],
+      "premises": "Measured dependencies, sanctions and correction routes.",
+      "limit": "No motive diagnosis or universal collapse law."
+    },
+    {
+      "id": "IK-12",
+      "claim": "Existing Anomalon design provides integration points",
+      "manuscript_section": "6.2.1",
+      "evidence": "SOURCE_SUPPORTED_OBSERVATION",
+      "lean_theorems": [],
+      "premises": "Two design documents at the pinned commit.",
+      "limit": "Document claims are not a current runtime audit or replay of their tests."
+    },
+    {
+      "id": "IK-13",
+      "claim": "Proposed council protocol improves recovery and coordination",
+      "manuscript_section": "6.4",
+      "evidence": "EMPIRICAL_HYPOTHESIS",
+      "lean_theorems": [],
+      "premises": "Matched budgets, baselines, negative controls and ablations for H1-H3.",
+      "limit": "No live-model, human, deployment or superiority experiment."
+    },
+    {
+      "id": "IK-14",
+      "claim": "Proposal does not authorize execution in the finite example",
+      "manuscript_section": "5.1",
+      "evidence": "CODE_DEMO_PYTHON",
+      "lean_theorems": [],
+      "premises": "Explicit mandate fixture and example YAML.",
+      "limit": "Externally verified Boolean is assumed; no authentication or enforced runtime gate."
+    },
+    {
+      "id": "IK-15",
+      "claim": "Prior work motivates distributed and socially organized knowing",
+      "manuscript_section": "1.2",
+      "evidence": "IMPORTED_BACKGROUND",
+      "lean_theorems": [],
+      "premises": "References and per-source inspection scope.",
+      "limit": "Not a systematic review or global novelty claim."
+    },
+    {
+      "id": "IK-16",
+      "claim": "RSI crosswalk and embedded evaluation",
+      "manuscript_section": "1.3",
+      "evidence": "PROPOSED_FRAMEWORK",
+      "lean_theorems": [],
+      "premises": "Agents, records and evaluators are parts of one world; questions and budgets are declared.",
+      "limit": "No outside observer; no claim that the existing runtime implements this protocol."
+    }
+  ]
+}

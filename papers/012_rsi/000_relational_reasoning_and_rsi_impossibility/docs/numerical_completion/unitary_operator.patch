@@ -1,0 +1,128 @@
+--- before/omega_engine/crates_rs/omega_quantum_physics/src/unitary_operator.rs
++++ after/omega_engine/crates_rs/omega_quantum_physics/src/unitary_operator.rs
+@@ -40,6 +40,49 @@
+     pub label: String,
+ }
+ 
++/// A finite floating-point propagator checked against an explicit tolerance.
++/// This type carries a numerical diagnostic, not an exact unitary certificate.
++#[derive(Debug, Clone, PartialEq)]
++pub struct NumericalUnitaryOperator {
++    dim: usize,
++    matrix: CMatrix,
++    label: String,
++    tolerance: f64,
++    defect: f64,
++}
++
++impl NumericalUnitaryOperator {
++    pub fn try_new(dim: usize, matrix: CMatrix, label: impl Into<String>, tolerance: f64)
++        -> Result<Self, UnitaryError>
++    {
++        let defect = UnitaryOperator::diagnostic_defect(dim, &matrix, tolerance)?;
++        if defect > tolerance {
++            return Err(UnitaryError::NonUnitary { defect });
++        }
++        Ok(Self { dim, matrix, label: label.into(), tolerance, defect })
++    }
++
++    pub fn matrix(&self) -> &CMatrix { &self.matrix }
++    pub fn unitarity_defect(&self) -> f64 { self.defect }
++    pub fn tolerance(&self) -> f64 { self.tolerance }
++
++    /// Applies the numerical matrix without silently renormalizing the result.
++    pub fn evolve_state(&self, psi: &QuantumState) -> Result<QuantumState, UnitaryError> {
++        if psi.dim != self.dim || psi.amplitudes.len() != self.dim {
++            return Err(UnitaryError::DimensionMismatch { expected: self.dim, actual: psi.dim });
++        }
++        if psi.amplitudes.iter().any(|z| !z.re.is_finite() || !z.im.is_finite()) {
++            return Err(UnitaryError::InvalidDiagnostic);
++        }
++        let evolved = &self.matrix * psi.to_cvector();
++        if evolved.iter().any(|z| !z.re.is_finite() || !z.im.is_finite()) {
++            return Err(UnitaryError::InvalidDiagnostic);
++        }
++        Ok(QuantumState { dim: self.dim, amplitudes: evolved.iter().copied().collect(),
++            label: format!("{}({})", self.label, psi.label) })
++    }
++}
++
+ impl UnitaryOperator {
+     /// Scaffold constructor: identity operator on dim = max(degree, 1).
+     pub fn new(degree: usize, label: impl Into<String>) -> Self {
+@@ -58,14 +101,8 @@
+             && matrix.iter().all(|z| z.re.is_finite() && z.im.is_finite())
+     }
+ 
+-    /// Construct and validate a unitary operator from a sovereign `CMatrix`.
+-    pub fn try_new(
+-        dim: usize,
+-        matrix: CMatrix,
+-        label: impl Into<String>,
+-        tol: f64,
+-    ) -> Result<Self, UnitaryError> {
+-        if !Self::has_finite_diagnostic_inputs(&matrix, tol) {
++    fn diagnostic_defect(dim: usize, matrix: &CMatrix, tol: f64) -> Result<f64, UnitaryError> {
++        if !Self::has_finite_diagnostic_inputs(matrix, tol) {
+             return Err(UnitaryError::InvalidDiagnostic);
+         }
+         omega_kernel::resource_limits::OperationLimits::default().check_dense_matrix(
+@@ -83,7 +120,21 @@
+             });
+         }
+         let id = CMatrix::identity(dim, dim);
+-        let defect = (matrix.adjoint() * &matrix - id).norm();
++        let defect = (matrix.adjoint() * matrix - id).norm();
++        if !defect.is_finite() {
++            return Err(UnitaryError::InvalidDiagnostic);
++        }
++        Ok(defect)
++    }
++
++    /// Construct with zero computed unitarity defect; tolerance never relaxes admission.
++    pub fn try_new(
++        dim: usize,
++        matrix: CMatrix,
++        label: impl Into<String>,
++        tol: f64,
++    ) -> Result<Self, UnitaryError> {
++        let defect = Self::diagnostic_defect(dim, &matrix, tol)?;
+         if !defect.is_finite() || defect > 0.0 {
+             return Err(UnitaryError::NonUnitary { defect });
+         }
+@@ -450,3 +501,35 @@
+         assert!(UnitaryOperator::pauli_x().validate().is_ok());
+     }
+ }
++
++#[cfg(test)]
++mod numerical_boundary_tests {
++    use super::*;
++
++    #[test]
++    fn numerical_roundoff_acceptance_does_not_relax_zero_defect_admission() {
++        let mut matrix = CMatrix::identity(2, 2);
++        matrix[(0, 0)] = C64::new(1.0 + 1e-8, 0.0);
++        let numerical = NumericalUnitaryOperator::try_new(2, matrix.clone(), "approx", 1e-7).unwrap();
++        assert!(numerical.unitarity_defect() > 0.0);
++        assert!(matches!(UnitaryOperator::try_new(2, matrix, "strict", 1.0),
++            Err(UnitaryError::NonUnitary { .. })));
++        let input = QuantumState { dim: 2, amplitudes: vec![C64::new(1.0, 0.0), C64::new(0.0, 0.0)], label: "0".into() };
++        let output = numerical.evolve_state(&input).unwrap();
++        assert!(output.amplitudes[0].norm_sqr() > 1.0);
++    }
++
++    #[test]
++    fn numerical_propagator_rejects_invalid_inputs_and_material_defects() {
++        for tolerance in [-1.0, f64::NAN, f64::INFINITY] {
++            assert!(NumericalUnitaryOperator::try_new(2, CMatrix::identity(2, 2), "bad", tolerance).is_err());
++        }
++        for value in [2.0, f64::NAN, f64::INFINITY] {
++            let mut matrix = CMatrix::identity(2, 2);
++            matrix[(0, 0)] = C64::new(value, 0.0);
++            assert!(NumericalUnitaryOperator::try_new(2, matrix, "bad", 1e-7).is_err());
++        }
++        assert!(NumericalUnitaryOperator::try_new(0, CMatrix::zeros(0, 0), "empty", 1e-7).is_err());
++        assert!(NumericalUnitaryOperator::try_new(2, CMatrix::identity(3, 3), "shape", 1e-7).is_err());
++    }
++}

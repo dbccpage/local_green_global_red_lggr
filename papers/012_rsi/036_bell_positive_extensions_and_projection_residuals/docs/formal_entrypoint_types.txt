@@ -1,0 +1,25 @@
+@Bell.GramQuantum.realization : ∀ {X Y : Type} (d : ℕ) (u : X → Fin d → ℝ) (v : Y → Fin d → ℝ),
+  (∀ (x : X), ∑ i, u x i ^ 2 = 1) →
+    (∀ (y : Y), ∑ i, v y i ^ 2 = 1) →
+      Nonempty (Bell.GramQuantum.Model (Bell.LocalGram.table fun x y => ∑ i, u x i * v y i))
+Bell.CompleteQuantumUnbounded.quantum_unbounded : ∀ (C : ℝ),
+  0 ≤ C →
+    ∃ n p q,
+      Nonempty (Bell.GramQuantum.Model p) ∧
+        Bell.marginal q = p ∧
+          ∑ g, q g = 1 ∧
+            (∀ (q' : Bell.Assignment (Fin (n + 1)) (Fin (n + 1)) Bool Bool → ℝ),
+                Bell.marginal q' = p →
+                  ∑ g, q' g = 1 → Bell.SignedDuality.negativeMass q ≤ Bell.SignedDuality.negativeMass q') ∧
+              0 < Bell.SignedDuality.negativeMass q ∧
+                C <
+                  Bell.ContextualFraction.fraction Bell.Repair.vertex (Bell.Repair.flatten p) /
+                    Bell.SignedDuality.negativeMass q
+Bell.CompleteQuantumUnbounded.finite_shadow_error : ∀ (k : ℕ) [inst : Fact (2 ≤ k)] (n : ℕ),
+  n + 1 = k * k →
+    ∀ (ε : ℝ),
+      0 < ε →
+        2 / ε < ↑k →
+          |Bell.SmoothedFamily.contextualFraction k n - 1| < ε ∧ |Bell.CompleteQuantumUnbounded.minimumMass k n| < ε
+Bell.ContinuumShadows.no_finite_ratio_endpoint : ¬∃ L,
+    ∀ (ε : ℝ), 0 < ε → ∃ K, ∀ (k : ℕ), K ≤ k → 2 ≤ k → |Bell.SmoothedComparison.ratioFloor ↑k - L| < ε

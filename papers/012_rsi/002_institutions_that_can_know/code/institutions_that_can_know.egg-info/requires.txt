@@ -1,0 +1,11 @@
+
+[contract]
+PyYAML<7,>=6
+
+[documents]
+PyMuPDF<2,>=1.24
+
+[notebook]
+nbclient<1,>=0.10
+nbformat<6,>=5
+ipykernel<8,>=6

@@ -1,0 +1,24 @@
+{
+  "title": "Institutions That Can Know: Preserving Difference, Coordinating Action, and the Risks of Epistemic Collapse",
+  "upload_type": "publication",
+  "publication_type": "workingpaper",
+  "publication_date": "2026-10-23",
+  "version": "0.1.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "A proposed institutional comparison protocol with finite recovery bounds, exact Python examples, and scoped Lean proofs. No live council or empirical superiority is reported.",
+  "keywords": [
+    "institutions",
+    "embedded knowledge",
+    "memory",
+    "recoverability",
+    "disagreement",
+    "Anomalon Councils"
+  ],
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "notes": "Text: CC BY 4.0 (LICENSE). Code and Lean source: PolyForm Noncommercial 1.0.0 (LICENSE-CODE). Metadata prepared locally; no deposit or DOI is asserted."
+}

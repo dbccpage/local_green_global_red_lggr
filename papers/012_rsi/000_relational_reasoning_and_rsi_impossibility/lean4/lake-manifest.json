@@ -1,0 +1,6 @@
+{"version": "1.2.0",
+ "packagesDir": ".lake/packages",
+ "packages": [],
+ "name": "relational_rsi_impossibility",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

@@ -1,0 +1,35 @@
+{
+  "title": "Contextual Prediction and Self-Certification",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "version": "1.8.3",
+  "publication_date": "2026-10-23",
+  "description": "Finite contextuality duality and exact-rational simplex with checked optimal, infeasible and unbounded outcomes, extended with embedded knowledge, attained scalar minimax certificates, future-memory capacity, total-variation loss transfer and correct finite-budget binary observation planning. Includes standalone sources, exact checkers, complete axiom censuses and offline Lean dependencies. Includes source-checked persistent agent memory and captured live restart trials, retaining a failed arithmetic control.",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H.",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "rights": [
+    {
+      "id": "cc-by-4.0",
+      "description": "Manuscript and documentation (LICENSE)."
+    },
+    {
+      "id": "polyform-noncommercial-1.0.0",
+      "description": "Source code, Lean files and release tooling (LICENSE-CODE)."
+    }
+  ],
+  "keywords": [
+    "Recursive self-improvement",
+    "Contextuality",
+    "Observation fibers",
+    "Memory preservation",
+    "Self-certification",
+    "Safe delegation",
+    "Lean 4"
+  ]
+}

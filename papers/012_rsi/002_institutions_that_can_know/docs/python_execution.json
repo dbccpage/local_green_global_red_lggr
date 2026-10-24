@@ -1,0 +1,15 @@
+{
+  "schema": "institutions.finite-checks.v1",
+  "python": "3.12.10",
+  "tests_run": 17,
+  "success": true,
+  "source_hashes": {
+    "code/institutional_reasoning.py": "4de979a8906a50f677229e1f44d469b5c7508370b3ff626f3eebea1483904ee2",
+    "code/tests/test_institutional_reasoning.py": "03fa09fa59070ef6af3e94dab78edb1d8c69d31b005a692347a33a8fd9d82066"
+  },
+  "exhaustive_cases": {
+    "recoverability": 216,
+    "side_information": 216
+  },
+  "scope": "Exact finite synthetic cases. No Python-to-Lean refinement or live council experiment."
+}

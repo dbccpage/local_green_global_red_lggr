@@ -1,0 +1,12 @@
+{
+  "version": "0.9.0",
+  "archive_sha256": "63944bdf236a72ce57bfbfc36b56a071898b805d1361518b5f1603d817f87fe0",
+  "full_physical_copy": true,
+  "hardlinks_used": false,
+  "zip_members": 93,
+  "payload_files": 91,
+  "all_member_bytes_and_manifests_verified": true,
+  "claim_census_and_PDF_bindings_verified": true,
+  "lean_replay": "Separate fresh-directory cold-cache replay recorded in clean_extraction_v0.9.0.json; same archive digest",
+  "exit_code": 0
+}

@@ -1,0 +1,12 @@
+Processing ./packaging_source
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: relational-reasoning-and-rsi-impossibility
+  Building wheel for relational-reasoning-and-rsi-impossibility (pyproject.toml): started
+  Building wheel for relational-reasoning-and-rsi-impossibility (pyproject.toml): finished with status 'done'
+  Created wheel for relational-reasoning-and-rsi-impossibility: filename=relational_reasoning_and_rsi_impossibility-1.0.0-py3-none-any.whl size=107674 sha256=d38bf9bf12ba7a34db0f024ac8b2edf9134a2f488d20ed7b94099ebb23f5c4f7
+  Stored in directory: /tmp/pip-ephem-wheel-cache-mla361yt/wheels/fd/06/68/47e1579fd917f2778c8626c9ec0cbde4006941ecb540bf89bb
+Successfully built relational-reasoning-and-rsi-impossibility
+
+[notice] A new release of pip is available: 26.2.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip

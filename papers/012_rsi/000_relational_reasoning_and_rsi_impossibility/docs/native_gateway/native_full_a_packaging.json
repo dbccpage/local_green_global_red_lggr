@@ -1,0 +1,10 @@
+{
+  "command": [
+    "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "tools/replay_full_axiom_census.py"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\012_rsi\\000_relational_reasoning_and_rsi_impossibility",
+  "exit_code": 0,
+  "seconds": 81.16131138801575
+}

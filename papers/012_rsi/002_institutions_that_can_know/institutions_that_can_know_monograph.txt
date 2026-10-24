@@ -1,0 +1,483 @@
+Institutions That Can Know
+Preserving Difference, Coordinating Action, and the Risks of Epistemic Collapse
+Jeremy H. Carroll
+2026-10-23
+Version 0.1.0
+
+## Abstract
+
+Institutions are commonly discussed as sources of authority, collective identity, or coordinated action. This paper develops a complementary account: institutions contribute to knowing by maintaining the relations through which differently situated participants can preserve observations, compare presentations, challenge interpretations, recover information lost in compression, and act without requiring comprehensive agreement. An epistemically capable institution does not merely select a dominant description. It maintains distinctions between equivalence, task-specific compatibility, certified non-equivalence, unavailable comparison, and unresolved inquiry. Drawing on the Omega Engine's representation-transport and descent-authority disciplines, we propose a finite framework for institutional reasoning with explicit witnesses, partial translations, recoverability obligations, residual records, and separately scoped action mandates. Elementary propositions establish when a compressed record can answer a declared family of questions, how much side information is required to restore lost distinctions, and how certified invariants can obstruct identification. A finite counterexample shows why locally acceptable comparisons need not support a globally consistent account. We then characterize institutional collapse as the loss of capacities for comparison, correction, memory, and bounded coordination, which can occur even while an organization continues issuing decisions. Finally, we specify an institutional reasoning protocol for Anomalon Councils, using their existing four-role design while replacing obligatory synthesis with evidence-governed comparison and explicit unresolved outputs. The companion includes finite Python checks and a Lean formalization of the explicitly identified recovery and separation statements. The contribution is a conceptual and engineering synthesis, not a demonstrated universal theory of institutional decline or an established improvement in model performance. Its empirical commitments are stated as falsifiable hypotheses with an evaluation program for human, AI, and mixed councils.
+
+**Keywords:** institutions; social epistemology; distributed cognition; representation; information loss; disagreement; authority; institutional collapse; multi-agent reasoning; Anomalon; Omega Engine.
+
+## 1. Introduction
+
+### 1.1 The problem: knowing together without becoming the same
+
+An institution may settle a dispute without making its participants believe the same thing. It may preserve knowledge that none of its members individually possesses. It may also manufacture agreement while destroying the conditions under which its decisions could be checked. These possibilities suggest that institutional knowledge should not be identified either with collective consensus or with the statements issued by an authorized office.
+
+The central question of this paper is therefore not simply, **Who is right?** It is: **What arrangements allow differently situated participants to retain their differences, test what travels between them, and undertake justified, bounded action?**
+
+The distinction matters for a school, a religious community, a research laboratory, a court, a legislature, or an AI council. These institutions have different purposes and standards. Their participants do not necessarily investigate the same objects or seek the same outcomes. Yet each can be examined for its capacity to retain evidence, compare accounts, expose error, carry unresolved questions forward, and distinguish a decision from a complete description of its subject.
+
+The motivating image is diplomatic rather than judicial. One examines another participant's account of the world, listens closely enough to reconstruct its commitments, and searches for relations that can be carried across the boundary. Understanding is not endorsement. Cooperation is not identity. A shared action need not require a shared metaphysics. Diplomacy, in this methodological sense, asks whether something can survive translation without either participant being redescribed out of existence.
+
+This paper proposes that an institution's epistemic contribution lies partly in maintaining this capacity across time and beyond any particular participant. Its danger is the converse: a procedure that once mediated difference can become a mechanism for suppressing it, or can lose the ability to mediate it at all.
+
+This is also a design problem for artificial intelligence. Multiple model instances can exchange persuasive arguments and converge. That convergence is an observable property of a conversation, not by itself a certificate of independent corroboration, preserved information, or valid authority. Multiagent debate has produced improvements on some evaluated tasks, but it has also produced accuracy degradation in other experimental settings (Du et al., 2023; Wynn et al., 2025). The appropriate engineering question is what institutional structure makes a particular interaction useful.
+
+The paper makes four contributions: a functional account of institutional knowing; a finite account of comparison, loss, and recoverability; a mechanism-based account of epistemic collapse; and a proposed protocol for Anomalon Councils. The formal results are elementary and intentionally inspectable. The proposed contribution is their organization into an institutional architecture, not a claim to have discovered the elementary mathematics.
+
+### 1.2 Intellectual setting and the proposed contribution
+
+The social organization of knowing has an established literature. Douglas's *How Institutions Think* examines the role of institutions in shaping shared classifications and thought; it does not require institutions to possess independent minds (Douglas, 1986). Hutchins's study of navigation develops an account of cognition distributed across people, artifacts, and organized activity (Hutchins, 1995). Longino treats scientific knowledge through the interaction of reasoning and social processes, rather than accepting an uncomplicated division between the rational and the social (Longino, 2002).
+
+Star and Griesemer's boundary objects are an especially close antecedent: shared objects can support cooperation across heterogeneous social worlds without having identical meanings in each (Star and Griesemer, 1989). Ostrom's polycentric account likewise examines multiple interacting institutional arrangements rather than treating one centralized solution as appropriate to every problem (Ostrom, 2010). These works already make it impossible to claim that cooperation without total agreement is a new discovery.
+
+The present proposal adds a specific engineering obligation: when an institution translates or compresses a presentation, it should record the distinctions preserved, the distinctions lost, the evidence supporting the translation, and the limits of the authority that can follow. An institution should also be able to report that two presentations are demonstrably different under an admitted class of comparisons. It must not represent every failure of unification as a temporary failure to reach consensus.
+
+The Omega Engine provides the immediate research lineage. The author's GTMUR materials distinguish a common representation grammar from a common ontology and require typed transport, loss accounting, and target-side verification before authority can be transported (Carroll, 2026a). This paper applies that discipline to institutions and councils. It does not rely on the stronger claim that every social relationship already has a complete categorical formalization.
+
+Barzun's *From Dawn to Decadence* supplies a historical motivation: institutional forms may persist while the possibilities associated with them become exhausted (Barzun, 2000). Here that motivation becomes a narrower research question. Can an institution preserve its visible organization while losing the capacities that formerly made its judgments corrigible? The paper does not infer a predetermined successor civilization from Barzun's interpretation.
+
+A useful mathematical antecedent is the treatment of local-to-global obstruction in sheaf-theoretic contextuality (Abramsky and Brandenburger, 2011). We borrow the question of whether local descriptions can be joined consistently. We do not infer that political disagreement is quantum contextuality. Similarly, compression-based model selection motivates asking what explanatory structure saves description length (Rissanen, 1978); our additional concern is whether the saved description has discarded distinctions required for later inquiry or action.
+
+### 1.3 Relation to the RSI papers
+
+The world is what it is. There is no outside or observer from nowhere. Participants, memory stores, instruments, and evaluators belong to the same world. Different presentations are partial accounts of it; they are not separate realities whose truth requires an external spectator. This paper studies the records and operations that allow embedded participants to correct and coordinate their accounts.
+
+Paper 000, *Relational Reasoning, Memory, and Embedded Knowledge* (v1.2.3), studies question-preserving memory and checked recall for an agent. Paper 001, *Contextual Prediction and Self-Certification* (v1.8.3), studies contextual extension, finite certificates, and limits of self-certification. The present paper extends the application to records held across roles and time: what an institution must preserve so that another participant can reconstruct a distinction, challenge a finding, or act under a separate mandate. Its formal recovery criterion is a shared mathematical boundary, not a new discovery. It does not assert that the existing agent memory implements the proposed council packet.
+
+## 2. Primitives and embedded evaluation
+
+### 2.1 Institutions as infrastructure for knowing
+
+#### 2.1.1 A descriptive definition and a capacity criterion
+
+For this paper, an **institution** is a relatively durable arrangement of roles, rules, records, expectations, and practices through which participants coordinate conduct. It need not be a formal organization, and it need not be epistemically successful. A family, a professional practice, and a state office may institutionalize different relations at different scales.
+
+An **epistemically capable institution**, relative to a declared task and constituency, additionally maintains ways to preserve relevant presentations, compare them where warranted, challenge conclusions, recover needed distinctions, and coordinate action under explicit limits. This is a capacity criterion, not a definition that makes every existing institution good by stipulation.
+
+The proposed institutional principle is:
+
+> An institution contributes to knowing when it makes differences examinable and action possible without misrepresenting either disagreement or the authority of its decisions.
+
+This principle does not require preserving every statement indefinitely, giving every claim equal evidential weight, or allowing indefinite obstruction. It requires an accountable account of what was admitted, translated, rejected, deferred, or acted upon. Rejection can be an epistemic achievement when the grounds are inspectable. Agreement can be an epistemic failure when it is obtained by erasing the question that mattered.
+
+#### 2.1.2 Five contributions
+
+**Memory.** Institutions retain records, methods, unsuccessful attempts, and reasons for earlier decisions. A conclusion without its conditions of production is less reusable than a conclusion with a traceable supporting record.
+
+**Comparison.** They supply opportunities and procedures for bringing different presentations into contact. The comparison may reveal equivalence, partial overlap, contradiction, or a missing translation. It need not yield a single vocabulary.
+
+**Correction.** They maintain routes by which a claim can encounter evidence that defeats or narrows it. A formal invitation to criticize is insufficient when criticism cannot alter the record or reach the relevant decision-maker.
+
+**Bounded coordination.** They allow action while some differences remain unresolved. A temporary operating arrangement can be acceptable to parties whose explanations of its necessity remain incompatible.
+
+**Succession.** They preserve enough context for people who were not present at the original encounter to understand, test, revise, or responsibly decline to reuse its result. This distinguishes institutional knowing from a transient conversation.
+
+These are proposed analytical dimensions. Their presence and quality must be investigated, not inferred from an organization's name, prestige, age, or procedural complexity.
+
+#### 2.1.3 Knowing is more than possessing a sentence
+
+We use *institutional knowing* operationally for a maintained capacity to answer specified questions through accessible evidence and competent procedures. This does not settle every philosophical definition of knowledge. It distinguishes possessing a statement from being able to support, revise, and use it.
+
+For an institution $I$, a question $q$, and a declared resource budget $b$, write
+
+$$\operatorname{CanAnswer}_{I,b}(q)$$
+
+when an admitted procedure can recover an answer together with the evidence and qualifications required by the task. The budget includes time, access permissions, expertise, and computational resources. A record can physically exist while being practically inaccessible. Conversely, a participant may know whom to consult without personally storing the answer. Hutchins's distributed account provides a substantive precedent for examining such organized capacities rather than isolating cognition inside a single individual (Hutchins, 1995).
+
+An institution does not become a mind floating above its members. Its contribution is enacted through people, artifacts, incentives, material resources, and relationships. Human participants also bear consequences that a computational role description does not reproduce. The analogy to AI councils concerns organized operations, not equivalence between a model and a human life.
+
+### 2.2 Presentations, witnesses, and the absence of an unlocated evaluator
+
+A **presentation** is a situated account made available for examination. It may be a testimony, a measurement series, a legal argument, a model, a software trace, or a statement of purpose. It is not automatically an account of the whole relevant world.
+
+For a finite inquiry, represent a presentation as
+
+$$P_i=(X_i,Q_i,W_i,V_i,F_i),$$
+
+where $X_i$ is its represented state space; $Q_i$ its declared questions or observables; $W_i$ its available evidence; $V_i$ its verification procedures; and $F_i$ its framing commitments, including definitions, scope, interests, and known exclusions. These fields are a minimal interface for this paper, not a claim that human experience can be exhausted by a record.
+
+A **witness** is evidence linked to a particular claim under stated procedures. Recording a witness is distinct from verifying it. A witness may be a reproducible computation, an instrument output, a document, or a person's testimony. The validity and limitations of each must be investigated in its own context. A checksum identifies bytes; it does not establish that the bytes are true.
+
+A **transport** $T_{ij}:D_{ij}\to X_j$, with $D_{ij}\subseteq X_i$, is a declared partial translation. Its domain matters. A translation suitable for one question need not preserve another. Its accompanying record specifies what can be checked, what is lost, and whether reconstruction requires access to source material.
+
+The evaluator is part of this arrangement. Words such as *central*, *extreme*, *credible*, *relevant*, or *safe* require a reference class, purpose, or consequence model if they are to perform analytical work. The remedy is not a prohibition on evaluation. It is to expose the frame and the evidence that make an evaluation applicable.
+
+This requirement applies to this paper's own categories. We select recoverability, contestability, and bounded coordination as design objectives. We do not derive their desirability from an observer-independent coordinate system. Participants can contest the objectives, the constituency they serve, and the costs they impose. The framework makes those commitments inspectable; it does not make them disappear.
+
+## 3. Comparison and recovery theorems
+
+### 3.1 What can be compared without being identified?
+
+#### 3.1.1 Comparison is scoped, and its outcomes are not one ranking
+
+Two presentations can be equivalent for a scheduling task and different for an explanation task. They may support a common action while disagreeing about its purpose. Consequently, a single scalar score or an exclusive label such as *compatible* is insufficient.
+
+A comparison should report separate answers to the following questions: What is the shared task? Which translations are admitted? What has been shown equal? Which distinctions remain? Is the failure a demonstrated obstruction, a missing bridge, or insufficient investigation? What, if anything, can follow operationally?
+
+A compact comparison vocabulary is:
+
+  ---------------------------------------------------------------------------------------------------------------------------------------------
+  Status                     Required basis                                               What does not follow
+  -------------------------- ------------------------------------------------------------ -----------------------------------------------------
+  Task-equivalent            Declared questions are preserved by checked maps             Identity of the complete presentations
+
+  Jointly actionable         A common action satisfies declared constraints               Agreement about causes, values, or truth
+
+  Certified non-equivalent   A separating witness rules out the declared identification   Difference under every conceivable future framework
+
+  No admitted comparison     No adequate bridge is currently available                    Impossibility of constructing a bridge
+
+  Unresolved                 Available evidence or search is insufficient                 Equivalence, error, or bad faith
+  ---------------------------------------------------------------------------------------------------------------------------------------------
+
+The first two statuses may coexist with the third when their scopes differ. A truthful packet records that structure rather than forcing one terminal word to carry all meanings.
+
+#### 3.1.2 A simple certificate of non-identification
+
+Let $\mathcal A$ be a declared class of admissible identification maps between presentations. Suppose an invariant $J$ takes values in a common, explicitly specified set and every map in $\mathcal A$ preserves $J$.
+
+**Proposition 1 --- Relative non-identification.** If $J(P)\ne J(P')$, no map in $\mathcal A$ identifies $P$ with $P'$.
+
+**Proof.** Any such identification would preserve $J$ and therefore imply $J(P)=J(P')$, contrary to the separating witness. $\square$
+
+The proposition is elementary. Its institutional importance is the quantifier: non-equivalence is certified relative to an admissible class and an invariant, not proclaimed from nowhere. The invariant may concern source lineage, jurisdiction, dimensionality, a preserved question, or an action constraint. The common comparison interface does not require all other content to share one ontology.
+
+Finding no map in a finite search is weaker unless the search covers the admitted class. Conversely, one witness separating the presentations can establish non-identification even when a general search is infeasible. The result is a reason to preserve difference, not an instruction to stop communication.
+
+#### 3.1.3 Why a bundle is a possible model, not a premise
+
+An indexed family of presentations is sufficient for the minimal architecture. A fiber bundle would require additional mathematical structure, including the relevant spaces and local triviality. A categorical fibration would require a declared base category, total category, projection functor, and suitable cartesian lifts. Neither structure follows merely because different people describe a situation differently.
+
+The institution can therefore begin with a typed graph of presentations and partial transports. Richer categorical or sheaf structures should be introduced only when their laws are specified and checked. This preserves the author's original omniversal ambition without using the word *universal* to disguise an unearned common ontology.
+
+### 3.2 Compression, recoverability, and epistemic loss
+
+#### 3.2.1 The exact recovery criterion
+
+Let $X$ be a finite, nonempty set of possible source records, $C:X\to Y$ a compression, and $q:X\to Z$ a question whose answer matters. Here $X$ is an admitted modeling domain, not an omniscient inventory of reality.
+
+**Proposition 2 --- Question recoverability.** A decoder $d:C(X)\to Z$ satisfying $d(C(x))=q(x)$ for every $x\in X$ exists if and only if $q$ is constant on every fiber of $C$.
+
+**Proof.** If $C(x)=C(x')$, a decoder receives the same input and must return the same answer. Hence $q(x)=q(x')$ is necessary. Conversely, when $q$ is constant on each fiber, define $d(y)$ to be the common answer on $C^{-1}(y)$. This is well-defined and satisfies the required identity. $\square$
+
+For a declared finite question family $\mathcal Q$, define the answer profile $s(x)=(q(x))_{q\in\mathcal Q}$. Compression preserves that family exactly when $s$ factors through $C$. It need not preserve everything else.
+
+This is the simplest reconstruction test for an institutional summary. Suppose a record retains that two experts support a conclusion but discards whether they relied on one shared witness or two independently obtained witnesses. A later question about corroboration may no longer be answerable. More eloquent reasoning over the same compressed record cannot restore a distinction erased from all its inputs.
+
+The remedy may be to retain source records, preserve a distinguishing field, or reopen contact with the world. It cannot be to declare the summary sufficient because the group approved it.
+
+#### 3.2.2 The price of restoring a distinction
+
+For each $y\in C(X)$ let
+
+$$m_y=\left|\{s(x):C(x)=y\}\right|.$$
+
+**Proposition 3 --- Finite side-information bound.** With an unrestricted deterministic encoder and a shared decoding table, exact recovery of every answer profile from $C(x)$ and a fixed-length $b$-bit side record is possible if and only if
+
+$$2^b\geq\max_{y\in C(X)}m_y.$$
+
+Thus the minimum fixed length is $\lceil\log_2\max_y m_y\rceil$ bits.
+
+**Proof.** Inside a fiber, distinct answer profiles require distinct side records, giving the lower bound by counting. For sufficiency, enumerate the profiles separately within each fiber and encode their indices. The decoder uses $y$ to select the appropriate enumeration. $\square$
+
+The bound excludes the cost of the shared decoding table, the compression specification, and any verification machinery. It is an information bound, not a claim of efficient discovery or a universal operational cost.
+
+For example, compress an ordered three-bit record to the sum of its bits. The sum $1$ leaves three possible ordered records. Recovering every bit requires at least two extra fixed-length bits. Recovering only the sum requires none. A summary is therefore adequate or inadequate relative to questions, not merely relative to its length.
+
+#### 3.2.3 A retained residual must be usable
+
+A **residual** records a distinction, discrepancy, or obligation not discharged by an operation. An **obstruction** is a residual that blocks a specified goal under the declared rules. Not every difference is an obstruction, and not every obstruction must be removed before any action is possible.
+
+We propose *residual escrow*: an indexed, retrievable record of what remains unresolved, why it matters, who or what can revisit it, and what event should reopen it. The term describes a design function, not a claim of intellectual priority. Escrow is ineffective if no successor can find or understand the record.
+
+Useful compression is not the shortest available story. It is an economical presentation that meets the task's preservation obligations. The practical target is to reduce representation and retrieval costs while satisfying declared reconstruction tests and retaining a route for questions that the current task did not anticipate. Rissanen's compression perspective helps formulate the economy; it does not select the institution's purposes or decide which losses are acceptable (Rissanen, 1978).
+
+## 4. Worked finite models
+
+### 4.1 Local success does not establish global coherence
+
+Consider three binary variables $a,b,c$ and three local constraint presentations:
+
+$$P_{ab}:a=b,\qquad P_{bc}:b=c,\qquad P_{ca}:c\ne a.$$
+
+Each local relation is nonempty. On every shared single variable, the projected set of allowed values is $\{0,1\}$. Each pair of constraints also has a solution. Nevertheless, the three constraints together have none: the first two imply $a=c$, contradicting the third.
+
+**Example 1 --- Local agreement of projections, global obstruction.** Pairwise satisfiability and matching single-variable projections do not imply a joint satisfying assignment.
+
+This is a finite constraint example, not evidence that actual councils instantiate quantum contextuality. It illustrates the local-to-global problem that motivates more developed mathematical treatments (Abramsky and Brandenburger, 2011).
+
+For institutions, the lesson is operational. Three departments can each report that a plan passes their local checks while the combined obligations are incompatible. A merger of favorable summaries may hide the contradiction. The required output is not another vote but an obstruction record identifying the incompatible cycle and the commitments whose revision would repair it.
+
+A second lesson follows: preserving incompatible presentations is not the same as asserting their conjunction. The institution can keep all three on record, label their joint obstruction, and seek repair without claiming that $a=b$, $b=c$, and $c\ne a$ are simultaneously satisfied. Multiple live hypotheses need not become an undifferentiated set of premises.
+
+### 4.2 Acting without complete agreement
+
+Let $U$ be a finite action set. For each participating presentation $P_i$, let $A_i\subseteq U$ denote actions acceptable under explicitly recorded constraints. Then
+
+$$A_{\mathrm{joint}} = \bigcap_i A_i$$
+
+is the set of jointly acceptable actions. When $A_{\mathrm{joint}}$ is nonempty, a common action can exist despite incompatible explanations. When it is empty, the institution has a negotiation or authority problem rather than permission to fabricate consensus.
+
+For example, an engineering group may favor a temporary shutdown because it suspects a mechanical fault; an operations group may favor the same shutdown because it needs an inventory check. Their explanations need not merge for the bounded action to be jointly acceptable. The differences remain relevant to what is inspected, when the shutdown ends, and which explanation later receives support.
+
+Joint acceptability is not the whole authorization rule. Define $\operatorname{Auth}(a\mid M,E,S)$ relative to a mandate *M*, evidentiary record *E*, and scope *S*. The mandate specifies who may authorize what, under which conditions, with which review or expiry. A quorum may satisfy a procedural condition without proving the action's factual premises. An excellent prediction may supply evidence without granting permission to execute.
+
+An institutional decision should therefore produce two linked records: an **epistemic record** of findings, evidence, conflicts, and unresolved questions; and an **action record** identifying the mandate, authorized operation, responsible executor, limits, and revision triggers. They are related but not interchangeable.
+
+Real institutions may also make binding decisions over dissent. Such decisions cannot honestly be represented as unanimous acceptability. The record must state the applicable decision rule, whose objections remain, and how the rule itself may be challenged. A formal authorization certificate verifies conformance to a declared mandate; it does not prove that the mandate is morally justified or accepted by everyone affected.
+
+### 4.3 A fixed-record model of epistemic disconnection
+
+Consider a finite directed graph whose nodes include participants, evidence stores, and verification services. An edge denotes an available transfer or access operation. Fix the evidence corpus, verification rules, and relevant questions. For a requesting node $r$, a verified answer is available only through an admitted path to the required evidence and checker.
+
+Removing all such paths can destroy answerability while leaving every underlying document intact. This is a direct reachability consequence of the model. It identifies a specific collapse mechanism: information survives, but the institution that made it usable does not. Restoring an archive alone will not repair a missing interpretation skill, access permission, or trusted verification route.
+
+The restriction to a fixed graph and fixed procedures matters. New relationships, alternative witnesses, or new institutions can restore answerability. The model predicts conditional vulnerability, not inevitable civilizational decline.
+
+### 4.4 Why more agents are not automatically more evidence
+
+For illustration, let $n\geq 1$ unbiased estimators have equal error variance $\sigma^2>0$. For $n>1$, suppose their common pairwise error correlation satisfies $-1/(n-1)\leq\rho\leq1$, the positive-semidefinite range for this covariance matrix. For $n=1$, no pairwise correlation is needed. Then direct expansion of the variance gives
+
+$$\operatorname{Var}(\bar e)=\frac{\sigma^2}{n}\bigl[1+(n-1)\rho\bigr].$$
+
+When $1+(n-1)\rho>0$, an equivalent independent sample size is $n_{\mathrm{eff}}=n/[1+(n-1)\rho]$. At the zero-denominator boundary for $n>1$, the average error has zero variance and no finite equivalent sample size is defined. Ten estimators with $\rho=1/2$ have the variance reduction of about $1.82$ independent estimators, not ten. This calculation is conditional on the model; it is not an estimate of any deployed council's correlation.
+
+The engineering implication is to measure dependence rather than count voices. One model with different role prompts may be useful, but the role count is not an independence certificate. Different models can also share sources or errors. Provenance diversity and measured error diversity must be evaluated separately.
+
+Du et al. (2023) report benefits from multiagent debate on their tested tasks, while Wynn et al. (2025) document settings where interaction moves models from correct to incorrect answers. A recent preprint studies a further distinction between stated conformity and detectable representations of an earlier premise (Ni and Zou, 2026). These results motivate separate measurements of accuracy, convergence, and retained information; they do not establish the superiority of the protocol proposed here.
+
+## 5. Mechanization and reproducibility
+
+### 5.1 Executable finite companion
+
+The supplied Python kernel and its 17 tests are preserved byte-for-byte in the active package. Run `python tools/run_checks.py` from the extracted package root. Two tests each enumerate 216 compression/question combinations, independently searching possible decoders and side assignments. Other tests cover the three-bit code, the locally consistent obstruction, action intersections, bounded search, the mandate fixture, and evidence-access graphs. These are finite synthetic checks; they do not prove universal equivalence between the Python implementation and Lean.
+
+The example contract is in the `contracts` directory. Its proposal carries no execution mandate and does not permit execution. Parsing its fields and testing a Boolean mandate fixture do not implement authentication, revocation, a council scheduler, or a live action gate. The fixture's externally-verified flag is an explicit assumption supplied by the caller.
+
+### 5.2 Formal scope
+
+The dependency-free Lean 4.35.0 core proves relative non-identification (Proposition 1), exact recovery on the image if and only if constancy on compression fibers (Proposition 2), the question-profile version, and the corresponding criterion for a compression augmented by a side record. It also proves that distinct answers inside one compression fiber require distinct side codes; the three-constraint global contradiction; and the preservation of individual constraints by a jointly acceptable action.
+
+The full logarithmic cardinality formula in Proposition 3 retains its written counting proof and exhaustive finite checks. Its general finite-cardinality bound is not claimed as a Lean theorem in this edition. Neither the Python implementation nor its runtime termination is formally refined to the Lean definitions. The correlation formula is an elementary conditional variance calculation, not a measured property of the council.
+
+The named theorem census covers every explicit theorem in the local proof module. A separate full census enumerates all declarations defined there, including generated declarations. Only Lean's standard foundational axioms are admitted. Source hashes bind the proof and census tools. Check modes are read-only. The package uses the installed pinned Lean toolchain and no network-fetched library dependency. The claim ledger and formalization map state the scope of each result.
+
+### 5.3 Reproduction and evidence boundaries
+
+The standalone README separates Python checks, notebook execution, fresh Lean replay, document binding, and release-envelope validation. Supplied receipts remain historical in the repository research archive; fresh checks have their own source-bound receipt. The ten supplied manifest entries and the supplied execution receipt's file bindings were checked before integration. A successful hash check establishes byte identity, not mathematical truth or institutional competence.
+
+The manuscript, equation registry, TeX, text, PDF, and DOCX are rebuilt from this edition. Ordered mathematical expressions are checked across Markdown, TeX, and text; PDF destinations locate their renderings. A typesetting check is not a symbolic proof of PDF glyph equivalence. The bibliography's inspection register distinguishes the supplied source claims from the primary arXiv records and pinned repository design documents checked during this integration.
+
+No live-model council, human experiment, deployed authorization service, or performance improvement is reported. The empirical hypotheses below remain open.
+
+## 6. Institutional design, evaluation, and limits
+
+### 6.1 Institutional collapse as a loss of epistemic capacity
+
+#### 6.1.1 Collapse can precede organizational disappearance
+
+We call a breakdown **epistemic collapse** when an institution persistently loses task-relevant capacities for preserving evidence, comparing presentations, correcting conclusions, or reconstructing its own decisions. This is a scoped definition. A university may fail in one domain and remain competent in another. A procedure may be replaced rather than destroyed. A failing institution may also improve by giving up an inappropriate jurisdiction.
+
+The proposition is not that old institutions should survive indefinitely. It is that transitions must be assessed for the functions they remove, preserve, or replace. Destroying an obstructive procedure may restore inquiry. Destroying the only accessible archive or trusted channel may disable it. Institutional continuity and epistemic continuity are different variables.
+
+Several failure modes follow from the framework.
+
+**Forced compression:** incompatible presentations are reduced to one vocabulary or score, and the distinguishing evidence disappears. The institution becomes more uniform while becoming less able to answer certain questions.
+
+**Comparison failure:** parties retain accounts but lose trusted translators, shared procedures, or access to one another's evidence. Disagreement becomes difficult to distinguish from simple misdescription.
+
+**Authority without reconstruction:** decisions continue, but their supporting records and limits are unavailable. The institution can command more readily than it can explain.
+
+**Paralysis:** every unresolved difference is treated as a veto, including differences irrelevant to the immediate action. Preservation of disagreement becomes failure to coordinate.
+
+**Memory and succession failure:** relevant experience remains in inaccessible archives or departing participants. New members inherit verdicts without the distinctions that made them intelligible.
+
+**Capture of the interface:** one faction controls which questions, sources, or translations are admitted while presenting those choices as neutral. The common interface becomes a concealed political or organizational instrument.
+
+These are proposed diagnostic categories, not findings that a named society has entered a terminal condition.
+
+#### 6.1.2 Belonging, identity, and the reaction to lost mediation
+
+A further hypothesis concerns institutions whose roles also provide belonging. When participants depend on agreement for recognition or continued membership, revising an opinion may carry a social cost unrelated to its evidentiary merits. Under such conditions, an end-state question or a request for a counterexample can become a perceived challenge to identity rather than an invitation to inquiry.
+
+This is a proposed mechanism. An insulting or absent response does not reveal a stranger's motives. A proper study would measure membership dependence, perceived penalties for disagreement, and actual willingness to revise, rather than diagnosing isolation from online behavior alone.
+
+Evidence supports narrower links. Lorenz and colleagues found that social influence could reduce estimate diversity without corresponding improvement in collective error in their experimental setting (Lorenz et al., 2011). Brady and colleagues found reinforcement and norm-learning effects on expressions of moral outrage in observational data and controlled experiments (Brady et al., 2021). Neither study establishes that social belonging causes institutional collapse. They motivate measuring how interaction rules change expression, confidence, and correction separately.
+
+The broader historical conjecture is that the response to failed mediation may become more consequential than the initial loss. Participants can seek new associations, alternative authorities, withdrawal, restored local obligations, or coercive settlement. The framework does not determine which response occurs. It directs attention to available alternatives, material pressures, sanctioning power, and the credibility of repair channels. A violent outcome requires additional explanation; it is not a mathematical consequence of disagreement.
+
+#### 6.1.3 A measurable research question
+
+The empirical prediction is not simply that distrust increases. It is that, in specified settings, reduced access to credible comparison and correction predicts a widening separation between expressed agreement and successful reconstruction, and a declining ability to coordinate across disagreement. That prediction can fail. Institutions may retain these capacities despite low trust, or regain them through replacement arrangements. Such results would narrow the proposed account rather than be redescribed as further evidence for it.
+
+### 6.2 Anomalon Councils: from obligatory synthesis to preserved comparison
+
+#### 6.2.1 What the inspected project documents establish
+
+Two repository documents were inspected at the pinned commit identified in the source register (short identifier `e15a9d4`). The operational integration plan describes four recurring roles: First Curator, Second Curator, Procurator, and Secretary. It separates deliberative councils from execution and specifies a progression through thesis, antithesis, synthesis, and motion (Carroll, 2026b).
+
+A separate reconciliation document describes two council models and asks whether they should be merged or treated as different layers connected by an explicit mapping (Carroll, 2026c). Its claims about compilation and tests are statements in that document; they were not independently rerun for this paper. The documents have different histories and should not be treated as a complete audit of current implementation.
+
+They nevertheless provide an unusually direct case for the proposed theory. Model reconciliation is not automatically normalization. Different role structures or authority scopes may reflect genuine architectural distinctions. A bridge should be tested against named obligations before either model is declared merely a redundant presentation of the other.
+
+The change proposed here is local and specific: **synthesis becomes an optional, certified result, not the mandatory destination of every deliberation.** A council may finish with a witnessed difference, a shared action with divergent reasons, a missing-comparison report, or an unresolved record with a next experiment.
+
+#### 6.2.2 Retain the roles; change their obligations
+
+The First Curator develops candidate explanations, records their scope, and identifies observations that distinguish them. This role must represent an idea well enough to test it rather than immediately classify it into an ideological or institutional category.
+
+The Second Curator tests proposed translations and compressions. Its assignment is not perpetual opposition. It searches for lost distinctions, alternative explanations, counterexamples, shared-source dependence, and claims that cannot survive a declared transformation.
+
+The Procurator separates procedure from inference. It records jurisdiction, budgets, deadlines, quorum conditions, and applicable mandates. It may close a session procedurally without converting unresolved content into an accepted finding. It does not determine truth by occupying the procedural seat.
+
+The Secretary becomes custodian of reconstruction rather than author of a single polished consensus. It maintains source anchors, versioned claims, comparison records, retained residuals, and reopening conditions. The Secretary's summary must pass declared reconstruction questions before replacing any fuller record in the active context.
+
+These obligations can be assigned to humans, model instances, or mixed teams. Distinct personas alone do not establish independent evidence or independent error. The protocol records known model, prompt, tool, and source dependencies, and marks unknown lineage as unknown.
+
+#### 6.2.3 The institutional reasoning protocol
+
+**Intake.** Record the original question, the contributor's own formulation, the relevant task, and the decision actually requested. Separate exploration from an action request. Do not infer that proposing a hypothesis means endorsing it.
+
+**Independent presentation.** Before exposure to peers' conclusions, collect candidate accounts, their evidence, missing information, and possible defeaters. Independence of this stage concerns information flow; it does not certify statistically independent models.
+
+**Translation.** Ask each participant to state another presentation in terms its contributor can recognize. Preserve disagreement about the translation itself. Contributor approval is evidence of representational fidelity, not proof of the underlying claim.
+
+**Comparison.** Declare each bridge and what it preserves. Test task-equivalence, separating invariants, and joint constraints. Distinguish an unavailable bridge from a certified obstruction.
+
+**World contact.** Retrieve evidence, run an experiment, inspect code, or consult a qualified human as appropriate. Return tool errors and absent evidence as such. Repeated paraphrases of one source do not create additional witnesses.
+
+**Compression and recovery.** Construct a shorter working record, then have a separate checker answer predefined distinction questions from that record. Where recovery fails, add a residual, retain a source route, or reject the compression for that task.
+
+**Bounded disposition.** Emit the comparison map, supported findings, unresolved records, and any action proposal. A separate mandate check determines whether an executor may act. A proposed warrant is not an executed operation.
+
+**Re-entry.** Reopen the appropriate record when a specified observation arrives, a deadline expires, an assumption changes, or a participant demonstrates a missed distinction. Corrections append to the history rather than silently rewriting it.
+
+A session may stop because its task is completed, a contradiction is certified, evidence is unavailable, its budget is exhausted, or the requested action exceeds its mandate. The output must name the reason. A budget stop is not an epistemic verdict.
+
+#### 6.2.4 The output is an institutional memory object
+
+The proposed primary artifact is a comparison packet containing the inquiry frame, source presentations, evidence dependencies, accepted and rejected transports, preserved questions, information losses, residuals, and separately recorded action authority. A readable answer is a view of that packet, not a replacement for it.
+
+The original proposal of an omniversal representation layer is therefore given an institutional interpretation: a host for different presentations and their tested relations, not an obligatory conversion of all presentations into one preferred account. GTMUR's common-grammar/common-ontology distinction is directly relevant here (Carroll, 2026a).
+
+`AuthorityEffect: None` is the default for proposals, findings, and comparison packets. An external authorization process may issue a bounded execution record under an identified mandate. Writing the word *authorized* inside a generated packet does not supply that process.
+
+### 6.3 Influence on AI and human reasoning
+
+#### 6.3.1 Change the objective of interaction
+
+The proposed influence is procedural and inspectable: change what participants must preserve, what they may claim, what can revise a conclusion, and what counts as completion. It is not a proposal for covert persuasion or agreement engineering.
+
+For AI, this means evaluating whether a system can maintain multiple hypotheses, distinguish their evidential commitments, and answer questions about what a summary lost. It does not require claiming access to a model's subjective experience. For humans, the same protocol can serve as a deliberation worksheet, research seminar format, mediation record, or technical review process. Human adoption must remain sensitive to workload, trust, privacy, and the consequences of disclosure.
+
+A practical prompt can ask: What is the contributor trying to explain? What observations does the hypothesis compress? Which alternatives fit those observations? What would distinguish them? What has the current framing excluded? What can be done without settling every disagreement? These questions redirect the interaction from status competition toward inspectable explanatory work.
+
+#### 6.3.2 Train against erased distinctions, not merely unpopular answers
+
+A training or evaluation set can include matched presentations that are similar in wording but differ in a consequential assumption, source dependency, permission, or objective. The model is rewarded for identifying the relevant distinction, producing faithful translations, and declining unsupported identification. It is also rewarded for justified equivalence and warranted revision; preserving a known error forever is not the objective.
+
+Political and institutional labels can be varied while the evidence structure is held fixed. This tests whether classification or authorization changes without a corresponding evidentiary change. Such tests do not presume a neutral political center. Their reference is the explicitly stated transformation and the invariant it is supposed to preserve.
+
+The central training target is not *be balanced*. It is **make the conditions and losses of the judgment inspectable, then let evidence change the judgment**.
+
+### 6.4 Evaluation program and falsifiable commitments
+
+The proposal requires comparisons against simpler methods. A suitable initial study includes a single model with tools; independent sampling with voting; ordinary multiagent debate; debate with a retained dissent archive; and the full institutional protocol. Hold total inference and tool budgets comparable, and report resource differences rather than hiding them in a composite performance score.
+
+Use separate task families. Closed-world tasks can contain known source records, controlled projections, and exact answers. Software tasks can use executable specifications and injected bugs. Documentary tasks can include conflicting accounts, shared-source duplication, and withheld evidence. Human or mixed-team studies can examine translation fidelity, revision, workload, and coordination. Open political questions should not be scored against a hidden preferred ideology; use explicit factual subquestions, forecast outcomes where available, and independently reviewed fidelity criteria.
+
+The primary measures are distinction recovery on held-out questions; unsupported-identification rate; factual or executable accuracy where an answer criterion exists; correct-to-incorrect shifts after social exposure; evidence-lineage errors; unauthorized-action rate in a sandbox; residual retrieval after a delayed context change; and action latency under bounded disagreement. Report disagreement itself descriptively. Neither a high nor a low amount is automatically success.
+
+Pre-register which questions must survive compression and which are held out. Separate paraphrase recovery from recovery of genuinely new query combinations. Include sources that are mistaken but mutually consistent, and summaries whose missing information cannot be recovered. A model should not receive credit for fabricating a plausible reconstruction.
+
+Three principal hypotheses follow.
+
+**H1 --- Recoverability.** Under a fixed task and budget, preserving indexed residuals and tested source routes improves delayed recovery of decision-relevant distinctions relative to a consensus-only summary. Failure to outperform a simpler retained-source baseline would weaken the need for a richer packet architecture.
+
+**H2 --- Correction without forced convergence.** Independent initial presentations and evidence-governed updates reduce harmful conformity while preserving useful correction. If apparent gains vanish after matching token budgets and access to tools, the proposed institutional explanation loses support.
+
+**H3 --- Coordination under disagreement.** Separating the epistemic record from the action mandate permits more correctly bounded actions without falsely reporting belief agreement. If separation instead increases error, delay, or unaccountable discretion, the protocol needs revision.
+
+Ablations should remove one component at a time: source lineage, independent intake, reconstruction tests, residual retrieval, or the authority boundary. Use blinded scoring where feasible, task-level uncertainty intervals, repeated trials, and analysis of shared-model dependence. The council is not the sole judge of its own success.
+
+For institutional-collapse research, test capacities directly: can successors reconstruct earlier decisions; can a credible correction reach the responsible office; can a documented objection change a record; can parties coordinate without falsely reporting agreement? Longitudinal designs must account for material stress, legal change, leadership turnover, and alternative institutions. Distrust alone is not the proposed mechanism.
+
+### 6.5 Objections and limits
+
+**Is this simply pluralism?** It shares pluralism's concern with heterogeneous perspectives, but adds specific obligations concerning transport, recoverability, residual retention, and bounded execution. The claim of added value must be demonstrated in implementation, not established by renaming familiar ideas.
+
+**Does retaining difference protect nonsense?** A retained record can say that a proposition failed a test. Preservation prevents historical erasure of what was tested; it does not keep every proposition equally eligible for action. Resource limits and admission criteria remain necessary and contestable.
+
+**Who defines relevance?** No unlocated evaluator does. A task sponsor, affected participants, expert procedures, or a negotiated mandate may define the question family. The packet records that choice and permits challenges to omissions. An excluded stakeholder can expose a missing question, but the architecture does not guarantee that the stakeholder will be heard. Power and access must be investigated materially.
+
+**Can an institution weaponize the procedure?** Yes. It can select convenient witnesses, hide behind excessive documentation, demand impossible standards from opponents, or manipulate deadlines. A schema alone cannot prevent this. Adversarial audits must examine admissions, omissions, resource allocations, and the practical accessibility of review. More receipts are not automatically better governance.
+
+**Does the audit require an infinite regress?** Every checker has a scope and dependencies. The protocol terminates under a declared budget and records what remains unverified. An independent check means a specified difference in evidence, implementation, or responsibility, not magical independence from all assumptions. No terminal status certifies unrestricted truth.
+
+**Is the collapse thesis established?** No. The finite results establish properties of specified representations and access graphs. Extending them to institutions requires empirical mapping and validation. The paper offers mechanisms, questions, and discriminating predictions; it does not convert a mathematical example into a forecast of societal violence or decline.
+
+**Is a new reasoning architecture already implemented?** This manuscript proposes one. The inspected Anomalon documents supply design lineage and integration points. The accompanying finite checks and Lean results establish only their specified mathematical properties. No live-model experiment, deployment audit, human study, or full repository integration is reported.
+
+### 6.6 Conclusion: preserve the capacity to learn again
+
+An institution's contribution to knowing is not exhausted by the conclusions it endorses. It also lies in preserving the conditions under which those conclusions can be reconstructed, challenged, translated, and responsibly used by people who were not present when they were formed.
+
+This account changes the meaning of institutional failure. An organization may survive while losing the capacity to compare its own presentations, hear correction, recover lost distinctions, or distinguish a mandate from a truth claim. Its apparent certainty can increase as its ability to know decreases. Conversely, a replacement institution may improve knowing by restoring these operations rather than reproducing an inherited form.
+
+The same distinction is available to AI design. A council need not be a machine for making several voices agree. It can be a maintained structure for learning what agrees, what differs, what cannot yet be compared, and what can nevertheless be done. Its output is then not merely an answer but an accountable continuation of inquiry.
+
+For Anomalon Councils, the proposed change is concrete: preserve original presentations; declare translations; test compression by recovery; retain usable residuals; admit witnessed non-equivalence; and keep action authority separate from explanatory success. Cooperation can be obtained without pretending that the participants have become the same.
+
+**An institution should make difference governable without falsifying it, and make its own judgments revisable without making collective action impossible.**
+
+### 6.7 Minimal comparison-packet contract
+
+The companion YAML file instantiates this proposed contract. It is a design artifact, not a statement that the current Omega Engine already implements these fields.
+
+A packet contains an inquiry identifier and version; a declared task and constituency; the source presentations; questions to preserve; admitted transformations; evidence references with lineage; comparison records; losses and residuals; supported findings; and an independent action-authorization field. Each comparison states its scope, tested property, result, and supporting witness. A result of *no admitted comparison* cannot be silently upgraded to *certified non-equivalent*.
+
+Residuals require a statement of the missing distinction, a recovery route or an explicit statement that none is known, an owner or responsible process, and a reopening condition. The original packet remains immutable as a historical record; corrected successors reference it. Sensitive source material can remain access-controlled, but a concealed source cannot be represented as publicly replayable.
+
+Proposal and comparison packets default to `AuthorityEffect: None`. Execution requires a separately verified mandate identifier, operation scope, responsible executor, and expiry or revocation condition. The companion example deliberately contains no execution mandate.
+
+## References
+
+Abramsky, S., and Brandenburger, A. (2011). The sheaf-theoretic structure of non-locality and contextuality. *New Journal of Physics*, 13, 113036. doi:10.1088/1367-2630/13/11/113036. arXiv:1102.0264.
+
+Barzun, J. (2000). *From Dawn to Decadence: 500 Years of Western Cultural Life, 1500 to the Present*. HarperCollins. Historical motivation; not used as empirical proof of the collapse hypotheses.
+
+Brady, W. J., McLoughlin, K., Doan, T. N., and Crockett, M. J. (2021). How social learning amplifies moral outrage expression in online social networks. *Science Advances*, 7(33), eabe5641. doi:10.1126/sciadv.abe5641.
+
+Carroll, J. H. (2026a). *GTMUR --- Certified Representation Transport* and *General Theory of Meta and Universal Representation*, section 1.1, "Meta, Universal, and Omniversal Boundary." Author-supplied research manuscripts, July 2026 and subsequent supplied revisions. The supplied source register names the consulted manuscripts; those manuscripts were not included in the received packet and were not independently re-inspected for this edition. These are project-lineage sources, not independently peer-reviewed validation of the present paper.
+
+Carroll, J. H. (2026b). *Anomalon Councils Operational Integration Plan & Architecture Spec*. `dbccpage/the_symbol_game`, [pinned integration plan](https://github.com/dbccpage/the_symbol_game/blob/e15a9d4ac6298524ce370cae679314aa0fef7585/omega_engine_product_planning_office/plans/epics/plan_anomalon_councils_engine_integration.md). Inspected at commit `e15a9d4` (full identifier in the source register) on October 23, 2026. Repository design specification.
+
+Carroll, J. H. (2026c). *Council Model Reconciliation*. `dbccpage/the_symbol_game`, [pinned reconciliation document](https://github.com/dbccpage/the_symbol_game/blob/e15a9d4ac6298524ce370cae679314aa0fef7585/omega_engine_governance/anomalon_councils/documentation/council_model_reconciliation.md). Document dated May 30, 2026; inspected at the same commit on October 23, 2026. Repository problem statement; reported tests not rerun here.
+
+Douglas, M. (1986). *How Institutions Think*. Syracuse University Press.
+
+Du, Y., Li, S., Torralba, A., Tenenbaum, J. B., and Mordatch, I. (2023). *Improving Factuality and Reasoning in Language Models through Multiagent Debate*. arXiv:2305.14325. doi:10.48550/arXiv.2305.14325. The cited record is the 2023 preprint.
+
+Hutchins, E. (1995). *Cognition in the Wild*. MIT Press.
+
+Longino, H. E. (2002). *The Fate of Knowledge*. Princeton University Press.
+
+Lorenz, J., Rauhut, H., Schweitzer, F., and Helbing, D. (2011). How social influence can undermine the wisdom of crowd effect. *Proceedings of the National Academy of Sciences*, 108(22), 9020--9025. doi:10.1073/pnas.1008636108.
+
+Ni, Z., and Zou, P. (2026). *Silent Dissent: LLM Agents That Yield to the Majority Still Represent Their Original Premise*. arXiv:2610.02702v2, October 5, 2026. doi:10.48550/arXiv.2610.02702. Preprint; findings are limited to its reported models, tasks, and interventions.
+
+Ostrom, E. (2010). Beyond markets and states: Polycentric governance of complex economic systems. *American Economic Review*, 100(3), 641--672. doi:10.1257/aer.100.3.641.
+
+Rissanen, J. (1978). Modeling by shortest data description. *Automatica*, 14(5), 465--471. doi:10.1016/0005-1098(78)90005-5.
+
+Star, S. L., and Griesemer, J. R. (1989). Institutional ecology, "translations" and boundary objects: Amateurs and professionals in Berkeley's Museum of Vertebrate Zoology, 1907--39. *Social Studies of Science*, 19(3), 387--420. doi:10.1177/030631289019003001.
+
+Wynn, A., Satija, H., and Hadfield, G. (2025). *Talk Isn't Always Cheap: Understanding Failure Modes in Multi-Agent Debate*. arXiv:2509.05396v2, October 13, 2025. doi:10.48550/arXiv.2509.05396. ICML MAS Workshop 2025 paper; cited as the inspected preprint version.
+
+### Preparation and source custody
+
+The supplied v0.1 manuscript was prepared with AI-assisted drafting, source retrieval, and finite-example development at the author's direction. This v0.1.0 repository edition preserves that packet separately, reorganizes the paper, makes the correlation assumptions explicit, adds the RSI crosswalk and scoped Lean results, and supplies a rebuilt standalone package. Source inspection is targeted, not a systematic literature review or a current runtime audit. Book references retain their supplied broad descriptions; no uninspected page-specific quotation is asserted. Publication and deployment are not reported.

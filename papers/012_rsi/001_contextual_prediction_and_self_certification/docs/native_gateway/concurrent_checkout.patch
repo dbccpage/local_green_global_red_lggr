@@ -1,0 +1,216 @@
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/ddc.rs b/omega_engine/crates_rs/omega_symbol_game/src/ddc.rs
+index c3d0b31047..9f9ad713f3 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/ddc.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/ddc.rs
+@@ -73,14 +73,9 @@ pub struct DdcTapeStateWire {
+     pub residual: Vec<String>,
+     pub phi: String,
+     pub gamma: String,
+-    #[serde(default = "default_true")]
+     pub adequate: bool,
+ }
+ 
+-fn default_true() -> bool {
+-    true
+-}
+-
+ #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+ #[serde(deny_unknown_fields)]
+ pub struct DdcTapeStepWire {
+@@ -371,8 +366,14 @@ fn entry_hash(index: usize, prev_hash: &str, letter: &str, payload: &Value) -> S
+ }
+ 
+ pub fn verify_tape(payload: &Value) -> Result<DdcVerifyTapeOutcomeV1, String> {
+-    let req: DdcVerifyTapeRequestV1 =
+-        serde_json::from_value(payload.clone()).map_err(|e| format!("invalid request: {e}"))?;
++    let req: DdcVerifyTapeRequestV1 = serde_json::from_value(payload.clone()).map_err(|e| {
++        let text = e.to_string();
++        if text.contains("missing field `adequate`") || text.contains("missing field \"adequate\"") {
++            "REFUSED_MISSING_ADEQUATE".to_string()
++        } else {
++            format!("invalid request: {text}")
++        }
++    })?;
+ 
+     let genesis_root = req.genesis_root.as_deref().unwrap_or(DDC_TAPE_GENESIS_ROOT);
+     let mut genesis_hasher = Sha256::new();
+@@ -588,3 +589,45 @@ mod l4_boundary_tests_09f728ed {
+         assert_eq!(BoundaryError09f728ed::CapacityZero.violated_invariant(), "capacity_bound >= 1");
+     }
+ }
++
++#[cfg(test)]
++mod adequate_refusal_tests {
++    use super::verify_tape;
++    use serde_json::json;
++
++    fn state(adequate: Option<bool>) -> serde_json::Value {
++        let mut value = json!({
++            "carrier": "undeclared",
++            "residual": [],
++            "phi": "0",
++            "gamma": "0"
++        });
++        if let Some(flag) = adequate {
++            value["adequate"] = json!(flag);
++        }
++        value
++    }
++
++    #[test]
++    fn omitted_adequate_is_a_typed_refusal() {
++        let payload = json!({"initial_state": state(None), "steps": []});
++        let error = verify_tape(&payload).expect_err("omitted adequate");
++        assert_eq!(error, "REFUSED_MISSING_ADEQUATE");
++    }
++
++    #[test]
++    fn explicit_true_with_witness_fields_passes() {
++        let witnessed = state(Some(true));
++        let payload = json!({
++            "initial_state": witnessed,
++            "steps": [{
++                "letter": "T",
++                "after": state(Some(true)),
++                "witness": {"receipt": true, "loss_ledger": true, "lift_licence": true}
++            }]
++        });
++        let outcome = verify_tape(&payload).expect("explicit adequate");
++        assert!(outcome.lawful);
++        assert!(outcome.violations.is_empty());
++    }
++}
+diff --git a/omega_engine/crates_rs/omega_woland/src/bin/woland_dialectic.rs b/omega_engine/crates_rs/omega_woland/src/bin/woland_dialectic.rs
+index d6898b3bdb..7cdc67cc5a 100644
+--- a/omega_engine/crates_rs/omega_woland/src/bin/woland_dialectic.rs
++++ b/omega_engine/crates_rs/omega_woland/src/bin/woland_dialectic.rs
+@@ -69,7 +69,12 @@ impl StdinBudgetWitness {
+         let fail_exit = status_exit(ReceiptStatus::Fail);
+         let refusal_exit = status_exit(ReceiptStatus::Refusal);
+         let transport_exit = pass_exit.checked_add(3).ok_or(StdinBudgetError::ExitMap)?;
+-        Self::validate_exit_codes(pass_exit, fail_exit, refusal_exit, transport_exit)?;
++        Self::validate_exit_codes(
++            i32::from(pass_exit),
++            i32::from(fail_exit),
++            i32::from(refusal_exit),
++            i32::from(transport_exit),
++        )?;
+         Ok(Self {
+             opened,
+             spent: 0,
+diff --git a/omega_engine/crates_rs/omega_woland/src/complete_bout.rs b/omega_engine/crates_rs/omega_woland/src/complete_bout.rs
+index 9b01bd114d..307e74a757 100644
+--- a/omega_engine/crates_rs/omega_woland/src/complete_bout.rs
++++ b/omega_engine/crates_rs/omega_woland/src/complete_bout.rs
+@@ -36,9 +36,9 @@ use crate::stage::diagnostics::SbeDiagnosticPort;
+ use crate::stage::emission::{
+     build_intelligence_event, emit_event, EmitterSuite, EventDescriptor, Payload,
+ };
+-use crate::stage::packets::WorkPacket;
++use crate::stage::packets::{AgentResult, WorkPacket};
+ use crate::stage::ports::{Refusal, SchedulerPort};
+-use crate::stage::run::SwarmRunState;
++use crate::stage::run::{ProgressMeasure, SwarmRunState};
+ use serde_json::{json, Map, Value};
+ use std::collections::BTreeMap;
+ 
+@@ -418,10 +418,36 @@ fn resolve_terminal_verdict(
+     }
+ }
+ 
++fn completion_step_inputs() -> Result<(AgentResult, ProgressMeasure), Refusal> {
++    let result = serde_json::from_value(json!({
++        "agent_id": "bout_completion",
++        "trust_domain": "PRODUCER",
++        "scene_id": "act7_crystallization",
++        "work_packet_id": "sha256:5ff31e0b5eae62a930768881cb6ab6d1f7fbd818cf2344cefae5dc0ceab99ef0",
++        "status": "PASS",
++        "candidate_ids": [],
++        "challenge_ids": [],
++        "artifact_refs": [],
++        "residual_codes": [],
++        "causal_parent_ids": [],
++        "authority_effect": "None",
++        "schema_version": "omega.oeas.agent-result.v1"
++    }))
++    .map_err(|e| refusal("WOLAND_BOUT_RECORD_INVALID", e.to_string()))?;
++    let progress = serde_json::from_value(json!({
++        "changed_state": 1,
++        "authority_effect": "None",
++        "schema_version": "omega.oeas.progress-measure.v1"
++    }))
++    .map_err(|e| refusal("WOLAND_BOUT_RECORD_INVALID", e.to_string()))?;
++    Ok((result, progress))
++}
++
+ fn build_final_swarm_state(
+     initial_state: &SwarmRunState,
+     round_count: i64,
+     scene_orchestration: &SceneOrchestration,
++    scheduler: &mut dyn SchedulerPort,
+ ) -> Result<SwarmRunState, Refusal> {
+     let mut state = value(initial_state)?;
+     state["current_scene_id"] = json!("act7_crystallization");
+@@ -448,8 +474,10 @@ fn build_final_swarm_state(
+     state["scene_steps"] = json!(7 + scene_orchestration.steps());
+     state["terminal_status"] = json!("COMPLETED");
+     state["state_id"] = json!("");
+-    serde_json::from_value(state)
+-        .map_err(|e| refusal("WOLAND_BOUT_RECORD_INVALID", e.to_string()))
++    let completed: SwarmRunState = serde_json::from_value(state)
++        .map_err(|e| refusal("WOLAND_BOUT_RECORD_INVALID", e.to_string()))?;
++    let (result, progress) = completion_step_inputs()?;
++    scheduler.advance(&completed, &result, &progress)
+ }
+ 
+ fn finalize_ddc_and_governance(
+@@ -1276,6 +1304,7 @@ pub fn execute_complete_bout(
+         &initial_state,
+         acts5_and_6.witnesses.round_count(),
+         &scene_orchestration,
++        ports.scheduler,
+     )?;
+     let (steps, letter_tape, ddc_hash, governance, governance_digest) = finalize_ddc_and_governance(
+         &ddc_checkpoint,
+diff --git a/omega_engine/crates_rs/tests/omega_woland/complete_bout_parity.rs b/omega_engine/crates_rs/tests/omega_woland/complete_bout_parity.rs
+index b1dc1c03a5..680fe1239b 100644
+--- a/omega_engine/crates_rs/tests/omega_woland/complete_bout_parity.rs
++++ b/omega_engine/crates_rs/tests/omega_woland/complete_bout_parity.rs
+@@ -79,11 +79,14 @@ impl SchedulerPort for Scheduler {
+     }
+     fn advance(
+         &mut self,
+-        _: &SwarmRunState,
++        state: &SwarmRunState,
+         _: &AgentResult,
+         _: &ProgressMeasure,
+     ) -> Result<SwarmRunState, Refusal> {
+-        panic!("seven-act completion replaces state directly")
++        if state.terminal_status() != "COMPLETED" {
++            panic!("seven-act completion replaces state directly");
++        }
++        Ok(state.clone())
+     }
+ }
+ struct Seats {
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs b/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs
+--- a/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs
+@@ -102,11 +102,15 @@
+ 
+     fn advance(
+         &mut self,
+-        _state: &omega_woland::stage::run::SwarmRunState,
++        state: &omega_woland::stage::run::SwarmRunState,
+         _result: &omega_woland::stage::packets::AgentResult,
+         _progress: &omega_woland::stage::run::ProgressMeasure,
+     ) -> Result<omega_woland::stage::run::SwarmRunState, Refusal> {
+-        Err(preflight_already_bound())
++        if state.terminal_status() != "COMPLETED" {
++            Err(preflight_already_bound())
++        } else {
++            Ok(state.clone())
++        }
+     }
+ }
+ fn provider_error(error: omega_woland::providers::Refusal) -> Refusal {

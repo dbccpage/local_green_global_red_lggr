@@ -1,0 +1,18 @@
+{
+  "command": [
+    "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "omega_engine_woland/tests/providers/test_llm_gateway_pfp.py",
+    "omega_engine_woland/tests/providers/test_residual_memory.py",
+    "-q",
+    "--basetemp",
+    "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\native_gateway_all_tmp",
+    "--junitxml",
+    "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\native_gateway_all.xml"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game",
+  "exit_code": 0,
+  "seconds": 10.028794050216675
+}

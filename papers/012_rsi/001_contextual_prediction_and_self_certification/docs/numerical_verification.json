@@ -1,0 +1,190 @@
+{
+  "schema": "rsi.numerical-completion.v1",
+  "date": "2026-10-23",
+  "task_start_head": "61bb44bfdb9be097540174bdc7dc2b9f1ec674e3",
+  "commands": {
+    "baseline_three": {
+      "command": [
+        "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs\\target\\debug\\deps\\omega_quantum_physics-9f49709e79a44cd6.exe",
+        "completely_positive_map::tests::transpose_map_choi_is_refused",
+        "quantum_hamiltonian::tests::a_hamiltonian_with_plus_minus_eigenvalues_has_the_right_spectrum_and_propagator",
+        "quantum_hamiltonian::tests::rabi_oscillation_follows_the_closed_form",
+        "--test-threads=1"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs\\omega_quantum_physics",
+      "exit_code": 101,
+      "seconds": 0.21539902687072754
+    },
+    "repair_check": {
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "omega_quantum_physics",
+        "--lib"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+      "exit_code": 0,
+      "seconds": 232.61809468269348
+    },
+    "quantum_release": {
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "-p",
+        "omega_quantum_physics",
+        "--lib",
+        "--",
+        "--test-threads=4"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+      "exit_code": 0,
+      "seconds": 990.1397867202759
+    },
+    "host_build": {
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "omega_symbol_game",
+        "--bin",
+        "omega_symbol_game"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+      "exit_code": 0,
+      "seconds": 384.5391774177551
+    },
+    "gateway_memory": {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "omega_engine_woland/tests/providers/test_llm_gateway_pfp.py",
+        "omega_engine_woland/tests/providers/test_residual_memory.py",
+        "-q",
+        "--basetemp",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\numerical_completion\\gateway_tmp",
+        "--junitxml",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\numerical_completion\\gateway.xml"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game",
+      "exit_code": 0,
+      "seconds": 13.300298929214478
+    },
+    "exact_solver_gate": {
+      "command": [
+        "C:\\Users\\a343o\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "omega_engine_operads/skills/governance-exact-solvers/scripts/check_exact_solvers.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game",
+      "exit_code": 0,
+      "seconds": 0.12616658210754395
+    },
+    "quantum_integrations": {
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "-p",
+        "omega_quantum_physics",
+        "--test",
+        "qddc",
+        "--test",
+        "states_channels_exact_tests",
+        "--test",
+        "test_adaptive_cluster_fusion",
+        "--test",
+        "mub6_non_cyclic_falser",
+        "--test",
+        "exact_channel_admission",
+        "--",
+        "--test-threads=4"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+      "exit_code": 0,
+      "seconds": 215.35940718650818
+    }
+  },
+  "quantum_library": {
+    "passed": 712,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "profile": "release",
+    "test_seconds": 319.04
+  },
+  "previously_unfinished": {
+    "passed": 10,
+    "failed": 0,
+    "tests": [
+      "mub::composite_tensor_family_gate::tests::composite_tensor_family_rejects_complete_basis_escalation",
+      "mub::composite_tensor_family_gate::tests::current_composite_tensor_family_verifies_min_factor_lower_bounds",
+      "mub::composite_tensor_family_gate::tests::unsupported_composite_factor_blocks_family_verification",
+      "mub::dimension_stratification::tests::a_board_without_complete_projector_control_grants_no_dimension",
+      "mub::dimension_stratification::tests::the_computed_controls_reproduce_the_former_hard_coded_list",
+      "mub::finite_projector_control::tests::finite_projector_control_requires_gtmur_ledger",
+      "mub::finite_projector_control::tests::finite_projector_controls_verify_for_characteristic_two_samples",
+      "mub::gtmur_projector_ledger::tests::gtmur_projector_ledgers_close_for_char_two_samples",
+      "mub::hilbert_transport::tests::hilbert_transport_verifies_for_char_two_boards",
+      "mub::prime_power_gtmur_boundary::tests::prime_power_gtmur_boundary_records_composite_gaps"
+    ]
+  },
+  "gateway_memory": {
+    "tests": 24,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "quantum_integrations": {
+    "binaries": 5,
+    "passed": 57,
+    "failed": 0,
+    "ignored": 0
+  },
+  "host": {
+    "path": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs\\target\\debug\\omega_symbol_game.exe",
+    "sha256": "a1c58b4932e05c5ba00dac40a45016f0f3419b71fef7c378b02b08744231069f"
+  },
+  "repairs": [
+    "Choi admission checks exact PSD after lossless lifting of finite binary entries; rounded eigenvalues remain diagnostic.",
+    "Hamiltonian floating-point evolution returns NumericalUnitaryOperator with a recorded finite defect and explicit tolerance; strict UnitaryOperator admission remains zero-defect.",
+    "Numerical state evolution retains norm drift; it does not silently renormalize."
+  ],
+  "new_regression_tests": 3,
+  "rust_source_sha256": {
+    "omega_engine/crates_rs/omega_quantum_physics/src/completely_positive_map.rs": "20c361c780a68479d8e8c05571ebcf3819f28a5caceb2a2850bb9c45a9bd8cde",
+    "omega_engine/crates_rs/omega_quantum_physics/src/unitary_operator.rs": "c71889c523b16e93349d9c2db4bd3486d3d58a47fcd30a4fd95231e853d56095",
+    "omega_engine/crates_rs/omega_quantum_physics/src/quantum_hamiltonian.rs": "abf69a3ddde262af69f46796cb993ecf2d3dfda3e5feb9e65313d210201c4f72"
+  },
+  "duplicate_debug_audit": {
+    "reason": "Stopped redundant pre-repair debug audit only after the current-source release suite completed every one of the ten named cases successfully.",
+    "debug_completed": 9,
+    "debug_unfinished": 1,
+    "current_source_completed": 10,
+    "current_source_full_suite": "712 passed; 0 failed; 0 ignored",
+    "pid": 21280
+  },
+  "limits": [
+    "This is a fresh complete quantum library suite, not a fresh test of every crate in the monorepo.",
+    "The preceding 3687-pass partial audit and its 13 ignored cases remain historical. Its three failures and ten unfinished quantum cases are resolved by the new full quantum run.",
+    "Exact PSD concerns the supplied binary-rational Choi matrix; floating diagnostic unitarity is not exact quantum certification.",
+    "The gateway tests use synthetic provider transports and the rebuilt native budget host; no new paid live-model trial was performed.",
+    "No new Lean theorem statements are introduced by this runtime repair.",
+    "Projection extensions require separately validated bounds; their new continuous arguments remain written proofs."
+  ],
+  "quantum_test_executable": {
+    "path": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs\\target\\release\\deps\\omega_quantum_physics-cfa922fa69441c8a.exe",
+    "sha256": "126e376aa048d0a364dd2ccaa3e05e9abedc705ed3aff1fcfeb762e37d509c76"
+  }
+}

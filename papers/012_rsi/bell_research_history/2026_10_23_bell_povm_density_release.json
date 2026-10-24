@@ -1,0 +1,183 @@
+{
+  "date_utc": "2026-10-23T17:10:58.975079+00:00",
+  "version": "0.4.0",
+  "repository_head": "bf6b87751e254c7aeac5ebf1b26f51bdcabaaa67",
+  "working_tree_scope": "Bell research package remains untracked in this checkout; no commit or publication performed",
+  "package": {
+    "path": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals\\dist\\bell_positive_extensions_v0.4.0.zip",
+    "bytes": 707256271,
+    "sha256": "e7fe2f2edda3acbfea49ae793d5382e3a4e85d65913f6aa0aff836faae1eb63d"
+  },
+  "lean": {
+    "theorems": 119,
+    "new_theorems": [
+      "Bell.QuantumMeasurement.born_alice_marginal",
+      "Bell.QuantumMeasurement.born_bob_marginal",
+      "Bell.QuantumMeasurement.born_chsh_bound",
+      "Bell.QuantumMeasurement.born_complex_trace",
+      "Bell.QuantumMeasurement.born_nonnegative",
+      "Bell.QuantumMeasurement.born_normalized",
+      "Bell.QuantumMeasurement.born_probability",
+      "Bell.QuantumMeasurement.born_score_trace",
+      "Bell.QuantumMeasurement.joint_effect_positive",
+      "Bell.QuantumMeasurement.leftLift_povm",
+      "Bell.QuantumMeasurement.rightLift_povm",
+      "Bell.QuantumMeasurement.tensor_behavior_eq",
+      "Bell.QuantumMeasurement.tensor_born_chsh_bound",
+      "Bell.QuantumMeasurement.tensor_born_probability",
+      "Bell.QuantumMeasurement.tensor_cross_commute",
+      "Bell.QuantumState.asOperator_apply",
+      "Bell.QuantumState.asOperator_chsh",
+      "Bell.QuantumState.density_chsh_bound",
+      "Bell.QuantumState.density_mean_nonneg",
+      "Bell.QuantumState.density_povm_chsh_bound",
+      "Bell.QuantumState.density_spectral_decomposition",
+      "Bell.QuantumState.density_trace_mixture",
+      "Bell.QuantumState.density_trace_real",
+      "Bell.QuantumState.density_vectors_unit",
+      "Bell.QuantumState.density_weights",
+      "Bell.QuantumState.eigenvector_apply",
+      "Bell.QuantumState.hermitian_contraction_of_eigenvalues",
+      "Bell.QuantumState.mean_add",
+      "Bell.QuantumState.mean_one",
+      "Bell.QuantumState.mean_sub",
+      "Bell.QuantumState.povm_eigenvalues_bound",
+      "Bell.QuantumState.povm_observable_contraction",
+      "Bell.QuantumState.povm_observable_hermitian",
+      "Bell.QuantumState.pure_add",
+      "Bell.QuantumState.pure_eq_dot",
+      "Bell.QuantumState.pure_nonneg",
+      "Bell.QuantumState.pure_one",
+      "Bell.QuantumState.pure_sub",
+      "Bell.QuantumState.trace_asOperator"
+    ],
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "custom_axioms": [],
+    "census_sha256": "99fd671148327779b70a65c56df54321012c9529b12ce189650a0e8b1f38ccd6",
+    "dependency_modules": 2948,
+    "dependency_files": 20672,
+    "source_and_archive_bindings": "axiom_census.json and lean4/vendor/manifest.json"
+  },
+  "checks": {
+    "v04_lean_record": {
+      "label": "v04_lean_record",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_lean.py",
+        "--record"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:57:06.742866+00:00",
+      "seconds": 586.020229101181,
+      "exit_code": 0,
+      "log": "v04_lean_record.txt"
+    },
+    "v04_pdf": {
+      "label": "v04_pdf",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "scripts/build_paper_artifacts.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:43:15.847215+00:00",
+      "seconds": 10.883872270584106,
+      "exit_code": 0,
+      "log": "v04_pdf.txt"
+    },
+    "v04_package": {
+      "label": "v04_package",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/package.py",
+        "--build"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:58:12.117112+00:00",
+      "seconds": 52.42525577545166,
+      "exit_code": 0,
+      "log": "v04_package.txt"
+    },
+    "v04_extract": {
+      "label": "v04_extract",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "C:/Users/a343o/.codex/visualizations/2026/10/21/01a15f49-0b77-7152-8513-136fd3bd1071/bell_integral_quantum/extract_v04.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:58:39.980728+00:00",
+      "seconds": 12.644718885421753,
+      "exit_code": 0,
+      "log": "v04_extract.txt"
+    },
+    "v04_clean_verify": {
+      "label": "v04_clean_verify",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "verify_deposit.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.4.0\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T17:10:41.028809+00:00",
+      "seconds": 702.449581861496,
+      "exit_code": 0,
+      "log": "v04_clean_verify.txt"
+    }
+  },
+  "clean_extraction": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.4.0\\036_bell_positive_extensions_and_projection_residuals",
+  "python": {
+    "exact_tests": 21,
+    "LP_solves": 14,
+    "two_qubit_times": 5,
+    "Mermin_assignments": 64,
+    "notebook": "direct Python-cell replay passed"
+  },
+  "pdf": {
+    "date": "2026-10-23",
+    "version": "0.4.0",
+    "pages": 19,
+    "visually_reviewed_pages": [
+      1,
+      6,
+      7,
+      17,
+      19
+    ],
+    "overfull_boxes": 0,
+    "bindings": {
+      "036_bell_positive_extensions_and_projection_residuals.md": "bab4feccc2b640289fefecac9b2a740ae8c45d116edb36121a7fad61fb4e5fbc",
+      "036_bell_positive_extensions_and_projection_residuals.tex": "80abc97fbc54f0232e1f07e7aa3e272428b252aa87723954fd00edb55e99ceb9",
+      "036_bell_positive_extensions_and_projection_residuals.pdf": "ecd46fb59a4af683723f975cffcf22f28f4eca9c33fb3745132429d7c5018b59",
+      "docs/pdf_build.log": "3f76092128850d2590d01c1f9424709c2cb527803706f56baa53c790c056bdac"
+    },
+    "scope": "Source association, zero overfull boxes and sampled visual layout; proof validation is recorded separately"
+  },
+  "original_input_sha256": "acbaddeb548a61c9f17f4ed99960aa926c92ccec3a014b758d010530e5ce8615",
+  "scope": "Arbitrary finite-dimensional positive unit-trace matrices and normalized binary POVMs; spectral and contraction conversions are derived. Cross-party commutation gives real positive joint probabilities and is proved for local tensor lifts. Infinite-dimensional trace-class conversions, general LP/tangent-cone results and Mermin/cohomology theorems remain outside the census.",
+  "logs": {
+    "axiom_report.txt": "9874a994937785bdf3a4336a4121d925aa31cc2fae28fb6e313eb59bbb858de1",
+    "build_report.txt": "7afa25410f3dc22536158770631b7604c1dfad2de1aea44c72ce7d4c712b1da0",
+    "v04_clean_verify.json": "01df0c6669f0d3df8ee6aa10abfa2655885e56e8e7b1e74e187b8703bea3f084",
+    "v04_clean_verify.txt": "f6dd42aa2ca4539bd99bda25d440106f9262a03f96f923068bb2cc139fd7869b",
+    "v04_extract.json": "c87e99fa414564f9c9df7182fd5408b32d9989919a0e9a865cfeaa4dc3d92401",
+    "v04_extract.txt": "184b69794f7bc7a5729b4311129d39b00e935b3d58ccf917daa196cc20368653",
+    "v04_lean_record.json": "77feb32822f8277f80121571bdca3e559a9b0eaecf18a8e7cf713663957df83b",
+    "v04_lean_record.txt": "94cb30fdc95d0d317bfa780472850c13a98ba0541954de6b09ca93fac5eefb1a",
+    "v04_package.json": "d4fce384db3295cdbedba9da28f1ad2b9d0e836b68888ac4125b1c7aafd46459",
+    "v04_package.txt": "c667296757d8798e2ce10882a60c78344ad5d86bfb893e712db2f144e82a977a",
+    "v04_pdf.json": "99556f9475645af6aaf446b0d7707da77297c7ac93c1e75bbdf88ebde5db48d1",
+    "v04_pdf.txt": "509bbe266d7971fa479b1e0887a7a644ede1c6c101f03622726fb30ccd6f0041"
+  }
+}

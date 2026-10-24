@@ -1,0 +1,93 @@
+{
+  "version": "0.12.0",
+  "formalized_in_lean": true,
+  "claims": [
+    {
+      "id": "BELL-01",
+      "claim": "Positive local extension iff finite stochastic locality or a probability-integral local model",
+      "evidence": "Lean: Bell.positive_extension_iff_local, Bell.positive_extension_iff_averaged, Bell.Integral.positive_extension_iff_probability_integral, including the atomic-measure converse",
+      "assumptions": "Finite setting/outcome types; setting-independent probability measure on a measurable latent space; measurable nonnegative pointwise-normalized responses. Integrability, boundedness and integral averaging laws are derived."
+    },
+    {
+      "id": "BELL-02",
+      "claim": "Isotropic family exact repair cost and negative mass",
+      "evidence": "Lean real-parameter CHSH signed-mass optimum against all real extensions; written exact repair sharpness; exact rational replay and 41 focused tests.",
+      "scope": "Specified CHSH family; no general solver completeness claim"
+    },
+    {
+      "id": "BELL-03",
+      "claim": "General dual bounds and tangent-cone onset",
+      "evidence": "Lean: Bell.Repair.bell_strong_duality, bell_support_duality, bell_witness_bound, bell_slack_primal; Bell.SignedDuality.bell_negative_mass_duality, bell_signed_spread_duality; Bell.RepairGeometry.repair_zero_iff, repair_lipschitz, local_polyhedral, localTangent_intrinsic, bell_explicit_ray_window, bell_quadratic_remainder.",
+      "scope": "Finite scenarios, nonempty outcomes, normalized nonnegative weights; strictly positive weights for zero repair iff positive extension. Signed duality requires an inhabited normalized signed fiber. Polyhedral presentation and both LP optimizers are constructed. The tangent window is existential and trajectory remainder control is supplied."
+    },
+    {
+      "id": "BELL-04",
+      "claim": "State-to-behavior comparison and dynamic examples",
+      "evidence": "Lean: Bell.QuantumTrace.measurement_tv_bound, weighted_measurement_tv_bound, born_tv_bound, tensor_tv_bound, born_repair_bound, state_distance_witness, trace_operator_bound; Bell.Dynamics.dynamical_witness, dynamical_born_repair, uncertain_oriented_repair, oriented_exit, face_exit_rate. Explicit two-qubit trajectories retain written proofs and numerical checks. Lean: Bell.Separable.mixture_density, separable_positive_extension, leftMarginal_density, rightMarginal_density, productMarginals_separable, productMarginals_idempotent, full_state_to_behavior_bound, chsh_full_state_to_behavior_bound, separable_chsh_bound.",
+      "scope": "Finite Hermitian spectral trace norm; arbitrary finite local dimensions, setting/outcome types, positive complete local POVMs and nonnegative normalized context weights. Actual finite separable mixtures yield local Born models and positive extensions. Partial traces and their product are constructed, and both infimum inequalities in (15) are proved without assuming an optimizer. Generic matrix-remainder dynamics requires an exact matrix decomposition and a Hermitian trace-norm remainder enclosure. No infinite-dimensional separability or general differential-equation formalization. The explicit GHZ orbit is treated separately in BELL-QUANTUM-EVOLUTION."
+    },
+    {
+      "id": "BELL-05",
+      "claim": "Observer fiber error floor and evidence-preserving recursion",
+      "evidence": "Lean: scalar_minimax, midpoint_optimal, factors_iff_constant_on_fibers, refinement_cannot_increase_minimax, recursion_error_floor, randomized_error_floor",
+      "scope": "Finite nonempty histories, real scalar target, absolute error; same retained report and a finite conditional output law per report. Qualitative factorization does not require finiteness."
+    },
+    {
+      "id": "BELL-06",
+      "claim": "CHSH local and uniform total-variation witness bounds with uncertainty",
+      "evidence": "Lean: positive_extension_chsh, stochastic_local_chsh, chsh_repair_lower_bound, uncertain_repair_lower_bound, uncertainty_excludes_extension",
+      "scope": "Canonical CHSH orientation, every positive local extension; a supplied total-variation uncertainty enclosure. No quantum operator or statistical coverage theorem."
+    },
+    {
+      "id": "BELL-07",
+      "claim": "Quantum CHSH ceiling, finite density/POVM conversions and exact two-qubit saturation",
+      "evidence": "Lean: Bell.Quantum.tsirelson_operator_bound, tsirelson_pure_state_bound, tsirelson_mixed_state_bound, tsirelson_dichotomic_bound; Bell.QuantumExample.born_formula, tsirelson_attained, bell_behavior_no_positive_extension; Bell.QuantumState.density_spectral_decomposition, density_trace_mixture, povm_observable_contraction, density_povm_chsh_bound; Bell.QuantumMeasurement.born_complex_trace, born_probability, born_alice_marginal, born_bob_marginal, born_score_trace, tensor_born_probability, tensor_born_chsh_bound",
+      "assumptions": "General bound: complex Hilbert-space contractions. Finite conversion: positive semidefinite complex density matrix of trace one and positive binary effects summing to identity. Cross-party commutation gives actual joint probabilities; local tensor lifts prove it. Spectral mixture and contraction are derived, not assumed.",
+      "scope": "Arbitrary finite matrix dimensions, including singular densities and zero effects; no infinite-dimensional trace-class conversion or experimental claim."
+    },
+    {
+      "id": "BELL-08",
+      "claim": "Contextual fraction versus signed mass",
+      "evidence": "Lean: real-parameter CHSH/Mermin formulas, explicit CF>2N and reversed ranking, constructive CF <= (m-1)N. Exact replay of 78 certificates and Lean/Python data binding.",
+      "scope": "Earlier three-party example quantum realizability is not established; see BELL-QUANTUM-CHAIN for a distinct quantum counterexample. No universal sharp constant or Python solver proof."
+    },
+    {
+      "id": "BELL-QUANTUM-EVOLUTION",
+      "claim": "Quantum-restricted CHSH/GHZ family comparisons and explicit unitary exit windows",
+      "evidence": "Lean QuantumComparisons, GHZEvolution, QuantumWindows; 1152 numerical Born entries, 36 independent LP solves, 15 noisy-boundary checks.",
+      "scope": "Specified families and first rising interval. General quantum CF versus negative mass, matrix exponential/ODE formalization, and arbitrary evolution remain unclaimed."
+    },
+    {
+      "id": "BELL-QUANTUM-CHAIN",
+      "claim": "Universal quantum CF <= 2N is false in the full 3x3 binary Bell scenario",
+      "evidence": "Lean ChainedData, ChainedComparison, ChainedQuantum; exact Q(sqrt(3)) Born and matching primal/dual replay.",
+      "scope": "Two qubits, three projective binary measurements at each site, all nine contexts. Exact factor four on the declared real line; any universal coefficient must be at least four, but sufficiency is not proved."
+    },
+    {
+      "id": "BELL-FIVE-QUANTUM",
+      "claim": "CF <= 4N is false even for a complete 5x5 quantum behavior",
+      "evidence": "FiveData, FiveComparison, FiveQuantum; exact full Born and primal-dual certificates",
+      "scope": "All 25 contexts; CF=698/925 and N_min=167/925 over all real signed extensions."
+    },
+    {
+      "id": "BELL-CHAIN-COVERS",
+      "claim": "Cycle-cover ratios grow without bound; complete equally spaced chains have a bounded tail",
+      "evidence": "CycleParity, CycleLimits, ChainAnalysis and FullChainBounds; finite cycle reconstruction replay",
+      "scope": "Cycle reconstruction and two-fold LP equivalence added in Lean. Complete regular planar chains retain a bounded tail; see the distinct complete smoothed Gram family."
+    },
+    {
+      "id": "BELL-COMPLETE-UNBOUNDED",
+      "claim": "CF/N_min is unbounded across complete finite-dimensional quantum Bell scenarios",
+      "evidence": "End-to-end Lean theorem CompleteQuantumUnbounded.quantum_unbounded; explicit cyclic profiles, general finite Clifford and Born construction, full-table packing witness and attained signed optimum.",
+      "scope": "All k^4 contexts for k^2 settings per party; bounds, not asserted exact scalar optimum formulas. Formal nonminimal local dimension 2^(4k^2). No fixed-dimension or priority claim."
+    },
+    {
+      "id": "BELL-CONTINUUM-SHADOW",
+      "claim": "Selected Archimedean scalar shadow (CF,N_min)->(1,0) with explicit cutoffs; no finite ratio endpoint",
+      "evidence": "ContinuumShadows and CompleteQuantumUnbounded.finite_shadow_error; preserved historical WDP presentation-completion sources",
+      "scope": "Chosen usual real metric and scalar summaries across growing scenarios. No physical continuity or common limiting state claim."
+    }
+  ],
+  "census": "axiom_census.json",
+  "formalized_subset": "docs/formalization.md"
+}

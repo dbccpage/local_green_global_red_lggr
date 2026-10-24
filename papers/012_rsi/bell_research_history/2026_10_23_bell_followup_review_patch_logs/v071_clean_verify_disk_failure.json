@@ -1,0 +1,14 @@
+{
+  "label": "v071_clean_verify",
+  "command": [
+    "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+    "-X",
+    "utf8",
+    "verify_deposit.py"
+  ],
+  "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.7.1\\036_bell_positive_extensions_and_projection_residuals",
+  "timestamp_utc": "2026-10-23T20:24:35.510918+00:00",
+  "seconds": 66.39398169517517,
+  "exit_code": 1,
+  "log": "v071_clean_verify.txt"
+}

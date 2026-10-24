@@ -1,0 +1,1564 @@
+diff --git a/omega_engine/crates_rs/omega_certifiers/src/meron_hamiltonian_bridge.rs b/omega_engine/crates_rs/omega_certifiers/src/meron_hamiltonian_bridge.rs
+index 886447209f..7d58016212 100644
+--- a/omega_engine/crates_rs/omega_certifiers/src/meron_hamiltonian_bridge.rs
++++ b/omega_engine/crates_rs/omega_certifiers/src/meron_hamiltonian_bridge.rs
+@@ -793,10 +793,10 @@ impl LckSymbolicLocalMatrixRow {
+     fn hu_onsite_element(
+         &self,
+         row: usize,
+-        source_up: u8,
+-        target_up: u8,
+-        source_down: u8,
+-        target_down: u8,
++        source_up: usize,
++        target_up: usize,
++        source_down: usize,
++        target_down: usize,
+     ) -> Result<i64, HamiltonianBridgeError> {
+         let site = self
+             .onsite_site
+@@ -2022,7 +2022,7 @@ impl LoopExtractionPacket {
+     fn validate_packet_header_and_counts(
+         &self,
+         total_orientations: u64,
+-    ) -> Result<i128, HamiltonianBridgeError> {
++    ) -> Result<i64, HamiltonianBridgeError> {
+         if self.family_id != LCK_HAMILTONIAN_FAMILY_ID {
+             return Err(HamiltonianBridgeError::UnsupportedHamiltonianFamily {
+                 family_id: self.family_id.clone(),
+diff --git a/omega_engine/crates_rs/omega_epistemic_immune_system/src/activation_ports.rs b/omega_engine/crates_rs/omega_epistemic_immune_system/src/activation_ports.rs
+index e7ce7034b8..26b7ec06b9 100644
+--- a/omega_engine/crates_rs/omega_epistemic_immune_system/src/activation_ports.rs
++++ b/omega_engine/crates_rs/omega_epistemic_immune_system/src/activation_ports.rs
+@@ -68,7 +68,7 @@ impl DigestQuorum {
+         let mut seen_earlier = false;
+         let mut votes = 0u32;
+         for (earlier, other) in digests.iter().enumerate() {
+-            if other != digest {
++            if *other != digest {
+                 continue;
+             }
+             if earlier < index {
+diff --git a/omega_engine/crates_rs/omega_functional/src/factory.rs b/omega_engine/crates_rs/omega_functional/src/factory.rs
+index 0e4f32dff2..2859dc8b98 100644
+--- a/omega_engine/crates_rs/omega_functional/src/factory.rs
++++ b/omega_engine/crates_rs/omega_functional/src/factory.rs
+@@ -195,21 +195,6 @@ impl ConfiguredFunctional {
+             }
+         }
+     }
+-}
+-
+-impl sealed::Kernel for ConfiguredFunctional {}
+-
+-impl BaseFunctionalKernel for ConfiguredFunctional {
+-    fn functional_id(&self) -> &'static str {
+-        match self.configuration {
+-            KernelConfiguration::Phi1(_) => "phi1",
+-            KernelConfiguration::Gamma2(_) => "gamma2",
+-        }
+-    }
+-
+-    fn functional_version(&self) -> u32 {
+-        FUNCTIONAL_VERSION
+-    }
+ 
+     fn evaluate_evidence(
+         &self,
+@@ -260,6 +245,21 @@ impl BaseFunctionalKernel for ConfiguredFunctional {
+         }
+         Ok(())
+     }
++}
++
++impl sealed::Kernel for ConfiguredFunctional {}
++
++impl BaseFunctionalKernel for ConfiguredFunctional {
++    fn functional_id(&self) -> &'static str {
++        match self.configuration {
++            KernelConfiguration::Phi1(_) => "phi1",
++            KernelConfiguration::Gamma2(_) => "gamma2",
++        }
++    }
++
++    fn functional_version(&self) -> u32 {
++        FUNCTIONAL_VERSION
++    }
+ 
+     fn compute(&self, state: &FunctionalInput) -> Result<FunctionalOutput, FunctionalError> {
+         // Admission precedes hashing. These typed algebraic boundaries are not
+diff --git a/omega_engine/crates_rs/omega_functional/src/operator_trace_closure.rs b/omega_engine/crates_rs/omega_functional/src/operator_trace_closure.rs
+index 69ab9a8aa2..341e0be71e 100644
+--- a/omega_engine/crates_rs/omega_functional/src/operator_trace_closure.rs
++++ b/omega_engine/crates_rs/omega_functional/src/operator_trace_closure.rs
+@@ -305,7 +305,7 @@ fn compute_repaired_edge(
+ fn check_dual_observable_polar(
+     dim: usize,
+     half: &BigRational,
+-    phi: &Matrix<GaussianRat>,
++    phi: &Operator,
+ ) -> Result<(), OperatorTraceError> {
+     let id_mat = mx::identity_with_limits(dim, limits())?;
+     let cap = mx::scale(&id_mat, &GaussianRat::from_rational(half.clone()))?;
+diff --git a/omega_engine/crates_rs/omega_functional/src/path_error.rs b/omega_engine/crates_rs/omega_functional/src/path_error.rs
+index 885e6c4df5..761d4a1ff5 100644
+--- a/omega_engine/crates_rs/omega_functional/src/path_error.rs
++++ b/omega_engine/crates_rs/omega_functional/src/path_error.rs
+@@ -117,7 +117,7 @@ fn compute_telescoping_step(
+ 
+ fn zero_matrix(rows: usize, cols: usize) -> Result<Matrix, PathErrorRefusal> {
+     let zeros = vec![Q::zero(); rows * cols];
+-    Matrix::from_vec(rows, cols, zeros)
++    Matrix::from_row_major(rows, cols, zeros)
+         .map_err(LossError::from)
+         .map_err(PathErrorRefusal::from)
+ }
+diff --git a/omega_engine/crates_rs/omega_holonomy/src/gauge_fixing.rs b/omega_engine/crates_rs/omega_holonomy/src/gauge_fixing.rs
+index cd96d20dda..669bbbe0f4 100644
+--- a/omega_engine/crates_rs/omega_holonomy/src/gauge_fixing.rs
++++ b/omega_engine/crates_rs/omega_holonomy/src/gauge_fixing.rs
+@@ -65,7 +65,7 @@
+ 
+ use crate::connection::DiscreteConnection;
+ use crate::error::HolonomyError;
+-use crate::graph::{CellComplex, OrientedStep};
++use crate::graph::{CellComplex, Face, OrientedStep};
+ use crate::matrix::{ExactMatrix, ExactScalar};
+ use linear_algebra::backend::basic_matrix::BasicMatrix;
+ use linear_algebra::smith_normal_form::smith_normal_form_checked;
+diff --git a/omega_engine/crates_rs/omega_homology/src/persistent_homology.rs b/omega_engine/crates_rs/omega_homology/src/persistent_homology.rs
+index 3e683b26bc..4946456d64 100644
+--- a/omega_engine/crates_rs/omega_homology/src/persistent_homology.rs
++++ b/omega_engine/crates_rs/omega_homology/src/persistent_homology.rs
+@@ -2,7 +2,7 @@
+ //! AuthorityEffect: None. Executable finite computation, not a formal proof.
+ 
+ use crate::barcode::Barcode;
+-use crate::filtration::Filtration;
++use crate::filtration::{FilteredSimplex, Filtration};
+ use crate::persistence_diagram::{PersistenceDiagram, PersistencePoint};
+ use crate::persistence_pairing::PersistencePairing;
+ use crate::ph_matrix_reduction::PhBoundaryMatrix;
+diff --git a/omega_engine/crates_rs/omega_operads/src/operad_runtime.rs b/omega_engine/crates_rs/omega_operads/src/operad_runtime.rs
+index 1494c0390b..8828deb31c 100644
+--- a/omega_engine/crates_rs/omega_operads/src/operad_runtime.rs
++++ b/omega_engine/crates_rs/omega_operads/src/operad_runtime.rs
+@@ -248,7 +248,7 @@ fn apply_reindexing(
+         .collect();
+ }
+ fn resolve_canonical_term(
+-    normalized: &omega_operad_theory::kernel::terms::NormalFormTerm,
++    normalized: &omega_operad_theory::kernel::terms::NormalizedTerm,
+     reindexed: &Option<ReindexedTerm>,
+ ) -> Result<(String, Value), Refusal> {
+     let (term_id, normal_form) = match reindexed {
+diff --git a/omega_engine/crates_rs/omega_pipelines/src/bounded_rewrite.rs b/omega_engine/crates_rs/omega_pipelines/src/bounded_rewrite.rs
+index 0934b91a31..0a11d3717c 100644
+--- a/omega_engine/crates_rs/omega_pipelines/src/bounded_rewrite.rs
++++ b/omega_engine/crates_rs/omega_pipelines/src/bounded_rewrite.rs
+@@ -33,7 +33,7 @@ use omega_types::authority::AuthorityEffect;
+ 
+ use crate::loop_step::TerminalizedRow;
+ use crate::rewrite_scheduler::{
+-    evaluation_replay_hash, schedule_evaluated_rewrite, ExactRewriteDiagnostic,
++    evaluation_replay_hash, schedule_evaluated_rewrite, ExactRewriteDiagnostic, ExactRewriteResult,
+ };
+ use omega_wdp::coda::coda_gtla::{evaluate_exact, CodaExactInput};
+ 
+@@ -125,7 +125,7 @@ fn evaluate_round_proposals<O: RewriteObserver>(
+     round: Vec<CodaExactInput>,
+     max_attempts: usize,
+     observer: &O,
+-    known_replays: &HashSet<ReplayHash>,
++    known_replays: &HashSet<blake3::Hash>,
+     attempts: &mut usize,
+     rejected_attempts: &mut Vec<String>,
+ ) -> (Vec<ExactRewriteResult>, bool, bool) {
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/adaptive_integrator.rs b/omega_engine/crates_rs/omega_quantum_physics/src/adaptive_integrator.rs
+index 01f2d16654..26709920ee 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/adaptive_integrator.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/adaptive_integrator.rs
+@@ -1148,7 +1148,7 @@ impl ExactClusterPartition {
+         let outside = self.single_site_marginal(outside_site)?;
+         let prod = mx::kronecker_with_limits(identity, outside.matrix(), exact_limits())?;
+         let weighted = mx::multiply_with_limits(term, &prod, exact_limits())?;
+-        partial_trace_second(&weighted, 2, 2)
++        Ok(partial_trace_second(&weighted, 2, 2)?)
+     }
+ 
+     fn contract_outside_left(
+@@ -1160,7 +1160,7 @@ impl ExactClusterPartition {
+         let outside = self.single_site_marginal(outside_site)?;
+         let prod = mx::kronecker_with_limits(outside.matrix(), identity, exact_limits())?;
+         let weighted = mx::multiply_with_limits(term, &prod, exact_limits())?;
+-        partial_trace_first(&weighted, 2, 2)
++        Ok(partial_trace_first(&weighted, 2, 2)?)
+     }
+ 
+     /// Advance all clusters using Cayley unitaries of effective Hamiltonians
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/completely_positive_map.rs b/omega_engine/crates_rs/omega_quantum_physics/src/completely_positive_map.rs
+index 581bfca1e7..73950db1f2 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/completely_positive_map.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/completely_positive_map.rs
+@@ -271,7 +271,7 @@ impl CompletelyPositiveMap {
+ 
+     fn build_kraus_matrices_from_spectrum(
+         &self,
+-        s_vals: &nalgebra::DVector<f64>,
++        s_vals: &[f64],
+         u: &CMatrix,
+         tol: f64,
+     ) -> Vec<CMatrix> {
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/entropy.rs b/omega_engine/crates_rs/omega_quantum_physics/src/entropy.rs
+index cda1611705..5382003882 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/entropy.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/entropy.rs
+@@ -90,8 +90,8 @@ impl Entropy {
+     }
+ 
+     fn enclose_root_entropy_term(
+-        polynomial: &omega_number_theory::polynomial::Polynomial,
+-        root: &omega_number_theory::polynomial::IsolatedRoot,
++        polynomial: &omega_number_theory::polynomial::Polynomial<omega_number_theory::rational::Rational>,
++        root: &omega_number_theory::polynomial::RealRoot,
+         tolerance: &omega_number_theory::rational::Rational,
+         bits: u32,
+     ) -> Result<Option<omega_kernel::interval::Interval>, EntropyError> {
+@@ -116,8 +116,8 @@ impl Entropy {
+     }
+ 
+     fn isolate_positive_root_range(
+-        polynomial: &omega_number_theory::polynomial::Polynomial,
+-        mut root: omega_number_theory::polynomial::IsolatedRoot,
++        polynomial: &omega_number_theory::polynomial::Polynomial<omega_number_theory::rational::Rational>,
++        mut root: omega_number_theory::polynomial::RealRoot,
+     ) -> Result<Option<(omega_kernel::interval::Interval, usize)>, EntropyError> {
+         use num_traits::{Signed, Zero};
+         use omega_kernel::interval::Interval;
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/exact_channel.rs b/omega_engine/crates_rs/omega_quantum_physics/src/exact_channel.rs
+index 9f64aa7df9..4d217342f8 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/exact_channel.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/exact_channel.rs
+@@ -988,7 +988,7 @@ impl ExactChoiMatrix {
+ 
+     fn extract_ldl_kraus_terms(
+         &self,
+-        ldl: &linear_algebra::exact_field::hermitian::HermitianLdl<GaussianRat>,
++        ldl: &linear_algebra::exact_field::ordered::Ldlt<GaussianRat>,
+     ) -> Result<Vec<(Rational, BasicMatrix<GaussianRat>)>, ExactChannelError> {
+         let lower = ldl.unit_lower();
+         let mut terms = Vec::new();
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/exact_operator.rs b/omega_engine/crates_rs/omega_quantum_physics/src/exact_operator.rs
+index 7051cc0da2..f930eadd71 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/exact_operator.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/exact_operator.rs
+@@ -341,7 +341,7 @@ fn sign_of(location: &RootLocation) -> std::cmp::Ordering {
+ }
+ 
+ fn refine_straddling_root(
+-    polynomial: &Polynomial,
++    polynomial: &Polynomial<Rational>,
+     mut root: RealRoot,
+ ) -> Result<RealRoot, OperatorError> {
+     loop {
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/mub/non_cyclic_falser.rs b/omega_engine/crates_rs/omega_quantum_physics/src/mub/non_cyclic_falser.rs
+index ca965cdb84..45980f183c 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/mub/non_cyclic_falser.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/mub/non_cyclic_falser.rs
+@@ -487,7 +487,7 @@ fn search_tao_permutations(
+ 
+ fn search_petrescu_candidates(
+     falser: &MubAdversarialFalser,
+-    petrescu_points: &[(i64, i64, i64, i64)],
++    petrescu_points: &[(usize, usize, usize, usize)],
+     sample_witnesses: &mut Vec<DefectWitness>,
+ ) -> Result<(usize, usize), String> {
+     let mut petrescu_tested = 0;
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/mub/odd_prime.rs b/omega_engine/crates_rs/omega_quantum_physics/src/mub/odd_prime.rs
+index 10dafb5748..6e3bbd361b 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/mub/odd_prime.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/mub/odd_prime.rs
+@@ -247,9 +247,9 @@ fn build_computational_projectors<const P: usize>(
+ fn build_slope_frequency_projector<const P: usize>(
+     field: &omega_number_theory::finite_field::FiniteField,
+     q: usize,
+-    inv_two: &[usize],
+-    slope: &[usize],
+-    frequency: &[usize],
++    inv_two: &omega_number_theory::finite_field::FieldElement,
++    slope: &omega_number_theory::finite_field::FieldElement,
++    frequency: &omega_number_theory::finite_field::FieldElement,
+     weight: &omega_number_theory::rational::Rational,
+ ) -> Result<BasicMatrix<omega_number_theory::cyclotomic_field::Cyclotomic<P>>, String> {
+     use omega_number_theory::cyclotomic_field::Cyclotomic;
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/pair_exchange_characters.rs b/omega_engine/crates_rs/omega_quantum_physics/src/pair_exchange_characters.rs
+index 98f28bef89..e4bf08bf92 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/pair_exchange_characters.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/pair_exchange_characters.rs
+@@ -132,7 +132,7 @@ fn accumulate_permutation_into_projector(
+     d: usize,
+     n: usize,
+     size: usize,
+-    permutation: &omega_lie_theory::finite_group::Permutation,
++    permutation: &[usize],
+     alternating: bool,
+ ) -> Result<(), ExchangeError> {
+     use linear_algebra::exact_field::ExactFieldError;
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/product_defect_bound.rs b/omega_engine/crates_rs/omega_quantum_physics/src/product_defect_bound.rs
+index 401fd8eddb..601c12e9af 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/product_defect_bound.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/product_defect_bound.rs
+@@ -370,7 +370,7 @@ fn compute_total_dimension(local_dims: &[usize]) -> Result<usize, ProductDefectR
+ 
+ fn validate_and_accumulate_term(
+     idx: usize,
+-    term: &HamiltonianTerm,
++    term: &SiteTerm,
+     local_dims: &[usize],
+     n_sites: usize,
+     h_global: &mut Mat,
+@@ -500,7 +500,7 @@ fn compute_sigma_derivatives(
+ }
+ 
+ fn verify_supplied_witness_mat(
+-    w: &[Vec<GaussianRat>],
++    w: &BasicMatrix<GaussianRat>,
+     n_sigma: &Mat,
+ ) -> Result<(Rational, Vec<u8>), ProductDefectRefusal> {
+     use ProductDefectRefusal as R;
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/qddc.rs b/omega_engine/crates_rs/omega_quantum_physics/src/qddc.rs
+index dc5bc45bbb..99f9c25a93 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/qddc.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/qddc.rs
+@@ -240,7 +240,7 @@ impl QddcState {
+         entry: usize,
+         imaginary: bool,
+         components: &mut [Vec<Vec<GaussianRat>>],
+-        fuel: &mut omega_number_theory::ExactBudget,
++        fuel: &mut linear_algebra::exact_field::rational_bareiss::RationalBudget,
+     ) -> Result<(), QddcError> {
+         let flow: Vec<Rational> = self
+             .cochain
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/quantum_hamiltonian.rs b/omega_engine/crates_rs/omega_quantum_physics/src/quantum_hamiltonian.rs
+index 910c047d77..8673388dd1 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/quantum_hamiltonian.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/quantum_hamiltonian.rs
+@@ -34,6 +34,7 @@
+ //! AuthorityEffect: None.
+ 
+ use linear_algebra::hermitian_eigen::{hermitian_eigen_checked, SpectrumError, SpectrumPolicy};
++use linear_algebra::backend::basic_matrix::BasicMatrix;
+ use linear_algebra::linear_algebra::complex_matrix::{CMatrix, CVector, C64};
+ use num_traits::Zero;
+ use omega_number_theory::cyclotomic::GaussianRat;
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps.rs b/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps.rs
+index 81d98ab7c3..9614cac542 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps.rs
+@@ -1949,9 +1949,9 @@ pub struct Qm213NonAbelianDfmReport {
+ }
+ 
+ fn check_qm213_borel_two_stage(
+-    complex: &omega_holonomy::cell_complex::FiniteCellComplex,
++    complex: &omega_holonomy::CellComplex,
+     borel_conn: &EdgeConnection<Q>,
+-    tg_borel: &omega_holonomy::tree_gauge::TreeGaugeReduction<Q>,
++    tg_borel: &omega_holonomy::gauge_fixing::TreeGauge<Q>,
+     u_n_vec: &[ExactMatrix<Q>],
+     u_t_vec: &[ExactMatrix<Q>],
+ ) -> (bool, bool, bool, bool, bool, bool, bool) {
+@@ -2006,7 +2006,7 @@ fn check_qm213_borel_two_stage(
+ }
+ 
+ fn check_second_kind_intertwiner_and_invariants(
+-    complex: &omega_holonomy::cell_complex::FiniteCellComplex,
++    complex: &omega_holonomy::CellComplex,
+     diamond: &CarrierGraph,
+     u_sub: &EdgeConnection<Q>,
+     id2: &ExactMatrix<Q>,
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps/algebraic_bound_state_spectra.rs b/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps/algebraic_bound_state_spectra.rs
+index 1e7bef3e57..f73a14438d 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps/algebraic_bound_state_spectra.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/quantum_import_finite_maps/algebraic_bound_state_spectra.rs
+@@ -386,7 +386,7 @@ fn audit_kravchuk_shells() -> (bool, bool, bool, bool, Q, Q, Q, bool, bool, bool
+     (sl2_comm_ok, casimir_ok, metric_adj_ok, ladder_ok, ground_q2, ground_p2, ground_prod, saturates_ok, ortho_all_ok, diff_all_ok)
+ }
+ 
+-fn check_so4_lie_brackets(ops: &So4HydrogenShellOperatorsQ) -> bool {
++fn check_so4_lie_brackets(ops: &So4ShellOps) -> bool {
+     qd_comm(&ops.lz, &ops.lp) == ops.lp
+         && qd_comm(&ops.lz, &ops.lm) == qd_scale(q(-1, 1), &ops.lm)
+         && qd_comm(&ops.lp, &ops.lm) == qd_scale(q(2, 1), &ops.lz)
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/topological_quantum_computing.rs b/omega_engine/crates_rs/omega_quantum_physics/src/topological_quantum_computing.rs
+index 51bea0e449..b03fabe815 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/topological_quantum_computing.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/topological_quantum_computing.rs
+@@ -60,7 +60,7 @@ impl<K: FusionScalar> TopologicalQuantumComputing<K> {
+     fn check_braid_word_budget(
+         &self,
+         word: &[i32],
+-        limits: linear_algebra::resource_limits::MatrixLimits,
++        limits: linear_algebra::backend::basic_matrix::OperationLimits,
+     ) -> Result<(), FusionError> {
+         if word.len() > 1 << 16 {
+             return Err(FusionError::Budget {
+diff --git a/omega_engine/crates_rs/omega_quantum_physics/src/toric_code.rs b/omega_engine/crates_rs/omega_quantum_physics/src/toric_code.rs
+index 8bc32d92ac..ae74674a86 100644
+--- a/omega_engine/crates_rs/omega_quantum_physics/src/toric_code.rs
++++ b/omega_engine/crates_rs/omega_quantum_physics/src/toric_code.rs
+@@ -43,7 +43,7 @@ fn pauli_mask(bits: &F2Vector, letter: Pauli) -> Vec<Pauli> {
+         .collect()
+ }
+ fn build_toric_stars_and_plaquettes(
+-    complex: &omega_homology::f2_chain::F2ChainComplex,
++    complex: &omega_homology::f2_cohomology::F2ChainComplex,
+ ) -> Result<(Vec<Vec<Pauli>>, Vec<Vec<Pauli>>), ToricError> {
+     let d0 = complex.coboundary(0).map_err(topology)?;
+     let d1 = complex.coboundary(1).map_err(topology)?;
+@@ -103,7 +103,7 @@ fn solve_toric_x_logicals(
+ }
+ 
+ fn extract_rank_two_torus_bases(
+-    complex: &omega_homology::f2_chain::F2ChainComplex,
++    complex: &omega_homology::f2_cohomology::F2ChainComplex,
+     k: usize,
+ ) -> Result<(Vec<F2Vector>, Vec<F2Vector>), ToricError> {
+     let z = complex.homology_basis(1).map_err(topology)?;
+diff --git a/omega_engine/crates_rs/omega_solvers/src/cert_channel_capacity.rs b/omega_engine/crates_rs/omega_solvers/src/cert_channel_capacity.rs
+index 28205879e3..1596f91f05 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/cert_channel_capacity.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/cert_channel_capacity.rs
+@@ -19,7 +19,7 @@ use sha2::{Digest, Sha256};
+ use thiserror::Error;
+ 
+ use crate::cert_lggr_soundness::{
+-    all_green_subspace, build_delta, validate_kernels, BlindSpotError, CoveringCarrier,
++    all_green_subspace, build_delta, validate_kernels, AllGreenSubspace, BlindSpotError, CoveringCarrier,
+     ObserverKernelFamily, BLIND_SPOT_NUMERICAL_TOLERANCE,
+ };
+ 
+@@ -524,7 +524,7 @@ fn validate_capacity_resource_limits(
+ }
+ 
+ fn validate_single_distinction_direction<'a>(
+-    distinction: &'a omega_contracts::ProtectedDistinctionDeclaration,
++    distinction: &'a omega_types::ProtectedDistinctionDeclaration,
+     section_dimension: usize,
+     seen: &mut std::collections::BTreeSet<&'a str>,
+ ) -> Result<(&'a [f64], f64), DetectorCapacityError> {
+@@ -556,7 +556,7 @@ fn validate_single_distinction_direction<'a>(
+ }
+ 
+ fn build_protected_directions(
+-    distinctions: &[omega_contracts::ProtectedDistinctionDeclaration],
++    distinctions: &[omega_types::ProtectedDistinctionDeclaration],
+     section_dimension: usize,
+ ) -> Result<DMatrix<f64>, DetectorCapacityError> {
+     let mut seen = std::collections::BTreeSet::new();
+diff --git a/omega_engine/crates_rs/omega_solvers/src/cert_hodge_decomp.rs b/omega_engine/crates_rs/omega_solvers/src/cert_hodge_decomp.rs
+index 6e121a6d4a..598a2ea134 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/cert_hodge_decomp.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/cert_hodge_decomp.rs
+@@ -125,7 +125,7 @@ fn validate_certificate_shapes_and_fuel(
+ fn verify_hodge_components_and_reconstruction(
+     p: &HodgeProblem<'_>,
+     c: &HodgeCertificate,
+-    d1t: &BasicMatrix<Rational>,
++    d1t: &BasicMatrix<BigRational>,
+     fuel: &mut RationalBudget,
+ ) -> Result<(), HodgeError> {
+     let exact_vec = exact::multiply_vector(p.d0, &c.alpha, fuel)?;
+@@ -145,7 +145,7 @@ fn verify_hodge_components_and_reconstruction(
+ fn verify_hodge_harmonic_and_orthogonal(
+     p: &HodgeProblem<'_>,
+     c: &HodgeCertificate,
+-    d0t: &BasicMatrix<Rational>,
++    d0t: &BasicMatrix<BigRational>,
+     fuel: &mut RationalBudget,
+ ) -> Result<(), HodgeError> {
+     let d0t_harm = exact::multiply_vector(d0t, &c.harmonic, fuel)?;
+diff --git a/omega_engine/crates_rs/omega_solvers/src/finite_stream_interpreter.rs b/omega_engine/crates_rs/omega_solvers/src/finite_stream_interpreter.rs
+index 1d08861b0b..9ab8759517 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/finite_stream_interpreter.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/finite_stream_interpreter.rs
+@@ -124,7 +124,7 @@ impl CompiledStream {
+         s: usize,
+         symbol: usize,
+         n: usize,
+-        cells: BTreeMap<isize, usize>,
++        cells: BTreeMap<i64, usize>,
+     ) -> Configuration {
+         if symbol == 0 {
+             Configuration {
+diff --git a/omega_engine/crates_rs/omega_solvers/src/router_structure_extension.rs b/omega_engine/crates_rs/omega_solvers/src/router_structure_extension.rs
+index 7adace20f0..d28362daf8 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/router_structure_extension.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/router_structure_extension.rs
+@@ -140,7 +140,9 @@ pub fn propose_question_family_extension(
+     checked: &CheckedQuestionExtensionV1,
+ ) -> Result<ExtensionProposalReceiptV1, StructureExtensionError> {
+     let new_questions = validate_extension_preconditions(checked)?;
+-    let map_val_err = |e: PlanGrammarError| StructureExtensionError::Validation(e.to_string());
++    fn map_val_err(error: impl std::fmt::Display) -> StructureExtensionError {
++        StructureExtensionError::Validation(error.to_string())
++    }
+     Ok(ExtensionProposalReceiptV1 {
+         parent_id: checked.parent.canonical_id().map_err(map_val_err)?,
+         child_id: checked.child.canonical_id().map_err(map_val_err)?,
+diff --git a/omega_engine/crates_rs/omega_solvers/src/solver_gauge_yang_mills.rs b/omega_engine/crates_rs/omega_solvers/src/solver_gauge_yang_mills.rs
+index 064df377f4..e171d3de30 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/solver_gauge_yang_mills.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/solver_gauge_yang_mills.rs
+@@ -392,12 +392,12 @@ fn classify_obstruction_source(
+ 
+ fn classify_yang_mills_truth(
+     mass_gap_expected: bool,
+-    obstruction: ObstructionSource,
++    obstruction: &ObstructionSource,
+ ) -> OmegaTruthValue {
+     // 8. Truth value for the UROS solver
+     if mass_gap_expected {
+         OmegaTruthValue::True
+-    } else if obstruction == ObstructionSource::None {
++    } else if *obstruction == ObstructionSource::None {
+         OmegaTruthValue::False
+     } else {
+         OmegaTruthValue::Unknown // e.g., abelian with topological sectors
+@@ -447,7 +447,7 @@ pub fn analyze_yang_mills(problem: &YangMillsProblem) -> YangMillsResult {
+         estimate_mass_gap_scale(&problem.group, &problem.manifold, problem.coupling)
+     });
+ 
+-    let as_truth = classify_yang_mills_truth(mass_gap_expected, obstruction);
++    let as_truth = classify_yang_mills_truth(mass_gap_expected, &obstruction);
+ 
+     YangMillsResult {
+         perturbative_descent: bv.cme_satisfied,
+diff --git a/omega_engine/crates_rs/omega_solvers/src/solver_hodge_rational_decomp.rs b/omega_engine/crates_rs/omega_solvers/src/solver_hodge_rational_decomp.rs
+index 7286db5589..cd291fff47 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/solver_hodge_rational_decomp.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/solver_hodge_rational_decomp.rs
+@@ -12,6 +12,7 @@ use crate::cert_hodge_decomp::{
+     VerifiedHodge,
+ };
+ use linear_algebra::exact_field::rational_bareiss::{self as exact, RationalBudget, RationalError};
++use num_rational::BigRational;
+ 
+ #[derive(Clone, Debug, PartialEq, Eq)]
+ pub struct HodgeSolution {
+diff --git a/omega_engine/crates_rs/omega_solvers/src/solver_lp_phi1_boundary.rs b/omega_engine/crates_rs/omega_solvers/src/solver_lp_phi1_boundary.rs
+index f84c2a6ab2..875f79179d 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/solver_lp_phi1_boundary.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/solver_lp_phi1_boundary.rs
+@@ -232,7 +232,7 @@ fn verify_phi1_boundary_certificate(
+     z: &[i128],
+     phi: &[i128],
+     objective: i128,
+-) -> Result<omega_functional::phi1::VerifiedPhi1Result, NetworkSimplexError> {
++) -> Result<omega_functional::phi1::VerifiedExactPhi1, NetworkSimplexError> {
+     // Replay the primal-dual pair through omega_functional before reporting it.
+     let num_v = boundary.num_vertices;
+     let integer = |value: i128| BigRational::from_integer(BigInt::from(value));
+diff --git a/omega_engine/crates_rs/omega_solvers/src/solver_neville_aitken_enclosure.rs b/omega_engine/crates_rs/omega_solvers/src/solver_neville_aitken_enclosure.rs
+index d8bb1caf37..d2a820214c 100644
+--- a/omega_engine/crates_rs/omega_solvers/src/solver_neville_aitken_enclosure.rs
++++ b/omega_engine/crates_rs/omega_solvers/src/solver_neville_aitken_enclosure.rs
+@@ -227,7 +227,7 @@ fn validate_problem_header(
+ 
+ fn extract_sample_and_remainder(
+     index: usize,
+-    sample: &NevilleSample,
++    sample: &SampleBound,
+     bound_opt: Option<&BigRational>,
+     fuel: &mut RationalBudget,
+ ) -> Result<(BigRational, RationalEndpoints, BigRational), NevilleEnclosureError> {
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/continuum.rs b/omega_engine/crates_rs/omega_symbol_game/src/continuum.rs
+index 2d934e9e23..9601b3a2d2 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/continuum.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/continuum.rs
+@@ -182,7 +182,7 @@ fn eval_cochain_symmetry(
+     dimensions: [usize; 3],
+     d0: Vec<String>,
+     d1: Vec<String>,
+-    maps: [SignedMap; 3],
++    maps: [Map; 3],
+     difference_operator: Option<Vec<String>>,
+ ) -> Result<Value, String> {
+     let [n0, n1, n2] = dimensions;
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/epics/bytecode/machine.rs b/omega_engine/crates_rs/omega_symbol_game/src/epics/bytecode/machine.rs
+index 5e86e68786..a8f08d97c3 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/epics/bytecode/machine.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/epics/bytecode/machine.rs
+@@ -102,7 +102,7 @@ impl RegisterMachineState {
+ 
+     fn read_glyph(&self, opcode: &'static str, reg: usize) -> Result<u64, BytecodeRefusal> {
+         match self.read(opcode, reg)? {
+-            RegisterValue::Glyph { glyph_id } => Ok(*glyph_id),
++            RegisterValue::Glyph { glyph_id } => Ok(glyph_id),
+             other => Err(BytecodeRefusal::RegisterTypeMismatch {
+                 opcode,
+                 reg,
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/foundation/dda.rs b/omega_engine/crates_rs/omega_symbol_game/src/foundation/dda.rs
+index 04b4a4a03f..79b4029796 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/foundation/dda.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/foundation/dda.rs
+@@ -243,7 +243,7 @@ where
+ 
+     fn verify_losses_and_removals(
+         losses: &[LossRecord],
+-        removed: &[String],
++        removed: &BTreeSet<String>,
+         protected_names: &BTreeSet<String>,
+     ) -> Result<(), FoundationError> {
+         let mut lost_fields = BTreeSet::new();
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/glyph_trajectory.rs b/omega_engine/crates_rs/omega_symbol_game/src/glyph_trajectory.rs
+index 072da710da..518802f3ba 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/glyph_trajectory.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/glyph_trajectory.rs
+@@ -435,9 +435,9 @@ fn build_transport_scope(
+     index: usize,
+ ) -> Result<
+     (
+-        omega_contracts::HashValue,
+-        omega_contracts::HashValue,
+-        omega_contracts::HashValue,
++        Hash256,
++        Hash256,
++        Hash256,
+         ScopeBinding,
+     ),
+     GlyphRefusal,
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/invoke/native_homology.rs b/omega_engine/crates_rs/omega_symbol_game/src/invoke/native_homology.rs
+index 3e241e048a..cab54bbf11 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/invoke/native_homology.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/invoke/native_homology.rs
+@@ -207,8 +207,8 @@ fn parse_and_validate_delta(
+ 
+ fn execute_perturbation_transfer(
+     data: ContractionData,
+-    report: omega_homological_algebra::homological_perturbation::NormalizationReport,
+-    delta: Vec<omega_homological_algebra::matrix::RationalMatrix>,
++    report: SideConditionReport,
++    delta: [BasicMatrix<BigRational>; 2],
+ ) -> Result<Value, String> {
+     if !report.is_normalized() {
+         return Ok(failed(
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/invoke/qm_classical.rs b/omega_engine/crates_rs/omega_symbol_game/src/invoke/qm_classical.rs
+index 85299a9002..5670788e6b 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/invoke/qm_classical.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/invoke/qm_classical.rs
+@@ -105,7 +105,7 @@ fn strings(values: &[Exact]) -> Vec<String> {
+     values.iter().map(wire).collect()
+ }
+ 
+-fn format_report_query_witness(decision: &ReportQueryDecision) -> Value {
++fn format_report_query_witness(decision: &carrier_tests::ReportDecision) -> Value {
+     match decision {
+         ReportQueryDecision::Collision(c) => json!({
+             "verdict":"report_collision", "first":c.first, "second":c.second,
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/invoke/workflow.rs b/omega_engine/crates_rs/omega_symbol_game/src/invoke/workflow.rs
+index 82a9d9a5de..a63a648d05 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/invoke/workflow.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/invoke/workflow.rs
+@@ -855,7 +855,8 @@ mod negative_cost_host {
+                 &omega, &proposal, None, None,
+             )
+         } else {
+-            let obstructions = serde_json::from_value(payload["obstructions"].clone()).unwrap();
++            let obstructions: Vec<String> =
++                serde_json::from_value(payload["obstructions"].clone()).unwrap();
+             omega_symbol_game_runtime::scoring_frontier::score_discrete_proposal_with_policy(
+                 &obstructions,
+                 &proposal,
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/mcp.rs b/omega_engine/crates_rs/omega_symbol_game/src/mcp.rs
+index 84c8e0696e..2857149814 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/mcp.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/mcp.rs
+@@ -218,7 +218,7 @@ impl McpSession {
+         if bytes.len() > MAX_ARTIFACT_MCP_MESSAGE_BYTES {
+             return Err(error(Value::Null, -32600, "MCP_MESSAGE_TOO_LARGE"));
+         }
+-        let Ok(value) = strict_json::<Value>(bytes, MAX_ARTIFACT_MCP_MESSAGE_BYTES) else {
++        let Ok(value) = strict_json(bytes, MAX_ARTIFACT_MCP_MESSAGE_BYTES) else {
+             return Err(error(Value::Null, -32700, "MALFORMED_OR_DUPLICATE_JSON"));
+         };
+         let Some(object) = value.as_object() else {
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/measurement_certificate.rs b/omega_engine/crates_rs/omega_symbol_game/src/measurement_certificate.rs
+index ccb6c6b00b..cec4b7128b 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/measurement_certificate.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/measurement_certificate.rs
+@@ -73,7 +73,7 @@ fn rationals(values: &[String]) -> Result<Vec<Exact>, String> {
+         .collect()
+ }
+ 
+-fn validate_observable_factors(factors: &[ObservableFactor], site_count: usize) -> Result<(), String> {
++fn validate_observable_factors(factors: &[PauliFactor], site_count: usize) -> Result<(), String> {
+     let mut previous = None;
+     for f in factors {
+         let invalid_site = f.site >= site_count || previous.is_some_and(|p| p >= f.site);
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/report_operation.rs b/omega_engine/crates_rs/omega_symbol_game/src/report_operation.rs
+index 05cbd77481..203e1b9991 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/report_operation.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/report_operation.rs
+@@ -97,7 +97,7 @@ fn detached(current: &ReportState, partition: &[usize]) -> Result<ReportState, S
+     Ok(post)
+ }
+ 
+-fn validate_native_report_result(result: &native::ReportResult) -> Result<(), String> {
++fn validate_native_report_result(result: &native::ResultPacket) -> Result<(), String> {
+     if result
+         .operations
+         .iter()
+@@ -115,7 +115,7 @@ fn validate_native_report_result(result: &native::ReportResult) -> Result<(), St
+ 
+ fn prepare_report_post_state(
+     current: &ReportState,
+-    result: &native::ReportResult,
++    result: &native::ResultPacket,
+     repair_prefix: usize,
+ ) -> Result<(ReportState, String, String, String), String> {
+     let repair = result.repair.as_ref().ok_or("REPORT_REPAIR_REQUIRED")?;
+@@ -144,7 +144,7 @@ fn mint_report_license(
+     phi_post: String,
+     repair_differential: String,
+     witness_digest: String,
+-) -> Result<omega_policy::LicensingReceipt, String> {
++) -> Result<omega_policy::ActionLicense, String> {
+     let invariants = vec![
+         "original_request".into(),
+         "protected_questions".into(),
+@@ -177,7 +177,7 @@ fn mint_report_license(
+         .map_err(|e| e.to_string())
+ }
+ 
+-fn evaluate_and_verify_report(input: &ExecuteRequest) -> Result<native::ReportResult, String> {
++fn evaluate_and_verify_report(input: &ExecuteRequest) -> Result<native::ResultPacket, String> {
+     let identity = binding(&input.request)?;
+     report_route::validate(&input.route, &identity)?;
+     if input.current != initial(&input.request, &input.current.target)? {
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/woland_scoring.rs b/omega_engine/crates_rs/omega_symbol_game/src/woland_scoring.rs
+index aaf8c4475b..2cc3131b59 100644
+--- a/omega_engine/crates_rs/omega_symbol_game/src/woland_scoring.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/woland_scoring.rs
+@@ -236,7 +236,7 @@ fn decode_verified_l1_solution(
+ }
+ 
+ fn dispatch_l1_primal_dual_solver(
+-    matrix: Vec<Vec<String>>,
++    matrix: Vec<Vec<&str>>,
+     target: Vec<String>,
+ ) -> Result<Result<Value, ObstructionMeasurement>, Refusal> {
+     let outcome = crate::dispatch_runtime_request(&crate::RuntimeRequestV1 {
+diff --git a/omega_engine/crates_rs/omega_symbol_game_runtime/src/cochain.rs b/omega_engine/crates_rs/omega_symbol_game_runtime/src/cochain.rs
+index c21bb6d504..e11f81edb6 100644
+--- a/omega_engine/crates_rs/omega_symbol_game_runtime/src/cochain.rs
++++ b/omega_engine/crates_rs/omega_symbol_game_runtime/src/cochain.rs
+@@ -542,7 +542,7 @@ impl PromptCochainEvaluator {
+     }
+ 
+     fn evaluate_gamma2_exact(
+-        exact_complex: &ChainComplexQ,
++        exact_complex: &ExactCochainComplexQ,
+         edge_cochain: &[BigRational],
+     ) -> Result<BigRational, CochainDisposition> {
+         // 2. Secondary Closure Defect Functional: Gamma_2(c) = ||d_1 c||_1
+@@ -584,7 +584,7 @@ impl PromptCochainEvaluator {
+     }
+ 
+     fn compute_face_defect(
+-        exact_complex: &ChainComplexQ,
++        exact_complex: &ExactCochainComplexQ,
+         edge_cochain: &[BigRational],
+     ) -> Vec<BigRational> {
+         if exact_complex.c2_dim() == 0 {
+@@ -603,7 +603,7 @@ impl PromptCochainEvaluator {
+     }
+ 
+     fn classify_cochain_disposition(
+-        exact_complex: &ChainComplexQ,
++        exact_complex: &ExactCochainComplexQ,
+         edge_cochain: &[BigRational],
+         primal_potential: &[BigRational],
+         dual_witness: &[BigRational],
+diff --git a/omega_engine/crates_rs/omega_symbol_game_runtime/src/code_change/commands.rs b/omega_engine/crates_rs/omega_symbol_game_runtime/src/code_change/commands.rs
+index 8bb89420f4..4422c5015a 100644
+--- a/omega_engine/crates_rs/omega_symbol_game_runtime/src/code_change/commands.rs
++++ b/omega_engine/crates_rs/omega_symbol_game_runtime/src/code_change/commands.rs
+@@ -1,6 +1,7 @@
+ //! Sequential create, submit and candidate-bound gate evaluation commands.
+ 
+ use super::*;
++use crate::diff_parser::DiffParseResult;
+ 
+ pub struct CreateCodeChangeProposalUseCase;
+ 
+diff --git a/omega_engine/crates_rs/omega_symbol_game_runtime/src/prompt_artifact.rs b/omega_engine/crates_rs/omega_symbol_game_runtime/src/prompt_artifact.rs
+index a4959a0d89..a05717805a 100644
+--- a/omega_engine/crates_rs/omega_symbol_game_runtime/src/prompt_artifact.rs
++++ b/omega_engine/crates_rs/omega_symbol_game_runtime/src/prompt_artifact.rs
+@@ -290,7 +290,7 @@ fn normalize_hint_demand_id(raw: &Value) -> Result<Value, String> {
+     }
+ }
+ 
+-fn validate_prior_digests(raw: &Value) -> Result<&Vec<Value>, String> {
++fn validate_prior_digests(raw: &Value) -> Result<&[Value], String> {
+     let prior = array(raw, "prior_report_digests", 64)?;
+     for value in prior {
+         digest(value, "prior_report_digest")?;
+diff --git a/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/permutation.rs b/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/permutation.rs
+index 800b27422f..78dd0c66dc 100644
+--- a/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/permutation.rs
++++ b/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/permutation.rs
+@@ -2,7 +2,7 @@ use num_bigint::BigUint;
+ use num_traits::{One, Zero};
+ use std::collections::{BTreeMap, BTreeSet};
+ 
+-use super::Presentation;
++use super::{Presentation, Rule};
+ 
+ /// A computed decomposition of the supplied finite permutation, not a pin.
+ #[derive(Debug, Clone, PartialEq, Eq)]
+@@ -75,7 +75,7 @@ fn collect_signature_scalars(
+ }
+ 
+ fn validate_and_insert_rule(
+-    rule: &RewriteRule,
++    rule: &Rule,
+     symbols: &BTreeSet<char>,
+     successors: &mut BTreeMap<char, char>,
+ ) -> Result<(), PermutationOrderError> {
+diff --git a/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/reduction.rs b/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/reduction.rs
+index 75f65e255f..cbada0bb37 100644
+--- a/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/reduction.rs
++++ b/omega_engine/crates_rs/omega_symbol_game_runtime/src/rewriting/reduction.rs
+@@ -255,9 +255,9 @@ fn merged_overlap_source(
+ }
+ 
+ fn build_ordered_critical_pair(
+-    left_rule: &RewriteRule,
++    left_rule: &Rule,
+     left_start: usize,
+-    right_rule: &RewriteRule,
++    right_rule: &Rule,
+     right_start: usize,
+     source: String,
+ ) -> CriticalPair {
+@@ -290,8 +290,8 @@ fn build_ordered_critical_pair(
+ type CriticalPairKey = (String, ReductionStep, ReductionStep, String, String);
+ 
+ fn collect_pair_overlaps(
+-    left_spec: (usize, &[char], &RewriteRule),
+-    right_spec: (usize, &[char], &RewriteRule),
++    left_spec: (usize, &[char], &Rule),
++    right_spec: (usize, &[char], &Rule),
+     seen: &mut BTreeSet<CriticalPairKey>,
+     pairs: &mut Vec<CriticalPair>,
+ ) {
+diff --git a/omega_engine/crates_rs/omega_symbol_game_runtime/src/stabilizer/solver.rs b/omega_engine/crates_rs/omega_symbol_game_runtime/src/stabilizer/solver.rs
+index 1a7790ece5..f15916644d 100644
+--- a/omega_engine/crates_rs/omega_symbol_game_runtime/src/stabilizer/solver.rs
++++ b/omega_engine/crates_rs/omega_symbol_game_runtime/src/stabilizer/solver.rs
+@@ -25,7 +25,7 @@ impl<T, E: std::fmt::Debug> CheckedInvariantExt_1c973ba1<T> for std::result::Res
+         }
+     }
+ }
+-use super::{parse_case, DecompositionRow, StabilizerOutcome, MAX_QUBITS};
++use super::{parse_case, DecompositionRow, StabilizerOutcome, Term, MAX_QUBITS};
+ use crate::f2::F2Matrix;
+ use num_bigint::BigInt;
+ use num_rational::{BigRational, Rational64};
+@@ -57,7 +57,7 @@ fn build_f2_matrix_from_cols(n: usize, basis_cols: &[Vec<bool>]) -> Result<F2Mat
+             mat_data.push(col[r]);
+         }
+     }
+-    F2Matrix::new(2 * n, k, mat_data)
++    F2Matrix::new(2 * n, k, mat_data).map_err(|error| error.to_string())
+ }
+ 
+ fn extract_independent_generators(
+diff --git a/omega_engine/crates_rs/omega_wdp/src/coda/q/finite_shadow_exact.rs b/omega_engine/crates_rs/omega_wdp/src/coda/q/finite_shadow_exact.rs
+index 5377d331f0..89c7ed51ef 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/coda/q/finite_shadow_exact.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/coda/q/finite_shadow_exact.rs
+@@ -638,9 +638,9 @@ impl FiniteShadowFixture {
+         case_id: &str,
+         a: &FinDistribution,
+         b: &FinDistribution,
+-        expected_product: &[String],
+-        expected_marg_a: &[String],
+-        expected_marg_b: &[String],
++        expected_product: &[u64],
++        expected_marg_a: &[u64],
++        expected_marg_b: &[u64],
+     ) -> Result<(), String> {
+         let product = a
+             .product(b)
+diff --git a/omega_engine/crates_rs/omega_wdp/src/ddc/agent_contract.rs b/omega_engine/crates_rs/omega_wdp/src/ddc/agent_contract.rs
+index d3fb7772d0..0ac0fb86eb 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/ddc/agent_contract.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/ddc/agent_contract.rs
+@@ -461,7 +461,7 @@ fn oracle_receipt(
+ fn index_defect_traces<'a>(
+     packet: &AgentWorkPacket,
+     proposal: &'a AgentProposal,
+-) -> Result<BTreeMap<&'a str, &'a AgentDefectTrace>, String> {
++) -> Result<BTreeMap<&'a str, &'a DefectTrace>, String> {
+     let packet_defects: BTreeSet<&str> = packet
+         .defects
+         .iter()
+diff --git a/omega_engine/crates_rs/omega_wdp/src/genesis_guarded_history.rs b/omega_engine/crates_rs/omega_wdp/src/genesis_guarded_history.rs
+index 4f9a863fb1..12aff6cf76 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/genesis_guarded_history.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/genesis_guarded_history.rs
+@@ -2433,7 +2433,7 @@ pub fn evaluate_problem(problem: CausalProblem) -> Result<GuardedEvaluation, Gua
+ }
+ 
+ fn build_coherence_witnesses(
+-    complex: &GuardedHistoryComplex,
++    complex: &SwapComplex,
+     star_base: &Option<Vec<usize>>,
+     pairs: usize,
+ ) -> Result<Vec<Json>, GuardedHistoryError> {
+@@ -2462,7 +2462,7 @@ fn build_coherence_witnesses(
+     Ok(witnesses)
+ }
+ 
+-fn cocycle_to_json(complex: &GuardedHistoryComplex, cocycle: Option<SeparatingCocycle>) -> Json {
++fn cocycle_to_json(complex: &SwapComplex, cocycle: Option<SeparatingCocycle>) -> Json {
+     let Some(c) = cocycle else {
+         return Json::Null;
+     };
+diff --git a/omega_engine/crates_rs/omega_wdp/src/genesis_joint_dynamics.rs b/omega_engine/crates_rs/omega_wdp/src/genesis_joint_dynamics.rs
+index 7543a8cf3f..33d3863533 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/genesis_joint_dynamics.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/genesis_joint_dynamics.rs
+@@ -4,7 +4,7 @@
+ use crate::genesis_carrier::{
+     CarrierError, CarrierRequest, PassageAnswer, PassageCarrier, PassageQuestion,
+ };
+-use crate::genesis_passage::PassageEvent;
++use crate::genesis_passage::{PassageEvent, PassageState};
+ use omega_category_theory::finite_joint_dynamics::{
+     JointDynamics, JointDynamicsError, JointOperation,
+ };
+@@ -91,7 +91,7 @@ impl PassageJoint {
+         right_ids: &BTreeMap<&PassageState, usize>,
+         pairs: &BTreeMap<(usize, usize), usize>,
+         interaction: usize,
+-        op: &PassageInteraction,
++        op: &LicenseInteraction,
+     ) -> Result<Vec<Option<usize>>, PassageJointError> {
+         let mut targets = Vec::new();
+         for (row, &(l, r)) in request.pairs.iter().enumerate() {
+diff --git a/omega_engine/crates_rs/omega_wdp/src/genesis_ongoing_adapter.rs b/omega_engine/crates_rs/omega_wdp/src/genesis_ongoing_adapter.rs
+index 520a747beb..f3d79881b2 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/genesis_ongoing_adapter.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/genesis_ongoing_adapter.rs
+@@ -345,7 +345,7 @@ impl GenesisOngoingAdapter {
+         &self,
+         vertices: &[usize],
+         pair_indices: &[usize],
+-        selected: &[([usize; 3], usize)],
++        selected: &[(MarkedTriple, usize)],
+     ) -> Result<Self, GenesisBridgeError> {
+         Self::try_new(GenesisOngoingPacket {
+             terms: vertices
+diff --git a/omega_engine/crates_rs/omega_wdp/src/genesis_passage.rs b/omega_engine/crates_rs/omega_wdp/src/genesis_passage.rs
+index d67365e247..e16dd70cf3 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/genesis_passage.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/genesis_passage.rs
+@@ -162,7 +162,7 @@ impl PassageState {
+         }
+     }
+ 
+-    fn add_col_enabled(&self, c: &[usize]) -> bool {
++    fn add_col_enabled(&self, c: &Column) -> bool {
+         self.column_ok(c) && self.licensed && self.budget > 0
+     }
+ 
+diff --git a/omega_engine/crates_rs/omega_wdp/src/genesis_report_runtime.rs b/omega_engine/crates_rs/omega_wdp/src/genesis_report_runtime.rs
+index a715f00d1a..5f39d76b3d 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/genesis_report_runtime.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/genesis_report_runtime.rs
+@@ -474,7 +474,7 @@ fn requested_global(
+ fn evaluate_operations(
+     presentation: &Presentation,
+     words: &[Vec<Event>],
+-    continuations: &[NamedWord],
++    continuations: &[NamedHistory],
+     class_of: &[usize],
+ ) -> Result<Vec<Operation>, Refusal> {
+     let mut operations = Vec::new();
+diff --git a/omega_engine/crates_rs/omega_wdp/src/genesis_transport_descent.rs b/omega_engine/crates_rs/omega_wdp/src/genesis_transport_descent.rs
+index c34aef6823..01274642d2 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/genesis_transport_descent.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/genesis_transport_descent.rs
+@@ -5,6 +5,7 @@ use crate::types::AuthorityEffect;
+ use linear_algebra::backend::basic_matrix::BasicMatrix;
+ use linear_algebra::gauge_pair_transport::{GaugeDescent, GaugePairTransport, GaugeTransportError};
+ use num_rational::BigRational;
++use num_bigint::BigInt;
+ 
+ #[derive(Debug, thiserror::Error)]
+ pub enum CarrierDescentError {
+diff --git a/omega_engine/crates_rs/omega_wdp/src/guarded_chain_transport.rs b/omega_engine/crates_rs/omega_wdp/src/guarded_chain_transport.rs
+index b023408d5e..2010b2f0db 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/guarded_chain_transport.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/guarded_chain_transport.rs
+@@ -37,7 +37,7 @@ use omega_homology::f2_cohomology::ComplexError;
+ use omega_homology::finite_poset::{FinitePoset, PosetError};
+ use omega_homology::integral_chain_complex::{IntegralChainComplex, SparseIntegerMatrix};
+ use omega_homology::integral_chain_equivalence::{
+-    verify_chain_equivalence, ChainEquivalenceCertificate, ChainEquivalenceError,
++    verify_chain_equivalence, ChainEquivalenceCertificate, ChainEquivalenceError, CheckedChainEquivalence,
+ };
+ use omega_homology::permutohedral::{
+     add_scaled, boundary, Cell, CellChain, ContractionLimits, LinearExtensionContraction,
+@@ -537,7 +537,7 @@ fn compute_single_inclusion_image(
+         return Ok(CellChain::new());
+     }
+     let poset = event_order(&task_order(cell, pairs)?)?;
+-    carrier(event_carriers, poset, limits)?.fill_cycle(&boundary_image, degree - 1)
++    Ok(carrier(event_carriers, poset, limits)?.fill_cycle(&boundary_image, degree - 1)?)
+ }
+ 
+ fn build_source_homotopy_images(
+@@ -590,7 +590,7 @@ fn compute_single_homotopy_image(
+         return Ok(CellChain::new());
+     }
+     let poset = event_order(&event_task_order(cell, pairs)?)?;
+-    carrier(event_carriers, poset, limits)?.fill_cycle(&residual, degree)
++    Ok(carrier(event_carriers, poset, limits)?.fill_cycle(&residual, degree)?)
+ }
+ 
+ fn compute_homotopy_residual(
+diff --git a/omega_engine/crates_rs/omega_wdp/src/measurement_packet.rs b/omega_engine/crates_rs/omega_wdp/src/measurement_packet.rs
+index 7be5126aff..cd88c5eb9a 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/measurement_packet.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/measurement_packet.rs
+@@ -502,7 +502,7 @@ fn validate_measurement_rationals(
+ fn evaluate_and_validate_calibration(
+     actual: &QuantumMeasurementProblem,
+     registration: &InstrumentRegistration,
+-) -> Result<(CalibrationCascadeReceipt, BoundedReading), MeasurementPacketError> {
++) -> Result<(CalibrationReceipt, BoundedReading), MeasurementPacketError> {
+     let aligned_bindings = actual.calibration.input.center() == &registration.mark.indication
+         && actual.value_map.source_carrier_id == registration.carrier_id
+         && actual.calibration_scale_id == actual.scale.scale_id
+@@ -529,7 +529,7 @@ fn evaluate_and_validate_calibration(
+ }
+ 
+ fn validate_measurement_scale(
+-    scale: &MeasurementScale,
++    scale: &NumericMeasurementScale,
+     corrected_value: &BigRational,
+     corrected_enclosure: &BoundedReading,
+ ) -> Result<(), MeasurementPacketError> {
+@@ -577,7 +577,7 @@ pub fn evaluate_quantum_measurement(
+ fn register_and_observe_instrument(
+     actual: &QuantumMeasurementProblem,
+     reaccessed_mark: &InstrumentMark,
+-) -> Result<(RegisteredInstrument, InstrumentObservation), MeasurementPacketError> {
++) -> Result<(InstrumentRegistration, AcceptedInstrumentObservation), MeasurementPacketError> {
+     let registration = register_instrument_problem(actual)?;
+     let witness = witness_instrument_registration(
+         &registration,
+@@ -595,8 +595,8 @@ fn register_and_observe_instrument(
+ 
+ fn evaluate_calibration_and_traceability(
+     actual: &QuantumMeasurementProblem,
+-    registration: &RegisteredInstrument,
+-) -> Result<(CalibrationReceipt, BoundedReading, TraceabilityReceipt), MeasurementPacketError> {
++    registration: &InstrumentRegistration,
++) -> Result<(CalibrationReceipt, BoundedReading, DocumentaryTraceabilityReport), MeasurementPacketError> {
+     let (calibration, output) = evaluate_and_validate_calibration(actual, registration)?;
+     let traceability = validate_documentary_traceability(&actual.traceability)?;
+     if traceability.graph().origin_id != actual.calibration.packet_id
+@@ -610,7 +610,7 @@ fn evaluate_calibration_and_traceability(
+ fn build_measurement_result_and_enclosure(
+     actual: &QuantumMeasurementProblem,
+     output: &BoundedReading,
+-    traceability: &TraceabilityReceipt,
++    traceability: &DocumentaryTraceabilityReport,
+ ) -> Result<(DeclaredMeasurementResult, BoundedReading), MeasurementPacketError> {
+     let corrected_value = output.center() + &actual.correction;
+     let corrected_enclosure = BoundedReading::new(
+diff --git a/omega_engine/crates_rs/omega_wdp/src/phi1_coda_adapter.rs b/omega_engine/crates_rs/omega_wdp/src/phi1_coda_adapter.rs
+index 4deb1afa8e..3c6171415a 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/phi1_coda_adapter.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/phi1_coda_adapter.rs
+@@ -244,7 +244,7 @@ fn evaluate_phi1_evidence(
+     boundary: &Boundary1,
+     omega: &[i128],
+     solution: &Phi1Solution,
+-    certificate: ExactPhi1Certificate<BigRational>,
++    certificate: ExactPhi1Certificate,
+     complex: ExactCochainComplexQ,
+ ) -> Result<CodaGtlaEvaluation, Phi1CodaAdapterError> {
+     let carrier_manifest = serde_json::to_vec(&(
+diff --git a/omega_engine/crates_rs/omega_wdp/src/prime_algos/prime_algorithm_0.rs b/omega_engine/crates_rs/omega_wdp/src/prime_algos/prime_algorithm_0.rs
+index 9b37b65c4e..8e213e88aa 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/prime_algos/prime_algorithm_0.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/prime_algos/prime_algorithm_0.rs
+@@ -525,7 +525,7 @@ pub fn run_admitted(
+     let terminal = term;
+ 
+     // Step 12 — literature only after terminal
+-    let (lit_msg, literature_compare) = format_step12_literature(adapter.literature_note(), terminal);
++    let (lit_msg, literature_compare) = format_step12_literature(adapter.literature_note().as_deref(), terminal);
+     emit(12, DdaOp::Integration, true, lit_msg);
+ 
+     // Backfill per-step residual state
+diff --git a/omega_engine/crates_rs/omega_wdp/src/wdp_source_packet.rs b/omega_engine/crates_rs/omega_wdp/src/wdp_source_packet.rs
+index e0c1dcadc4..0cdfa5e85e 100644
+--- a/omega_engine/crates_rs/omega_wdp/src/wdp_source_packet.rs
++++ b/omega_engine/crates_rs/omega_wdp/src/wdp_source_packet.rs
+@@ -791,7 +791,7 @@ pub fn evaluate_source_packet(
+ fn validate_replay_bindings(
+     request: &WdpSourcePacketRequestV1,
+     result: &WdpSourcePacketResultV1,
+-    source: &WdpSourceVerificationV1,
++    source: &VerifiedSourceBindingV1,
+     input_digest: &str,
+     carrier_digest: &str,
+ ) -> Result<(), WdpPacketRefusalV1> {
+@@ -840,6 +840,7 @@ fn verify_replay_operation(
+                 result,
+                 fuel,
+             )
++            .map(|_| ())
+             .map_err(hodge_refusal)
+         }
+         (
+diff --git a/omega_engine/crates_rs/omega_woland/src/candidate_checks.rs b/omega_engine/crates_rs/omega_woland/src/candidate_checks.rs
+index 9aa59bbb4a..6c0371988a 100644
+--- a/omega_engine/crates_rs/omega_woland/src/candidate_checks.rs
++++ b/omega_engine/crates_rs/omega_woland/src/candidate_checks.rs
+@@ -72,7 +72,7 @@ fn emit_candidate_check_event(
+         "gamma_2":measurement.and_then(ObstructionMeasurement::gamma2_text),
+     })).map_err(|error|refuse("WOLAND_GATE_RECORD_INVALID",error.to_string()))?;
+     // R audits the result; ACCEPTED alone never becomes an E repair.
+-    emit_event(&event, &bytes, emitters, Some(&step), None)
++    emit_event(&event, &bytes, emitters, Some(&step), None).map(|_| ())
+ }
+ 
+ fn verify_single_candidate_check(
+diff --git a/omega_engine/crates_rs/omega_woland/src/candidate_proposals.rs b/omega_engine/crates_rs/omega_woland/src/candidate_proposals.rs
+index 21b439f0d6..f720d4308e 100644
+--- a/omega_engine/crates_rs/omega_woland/src/candidate_proposals.rs
++++ b/omega_engine/crates_rs/omega_woland/src/candidate_proposals.rs
+@@ -8,7 +8,7 @@ use crate::stage::emission::{
+ };
+ use crate::stage::genealogy::{CemeteryHeadstone, HeadstoneInput};
+ use crate::stage::packets::CandidateProposal;
+-use crate::stage::ports::{Refusal, SeatPort, SeatTurnRequest};
++use crate::stage::ports::{Refusal, SeatPort, SeatTurnReply, SeatTurnRequest};
+ use serde_json::{json, Map, Value};
+ 
+ pub struct CandidateProposalsInput<'a> {
+@@ -143,7 +143,7 @@ fn emit_act3_summary_event(
+         "carrier_hash":sha256_ref(b"carrier"),"witness_hash":sha256_ref(candidate_ids_repr(candidates).as_bytes()),"receipt_sha256":sha256_ref(&bytes),
+         "timestamp":if input.now_utc.is_empty(){time.dda_timestamp}else{input.now_utc}}))
+         .map_err(record_error)?;
+-    emit_event(&event, &bytes, suite, Some(&step), None)
++    emit_event(&event, &bytes, suite, Some(&step), None).map(|_| ())
+ }
+ 
+ #[allow(clippy::too_many_arguments)]
+@@ -219,7 +219,7 @@ fn record_accepted_proposal(
+ }
+ 
+ fn build_begemot_candidate_request(
+-    index: usize,
++    index: i64,
+     objective: &str,
+     request_id: &str,
+ ) -> SeatTurnRequest {
+diff --git a/omega_engine/crates_rs/omega_woland/src/dialectic.rs b/omega_engine/crates_rs/omega_woland/src/dialectic.rs
+index ba008323f0..baa434d7a0 100644
+--- a/omega_engine/crates_rs/omega_woland/src/dialectic.rs
++++ b/omega_engine/crates_rs/omega_woland/src/dialectic.rs
+@@ -350,7 +350,7 @@ impl WolandTurnEngine {
+     fn validate_turn_act_and_seat<'a>(
+         index: usize,
+         depth: u8,
+-        turn_wire: &'a TurnWire,
++        turn_wire: &'a StoredTurnWire,
+         seats: &mut Vec<&'a str>,
+     ) -> Result<Act, Fault> {
+         let act =
+@@ -374,7 +374,7 @@ impl WolandTurnEngine {
+     fn restore_single_turn<'a>(
+         index: usize,
+         depth: u8,
+-        turn_wire: &'a TurnWire,
++        turn_wire: &'a StoredTurnWire,
+         seats: &mut Vec<&'a str>,
+         spent: &mut Rational,
+     ) -> Result<DialecticTurn, Fault> {
+diff --git a/omega_engine/crates_rs/omega_woland/src/gauge_break.rs b/omega_engine/crates_rs/omega_woland/src/gauge_break.rs
+index cfb09ad802..38890d1eac 100644
+--- a/omega_engine/crates_rs/omega_woland/src/gauge_break.rs
++++ b/omega_engine/crates_rs/omega_woland/src/gauge_break.rs
+@@ -225,7 +225,7 @@ fn emit_act4_event(
+         "timestamp": timestamp
+     }))
+     .map_err(record_error)?;
+-    emit_event(&event, &bytes, suite, Some(&step), None)
++    emit_event(&event, &bytes, suite, Some(&step), None).map(|_| ())
+ }
+ 
+ fn evaluate_stagnation_and_telemetry(
+diff --git a/omega_engine/crates_rs/omega_woland/src/independent_witness.rs b/omega_engine/crates_rs/omega_woland/src/independent_witness.rs
+index 5968f8fdb9..1b2de5c1c9 100644
+--- a/omega_engine/crates_rs/omega_woland/src/independent_witness.rs
++++ b/omega_engine/crates_rs/omega_woland/src/independent_witness.rs
+@@ -227,14 +227,14 @@ fn emit_act5_event(
+         "timestamp": timestamp
+     }))
+     .map_err(record_error)?;
+-    emit_event(&event, &bytes, suite, Some(&step), None)
++    emit_event(&event, &bytes, suite, Some(&step), None).map(|_| ())
+ }
+ 
+ fn build_critique_capture(
+     candidate: &CandidateProposal,
+     payload_digest: &str,
+-    reply: &crate::gateway::SeatTurnReply,
+-    critique: &crate::stage::critique::StructuredCritique,
++    reply: &crate::stage::ports::SeatTurnReply,
++    critique: &crate::evidence_parse::StructuredCritique,
+     verdict: &str,
+     challenge: &Challenge,
+ ) -> Value {
+@@ -261,7 +261,7 @@ fn critique_single_candidate(
+     critique_verdicts: &mut BTreeMap<String, String>,
+     critiques_data: &mut Vec<Value>,
+     critiques: &mut Vec<Challenge>,
+-    dead_candidates: &mut Vec<CandidateProposal>,
++    dead_candidates: &mut Vec<CemeteryHeadstone>,
+     surviving_candidates: &mut Vec<CandidateProposal>,
+ ) -> Result<bool, Refusal> {
+     let (payload, payload_digest) = verify_candidate_payload(input, candidate)?;
+@@ -273,7 +273,7 @@ fn critique_single_candidate(
+         role_kind: "prose".into(),
+         candidate_id: candidate.candidate_id().clone(),
+         round_index: round_count,
+-        context_bytes: payload,
++        context_bytes: payload.clone(),
+     };
+     let port = seat_port
+         .as_mut()
+diff --git a/omega_engine/crates_rs/omega_woland/src/intergates.rs b/omega_engine/crates_rs/omega_woland/src/intergates.rs
+index 766f991a7e..9a007a2ebd 100644
+--- a/omega_engine/crates_rs/omega_woland/src/intergates.rs
++++ b/omega_engine/crates_rs/omega_woland/src/intergates.rs
+@@ -712,7 +712,7 @@ fn check_repeated_edge_descent(
+ 
+ fn evaluate_spec_payload(
+     spec: &Spec,
+-    payload: &Fields,
++    payload: &Map<String, Value>,
+     history_edges: &[String],
+ ) -> Result<Value, Refusal> {
+     if payload
+diff --git a/omega_engine/crates_rs/omega_woland/src/intergates_source_contract.rs b/omega_engine/crates_rs/omega_woland/src/intergates_source_contract.rs
+index 0b42e96762..85da981106 100644
+--- a/omega_engine/crates_rs/omega_woland/src/intergates_source_contract.rs
++++ b/omega_engine/crates_rs/omega_woland/src/intergates_source_contract.rs
+@@ -539,7 +539,7 @@ fn verify_scar_custody(p: &Fields) -> Result<usize, Refusal> {
+     Ok(before.len())
+ }
+ 
+-fn verify_high_antagonism_envelope(p: &Fields, current: &Q) -> Result<(), Refusal> {
++fn verify_high_antagonism_envelope(p: &Fields, current: &BigRational) -> Result<(), Refusal> {
+     let acknowledged = boolean(p, "has_acknowledged_error")?;
+     let repair = text(p, "repair_action_proposed")?;
+     let envelope = text(p, "deescalation_envelope")?;
+diff --git a/omega_engine/crates_rs/omega_woland/src/obstruction_identification.rs b/omega_engine/crates_rs/omega_woland/src/obstruction_identification.rs
+index e5258c9082..9eaa7a9c23 100644
+--- a/omega_engine/crates_rs/omega_woland/src/obstruction_identification.rs
++++ b/omega_engine/crates_rs/omega_woland/src/obstruction_identification.rs
+@@ -92,7 +92,7 @@ fn emit_act2_event(
+         fields.insert("gamma_2".into(), json!(measurement.gamma2_text()));
+     }
+     let step: DdcStep = serde_json::from_value(Value::Object(fields)).map_err(record_error)?;
+-    emit_event(&event, &bytes, suite, Some(&step), None)
++    emit_event(&event, &bytes, suite, Some(&step), None).map(|_| ())
+ }
+ 
+ pub fn execute_act2_obstruction_identification(
+diff --git a/omega_engine/crates_rs/omega_woland/src/primary_gates.rs b/omega_engine/crates_rs/omega_woland/src/primary_gates.rs
+index be595fa9d5..b76ab83574 100644
+--- a/omega_engine/crates_rs/omega_woland/src/primary_gates.rs
++++ b/omega_engine/crates_rs/omega_woland/src/primary_gates.rs
+@@ -1761,7 +1761,7 @@ fn dispatch_gate_index(index: usize, p: &Fields) -> GateResult {
+     }
+ }
+ 
+-fn unpack_gate_outcome(outcome: GateResult) -> (&'static str, Option<&'static str>, String, Value) {
++fn unpack_gate_outcome(outcome: GateResult) -> (&'static str, Option<String>, String, Value) {
+     match outcome {
+         Ok(witness) => (
+             "PASS",
+diff --git a/omega_engine/crates_rs/omega_woland/src/providers/anthropic/transport.rs b/omega_engine/crates_rs/omega_woland/src/providers/anthropic/transport.rs
+index 7900f94bbf..8c92fd41fd 100644
+--- a/omega_engine/crates_rs/omega_woland/src/providers/anthropic/transport.rs
++++ b/omega_engine/crates_rs/omega_woland/src/providers/anthropic/transport.rs
+@@ -288,7 +288,7 @@ impl<C: HttpClient, S: RawReplySink> AnthropicMessagesTransport<C, S> {
+         &mut self,
+         raw_name: &str,
+         body: &[u8],
+-    ) -> Result<super::super::raw_reply::RawReplyRef, SendError> {
++    ) -> Result<PersistedRaw, SendError> {
+         match self.sink.persist(raw_name, body) {
+             Err(refusal) if refusal.code == "RAW_REPLY_CONFLICT" => {
+                 let hex = digest(body);
+@@ -301,7 +301,7 @@ impl<C: HttpClient, S: RawReplySink> AnthropicMessagesTransport<C, S> {
+     }
+ 
+     fn decode_reply(
+-        reply: &super::super::http::HttpStatusResponse,
++        reply: &crate::providers::transport::HttpReply,
+     ) -> Result<MessagesResponse, Refusal> {
+         if let Some(code) = &reply.truncated {
+             Err(Refusal::new(
+diff --git a/omega_engine/crates_rs/omega_woland/src/residual_ledger.rs b/omega_engine/crates_rs/omega_woland/src/residual_ledger.rs
+index 4a313f1f33..0053982bdd 100644
+--- a/omega_engine/crates_rs/omega_woland/src/residual_ledger.rs
++++ b/omega_engine/crates_rs/omega_woland/src/residual_ledger.rs
+@@ -158,7 +158,7 @@ fn emit_act6_event(
+         "timestamp": ts,
+     }))
+     .map_err(|error| refuse("WOLAND_GATE_RECORD_INVALID", error.to_string()))?;
+-    emit_event(&event, &bytes, suite, Some(&step), None)
++    emit_event(&event, &bytes, suite, Some(&step), None).map(|_| ())
+ }
+ 
+ // Origin: omega_engine/crates_rs/omega_woland/src/residual_ledger.rs
+diff --git a/omega_engine/crates_rs/omega_woland/src/run_reporting.rs b/omega_engine/crates_rs/omega_woland/src/run_reporting.rs
+index 2544eca683..d5826e49ae 100644
+--- a/omega_engine/crates_rs/omega_woland/src/run_reporting.rs
++++ b/omega_engine/crates_rs/omega_woland/src/run_reporting.rs
+@@ -578,6 +578,7 @@ fn render_single_contribution(
+ 
+ fn render_missing_role_contributions(
+     view: &Value,
++    context: &Value,
+     observed_roles: &BTreeSet<String>,
+     lines: &mut Vec<String>,
+ ) {
+@@ -687,6 +688,7 @@ fn render_act3_checks_and_dissent(
+ fn render_act2_contributions_section(
+     view: &Value,
+     view_pointer: &str,
++    context: &Value,
+     source_reference: &str,
+     lines: &mut Vec<String>,
+     events: &mut Vec<Value>,
+@@ -716,7 +718,7 @@ fn render_act2_contributions_section(
+             String::new(),
+         ]);
+     }
+-    render_missing_role_contributions(view, &observed_roles, lines);
++    render_missing_role_contributions(view, context, &observed_roles, lines);
+     Ok(())
+ }
+ 
+@@ -816,6 +818,7 @@ pub fn project_run_reports(
+     render_act2_contributions_section(
+         view,
+         &view_pointer,
++        context,
+         source_reference,
+         &mut lines,
+         &mut events,
+@@ -928,6 +931,30 @@ impl BoundaryRecord3c3d93aa {
+     }
+ }
+ 
++#[cfg(test)]
++mod schedule_reporting_tests {
++    use super::*;
++
++    #[test]
++    fn declared_schedule_skips_are_distinct_from_missing_contributions() {
++        let view = json!({"retinue_plan": {"steps": [
++            {"role_id": "observed"}, {"role_id": "scheduled_skip"}, {"role_id": "absent"}
++        ]}});
++        let context = json!({"skipped_by_schedule": ["scheduled_skip"]});
++        let observed = BTreeSet::from(["observed".to_owned()]);
++        let mut lines = Vec::new();
++        render_missing_role_contributions(&view, &context, &observed, &mut lines);
++        assert!(lines.iter().any(|line| line == "SKIPPED BY SCHEDULE: scheduled_skip"));
++        assert!(lines.iter().any(|line| line == "MISSING: absent"));
++        assert!(!lines.iter().any(|line| line == "MISSING: scheduled_skip"));
++        assert!(!lines.iter().any(|line| line == "MISSING: observed"));
++
++        lines.clear();
++        render_missing_role_contributions(&view, &json!({}), &observed, &mut lines);
++        assert!(lines.iter().any(|line| line == "MISSING: scheduled_skip"));
++    }
++}
++
+ #[cfg(test)]
+ mod l4_boundary_tests_3c3d93aa {
+     // Mutation Accounting: killed=6, survived=0, demonstrably_equivalent=0, invalid=0, inconclusive=0, unrun=0
+diff --git a/omega_engine/crates_rs/omega_woland/src/scene_orchestration.rs b/omega_engine/crates_rs/omega_woland/src/scene_orchestration.rs
+index 1779e4c2c4..bf9b9f5317 100644
+--- a/omega_engine/crates_rs/omega_woland/src/scene_orchestration.rs
++++ b/omega_engine/crates_rs/omega_woland/src/scene_orchestration.rs
+@@ -242,7 +242,7 @@ impl SceneOrchestration {
+ 
+     fn validate_stage_attachment<'a>(
+         stage: &Stage,
+-        attachment: &'a SkillAttachment,
++        attachment: &'a Attachment,
+         plan: Option<&InstructionPlanTransportV01>,
+         attached: &mut BTreeSet<&'a String>,
+     ) -> Result<(), Refusal> {
+diff --git a/omega_engine/crates_rs/omega_woland/src/skill_run.rs b/omega_engine/crates_rs/omega_woland/src/skill_run.rs
+index 809fed4a11..b140817d02 100644
+--- a/omega_engine/crates_rs/omega_woland/src/skill_run.rs
++++ b/omega_engine/crates_rs/omega_woland/src/skill_run.rs
+@@ -261,7 +261,7 @@ fn extract_skill_run_text_fields(
+         "EMPTY_NOVELLA",
+         "novella must contain text",
+     )?;
+-    Ok((objective, verdict.to_owned(), source, novella))
++    Ok((objective.to_owned(), verdict.to_owned(), source.to_owned(), novella.to_owned()))
+ }
+ 
+ fn parse_and_verify_checker_receipt(
+@@ -292,7 +292,7 @@ fn parse_and_verify_checker_receipt(
+ 
+ fn verify_checker_verdict_matches(
+     verdict: &str,
+-    record: &crate::stage::evaluation::CheckerReceipt,
++    record: &crate::evidence_parse::CheckerReceiptRecord,
+ ) -> Result<(), Refusal> {
+     let required = match verdict {
+         "PASS_TO_MASTER" => Some(CheckerVerdict::Accepted),
+diff --git a/omega_engine/crates_rs/omega_woland/src/stage/ddc_tape_evaluator.rs b/omega_engine/crates_rs/omega_woland/src/stage/ddc_tape_evaluator.rs
+index 0256dc4cbd..43815d0ab0 100644
+--- a/omega_engine/crates_rs/omega_woland/src/stage/ddc_tape_evaluator.rs
++++ b/omega_engine/crates_rs/omega_woland/src/stage/ddc_tape_evaluator.rs
+@@ -494,7 +494,7 @@ impl DdcTapeEvaluator {
+     }
+ 
+     fn extract_rational64(
+-        metric: &Option<crate::stage::exact::ExactRational>,
++        metric: &Option<crate::stage::exact::Rational>,
+         label: &str,
+     ) -> Result<Option<Rational64>, Refusal> {
+         let Some(r) = metric else {
+diff --git a/omega_engine/crates_rs/omega_woland/src/stage/emission.rs b/omega_engine/crates_rs/omega_woland/src/stage/emission.rs
+index bfb92c9f1c..538286f157 100644
+--- a/omega_engine/crates_rs/omega_woland/src/stage/emission.rs
++++ b/omega_engine/crates_rs/omega_woland/src/stage/emission.rs
+@@ -218,7 +218,7 @@ fn decode_text(raw: &[u8]) -> Result<&str, String> {
+ fn emit_uns_narrative(
+     event: &IntelligenceEvent,
+     payload: &[u8],
+-    uns: &mut Option<&mut dyn UnsEmitter>,
++    uns: &mut Option<&mut dyn UnsSink>,
+ ) -> Result<(), Refusal> {
+     if event.event_kind == "NARRATIVE" {
+         if let Some(sink) = uns {
+diff --git a/omega_engine/crates_rs/omega_woland/src/stage/run_swarm.rs b/omega_engine/crates_rs/omega_woland/src/stage/run_swarm.rs
+index 824f1bd29b..ccd431ec5e 100644
+--- a/omega_engine/crates_rs/omega_woland/src/stage/run_swarm.rs
++++ b/omega_engine/crates_rs/omega_woland/src/stage/run_swarm.rs
+@@ -308,7 +308,7 @@ fn emit_circuit_events(
+     };
+     let (event, raw) =
+         build_intelligence_event(descriptor, Payload::Text(&narrative), runtime.clock)?;
+-    emit_event(&event, &raw, runtime.emitters, None, None)
++    emit_event(&event, &raw, runtime.emitters, None, None).map(|_| ())
+ }
+ 
+ fn advance_scheduler_with_result(
+diff --git a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_appw_native_repair_bindings.rs b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_appw_native_repair_bindings.rs
+index a045010670..3fdc1b41e4 100644
+--- a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_appw_native_repair_bindings.rs
++++ b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_appw_native_repair_bindings.rs
+@@ -57,7 +57,7 @@ fn accumulate_repair_row(
+     open: &mut i64,
+     refused: &mut i64,
+     holonomy: &mut i64,
+-    row: &RepairRow,
++    row: &ControlRow,
+ ) -> Result<(), CensusError> {
+     if row.name.is_empty() {
+         return Err(CensusError::Holonomy);
+diff --git a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_dp1_02_residual.rs b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_dp1_02_residual.rs
+index d161a41162..ca2f465de4 100644
+--- a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_dp1_02_residual.rs
++++ b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_dp1_02_residual.rs
+@@ -48,7 +48,7 @@ fn residual_rows() -> &'static [ControlRow] {
+     ]
+ }
+ 
+-fn accumulate_residual_row(counts: &mut (i64, i64, i64), row: &ResidualRow) -> Result<(), CensusError> {
++fn accumulate_residual_row(counts: &mut (i64, i64, i64), row: &ControlRow) -> Result<(), CensusError> {
+     if row.name.is_empty() {
+         return Err(CensusError::Residual);
+     }
+diff --git a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_o10_signed_measure_positivity.rs b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_o10_signed_measure_positivity.rs
+index bde6973a46..087417f2b6 100644
+--- a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_o10_signed_measure_positivity.rs
++++ b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wdp_o10_signed_measure_positivity.rs
+@@ -449,7 +449,7 @@ pub fn try_scope(sites: i64, repetitions: i64) -> Result<(), &'static str> {
+     Ok(())
+ }
+ 
+-fn verify_clusters_and_signs(plaquettes: &[Plaquette]) -> ([i64; 4], i64) {
++fn verify_clusters_and_signs(plaquettes: &[Plaquette; PLAQUETTES]) -> ([i64; 4], i64) {
+     let adj = horizontal_adjacency(plaquettes);
+     let cluster = clusters(&min_roots(&adj));
+     for id in 0..2u32 {
+diff --git a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wf_research_bind_prompts.rs b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wf_research_bind_prompts.rs
+index 21d6144250..8b3f3a1cbb 100644
+--- a/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wf_research_bind_prompts.rs
++++ b/omega_engine/crates_rs/tests/omega_wdp/derivation_controls/wf_research_bind_prompts.rs
+@@ -53,7 +53,7 @@ fn binding_rows() -> &'static [ControlRow] {
+     ]
+ }
+ 
+-fn accumulate_binding_row(counts: &mut (i64, i64, i64), row: &BindingRow) -> Result<(), CensusError> {
++fn accumulate_binding_row(counts: &mut (i64, i64, i64), row: &ControlRow) -> Result<(), CensusError> {
+     if row.name.is_empty() {
+         return Err(CensusError::Ratio);
+     }
+diff --git a/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_receipt_v1.contract.yaml b/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_receipt_v1.contract.yaml
+index 48cd320789..ebfe462bb8 100644
+--- a/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_receipt_v1.contract.yaml
++++ b/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_receipt_v1.contract.yaml
+@@ -55,3 +55,4 @@ structure:
+     - name: authority
+     - name: detail
+     - name: authority_effect
++    - name: premise_source
+diff --git a/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_request_v1.contract.yaml b/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_request_v1.contract.yaml
+index 6a154bee39..6e4a471732 100644
+--- a/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_request_v1.contract.yaml
++++ b/omega_engine_governance/contracts/contracts_pfp/coda_evaluate_request_v1.contract.yaml
+@@ -52,3 +52,4 @@ structure:
+     - name: gamma2_distance
+     - name: license_granted
+     - name: budget
++    - name: matrices
+diff --git a/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs b/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs
+--- a/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs
++++ b/omega_engine/crates_rs/omega_symbol_game/src/woland_host.rs
+@@ -1549,9 +1549,9 @@
+ 
+ fn format_bout_success(
+     request: &Request,
+-    result: &omega_woland::complete_bout::CompleteBoutOutput,
++    result: &omega_woland::complete_bout::CompleteBoutOutcome,
+     working_directory: Option<&PathBuf>,
+-    journal_residuals: Vec<String>,
++    journal_residuals: Vec<Refusal>,
+     recovery: Option<Refusal>,
+ ) -> Value {
+     let s = &result.summary;

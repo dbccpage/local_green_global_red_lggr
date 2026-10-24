@@ -1,0 +1,205 @@
+{
+  "date_utc": "2026-10-23T16:26:56.281737+00:00",
+  "version": "0.3.0",
+  "repository_head": "bf6b87751e254c7aeac5ebf1b26f51bdcabaaa67",
+  "working_tree_scope": "Bell paper remains an untracked research package in this checkout; no commit or publication performed",
+  "package": {
+    "path": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals\\dist\\bell_positive_extensions_v0.3.0.zip",
+    "bytes": 613351824,
+    "sha256": "0164dfe963c6f68ee09d217191e6c64a3a37d54efce5da9be01dc2ef61413029"
+  },
+  "lean": {
+    "theorems": 80,
+    "new_theorems": [
+      "Bell.Integral.atomicMeasure_integral",
+      "Bell.Integral.atomicMeasure_probability",
+      "Bell.Integral.average_nonnegative",
+      "Bell.Integral.average_one",
+      "Bell.Integral.finite_model_as_integral",
+      "Bell.Integral.functions_integrable",
+      "Bell.Integral.positive_extension_iff_probability_integral",
+      "Bell.Integral.probability_integral_chsh",
+      "Bell.Integral.probability_integral_positive_extension",
+      "Bell.Integral.response_bounded",
+      "Bell.Quantum.chsh_apply_bound",
+      "Bell.Quantum.contraction_apply",
+      "Bell.Quantum.dichotomic_contraction",
+      "Bell.Quantum.dichotomic_preserves_norm",
+      "Bell.Quantum.sum_difference_bound",
+      "Bell.Quantum.tsirelson_dichotomic_bound",
+      "Bell.Quantum.tsirelson_mixed_state_bound",
+      "Bell.Quantum.tsirelson_operator_bound",
+      "Bell.Quantum.tsirelson_pure_state_bound",
+      "Bell.QuantumExample.alice_hermitian",
+      "Bell.QuantumExample.alice_square",
+      "Bell.QuantumExample.bell_behavior_no_positive_extension",
+      "Bell.QuantumExample.bell_state_unit",
+      "Bell.QuantumExample.bob_hermitian",
+      "Bell.QuantumExample.bob_square",
+      "Bell.QuantumExample.born_formula",
+      "Bell.QuantumExample.local_commutation",
+      "Bell.QuantumExample.mean_eq_inner",
+      "Bell.QuantumExample.mean_four_entries",
+      "Bell.QuantumExample.state_norm_sq",
+      "Bell.QuantumExample.t_normalization",
+      "Bell.QuantumExample.tsirelson_attained"
+    ],
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "custom_axioms": [],
+    "census_sha256": "8804e042a19b5db82cdd2707b7e76d24ebd14bb563ae2e9fb74a7587f3a1f0d0",
+    "dependency_modules": 2634,
+    "dependency_files": 18474,
+    "source_and_archive_bindings": "axiom_census.json and lean4/vendor/manifest.json"
+  },
+  "checks": {
+    "lean_record": {
+      "label": "lean_record",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/replay_lean.py",
+        "--record"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:15:31.132007+00:00",
+      "seconds": 190.46262550354004,
+      "exit_code": 0,
+      "log": "lean_record.txt"
+    },
+    "exact_tests": {
+      "label": "exact_tests",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "-m",
+        "pytest",
+        "-q",
+        "code/tests",
+        "--basetemp=C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\pytest_release"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:12:44.294276+00:00",
+      "seconds": 2.954711437225342,
+      "exit_code": 0,
+      "log": "exact_tests.txt"
+    },
+    "numerical_reproduction": {
+      "label": "numerical_reproduction",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "code/reproduce_examples.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:12:48.601181+00:00",
+      "seconds": 6.650037050247192,
+      "exit_code": 0,
+      "log": "numerical_reproduction.txt"
+    },
+    "pdf_final": {
+      "label": "pdf_final",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "scripts/build_paper_artifacts.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:11:36.640354+00:00",
+      "seconds": 10.870018482208252,
+      "exit_code": 0,
+      "log": "pdf_final.txt"
+    },
+    "package_build": {
+      "label": "package_build",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/package.py",
+        "--build"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:16:10.678947+00:00",
+      "seconds": 22.205522298812866,
+      "exit_code": 0,
+      "log": "package_build.txt"
+    },
+    "clean_release_verify": {
+      "label": "clean_release_verify",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "verify_deposit.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.3.0\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:25:49.455396+00:00",
+      "seconds": 540.1383376121521,
+      "exit_code": 0,
+      "log": "clean_release_verify.txt"
+    },
+    "final_package_check": {
+      "label": "final_package_check",
+      "command": [
+        "C:\\Users\\a343o\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\python.exe",
+        "-X",
+        "utf8",
+        "tools/package.py"
+      ],
+      "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine_atlas\\coda_atlas\\F004_papers\\002_projection_obstruction\\036_bell_positive_extensions_and_projection_residuals",
+      "timestamp_utc": "2026-10-23T16:26:54.532721+00:00",
+      "seconds": 14.847530841827393,
+      "exit_code": 0,
+      "log": "final_package_check.txt"
+    }
+  },
+  "exact_tests": 21,
+  "finite_reproduction": {
+    "status": "passed",
+    "exact_CHSH_parameters": [
+      "0",
+      "1/4",
+      "1/2",
+      "3/4",
+      "1"
+    ],
+    "floating_LP_parameters": 7,
+    "max_LP_absolute_error": 1.1102230246251565e-16,
+    "two_qubit_times_checked": 5,
+    "max_state_absolute_error": 8.881784197001252e-16,
+    "Mermin_assignments_checked": 64,
+    "phase_fiber_and_finite_inference_checks": "passed"
+  },
+  "pdf": {
+    "date": "2026-10-23",
+    "version": "0.3.0",
+    "pages": 18,
+    "visually_reviewed_pages": [
+      1,
+      3,
+      6,
+      7,
+      16,
+      18
+    ],
+    "overfull_boxes": 0,
+    "bindings": {
+      "036_bell_positive_extensions_and_projection_residuals.md": "5b141503e3148414ab6e30ca58d137fed87c95d7a518d5725994d0c2a9300ba1",
+      "036_bell_positive_extensions_and_projection_residuals.tex": "84fd5ed3c252ccf67b6a864c58b088f403b98af3a1a3fa869aede127a7b8b54c",
+      "036_bell_positive_extensions_and_projection_residuals.pdf": "21a142c177cdc101798e0c6cbf932259de319108748dd4a050eafa4c1ee90ac8",
+      "docs/pdf_build.log": "6a8dc4f9d57b4497c7291c4c4f7712a06bccb61d82a6635046c941bcd316d4fc"
+    },
+    "scope": "Source association, zero overfull boxes and sampled visual layout; proof validation is recorded separately"
+  },
+  "clean_extraction": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\bell_integral_quantum\\clean_release_v0.3.0\\036_bell_positive_extensions_and_projection_residuals",
+  "payload_unchanged_by_verifier": true,
+  "remaining_scope": "General LP duality/tangent-cone results, arbitrary POVM/density conversions, other state/dynamical and Mermin/cohomology results remain outside this census."
+}

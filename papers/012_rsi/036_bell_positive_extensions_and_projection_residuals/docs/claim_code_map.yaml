@@ -1,0 +1,367 @@
+{
+  "version": "0.12.0",
+  "format": "JSON-compatible YAML; all numbered manuscript claims",
+  "detailed_scope": "docs/formalization.md",
+  "claims": [
+    {
+      "id": "Theorem 1",
+      "coverage": "Lean finite and probability-integral equivalences",
+      "declarations": [
+        "Bell.positive_extension_iff_local",
+        "Bell.Integral.positive_extension_iff_probability_integral"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    },
+    {
+      "id": "Theorem 2",
+      "coverage": "Lean attained weighted repair, zero-repair characterization and stability",
+      "declarations": [
+        "Bell.Repair.bell_strong_duality",
+        "Bell.RepairGeometry.repair_zero_iff",
+        "Bell.RepairGeometry.repair_lipschitz"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    },
+    {
+      "id": "Theorem 3",
+      "coverage": "Lean attained LP dual, support maximum and normalized witness bound",
+      "declarations": [
+        "Bell.Repair.bell_support_duality",
+        "Bell.Repair.bell_witness_bound",
+        "Bell.Repair.bell_slack_primal"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    },
+    {
+      "id": "Proposition 4",
+      "coverage": "Lean constructed polyhedral presentation, intrinsic tangent cone and explicit one-sided quadratic estimate",
+      "declarations": [
+        "Bell.RepairGeometry.local_polyhedral",
+        "Bell.RepairGeometry.localTangent_intrinsic",
+        "Bell.RepairGeometry.bell_explicit_ray_window",
+        "Bell.RepairGeometry.bell_quadratic_remainder"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    },
+    {
+      "id": "Theorem 5",
+      "coverage": "Lean score and nonlocality threshold; written exact sharpness with finite certificate checks",
+      "declarations": [
+        "Bell.CHSH.isotropic_score",
+        "Bell.CHSH.isotropic_nonlocal"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/bell_certificates.py",
+        "code/review_certificates.py"
+      ]
+    },
+    {
+      "id": "Proposition 5a",
+      "coverage": "Lean operator, pure-state and finite-mixture ceiling",
+      "declarations": [
+        "Bell.Quantum.tsirelson_operator_bound",
+        "Bell.Quantum.tsirelson_pure_state_bound",
+        "Bell.Quantum.tsirelson_mixed_state_bound"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    },
+    {
+      "id": "Proposition 5b",
+      "coverage": "Lean arbitrary finite density and binary-POVM conversions and tensor Born tables",
+      "declarations": [
+        "Bell.QuantumState.density_spectral_decomposition",
+        "Bell.QuantumState.povm_observable_contraction",
+        "Bell.QuantumMeasurement.tensor_born_probability",
+        "Bell.QuantumMeasurement.tensor_born_chsh_bound"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    },
+    {
+      "id": "Proposition 6",
+      "coverage": "Lean general negativity lower bound and attained real-parameter CHSH optimum; repair equality retains written sharpness",
+      "declarations": [
+        "Bell.CHSH.signed_negativity_lower_bound",
+        "Bell.BinaryScenarios.chsh_negative_mass"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/review_certificates.py"
+      ]
+    },
+    {
+      "id": "Theorem 7",
+      "coverage": "Lean full finite state-to-behavior inequality (15), with explicit separable mixtures, local models, partial traces and product reference",
+      "declarations": [
+        "Bell.Separable.mixture_density",
+        "Bell.Separable.separable_positive_extension",
+        "Bell.Separable.leftMarginal_density",
+        "Bell.Separable.rightMarginal_density",
+        "Bell.Separable.productMarginals_separable",
+        "Bell.Separable.productMarginals_idempotent",
+        "Bell.Separable.full_state_to_behavior_bound",
+        "Bell.Separable.chsh_full_state_to_behavior_bound"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    },
+    {
+      "id": "Theorem 8",
+      "coverage": "Lean qualitative factorization and exact finite scalar minimax.",
+      "declarations": [
+        "Bell.Observer.factors_iff_constant_on_fibers",
+        "Bell.Observer.scalar_minimax",
+        "Bell.Observer.midpoint_optimal"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/reproduce_examples.py"
+      ]
+    },
+    {
+      "id": "Proposition 9",
+      "coverage": "Written finite-dimensional kernel-factorization criterion; no general Lean theorem",
+      "declarations": [],
+      "checks": []
+    },
+    {
+      "id": "Theorem 10",
+      "coverage": "Lean deterministic report-preserving recursion and finite conditional randomization; arbitrary-measure randomization remains written",
+      "declarations": [
+        "Bell.Observer.recursion_error_floor",
+        "Bell.Observer.randomized_error_floor"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/reproduce_examples.py"
+      ]
+    },
+    {
+      "id": "Theorem 11",
+      "coverage": "Lean real-parameter optima for actual CHSH/Mermin incidence; quantum Mermin Born realization formalized in QuantumWindows",
+      "declarations": [
+        "Bell.BinaryScenarios.chsh_negative_mass",
+        "Bell.BinaryScenarios.mermin_negative_mass",
+        "Bell.BinaryScenarios.chsh_contextual_fraction",
+        "Bell.BinaryScenarios.mermin_contextual_fraction",
+        "Bell.BinaryScenarios.chsh_behavior_bridge"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/contextual_fraction.py",
+        "tools/generate_comparison_fixture.py"
+      ]
+    },
+    {
+      "id": "Theorem 12",
+      "coverage": "Lean exact real-table CF and signed-mass optima and reversed ordering; no-signalling replayed exactly in Python and proved by written mixture",
+      "declarations": [
+        "Bell.Comparison.contextual_fraction",
+        "Bell.Comparison.signed_projects",
+        "Bell.Comparison.signed_mass",
+        "Bell.Comparison.negative_mass_optimal",
+        "Bell.Comparison.cf_gt_twice_negative_mass",
+        "Bell.Comparison.ranking_reversal"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/contextual_fraction.py",
+        "tools/generate_comparison_fixture.py"
+      ]
+    },
+    {
+      "id": "Theorem 13",
+      "coverage": "Lean constructive finite-context comparison from normalized signed extension",
+      "declarations": [
+        "Bell.ContextualFraction.fraction_nonnegative",
+        "Bell.ContextualFraction.fraction_le_one",
+        "Bell.ContextualFraction.packing_from_signed",
+        "Bell.ContextualFraction.fraction_le_negative_mass"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/contextual_fraction.py",
+        "tools/generate_comparison_fixture.py"
+      ]
+    },
+    {
+      "id": "Theorem 14",
+      "coverage": "Lean CHSH-line cap from Hilbert-space bound and scalar endpoint; quantum endpoint Born realization already formalized; interpolation written",
+      "declarations": [
+        "Bell.QuantumComparisons.quantum_line_comparison",
+        "Bell.QuantumComparisons.cap_attained",
+        "Bell.QuantumExample.born_formula"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/quantum_evolution.py"
+      ]
+    },
+    {
+      "id": "Theorem 15",
+      "coverage": "Lean constructed normalized three-qubit state, local POVMs, exact Born table and all real visibilities; active unitary block group identities; exponential identification written and numerically replayed",
+      "declarations": [
+        "Bell.GHZEvolution.orbit_unit",
+        "Bell.GHZEvolution.orbit_born",
+        "Bell.GHZEvolution.orbit_optima",
+        "Bell.GHZEvolution.rotation_unitary",
+        "Bell.GHZEvolution.rotation_add",
+        "Bell.QuantumWindows.local_povm",
+        "Bell.QuantumWindows.all_visibilities_quantum",
+        "Bell.QuantumWindows.quantum_endpoint",
+        "Bell.QuantumWindows.rotation_column"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/quantum_evolution.py"
+      ]
+    },
+    {
+      "id": "Theorem 16",
+      "coverage": "Lean exact onset, local extension before onset, score-error inverse-sine window, CF and negative-mass witnesses, cellwise L1 to uniform TV; coupling rescaling written",
+      "declarations": [
+        "Bell.QuantumWindows.exact_exit",
+        "Bell.QuantumWindows.onset_zero",
+        "Bell.QuantumWindows.noisy_threshold",
+        "Bell.QuantumWindows.noisy_exit",
+        "Bell.QuantumWindows.noisy_cf_lower",
+        "Bell.QuantumWindows.noisy_negative_mass_lower",
+        "Bell.QuantumWindows.noisy_tv_exit"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/quantum_evolution.py"
+      ]
+    },
+    {
+      "id": "Theorem 17",
+      "coverage": "Lean all deterministic responses, exact real packing/signed optima and strict line separation",
+      "declarations": [
+        "Bell.ChainedData.assignment_complete",
+        "Bell.ChainedComparison.contextual_fraction",
+        "Bell.ChainedComparison.exact_comparison",
+        "Bell.ChainedComparison.strict_separation"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/chained_quantum.py"
+      ]
+    },
+    {
+      "id": "Theorem 18",
+      "coverage": "Lean normalized two-qubit state, local positive complete effects, full Born table, strict quantum counterexample and necessary lower bound on universal coefficient",
+      "declarations": [
+        "Bell.ChainedQuantum.quantum_realization",
+        "Bell.ChainedQuantum.quantum_counterexample",
+        "Bell.ChainedQuantum.universal_coefficient_at_least_four"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/chained_quantum.py"
+      ]
+    },
+    {
+      "id": "Theorem 19",
+      "coverage": "Lean complete assignments, exact real optima, physical local POVMs and full 25-context Born table",
+      "declarations": [
+        "Bell.FiveData.assignment_complete",
+        "Bell.FiveComparison.exact_counterexample",
+        "Bell.FiveComparison.universal_coefficient",
+        "Bell.FiveQuantum.quantum_realization",
+        "Bell.FiveQuantum.quantum_counterexample"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/chain_comparisons.py"
+      ]
+    },
+    {
+      "id": "Theorem 20",
+      "coverage": "Lean arbitrary-size parity optimization and quantum edge formulas; inverse graph path reconstruction, two-fold assignment equivalence, global-sign propagation, outcome recoding, packing equality and signed-budget equivalence.",
+      "declarations": [
+        "Bell.CycleParity.exact_comparison",
+        "Bell.CycleLimits.quantum_visibility",
+        "Bell.CycleLimits.cycle_unbounded",
+        "Bell.CycleLimits.cycle_quantum_cells",
+        "Bell.CycleLimits.closing_quantum_cell",
+        "Bell.CycleLifting.failures_reconstruct",
+        "Bell.CycleLifting.reconstruct_failures",
+        "Bell.CycleLifting.walk_global_flip",
+        "Bell.CycleLifting.cycle_fraction_equal",
+        "Bell.CycleLifting.cycle_signed_budget"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/chain_comparisons.py"
+      ]
+    },
+    {
+      "id": "Theorem 21",
+      "coverage": "Lean finite-size trigonometric and grid bounds, pulled-back signed CHSH inequality, 160/17 tail cap, and quantified eventual coefficient for every k>2(sqrt(2)+1).",
+      "declarations": [
+        "Bell.ChainAnalysis.grid_rounding",
+        "Bell.ChainAnalysis.full_grid_score",
+        "Bell.FullChainBounds.quantum_grid_bound",
+        "Bell.FullChainBounds.complete_chain_cap",
+        "Bell.ChainAsymptotic.eventual_coefficient"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/chain_comparisons.py"
+      ]
+    },
+    {
+      "id": "Theorem 22",
+      "coverage": "End-to-end Lean construction of complete quantum Bell behaviors, explicit cyclic profiles, arbitrary finite Clifford realization, density and local POVMs, every Born cell, actual CF witness, attained strictly positive signed minimum, ratio bound and quantified unboundedness.",
+      "declarations": [
+        "Bell.LocalGram.positive_extension",
+        "Bell.LocalGram.white_positive_extension",
+        "Bell.LocalGram.signed_extension",
+        "Bell.LocalGram.normalized_vector",
+        "Bell.RampSums.full_square_sum",
+        "Bell.RampSums.active_edge_energy",
+        "Bell.ScenarioRestriction.fraction_monotone",
+        "Bell.SmoothedComparison.ratio_identity",
+        "Bell.SmoothedComparison.no_uniform_coefficient",
+        "Bell.CyclicProfile.profile_energy",
+        "Bell.GramQuantum.realization",
+        "Bell.SmoothedFamily.fraction_lower",
+        "Bell.CompleteQuantumUnbounded.minimum_mass_positive",
+        "Bell.CompleteQuantumUnbounded.ratio_bound",
+        "Bell.CompleteQuantumUnbounded.quantum_unbounded"
+      ],
+      "checks": [
+        "tools/replay_lean.py",
+        "code/smoothed_gram.py",
+        "code/smoothed_quantum.py"
+      ]
+    },
+    {
+      "id": "Theorem 23",
+      "coverage": "Explicit epsilon cutoff for actual optimization values in the selected real metric; no finite real endpoint for the ratio envelope.",
+      "declarations": [
+        "Bell.ContinuumShadows.reciprocal_norm",
+        "Bell.ContinuumShadows.massCap_bound",
+        "Bell.ContinuumShadows.fraction_deficit_bound",
+        "Bell.ContinuumShadows.no_finite_ratio_endpoint",
+        "Bell.CompleteQuantumUnbounded.finite_shadow_error"
+      ],
+      "checks": [
+        "tools/replay_lean.py"
+      ]
+    }
+  ]
+}

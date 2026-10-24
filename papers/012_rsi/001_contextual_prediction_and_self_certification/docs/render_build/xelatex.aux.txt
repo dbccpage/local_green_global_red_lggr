@@ -1,0 +1,82 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand*\HyPL@Entry[1]{}
+\HyPL@Entry{0<</S/D>>}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{Abstract}{1}{section*.1}\protected@file@percent }
+\newlabel{abstract}{{}{1}{Abstract}{section*.1}{}}
+\@writefile{toc}{\contentsline {subsection}{1. Two papers, two questions}{1}{section*.2}\protected@file@percent }
+\newlabel{two-papers-two-questions}{{}{1}{1. Two papers, two questions}{section*.2}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{1.1 Status of the claims}{2}{section*.3}\protected@file@percent }
+\newlabel{status-of-the-claims}{{}{2}{1.1 Status of the claims}{section*.3}{}}
+\@writefile{toc}{\contentsline {subsection}{2. Contextual prediction}{2}{section*.4}\protected@file@percent }
+\newlabel{contextual-prediction}{{}{2}{2. Contextual prediction}{section*.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{2.1 The finite rational dichotomy}{2}{section*.5}\protected@file@percent }
+\newlabel{the-finite-rational-dichotomy}{{}{2}{2.1 The finite rational dichotomy}{section*.5}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{2.2 The exact-rational standard-form solver}{3}{section*.6}\protected@file@percent }
+\newlabel{the-exact-rational-standard-form-solver}{{}{3}{2.2 The exact-rational standard-form solver}{section*.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{2.2.1 Executable simplex correctness and finite-budget termination}{3}{section*.7}\protected@file@percent }
+\newlabel{executable-simplex-correctness-and-finite-budget-termination}{{}{3}{2.2.1 Executable simplex correctness and finite-budget termination}{section*.7}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{2.2.2 Checked infeasibility and unboundedness}{4}{section*.8}\protected@file@percent }
+\newlabel{checked-infeasibility-and-unboundedness}{{}{4}{2.2.2 Checked infeasibility and unboundedness}{section*.8}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{2.3 The PR support obstruction}{5}{section*.9}\protected@file@percent }
+\newlabel{the-pr-support-obstruction}{{}{5}{2.3 The PR support obstruction}{section*.9}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{3. Observation fibers and future privacy}{6}{section*.10}\protected@file@percent }
+\newlabel{observation-fibers-and-future-privacy}{{}{6}{3. Observation fibers and future privacy}{section*.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{3.1 The missing dynamics premise}{6}{section*.11}\protected@file@percent }
+\newlabel{the-missing-dynamics-premise}{{}{6}{3.1 The missing dynamics premise}{section*.11}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{3.2 Projection Obstruction: error propagation and correction windows}{7}{section*.12}\protected@file@percent }
+\newlabel{projection-obstruction-error-propagation-and-correction-windows}{{}{7}{3.2 Projection Obstruction: error propagation and correction windows}{section*.12}{}}
+\def\@LN@column{1}
+\newlabel{uncertain-observations-and-the-api-boundary}{{}{8}{Uncertain observations and the API boundary}{section*.13}{}}
+\@writefile{toc}{\contentsline {paragraph}{Uncertain observations and the API boundary}{8}{section*.13}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{3.3 Changing representations without erasing accumulated error}{9}{section*.14}\protected@file@percent }
+\newlabel{changing-representations-without-erasing-accumulated-error}{{}{9}{3.3 Changing representations without erasing accumulated error}{section*.14}{}}
+\@writefile{toc}{\contentsline {subsection}{4. Internal checks and self-certification}{9}{section*.15}\protected@file@percent }
+\newlabel{internal-checks-and-self-certification}{{}{9}{4. Internal checks and self-certification}{section*.15}{}}
+\@writefile{toc}{\contentsline {subsubsection}{4.1 Ledger validity and completeness}{9}{section*.16}\protected@file@percent }
+\newlabel{ledger-validity-and-completeness}{{}{9}{4.1 Ledger validity and completeness}{section*.16}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{4.2 Relabeling}{10}{section*.17}\protected@file@percent }
+\newlabel{relabeling}{{}{10}{4.2 Relabeling}{section*.17}{}}
+\@writefile{toc}{\contentsline {subsubsection}{4.3 Logical self-reference}{10}{section*.18}\protected@file@percent }
+\newlabel{logical-self-reference}{{}{10}{4.3 Logical self-reference}{section*.18}{}}
+\@writefile{toc}{\contentsline {subsection}{5. Provenance, permission, and safe delegation}{10}{section*.19}\protected@file@percent }
+\newlabel{provenance-permission-and-safe-delegation}{{}{10}{5. Provenance, permission, and safe delegation}{section*.19}{}}
+\@writefile{toc}{\contentsline {subsubsection}{5.1 A gate can pass an unsafe action}{10}{section*.20}\protected@file@percent }
+\newlabel{a-gate-can-pass-an-unsafe-action}{{}{10}{5.1 A gate can pass an unsafe action}{section*.20}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{5.2 Memory under partial observation: reports and decisions}{11}{section*.21}\protected@file@percent }
+\newlabel{memory-under-partial-observation-reports-and-decisions}{{}{11}{5.2 Memory under partial observation: reports and decisions}{section*.21}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{6. Embedded knowledge, recovery and observation budgets}{12}{section*.22}\protected@file@percent }
+\newlabel{embedded-knowledge-recovery-and-observation-budgets}{{}{12}{6. Embedded knowledge, recovery and observation budgets}{section*.22}{}}
+\@writefile{toc}{\contentsline {subsubsection}{6.1 Exact scalar recovery and memory capacity}{12}{section*.23}\protected@file@percent }
+\newlabel{exact-scalar-recovery-and-memory-capacity}{{}{12}{6.1 Exact scalar recovery and memory capacity}{section*.23}{}}
+\@writefile{toc}{\contentsline {subsubsection}{6.2 Statistical experiment simulation}{12}{section*.24}\protected@file@percent }
+\newlabel{statistical-experiment-simulation}{{}{12}{6.2 Statistical experiment simulation}{section*.24}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{6.3 Exact observation planning}{13}{section*.25}\protected@file@percent }
+\newlabel{exact-observation-planning}{{}{13}{6.3 Exact observation planning}{section*.25}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{6.4 Learning without a universal intelligence ceiling}{14}{section*.26}\protected@file@percent }
+\newlabel{learning-without-a-universal-intelligence-ceiling}{{}{14}{6.4 Learning without a universal intelligence ceiling}{section*.26}{}}
+\@writefile{toc}{\contentsline {subsection}{7. Executable scope and reproduction}{14}{section*.27}\protected@file@percent }
+\newlabel{executable-scope-and-reproduction}{{}{14}{7. Executable scope and reproduction}{section*.27}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{8. Limits and research directions}{15}{section*.28}\protected@file@percent }
+\newlabel{limits-and-research-directions}{{}{15}{8. Limits and research directions}{section*.28}{}}
+\@writefile{toc}{\contentsline {subsection}{9. Persistent memory in the live agent}{15}{section*.29}\protected@file@percent }
+\newlabel{persistent-memory-in-the-live-agent}{{}{15}{9. Persistent memory in the live agent}{section*.29}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{References}{16}{section*.30}\protected@file@percent }
+\newlabel{references}{{}{16}{References}{section*.30}{}}
+\def\@LN@column{1}
+\gdef \@abspage@last{17}

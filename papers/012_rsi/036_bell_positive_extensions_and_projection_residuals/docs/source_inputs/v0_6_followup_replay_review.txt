@@ -1,0 +1,119 @@
+**Yes—`verify_obstruction.py` is the missing file I mentioned, and that replay gap is now closed.** I ran it successfully, then ran the separate certificate checker against it. These documents strengthen my earlier assessment of v0.6: I found no new substantive mathematical error in the current manuscript. There is one small additional correction to make in the claim map.
+
+## 1. The previously blocked checks now pass
+
+The new script supplies the dependency that `review_certificates.py` expected. With the original directory structure reconstructed, both programs completed successfully.
+
+| Verification performed                        |           Result | What it establishes                                                                                                                                                      |
+| --------------------------------------------- | ---------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Supplied exact-arithmetic checks              | **39/39 passed** | The listed simplex sanity checks, CHSH linear algebra, extension examples, repair calculations, signed representations, and finite observer examples behave as reported. |
+| Separate repair-certificate validation        |   **8/8 passed** | Exact primal feasibility, dual feasibility, matching objectives, and actual repair distance for the tested tables.                                                       |
+| Separate negative-mass certificate validation |   **7/7 passed** | Exact signed reconstruction, normalization, dual feasibility, matching objectives, and the claimed uncancelled negative mass.                                            |
+| Actual-table uncertainty check                |       **Passed** | The perturbed observation yields the stated lower bound for the underlying table.                                                                                        |
+
+These are executions I performed, in addition to reading the supplied verification receipt. The relevant programs are `verify_obstruction.py` and `review_certificates.py`.  
+
+The uncertainty example is particularly useful because it resolves a labeling problem in the original script. For the underlying isotropic table at \(v=5/8\), the separate checker confirms
+
+$$
+\varepsilon=\frac1{400},
+\qquad
+R_\pi(\widetilde p)=\frac{13}{200},
+\qquad
+R_\pi(p)\ge
+\frac{S(\widetilde p)-2-8\varepsilon}{8}
+=\frac1{16}.
+$$
+
+Thus the observed-table distance and the uncertainty-adjusted guarantee for the underlying table are distinguished correctly. The assimilation document explicitly acknowledges the original script’s misleading label.  
+
+There is a useful precision about **“independent” checking**: the certificate validator checks feasibility and optimality independently of the simplex algorithm, while reusing the supplied CHSH scenario helpers. That is a meaningful separation of responsibilities. The separately encoded `bell_certificates.py` from the previous upload supplies an additional check of the scenario representation. These finite executions establish the reported cases; the general results continue to rest on the written arguments and the stated Lean coverage.
+
+## 2. The formalization documentation matches the source
+
+The new claim map covers **all 12 numbered manuscript results exactly once**, and every Lean declaration it names occurs in the supplied source and census. Its principal boundaries agree with my earlier source audit:
+
+* General compactness/stability, LP duality, tangent-cone geometry, and the kernel-factorization criterion remain written results.
+* The isotropic formalization is distinguished from the full sharp repair and negative-mass optimum.
+* The observer minimax theorem is scoped to scalar absolute error, with finite conditional laws for the randomized formalization.
+* The dynamics results require the supplied decomposition and remainder enclosure.
+* The state-to-behavior bound uses actual separable mixtures, local models, partial traces, and a properly inhabited distance set.  
+
+This matters because documentation can obscure whether an important property was proved or placed in a definition. Here, the main formalization document is explicit about those distinctions, and I found no new instance of a hypothesis being presented as a derived result.
+
+### One small claim-map correction
+
+The Theorem 8 entry currently says:
+
+> “general bounded-fiber extension remains written”
+
+I could not locate a general bounded-but-infinite-fiber minimax extension in the current manuscript. Section 9.2 assumes a finite history set; the qualitative factorization statement has broader scope.
+
+I would replace that coverage string with:
+
+> “Lean qualitative factorization and exact finite scalar minimax.”
+
+Alternatively, give a precise pointer to the general extension if it exists elsewhere in the release. This is a metadata correction; it does not affect the finite theorem.  
+
+## 3. The assimilation document catches real errors in the older review
+
+This is the most consequential addition beyond the executable script. **The older review notes contain substantive mathematical mistakes, and `review_assimilation.md` identifies and corrects them.** I checked those corrections against the notes and current manuscript.
+
+For example, the notes’ proposed Tsirelson identity
+
+$$
+XX^\dagger+X^\dagger X=8I
+$$
+
+is false in general. For the usual CHSH operator built from Hermitian observables squaring to \(I\), the square retains the commutator term:
+
+$$
+X^2=4I-[A_0,A_1]\otimes[B_0,B_1].
+$$
+
+The assimilation document catches this, and the current formalization uses the separate contraction/parallelogram argument.  
+
+Other justified corrections include:
+
+* Distinguishing the weighted \(\ell^1\) primal ball from its coordinate-box dual.
+* Correcting the tangent-cone support calculation.
+* Removing the extra factor in the worked \(v=5/8\) residual.
+* Distinguishing a unique midpoint on one fiber from uniqueness of a globally optimal predictor.
+* Recognizing that better computation can improve performance without changing the available evidence.
+* Keeping the nonconvex product-state set separate from the convex separable-state set.
+* Treating the original finite predictor-grid check as a finite check, with the universal theorem supplied separately. 
+
+These corrections support confidence in the revision process. The preserved notes should remain clearly labeled as historical research input: their standalone mathematical exposition still contains the errors that the assimilation document records.
+
+The additional `bell_rsi_asi_projection_residuals(1).md` is likewise the preserved **v0.2 source draft**, rather than a replacement for the current v0.6 manuscript. Its older material therefore does not represent a regression in the current paper.  
+
+## 4. The available custody and build records check out
+
+All **six available file-to-hash bindings match exactly**:
+
+* The preserved original draft.
+* The two preserved review-text files.
+* `verify_obstruction.py`.
+* The current v0.6 manuscript.
+* `pdf_build.log`.
+
+The three recorded review-input byte counts also match. This establishes consistency between the supplied files and their receipts.  
+
+The matching build log records a **20-page PDF** and contains **zero overfull-box reports**, with no fatal compilation or undefined-reference errors found. It does contain font-substitution warnings. The actual PDF and generated TeX are absent, so their recorded hashes and the claimed visual review remain unverified here.  
+
+## 5. What remains before the review is fully closed
+
+The remaining **major verification qualification is now narrow**: I have inspected the Lean sources and reproduced the supplied finite calculations, but have not performed a fresh Lean compilation or the complete release-archive replay.
+
+That would require the complete replay package: the pinned project and dependencies, replay/verifier scripts, axiom census and raw report, and the actual test suite. The newly supplied `verification.json` is consistent with the inspected sources and reproduced results, but its reported **26-test suite** has not itself been rerun from the files provided.  
+
+The two earlier small manuscript edits also remain appropriate:
+
+| Location | Suggested edit                                                                          | Reason                                                                              |
+| -------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| §9.3     | Change “a matrix” to “a finitely specified matrix” in the finite-string encoding claim. | Arbitrary real-valued matrices cannot all be encoded injectively by finite strings. |
+| §9.5     | Explicitly state that \(O\) and \(G\) are linear maps.                                  | The proof of Proposition 9 uses linearity.                                          |
+
+These are local wording fixes, alongside the new claim-map cleanup. 
+
+**My assessment remains positive for a revised research preprint.** The missing solver dependency is resolved, the exact certificate replays succeed, the supplied provenance bindings match, and the formalization documentation accurately describes its scope. The strongest remaining qualification concerns independent reproduction of the complete Lean/release build.

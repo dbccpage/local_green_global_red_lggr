@@ -1,0 +1,16 @@
+{
+  "schema": "contextuality.solver-source.v1",
+  "implementation": "code/contextuality_lp.py",
+  "algorithm": "Exact two-phase Bland simplex with independent certificate replay",
+  "adapted_from": {
+    "omega_engine/crates_rs/omega_solvers/src/solver_lp_standard_form.rs": {
+      "sha256": "00624f886eb61fef2165837426a290cdc76747d593c00e542090907288df83ac",
+      "deposited_copy": "docs/source_inputs/standard_form_lp.rs"
+    },
+    "omega_engine/crates_rs/omega_sheaf_theory/src/empirical_presheaf/lp.rs": {
+      "sha256": "2fe7f5fd79379d1e4a1461ee6cc830f8544969a24b36ad742f0a30b78b7f7f0e",
+      "deposited_copy": "docs/source_inputs/convex_hull_lp.rs"
+    }
+  },
+  "scope": "Algorithmic adaptation; no general cross-language refinement proof."
+}

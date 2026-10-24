@@ -1,0 +1,26 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--release",
+    "--locked",
+    "--offline",
+    "-p",
+    "omega_quantum_physics",
+    "--test",
+    "qddc",
+    "--test",
+    "states_channels_exact_tests",
+    "--test",
+    "test_adaptive_cluster_fusion",
+    "--test",
+    "mub6_non_cyclic_falser",
+    "--test",
+    "exact_channel_admission",
+    "--",
+    "--test-threads=4"
+  ],
+  "cwd": "C:\\Users\\a343o\\source\\repos\\the_symbol_game\\omega_engine\\crates_rs",
+  "exit_code": 0,
+  "seconds": 215.35940718650818
+}

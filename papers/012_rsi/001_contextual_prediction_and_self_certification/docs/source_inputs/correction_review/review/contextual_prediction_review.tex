@@ -1,0 +1,321 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.82in,headheight=16pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,booktabs,tabularx,array,xcolor,fancyhdr,enumitem}
+\usepackage[colorlinks=true,linkcolor=teal,urlcolor=teal]{hyperref}
+\hypersetup{pdftitle={Contextual Prediction: Review and Quantitative Extensions},pdfsubject={Review of version 1.4.0; exact checks and conditional extensions}}
+\definecolor{ink}{HTML}{15343C}
+\definecolor{teal}{HTML}{087F8C}
+\definecolor{pale}{HTML}{EDF5F6}
+\definecolor{muted}{HTML}{53636A}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\sffamily\color{muted}CONTEXTUAL PREDICTION}
+\fancyhead[R]{\small\sffamily\color{muted}REVIEW + EXTENSIONS}
+\fancyfoot[L]{\small\sffamily Research note \enspace\textbullet\enspace 21 October 2026}
+\fancyfoot[R]{\small\sffamily\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parindent}{0pt}\setlength{\parskip}{7pt}
+\setlength{\emergencystretch}{2em}
+\setlist[itemize]{leftmargin=1.3em,itemsep=3pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=1.4em,itemsep=3pt,topsep=3pt}
+\newcommand{\sect}[1]{\vspace{3pt}{\Large\sffamily\bfseries\color{ink}#1}\par\vspace{3pt}}
+\newcommand{\sub}[1]{{\bfseries\color{ink}#1}\par}
+\newcommand{\note}[1]{\par\vspace{3pt}\noindent\colorbox{pale}{\parbox{\dimexpr\linewidth-2\fboxsep}{#1}}\par\vspace{3pt}}
+\newcommand{\TV}{\operatorname{TV}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\code}[1]{\texttt{\small #1}}
+\begin{document}
+
+{\small\sffamily\color{teal}REVIEW OF VERSION 1.4.0}\par
+{\LARGE\sffamily\bfseries\color{ink}From exact certificates\par to uncertainty and adaptive observation\par}
+\vspace{4pt}
+{\large Contextual Prediction and Self-Certification}\par
+\textit{A review of the supplied manuscript and code, with two quantitative extensions and a decision corollary.}
+
+\sect{Assessment}
+The revision has a defensible mathematical core. It separates three questions that should remain separate: whether contextual statistics admit a global joint representation; what an observer can infer from a report; and which actions a gate may authorize. The source now contains a genuine construction of primal and dual optima, rather than a theorem that assumes a zero-gap certificate exists.
+
+The strongest next contribution is \textbf{quantitative management of those boundaries}. An exact contextuality verdict needs an uncertainty margin before it can support an empirical claim. A report that hides a distinction now may expose it under later interventions. A valid provenance packet still needs an independent action-safety condition.
+
+\note{\textbf{Scope of this review.} The exact Python checks described here passed. The Lean files were inspected as source; no fresh Lean build or axiom audit was possible from this attachment set. The new propositions have prose proofs and finite exact checks, not Lean proofs.}
+
+\sub{What to retain}
+\begin{itemize}
+\item \textbf{General dual attainment.} The compact-convex separation argument in \code{ContextualDuality.lean} is substantively stronger than checking five instances.
+\item \textbf{Representation scope.} A context-aware predictor can store the empirical tables. Contextuality rules out a specified joint representation; it does not rule out every world-model.
+\item \textbf{Temporal scope.} The deterministic fiber-preservation condition correctly replaces the earlier inference from an instantaneous kernel to perpetual privacy.
+\item \textbf{Authorization scope.} The explicit valid-packet/unsafe-action counterexample makes the boundary between provenance and safety concrete.
+\end{itemize}
+
+\sub{What to change before the next release}
+\begin{enumerate}
+\item Validate context elements before sorting or hashing them. The current public input boundary can throw \code{TypeError} instead of a typed refusal.
+\item Mark the legacy row and marginal predicates as partial checks. They are unsuitable as complete probability-model validators.
+\item Add an empirical uncertainty contract and an adaptive stochastic observation contract. Pages 3--6 supply the mathematics and examples.
+\item Include the complete build and audit package in any reproducibility submission. Fix the stale module comments and the ``Proposition 1'' reference in section 2.3.
+\end{enumerate}
+
+\newpage
+\sect{Review evidence and executable findings}
+\sub{Fresh results}
+The supplied rational arrays were parsed directly from \code{RationalCertificates.lean}. A separate calculation checked nonnegative normalized primal weights, bounded dual coordinates, every generator inequality, and exact equality of primal and dual values. The Python solver then regenerated the same objectives.
+
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Fixture & Exact defect & Simplex pivots\\\midrule
+Classical mixture & $0$ & 21\\
+PR box & $2$ & 19\\
+Near-Tsirelson table & $4/5$ & 19\\
+Odd-parity triangle & $2$ & 15\\
+Near-boundary Bell table & $1/25{,}000{,}000$ & 19\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+\toprule
+Additional check & Cases\\\midrule
+Solver vs. independent exact dual-vertex enumeration, dimensions 1--3 & 130\\
+Mutated original defect certificates rejected & 30\\
+Deterministic maps: fiber criterion, finite words, stochastic embedding & 256\\
+Uncertainty balls: two-hull LP vs. exact distance formula & 30\\
+Mutated two-hull distance certificates rejected & 30\\
+Adaptive stochastic state-pair/horizon comparisons & 360\\
+Sharp reveal-model examples, including zero and unit leakage & 28\\
+\bottomrule
+\end{tabularx}
+
+The independent LP oracle uses exact Gaussian elimination and enumerates active dual constraints; it does not call the simplex implementation. These finite checks support the implementation on the stated cases. They are not a proof of general solver refinement or termination.
+
+\sub{A concrete boundary repair}
+\code{Scenario((2,2), ((0,'1'),), ((1,),))} reaches \code{sorted(set(c))} before element validation and raises \code{TypeError}. A list-valued context also reaches an unhashable-container failure. The proposed copy validates containers and integer indices first, then canonicalizes list/tuple contexts. Nine boundary cases were checked; valid fixture results are preserved. The patch changes input handling, not LP mathematics.
+
+\sub{A legacy-helper trap}
+\code{is\_distribution(\{\})} is true because it checks only supplied rows. Also, \code{marginalises} accepts a signed PR representation with minimum weight $-1/16$: it checks marginal equalities, not positivity. These are partial predicates, not a discovered failure of \code{evaluate}, which correctly returns \code{Obstructed} for the PR box.
+
+\sub{Formal-verification boundary}
+The displayed Lean arguments were inspected, including general duality, concrete certificate wrappers, deterministic word preservation, and the provenance and pinning counterexamples. The attachment set omits \code{Core.lean}, build configuration, the pinned dependency bundle, and the release audit scripts; \code{lean} and \code{lake} are absent here. The release's stated build results were therefore not reproduced. This is a limit of this review, not evidence that the full upstream release fails.
+
+\newpage
+\sect{Extension 1: contextuality with uncertain data}
+Let $K=\conv\{A_g:g\in G\}\subseteq\R^m$ be the nonempty finite classical polytope and
+\[
+ d(e)=\min_{x\in K}\|e-x\|_1.
+\]
+The manuscript uses the raw sum of absolute errors over all context entries. Keep that convention explicit: this number is not a probability of harm, and it changes when contexts are replicated or reweighted.
+
+\sub{Proposition R1: uncertainty-adjusted witness}
+Suppose $\|y\|_\infty\leq1$ and $y\cdot A_g+z\leq0$ for every generator. If the true vector satisfies $\|e-\widehat e\|_1\leq\rho$, then
+\[
+\boxed{\quad d(e)\ \geq\ \max\{0,\ y\cdot\widehat e+z-\rho\|y\|_\infty\}.\quad}
+\]
+\textit{Proof.} Weak duality gives $d(e)\geq y\cdot e+z$. H\"older's inequality gives $y\cdot(e-\widehat e)\geq-\|y\|_\infty\rho$. Distance is nonnegative. Combining the three inequalities proves the claim. No optimality of the witness is needed.\hfill$\square$
+
+For an optimal certificate this yields at least $\max\{0,d(\widehat e)-\rho\}$. It is useful even when the noisy center is not exactly nonsignalling: the convex distance and witness still make sense in the ambient vector space. A contextuality claim about a physical empirical model additionally needs a justified model class and data-generation assumptions.
+
+\sub{Proposition R2: exact erosion of the margin}
+For the full closed $\ell_1$ ball,
+\[
+\boxed{\quad \min_{\|e-\widehat e\|_1\leq\rho}d(e)
+       =\max\{d(\widehat e)-\rho,0\}.\quad}
+\]
+\textit{Proof.} Distance to a nonempty set is 1-Lipschitz, by the triangle inequality followed by minimization, so the right side is a lower bound. Choose a nearest $x_*\in K$. If $d(\widehat e)=0$, choose $e=\widehat e$. Otherwise set
+\[
+ \alpha=\min\{1,\rho/d(\widehat e)\},\qquad
+ e_\rho=(1-\alpha)\widehat e+\alpha x_*.
+\]
+Then $\|e_\rho-\widehat e\|_1=\alpha d(\widehat e)\leq\rho$ and
+$d(e_\rho)\leq\|e_\rho-x_*\|_1=(1-\alpha)d(\widehat e)$, attaining the bound.\hfill$\square$
+
+The same equality holds after intersecting the ball with any convex valid-model set $M$ containing both $K$ and $\widehat e$: the attaining segment stays in $M$. If the center lies outside $M$, that argument does not apply; the lower bound remains valid but the exact constrained optimum can be larger.
+
+\note{\textbf{Application contract.} A radius is an assumption or a separately justified statistical guarantee. Rational arithmetic does not supply it. If a confidence region contains the true vector with probability at least $1-\alpha$, a positive robust certificate is sound on that coverage event. Adaptive data selection requires an appropriate coverage argument.}
+
+These propositions are elementary consequences of norm duality and convexity. Distance-based contextuality and Bell measures have established prior art [1,2]. The contribution proposed here is their explicit integration into the manuscript's replayable certificate interface.
+
+\newpage
+\sect{A certificate for an entire uncertainty set}
+For a nonempty compact convex uncertainty set $\mathcal E$, define
+\[
+ D(\mathcal E,K)=\min_{e\in\mathcal E,\ x\in K}\|e-x\|_1.
+\]
+Applying the manuscript's compact-convex distance duality to $K-\mathcal E$ at zero gives
+\[
+\boxed{\quad D(\mathcal E,K)=
+ \max_{\|y\|_\infty\leq1}
+ \left[\min_{e\in\mathcal E}y\cdot e-\max_{g\in G}y\cdot A_g\right].\quad}
+\]
+This is a uniform separating witness. $D>0$ certifies contextuality for every member of the uncertainty set. $D=0$ means the two compact sets intersect; it does not establish that the actual unknown member is classical.
+
+\sub{Exact implementation by reusing the existing LP}
+If $\mathcal E=\conv\{e_j:j\in J\}$, then
+\[
+ K-\mathcal E=\conv\{A_g-e_j:(g,j)\in G\times J\}.
+\]
+For the forward inclusion, expand independent convex mixtures using product weights $p_gq_j$. For the reverse inclusion, any mixture $\lambda_{gj}$ induces marginals $p_g=\sum_j\lambda_{gj}$ and $q_j=\sum_g\lambda_{gj}$. Thus the existing distance-to-hull solver, with target zero and pair-difference columns, computes $D$ exactly.
+
+The new reference module returns the two marginal weight vectors and a witness $y$. A separate replay checks
+\[
+\begin{gathered}
+ p,q\geq0,\qquad \sum_gp_g=\sum_jq_j=1,\qquad \|y\|_\infty\leq1,\\
+ \left\|\sum_gp_gA_g-\sum_jq_je_j\right\|_1
+ =D
+ =\min_j y\cdot e_j-\max_g y\cdot A_g.
+\end{gathered}
+\]
+These equalities certify the optimum without trusting the optimizer. The pair construction can be large; the implementation checks its matrix budget before allocating the product. It is a transparent reference reduction, not a scalability claim.
+
+\sub{The near-boundary example becomes a useful stress test}
+The supplied example has $d(\widehat e)=4\times10^{-8}$. Under a raw $\ell_1$ uncertainty ball the guaranteed defect is:
+\begin{center}
+\begin{tabular}{rrl}
+\toprule
+Radius $\rho$ & Robust defect & Conclusion for the whole ball\\\midrule
+$0$ & $1/25{,}000{,}000$ & Positive\\
+$1/50{,}000{,}000$ & $1/50{,}000{,}000$ & Positive\\
+$1/25{,}000{,}000$ & $0$ & Contains a classical model\\
+$1/1{,}000{,}000$ & $0$ & Contains a classical model\\
+\bottomrule
+\end{tabular}
+\end{center}
+The example remains a strong exact-arithmetic regression test. Calling it robust experimental evidence requires uncertainty smaller than the relevant separation margin, or a tighter structured uncertainty set that excludes the classical polytope.
+
+\newpage
+\sect{Extension 2: stochastic observation over time}
+Let $S$ and $U$ be nonempty finite state and action sets, $\pi:S\to B$ a report map, and $P_u(s,\cdot)$ a Markov transition kernel for each action. All observations available to the controller must be represented in the transcript. Define
+\[
+ \delta=\max_{u\in U}\max_{\pi(s)=\pi(t)}
+ \TV\bigl(\pi_*P_u(s,\cdot),\pi_*P_u(t,\cdot)\bigr),
+ \qquad \TV(p,q)=\tfrac12\sum_b|p(b)-q(b)|.
+\]
+Here $\pi_*P_u$ is the distribution of the next report. The maximum is over \emph{all} pairs in each report fiber, not just the initial pair and not just average transitions under a chosen prior.
+
+\sub{Proposition S1: an adaptive transcript bound}
+Use the same history-dependent policy in both worlds. The policy may randomize, but its initial random seed is independent of the hidden initial state and it receives only the declared transcript. For initial states $s,t$ with $\pi(s)=\pi(t)$, let $T_n^s,T_n^t$ be the laws of the complete report/action transcript through $n$ transitions. Then
+\[
+\boxed{\quad \TV(T_n^s,T_n^t)\leq1-(1-\delta)^n\leq n\delta.\quad}
+\]
+If a uniform bound $\delta_k$ holds at step $k$, including every permitted history-dependent update, the corresponding bound is $1-\prod_{k=1}^n(1-\delta_k)$.
+
+\textit{Proof.} Couple the policy's initial randomness identically. While the two transcripts agree, the policy chooses the same action and the current hidden states lie in the same report fiber. Couple their next-report distributions maximally: agreement has probability at least $1-\delta$. Conditional on the coupled reports, sample next hidden states from the appropriate conditional transition laws. Each trajectory retains its required marginal distribution. The chance that the coupled transcripts remain equal for $n$ steps is at least $(1-\delta)^n$. Total variation is bounded above by disagreement probability under any coupling. The time-varying statement follows by multiplying the successive conditional agreement bounds.\hfill$\square$
+
+\sub{The exact deterministic theorem is recovered}
+When $\delta=0$, each action has a well-defined report-level Markov kernel: all states in a fiber induce the same next-report law. This is the finite lumpability condition. It implies exact agreement for every finite adaptive transcript. Conversely, equality for all policies at horizon one implies $\delta=0$, since one may choose any action deterministically.
+
+For deterministic transitions, the next-report distributions are point masses. Thus $\delta=0$ precisely when each update preserves report fibers, recovering the manuscript's bridge. A single failing fiber pair gives $\delta=1$ under this coarse uniform bound; finer stochastic or relational structure may give more useful bounds.
+
+\note{\textbf{Prior art and claim boundary.} The sharp $1-(1-\delta)^n$ trace bound is established for approximate probabilistic bisimulation by Bian and Abate [3]. The formulation here specializes a coupling argument to the manuscript's report fibers and extends its interface to adaptive actions. Novelty is not claimed for the bound.}
+
+\newpage
+\sect{A forced decision turns hidden information into risk}
+Consider two possible initial worlds, labelled 0 and 1, with identical initial reports. After $n$ interventions the controller must choose action 0 or 1. Choosing the wrong label incurs loss 1; choosing the correct label incurs loss 0. The actions are therefore incompatible across the two worlds. This loss specification is essential.
+
+\sub{Corollary D1: minimax decision error}
+For any randomized transcript-based decision rule,
+\[
+\boxed{\quad \max\{\Prob_0(\text{error}),\Prob_1(\text{error})\}
+ \geq \frac{1-\TV(T_n^0,T_n^1)}{2}
+ \geq\frac{(1-\delta)^n}{2}.\quad}
+\]
+\textit{Proof.} Let $r(h)\in[0,1]$ be the probability of choosing action 1 after transcript $h$. The sum of the two error probabilities is
+\[
+ \sum_h\bigl[T_n^0(h)r(h)+T_n^1(h)(1-r(h))\bigr]
+ \geq\sum_h\min\{T_n^0(h),T_n^1(h)\}
+ =1-\TV(T_n^0,T_n^1).
+\]
+The larger error is at least half their sum. Apply Proposition S1.\hfill$\square$
+
+\sub{A four-state construction makes the bound sharp}
+Take hidden states $h_0,h_1$ reporting ``?'' and revealed states $r_0,r_1$ reporting their bit. From $h_b$, stay at $h_b$ with probability $1-\delta$ and move to $r_b$ with probability $\delta$. Revealed states are absorbing. At horizon $n$, the ambiguous transcript has probability $(1-\delta)^n$ in either world; every other transcript reveals the bit. Consequently
+\[
+ \TV(T_n^0,T_n^1)=1-(1-\delta)^n,\qquad
+ \inf_{\text{decision rules}}\max_b\Prob_b(\text{error})=\tfrac12(1-\delta)^n.
+\]
+Choose the revealed bit, or use a fair coin on the all-hidden transcript, to attain the minimax value. The reference code enumerates these transcript distributions exactly.
+
+\begin{center}
+\begin{tabular}{rrr}
+\toprule
+Steps, with $\delta=1/10$ & Transcript TV & Optimal worst-world error\\\midrule
+0 & $0$ & $1/2$\\
+1 & $1/10$ & $9/20$\\
+2 & $19/100$ & $81/200$\\
+4 & $3439/10000$ & $6561/20000$\\
+6 & $468559/1000000$ & $531441/2000000$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\sub{What this says about recursion and intervention}
+Additional computation applied only to the same transcript cannot improve distinguishability beyond its information content. Interventions can produce new information, and the bound quantifies that possibility. For any fixed positive $\delta$, this example eventually reveals the bit with probability one: a small one-step leak does not establish perpetual privacy.
+
+If abstention or a common safe action is available, the forced binary-choice lower bound no longer compels harm. Likewise, a contextuality defect alone supplies no action-loss relation. These qualifications preserve the earlier common-safe-action criterion rather than replacing it.
+
+\newpage
+\sect{How the pieces fit into safe delegation}
+The useful research object is a contract that binds a certificate to a model, its observations, the permitted changes, and the action consequences. More computation may improve a proposal while leaving these obligations untouched.
+
+\begin{tabularx}{\linewidth}{@{}p{0.20\linewidth}XX@{}}
+\toprule
+Layer & Checkable statement & Additional obligation\\\midrule
+Uncertain data & $\inf_{e\in\mathcal E}d(e)>0$ & The real data-generating vector lies in $\mathcal E$.\\[4pt]
+Future reports & A bound on every permitted same-report transition pair & The declared transcript includes every observation; updates preserve the bound.\\[4pt]
+Action safety & An action is safe in every state compatible with current evidence & The state set and safety relation are sound; all actions pass through the gate.\\[4pt]
+Self-modification & The proposed change preserves the contract & A proof binds to the executed implementation and the protected checker.\\
+\bottomrule
+\end{tabularx}
+
+\sub{A concrete next formalization target}
+\begin{enumerate}
+\item Add the Lipschitz distance lemma, uncertainty-adjusted witness, and two-polytope certificate soundness to the Lean distance development. These reuse the current separation theorem and finite sums.
+\item Define finite transition kernels and report pushforwards. First prove the $\delta=0$ stochastic quotient theorem, then a coupling lemma and the finite-horizon product bound.
+\item Derive the binary decision lower bound from transcript overlap. Keep it parameterized by explicit losses; do not infer danger from contextuality alone.
+\item Give a model update a proof obligation: preserve the represented uncertainty, the report/transition relationship, and the safety predicate used by the gate. A faster or more confident proposer does not discharge it.
+\end{enumerate}
+
+\sub{Publication and release recommendation}
+Present the paper as \textit{conditional limits and auditable interfaces for prediction and delegation}. The current evidence supports continuing the research, with the input-boundary patch and clear legacy-helper documentation. A reproducibility claim should wait for a clean build of the complete pinned release and its actual census tools. General Python-to-Lean refinement, statistical coverage, identity binding, and real-system gate enforcement remain separate work.
+
+An optional prose correction can leave historically preserved modules byte-identical: add a current-scope note explaining that the old Result I header omits the later general LP proof, and the old Result II header calls temporal privacy open although \code{Bridge.lean} now proves the deterministic case. In manuscript section 2.3, replace ``Proposition 1'' with ``Theorem 1.''
+
+\note{\textbf{Recommended central claim.} Recursive improvement can change computation and can seek new evidence. Any guarantee must still account for uncertainty in that evidence, distinguishability under future interventions, and the existence of an action safe under the remaining uncertainty. None of the present results establishes universal RSI impossibility or an ASI catastrophe.}
+
+\newpage
+\sect{Reproduction, provenance, and references}
+\sub{Contents of the companion packet}
+\begin{itemize}
+\item \code{run\_review\_checks.py}: deterministic audit runner, standard library only.
+\item \code{quantitative\_prediction.py}: uncertainty-set certificates, finite-kernel leakage bounds, and transcript enumeration.
+\item \code{contextuality\_lp\_validation.patch} and \code{proposed/contextuality\_lp.py}: proposed input repair, supplied separately from the originals.
+\item \code{verification.json}: exact results, reproducible seed, fixture outcomes, and source hashes.
+\item \code{originals/}: copies of the supplied revision packet for review provenance. This is not the complete upstream build package.
+\item This note's TeX and PDF, a source manifest, README, and file checksums.
+\end{itemize}
+
+From the unpacked packet directory, run:
+\begin{quote}\ttfamily\small
+python3 run\_review\_checks.py
+\end{quote}
+The runner rebuilds \code{verification.json}. A missing Lean executable is recorded as a scope limitation, not silently treated as a successful build. To rebuild this PDF, use a LaTeX installation with the packages named at the top of its source:
+\begin{quote}\ttfamily\small
+pdflatex -interaction=nonstopmode -halt-on-error\\
+\hspace*{1em}contextual\_prediction\_review.tex
+\end{quote}
+The line break above is typographical; supply the filename on the same command line. The artifact includes no new Lean proof claims.
+
+\sub{Source basis}
+The primary source is the supplied \textit{Contextual Prediction and Self-Certification}, v1.4.0, with its Markdown, TeX, PDF, text, equation spine, three Python modules and nine Lean files. The previous safe-delegation note supplies the common-action framing. The v1.3.0 RSI companion named in this manuscript was not independently supplied as a complete build in this packet, so its new release claims were not re-audited here.
+
+\sub{Selected primary literature checked for this review}
+\begin{enumerate}[label={[\arabic*]}]
+\item Meng, H.-x., Cao, H.-x., Wang, W.-h., Fan, Y.-j., and Chen, L. (2017). \textit{Quantifying Contextuality of Empirical Models in Terms of Trace-Distance}. International Journal of Theoretical Physics 56, 1807--1830. \href{https://doi.org/10.1007/s10773-017-3327-5}{doi:10.1007/s10773-017-3327-5}. Publisher metadata checked; full text was not accessible here. Cited only for the existence of the earlier distance-based approach.
+\item Brito, S. G. A., Amaral, B., and Chaves, R. (2018). \textit{Quantifying Bell non-locality with the trace distance}. Physical Review A 97, 022111. \href{https://arxiv.org/abs/1709.04260}{arXiv:1709.04260}. The abstract identifies a distance to classical correlations and an LP computation.
+\item Bian, G., and Abate, A. (2017). \textit{On the Relationship between Bisimulation and Trace Equivalence in an Approximate Probabilistic Context}. FoSSaCS, 321--337. \href{https://arxiv.org/abs/1701.04547}{arXiv:1701.04547}; \href{https://www.cs.ox.ac.uk/people/alessandro.abate/publications/bcBA17.pdf}{author-hosted paper}. The finite-trace bound and its tightness are explicit prior art.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,14 @@
+Fresh Bell proof build; using packaged offline dependencies
+Proofs compiled; checking every extracted dependency file
+Checked 2000/20672 dependency files
+Checked 4000/20672 dependency files
+Checked 6000/20672 dependency files
+Checked 8000/20672 dependency files
+Checked 10000/20672 dependency files
+Checked 12000/20672 dependency files
+Checked 14000/20672 dependency files
+Checked 16000/20672 dependency files
+Checked 18000/20672 dependency files
+Checked 20000/20672 dependency files
+Checked 20672/20672 dependency files
+PASS fresh Bell census: 181 theorems; no custom axioms
