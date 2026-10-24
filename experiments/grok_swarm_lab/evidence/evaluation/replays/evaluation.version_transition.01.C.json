@@ -1,8 +1,0 @@
-{
-  "action": "block",
-  "admitted": false,
-  "elapsed_ns": 7557200,
-  "meaning": "successful replay preserves negative/deferred decisions; it does not grant admission",
-  "replayed": true,
-  "run_id": "437f0d2470181916"
-}
