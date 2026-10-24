@@ -302,4 +302,27 @@ theorem boundary_insufficiency_forces_defect (el_x el_y eg_x eg_y : Bool)
   · right; decide
   · contradiction
 
+/-- Theorem 13 (`streaming_closed_nonexact_cohomology`): On a 4-vertex complex with 5 directed edges
+    `(e01, e12, e02, e23, e03)` where Triangle `(0, 1, 2)` is filled by a 2-cell (`cycleD1 h01 h12 h02`)
+    while Loop `(0, 2, 3)` surrounds an unfilled topological hole:
+    1. Every coboundary `D0 x` vanishes on the filled 2-cell (`D1 (D0 x) = 0`),
+    2. The streaming 1-cochain `h = (0, 0, 0, 1, 0)` is closed on the filled 2-cell (`cycleD1 0 0 0 = 0`),
+    3. Yet `h` is not in `im(D0)` because its circulation around the unfilled loop `(0, 2, 3)` is nonzero,
+       exhibiting a `CLOSED_NONEXACT` first cohomology obstruction (`H^1 ≠ 0`). -/
+theorem streaming_closed_nonexact_cohomology :
+    (∀ x0 x1 x2 : Int, cycleD1 (x1 - x0) (x2 - x1) (x2 - x0) = 0) ∧
+    cycleD1 0 0 0 = 0 ∧
+    (¬ ∃ x0 x1 x2 x3 : Int,
+      x1 - x0 = (0 : Int) ∧
+      x2 - x1 = (0 : Int) ∧
+      x2 - x0 = (0 : Int) ∧
+      x3 - x2 = (1 : Int) ∧
+      x3 - x0 = (0 : Int)) := by
+  refine ⟨?_, rfl, ?_⟩
+  · intro x0 x1 x2
+    dsimp [cycleD1]
+    omega
+  · rintro ⟨x0, x1, x2, x3, h01, h12, h02, h23, h03⟩
+    omega
+
 end LggrVIII
