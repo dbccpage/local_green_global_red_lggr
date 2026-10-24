@@ -2593,3 +2593,175 @@ class StreamingSixRoleOverlayMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+
+class StreamingGramProbeMonitor:
+    """Online LGGR VI Gram kernel nullspace and centered adjoint probe monitor.
+
+    Given an observation matrix Q in Q^{m x d}, maintains its exact rational Gram
+    matrix H = Q^T Q in Q^{d x d} and evaluates streaming state vectors x in Q^d:
+      - Theorem 3 (Gram Kernel Identity): ker(Q^T Q) = ker(Q), so Hx == 0 iff Qx == 0.
+      - Theorem 4 (Centered Directional Identity): for f(z) = (1/2) ||Qz||_2^2 and c > 0,
+        (f(x + c*u) - f(x - c*u)) / (2*c) == u^T H x.
+      - Theorem 5 (Full Sign-Cube Recovery): averaging
+        ((f(x + c*delta) - f(x - c*delta)) / (2*c)) * delta over delta in {-1, +1}^d
+        recovers Hx = Q^T Q x.
+      - Detects GRAM_NULLSPACE_BLINDSPOT_LGGR when a nonzero state x != 0 lies in ker(Q),
+        where every zero-preserving post-processor and adjoint probe returns zero.
+    """
+
+    def __init__(
+        self,
+        observation_matrix: Any,
+        *,
+        scope_id: str = "streaming-gram-probe-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.q_mat = matrix(observation_matrix, "observation_matrix")
+        self.num_obs = len(self.q_mat)
+        self.dim = len(self.q_mat[0])
+        self.q_transpose = tuple(
+            tuple(self.q_mat[r][c] for r in range(self.num_obs))
+            for c in range(self.dim)
+        )
+        self.gram_matrix = matmul(self.q_transpose, self.q_mat)
+        self.probed_states: list[dict[str, Any]] = []
+        self.nullspace_blindspots_count: int = 0
+
+    def quadratic_energy(self, state_vec: tuple[Fraction, ...]) -> Fraction:
+        """Compute exact rational quadratic energy f(x) = (1/2) * ||Q x||_2^2."""
+        qx = matvec(self.q_mat, state_vec)
+        return sum((val * val for val in qx), Fraction(0)) / Fraction(2)
+
+    def probe_state(
+        self,
+        state_id: str,
+        state_vector: Any,
+        *,
+        step_size: Fraction | int | str = 1,
+        direction: Any | None = None,
+    ) -> dict[str, Any]:
+        """Evaluate Qx, Hx = Q^T Q x, centered two-query directional probe, and sign-cube recovery."""
+        sid = text(state_id, "state_id")
+        x_vec = vector(state_vector, "state_vector")
+        if len(x_vec) != self.dim:
+            raise ValidationError(f"state_vector must have length {self.dim}")
+        c_step = rational(step_size)
+        if c_step <= 0:
+            raise ValidationError("step_size must be strictly positive")
+
+        qx = matvec(self.q_mat, x_vec)
+        hx = matvec(self.gram_matrix, x_vec)
+        fx = self.quadratic_energy(x_vec)
+
+        x_nonzero = any(v != 0 for v in x_vec)
+        qx_zero = all(v == 0 for v in qx)
+        hx_zero = all(v == 0 for v in hx)
+        gram_kernel_identity_verified = (qx_zero == hx_zero)
+
+        # Centered two-query directional probe (Theorem 4)
+        if direction is not None:
+            u_vec = vector(direction, "direction")
+            if len(u_vec) != self.dim:
+                raise ValidationError(f"direction must have length {self.dim}")
+        else:
+            u_vec = tuple(Fraction(1 if i == 0 else 0) for i in range(self.dim))
+        x_plus = tuple(x_vec[i] + c_step * u_vec[i] for i in range(self.dim))
+        x_minus = tuple(x_vec[i] - c_step * u_vec[i] for i in range(self.dim))
+        centered_probe = (self.quadratic_energy(x_plus) - self.quadratic_energy(x_minus)) / (
+            Fraction(2) * c_step
+        )
+        expected_pairing = sum((u_vec[i] * hx[i] for i in range(self.dim)), Fraction(0))
+        directional_identity_verified = (centered_probe == expected_pairing)
+
+        # Full sign-cube recovery over {-1, +1}^d (Theorem 5, for d <= 10)
+        sign_cube_recovered: list[Fraction] | None = None
+        sign_cube_identity_verified: bool | None = None
+        if self.dim <= 10:
+            acc = [Fraction(0)] * self.dim
+            num_corners = 1 << self.dim
+            for delta_tuple in itertools.product((Fraction(-1), Fraction(1)), repeat=self.dim):
+                xp = tuple(x_vec[i] + c_step * delta_tuple[i] for i in range(self.dim))
+                xm = tuple(x_vec[i] - c_step * delta_tuple[i] for i in range(self.dim))
+                slope = (self.quadratic_energy(xp) - self.quadratic_energy(xm)) / (
+                    Fraction(2) * c_step
+                )
+                for i in range(self.dim):
+                    acc[i] += slope * delta_tuple[i]
+            sign_cube_recovered = [val / Fraction(num_corners) for val in acc]
+            sign_cube_identity_verified = (tuple(sign_cube_recovered) == hx)
+
+        is_nullspace_blindspot = x_nonzero and qx_zero
+        if is_nullspace_blindspot:
+            self.nullspace_blindspots_count += 1
+            status = "GRAM_NULLSPACE_BLINDSPOT_LGGR"
+        elif x_nonzero:
+            status = "ADJOINT_SIGNAL_VERIFIED"
+        else:
+            status = "ZERO_STATE_VERIFIED"
+
+        contract_status = (
+            "OBSTRUCTED_LGGR"
+            if self.nullspace_blindspots_count > 0
+            else "COMPOSABLE_LGGG"
+        )
+        record = {
+            "state_id": sid,
+            "state_vector": list(x_vec),
+            "observation_qx": list(qx),
+            "gram_response_hx": list(hx),
+            "quadratic_energy": fx,
+            "state_nonzero": x_nonzero,
+            "observation_zero": qx_zero,
+            "gram_response_zero": hx_zero,
+            "gram_kernel_identity_verified": gram_kernel_identity_verified,
+            "centered_directional_probe": centered_probe,
+            "expected_gram_pairing": expected_pairing,
+            "directional_identity_verified": directional_identity_verified,
+            "sign_cube_recovered_hx": sign_cube_recovered,
+            "sign_cube_identity_verified": sign_cube_identity_verified,
+            "is_nullspace_blindspot": is_nullspace_blindspot,
+        }
+        self.probed_states.append(record)
+        body = {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            **record,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit summary receipt for the Gram kernel & adjoint probe monitor."""
+        status = (
+            "GRAM_NULLSPACE_BLINDSPOT_LGGR"
+            if self.nullspace_blindspots_count > 0
+            else "GRAM_PROBE_VERIFIED"
+        )
+        contract_status = (
+            "OBSTRUCTED_LGGR"
+            if self.nullspace_blindspots_count > 0
+            else "COMPOSABLE_LGGG"
+        )
+        body = {
+            "schema": "lggr.online_gram_probe_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "num_observations": self.num_obs,
+            "state_dimension": self.dim,
+            "gram_matrix": [list(row) for row in self.gram_matrix],
+            "probed_states_count": len(self.probed_states),
+            "nullspace_blindspots_count": self.nullspace_blindspots_count,
+            "all_gram_identities_verified": all(
+                r["gram_kernel_identity_verified"]
+                and r["directional_identity_verified"]
+                and (r["sign_cube_identity_verified"] is not False)
+                for r in self.probed_states
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+

@@ -28,6 +28,7 @@ from lggr.streaming import (
     StreamingBaselineComparator,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingGramProbeMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingTransportMonitor,
@@ -1093,6 +1094,54 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(res_sub["predictor_error_rate"], "2/3")
         self.assertTrue(res_sub["pair_ceiling_verified"])
         self.assertTrue(res_sub["floor_inequality_verified"])
+
+    def test_gram_probe_monitor_and_nullspace_blindspot(self) -> None:
+        """Verify LGGR VI Gram kernel identity, centered two-query probe, sign-cube recovery, and ker(Q) blindspot."""
+        gmon = StreamingGramProbeMonitor([[1, 0]], scope_id="gram-probe-test")
+
+        # 1. Visible state x = [3, 5] with direction u = [2, 1] and step_size = 1/2
+        r_vis = gmon.probe_state(
+            "visible_x",
+            [3, 5],
+            step_size=Fraction(1, 2),
+            direction=[2, 1],
+        )
+        self.assertEqual(r_vis["status"], "ADJOINT_SIGNAL_VERIFIED")
+        self.assertEqual(r_vis["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_vis["observation_qx"], ["3"])
+        self.assertEqual(r_vis["gram_response_hx"], ["3", "0"])
+        self.assertEqual(r_vis["quadratic_energy"], "9/2")
+        self.assertEqual(r_vis["centered_directional_probe"], "6")
+        self.assertEqual(r_vis["expected_gram_pairing"], "6")
+        self.assertTrue(r_vis["gram_kernel_identity_verified"])
+        self.assertTrue(r_vis["directional_identity_verified"])
+        self.assertEqual(r_vis["sign_cube_recovered_hx"], ["3", "0"])
+        self.assertTrue(r_vis["sign_cube_identity_verified"])
+
+        # 2. Hidden nullspace state k = [0, 1] in ker(Q0) -> GRAM_NULLSPACE_BLINDSPOT_LGGR
+        r_hid = gmon.probe_state("hidden_k", [0, 1], step_size=Fraction(1, 3), direction=[1, 1])
+        self.assertEqual(r_hid["status"], "GRAM_NULLSPACE_BLINDSPOT_LGGR")
+        self.assertEqual(r_hid["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_hid["observation_qx"], ["0"])
+        self.assertEqual(r_hid["gram_response_hx"], ["0", "0"])
+        self.assertTrue(r_hid["is_nullspace_blindspot"])
+        self.assertTrue(r_hid["gram_kernel_identity_verified"])
+        self.assertTrue(r_hid["directional_identity_verified"])
+        self.assertTrue(r_hid["sign_cube_identity_verified"])
+
+        summary = gmon.get_receipt()
+        self.assertEqual(summary["status"], "GRAM_NULLSPACE_BLINDSPOT_LGGR")
+        self.assertEqual(summary["nullspace_blindspots_count"], 1)
+        self.assertTrue(summary["all_gram_identities_verified"])
+
+        # 3. Break/recover fixture Q1 = [[1, 1/4]] makes k = [0, 1] detectable
+        gmon_rec = StreamingGramProbeMonitor([[1, Fraction(1, 4)]])
+        r_det = gmon_rec.probe_state("detected_k", [0, 1], step_size=Fraction(1, 2))
+        self.assertEqual(r_det["status"], "ADJOINT_SIGNAL_VERIFIED")
+        self.assertEqual(r_det["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_det["observation_qx"], ["1/4"])
+        self.assertEqual(r_det["gram_response_hx"], ["1/4", "1/16"])
+        self.assertEqual(r_det["sign_cube_recovered_hx"], ["1/4", "1/16"])
 
 
 if __name__ == "__main__":
