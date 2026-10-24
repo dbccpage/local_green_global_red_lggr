@@ -259,7 +259,7 @@ This finite rational check is **not automatically connected to runtime represent
 
 ### 5. Online Streaming Monitors (`lggr.streaming`)
 
-The package provides five streaming monitors for real-time verification during live agent execution:
+The following examples show five of the streaming monitors for verification during live agent execution:
 
 ```python
 from lggr.streaming import (
@@ -299,6 +299,36 @@ minimax_mon = StreamingPositiveExtensionMonitor()
 minimax_mon.observe_target("s1", report={"tag": "ok"}, target_value=2)
 minimax_mon.observe_target("s2", report={"tag": "ok"}, target_value=6)
 ```
+
+### Two-step optional-stopping receipts
+
+`StreamingMartingaleOptionalStoppingMonitor` checks exact rational binary trees
+and all four choices of stopping or continuing on the two first-step branches.
+Its receipt separates four questions:
+
+| Field | Meaning |
+|---|---|
+| `optional_stopping_theorem_applicable` | All three conditional martingale equations hold. |
+| `optional_stopping_conservation_verified` | The computed stopped and full-horizon expectations both equal the initial value. Accidental equality can hold even when the martingale premise fails. |
+| `global_drawdown_evaluator` | The worst stopped terminal loss from the initial value is within the declared budget, independently of martingale validity. |
+| `joint_admission_evaluator` | Both the local martingale checks and the global loss-budget check pass. |
+
+The corresponding aggregate applicability and conservation fields are separate
+in `get_receipt()`. A non-martingale is still rejected by the overall contract,
+even if its global loss-budget verdict is green (`evaluator_defect = +1`).
+
+The legacy field `tail_drawdown` means
+`max(0, x0 - min(stopped terminal values))`; it does not bound peak-to-trough
+losses along a path. For example, the fair martingale
+`0 -> (10, -10) -> (30, -10, -10, -10)`, continued on both branches, has
+`tail_drawdown = 10` and passes budget 15, although one path falls 20 from its peak.
+
+[Theorem 49](lean4/LggrVIII.lean) formalizes two fair-tree sum identities
+(full horizon and stop-on-up/continue-on-down) and one fixed loss-budget example
+over integers. Its proposition does not count the `3/4` win probability or cover
+arbitrary rational probabilities and all four Python stopping rules. Those are
+finite exact-arithmetic computations tested by the Python suite; the Lean result
+is a finite instance of established optional-stopping mathematics.
 
 ## Practitioner Cookbooks (`cookbooks/`)
 
