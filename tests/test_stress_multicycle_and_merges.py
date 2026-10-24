@@ -23,7 +23,11 @@ import time
 import unittest
 
 from lggr.common import ValidationError
-from lggr.streaming import StreamingCochainMonitor, StreamingFiberMonitor
+from lggr.streaming import (
+    StreamingCochainMonitor,
+    StreamingFiberMonitor,
+    StreamingTransportMonitor,
+)
 
 
 class TestStressCochainMultiCycleAndWeights(unittest.TestCase):
@@ -481,6 +485,62 @@ class TestStreamingTwoCellCohomology(unittest.TestCase):
         r_bad = mon.add_two_cell("open_path", [("V0", "V1", 1), ("V1", "V2", 1)])
         self.assertEqual(r_bad["status"], "INVALID_COMPLEX")
         self.assertEqual(mon.classify_streaming_cohomology()["status"], "INVALID_COMPLEX")
+
+
+class TestStreamingTransportMonitor(unittest.TestCase):
+    """Online chain-retraction vs. lossy coarse-graining projection tests."""
+
+    def test_lossy_chord_dropping_projection_masks_cycle_obstruction(self) -> None:
+        """Dropping the closing chord maps an obstructed 3-cycle onto a repairable 2-edge tree."""
+        src = StreamingCochainMonitor()
+        src.add_edge("V0", "V1", 1)
+        src.add_edge("V1", "V2", 1)
+        src.add_edge("V0", "V2", 1)  # frustrated cycle: 1 + 1 != 1
+
+        tgt = StreamingCochainMonitor()
+        tgt.add_edge("V0", "V1", 1)
+        tgt.add_edge("V1", "V2", 1)  # open 2-edge tree
+
+        tmon = StreamingTransportMonitor(src, tgt)
+        # F0 = I_3 (3 vertices -> 3 vertices), F1 drops edge 2 (the closing chord V0->V2)
+        f0 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        f1 = [[1, 0, 0], [0, 1, 0]]
+        res = tmon.audit_projection(f0, f1)
+
+        self.assertEqual(res["status"], "LOSSY_PROJECTION_LGGR")
+        self.assertEqual(res["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(res["forward_commutes"])
+        self.assertFalse(res["source_repairable"])
+        self.assertTrue(res["target_repairable"])
+        self.assertTrue(res["lossy_projection_lggr"])
+
+    def test_faithful_retraction_reflects_source_obstruction(self) -> None:
+        """Faithful chain retraction (G1 F1 = I, G0 F0 = I) reflects cycle nonrepairability."""
+        src = StreamingCochainMonitor()
+        src.add_edge("V0", "V1", 1)
+        src.add_edge("V1", "V2", 1)
+        src.add_edge("V0", "V2", 1)  # frustrated 3-cycle
+
+        tgt = StreamingCochainMonitor()
+        tgt.add_edge("V0", "V1", 1)
+        tgt.add_edge("V1", "V2", 1)
+        tgt.add_edge("V0", "V2", 1)
+        tgt.add_edge("V2", "V3", 0)  # extra leaf edge in target
+
+        tmon = StreamingTransportMonitor(src, tgt)
+        # F0 embeds (V0, V1, V2) -> (V0, V1, V2, V3=V2) so D_t F0 on edge (V2->V3) is 0
+        f0 = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 1]]
+        f1 = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]]
+        g0 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]]
+        g1 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]]
+
+        res = tmon.audit_projection(f0, f1, G0=g0, G1=g1)
+        self.assertEqual(res["status"], "RETRACTION_VERIFIED")
+        self.assertEqual(res["contract_status"], "REFLECTED_LGGR")
+        self.assertTrue(res["nonrepairability_reflection_verified"])
+        self.assertFalse(res["source_repairable"])
+        self.assertFalse(res["target_repairable"])
+        self.assertFalse(res["lossy_projection_lggr"])
 
 
 if __name__ == "__main__":
