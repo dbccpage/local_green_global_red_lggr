@@ -1512,6 +1512,83 @@ class StreamingCochainMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+    def compute_edge_pivot_threshold(self, edge_index: int) -> dict[str, Any]:
+        """Compute the exact rational critical weight w_e^crit at which increasing w_e triggers a basis pivot."""
+        idx = exact_int(edge_index, "edge_index", minimum=0)
+        if idx >= len(self.edges):
+            raise ValidationError(f"edge_index {idx} out of range for {len(self.edges)} edges")
+
+        base_l1 = self.solve_global_l1_repair()
+        cert = base_l1["certificate"]
+        residuals = [rational(r) for r in cert["residual"]]
+        r_e = residuals[idx]
+        s0 = abs(r_e)
+        w0 = self.edges[idx]["weight"]
+        phi0 = rational(base_l1["global_l1_repair_distance"])
+        u_e, v_e = self.edges[idx]["source"], self.edges[idx]["target"]
+
+        if s0 == 0 or u_e == v_e:
+            status = "SELF_LOOP_INVARIANT" if (s0 > 0 and u_e == v_e) else "INACTIVE_ZERO_RESIDUAL"
+            body: dict[str, Any] = {
+                "schema": "lggr.online_pivot_threshold.v1",
+                "authority_effect": "None",
+                "edge_index": idx,
+                "status": status,
+                "is_active_bottleneck": s0 > 0,
+                "current_weight": w0,
+                "current_residual_magnitude": s0,
+                "critical_weight": None,
+                "weight_margin": None,
+                "post_pivot_residual_magnitude": s0,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        # Supporting-line intersection (Eisner-Severance) over exact rationals
+        w_high = w0 + Fraction(1) + sum(
+            (e["weight"] * (Fraction(1) + abs(e["value"])) for i, e in enumerate(self.edges) if i != idx),
+            Fraction(0),
+        ) * (Fraction(1) / s0 + Fraction(1))
+
+        orig_weight = self.edges[idx]["weight"]
+        try:
+            self.edges[idx]["weight"] = w_high
+            high_l1 = self.solve_global_l1_repair()
+            phi_high = rational(high_l1["global_l1_repair_distance"])
+            s_high = abs(rational(high_l1["certificate"]["residual"][idx]))
+
+            while True:
+                # Supporting lines: phi0 + s0 * (w - w0) = phi_high + s_high * (w - w_high)
+                if s0 == s_high:
+                    w_crit = w0
+                    break
+                w_cand = (phi_high - s_high * w_high - (phi0 - s0 * w0)) / (s0 - s_high)
+                self.edges[idx]["weight"] = w_cand
+                cand_l1 = self.solve_global_l1_repair()
+                phi_cand = rational(cand_l1["global_l1_repair_distance"])
+                expected_left = phi0 + s0 * (w_cand - w0)
+                if phi_cand == expected_left:
+                    w_crit = w_cand
+                    break
+                w_high = w_cand
+                phi_high = phi_cand
+                s_high = abs(rational(cand_l1["certificate"]["residual"][idx]))
+        finally:
+            self.edges[idx]["weight"] = orig_weight
+
+        body = {
+            "schema": "lggr.online_pivot_threshold.v1",
+            "authority_effect": "None",
+            "edge_index": idx,
+            "status": "PIVOT_THRESHOLD_LOCATED",
+            "is_active_bottleneck": True,
+            "current_weight": w0,
+            "current_residual_magnitude": s0,
+            "critical_weight": w_crit,
+            "weight_margin": w_crit - w0,
+            "post_pivot_residual_magnitude": s_high,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
     def get_receipt(self) -> dict[str, Any]:
         """Emit comprehensive summary receipt for cochain monitor."""
         has_nonrepairable = any(c["closure_defect"] != 0 for c in self.cycles)

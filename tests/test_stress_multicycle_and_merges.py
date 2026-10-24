@@ -924,6 +924,23 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(sens["active_repair_edges"], [0])
         self.assertEqual(sens["marginal_weight_sensitivity"], ["2", "0", "0", "0", "0"])
 
+        # Exact rational pivot threshold for shared diagonal edge 0:
+        # w_0 = 3/2, |r_0| = 2, alternative outer-wing cut cost = 5*2 + 5*2 = 20 -> w_0^crit = 10, margin = 17/2
+        piv0 = mon.compute_edge_pivot_threshold(0)
+        self.assertEqual(piv0["status"], "PIVOT_THRESHOLD_LOCATED")
+        self.assertTrue(piv0["is_active_bottleneck"])
+        self.assertEqual(piv0["current_weight"], "3/2")
+        self.assertEqual(piv0["current_residual_magnitude"], "2")
+        self.assertEqual(piv0["critical_weight"], "10")
+        self.assertEqual(piv0["weight_margin"], "17/2")
+        self.assertEqual(piv0["post_pivot_residual_magnitude"], "0")
+
+        # Inactive outer edge 1 (A->B) has zero residual -> INACTIVE_ZERO_RESIDUAL
+        piv1 = mon.compute_edge_pivot_threshold(1)
+        self.assertEqual(piv1["status"], "INACTIVE_ZERO_RESIDUAL")
+        self.assertFalse(piv1["is_active_bottleneck"])
+        self.assertIsNone(piv1["critical_weight"])
+
 
 if __name__ == "__main__":
     unittest.main()

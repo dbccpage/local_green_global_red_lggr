@@ -22,3 +22,4 @@ import LggrVIII
 #print axioms LggrVIII.minimal_metadata_refinement_eliminates_collision
 #print axioms LggrVIII.deferred_obligation_and_scope_migration_separation
 #print axioms LggrVIII.l1_dual_witness_subgradient_weight_sensitivity
+#print axioms LggrVIII.cycle_bottleneck_weight_pivot_threshold
