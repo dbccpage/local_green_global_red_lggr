@@ -1,8 +1,0 @@
-{
-  "action": "defer",
-  "admitted": false,
-  "elapsed_ns": 20454300,
-  "meaning": "successful replay preserves negative/deferred decisions; it does not grant admission",
-  "replayed": true,
-  "run_id": "9c4b3ac8b3b6941b"
-}
