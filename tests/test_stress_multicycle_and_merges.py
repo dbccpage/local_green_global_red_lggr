@@ -29,6 +29,7 @@ from lggr.streaming import (
     StreamingCochainMonitor,
     StreamingFiberMonitor,
     StreamingPositiveExtensionMonitor,
+    StreamingSixRoleOverlayMonitor,
     StreamingTransportMonitor,
 )
 from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
@@ -940,6 +941,81 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(piv1["status"], "INACTIVE_ZERO_RESIDUAL")
         self.assertFalse(piv1["is_active_bottleneck"])
         self.assertIsNone(piv1["critical_weight"])
+
+    def test_six_role_overlay_and_cancellation_masking(self) -> None:
+        """Verify LGGR III six-role overlay context guards and D=0 vs M>0 cancellation masking."""
+        mon = StreamingSixRoleOverlayMonitor(scope_id="six-role-test")
+
+        valid_contexts = {
+            "finite_obstruction": {
+                "carrier": "X_6",
+                "degree": 1,
+                "comparison_map": "d_0",
+                "quotient_gauge": "grounded_v0",
+                "replay_data": "sha256:abc",
+            },
+            "foundations": {"diagnostic_only": True, "authority_effect": "None"},
+            "representation": {"operation": "F1_D0", "transport_witness": "F1_D0"},
+            "observer": {"left_envelope": "scale_w1", "right_envelope": "scale_w1"},
+            "continuum_shadow": {"finite_calculation": True, "limit_statement_distinct": True},
+            "action_and_alignment": {
+                "residual_routed_as_feedback": True,
+                "relabeled_as_success": False,
+            },
+        }
+
+        for role, ctx in valid_contexts.items():
+            res = mon.record_evaluation(role, 1, 1, 1, context=ctx)
+            self.assertEqual(res["status"], "ROLE_OVERLAY_VERIFIED")
+            self.assertEqual(res["contract_status"], "COMPOSABLE_LGGG")
+            self.assertTrue(res["identity_g_minus_l_eq_d"])
+
+        sum_ok = mon.get_receipt()
+        self.assertEqual(sum_ok["status"], "ROLE_OVERLAY_VERIFIED")
+        self.assertEqual(sum_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(sum_ok["records_count"], 6)
+        self.assertEqual(sum_ok["disagreement_count"], 0)
+
+        # Now add PGD (0, 1, 1) -> defect +1, then NGD (1, 1, 0) -> defect -1
+        # Signed defect sum D = +1 + (-1) = 0, but disagreement count M = 2 > 0
+        r_pgd = mon.record_evaluation(
+            "observer", 0, 1, 1, context=valid_contexts["observer"], weight=Fraction(3, 2)
+        )
+        self.assertEqual(r_pgd["classification"], "PGD")
+        self.assertEqual(r_pgd["status"], "POINTWISE_DISAGREEMENT")
+
+        r_ngd = mon.record_evaluation(
+            "finite_obstruction",
+            1,
+            1,
+            0,
+            context=valid_contexts["finite_obstruction"],
+            weight=Fraction(5, 2),
+        )
+        self.assertEqual(r_ngd["classification"], "NGD")
+        self.assertEqual(r_ngd["sample_signed_defect_sum"], 0)
+        self.assertEqual(r_ngd["sample_disagreement_count"], 2)
+        self.assertTrue(r_ngd["cancellation_masked"])
+        self.assertEqual(r_ngd["status"], "CANCELLATION_MASKED_LGGR")
+        self.assertEqual(r_ngd["contract_status"], "OBSTRUCTED_LGGR")
+
+        sum_masked = mon.get_receipt()
+        self.assertEqual(sum_masked["status"], "CANCELLATION_MASKED_LGGR")
+        self.assertTrue(sum_masked["identity_g_minus_l_eq_d"])
+        self.assertTrue(sum_masked["identity_d_eq_npos_minus_nneg"])
+        self.assertEqual(sum_masked["weighted_disagreement_sum"], "4")
+
+        # Verify context envelope violation when observer envelopes differ (Proposition 4)
+        r_env = mon.record_evaluation(
+            "observer",
+            1,
+            1,
+            1,
+            context={"left_envelope": "w=1", "right_envelope": "w=2"},
+        )
+        self.assertEqual(r_env["status"], "CONTEXT_ENVELOPE_VIOLATION")
+        self.assertFalse(r_env["context_valid"])
+        self.assertIn("OBSERVATION_ENVELOPE_MISMATCH", r_env["context_violation_reasons"])
 
 
 if __name__ == "__main__":

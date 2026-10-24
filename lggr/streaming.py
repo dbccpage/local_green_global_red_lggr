@@ -2101,3 +2101,235 @@ class StreamingBaselineComparator:
             "comparisons": self.comparisons,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingSixRoleOverlayMonitor:
+    """Online LGGR III six-role evaluator overlay and cancellation-masking monitor.
+
+    Records finite binary verdict triples (e1, e2, eg) across the six canonical
+    role profiles from LGGR III:
+      - finite_obstruction
+      - foundations
+      - representation
+      - observer
+      - continuum_shadow
+      - action_and_alignment
+
+    Enforces role-specific context guards (e.g., matching observation envelopes
+    under Proposition 4, operation/transport witness matching, and diagnostic-only
+    foundations records) and tracks both the signed defect sum D = G - L = N_+ - N_-
+    and the total disagreement count M = N_+ + N_- = sum |Delta_E(v_i)| so signed
+    cancellation (D = 0 with M > 0) does not mask pointwise NGD failures.
+    """
+
+    CANONICAL_ROLES: tuple[str, ...] = (
+        "finite_obstruction",
+        "foundations",
+        "representation",
+        "observer",
+        "continuum_shadow",
+        "action_and_alignment",
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-six-role-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.records: list[dict[str, Any]] = []
+        self.total_global: int = 0
+        self.total_local_product: int = 0
+        self.total_signed_defect: int = 0
+        self.positive_defect_count: int = 0
+        self.negative_defect_count: int = 0
+        self.zero_defect_count: int = 0
+        self.weighted_disagreement_sum: Fraction = Fraction(0)
+        self.role_counts: dict[str, int] = {r: 0 for r in self.CANONICAL_ROLES}
+        self.context_violations_count: int = 0
+
+    @staticmethod
+    def _binary_verdict(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    @classmethod
+    def _audit_role_context(cls, role: str, ctx: Mapping[str, Any]) -> tuple[bool, list[str]]:
+        reasons: list[str] = []
+        if role == "finite_obstruction":
+            for req in ("carrier", "degree", "comparison_map", "quotient_gauge", "replay_data"):
+                if req not in ctx or ctx[req] in (None, ""):
+                    reasons.append(f"MISSING_FINITE_OBSTRUCTION_FIELD:{req}")
+        elif role == "foundations":
+            if ctx.get("diagnostic_only") is not True:
+                reasons.append("FOUNDATIONS_NOT_DIAGNOSTIC_ONLY")
+            if ctx.get("authority_effect", "None") != "None":
+                reasons.append("FOUNDATIONS_NON_NONE_AUTHORITY_EFFECT")
+        elif role == "representation":
+            op = ctx.get("operation")
+            tw = ctx.get("transport_witness")
+            if not op or not tw:
+                reasons.append("MISSING_REPRESENTATION_WITNESS")
+            elif op != tw:
+                reasons.append("REPRESENTATION_TRANSPORT_MISMATCH")
+        elif role == "observer":
+            left_env = ctx.get("left_envelope")
+            right_env = ctx.get("right_envelope")
+            if left_env is None or right_env is None:
+                reasons.append("MISSING_OBSERVATION_ENVELOPE")
+            elif left_env != right_env:
+                reasons.append("OBSERVATION_ENVELOPE_MISMATCH")
+        elif role == "continuum_shadow":
+            if ctx.get("finite_calculation") is not True:
+                reasons.append("CONTINUUM_SHADOW_MISSING_FINITE_TAG")
+            if ctx.get("limit_statement_distinct") is not True:
+                reasons.append("CONTINUUM_SHADOW_CONFLATES_LIMIT")
+        elif role == "action_and_alignment":
+            if ctx.get("residual_routed_as_feedback") is not True:
+                reasons.append("RESIDUAL_NOT_ROUTED_AS_FEEDBACK")
+            if ctx.get("relabeled_as_success") is not False:
+                reasons.append("RESIDUAL_RELABELED_AS_SUCCESS")
+        return len(reasons) == 0, reasons
+
+    def record_evaluation(
+        self,
+        role: str,
+        e1: int | bool,
+        e2: int | bool,
+        eg: int | bool,
+        *,
+        context: Mapping[str, Any] | None = None,
+        weight: Fraction | int | str = 1,
+    ) -> dict[str, Any]:
+        """Record a role-indexed verdict triple (r, e1, e2, eg, context) and update sample totals."""
+        role_clean = text(role, "role")
+        if role_clean not in self.CANONICAL_ROLES:
+            raise ValidationError(f"role must be one of {self.CANONICAL_ROLES}")
+        v1 = self._binary_verdict(e1, "e1")
+        v2 = self._binary_verdict(e2, "e2")
+        vg = self._binary_verdict(eg, "eg")
+        wt = rational(weight)
+        if wt < 0:
+            raise ValidationError("weight must be non-negative")
+
+        ctx_clean: dict[str, Any] = (
+            json.loads(canonical(dict(context))) if isinstance(context, Mapping) else {}
+        )
+        ctx_ok, ctx_reasons = self._audit_role_context(role_clean, ctx_clean)
+        if not ctx_ok:
+            self.context_violations_count += 1
+
+        local_prod = v1 * v2
+        defect = vg - local_prod
+        classification = {-1: "NGD", 0: "ZDR", 1: "PGD"}[defect]
+
+        self.total_global += vg
+        self.total_local_product += local_prod
+        self.total_signed_defect += defect
+        if defect == 1:
+            self.positive_defect_count += 1
+        elif defect == -1:
+            self.negative_defect_count += 1
+        else:
+            self.zero_defect_count += 1
+        self.weighted_disagreement_sum += wt * abs(defect)
+        self.role_counts[role_clean] += 1
+
+        disagreement_count = self.positive_defect_count + self.negative_defect_count
+        cancellation_masked = (self.total_signed_defect == 0 and disagreement_count > 0)
+
+        step_idx = len(self.records)
+        rec = {
+            "step_index": step_idx,
+            "role": role_clean,
+            "e1": v1,
+            "e2": v2,
+            "eg": vg,
+            "local_product": local_prod,
+            "defect": defect,
+            "classification": classification,
+            "weight": wt,
+            "context_valid": ctx_ok,
+            "context_violation_reasons": ctx_reasons,
+            "context": ctx_clean,
+        }
+        self.records.append(rec)
+
+        if not ctx_ok:
+            status = "CONTEXT_ENVELOPE_VIOLATION"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.negative_defect_count > 0 and cancellation_masked:
+            status = "CANCELLATION_MASKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.negative_defect_count > 0:
+            status = "NGD_DEFECT_DETECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif disagreement_count > 0:
+            status = "POINTWISE_DISAGREEMENT"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ROLE_OVERLAY_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_six_role_step.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            **rec,
+            "sample_global_sum": self.total_global,
+            "sample_local_sum": self.total_local_product,
+            "sample_signed_defect_sum": self.total_signed_defect,
+            "sample_disagreement_count": disagreement_count,
+            "cancellation_masked": cancellation_masked,
+            "identity_g_minus_l_eq_d": (
+                self.total_global - self.total_local_product == self.total_signed_defect
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit summary receipt for the six-role overlay monitor."""
+        disagreement_count = self.positive_defect_count + self.negative_defect_count
+        cancellation_masked = (self.total_signed_defect == 0 and disagreement_count > 0)
+        if self.context_violations_count > 0:
+            status = "CONTEXT_ENVELOPE_VIOLATION"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif cancellation_masked:
+            status = "CANCELLATION_MASKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.negative_defect_count > 0:
+            status = "NGD_DEFECT_DETECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif disagreement_count > 0:
+            status = "POINTWISE_DISAGREEMENT"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "ROLE_OVERLAY_VERIFIED"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_six_role_summary.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "records_count": len(self.records),
+            "sample_global_sum": self.total_global,
+            "sample_local_sum": self.total_local_product,
+            "sample_signed_defect_sum": self.total_signed_defect,
+            "positive_defect_count": self.positive_defect_count,
+            "negative_defect_count": self.negative_defect_count,
+            "zero_defect_count": self.zero_defect_count,
+            "disagreement_count": disagreement_count,
+            "weighted_disagreement_sum": self.weighted_disagreement_sum,
+            "cancellation_masked": cancellation_masked,
+            "context_violations_count": self.context_violations_count,
+            "identity_g_minus_l_eq_d": (
+                self.total_global - self.total_local_product == self.total_signed_defect
+            ),
+            "identity_d_eq_npos_minus_nneg": (
+                self.total_signed_defect == self.positive_defect_count - self.negative_defect_count
+            ),
+            "role_counts": self.role_counts,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+

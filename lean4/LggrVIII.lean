@@ -548,4 +548,36 @@ theorem cycle_bottleneck_weight_pivot_threshold (w_e C_alt d : Int) (hd : d > 0)
   · intro h_gt
     exact Int.mul_lt_mul_of_pos_right h_gt hd
 
+/-- Role-indexed binary evaluator defect `Δ_E(e1, e2, eg) = eg - e1 * e2`. -/
+def roleTripleDefect (e1 e2 eg : Int) : Int :=
+  eg - e1 * e2
+
+/-- Theorem 24 (`six_role_sample_defect_and_cancellation_masking`):
+    Formalizes the LGGR III Six-Role Overlay finite sample laws:
+    1. (Sample Global-Minus-Local Identity): Across any two role-evaluated triples
+       `(e1a, e2a, ega)` and `(e1b, e2b, egb)`, the global sum minus local-product sum
+       equals the sum of signed defects:
+       `(ega + egb) - (e1a * e2a + e1b * e2b) = roleTripleDefect e1a e2a ega + roleTripleDefect e1b e2b egb`.
+    2. (Signed Cancellation Masking): For the PGD triple `(0, 1, 1)` (`Δ_E = +1`) and the
+       NGD triple `(1, 1, 0)` (`Δ_E = -1`), the signed defect sum vanishes (`D = 0`) while
+       the disagreement count `M = |Δ_E(v1)| + |Δ_E(v2)| = 2 > 0` detects the masked NGD failure.
+    3. (Observation Envelope Separation): For any positive residual `R > 0` and distinct
+       envelope weights `w1 ≠ w2`, `w1 * R ≠ w2 * R`. -/
+theorem six_role_sample_defect_and_cancellation_masking
+    (e1a e2a ega e1b e2b egb w1 w2 R : Int) (hR : R > 0) (hw : w1 ≠ w2) :
+    ((ega + egb) - (e1a * e2a + e1b * e2b) =
+      roleTripleDefect e1a e2a ega + roleTripleDefect e1b e2b egb) ∧
+    (roleTripleDefect 0 1 1 + roleTripleDefect 1 1 0 = 0 ∧
+      absInt (roleTripleDefect 0 1 1) + absInt (roleTripleDefect 1 1 0) = 2) ∧
+    (w1 * R ≠ w2 * R) := by
+  dsimp [roleTripleDefect]
+  refine ⟨by omega, ⟨by decide, by decide⟩, ?_⟩
+  intro heq
+  rcases Int.lt_trichotomy w1 w2 with hlt | rfl | hgt
+  · have hmul : w1 * R < w2 * R := Int.mul_lt_mul_of_pos_right hlt hR
+    omega
+  · exact hw rfl
+  · have hmul : w2 * R < w1 * R := Int.mul_lt_mul_of_pos_right hgt hR
+    omega
+
 end LggrVIII
