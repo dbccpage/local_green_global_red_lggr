@@ -951,4 +951,38 @@ theorem two_player_shapley_efficiency_and_symmetry
   · intro hdum
     omega
 
+/-- 3-validator strict product aggregator `L = e1 * e2 * e3`. -/
+def prod3 (e1 e2 e3 : Int) : Int :=
+  e1 * e2 * e3
+
+/-- 2-of-3 quorum majority aggregator `M_{2,3} = 1[e1 + e2 + e3 ≥ 2]`. -/
+def maj2of3 (e1 e2 e3 : Int) : Int :=
+  if e1 + e2 + e3 ≥ 2 then 1 else 0
+
+/-- Theorem 36 (`quorum_threshold_vs_product_defect_separation`):
+    Formalizes the LGGR II k-of-n Quorum Threshold vs. Strict Product Aggregator
+    Defect Separation Laws:
+    1. (Exhaustive Monotonicity & Defect Difference Identity over `{0, 1}^3`):
+       For all binary validator verdicts `e1, e2, e3 ∈ {0, 1}` and global verdict `eg : Int`,
+       `prod3 e1 e2 e3 ≤ maj2of3 e1 e2 e3` and
+       `(eg - prod3 e1 e2 e3) - (eg - maj2of3 e1 e2 e3) = maj2of3 e1 e2 e3 - prod3 e1 e2 e3`.
+    2. (Quorum-Masked Defect vs. Unanimous NGD Separation):
+       - On `(1, 1, 0)` with `eg = 0` (validator 3 vetoes, global fails):
+         `0 - prod3 1 1 0 = 0` (no product NGD), whereas `0 - maj2of3 1 1 0 = -1`
+         (quorum overrides the veto and incurs a quorum-masked negative defect).
+       - On `(1, 1, 1)` with `eg = 0` (all 3 validators pass, global fails):
+         both `0 - prod3 1 1 1 = -1` and `0 - maj2of3 1 1 1 = -1` (unanimous NGD). -/
+theorem quorum_threshold_vs_product_defect_separation
+    (e1 e2 e3 eg : Int)
+    (h1 : e1 = 0 ∨ e1 = 1) (h2 : e2 = 0 ∨ e2 = 1) (h3 : e3 = 0 ∨ e3 = 1) :
+    (prod3 e1 e2 e3 ≤ maj2of3 e1 e2 e3 ∧
+     (eg - prod3 e1 e2 e3) - (eg - maj2of3 e1 e2 e3) = maj2of3 e1 e2 e3 - prod3 e1 e2 e3) ∧
+    (0 - prod3 1 1 0 = 0 ∧ 0 - maj2of3 1 1 0 = -1) ∧
+    (0 - prod3 1 1 1 = -1 ∧ 0 - maj2of3 1 1 1 = -1) := by
+  refine ⟨⟨?_, by omega⟩, ⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩
+  rcases h1 with rfl | rfl <;>
+  rcases h2 with rfl | rfl <;>
+  rcases h3 with rfl | rfl <;>
+  decide
+
 end LggrVIII

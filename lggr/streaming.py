@@ -4433,6 +4433,151 @@ class StreamingCoalitionalAttributionMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingThresholdGovernanceMonitor:
+    """Online k-of-n quorum/majority vs. strict product aggregator defect monitor.
+
+    Evaluates n binary local validators (E_1, ..., E_n) in {0, 1}^n and global verdict
+    E_g in {0, 1} under both the strict product aggregator L = prod_{i=1}^n E_i = 1[sum E_i == n]
+    and the k-of-n threshold aggregator M_{k,n} = 1[sum E_i >= k] (1 <= k <= n):
+      - Monotonicity: L <= M_{k,n} on every trace since k <= n.
+      - Defect difference identity:
+          Delta_prod - Delta_quorum == (E_g - L) - (E_g - M_{k,n}) == M_{k,n} - L == 1[k <= sum E_i < n].
+      - Separates:
+          1. UNANIMOUS_NGD_DEFECT_LGGR (OBSTRUCTED_LGGR): sum E_i == n and E_g == 0
+             (both L == 1 and M_{k,n} == 1 incur negative defect -1).
+          2. QUORUM_MASKED_DEFECT_LGGR (OBSTRUCTED_LGGR): k <= sum E_i < n and E_g == 0
+             (at least one local validator vetoed so L == 0 and Delta_prod == 0, yet the
+             k-of-n quorum overrides the veto so M_{k,n} == 1 and Delta_quorum == -1).
+          3. QUORUM_RECOVERED_PGD (COMPOSABLE_LGGG): k <= sum E_i < n and E_g == 1
+             (Delta_prod == +1 while Delta_quorum == 0).
+          4. THRESHOLD_GOVERNANCE_COHERENT_LGGG (COMPOSABLE_LGGG): Delta_prod == 0 and Delta_quorum == 0.
+    """
+
+    def __init__(
+        self,
+        n_validators: int,
+        quorum_k: int,
+        *,
+        scope_id: str = "streaming-threshold-governance-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        n_val = exact_int(n_validators, "n_validators")
+        k_val = exact_int(quorum_k, "quorum_k")
+        if n_val < 1:
+            raise ValidationError("n_validators must be >= 1")
+        if k_val < 1 or k_val > n_val:
+            raise ValidationError(f"quorum_k must satisfy 1 <= k <= n_validators ({n_val}), got {k_val}")
+        self.n_validators = n_val
+        self.quorum_k = k_val
+        self.records: list[dict[str, Any]] = []
+        self.unanimous_ngd_count: int = 0
+        self.quorum_masked_ngd_count: int = 0
+        self.quorum_recovered_pgd_count: int = 0
+        self.coherent_count: int = 0
+
+    @staticmethod
+    def _binary_int(value: Any, name: str) -> int:
+        if type(value) not in (int, bool) or int(value) not in (0, 1):
+            raise ValidationError(f"{name} must be a binary verdict in {{0, 1}}")
+        return int(value)
+
+    def record_vote(
+        self,
+        trace_id: str,
+        local_verdicts: Iterable[int | bool],
+        eg: int | bool,
+    ) -> dict[str, Any]:
+        """Record an n-validator binary vote vector and global verdict eg."""
+        tid = text(trace_id, "trace_id")
+        verdicts = [
+            self._binary_int(v, f"local_verdicts[{idx}]")
+            for idx, v in enumerate(sequence(local_verdicts, "local_verdicts"))
+        ]
+        if len(verdicts) != self.n_validators:
+            raise ValidationError(
+                f"Expected {self.n_validators} local verdicts, got {len(verdicts)}"
+            )
+        vg = self._binary_int(eg, "eg")
+
+        vote_sum = sum(verdicts)
+        l_prod = 1 if vote_sum == self.n_validators else 0
+        m_quorum = 1 if vote_sum >= self.quorum_k else 0
+        delta_prod = vg - l_prod
+        delta_quorum = vg - m_quorum
+        quorum_inflation = m_quorum - l_prod
+
+        monotonicity_ok = (l_prod <= m_quorum)
+        difference_identity_ok = (delta_prod - delta_quorum == quorum_inflation)
+
+        if l_prod == 1 and vg == 0:
+            trace_status = "UNANIMOUS_NGD_DEFECT_LGGR"
+            self.unanimous_ngd_count += 1
+        elif m_quorum == 1 and l_prod == 0 and vg == 0:
+            trace_status = "QUORUM_MASKED_DEFECT_LGGR"
+            self.quorum_masked_ngd_count += 1
+        elif m_quorum == 1 and l_prod == 0 and vg == 1:
+            trace_status = "QUORUM_RECOVERED_PGD"
+            self.quorum_recovered_pgd_count += 1
+        else:
+            trace_status = "THRESHOLD_GOVERNANCE_COHERENT_LGGG"
+            self.coherent_count += 1
+
+        rec = {
+            "trace_id": tid,
+            "local_verdicts": verdicts,
+            "vote_sum": vote_sum,
+            "eg": vg,
+            "product_aggregator_l": l_prod,
+            "quorum_aggregator_m": m_quorum,
+            "delta_product": delta_prod,
+            "delta_quorum": delta_quorum,
+            "quorum_inflation_gap": quorum_inflation,
+            "trace_status": trace_status,
+            "monotonicity_l_le_quorum_verified": monotonicity_ok,
+            "defect_difference_identity_verified": difference_identity_ok,
+        }
+        self.records.append(rec)
+        return self.get_receipt()
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit threshold governance audit receipt separating quorum-masked defects from unanimous NGD."""
+        all_mono = all(r["monotonicity_l_le_quorum_verified"] for r in self.records)
+        all_diff = all(r["defect_difference_identity_verified"] for r in self.records)
+
+        if self.unanimous_ngd_count > 0:
+            status = "UNANIMOUS_NGD_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.quorum_masked_ngd_count > 0:
+            status = "QUORUM_MASKED_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif self.quorum_recovered_pgd_count > 0:
+            status = "QUORUM_RECOVERED_PGD"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "THRESHOLD_GOVERNANCE_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "n_validators": self.n_validators,
+            "quorum_k": self.quorum_k,
+            "observed_traces_count": len(self.records),
+            "unanimous_ngd_count": self.unanimous_ngd_count,
+            "quorum_masked_ngd_count": self.quorum_masked_ngd_count,
+            "quorum_recovered_pgd_count": self.quorum_recovered_pgd_count,
+            "coherent_count": self.coherent_count,
+            "all_monotonicity_verified": all_mono,
+            "all_defect_difference_identities_verified": all_diff,
+            "latest_trace": self.records[-1] if self.records else None,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
