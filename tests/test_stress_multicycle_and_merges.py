@@ -28,6 +28,7 @@ from lggr.streaming import (
     StreamingBaselineComparator,
     StreamingBellPolytopeMonitor,
     StreamingCPTPTraceMonitor,
+    StreamingCatalystDegradationMonitor,
     StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
     StreamingDFAGrammarGluingMonitor,
@@ -1920,6 +1921,52 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(r_ok["evaluator_defect"], 0)
         self.assertTrue(r_ok["all_monoid_homomorphisms_verified"])
+
+    def test_catalyst_degradation_residual_accumulation_and_cycle_ceiling(self) -> None:
+        """Verify constructor catalyst degradation monitor separates bounded cycles from multi-cycle exhaustion NGD."""
+        # 1. Multi-cycle exhaustion NGD: tau_cat = 5, per_cycle_local_tolerance = 2, wear = +2 per cycle
+        #    Cycle ceiling = floor(5 / 2) = 2; cycle 3 reaches cumulative wear 6 > 5 -> NGD (L=1, Eg=0, Delta_E=-1)
+        cat_ngd = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=10,
+            catalyst_tolerance=5,
+            per_cycle_local_tolerance=2,
+            scope_id="catalyst-exhaustion-test",
+        )
+        c1 = cat_ngd.record_cycle("cyc_1", "S0", "S1", True, 2)
+        c2 = cat_ngd.record_cycle("cyc_2", "S0", "S1", True, 2)
+        c3 = cat_ngd.record_cycle("cyc_3", "S0", "S1", True, 2)
+
+        self.assertEqual(c1["uniform_wear_cycle_ceiling"], 2)
+        self.assertTrue(c1["within_global_catalyst_tolerance"])
+        self.assertTrue(c2["within_global_catalyst_tolerance"])
+        self.assertFalse(c3["within_global_catalyst_tolerance"])
+
+        r_ngd = cat_ngd.get_receipt()
+        self.assertEqual(r_ngd["schema"], "lggr.online_catalyst_degradation.v1")
+        self.assertEqual(r_ngd["status"], "CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR")
+        self.assertEqual(r_ngd["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_ngd["local_product_aggregator"], 1)
+        self.assertEqual(r_ngd["global_evaluator"], 0)
+        self.assertEqual(r_ngd["evaluator_defect"], -1)
+        self.assertEqual(r_ngd["cumulative_catalyst_drift"], "6")
+        self.assertEqual(r_ngd["exhausted_cycle_ids"], ["cyc_3"])
+        self.assertTrue(r_ngd["all_telescoping_identities_verified"])
+
+        # 2. Ideal exact catalyst restoration: wear +1 followed by regeneration -1 -> terminal drift 0, max dev 1 <= 5
+        cat_bounded = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=10,
+            catalyst_tolerance=5,
+            per_cycle_local_tolerance=2,
+            scope_id="catalyst-bounded-test",
+        )
+        cat_bounded.record_cycle("cyc_1", "S0", "S1", True, 1)
+        cat_bounded.record_cycle("cyc_2", "S0", "S1", True, -1)
+        r_bounded = cat_bounded.get_receipt()
+        self.assertEqual(r_bounded["status"], "BOUNDED_APPROXIMATE_CATALYST_LGGG")
+        self.assertEqual(r_bounded["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_bounded["cumulative_catalyst_drift"], "0")
+        self.assertEqual(r_bounded["max_catalyst_deviation"], "1")
+        self.assertEqual(r_bounded["evaluator_defect"], 0)
 
 
 if __name__ == "__main__":

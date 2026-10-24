@@ -60,3 +60,4 @@ import LggrVIII
 #print axioms LggrVIII.mayer_vietoris_local_exactness_gluing_obstruction
 #print axioms LggrVIII.discrete_hodge_harmonic_orthogonality_and_decomposition
 #print axioms LggrVIII.dfa_concatenation_state_mismatch_obstruction
+#print axioms LggrVIII.catalyst_residual_accumulation_and_cycle_ceiling

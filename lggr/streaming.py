@@ -5743,6 +5743,167 @@ class StreamingDFAGrammarGluingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCatalystDegradationMonitor:
+    """Online constructor-task catalyst residual wear and cycle-ceiling monitor.
+
+    Audits multi-cycle constructor tasks (S_t, C_t) -> (S_{t+1}, C_{t+1}) over Q:
+      - Tracks initial catalyst state C_0, catalyst tolerance threshold tau_cat >= 0,
+        and per-cycle local step wear tolerance eps_local >= 0.
+      - On each cycle t, records substrate task completion E_sub(t) in {0, 1} and
+        catalyst residual wear delta_C_t = C_t - C_{t-1}.
+      - Evaluates the single-cycle local gate:
+          E_local(t) = 1[E_sub(t) == 1 and |delta_C_t| <= eps_local]
+        and local product aggregator L = prod_{t=1}^N E_local(t).
+      - Evaluates cumulative catalyst deviation |C_t - C_0| = |sum_{k=1}^t delta_C_k|
+        against tau_cat and global multi-cycle task evaluator:
+          E_g = 1[(prod_{t=1}^N E_sub(t) == 1) and (max_{1<=t<=N} |C_t - C_0| <= tau_cat)].
+      - Computes the exact uniform-wear cycle ceiling floor(tau_cat / |delta_C_t|)
+        when delta_C_t != 0, and separates:
+          * IDEAL_EXACT_CATALYST_LGGG (L == 1, E_g == 1, max |C_t - C_0| == 0),
+          * BOUNDED_APPROXIMATE_CATALYST_LGGG (L == 1, E_g == 1, 0 < max |C_t - C_0| <= tau_cat),
+          * CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR (L == 1, E_g == 0, Delta_E = -1),
+          * LOCAL_CYCLE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        initial_catalyst_state: Fraction | int | str = 0,
+        catalyst_tolerance: Fraction | int | str = 1,
+        *,
+        per_cycle_local_tolerance: Fraction | int | str | None = None,
+        scope_id: str = "streaming-catalyst-degradation-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.initial_catalyst = rational(initial_catalyst_state)
+        self.catalyst_tolerance = rational(catalyst_tolerance)
+        if self.catalyst_tolerance < 0:
+            raise ValidationError("catalyst_tolerance must be non-negative")
+        if per_cycle_local_tolerance is None:
+            self.per_cycle_local_tolerance = self.catalyst_tolerance
+        else:
+            self.per_cycle_local_tolerance = rational(per_cycle_local_tolerance)
+            if self.per_cycle_local_tolerance < 0:
+                raise ValidationError("per_cycle_local_tolerance must be non-negative")
+
+        self.current_catalyst = self.initial_catalyst
+        self.cumulative_wear = Fraction(0)
+        self.cumulative_abs_wear = Fraction(0)
+        self.max_catalyst_deviation = Fraction(0)
+        self.cycles: list[dict[str, Any]] = []
+
+    def record_cycle(
+        self,
+        cycle_id: str,
+        substrate_in: str,
+        substrate_out: str,
+        substrate_target_met: bool,
+        catalyst_wear_delta: Fraction | int | str,
+    ) -> dict[str, Any]:
+        """Record a single constructor cycle and evaluate local vs cumulative catalyst bounds."""
+        cid = text(cycle_id, "cycle_id")
+        s_in = text(substrate_in, "substrate_in")
+        s_out = text(substrate_out, "substrate_out")
+        boolean(substrate_target_met, "substrate_target_met")
+        wear = rational(catalyst_wear_delta)
+
+        c_prev = self.current_catalyst
+        c_next = c_prev + wear
+        self.current_catalyst = c_next
+        self.cumulative_wear += wear
+        self.cumulative_abs_wear += abs(wear)
+
+        deviation = abs(c_next - self.initial_catalyst)
+        if deviation > self.max_catalyst_deviation:
+            self.max_catalyst_deviation = deviation
+
+        telescoping_ok = (c_next - self.initial_catalyst) == self.cumulative_wear
+        sub_ok = 1 if substrate_target_met else 0
+        step_wear_ok = abs(wear) <= self.per_cycle_local_tolerance
+        local_eval = 1 if (substrate_target_met and step_wear_ok) else 0
+        within_global_tolerance = deviation <= self.catalyst_tolerance
+
+        uniform_cycle_ceiling: int | None = None
+        if wear != Fraction(0):
+            uniform_cycle_ceiling = int(self.catalyst_tolerance // abs(wear))
+
+        rec = {
+            "cycle_index": len(self.cycles),
+            "cycle_id": cid,
+            "substrate_in": s_in,
+            "substrate_out": s_out,
+            "substrate_target_met": sub_ok,
+            "catalyst_state_before": c_prev,
+            "catalyst_wear_delta": wear,
+            "catalyst_state_after": c_next,
+            "cumulative_catalyst_drift": self.cumulative_wear,
+            "cumulative_abs_wear": self.cumulative_abs_wear,
+            "catalyst_deviation_from_initial": deviation,
+            "local_cycle_evaluator": local_eval,
+            "within_global_catalyst_tolerance": within_global_tolerance,
+            "uniform_wear_cycle_ceiling": uniform_cycle_ceiling,
+            "telescoping_identity_verified": telescoping_ok,
+        }
+        self.cycles.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed multi-cycle constructor catalyst degradation receipt."""
+        if not self.cycles:
+            raise ValidationError("At least one constructor cycle must be recorded before emitting a receipt")
+
+        local_product = 1
+        all_sub_ok = True
+        for cyc in self.cycles:
+            local_product *= cyc["local_cycle_evaluator"]
+            if cyc["substrate_target_met"] != 1:
+                all_sub_ok = False
+
+        catalyst_viable_all_cycles = self.max_catalyst_deviation <= self.catalyst_tolerance
+        global_eval = 1 if (all_sub_ok and catalyst_viable_all_cycles) else 0
+        defect = global_eval - local_product
+        exhausted_cycle_ids = [
+            cyc["cycle_id"] for cyc in self.cycles if not cyc["within_global_catalyst_tolerance"]
+        ]
+        all_telescoping = all(cyc["telescoping_identity_verified"] for cyc in self.cycles)
+
+        if local_product == 1 and global_eval == 1:
+            if self.max_catalyst_deviation == Fraction(0):
+                status = "IDEAL_EXACT_CATALYST_LGGG"
+            else:
+                status = "BOUNDED_APPROXIMATE_CATALYST_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            status = "CATALYST_DEGRADATION_EXHAUSTION_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_CYCLE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_catalyst_degradation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "initial_catalyst_state": self.initial_catalyst,
+            "terminal_catalyst_state": self.current_catalyst,
+            "catalyst_tolerance": self.catalyst_tolerance,
+            "per_cycle_local_tolerance": self.per_cycle_local_tolerance,
+            "cycle_count": len(self.cycles),
+            "cumulative_catalyst_drift": self.cumulative_wear,
+            "cumulative_abs_wear": self.cumulative_abs_wear,
+            "max_catalyst_deviation": self.max_catalyst_deviation,
+            "local_product_aggregator": local_product,
+            "global_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "exhausted_cycle_ids": exhausted_cycle_ids,
+            "all_telescoping_identities_verified": all_telescoping,
+            "cycles": self.cycles,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
