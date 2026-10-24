@@ -1,0 +1,8 @@
+# Generated Lean outputs are reproducible from the retained source and logs.
+*.olean
+*.ilean
+# Publish only the verified distribution; ignore fresh extraction/build outputs.
+!/dist/
+/dist/*
+!/dist/lggr-swarm-lab-2026-10-24.zip
+!/dist/lggr-swarm-lab-2026-10-24.zip.sha256
