@@ -5254,6 +5254,159 @@ class StreamingSimplicialCupMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingMayerVietorisMonitor:
+    """Online Mayer-Vietoris subcomplex cover and connecting-homomorphism obstruction monitor.
+
+    Audits two-subcomplex covers K = U U V of a 1-cochain h:
+      - Tracks subcomplex monitors for U, V, and the union U U V.
+      - When h|_U = d^0 f_U is locally exact on U and h|_V = d^0 f_V is locally exact on V,
+        computes the intersection difference 0-cochain on V(U) cap V(V):
+          delta_{U cap V}(w) = f_U(w) - f_V(w).
+      - Verifies that delta_{U cap V} is locally constant on every connected component of
+        U cap V (d^0 delta_{U cap V} == 0 on E(U) cap E(V)).
+      - Computes the Mayer-Vietoris connecting coboundary spread:
+          Delta_MV = max_{w in V(U) cap V(V)} delta_{U cap V}(w) - min_{w in V(U) cap V(V)} delta_{U cap V}(w)
+        and verifies that for connected locally exact U and V, h is globally exact on U U V
+        if and only if delta_{U cap V} is constant across all connected components of U cap V
+        (Delta_MV == 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-mayer-vietoris-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.monitor_u = StreamingCochainMonitor()
+        self.monitor_v = StreamingCochainMonitor()
+        self.monitor_union = StreamingCochainMonitor()
+        self.overlap_edges: list[dict[str, Any]] = []
+
+    def record_edge(
+        self,
+        source: str,
+        target: str,
+        value: Fraction | int | str,
+        *,
+        in_u: bool,
+        in_v: bool,
+        weight: Fraction | int | str = 1,
+    ) -> dict[str, Any]:
+        """Record a directed edge in U, V, or both (U cap V)."""
+        u_node = text(source, "source")
+        v_node = text(target, "target")
+        boolean(in_u, "in_u")
+        boolean(in_v, "in_v")
+        if not in_u and not in_v:
+            raise ValidationError("Edge must belong to at least one subcomplex (in_u or in_v)")
+        val_q = rational(value)
+        w_q = rational(weight)
+
+        if in_u:
+            self.monitor_u.add_edge(u_node, v_node, val_q, weight=w_q)
+        if in_v:
+            self.monitor_v.add_edge(u_node, v_node, val_q, weight=w_q)
+        self.monitor_union.add_edge(u_node, v_node, val_q, weight=w_q)
+        if in_u and in_v:
+            self.overlap_edges.append(
+                {
+                    "source": u_node,
+                    "target": v_node,
+                    "value": val_q,
+                }
+            )
+        return self.audit_mayer_vietoris()
+
+    @staticmethod
+    def _is_exact(mon: StreamingCochainMonitor) -> bool:
+        return all(c["closure_defect"] == Fraction(0) for c in mon.cycles)
+
+    @staticmethod
+    def _integrate_potentials(mon: StreamingCochainMonitor) -> dict[str, Fraction]:
+        potentials: dict[str, Fraction] = {}
+        adj: dict[str, list[tuple[str, Fraction]]] = {v: [] for v in mon.vertices}
+        for e in mon.edges:
+            u, v, val = e["source"], e["target"], e["value"]
+            adj[u].append((v, val))
+            adj[v].append((u, -val))
+        for start in sorted(mon.vertices):
+            if start in potentials:
+                continue
+            potentials[start] = Fraction(0)
+            queue: deque[str] = deque([start])
+            while queue:
+                curr = queue.popleft()
+                for nxt, diff in adj[curr]:
+                    if nxt not in potentials:
+                        potentials[nxt] = potentials[curr] + diff
+                        queue.append(nxt)
+        return potentials
+
+    def audit_mayer_vietoris(self) -> dict[str, Any]:
+        """Audit local exactness on U and V, intersection 0-cocycle delta_{U cap V}, and global exactness on U U V."""
+        u_exact = self._is_exact(self.monitor_u)
+        v_exact = self._is_exact(self.monitor_v)
+        union_exact = self._is_exact(self.monitor_union)
+        overlap_vertices = sorted(self.monitor_u.vertices & self.monitor_v.vertices)
+
+        delta_map: dict[str, Fraction] = {}
+        glued_potential: dict[str, Fraction] | None = None
+        locally_constant_on_overlap = True
+        mv_spread = Fraction(0)
+
+        if u_exact and v_exact:
+            f_u = self._integrate_potentials(self.monitor_u)
+            f_v = self._integrate_potentials(self.monitor_v)
+            for w in overlap_vertices:
+                delta_map[w] = f_u[w] - f_v[w]
+            for oe in self.overlap_edges:
+                if delta_map[oe["target"]] - delta_map[oe["source"]] != Fraction(0):
+                    locally_constant_on_overlap = False
+            if delta_map:
+                mv_spread = max(delta_map.values()) - min(delta_map.values())
+            if mv_spread == Fraction(0) and union_exact:
+                shift = next(iter(delta_map.values()), Fraction(0))
+                glued_potential = {}
+                for x, val in sorted(f_u.items()):
+                    glued_potential[x] = val
+                for x, val in sorted(f_v.items()):
+                    glued_potential[x] = val + shift
+
+        mv_equivalence_ok = (
+            not (u_exact and v_exact and len(overlap_vertices) > 0)
+            or (union_exact == (mv_spread == Fraction(0)))
+        )
+
+        if not u_exact or not v_exact:
+            status = "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not union_exact:
+            status = "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "MAYER_VIETORIS_EXACT_GLUED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_mayer_vietoris.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "u_locally_exact": u_exact,
+            "v_locally_exact": v_exact,
+            "union_globally_exact": union_exact,
+            "overlap_vertices": overlap_vertices,
+            "intersection_difference_cocycle": delta_map,
+            "connecting_coboundary_spread": mv_spread,
+            "glued_global_potential": glued_potential,
+            "intersection_cocycle_locally_constant_verified": locally_constant_on_overlap,
+            "mayer_vietoris_equivalence_verified": mv_equivalence_ok,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Return the current Mayer-Vietoris cover audit receipt."""
+        return self.audit_mayer_vietoris()
+
+
+
 
 
 

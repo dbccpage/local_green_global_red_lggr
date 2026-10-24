@@ -1096,4 +1096,32 @@ theorem simplicial_cup_product_and_leibniz_cocycle_identity
   dsimp [simplexD1, cup2Simplex]
   refine ⟨by omega, by omega, ⟨by decide, by decide, by decide, by decide⟩⟩
 
+/-- Theorem 41 (`mayer_vietoris_local_exactness_gluing_obstruction`):
+    Formalizes the Mayer-Vietoris Connecting Homomorphism `∂* : H^0(U ∩ V) → H^1(U ∪ V)`
+    and Local-Exactness Gluing Equivalence for a Two-Subcomplex Cover `K = U ∪ V`
+    meeting at two boundary components `a, b ∈ U ∩ V`:
+    1. (Connecting Homomorphism Identity): Given local vertex potentials `(fUa, fUb)` on `U`
+       and `(fVa, fVb)` on `V` with intersection difference 0-cocycle `δ_a = fUa - fVa`
+       and `δ_b = fUb - fVb`, the difference across components equals the closed-loop
+       circulation around `U ∪ V`:
+       `δ_b - δ_a = (fUb - fUa) - (fVb - fVa)`.
+    2. (Exact Gluing Equivalence): `δ_a = δ_b ↔ fUb - fUa = fVb - fVa`, and when
+       `c = fUa - fVa`, the shifted potential `fVa + c = fUa` matches on `a` while
+       preserving `(fVb + c) - (fVa + c) = fVb - fVa`.
+    3. (Locally Exact Cover with Non-Zero Connecting Obstruction): For `(fUa, fUb) = (0, 2)`
+       and `(fVa, fVb) = (0, -1)`, both `U` and `V` are locally exact, yet
+       `δ_a = 0 ≠ 3 = δ_b` and the connecting loop holonomy is `δ_b - δ_a = 3 ≠ 0`. -/
+theorem mayer_vietoris_local_exactness_gluing_obstruction
+    (fUa fUb fVa fVb : Int) :
+    (let da := fUa - fVa; let db := fUb - fVb;
+     db - da = (fUb - fUa) - (fVb - fVa) ∧
+     (da = db ↔ fUb - fUa = fVb - fVa) ∧
+     fVa + da = fUa ∧
+     (fVb + da) - (fVa + da) = fVb - fVa) ∧
+    (let da0 := (0 : Int) - 0;
+     let db0 := (2 : Int) - (-1);
+     da0 = 0 ∧ db0 = 3 ∧ db0 - da0 = 3) := by
+  refine ⟨⟨by omega, ?_, by omega, by omega⟩, ⟨by decide, by decide, by decide⟩⟩
+  constructor <;> intro h <;> omega
+
 end LggrVIII

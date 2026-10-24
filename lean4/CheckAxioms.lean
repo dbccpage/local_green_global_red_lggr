@@ -57,3 +57,4 @@ import LggrVIII
 #print axioms LggrVIII.sliding_window_green_vs_horizon_drift_breach
 #print axioms LggrVIII.arrival_order_endpoint_invariance_vs_prefix_divergence
 #print axioms LggrVIII.simplicial_cup_product_and_leibniz_cocycle_identity
+#print axioms LggrVIII.mayer_vietoris_local_exactness_gluing_obstruction

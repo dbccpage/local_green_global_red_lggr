@@ -34,6 +34,7 @@ from lggr.streaming import (
     StreamingDefectSoundnessMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
+    StreamingMayerVietorisMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
@@ -1765,6 +1766,49 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(summary["nontrivial_cup_simplex_ids"], ["sigma_nontrivial_cup"])
         self.assertTrue(summary["all_leibniz_identities_verified"])
         self.assertTrue(summary["all_d1_d0_zero_verified"])
+
+    def test_mayer_vietoris_local_exactness_and_connecting_obstruction(self) -> None:
+        """Verify Mayer-Vietoris connecting homomorphism obstruction on locally exact subcomplex covers."""
+        # 1. Locally exact U (top arc A->M1->B with sum 1+1=2) and locally exact V
+        #    (bottom arc A->M2->B with sum 0+(-1)=-1) meeting at disconnected overlap {A, B}:
+        #    delta(A) = 0 - 0 = 0, delta(B) = 2 - (-1) = 3 -> spread = 3 != 0
+        mv_bad = StreamingMayerVietorisMonitor(scope_id="mv-obstructed-circle")
+        mv_bad.record_edge("A", "M1", 1, in_u=True, in_v=False)
+        mv_bad.record_edge("M1", "B", 1, in_u=True, in_v=False)
+        mv_bad.record_edge("A", "M2", 0, in_u=False, in_v=True)
+        r_bad = mv_bad.record_edge("M2", "B", -1, in_u=False, in_v=True)
+
+        self.assertEqual(r_bad["status"], "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR")
+        self.assertEqual(r_bad["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(r_bad["u_locally_exact"])
+        self.assertTrue(r_bad["v_locally_exact"])
+        self.assertFalse(r_bad["union_globally_exact"])
+        self.assertEqual(r_bad["overlap_vertices"], ["A", "B"])
+        self.assertEqual(r_bad["intersection_difference_cocycle"], {"A": "0", "B": "3"})
+        self.assertEqual(r_bad["connecting_coboundary_spread"], "3")
+        self.assertIsNone(r_bad["glued_global_potential"])
+        self.assertTrue(r_bad["intersection_cocycle_locally_constant_verified"])
+        self.assertTrue(r_bad["mayer_vietoris_equivalence_verified"])
+
+        # 2. Compatible locally exact cover: U has A->M1->B with sum 1+1=2,
+        #    V has A->M2->B with sum 3+(-1)=2 -> delta(A) = 0, delta(B) = 0 -> glues globally!
+        mv_ok = StreamingMayerVietorisMonitor(scope_id="mv-exact-circle")
+        mv_ok.record_edge("A", "M1", 1, in_u=True, in_v=False)
+        mv_ok.record_edge("M1", "B", 1, in_u=True, in_v=False)
+        mv_ok.record_edge("A", "M2", 3, in_u=False, in_v=True)
+        r_ok = mv_ok.record_edge("M2", "B", -1, in_u=False, in_v=True)
+
+        self.assertEqual(r_ok["status"], "MAYER_VIETORIS_EXACT_GLUED_LGGG")
+        self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
+        self.assertTrue(r_ok["u_locally_exact"])
+        self.assertTrue(r_ok["v_locally_exact"])
+        self.assertTrue(r_ok["union_globally_exact"])
+        self.assertEqual(r_ok["connecting_coboundary_spread"], "0")
+        self.assertEqual(
+            r_ok["glued_global_potential"],
+            {"A": "0", "B": "2", "M1": "1", "M2": "3"},
+        )
+        self.assertTrue(r_ok["mayer_vietoris_equivalence_verified"])
 
 
 if __name__ == "__main__":
