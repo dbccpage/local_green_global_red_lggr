@@ -21,3 +21,4 @@ import LggrVIII
 #print axioms LggrVIII.coarsened_macro_stage_masks_internal_prefix_breach
 #print axioms LggrVIII.minimal_metadata_refinement_eliminates_collision
 #print axioms LggrVIII.deferred_obligation_and_scope_migration_separation
+#print axioms LggrVIII.l1_dual_witness_subgradient_weight_sensitivity

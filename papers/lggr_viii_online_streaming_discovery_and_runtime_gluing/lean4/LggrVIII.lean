@@ -503,4 +503,29 @@ theorem deferred_obligation_and_scope_migration_separation :
   · intro loc ep pref sc ob
     cases loc <;> cases ep <;> cases pref <;> cases sc <;> cases ob <;> decide
 
+/-- Weighted 3-edge L1 residual under non-negative edge weights `(w1, w2, w3)`. -/
+def weightedL1Cost3 (w1 w2 w3 r1 r2 r3 : Int) : Int :=
+  w1 * absInt r1 + w2 * absInt r2 + w3 * absInt r3
+
+/-- Theorem 22 (`l1_dual_witness_subgradient_weight_sensitivity`):
+    1. (Dual Feasibility Under Non-Negative Weight Increases): If a dual witness `(z1, z2, z3)`
+       satisfies `|zi| ≤ wi` and weight increments satisfy `dwi ≥ 0`, then `|zi| ≤ wi + dwi`.
+    2. (Monotonicity of Weighted L1 Residual): For any residual vector `(r1, r2, r3)` and
+       non-negative weight increments `dw1, dw2, dw3 ≥ 0`, the weighted L1 cost satisfies
+       `weightedL1Cost3 (w1 + dw1) (w2 + dw2) (w3 + dw3) r1 r2 r3 - weightedL1Cost3 w1 w2 w3 r1 r2 r3 = dw1 * |r1| + dw2 * |r2| + dw3 * |r3| ≥ 0`. -/
+theorem l1_dual_witness_subgradient_weight_sensitivity
+    (w1 w2 w3 dw1 dw2 dw3 z1 z2 z3 r1 r2 r3 : Int)
+    (hw1 : absInt z1 ≤ w1) (hw2 : absInt z2 ≤ w2) (hw3 : absInt z3 ≤ w3)
+    (hdw1 : dw1 ≥ 0) (hdw2 : dw2 ≥ 0) (hdw3 : dw3 ≥ 0) :
+    (absInt z1 ≤ w1 + dw1 ∧ absInt z2 ≤ w2 + dw2 ∧ absInt z3 ≤ w3 + dw3) ∧
+    weightedL1Cost3 (w1 + dw1) (w2 + dw2) (w3 + dw3) r1 r2 r3 -
+      weightedL1Cost3 w1 w2 w3 r1 r2 r3 =
+      dw1 * absInt r1 + dw2 * absInt r2 + dw3 * absInt r3 := by
+  dsimp [weightedL1Cost3] at *
+  refine ⟨⟨by omega, by omega, by omega⟩, ?_⟩
+  have h1 : (w1 + dw1) * absInt r1 = w1 * absInt r1 + dw1 * absInt r1 := Int.add_mul w1 dw1 (absInt r1)
+  have h2 : (w2 + dw2) * absInt r2 = w2 * absInt r2 + dw2 * absInt r2 := Int.add_mul w2 dw2 (absInt r2)
+  have h3 : (w3 + dw3) * absInt r3 = w3 * absInt r3 + dw3 * absInt r3 := Int.add_mul w3 dw3 (absInt r3)
+  omega
+
 end LggrVIII

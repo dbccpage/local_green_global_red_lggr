@@ -23,7 +23,7 @@ from .common import (
     text,
 )
 from .descent import _scope
-from .linear import Vector, classify_cochain, matvec, matrix, rational, solve_exact, vector, verify_l1_certificate
+from .linear import Vector, classify_cochain, is_zero, matmul, matvec, matrix, rational, solve_exact, vector, verify_l1_certificate
 from .transport import verify_transport
 from .witnesses import BudgetPolicy, StateRef, StepWitness, audit_history, local_accepts
 import itertools
@@ -1430,6 +1430,87 @@ class StreamingCochainMonitor:
                 d1_rows.append(row_d1)
 
         return classify_cochain(d0_rows, h_vec, d1_rows)
+
+    def analyze_cycle_basis_sensitivity(self) -> dict[str, Any]:
+        """Compute the fundamental cycle basis matrix C, coboundary Ch, and L1 weight sensitivities."""
+        m = len(self.edges)
+        if m == 0:
+            body: dict[str, Any] = {
+                "schema": "lggr.online_cycle_sensitivity.v1",
+                "authority_effect": "None",
+                "status": "OPEN_TREE",
+                "betti_1": 0,
+                "fundamental_cycle_matrix": [],
+                "fundamental_coboundary": [],
+                "cycle_annihilates_coboundary": True,
+                "marginal_weight_sensitivity": [],
+                "active_repair_edges": [],
+                "complementary_slackness_verified": True,
+                "global_l1_repair_distance": Fraction(0),
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        node_list = sorted(self.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        d0_rows: list[list[Fraction]] = []
+        for e in self.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d0_rows.append(row)
+
+        forest_set = set(self.forest_edge_indices)
+        chord_indices = [idx for idx in range(m) if idx not in forest_set]
+        c_rows: list[list[Fraction]] = []
+        c_coboundary: list[Fraction] = []
+
+        for c_idx in chord_indices:
+            row_c = [Fraction(0)] * m
+            row_c[c_idx] = Fraction(1)
+            u, v = self.edges[c_idx]["source"], self.edges[c_idx]["target"]
+            if u != v:
+                t_path = self._find_tree_path_for_indices(forest_set, v, u)
+                if t_path is not None:
+                    for t_idx, orient in t_path:
+                        row_c[t_idx] = Fraction(orient)
+            c_rows.append(row_c)
+            c_coboundary.append(
+                sum((row_c[j] * self.edges[j]["value"] for j in range(m)), Fraction(0))
+            )
+
+        if c_rows:
+            c_mat = matrix(c_rows, "C_fundamental")
+            d0_mat = matrix(d0_rows, "D0")
+            annihilates = is_zero(matmul(c_mat, d0_mat))
+        else:
+            annihilates = True
+
+        global_l1 = self.solve_global_l1_repair()
+        cert = global_l1["certificate"]
+        residuals = [rational(r) for r in cert["residual"]]
+        dual_vec = [rational(z) for z in global_l1["dual_witness"]]
+        sensitivities = [abs(r) for r in residuals]
+        active_edges = [i for i, r in enumerate(residuals) if r != 0]
+        comp_slack = all(
+            (r == 0)
+            or (dual_vec[i] == self.edges[i]["weight"] * (Fraction(1) if r > 0 else Fraction(-1)))
+            for i, r in enumerate(residuals)
+        )
+
+        body = {
+            "schema": "lggr.online_cycle_sensitivity.v1",
+            "authority_effect": "None",
+            "status": global_l1["status"],
+            "betti_1": len(chord_indices),
+            "fundamental_cycle_matrix": c_rows,
+            "fundamental_coboundary": c_coboundary,
+            "cycle_annihilates_coboundary": annihilates,
+            "marginal_weight_sensitivity": sensitivities,
+            "active_repair_edges": active_edges,
+            "complementary_slackness_verified": comp_slack,
+            "global_l1_repair_distance": rational(global_l1["global_l1_repair_distance"]),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
 
     def get_receipt(self) -> dict[str, Any]:
         """Emit comprehensive summary receipt for cochain monitor."""
