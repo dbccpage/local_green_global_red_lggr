@@ -25,7 +25,7 @@ from .common import (
 from .descent import _scope
 from .linear import Vector, classify_cochain, matvec, matrix, rational, solve_exact, vector, verify_l1_certificate
 from .transport import verify_transport
-from .witnesses import BudgetPolicy, StateRef, StepWitness, local_accepts
+from .witnesses import BudgetPolicy, StateRef, StepWitness, audit_history, local_accepts
 import itertools
 
 _witness_counter = itertools.count(1)
@@ -1828,6 +1828,118 @@ class StreamingPositiveExtensionMonitor:
             "global_minimax_error_floor": self.global_minimax_floor,
             "audited_models_count": len(self.audited_models),
             "status": "NONZERO_MINIMAX_FLOOR" if self.global_minimax_floor > 0 else "EXACT_FIBER_DECODER",
-            "contract_status": "OBSTRUCTED_LGGR" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG",
+        }
+        body["contract_status"] = "OBSTRUCTED_LGGR" if self.global_minimax_floor > 0 else "COMPOSABLE_LGGG"
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingBaselineComparator:
+    """Controlled equal-information comparative evaluator: conventional baseline vs. LGGR audit.
+
+    Compares a conventional local-step + endpoint invariant checker against
+    StreamingAuditMonitor and audit_history on identical step-witness histories,
+    tracking:
+      - conventional_accepts: local step acceptance + endpoint bound |x_n - x_0| <= max_total
+      - lggr_accepts: full G1-G4 composition + zero unresolved deferred obligations
+      - conventional_false_acceptance: conventional accepts while LGGR detects a prefix
+        excursion, uncertified representation/scope migration, or retained obligation
+      - first_fault_step_index: exact step index localized by StreamingAuditMonitor
+    """
+
+    def __init__(self, policy: BudgetPolicy) -> None:
+        if not isinstance(policy, BudgetPolicy):
+            raise ValidationError("policy must be a BudgetPolicy instance")
+        self.policy = policy
+        self.comparisons: list[dict[str, Any]] = []
+
+    def compare_trace(
+        self,
+        trace_id: str,
+        baseline: StateRef,
+        steps: Iterable[StepWitness],
+    ) -> dict[str, Any]:
+        """Evaluate a multi-step witness trace under both checkers with equal input information."""
+        tid = text(trace_id, "trace_id")
+        if not isinstance(baseline, StateRef):
+            raise ValidationError("baseline must be a StateRef instance")
+        step_list = list(sequence(steps, "steps"))
+        if not step_list:
+            raise ValidationError("steps must be non-empty")
+
+        # 1. Conventional local-step + endpoint baseline regression checker
+        local_steps_ok = all(w.local_accepted and w.smoke_passed for w in step_list)
+        start_val = baseline.value
+        end_val = step_list[-1].target.value
+        endpoint_ok = (
+            start_val is not None
+            and end_val is not None
+            and abs(end_val - start_val) <= self.policy.max_total
+        )
+        conventional_accepts = bool(local_steps_ok and endpoint_ok)
+
+        # 2. Online StreamingAuditMonitor + full batch audit_history
+        smon = StreamingAuditMonitor(self.policy, baseline=baseline)
+        first_alert_step: int | None = None
+        for idx, w in enumerate(step_list):
+            s_res = smon.step(w)
+            if s_res["status"] == "ALERT" and first_alert_step is None:
+                first_alert_step = idx
+
+        stream_rec = smon.get_receipt()
+        batch_rec = audit_history(self.policy, baseline, step_list)
+        retained_obligations = list(batch_rec.get("unresolved_obligations", []))
+        lggr_accepts = (
+            batch_rec["status"] == "COMPOSITION_VERIFIED"
+            and stream_rec["contract_status"] == "COMPOSABLE_LGGG"
+            and len(retained_obligations) == 0
+        )
+
+        false_acceptance = conventional_accepts and not lggr_accepts
+        false_refusal = (not conventional_accepts) and lggr_accepts
+        record = {
+            "trace_id": tid,
+            "steps_count": len(step_list),
+            "conventional_accepts": conventional_accepts,
+            "lggr_accepts": lggr_accepts,
+            "conventional_false_acceptance": false_acceptance,
+            "conventional_false_refusal": false_refusal,
+            "first_fault_step_index": first_alert_step,
+            "retained_obligations": retained_obligations,
+            "lggr_batch_status": batch_rec["status"],
+            "lggr_stream_contract_status": stream_rec["contract_status"],
+        }
+        self.comparisons.append(record)
+        status = (
+            "CONVENTIONAL_FALSE_ACCEPTANCE"
+            if false_acceptance
+            else "AGREEMENT_VERIFIED"
+            if conventional_accepts == lggr_accepts
+            else "DIVERGENT_VERDICT"
+        )
+        body = {
+            "schema": "lggr.online_baseline_comparison.v1",
+            "authority_effect": "None",
+            "status": status,
+            **record,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate comparative evaluation receipt across all evaluated traces."""
+        total = len(self.comparisons)
+        false_acc_count = sum(1 for c in self.comparisons if c["conventional_false_acceptance"])
+        false_ref_count = sum(1 for c in self.comparisons if c["conventional_false_refusal"])
+        localized_count = sum(1 for c in self.comparisons if c["first_fault_step_index"] is not None)
+        obligations_retained_traces = sum(1 for c in self.comparisons if len(c["retained_obligations"]) > 0)
+        body = {
+            "schema": "lggr.online_baseline_comparison_summary.v1",
+            "authority_effect": "None",
+            "traces_evaluated": total,
+            "conventional_false_acceptances": false_acc_count,
+            "conventional_false_refusals": false_ref_count,
+            "faults_localized_online": localized_count,
+            "traces_with_retained_obligations": obligations_retained_traces,
+            "comparisons": self.comparisons,
         }
         return json_value({**body, "receipt_sha256": digest(body)})

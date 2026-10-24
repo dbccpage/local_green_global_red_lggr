@@ -474,4 +474,33 @@ theorem minimal_metadata_refinement_eliminates_collision
   · intro ⟨h_pair_eq, h_q_neq⟩
     exact ⟨congrArg Prod.fst h_pair_eq, h_q_neq⟩
 
+/-- Conventional local-step + endpoint baseline checker vs. full LGGR G1-G4 + obligation checker. -/
+def conventionalAccepts (local_ok endpoint_ok : Bool) : Bool :=
+  local_ok && endpoint_ok
+
+def lggrFullAccepts (local_ok endpoint_ok prefix_ok scope_ok obligations_clear : Bool) : Bool :=
+  local_ok && endpoint_ok && prefix_ok && scope_ok && obligations_clear
+
+/-- Theorem 21 (`deferred_obligation_and_scope_migration_separation`):
+    1. (Obligation Retention Monotonicity): For non-negative step obligation counts `o1 ≥ 1` and
+       `o2 ≥ 0`, the cumulative retained obligation count `o1 + o2 ≥ 1` remains strictly positive
+       even when the subsequent step introduces zero new obligations (`o2 = 0`).
+    2. (Strict Soundness Refinement & False-Acceptance Separation): Full LGGR acceptance implies
+       conventional local+endpoint acceptance, whereas mid-flight prefix breaches (`prefix_ok = false`),
+       silent representation/scope migrations (`scope_ok = false`), or unresolved deferred obligations
+       (`obligations_clear = false`) cause conventional false acceptance (`conventionalAccepts = true`
+       while `lggrFullAccepts = false`). -/
+theorem deferred_obligation_and_scope_migration_separation :
+    (∀ o1 o2 : Int, o1 ≥ 1 → o2 ≥ 0 → o1 + o2 ≥ 1) ∧
+    (∀ loc ep pref sc ob : Bool,
+      lggrFullAccepts loc ep pref sc ob = true → conventionalAccepts loc ep = true) ∧
+    (conventionalAccepts true true = true ∧ lggrFullAccepts true true false true true = false) ∧
+    (conventionalAccepts true true = true ∧ lggrFullAccepts true true true false true = false) ∧
+    (conventionalAccepts true true = true ∧ lggrFullAccepts true true true true false = false) := by
+  refine ⟨?_, ?_, by decide, by decide, by decide⟩
+  · intro o1 o2 ho1 ho2
+    omega
+  · intro loc ep pref sc ob
+    cases loc <;> cases ep <;> cases pref <;> cases sc <;> cases ob <;> decide
+
 end LggrVIII
