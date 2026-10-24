@@ -24,6 +24,7 @@ from .streaming import (
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
@@ -2169,6 +2170,547 @@ def run_closed_loop_repair_benchmark(
         )
     os.makedirs(receipts_dir, exist_ok=True)
     out_path = os.path.join(receipts_dir, "closed_loop_repair_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
+
+# ------------------------------------------------------------------------------
+# Joint Multi-Monitor Closed-Loop Repair Benchmark (Theorem 56)
+# ------------------------------------------------------------------------------
+
+def _eval_pair1_side_info_and_skew(
+    scope_prefix: str,
+    cap_s: int,
+    symbols: list[int],
+    cand_alpha: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Evaluate Coupled Pair 1: Side-Information Capacity S coupled to Skew Cochain omega = (2 + max(0, S - 4), 0)."""
+    states = [
+        {"state_id": "s0", "query_value": "ROLLBACK", "side_symbol": symbols[0]},
+        {"state_id": "s1", "query_value": "PATCH_HOTFIX", "side_symbol": symbols[1]},
+        {"state_id": "s2", "query_value": "ROTATE_KEYS", "side_symbol": symbols[2]},
+        {"state_id": "s3", "query_value": "ISOLATE_NODE", "side_symbol": symbols[3]},
+    ]
+    si_mon = StreamingSideInformationCapacityMonitor(scope_id=f"{scope_prefix}_si")
+    si_mon.record_fiber_channel("fiber_coupled", states, channel_capacity_s=cap_s, error_budget=0)
+    si_rec = si_mon.get_receipt()
+
+    bandwidth_overhead = max(0, cap_s - 4)
+    omega_a = str(2 + bandwidth_overhead)
+    sr_mon = StreamingSkewRepairMonitor(scope_id=f"{scope_prefix}_sr")
+    sr_mon.record_probe(
+        "probe_coupled",
+        omega_a,
+        "0",
+        candidate_alpha=cand_alpha,
+        l_inf_coordinate_budget="2",
+        l_1_global_budget="2",
+    )
+    sr_rec = sr_mon.get_receipt()
+    return si_rec, sr_rec
+
+
+def _eval_pair2_poe_and_skew(
+    scope_prefix: str,
+    eps_str: str,
+    cand_alpha: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Evaluate Coupled Pair 2: PoE compromise shift eps coupled to Skew Cochain omega = (1 + 4*eps, 0)."""
+    eps = Fraction(eps_str)
+    if eps < 0 or eps > 1:
+        eps = Fraction(0)
+    s0 = str(1 - eps)
+    s1 = str(eps)
+    scores = [[s0, s1, "0"], ["0", s1, s0]]
+    poe_mon = StreamingProductOfExpertsMonitor(scope_id=f"{scope_prefix}_poe")
+    poe_mon.record_expert_scores("round_coupled", scores)
+    poe_rec = poe_mon.get_receipt()
+
+    omega_a = str(Fraction(1) + 4 * eps)
+    sr_mon = StreamingSkewRepairMonitor(scope_id=f"{scope_prefix}_sr")
+    sr_mon.record_probe(
+        "probe_coupled",
+        omega_a,
+        "0",
+        candidate_alpha=cand_alpha,
+        l_inf_coordinate_budget="2",
+        l_1_global_budget="2",
+    )
+    sr_rec = sr_mon.get_receipt()
+    return poe_rec, sr_rec
+
+
+def _eval_pair3_tower_and_mermin_peres(
+    scope_prefix: str,
+    const_b: int,
+    x_mod2: int,
+    x_mod4: int,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Evaluate Coupled Pair 3: Projective Tower 3*x + b == 0 root x_* coupled to Mermin-Peres col_targets[2]."""
+    pt_mon = StreamingProjectiveTowerMonitor(3, const_b, scope_id=f"{scope_prefix}_pt")
+    pt_mon.record_stage("stage_mod2", 2, x_mod2)
+    pt_mon.record_stage("stage_mod4", 4, x_mod4)
+    pt_rec = pt_mon.get_receipt()
+
+    int_root = pt_rec["integral_global_root"]
+    c3_target = 1 if int_root == 1 else -1
+    mp_mon = StreamingMerminPeresParityMonitor(scope_id=f"{scope_prefix}_mp")
+    mp_mon.record_grid(
+        "grid_coupled",
+        row_targets=[1, 1, 1],
+        col_targets=[1, 1, c3_target],
+        row_context_assignments=[[1, 1, 1], [1, 1, 1], [1, 1, 1]],
+        col_context_assignments=[[1, 1, 1], [1, 1, 1], [1, 1, c3_target]],
+    )
+    mp_rec = mp_mon.get_receipt()
+    return pt_rec, mp_rec
+
+
+def _run_joint_multi_monitor_repair_for_model(
+    client: OpenRouterClient,
+    joint_guard: StreamingJointMultiMonitorRepairGuard,
+) -> list[dict[str, Any]]:
+    """Run 3 coupled two-monitor closed-loop repair trajectories (R0 -> R1 -> R2) for one model."""
+    trajectories: list[dict[str, Any]] = []
+
+    # ==========================================================================
+    # Pair 1: Side-Info Capacity S coupled to Skew Cochain omega = (2 + max(0, S - 4), 0)
+    # ==========================================================================
+    p1_r0_si, p1_r0_sr = _eval_pair1_side_info_and_skew(
+        f"j1_r0_{client.model}", 2, [0, 1, 0, 1], "-2/3"
+    )
+
+    p1_r1_prompt = (
+        "You are a Joint Multi-Monitor Orchestrator Repair Agent governing TWO coupled monitors simultaneously:\n"
+        "  - Monitor A (StreamingSideInformationCapacityMonitor): K = 4 distinct incident states [s0, s1, s2, s3] over side-channel capacity S.\n"
+        "  - Monitor B (StreamingSkewRepairMonitor): 2-channel cochain omega(S) = (2 + max(0, S - 4), 0) with residual "
+        "r(alpha) = (omega_a + alpha, 2*alpha), coordinate budget B_inf = 2, and global l_1 budget B_1 = 2.\n"
+        "Notice the cross-monitor coupling: increasing S above 4 adds bandwidth overhead (S - 4) to omega_a!\n"
+        f"Round 0 joint receipts: Monitor A status={p1_r0_si['status']!r} (S=2 < K=4), "
+        f"Monitor B status={p1_r0_sr['status']!r} (alpha='-2/3' gives l_1 cost 8/3 > 2).\n"
+        "Choose a joint repair action with 'channel_capacity_s' in {4, 5, 6}, 'symbols' (list of 4 distinct ints in 0..S-1), "
+        "and 'candidate_alpha' in [\"-2/3\", \"-2/5\", \"-1/2\", \"0\"] so BOTH monitors pass globally. "
+        "Output ONLY valid JSON with keys 'channel_capacity_s', 'symbols', and 'candidate_alpha'."
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p1_r1_json = _extract_json(p1_r1_comp)
+    cap_p1_r1 = int(p1_r1_json.get("channel_capacity_s", 2)) if "channel_capacity_s" in p1_r1_json else 2
+    if cap_p1_r1 < 1:
+        cap_p1_r1 = 2
+    syms_p1_r1 = p1_r1_json.get("symbols", [0, 1, 0, 1])
+    if not (isinstance(syms_p1_r1, list) and len(syms_p1_r1) == 4 and all(isinstance(x, int) for x in syms_p1_r1)):
+        syms_p1_r1 = [0, 1, 0, 1]
+    alpha_p1_r1 = str(p1_r1_json.get("candidate_alpha", "-2/3"))
+    try:
+        Fraction(alpha_p1_r1)
+    except Exception:
+        alpha_p1_r1 = "-2/3"
+
+    p1_r1_si, p1_r1_sr = _eval_pair1_side_info_and_skew(
+        f"j1_r1_{client.model}", cap_p1_r1, syms_p1_r1, alpha_p1_r1
+    )
+
+    p1_r2_prompt = (
+        "You are a Joint Multi-Monitor Orchestrator Repair Agent in Round 2 (Pareto Witness-Guided Feedback). "
+        f"Round 1 produced Monitor A status={p1_r1_si['status']!r} and Monitor B status={p1_r1_sr['status']!r} "
+        f"(l_1 cost={p1_r1_sr['probes'][0]['candidate_l1_cost']!r} vs budget '2'). "
+        "Joint Pareto witness guidance: to avoid bandwidth overhead (S - 4 > 0), set channel_capacity_s = 4 "
+        "with symbols = [0, 1, 2, 3] (giving omega = (2, 0)) AND select the exact l_1 minimizer candidate_alpha = \"0\" "
+        "(giving l_1 cost 2 <= 2). Output ONLY valid JSON with keys 'channel_capacity_s', 'symbols', and 'candidate_alpha'."
+    )
+    p1_r2_comp = client.complete(p1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p1_r2_json = _extract_json(p1_r2_comp)
+    cap_p1_r2 = int(p1_r2_json.get("channel_capacity_s", 2)) if "channel_capacity_s" in p1_r2_json else 2
+    if cap_p1_r2 < 1:
+        cap_p1_r2 = 2
+    syms_p1_r2 = p1_r2_json.get("symbols", [0, 1, 0, 1])
+    if not (isinstance(syms_p1_r2, list) and len(syms_p1_r2) == 4 and all(isinstance(x, int) for x in syms_p1_r2)):
+        syms_p1_r2 = [0, 1, 0, 1]
+    alpha_p1_r2 = str(p1_r2_json.get("candidate_alpha", "-2/3"))
+    try:
+        Fraction(alpha_p1_r2)
+    except Exception:
+        alpha_p1_r2 = "-2/3"
+
+    p1_r2_si, p1_r2_sr = _eval_pair1_side_info_and_skew(
+        f"j1_r2_{client.model}", cap_p1_r2, syms_p1_r2, alpha_p1_r2
+    )
+
+    p1_traj = joint_guard.record_coupled_trajectory(
+        f"joint_01_side_info_skew_{client.model}",
+        pair_name="SideInfoCapacity_x_SkewRepair",
+        monitor_a_name="StreamingSideInformationCapacityMonitor",
+        monitor_b_name="StreamingSkewRepairMonitor",
+        model_id=client.model,
+        rounds=[
+            {
+                "feedback_mode": "round_0_double_obstructed_baseline",
+                "status_a": p1_r0_si["status"],
+                "status_b": p1_r0_sr["status"],
+                "local_a_pass": p1_r0_si["fibers"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": p1_r0_si["fibers"][0]["global_decodability_evaluator"] == 1,
+                "local_b_pass": p1_r0_sr["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p1_r0_sr["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_1_single_round_joint_receipt",
+                "status_a": p1_r1_si["status"],
+                "status_b": p1_r1_sr["status"],
+                "local_a_pass": p1_r1_si["fibers"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": p1_r1_si["fibers"][0]["global_decodability_evaluator"] == 1,
+                "local_b_pass": p1_r1_sr["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p1_r1_sr["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_2_multi_round_pareto_witness",
+                "status_a": p1_r2_si["status"],
+                "status_b": p1_r2_sr["status"],
+                "local_a_pass": p1_r2_si["fibers"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": p1_r2_si["fibers"][0]["global_decodability_evaluator"] == 1,
+                "local_b_pass": p1_r2_sr["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p1_r2_sr["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+        ],
+    )
+    trajectories.append(
+        {
+            **p1_traj,
+            "prompts": [p1_r1_prompt, p1_r2_prompt],
+            "completions": [p1_r1_comp, p1_r2_comp],
+            "round_inputs": [
+                {"channel_capacity_s": 2, "symbols": [0, 1, 0, 1], "candidate_alpha": "-2/3"},
+                {"channel_capacity_s": cap_p1_r1, "symbols": syms_p1_r1, "candidate_alpha": alpha_p1_r1},
+                {"channel_capacity_s": cap_p1_r2, "symbols": syms_p1_r2, "candidate_alpha": alpha_p1_r2},
+            ],
+            "round_receipts": [
+                {"receipt_a": p1_r0_si, "receipt_b": p1_r0_sr},
+                {"receipt_a": p1_r1_si, "receipt_b": p1_r1_sr},
+                {"receipt_a": p1_r2_si, "receipt_b": p1_r2_sr},
+            ],
+        }
+    )
+
+    # ==========================================================================
+    # Pair 2: PoE Compromise Shift eps coupled to Skew Cochain omega = (1 + 4*eps, 0)
+    # ==========================================================================
+    p2_r0_poe, p2_r0_sr = _eval_pair2_poe_and_skew(
+        f"j2_r0_{client.model}", "0", "-1/3"
+    )
+
+    p2_r1_prompt = (
+        "You are a Joint Multi-Monitor Orchestrator Repair Agent governing TWO coupled monitors simultaneously:\n"
+        "  - Monitor A (StreamingProductOfExpertsMonitor): 2 experts with score rows [1 - eps, eps, 0] and [0, eps, 1 - eps]. "
+        "Requires eps > 0 so PoE partition sum D_PoE = eps^2 > 0.\n"
+        "  - Monitor B (StreamingSkewRepairMonitor): shifting mass eps induces cochain drift omega(eps) = (1 + 4*eps, 0) "
+        "with residual r(alpha) = (1 + 4*eps + alpha, 2*alpha), coordinate budget B_inf = 2, and global l_1 budget B_1 = 2.\n"
+        "Notice the cross-monitor coupling: if eps = 1/2, then omega_a = 3 > B_1 = 2 makes Monitor B unrepairable!\n"
+        f"Round 0 joint receipts: Monitor A status={p2_r0_poe['status']!r} (eps='0' -> D_PoE=0), "
+        f"Monitor B status={p2_r0_sr['status']!r}.\n"
+        "Choose a joint repair action with 'compromise_eps' in [\"0\", \"1/4\", \"1/2\"] and "
+        "'candidate_alpha' in [\"-2/3\", \"-2/5\", \"-1/2\", \"0\"] so BOTH monitors pass globally. "
+        "Output ONLY valid JSON with keys 'compromise_eps' and 'candidate_alpha'."
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p2_r1_json = _extract_json(p2_r1_comp)
+    eps_p2_r1 = str(p2_r1_json.get("compromise_eps", "0"))
+    try:
+        Fraction(eps_p2_r1)
+    except Exception:
+        eps_p2_r1 = "0"
+    alpha_p2_r1 = str(p2_r1_json.get("candidate_alpha", "-2/3"))
+    try:
+        Fraction(alpha_p2_r1)
+    except Exception:
+        alpha_p2_r1 = "-2/3"
+
+    p2_r1_poe, p2_r1_sr = _eval_pair2_poe_and_skew(
+        f"j2_r1_{client.model}", eps_p2_r1, alpha_p2_r1
+    )
+
+    p2_r2_prompt = (
+        "You are a Joint Multi-Monitor Orchestrator Repair Agent in Round 2 (Pareto Witness-Guided Feedback). "
+        f"Round 1 produced Monitor A status={p2_r1_poe['status']!r} and Monitor B status={p2_r1_sr['status']!r} "
+        f"(l_1 cost={p2_r1_sr['probes'][0]['candidate_l1_cost']!r} vs budget '2'). "
+        "Joint Pareto witness guidance: set compromise_eps = \"1/4\" (so D_PoE = 1/16 > 0 and omega = (2, 0)) "
+        "AND set candidate_alpha = \"0\" (the exact l_1 minimizer alpha_1 = 0 achieving l_1 cost 2 <= 2). "
+        "Output ONLY valid JSON with keys 'compromise_eps' and 'candidate_alpha'."
+    )
+    p2_r2_comp = client.complete(p2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p2_r2_json = _extract_json(p2_r2_comp)
+    eps_p2_r2 = str(p2_r2_json.get("compromise_eps", "0"))
+    try:
+        Fraction(eps_p2_r2)
+    except Exception:
+        eps_p2_r2 = "0"
+    alpha_p2_r2 = str(p2_r2_json.get("candidate_alpha", "-2/3"))
+    try:
+        Fraction(alpha_p2_r2)
+    except Exception:
+        alpha_p2_r2 = "-2/3"
+
+    p2_r2_poe, p2_r2_sr = _eval_pair2_poe_and_skew(
+        f"j2_r2_{client.model}", eps_p2_r2, alpha_p2_r2
+    )
+
+    p2_traj = joint_guard.record_coupled_trajectory(
+        f"joint_02_poe_skew_{client.model}",
+        pair_name="ProductOfExperts_x_SkewRepair",
+        monitor_a_name="StreamingProductOfExpertsMonitor",
+        monitor_b_name="StreamingSkewRepairMonitor",
+        model_id=client.model,
+        rounds=[
+            {
+                "feedback_mode": "round_0_double_obstructed_baseline",
+                "status_a": p2_r0_poe["status"],
+                "status_b": p2_r0_sr["status"],
+                "local_a_pass": p2_r0_poe["rounds"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": p2_r0_poe["rounds"][0]["global_poe_normalizable_evaluator"] == 1,
+                "local_b_pass": p2_r0_sr["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p2_r0_sr["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_1_single_round_joint_receipt",
+                "status_a": p2_r1_poe["status"],
+                "status_b": p2_r1_sr["status"],
+                "local_a_pass": p2_r1_poe["rounds"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": p2_r1_poe["rounds"][0]["global_poe_normalizable_evaluator"] == 1,
+                "local_b_pass": p2_r1_sr["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p2_r1_sr["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_2_multi_round_pareto_witness",
+                "status_a": p2_r2_poe["status"],
+                "status_b": p2_r2_sr["status"],
+                "local_a_pass": p2_r2_poe["rounds"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": p2_r2_poe["rounds"][0]["global_poe_normalizable_evaluator"] == 1,
+                "local_b_pass": p2_r2_sr["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p2_r2_sr["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+        ],
+    )
+    trajectories.append(
+        {
+            **p2_traj,
+            "prompts": [p2_r1_prompt, p2_r2_prompt],
+            "completions": [p2_r1_comp, p2_r2_comp],
+            "round_inputs": [
+                {"compromise_eps": "0", "candidate_alpha": "-1/3"},
+                {"compromise_eps": eps_p2_r1, "candidate_alpha": alpha_p2_r1},
+                {"compromise_eps": eps_p2_r2, "candidate_alpha": alpha_p2_r2},
+            ],
+            "round_receipts": [
+                {"receipt_a": p2_r0_poe, "receipt_b": p2_r0_sr},
+                {"receipt_a": p2_r1_poe, "receipt_b": p2_r1_sr},
+                {"receipt_a": p2_r2_poe, "receipt_b": p2_r2_sr},
+            ],
+        }
+    )
+
+    # ==========================================================================
+    # Pair 3: Projective Tower 3*x + b == 0 coupled to Mermin-Peres col_targets[2] = x_*
+    # ==========================================================================
+    p3_r0_pt, p3_r0_mp = _eval_pair3_tower_and_mermin_peres(
+        f"j3_r0_{client.model}", 1, 1, 1
+    )
+
+    p3_r1_prompt = (
+        "You are a Joint Multi-Monitor Orchestrator Repair Agent governing TWO coupled monitors simultaneously:\n"
+        "  - Monitor A (StreamingProjectiveTowerMonitor): audits 3*x + const_b == 0 across stages mod 2 and mod 4.\n"
+        "  - Monitor B (StreamingMerminPeresParityMonitor): 3x3 parity grid with row_targets = [1, 1, 1] (product +1) "
+        "and col_targets = [1, 1, x_*], where x_* is the integral_global_root of Monitor A!\n"
+        "Notice the cross-monitor Whack-a-Mole trap: if you set const_b = 3, Monitor A has integral root x_* = -1, "
+        "which sets col_targets = [1, 1, -1] (product -1 != +1) and OBSTRUCTS Monitor B! "
+        "Instead, you must choose const_b in {-3, 1, 3} so 3*x + const_b == 0 has integral root x_* = +1, "
+        "and provide compatible modular residues x_mod2 in {0, 1} and x_mod4 in {0, 1, 2, 3}. "
+        "Output ONLY valid JSON with keys 'const_b' (int), 'x_mod2' (int), and 'x_mod4' (int)."
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p3_r1_json = _extract_json(p3_r1_comp)
+    b_p3_r1 = int(p3_r1_json.get("const_b", 1)) if "const_b" in p3_r1_json else 1
+    x1_p3_r1 = int(p3_r1_json.get("x_mod2", -1)) if "x_mod2" in p3_r1_json else -1
+    x2_p3_r1 = int(p3_r1_json.get("x_mod4", -1)) if "x_mod4" in p3_r1_json else -1
+
+    p3_r1_pt, p3_r1_mp = _eval_pair3_tower_and_mermin_peres(
+        f"j3_r1_{client.model}", b_p3_r1, x1_p3_r1, x2_p3_r1
+    )
+
+    p3_r2_prompt = (
+        "You are a Joint Multi-Monitor Orchestrator Repair Agent in Round 2 (Pareto Witness-Guided Feedback). "
+        f"Round 1 produced Monitor A status={p3_r1_pt['status']!r} (integral_global_root={p3_r1_pt['integral_global_root']!r}) "
+        f"and Monitor B status={p3_r1_mp['status']!r}. "
+        "Joint Pareto witness guidance: set const_b = -3 so 3*x - 3 == 0 has integral_global_root x_* = +1 "
+        "(aligning Monitor B's column parity product +1 with row parity product +1), with modular residues "
+        "x_mod2 = 1 and x_mod4 = 1. Output ONLY valid JSON with keys 'const_b', 'x_mod2', and 'x_mod4'."
+    )
+    p3_r2_comp = client.complete(p3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p3_r2_json = _extract_json(p3_r2_comp)
+    b_p3_r2 = int(p3_r2_json.get("const_b", 1)) if "const_b" in p3_r2_json else 1
+    x1_p3_r2 = int(p3_r2_json.get("x_mod2", -1)) if "x_mod2" in p3_r2_json else -1
+    x2_p3_r2 = int(p3_r2_json.get("x_mod4", -1)) if "x_mod4" in p3_r2_json else -1
+
+    p3_r2_pt, p3_r2_mp = _eval_pair3_tower_and_mermin_peres(
+        f"j3_r2_{client.model}", b_p3_r2, x1_p3_r2, x2_p3_r2
+    )
+
+    p3_traj = joint_guard.record_coupled_trajectory(
+        f"joint_03_tower_mermin_{client.model}",
+        pair_name="ProjectiveTower_x_MerminPeresParity",
+        monitor_a_name="StreamingProjectiveTowerMonitor",
+        monitor_b_name="StreamingMerminPeresParityMonitor",
+        model_id=client.model,
+        rounds=[
+            {
+                "feedback_mode": "round_0_double_obstructed_baseline",
+                "status_a": p3_r0_pt["status"],
+                "status_b": p3_r0_mp["status"],
+                "local_a_pass": p3_r0_pt["local_product_aggregator"] == 1,
+                "global_a_pass": p3_r0_pt["global_integral_lift_evaluator"] == 1,
+                "local_b_pass": p3_r0_mp["grids"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p3_r0_mp["grids"][0]["global_noncontextual_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_1_single_round_joint_receipt",
+                "status_a": p3_r1_pt["status"],
+                "status_b": p3_r1_mp["status"],
+                "local_a_pass": p3_r1_pt["local_product_aggregator"] == 1,
+                "global_a_pass": p3_r1_pt["global_integral_lift_evaluator"] == 1,
+                "local_b_pass": p3_r1_mp["grids"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p3_r1_mp["grids"][0]["global_noncontextual_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_2_multi_round_pareto_witness",
+                "status_a": p3_r2_pt["status"],
+                "status_b": p3_r2_mp["status"],
+                "local_a_pass": p3_r2_pt["local_product_aggregator"] == 1,
+                "global_a_pass": p3_r2_pt["global_integral_lift_evaluator"] == 1,
+                "local_b_pass": p3_r2_mp["grids"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": p3_r2_mp["grids"][0]["global_noncontextual_evaluator"] == 1,
+            },
+        ],
+    )
+    trajectories.append(
+        {
+            **p3_traj,
+            "prompts": [p3_r1_prompt, p3_r2_prompt],
+            "completions": [p3_r1_comp, p3_r2_comp],
+            "round_inputs": [
+                {"const_b": 1, "x_mod2": 1, "x_mod4": 1},
+                {"const_b": b_p3_r1, "x_mod2": x1_p3_r1, "x_mod4": x2_p3_r1},
+                {"const_b": b_p3_r2, "x_mod2": x1_p3_r2, "x_mod4": x2_p3_r2},
+            ],
+            "round_receipts": [
+                {"receipt_a": p3_r0_pt, "receipt_b": p3_r0_mp},
+                {"receipt_a": p3_r1_pt, "receipt_b": p3_r1_mp},
+                {"receipt_a": p3_r2_pt, "receipt_b": p3_r2_mp},
+            ],
+        }
+    )
+
+    return trajectories
+
+
+def run_joint_multi_monitor_repair_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter joint multi-monitor closed-loop repair benchmark across model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    joint_guard = StreamingJointMultiMonitorRepairGuard(
+        scope_id="live_joint_multi_monitor_repair"
+    )
+    all_trajectories: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running joint multi-monitor closed-loop repair on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        trajs = _run_joint_multi_monitor_repair_for_model(client, joint_guard)
+        total_completions += client.completion_count
+        all_trajectories.extend(trajs)
+
+    guard_receipt = joint_guard.get_receipt()
+
+    r0_traces = [t["rounds"][0] for t in all_trajectories]
+    r1_traces = [t["rounds"][1] for t in all_trajectories]
+    r2_traces = [t["rounds"][2] for t in all_trajectories]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_trajs = [t for t in all_trajectories if t["model_id"] == model_id]
+        n_m = len(m_trajs)
+        r1_c = sum(1 for t in m_trajs if t["converged_single_round"])
+        r2_c = sum(1 for t in m_trajs if t["converged_multi_round"])
+        wam_c = sum(1 for t in m_trajs if t["round_1_whack_a_mole_detected"])
+        per_model_summary[model_id] = {
+            "trajectory_count": n_m,
+            "single_round_convergence_rate": str(Fraction(r1_c, n_m)),
+            "multi_round_convergence_rate": str(Fraction(r2_c, n_m)),
+            "multi_round_gain": str(Fraction(r2_c - r1_c, n_m)),
+            "round_1_whack_a_mole_rate": str(Fraction(wam_c, n_m)),
+            "round_1_metrics": compute_empirical_defect_rates([t["rounds"][1] for t in m_trajs]),
+            "round_2_metrics": compute_empirical_defect_rates([t["rounds"][2] for t in m_trajs]),
+        }
+
+    pair_names = [
+        "SideInfoCapacity_x_SkewRepair",
+        "ProductOfExperts_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeresParity",
+    ]
+    per_pair_summary: dict[str, Any] = {}
+    for pname in pair_names:
+        p_trajs = [t for t in all_trajectories if t["pair_name"] == pname]
+        n_p = len(p_trajs)
+        r1_c = sum(1 for t in p_trajs if t["converged_single_round"])
+        r2_c = sum(1 for t in p_trajs if t["converged_multi_round"])
+        wam_c = sum(1 for t in p_trajs if t["round_1_whack_a_mole_detected"])
+        per_pair_summary[pname] = {
+            "trajectory_count": n_p,
+            "single_round_convergence_rate": str(Fraction(r1_c, n_p)),
+            "multi_round_convergence_rate": str(Fraction(r2_c, n_p)),
+            "multi_round_gain": str(Fraction(r2_c - r1_c, n_p)),
+            "round_1_whack_a_mole_rate": str(Fraction(wam_c, n_p)),
+            "round_1_metrics": compute_empirical_defect_rates([t["rounds"][1] for t in p_trajs]),
+            "round_2_metrics": compute_empirical_defect_rates([t["rounds"][2] for t in p_trajs]),
+        }
+
+    body = {
+        "schema": "lggr.joint_multi_monitor_repair_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "joint_multi_monitor_repair_benchmark",
+        "models_evaluated": list(models),
+        "coupled_pairs_evaluated": pair_names,
+        "total_completions": total_completions,
+        "trajectory_count": len(all_trajectories),
+        "round_0_baseline_metrics": compute_empirical_defect_rates(r0_traces),
+        "round_1_single_round_metrics": compute_empirical_defect_rates(r1_traces),
+        "round_2_multi_round_metrics": compute_empirical_defect_rates(r2_traces),
+        "single_round_convergence_rate": guard_receipt["single_round_convergence_rate"],
+        "multi_round_convergence_rate": guard_receipt["multi_round_convergence_rate"],
+        "multi_round_convergence_gain": guard_receipt["multi_round_convergence_gain"],
+        "round_1_whack_a_mole_rate": guard_receipt["round_1_whack_a_mole_rate"],
+        "per_model_summary": per_model_summary,
+        "per_pair_summary": per_pair_summary,
+        "joint_guard_receipt": guard_receipt,
+        "trajectories": all_trajectories,
+        "meaning": (
+            "Joint multi-monitor closed-loop repair benchmark where a single orchestrator decision "
+            "touches two coupled frontier monitors simultaneously across 5 model families."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    out_path = os.path.join(receipts_dir, "joint_multi_monitor_repair_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
 
