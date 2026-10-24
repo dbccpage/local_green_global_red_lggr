@@ -43,3 +43,4 @@ import LggrVIII
 #print axioms LggrVIII.six_role_sample_defect_and_cancellation_masking
 #print axioms LggrVIII.completion_relative_obstruction_on_carrier_extension
 #print axioms LggrVIII.disjoint_colliding_pairs_additive_error_lower_bound
+#print axioms LggrVIII.centered_gram_kernel_nullspace_obstruction

@@ -656,4 +656,48 @@ theorem disjoint_colliding_pairs_additive_error_lower_bound {X A A' B : Type} [D
   have hbf2 := single_colliding_pair_error_lower_bound (fun z => f (p z)) q E' x2 y2 hcol2_f
   exact ⟨by omega, by omega⟩
 
+/-- Reference projection `Q0(x1, x2) = x1` and Gram operator `H0(x1, x2) = (x1, 0)` from LGGR VI. -/
+def projQ0 (x1 _x2 : Int) : Int := x1
+def gramH0 (x1 _x2 : Int) : Int × Int := (x1, 0)
+
+/-- 2D Sign-cube sum `∑_{d1,d2 ∈ {-1,1}} d1 * (d1 * g1 + d2 * g2)` for coordinate 1. -/
+def signCubeSum1 (g1 g2 : Int) : Int :=
+  (-1) * ((-1) * g1 + (-1) * g2) +
+  (-1) * ((-1) * g1 + 1 * g2) +
+  1 * (1 * g1 + (-1) * g2) +
+  1 * (1 * g1 + 1 * g2)
+
+/-- 2D Sign-cube sum `∑_{d1,d2 ∈ {-1,1}} d2 * (d1 * g1 + d2 * g2)` for coordinate 2. -/
+def signCubeSum2 (g1 g2 : Int) : Int :=
+  (-1) * ((-1) * g1 + (-1) * g2) +
+  1 * ((-1) * g1 + 1 * g2) +
+  (-1) * (1 * g1 + (-1) * g2) +
+  1 * (1 * g1 + 1 * g2)
+
+/-- Theorem 27 (`centered_gram_kernel_nullspace_obstruction`):
+    Formalizes the LGGR VI Gram Kernel Identity, Hidden Nullspace Blindspot, and
+    Sign-Cube Adjoint Probe Recovery:
+    1. (Gram Kernel Identity & Nullspace Blindspot): For `Q0(x1, x2) = x1` and
+       `H0(x1, x2) = Q0^T Q0 (x1, x2) = (x1, 0)`, `H0(x1, x2) = (0, 0) ↔ Q0(x1, x2) = 0`,
+       and every nonzero vertical state `(0, t)` (`t ≠ 0`) produces zero observation and
+       zero Gram response (`Q0(0, t) = 0 ∧ H0(0, t) = (0, 0)`).
+    2. (Zero-Preserving Post-Processing Blindness): Any post-processor `A : Int → V`
+       applied to `Q0` assigns the same verdict to any hidden state `(0, t)` as to `(0, 0)`:
+       `A (projQ0 0 t) = A (projQ0 0 0)`.
+    3. (Full 2D Sign-Cube Recovery): Across the `2^2 = 4` corners of `{-1, +1}^2`,
+       `(signCubeSum1 g1 g2, signCubeSum2 g1 g2) = (4 * g1, 4 * g2)`. -/
+theorem centered_gram_kernel_nullspace_obstruction {V : Type}
+    (A : Int → V) (x1 x2 t g1 g2 : Int) :
+    (gramH0 x1 x2 = (0, 0) ↔ projQ0 x1 x2 = 0) ∧
+    (projQ0 0 t = 0 ∧ gramH0 0 t = (0, 0)) ∧
+    (A (projQ0 0 t) = A (projQ0 0 0)) ∧
+    (signCubeSum1 g1 g2 = 4 * g1 ∧ signCubeSum2 g1 g2 = 4 * g2) := by
+  dsimp [projQ0, gramH0, signCubeSum1, signCubeSum2]
+  refine ⟨?_, ⟨rfl, rfl⟩, rfl, ⟨by omega, by omega⟩⟩
+  constructor
+  · intro h
+    injection h with h1 _
+  · intro h
+    rw [h]
+
 end LggrVIII
