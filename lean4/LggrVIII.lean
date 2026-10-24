@@ -1511,4 +1511,41 @@ theorem mermin_peres_magic_square_parity_obstruction :
   intro x11 x12 x13 x21 x22 x23 x31 x32 x33 h
   omega
 
+/-- Theorem 53 (`side_information_channel_capacity_and_fiber_error_floor`):
+    Formalizes the Side-Information Channel Capacity & Fiber Error Floor
+    (`012_rsi/002` Claims IK-04/IK-05 & LGGR I §5):
+    1. (Universal 4-State Fiber Error Floor under 1-Bit Side Channel `S = 2 < K = 4`):
+       For any 4 pairwise distinct target query values `v₀, v₁, v₂, v₃ : Int`,
+       any 2-symbol side-channel assignment `b₀, b₁, b₂, b₃ : Bool`, and any deterministic
+       2-symbol decoder outputs `d₀, d₁ : Int`, the number of misclassified fiber states
+       satisfies `err₀ + err₁ + err₂ + err₃ ≥ 2 = K - S`.
+    2. (Concrete Capacity-Deficit Witness `NGD`):
+       For `K = 4` distinct query values and channel capacity `S = 2`, every state emits a
+       valid side-channel symbol (`L = 1`), yet the capacity error floor `K - S = 2 > 0`
+       blocks zero-error decoding (`Eg = 0`, `Δ_E = Eg - L = -1`). -/
+theorem side_information_channel_capacity_and_fiber_error_floor
+    (v0 v1 v2 v3 d0 d1 : Int)
+    (h01 : v0 ≠ v1) (h02 : v0 ≠ v2) (h03 : v0 ≠ v3)
+    (h12 : v1 ≠ v2) (h13 : v1 ≠ v3) (h23 : v2 ≠ v3)
+    (b0 b1 b2 b3 : Bool) :
+    (let p0 := if b0 then d1 else d0;
+     let p1 := if b1 then d1 else d0;
+     let p2 := if b2 then d1 else d0;
+     let p3 := if b3 then d1 else d0;
+     let err0 := if p0 = v0 then (0 : Int) else 1;
+     let err1 := if p1 = v1 then (0 : Int) else 1;
+     let err2 := if p2 = v2 then (0 : Int) else 1;
+     let err3 := if p3 = v3 then (0 : Int) else 1;
+     err0 + err1 + err2 + err3 ≥ 2) ∧
+    (let k_distinct : Int := 4;
+     let s_capacity : Int := 2;
+     let cap_floor := k_distinct - s_capacity;
+     let l_prod := (1 : Int);
+     let e_global := if cap_floor ≤ 0 then (1 : Int) else 0;
+     cap_floor = 2 ∧
+     e_global = 0 ∧
+     e_global - l_prod = -1) := by
+  refine ⟨?_, ⟨by decide, by decide, by decide⟩⟩
+  cases b0 <;> cases b1 <;> cases b2 <;> cases b3 <;> dsimp <;> omega
+
 end LggrVIII

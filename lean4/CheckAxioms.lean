@@ -69,3 +69,4 @@ import LggrVIII
 #print axioms LggrVIII.derived_limit_projective_tower_lifting_obstruction
 #print axioms LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction
 #print axioms LggrVIII.mermin_peres_magic_square_parity_obstruction
+#print axioms LggrVIII.side_information_channel_capacity_and_fiber_error_floor
