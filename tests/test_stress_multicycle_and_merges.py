@@ -19,6 +19,7 @@ from __future__ import annotations
 from fractions import Fraction
 import itertools
 import random
+import time
 import unittest
 
 from lggr.common import ValidationError
@@ -330,6 +331,98 @@ class TestStressFiberConcurrentBranchMerges(unittest.TestCase):
 
         with self.assertRaises(ValidationError):
             b1.merge(b2)
+
+
+class TestHigherGenusLatencyAndPivots(unittest.TestCase):
+    """Benchmark runtime latency and pivot counts on higher-genus graphs (b_1 >= 25)
+    with adversarial weight degeneracies.
+    """
+
+    def test_k9_complete_graph_b1_28_adversarial_weight_ties(self) -> None:
+        """Complete directed graph K9 (|V|=9, |E|=36, b_1=28) with 3-tier tied weights."""
+        mon = StreamingCochainMonitor()
+        # Adversarial tied weights from {1/3, 1/2, 1} and frustrated cochain values
+        tied_weights = [Fraction(1, 3), Fraction(1, 2), Fraction(1, 1)]
+        edge_idx = 0
+        for i in range(9):
+            for j in range(i + 1, 9):
+                wt = tied_weights[(i + j) % 3]
+                # Perturb edge values on chords to create coupled frustration + zero-residual ties
+                val = Fraction((i - j) % 4 - 1, 2) if (i + j) % 2 == 0 else Fraction(0)
+                mon.add_edge(f"V_{i}", f"V_{j}", val, weight=wt)
+                edge_idx += 1
+
+        self.assertEqual(len(mon.edges), 36)
+        self.assertEqual(len(mon.cycles), 28)  # b_1 = 36 - 9 + 1 = 28 >= 25
+
+        t0 = time.perf_counter()
+        glob = mon.solve_global_l1_repair()
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+        self.assertEqual(glob["certificate_status"], "OPTIMALITY_VERIFIED")
+        self.assertEqual(glob["certificate"]["duality_gap"], "0")
+        self.assertGreaterEqual(glob["pivots_count"], 0)
+        self.assertLess(elapsed_ms, 5000.0)
+        self.assertGreater(Fraction(glob["global_l1_repair_distance"]), Fraction(0))
+
+    def test_toroidal_grid_6x6_b1_37_degenerate_chords(self) -> None:
+        """6x6 torus grid (|V|=36, |E|=72, b_1=37) with uniform/degenerate rational weights."""
+        mon = StreamingCochainMonitor()
+        rows, cols = 6, 6
+        for r in range(rows):
+            for c in range(cols):
+                u = f"N_{r}_{c}"
+                v_right = f"N_{r}_{(c + 1) % cols}"
+                v_down = f"N_{(r + 1) % rows}_{c}"
+                # Adversarial degenerate weights: many identical weights 1/2 and 1/4
+                w_h = Fraction(1, 2) if (r + c) % 2 == 0 else Fraction(1, 4)
+                w_v = Fraction(1, 2) if (r * c) % 2 == 0 else Fraction(1, 4)
+                # Inject localized vortex defects at 6 plaquettes; zero elsewhere (high degeneracy)
+                h_right = Fraction(1, 3) if (r == c) else Fraction(0)
+                h_down = Fraction(-1, 5) if (r + c == 5) else Fraction(0)
+                mon.add_edge(u, v_right, h_right, weight=w_h)
+                mon.add_edge(u, v_down, h_down, weight=w_v)
+
+        self.assertEqual(len(mon.edges), 72)
+        self.assertEqual(len(mon.cycles), 37)  # b_1 = 72 - 36 + 1 = 37 >= 25
+
+        t0 = time.perf_counter()
+        glob = mon.solve_global_l1_repair()
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+        self.assertEqual(glob["certificate_status"], "OPTIMALITY_VERIFIED")
+        self.assertEqual(glob["certificate"]["duality_gap"], "0")
+        self.assertGreaterEqual(glob["pivots_count"], 0)
+        self.assertLess(elapsed_ms, 5000.0)
+        self.assertGreater(Fraction(glob["global_l1_repair_distance"]), Fraction(0))
+
+    def test_adversarial_forced_multi_pivot_dense_b1_30(self) -> None:
+        """Dense graph (b_1 = 30) where heavy spanning tree is non-optimal and forces cut pivots."""
+        mon = StreamingCochainMonitor()
+        # Spine of 10 vertices S_0 -> S_1 -> ... -> S_9 with weight 1 (total 9 edges)
+        for i in range(9):
+            mon.add_edge(f"S_{i}", f"S_{i + 1}", 0, weight=1)
+
+        # Add 30 chords across the spine (b_1 = 30):
+        # 20 chords bridging S_0 -> S_9 through shared intermediate hubs with weight 2/5 and value 1
+        for k in range(30):
+            u_idx = k % 4
+            v_idx = 9 - (k % 3)
+            wt = Fraction(2, 5) if k % 2 == 0 else Fraction(3, 10)
+            val = Fraction(1) if k < 20 else Fraction(-1, 2)
+            mon.add_edge(f"S_{u_idx}", f"S_{v_idx}", val, weight=wt)
+
+        self.assertEqual(len(mon.cycles), 30)  # b_1 = 30 >= 25
+
+        t0 = time.perf_counter()
+        glob = mon.solve_global_l1_repair()
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+        self.assertEqual(glob["certificate_status"], "OPTIMALITY_VERIFIED")
+        self.assertEqual(glob["certificate"]["duality_gap"], "0")
+        # Here the 30 light chords overpower the weight-1 spine edges, forcing > 0 min-cut pivots!
+        self.assertGreater(glob["pivots_count"], 0)
+        self.assertLess(elapsed_ms, 5000.0)
 
 
 if __name__ == "__main__":
