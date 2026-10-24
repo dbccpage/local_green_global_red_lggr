@@ -40,6 +40,7 @@ from lggr.streaming import (
     StreamingProductRetractionMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingReplayOrderMonitor,
+    StreamingSimplicialCupMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
@@ -1683,6 +1684,87 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(r_ok["contract_status"], "COMPOSABLE_LGGG")
         self.assertTrue(r_ok["endpoint_permutation_invariance_verified"])
         self.assertTrue(r_ok["positive_sum_equals_worst_permutation_max_verified"])
+
+    def test_simplicial_cup_product_and_leibniz_cocycle_identity(self) -> None:
+        """Verify Alexander-Whitney discrete cup product and graded Leibniz cocycle identity on 2-simplices."""
+        smon = StreamingSimplicialCupMonitor(scope_id="simplicial-cup-test")
+
+        # 1. Trivial cup cocycle: d^1 alpha = 0, d^1 beta = 0, alpha_{01} = 0 -> alpha cup beta = 0
+        s_triv = smon.evaluate_two_simplex(
+            "sigma_trivial",
+            "v0",
+            "v1",
+            "v2",
+            alpha_01=0,
+            alpha_12=2,
+            alpha_02=2,
+            beta_01=1,
+            beta_12=0,
+            beta_02=1,
+            f_v0=3,
+            f_v1=5,
+            f_v2=9,
+        )
+        self.assertEqual(s_triv["status"], "EXACT_TRIVIAL_CUP_COCYCLE_LGGG")
+        self.assertEqual(s_triv["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(s_triv["alpha_cup_beta"], "0")
+        self.assertTrue(s_triv["leibniz_identity_verified"])
+        self.assertTrue(s_triv["exact_coboundary_d1_d0_zero_verified"])
+
+        # 2. Non-trivial cup cocycle obstruction: alpha = (2, 3, 5) with d^1 alpha = 3 - 5 + 2 = 0,
+        #    beta = (4, -1, 3) with d^1 beta = -1 - 3 + 4 = 0,
+        #    yet alpha cup beta = 2 * (-1) = -2 != 0 and commutator = -2 - 12 = -14
+        s_cup = smon.evaluate_two_simplex(
+            "sigma_nontrivial_cup",
+            "v0",
+            "v1",
+            "v2",
+            alpha_01=2,
+            alpha_12=3,
+            alpha_02=5,
+            beta_01=4,
+            beta_12=-1,
+            beta_02=3,
+            f_v0=2,
+            f_v1=7,
+            f_v2=-1,
+        )
+        self.assertEqual(s_cup["status"], "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR")
+        self.assertEqual(s_cup["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(s_cup["d1_alpha"], "0")
+        self.assertEqual(s_cup["d1_beta"], "0")
+        self.assertEqual(s_cup["alpha_cup_beta"], "-2")
+        self.assertEqual(s_cup["beta_cup_alpha"], "12")
+        self.assertEqual(s_cup["cup_commutator"], "-14")
+        self.assertTrue(s_cup["leibniz_identity_verified"])
+        self.assertTrue(s_cup["exact_coboundary_d1_d0_zero_verified"])
+
+        # 3. Non-cocycle coboundary: d^1 alpha = 1 + 1 - 1 = 1 != 0
+        s_non = smon.evaluate_two_simplex(
+            "sigma_non_cocycle",
+            "v0",
+            "v1",
+            "v2",
+            alpha_01=1,
+            alpha_12=1,
+            alpha_02=1,
+            beta_01=1,
+            beta_12=2,
+            beta_02=3,
+            f_v0=1,
+            f_v1=4,
+            f_v2=6,
+        )
+        self.assertEqual(s_non["status"], "NON_COCYCLE_COBOUNDARY_LGGR")
+        self.assertEqual(s_non["d1_alpha"], "1")
+        self.assertTrue(s_non["leibniz_identity_verified"])
+
+        summary = smon.get_receipt()
+        self.assertEqual(summary["status"], "NON_COCYCLE_COBOUNDARY_LGGR")
+        self.assertEqual(summary["non_cocycle_simplex_ids"], ["sigma_non_cocycle"])
+        self.assertEqual(summary["nontrivial_cup_simplex_ids"], ["sigma_nontrivial_cup"])
+        self.assertTrue(summary["all_leibniz_identities_verified"])
+        self.assertTrue(summary["all_d1_d0_zero_verified"])
 
 
 if __name__ == "__main__":

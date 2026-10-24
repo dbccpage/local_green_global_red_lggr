@@ -56,3 +56,4 @@ import LggrVIII
 #print axioms LggrVIII.kraus_trace_preservation_and_blindspot_residual
 #print axioms LggrVIII.sliding_window_green_vs_horizon_drift_breach
 #print axioms LggrVIII.arrival_order_endpoint_invariance_vs_prefix_divergence
+#print axioms LggrVIII.simplicial_cup_product_and_leibniz_cocycle_identity

@@ -5095,6 +5095,166 @@ class StreamingReplayOrderMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingSimplicialCupMonitor:
+    """Online Alexander-Whitney simplicial cup product and graded Leibniz cocycle monitor.
+
+    Evaluates rational 0-cochains f in C^0 and 1-cochains alpha, beta in C^1 on oriented
+    2-simplices sigma = (v_0, v_1, v_2):
+      - Simplicial 1-coboundary:
+          (d^1 alpha)_{(v_0, v_1, v_2)} = alpha_{(v_1, v_2)} - alpha_{(v_0, v_2)} + alpha_{(v_0, v_1)}.
+      - Alexander-Whitney cup product of 1-cochains on (v_0, v_1, v_2):
+          (alpha cup beta)_{(v_0, v_1, v_2)} = alpha_{(v_0, v_1)} * beta_{(v_1, v_2)},
+        reverse cup product (beta cup alpha)_{(v_0, v_1, v_2)} = beta_{(v_0, v_1)} * alpha_{(v_1, v_2)},
+        and cup commutator [alpha, beta]_cup = alpha_{01} beta_{12} - beta_{01} alpha_{12}.
+      - Graded Leibniz identity for (f, alpha) in C^0 x C^1 on (v_0, v_1, v_2):
+          d^1(f cup alpha) == (d^0 f cup alpha) + (f cup d^1 alpha),
+        where (f cup alpha)_{(v_i, v_j)} = f(v_i) * alpha_{(v_i, v_j)}.
+      - Separates:
+          1. NON_COCYCLE_COBOUNDARY_LGGR (OBSTRUCTED_LGGR): d^1 alpha != 0 or d^1 beta != 0.
+          2. NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR (OBSTRUCTED_LGGR): d^1 alpha == 0 and
+             d^1 beta == 0, while (alpha cup beta)_{(v_0, v_1, v_2)} != 0.
+          3. EXACT_TRIVIAL_CUP_COCYCLE_LGGG (COMPOSABLE_LGGG): d^1 alpha == 0, d^1 beta == 0,
+             and (alpha cup beta)_{(v_0, v_1, v_2)} == 0.
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-simplicial-cup-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.simplices: dict[str, dict[str, Any]] = {}
+
+    def evaluate_two_simplex(
+        self,
+        simplex_id: str,
+        v0: str,
+        v1: str,
+        v2: str,
+        *,
+        alpha_01: Fraction | int | str,
+        alpha_12: Fraction | int | str,
+        alpha_02: Fraction | int | str,
+        beta_01: Fraction | int | str,
+        beta_12: Fraction | int | str,
+        beta_02: Fraction | int | str,
+        f_v0: Fraction | int | str = 0,
+        f_v1: Fraction | int | str = 0,
+        f_v2: Fraction | int | str = 0,
+    ) -> dict[str, Any]:
+        """Audit d^1 alpha, d^1 beta, alpha cup beta, and graded Leibniz rule on (v0, v1, v2)."""
+        sid = text(simplex_id, "simplex_id")
+        n0 = text(v0, "v0")
+        n1 = text(v1, "v1")
+        n2 = text(v2, "v2")
+        if len({n0, n1, n2}) != 3:
+            raise ValidationError("2-simplex vertices (v0, v1, v2) must be distinct")
+
+        a01 = rational(alpha_01)
+        a12 = rational(alpha_12)
+        a02 = rational(alpha_02)
+        b01 = rational(beta_01)
+        b12 = rational(beta_12)
+        b02 = rational(beta_02)
+        f0 = rational(f_v0)
+        f1 = rational(f_v1)
+        f2 = rational(f_v2)
+
+        d1_alpha = a12 - a02 + a01
+        d1_beta = b12 - b02 + b01
+        alpha_cup_beta = a01 * b12
+        beta_cup_alpha = b01 * a12
+        cup_commutator = alpha_cup_beta - beta_cup_alpha
+
+        # Graded Leibniz check for (f, alpha):
+        # (f cup alpha)_{01} = f0 * a01, (f cup alpha)_{12} = f1 * a12, (f cup alpha)_{02} = f0 * a02
+        d1_f_cup_alpha = f1 * a12 - f0 * a02 + f0 * a01
+        d0f_cup_alpha = (f1 - f0) * a12
+        f_cup_d1_alpha = f0 * d1_alpha
+        leibniz_alpha_ok = (d1_f_cup_alpha == d0f_cup_alpha + f_cup_d1_alpha)
+
+        # Graded Leibniz check for (f, beta):
+        d1_f_cup_beta = f1 * b12 - f0 * b02 + f0 * b01
+        d0f_cup_beta = (f1 - f0) * b12
+        f_cup_d1_beta = f0 * d1_beta
+        leibniz_beta_ok = (d1_f_cup_beta == d0f_cup_beta + f_cup_d1_beta)
+
+        # Exact 1-coboundary check d^1(d^0 f) == 0 on (v0, v1, v2)
+        d0f_01 = f1 - f0
+        d0f_12 = f2 - f1
+        d0f_02 = f2 - f0
+        d1_d0_f = d0f_12 - d0f_02 + d0f_01
+        d1_d0_zero_ok = (d1_d0_f == Fraction(0))
+
+        if d1_alpha != Fraction(0) or d1_beta != Fraction(0):
+            status = "NON_COCYCLE_COBOUNDARY_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif alpha_cup_beta != Fraction(0):
+            status = "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EXACT_TRIVIAL_CUP_COCYCLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        entry = {
+            "schema": "lggr.online_simplicial_cup_simplex.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "simplex_id": sid,
+            "vertices": [n0, n1, n2],
+            "status": status,
+            "contract_status": contract_status,
+            "d1_alpha": d1_alpha,
+            "d1_beta": d1_beta,
+            "alpha_is_cocycle": (d1_alpha == Fraction(0)),
+            "beta_is_cocycle": (d1_beta == Fraction(0)),
+            "alpha_cup_beta": alpha_cup_beta,
+            "beta_cup_alpha": beta_cup_alpha,
+            "cup_commutator": cup_commutator,
+            "d1_f_cup_alpha": d1_f_cup_alpha,
+            "d0f_cup_alpha": d0f_cup_alpha,
+            "f_cup_d1_alpha": f_cup_d1_alpha,
+            "leibniz_identity_verified": (leibniz_alpha_ok and leibniz_beta_ok),
+            "exact_coboundary_d1_d0_zero_verified": d1_d0_zero_ok,
+        }
+        self.simplices[sid] = entry
+        return json_value({**entry, "receipt_sha256": digest(entry)})
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit aggregate simplicial cup product and graded Leibniz receipt."""
+        non_cocycle_ids = [
+            sid for sid, s in self.simplices.items()
+            if s["status"] == "NON_COCYCLE_COBOUNDARY_LGGR"
+        ]
+        nontrivial_cup_ids = [
+            sid for sid, s in self.simplices.items()
+            if s["status"] == "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR"
+        ]
+        all_leibniz = all(s["leibniz_identity_verified"] for s in self.simplices.values())
+        all_d1_d0 = all(s["exact_coboundary_d1_d0_zero_verified"] for s in self.simplices.values())
+
+        if non_cocycle_ids:
+            status = "NON_COCYCLE_COBOUNDARY_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif nontrivial_cup_ids:
+            status = "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EXACT_TRIVIAL_CUP_COCYCLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        body = {
+            "schema": "lggr.online_simplicial_cup.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluated_simplices_count": len(self.simplices),
+            "non_cocycle_simplex_ids": sorted(non_cocycle_ids),
+            "nontrivial_cup_simplex_ids": sorted(nontrivial_cup_ids),
+            "all_leibniz_identities_verified": all_leibniz,
+            "all_d1_d0_zero_verified": all_d1_d0,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
