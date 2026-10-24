@@ -27,6 +27,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingCochainMonitor,
+    StreamingDashboardAdequacyMonitor,
     StreamingDefectSoundnessMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
@@ -1261,6 +1262,51 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(mink["unique_l2_linf_minimizer_alpha"], "0")
         self.assertEqual(mink["l1_minimizer_interval"], ["-1", "1"])
         self.assertTrue(mink["chain_inequality_verified"])
+
+    def test_dashboard_adequacy_reconstruction_and_collapsing_detector(self) -> None:
+        """Verify LGGR I (E9-E18) and LGGR II (M6-M7) dashboard reconstruction and collapsing detector."""
+        # 1. Mixed sample with ZDR (1, 1, 1), NGD (1, 1, 0), PGD (1, 0, 1), and joint failure (0, 1, 0)
+        dmon = StreamingDashboardAdequacyMonitor(scope_id="dashboard-mixed")
+        dmon.record_trace("t1", 1, 1, 1)  # ZDR, L=1, Eg=1
+        dmon.record_trace("t2", 1, 1, 0)  # NGD, L=1, Eg=0
+        dmon.record_trace("t3", 1, 0, 1)  # PGD, L=0, Eg=1
+        r_mix = dmon.record_trace("t4", 0, 1, 0)  # ZDR joint failure, L=0, Eg=0
+
+        self.assertEqual(r_mix["status"], "NGD_DEFECT_PRESENT_LGGR")
+        self.assertEqual(r_mix["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_mix["sample_size"], 4)
+        self.assertEqual(r_mix["n_pos_pgd"], 1)
+        self.assertEqual(r_mix["n_neg_ngd"], 1)
+        self.assertEqual(r_mix["n_zero_zdr"], 2)
+        self.assertEqual(r_mix["disagreement_count_m"], 2)
+        self.assertEqual(r_mix["signed_defect_sum_d"], 0)
+        self.assertEqual(r_mix["local_pass_rate_lpr"], "1/2")
+        self.assertEqual(r_mix["global_pass_rate_gpr"], "1/2")
+        self.assertEqual(r_mix["evaluator_gluing_disagreement_egd"], "1/2")
+        self.assertEqual(r_mix["mean_signed_defect"], "0")
+        self.assertEqual(r_mix["global_failure_count"], 2)
+        self.assertEqual(r_mix["joint_local_global_failure_count"], 1)
+        self.assertTrue(r_mix["reconstruction_identities_verified"])
+        self.assertTrue(r_mix["ngd_bounded_by_local_passes"])
+        self.assertTrue(r_mix["global_failure_partition_verified"])
+        self.assertTrue(r_mix["all_packet_recoveries_verified"])
+
+        # 2. Claim M7 Product-Collapsing Detector: E1 copies Eg, E2 == 1 -> L == Eg tautologically
+        dmon_collapse = StreamingDashboardAdequacyMonitor(
+            scope_id="dashboard-collapse", copied_global_validator=True
+        )
+        dmon_collapse.record_trace("c1", 1, 1, 1)
+        r_col = dmon_collapse.record_trace("c2", 0, 1, 0)
+        self.assertEqual(r_col["status"], "PRODUCT_COLLAPSING_DETECTOR_LGGR")
+        self.assertEqual(r_col["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(r_col["product_collapsing_detected"])
+
+        # 3. Claim M6 All-Zero Agreement at Failure: Eg == L == 0 everywhere -> Delta_E == 0 with 0 global passes
+        dmon_zero = StreamingDashboardAdequacyMonitor(scope_id="dashboard-all-fail")
+        r_zero = dmon_zero.record_trace("z1", 0, 0, 0)
+        self.assertEqual(r_zero["status"], "ZERO_DEFECT_ALL_FAIL_LGGR")
+        self.assertEqual(r_zero["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(r_zero["all_zero_agreement_at_failure"])
 
 
 if __name__ == "__main__":

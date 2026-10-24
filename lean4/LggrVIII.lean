@@ -776,4 +776,26 @@ theorem realizable_defect_soundness_kernel_intersection
   · constructor <;> intro h <;> omega
   · split <;> split <;> omega
 
+/-- Theorem 31 (`dashboard_summary_reconstruction_and_collapsing_detector`):
+    Formalizes the LGGR I (Claims E9–E18) & LGGR II (Claims M6–M7) Dashboard
+    Information-Retention and Collapsing-Detector laws:
+    1. (Oriented Defect Count Reconstruction — E9/E10): From disagreement count
+       `M = nPos + nNeg` and signed defect sum `D = nPos - nNeg`,
+       `2 * nPos = M + D ∧ 2 * nNeg = M - D`.
+    2. (Packet Recovery — E12/E14): Given `dE = eg - L`, `L + dE = eg ∧ eg - dE = L`,
+       while `roleTripleDefect 0 0 0 = 0` and `roleTripleDefect 1 1 1 = 0` (Claim M6/E13:
+       zero defect alone cannot distinguish joint failure from joint pass).
+    3. (Product-Collapsing Validator vs. Failing Peer — Claim M7): Copying `eg ∈ {0, 1}`
+       into `e1 = eg` with passing peer `e2 = 1` forces `roleTripleDefect eg 1 eg = 0`,
+       whereas a failing peer `e2 = 0` on `eg = 1` yields `roleTripleDefect 1 0 1 = 1 ≠ 0`. -/
+theorem dashboard_summary_reconstruction_and_collapsing_detector
+    (nPos nNeg L eg : Int) :
+    (let M := nPos + nNeg; let D := nPos - nNeg;
+     2 * nPos = M + D ∧ 2 * nNeg = M - D) ∧
+    (let dE := eg - L; L + dE = eg ∧ eg - dE = L) ∧
+    (roleTripleDefect 0 0 0 = 0 ∧ roleTripleDefect 1 1 1 = 0) ∧
+    (roleTripleDefect eg 1 eg = 0 ∧ roleTripleDefect 1 0 1 = 1) := by
+  dsimp [roleTripleDefect]
+  refine ⟨⟨by omega, by omega⟩, ⟨by omega, by omega⟩, ⟨by decide, by decide⟩, ⟨by omega, by decide⟩⟩
+
 end LggrVIII
