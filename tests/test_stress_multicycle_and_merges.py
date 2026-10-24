@@ -34,6 +34,7 @@ from lggr.streaming import (
     StreamingDefectSoundnessMonitor,
     StreamingFiberMonitor,
     StreamingGramProbeMonitor,
+    StreamingHodgeDecompositionMonitor,
     StreamingMayerVietorisMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
@@ -1809,6 +1810,59 @@ class TestStreamingBaselineComparator(unittest.TestCase):
             {"A": "0", "B": "2", "M1": "1", "M2": "3"},
         )
         self.assertTrue(r_ok["mayer_vietoris_equivalence_verified"])
+
+    def test_hodge_decomposition_exact_coexact_and_harmonic_separation(self) -> None:
+        """Verify orthogonal discrete Hodge decomposition into exact, coexact, and harmonic components."""
+        mon = StreamingHodgeDecompositionMonitor(scope_id="hodge-test")
+
+        # Triangle D0: e0=(v0->v1), e1=(v1->v2), e2=(v2->v0)
+        d0_tri = [
+            [-1, 1, 0],
+            [0, -1, 1],
+            [1, 0, -1],
+        ]
+
+        # 1. Purely exact gradient h = (1, 2, -3) = D0([0, 1, 3])
+        r_exact = mon.record_complex_cochain("tri_exact", d0_tri, [1, 2, -3], D1=None)
+        self.assertEqual(r_exact["classification"], "EXACT_GRADIENT_LGGG")
+        self.assertEqual(r_exact["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(r_exact["h_exact"], ["1", "2", "-3"])
+        self.assertEqual(r_exact["h_coexact"], ["0", "0", "0"])
+        self.assertEqual(r_exact["h_harmonic"], ["0", "0", "0"])
+        self.assertTrue(r_exact["orthogonality_verified"])
+        self.assertTrue(r_exact["pythagorean_energy_verified"])
+
+        # 2. Unfilled triangle with h = (3, 0, 0) -> h_exact = (2, -1, -1), h_harm = (1, 1, 1)
+        r_harm = mon.record_complex_cochain("tri_unfilled_harmonic", d0_tri, [3, 0, 0], D1=None)
+        self.assertEqual(r_harm["classification"], "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR")
+        self.assertEqual(r_harm["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_harm["h_exact"], ["2", "-1", "-1"])
+        self.assertEqual(r_harm["h_coexact"], ["0", "0", "0"])
+        self.assertEqual(r_harm["h_harmonic"], ["1", "1", "1"])
+        self.assertEqual(r_harm["norm2_total"], "9")
+        self.assertEqual(r_harm["norm2_exact"], "6")
+        self.assertEqual(r_harm["norm2_harmonic"], "3")
+        self.assertTrue(r_harm["laplacian_kernel_verified"])
+
+        # 3. Filled triangle D1 = [[1, 1, 1]] with h = (3, 0, 0) -> h_exact = (2, -1, -1),
+        #    h_coexact = (1, 1, 1), h_harm = (0, 0, 0)
+        r_coexact = mon.record_complex_cochain("tri_filled_coexact", d0_tri, [3, 0, 0], D1=[[1, 1, 1]])
+        self.assertEqual(r_coexact["classification"], "COEXACT_CURL_OBSTRUCTION_LGGR")
+        self.assertEqual(r_coexact["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(r_coexact["h_exact"], ["2", "-1", "-1"])
+        self.assertEqual(r_coexact["h_coexact"], ["1", "1", "1"])
+        self.assertEqual(r_coexact["h_harmonic"], ["0", "0", "0"])
+        self.assertEqual(r_coexact["norm2_coexact"], "3")
+        self.assertEqual(r_coexact["norm2_harmonic"], "0")
+
+        receipt = mon.get_receipt()
+        self.assertEqual(receipt["schema"], "lggr.online_hodge_decomposition.v1")
+        self.assertEqual(receipt["status"], "HODGE_OBSTRUCTED_LGGR")
+        self.assertEqual(receipt["harmonic_obstructed_ids"], ["tri_unfilled_harmonic"])
+        self.assertEqual(receipt["coexact_obstructed_ids"], ["tri_filled_coexact"])
+        self.assertTrue(receipt["all_orthogonality_verified"])
+        self.assertTrue(receipt["all_pythagorean_energy_verified"])
+        self.assertTrue(receipt["all_laplacian_kernels_verified"])
 
 
 if __name__ == "__main__":
