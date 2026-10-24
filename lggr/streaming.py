@@ -446,6 +446,142 @@ class StreamingFiberMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+    def evaluate_predictor_error_ceiling(
+        self,
+        predictor_map: Mapping[Any, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Compute disjoint colliding-pair packing and exact deterministic error lower bounds.
+
+        For each realized report fiber F(r):
+          - Packs k_r = min(floor(n_r / 2), n_r - m_r) pairwise-disjoint colliding state pairs
+            (u_j, v_j) with p(u_j) = p(v_j) = r and q(u_j) != q(v_j).
+          - Computes the fiber majority-vote error floor e_min(r) = n_r - m_r >= k_r.
+          - If predictor_map is supplied, evaluates its empirical error count E(g) across
+            self.history and checks E(g) >= E_min >= K_pack and that g errs on at least one
+            member of every packed colliding pair.
+        """
+        fiber_rows: dict[str, list[dict[str, Any]]] = {}
+        for row in self.history:
+            rk = canonical(row["report"])
+            fiber_rows.setdefault(rk, []).append(row)
+
+        disjoint_pairs: list[dict[str, Any]] = []
+        majority_decoder: dict[str, Any] = {}
+        majority_decoder_list: list[dict[str, Any]] = []
+        total_majority_error_floor = 0
+
+        for rk in sorted(fiber_rows):
+            rows_in_fiber = fiber_rows[rk]
+            n_r = len(rows_in_fiber)
+            # Group by canonical query answer
+            q_buckets: dict[str, list[dict[str, Any]]] = {}
+            for r_item in rows_in_fiber:
+                qk = canonical(r_item["query"])
+                q_buckets.setdefault(qk, []).append(r_item)
+
+            # Sort buckets by (-count, canonical_query_key) for deterministic majority mode
+            sorted_qks = sorted(q_buckets, key=lambda k: (-len(q_buckets[k]), k))
+            mode_qk = sorted_qks[0]
+            m_r = len(q_buckets[mode_qk])
+            mode_query_val = q_buckets[mode_qk][0]["query"]
+            majority_decoder[rk] = mode_query_val
+            majority_decoder_list.append({
+                "report": rows_in_fiber[0]["report"],
+                "majority_query": mode_query_val,
+                "fiber_size": n_r,
+                "majority_count": m_r,
+                "fiber_error_floor": n_r - m_r,
+            })
+            total_majority_error_floor += (n_r - m_r)
+
+            # Construct maximum packing of pairwise-disjoint colliding pairs in F(r)
+            active_buckets = [
+                [item for item in q_buckets[qk]]
+                for qk in sorted_qks
+                if len(q_buckets[qk]) > 0
+            ]
+            while len(active_buckets) >= 2:
+                active_buckets.sort(key=lambda b: (-len(b), canonical(b[0]["query"])))
+                left_item = active_buckets[0].pop(0)
+                right_item = active_buckets[1].pop(0)
+                disjoint_pairs.append({
+                    "report": rows_in_fiber[0]["report"],
+                    "left_state_id": left_item["state_id"],
+                    "left_query": left_item["query"],
+                    "right_state_id": right_item["state_id"],
+                    "right_query": right_item["query"],
+                })
+                active_buckets = [b for b in active_buckets if len(b) > 0]
+
+        k_pack = len(disjoint_pairs)
+        total_states = len(self.history)
+
+        predictor_errors: int | None = None
+        predictor_error_rate: Fraction | None = None
+        pair_ceiling_verified: bool = True
+        floor_inequality_verified: bool = total_majority_error_floor >= k_pack
+
+        if predictor_map is not None:
+            if not isinstance(predictor_map, Mapping):
+                raise ValidationError("predictor_map must be a Mapping from report to predicted query")
+            canon_pred: dict[str, Any] = {
+                canonical(json.loads(canonical(k))): json.loads(canonical(v))
+                for k, v in predictor_map.items()
+            }
+            err_by_state: dict[str, bool] = {}
+            err_count = 0
+            for row in self.history:
+                rk = canonical(row["report"])
+                has_pred = rk in canon_pred
+                pred_q = canon_pred.get(rk)
+                is_err = (not has_pred) or (canonical(pred_q) != canonical(row["query"]))
+                err_by_state[row["state_id"]] = is_err
+                if is_err:
+                    err_count += 1
+            predictor_errors = err_count
+            predictor_error_rate = (
+                Fraction(err_count, total_states) if total_states > 0 else Fraction(0)
+            )
+            for dp in disjoint_pairs:
+                if not (err_by_state[dp["left_state_id"]] or err_by_state[dp["right_state_id"]]):
+                    pair_ceiling_verified = False
+            floor_inequality_verified = (
+                predictor_errors >= total_majority_error_floor >= k_pack
+                and pair_ceiling_verified
+            )
+
+        majority_error_rate = (
+            Fraction(total_majority_error_floor, total_states)
+            if total_states > 0
+            else Fraction(0)
+        )
+        status = (
+            "NONZERO_ERROR_CEILING_LGGR"
+            if total_majority_error_floor > 0
+            else "ZERO_ERROR_DECODER_LGGG"
+        )
+        contract_status = (
+            "OBSTRUCTED_LGGR" if total_majority_error_floor > 0 else "COMPOSABLE_LGGG"
+        )
+        body = {
+            "schema": "lggr.online_error_ceiling.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "carrier_size": total_states,
+            "disjoint_colliding_pairs_count": k_pack,
+            "majority_vote_error_floor": total_majority_error_floor,
+            "majority_vote_error_rate": majority_error_rate,
+            "predictor_errors": predictor_errors,
+            "predictor_error_rate": predictor_error_rate,
+            "pair_ceiling_verified": pair_ceiling_verified,
+            "floor_inequality_verified": floor_inequality_verified,
+            "disjoint_colliding_pairs": disjoint_pairs,
+            "fiber_majority_summary": majority_decoder_list,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 class StreamingAuditMonitor:
     """Incremental step witness composition and evaluator defect monitor.

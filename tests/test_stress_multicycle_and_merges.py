@@ -1059,6 +1059,41 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertTrue(res_desc["reflection_descends_to_integer_carrier"])
         self.assertFalse(res_desc["completion_only_witness_lggr"])
 
+    def test_disjoint_colliding_pairs_and_predictor_error_ceiling(self) -> None:
+        """Verify disjoint colliding-pair packing and majority-vote error floor."""
+        fmon = StreamingFiberMonitor(scope_id="error-ceiling-test")
+        # Fiber 'rep_A': 5 states with queries [0, 0, 1, 1, 2] -> n_A=5, m_A=2 -> floor=3, k_A=2
+        fmon.observe("a1", "rep_A", 0)
+        fmon.observe("a2", "rep_A", 0)
+        fmon.observe("a3", "rep_A", 1)
+        fmon.observe("a4", "rep_A", 1)
+        fmon.observe("a5", "rep_A", 2)
+        # Fiber 'rep_B': 4 states with queries [10, 10, 20, 20] -> n_B=4, m_B=2 -> floor=2, k_B=2
+        fmon.observe("b1", "rep_B", 10)
+        fmon.observe("b2", "rep_B", 10)
+        fmon.observe("b3", "rep_B", 20)
+        fmon.observe("b4", "rep_B", 20)
+
+        # Evaluate with optimal majority-vote predictor {'rep_A': 0, 'rep_B': 10}
+        res_opt = fmon.evaluate_predictor_error_ceiling({"rep_A": 0, "rep_B": 10})
+        self.assertEqual(res_opt["status"], "NONZERO_ERROR_CEILING_LGGR")
+        self.assertEqual(res_opt["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertEqual(res_opt["carrier_size"], 9)
+        self.assertEqual(res_opt["disjoint_colliding_pairs_count"], 4)
+        self.assertEqual(res_opt["majority_vote_error_floor"], 5)
+        self.assertEqual(res_opt["majority_vote_error_rate"], "5/9")
+        self.assertEqual(res_opt["predictor_errors"], 5)
+        self.assertEqual(res_opt["predictor_error_rate"], "5/9")
+        self.assertTrue(res_opt["pair_ceiling_verified"])
+        self.assertTrue(res_opt["floor_inequality_verified"])
+
+        # Evaluate with suboptimal predictor {'rep_A': 2, 'rep_B': 20} -> 4 + 2 = 6 errors
+        res_sub = fmon.evaluate_predictor_error_ceiling({"rep_A": 2, "rep_B": 20})
+        self.assertEqual(res_sub["predictor_errors"], 6)
+        self.assertEqual(res_sub["predictor_error_rate"], "2/3")
+        self.assertTrue(res_sub["pair_ceiling_verified"])
+        self.assertTrue(res_sub["floor_inequality_verified"])
+
 
 if __name__ == "__main__":
     unittest.main()
