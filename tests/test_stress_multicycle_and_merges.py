@@ -738,6 +738,53 @@ class TestStreamingAuditBranchSplice(unittest.TestCase):
         self.assertEqual(merge_res["cumulative_delta"], 4)
         self.assertEqual(merge_res["contract_status"], "OBSTRUCTED_LGGR")
 
+    def test_coarsened_macro_stage_masks_internal_prefix_breach(self) -> None:
+        """Grouping steps [1, 2] on trajectory (0 -> 1 -> 3 -> 1) with B=2 detects masked excursion."""
+        policy = BudgetPolicy(
+            policy_id="coarsen-policy",
+            max_step=2,
+            max_total=2,
+            allowed_states=tuple(range(-10, 11)),
+            query_scope="every_prefix",
+            evaluator_id="bounded-step/v1",
+            spec_id="cumulative-budget/v1",
+            representation_id="integer-state/v1",
+            authority_id="external-owner/v1",
+        )
+        s0 = StateRef("S0", 0)
+        s1 = StateRef("S1", 1)
+        s2 = StateRef("S2", 3)
+        s3 = StateRef("S3", 1)
+
+        mon = StreamingAuditMonitor(policy, baseline=s0)
+        mon.step(StepWitness(
+            witness_id="w_c1", source=s0, target=s1, observed_magnitude=1,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+        ))
+        mon.step(StepWitness(
+            witness_id="w_c2", source=s1, target=s2, observed_magnitude=2,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+        ))
+        mon.step(StepWitness(
+            witness_id="w_c3", source=s2, target=s3, observed_magnitude=2,
+            local_accepted=True, smoke_passed=True, policy_sha256=policy.sha256,
+        ))
+
+        # Coarsening steps 2 and 3 into a single macro-stage [1, 2] hides step index 1 (delta=3 > 2)
+        coarse_res = mon.audit_coarsened_partition([1, 2])
+        self.assertEqual(coarse_res["status"], "COARSENED_EXCURSION_MASKED")
+        self.assertEqual(coarse_res["contract_status"], "OBSTRUCTED_LGGR")
+        self.assertTrue(coarse_res["fine_prefix_breach"])
+        self.assertFalse(coarse_res["coarse_prefix_breach"])
+        self.assertTrue(coarse_res["hidden_excursion_masked"])
+        self.assertEqual(coarse_res["fine_breach_step_indices"], [1])
+
+        # Fine partition [1, 1, 1] exposes the breach at macro boundary 1
+        fine_res = mon.audit_coarsened_partition([1, 1, 1])
+        self.assertEqual(fine_res["status"], "COARSENING_PRESERVES_VERDICT")
+        self.assertTrue(fine_res["coarse_prefix_breach"])
+        self.assertFalse(fine_res["hidden_excursion_masked"])
+
 
 if __name__ == "__main__":
     unittest.main()
