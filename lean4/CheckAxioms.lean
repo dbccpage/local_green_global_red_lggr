@@ -66,3 +66,4 @@ import LggrVIII
 #print axioms LggrVIII.discrete_regge_hinge_deficit_and_gauss_bonnet
 #print axioms LggrVIII.fibered_pullback_compatibility_and_mediator_uniqueness
 #print axioms LggrVIII.optional_stopping_expectation_conservation_vs_skew
+#print axioms LggrVIII.derived_limit_projective_tower_lifting_obstruction

@@ -1400,4 +1400,29 @@ theorem optional_stopping_expectation_conservation_vs_skew
      e_global - l_prod = -1) := by
   refine ⟨⟨by omega, by omega⟩, ⟨by decide, by decide, by decide, by decide⟩⟩
 
+/-- Theorem 50 (`derived_limit_projective_tower_lifting_obstruction`):
+    Formalizes the LGGR IV 3-Stage Projective Tower Derived-Limit Lifting Obstruction
+    for `3 * x_n + 1 ≡ 0 (mod 2^n)`:
+    1. (Finite-Stage Modular Solvability & Inverse-Limit Compatibility):
+       The residue thread `(x₁, x₂, x₃) = (1, 1, 5)` satisfies
+       `(3 * x₁ + 1) % 2 = 0`, `(3 * x₂ + 1) % 4 = 0`, `(3 * x₃ + 1) % 8 = 0`,
+       and projection compatibility `(x₂ - x₁) % 2 = 0`, `(x₃ - x₂) % 4 = 0` (`L = 1`).
+    2. (Global Integral Lifting Obstruction `NGD`):
+       For every integer `x : Int`, `3 * x + 1 ≠ 0`, so no global integer root lifts
+       the compatible 2-adic tower thread (`Eg = 0`, `Δ_E = Eg - L = -1`). -/
+theorem derived_limit_projective_tower_lifting_obstruction :
+    (let x1 : Int := 1; let x2 : Int := 1; let x3 : Int := 5;
+     (3 * x1 + 1) % 2 = 0 ∧
+     (3 * x2 + 1) % 4 = 0 ∧
+     (3 * x3 + 1) % 8 = 0 ∧
+     (x2 - x1) % 2 = 0 ∧
+     (x3 - x2) % 4 = 0) ∧
+    (∀ x : Int, 3 * x + 1 ≠ 0) ∧
+    (let l_prod := (1 : Int);
+     let e_global := (0 : Int);
+     e_global - l_prod = -1) := by
+  refine ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨?_, by decide⟩⟩
+  intro x hx
+  omega
+
 end LggrVIII

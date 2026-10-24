@@ -6823,6 +6823,141 @@ class StreamingMartingaleOptionalStoppingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingProjectiveTowerMonitor:
+    """Online projective tower and R^1 lim^1 derived-limit integer lifting monitor (LGGR IV).
+
+    Audits finite-stage modular congruence threads (x_n, m_n) for a linear equation
+    a * x + b == 0 along a divisibility tower m_1 | m_2 | ... | m_N:
+      - Evaluates each stage n locally for modular root satisfaction:
+          E_mod(n) = 1[(a * x_n + b) % m_n == 0]
+        and inverse-limit transition compatibility with the prior stage:
+          E_proj(n) = 1[(x_n - x_{n-1}) % m_{n-1} == 0]  (for n >= 2).
+      - Computes the step-lift coboundary differences d_n = x_{n+1} - x_n in m_n Z
+        and the rational completion root x_inf = -b / a in Q.
+      - Evaluates global integral lifting E_g in {0, 1}:
+          E_g = 1 iff there exists x_* in Z such that a * x_* + b == 0 and
+          (x_* - x_n) % m_n == 0 for all recorded stages n.
+      - Separates:
+          * INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG (L == 1 and E_g == 1, Delta_E = 0),
+          * DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR (L == 1 and E_g == 0,
+            Delta_E = -1: every finite modular stage is solvable and compatible in
+            lim Z/m_n Z, yet x_inf = -b / a not in Z leaves a non-zero coset
+            obstruction [-b/a] != 0 in Q/Z),
+          * LOCAL_TOWER_STAGE_REJECTED (L == 0).
+    """
+
+    def __init__(
+        self,
+        coeff_a: int,
+        const_b: int,
+        *,
+        scope_id: str = "streaming-projective-tower-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.coeff_a = exact_int(coeff_a, "coeff_a")
+        self.const_b = exact_int(const_b, "const_b")
+        if self.coeff_a == 0:
+            raise ValidationError("coeff_a must be non-zero")
+        self.rational_completion_root = Fraction(-self.const_b, self.coeff_a)
+        self.integral_root: int | None = (
+            -self.const_b // self.coeff_a if (-self.const_b) % self.coeff_a == 0 else None
+        )
+        self.stages: list[dict[str, Any]] = []
+
+    def record_stage(
+        self,
+        stage_id: str,
+        modulus: int,
+        candidate_x: int,
+    ) -> dict[str, Any]:
+        """Record a finite presentation stage (m_n, x_n) and check modular and projection compatibility."""
+        sid = text(stage_id, "stage_id")
+        mod_n = exact_int(modulus, "modulus", minimum=2)
+        x_n = exact_int(candidate_x, "candidate_x")
+
+        if self.stages:
+            prev_mod = self.stages[-1]["modulus"]
+            prev_x = self.stages[-1]["candidate_x"]
+            if mod_n % prev_mod != 0 or mod_n <= prev_mod:
+                raise ValidationError("Each stage modulus must strictly divide the next stage modulus")
+            step_diff = x_n - prev_x
+            proj_ok = 1 if (step_diff % prev_mod == 0) else 0
+        else:
+            step_diff = 0
+            proj_ok = 1
+
+        mod_residual = (self.coeff_a * x_n + self.const_b) % mod_n
+        mod_ok = 1 if mod_residual == 0 else 0
+        local_stage_pass = mod_ok * proj_ok
+
+        rec = {
+            "stage_index": len(self.stages),
+            "stage_id": sid,
+            "modulus": mod_n,
+            "candidate_x": x_n,
+            "modular_residual": mod_residual,
+            "local_modular_pass": mod_ok,
+            "step_lift_difference": step_diff,
+            "inverse_limit_projection_compatible": proj_ok,
+            "local_stage_evaluator": local_stage_pass,
+        }
+        self.stages.append(rec)
+        return json_value(rec)
+
+    def get_receipt(self) -> dict[str, Any]:
+        """Emit a signed projective tower and R^1 lim^1 lifting obstruction receipt."""
+        if not self.stages:
+            raise ValidationError("At least one projective tower stage must be recorded before emitting a receipt")
+
+        local_product = 1
+        for st in self.stages:
+            local_product *= st["local_stage_evaluator"]
+
+        if self.integral_root is not None:
+            all_stages_lift = all(
+                (self.integral_root - st["candidate_x"]) % st["modulus"] == 0
+                for st in self.stages
+            )
+            global_eval = 1 if (local_product == 1 and all_stages_lift) else 0
+        else:
+            global_eval = 0
+
+        defect = global_eval - local_product
+        fractional_coset_residual = self.rational_completion_root - Fraction(
+            self.rational_completion_root.numerator // self.rational_completion_root.denominator
+        )
+
+        if local_product == 1 and global_eval == 1:
+            status = "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_product == 1 and global_eval == 0:
+            status = "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_TOWER_STAGE_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body = {
+            "schema": "lggr.online_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "coeff_a": self.coeff_a,
+            "const_b": self.const_b,
+            "stage_count": len(self.stages),
+            "rational_completion_root": self.rational_completion_root,
+            "integral_global_root": self.integral_root,
+            "r1_lim_coset_residual_mod_z": fractional_coset_residual,
+            "local_product_aggregator": local_product,
+            "global_integral_lift_evaluator": global_eval,
+            "evaluator_defect": defect,
+            "stages": self.stages,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
