@@ -179,6 +179,61 @@ class StreamingFiberMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+    def merge(self, other: "StreamingFiberMonitor") -> dict[str, Any]:
+        """Merge observations from a concurrent asynchronous branch monitor into this monitor."""
+        if not isinstance(other, StreamingFiberMonitor):
+            raise ValidationError("other must be a StreamingFiberMonitor instance")
+        target_was_obstructed = self.is_obstructed
+        source_was_obstructed = other.is_obstructed
+        new_collisions_count = 0
+        merged_count = 0
+
+        for row in other.history:
+            sid = row["state_id"]
+            if sid in self.observed_states:
+                prev = self.observed_states[sid]
+                if (canonical(prev["report"]) != canonical(row["report"]) or
+                        canonical(prev["query"]) != canonical(row["query"])):
+                    raise ValidationError(f"Conflicting state observation during branch merge for state_id: {sid}")
+                continue
+            step_res = self.observe(
+                sid,
+                row["report"],
+                row["query"],
+                metadata=row.get("metadata"),
+            )
+            merged_count += 1
+            if step_res.get("schema") == "lggr.online_collision.v1":
+                new_collisions_count += 1
+
+        cross_branch_lggr = (
+            not target_was_obstructed
+            and not source_was_obstructed
+            and self.is_obstructed
+        )
+        body = {
+            "schema": "lggr.online_branch_merge.v1",
+            "authority_effect": "None",
+            "target_scope_id": self.scope_id,
+            "source_scope_id": other.scope_id,
+            "target_was_obstructed": target_was_obstructed,
+            "source_was_obstructed": source_was_obstructed,
+            "merged_states_count": merged_count,
+            "new_collisions_count": new_collisions_count,
+            "cross_branch_lggr_discovered": cross_branch_lggr,
+            "status": "REPORT_INSUFFICIENT" if self.is_obstructed else "OK",
+            "contract_status": self.status,
+            "colliding_pair": self.collision,
+            "meaning": (
+                "Concurrent locally-green branches collided on a shared report fiber upon merge."
+                if cross_branch_lggr
+                else "Merged branch state observations remains obstructed LGGR."
+                if self.is_obstructed
+                else "Concurrent branch merge preserved fiber constancy; contract is composable LGGG."
+            ),
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 class StreamingAuditMonitor:
     """Incremental step witness composition and evaluator defect monitor.
@@ -522,20 +577,31 @@ class StreamingCochainMonitor:
         # Construct dual witness z
         # Dual witness has support on cycle edges: z_e = sign(defect) * min_weight * orientation
         dual_witness: dict[str, Fraction] = {}
+        z_by_f_idx: dict[int, Fraction] = {}
         sign_defect = Fraction(1) if defect > 0 else Fraction(-1) if defect < 0 else Fraction(0)
 
+        name_counts: dict[str, int] = {}
+        for f_idx, _ in cycle_edges:
+            base_name = f"{self.edges[f_idx]['source']}->{self.edges[f_idx]['target']}"
+            name_counts[base_name] = name_counts.get(base_name, 0) + 1
+
+        seen_names: set[str] = set()
         for f_idx, orient in cycle_edges:
-            e_name = f"{self.edges[f_idx]['source']}->{self.edges[f_idx]['target']}"
-            if defect == 0:
-                dual_witness[e_name] = Fraction(0)
+            base_name = f"{self.edges[f_idx]['source']}->{self.edges[f_idx]['target']}"
+            if name_counts[base_name] > 1 and base_name in seen_names:
+                e_name = f"{base_name}#{f_idx}"
             else:
-                dual_witness[e_name] = sign_defect * min_weight * orient
+                e_name = base_name
+                seen_names.add(base_name)
+            z_val = Fraction(0) if defect == 0 else sign_defect * min_weight * orient
+            dual_witness[e_name] = z_val
+            z_by_f_idx[f_idx] = z_val
 
         # Construct exact vertex potentials x on the active graph
         potential = self._compute_potential(cycle_edges, defect)
 
         # Build certificate check across cycle edges to independently verify optimality
-        certificate = self._verify_cycle_certificate(cycle_edges, potential, dual_witness)
+        certificate = self._verify_cycle_certificate(cycle_edges, potential, dual_witness, z_by_f_idx)
 
         cycle_record = {
             "cycle_index": len(self.cycles),
@@ -636,7 +702,8 @@ class StreamingCochainMonitor:
 
     def _verify_cycle_certificate(self, cycle_edges: list[tuple[int, int]],
                                   potential: dict[str, Fraction],
-                                  dual_witness: dict[str, Fraction]) -> dict[str, Any]:
+                                  dual_witness: dict[str, Fraction],
+                                  z_by_f_idx: dict[int, Fraction] | None = None) -> dict[str, Any]:
         """Construct D, h, w, x, z on the cycle subgraph and verify with verify_l1_certificate."""
         cycle_node_list = sorted({self.edges[f_idx][end] for f_idx, _ in cycle_edges for end in ("source", "target")})
         node_to_idx = {name: i for i, name in enumerate(cycle_node_list)}
@@ -650,21 +717,367 @@ class StreamingCochainMonitor:
             e = self.edges[f_idx]
             u_name, v_name = e["source"], e["target"]
             row = [Fraction(0)] * len(cycle_node_list)
-            row[node_to_idx[u_name]] = Fraction(-1)
-            row[node_to_idx[v_name]] = Fraction(1)
+            row[node_to_idx[u_name]] -= Fraction(1)
+            row[node_to_idx[v_name]] += Fraction(1)
             d_rows.append(row)
             h_vec.append(e["value"])
             w_vec.append(e["weight"])
-            e_name = f"{u_name}->{v_name}"
-            z_vec.append(dual_witness.get(e_name, Fraction(0)))
+            if z_by_f_idx is not None and f_idx in z_by_f_idx:
+                z_vec.append(z_by_f_idx[f_idx])
+            else:
+                e_name = f"{u_name}->{v_name}"
+                z_vec.append(dual_witness.get(e_name, Fraction(0)))
 
         x_vec = [potential.get(node, Fraction(0)) for node in cycle_node_list]
         return verify_l1_certificate(d_rows, h_vec, w_vec, x_vec, z_vec)
+
+    def _forest_potential_and_residuals(
+        self, tree_indices: set[int], node_list: list[str]
+    ) -> tuple[dict[str, Fraction], list[Fraction], Fraction]:
+        """Integrate h along a spanning forest and return (potential, residuals, weighted_l1_cost)."""
+        prop_adj: dict[str, list[tuple[str, Fraction]]] = {v: [] for v in node_list}
+        for idx in tree_indices:
+            e = self.edges[idx]
+            u, v, h_val = e["source"], e["target"], e["value"]
+            if u != v:
+                prop_adj[u].append((v, h_val))
+                prop_adj[v].append((u, -h_val))
+
+        potential: dict[str, Fraction] = {}
+        for root in node_list:
+            if root in potential:
+                continue
+            potential[root] = Fraction(0)
+            queue: deque[str] = deque([root])
+            while queue:
+                curr = queue.popleft()
+                curr_x = potential[curr]
+                for neighbor, delta_h in prop_adj[curr]:
+                    if neighbor not in potential:
+                        potential[neighbor] = curr_x + delta_h
+                        queue.append(neighbor)
+
+        residuals: list[Fraction] = []
+        cost = Fraction(0)
+        for e in self.edges:
+            r_e = e["value"] - (potential[e["target"]] - potential[e["source"]])
+            residuals.append(r_e)
+            cost += e["weight"] * abs(r_e)
+        return potential, residuals, cost
+
+    def _find_tree_path_for_indices(
+        self, tree_indices: set[int], start: str, goal: str
+    ) -> list[tuple[int, int]] | None:
+        """Return path from start to goal in tree_indices as list of (edge_idx, orientation)."""
+        if start == goal:
+            return []
+        adj: dict[str, list[tuple[str, int, int]]] = {}
+        for idx in tree_indices:
+            e = self.edges[idx]
+            u, v = e["source"], e["target"]
+            adj.setdefault(u, []).append((v, idx, +1))
+            adj.setdefault(v, []).append((u, idx, -1))
+        queue: deque[tuple[str, list[tuple[int, int]]]] = deque([(start, [])])
+        visited = {start}
+        while queue:
+            curr, path = queue.popleft()
+            if curr == goal:
+                return path
+            for neighbor, e_idx, orient in adj.get(curr, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, path + [(e_idx, orient)]))
+        return None
+
+    @staticmethod
+    def _solve_bounded_linear_feasibility(
+        var_bounds: list[tuple[Fraction, Fraction]],
+        constraints: list[tuple[list[Fraction], Fraction, Fraction]],
+    ) -> list[Fraction] | None:
+        """Exact rational Fourier-Motzkin elimination for L_j <= a_j^T y <= U_j with l_i <= y_i <= u_i."""
+        k = len(var_bounds)
+        if k == 0:
+            for coeffs, lo, hi in constraints:
+                if not (lo <= 0 <= hi):
+                    return None
+            return []
+
+        # Convert to inequalities: sum_i c_i y_i <= rhs
+        ineqs: list[tuple[list[Fraction], Fraction]] = []
+        for i, (lo, hi) in enumerate(var_bounds):
+            row_hi = [Fraction(0)] * k
+            row_hi[i] = Fraction(1)
+            ineqs.append((row_hi, hi))
+            row_lo = [Fraction(0)] * k
+            row_lo[i] = Fraction(-1)
+            ineqs.append((row_lo, -lo))
+
+        for coeffs, lo, hi in constraints:
+            ineqs.append((list(coeffs), hi))
+            ineqs.append(([-c for c in coeffs], -lo))
+
+        history: list[list[tuple[list[Fraction], Fraction]]] = []
+        curr_ineqs = ineqs
+        for var_idx in range(k - 1, -1, -1):
+            history.append(curr_ineqs)
+            pos: list[tuple[list[Fraction], Fraction]] = []
+            neg: list[tuple[list[Fraction], Fraction]] = []
+            zero: list[tuple[list[Fraction], Fraction]] = []
+            for coeffs, rhs in curr_ineqs:
+                c = coeffs[var_idx]
+                if c > 0:
+                    pos.append(([x / c for x in coeffs[:var_idx]], rhs / c))
+                elif c < 0:
+                    neg_c = -c
+                    neg.append(([x / neg_c for x in coeffs[:var_idx]], rhs / neg_c))
+                else:
+                    zero.append((coeffs[:var_idx], rhs))
+            next_ineqs: list[tuple[list[Fraction], Fraction]] = list(zero)
+            for p_coeffs, p_rhs in pos:
+                for n_coeffs, n_rhs in neg:
+                    comb = [p + n for p, n in zip(p_coeffs, n_coeffs)]
+                    next_ineqs.append((comb, p_rhs + n_rhs))
+            curr_ineqs = next_ineqs
+
+        for _, rhs in curr_ineqs:
+            if rhs < 0:
+                return None
+
+        sol: list[Fraction] = []
+        for var_idx in range(k):
+            step_ineqs = history[k - 1 - var_idx]
+            lo_val: Fraction | None = None
+            hi_val: Fraction | None = None
+            for coeffs, rhs in step_ineqs:
+                c = coeffs[var_idx]
+                if c == 0:
+                    continue
+                rem = rhs - sum((coeffs[j] * sol[j] for j in range(var_idx)), Fraction(0))
+                bound = rem / c
+                if c > 0:
+                    hi_val = bound if hi_val is None else min(hi_val, bound)
+                else:
+                    lo_val = bound if lo_val is None else max(lo_val, bound)
+            if lo_val is not None and hi_val is not None and lo_val > hi_val:
+                return None
+            chosen = Fraction(0)
+            if lo_val is not None and chosen < lo_val:
+                chosen = lo_val
+            if hi_val is not None and chosen > hi_val:
+                chosen = hi_val
+            sol.append(chosen)
+        return sol
+
+    def _try_construct_dual_for_forest(
+        self, tree_indices: set[int], residuals: list[Fraction]
+    ) -> list[Fraction] | None:
+        """Attempt to build a dual circulation z in ker(D_0^T) with |z_e| <= w_e matching tree_indices."""
+        m = len(self.edges)
+        chords = [i for i in range(m) if i not in tree_indices]
+        cycle_vecs: dict[int, list[Fraction]] = {}
+        for c_idx in chords:
+            e = self.edges[c_idx]
+            vec = [Fraction(0)] * m
+            vec[c_idx] = Fraction(1)
+            path = self._find_tree_path_for_indices(tree_indices, e["target"], e["source"])
+            if path is None:
+                return None
+            for t_idx, orient in path:
+                vec[t_idx] += Fraction(orient)
+            cycle_vecs[c_idx] = vec
+
+        z_base = [Fraction(0)] * m
+        zero_chords: list[int] = []
+        for c_idx in chords:
+            r_c = residuals[c_idx]
+            w_c = self.edges[c_idx]["weight"]
+            if r_c > 0:
+                for i in range(m):
+                    z_base[i] += w_c * cycle_vecs[c_idx][i]
+            elif r_c < 0:
+                for i in range(m):
+                    z_base[i] -= w_c * cycle_vecs[c_idx][i]
+            else:
+                zero_chords.append(c_idx)
+
+        if all(abs(z_base[i]) <= self.edges[i]["weight"] for i in range(m)):
+            return z_base
+
+        if not zero_chords:
+            return None
+
+        var_bounds = [(-self.edges[c_idx]["weight"], self.edges[c_idx]["weight"]) for c_idx in zero_chords]
+        constraints: list[tuple[list[Fraction], Fraction, Fraction]] = []
+        for t_idx in sorted(tree_indices):
+            w_t = self.edges[t_idx]["weight"]
+            coeffs = [cycle_vecs[c_idx][t_idx] for c_idx in zero_chords]
+            constraints.append((coeffs, -w_t - z_base[t_idx], w_t - z_base[t_idx]))
+
+        y_zero = self._solve_bounded_linear_feasibility(var_bounds, constraints)
+        if y_zero is None:
+            return None
+
+        z_full = list(z_base)
+        for val_y, c_idx in zip(y_zero, zero_chords):
+            for i in range(m):
+                z_full[i] += val_y * cycle_vecs[c_idx][i]
+        if all(abs(z_full[i]) <= self.edges[i]["weight"] for i in range(m)):
+            return z_full
+        return None
+
+    def solve_global_l1_repair(self) -> dict[str, Any]:
+        """Compute exact rational global multi-cycle L1 repair distance and primal-dual certificate."""
+        if not self.edges:
+            body: dict[str, Any] = {
+                "schema": "lggr.global_cochain_l1.v1",
+                "authority_effect": "None",
+                "status": "OPEN_TREE",
+                "global_l1_repair_distance": Fraction(0),
+                "potential": {},
+                "dual_witness": [],
+                "certificate": None,
+            }
+            return json_value({**body, "receipt_sha256": digest(body)})
+
+        node_list = sorted(self.vertices)
+        node_to_idx = {name: i for i, name in enumerate(node_list)}
+        m = len(self.edges)
+
+        # Build initial Maximum-Weight Spanning Forest via Kruskal's algorithm
+        parent = {v: v for v in node_list}
+
+        def find(v: str) -> str:
+            while parent[v] != v:
+                parent[v] = parent[parent[v]]
+                v = parent[v]
+            return v
+
+        sorted_edge_indices = sorted(range(m), key=lambda i: (-self.edges[i]["weight"], i))
+        initial_forest: set[int] = set()
+        for idx in sorted_edge_indices:
+            u, v = self.edges[idx]["source"], self.edges[idx]["target"]
+            ru, rv = find(u), find(v)
+            if ru != rv:
+                parent[ru] = rv
+                initial_forest.add(idx)
+
+        best_forest = frozenset(initial_forest)
+        best_pot, best_res, best_cost = self._forest_potential_and_residuals(set(best_forest), node_list)
+        best_dual = self._try_construct_dual_for_forest(set(best_forest), best_res)
+
+        if best_dual is None:
+            queue: deque[frozenset[int]] = deque([best_forest])
+            visited_forests: set[frozenset[int]] = {best_forest}
+            while queue and best_dual is None:
+                curr_forest = queue.popleft()
+                curr_set = set(curr_forest)
+                curr_pot, curr_res, curr_cost = self._forest_potential_and_residuals(curr_set, node_list)
+                if curr_cost == best_cost:
+                    cand_dual = self._try_construct_dual_for_forest(curr_set, curr_res)
+                    if cand_dual is not None:
+                        best_forest = curr_forest
+                        best_pot, best_res, best_cost = curr_pot, curr_res, curr_cost
+                        best_dual = cand_dual
+                        break
+
+                chords = [i for i in range(m) if i not in curr_set]
+                improved = False
+                for c_idx in chords:
+                    e = self.edges[c_idx]
+                    path = self._find_tree_path_for_indices(curr_set, e["target"], e["source"])
+                    if not path:
+                        continue
+                    for t_idx, _ in path:
+                        next_set = (curr_set - {t_idx}) | {c_idx}
+                        next_frozen = frozenset(next_set)
+                        if next_frozen in visited_forests:
+                            continue
+                        _, next_res, next_cost = self._forest_potential_and_residuals(next_set, node_list)
+                        if next_cost < best_cost:
+                            best_cost = next_cost
+                            best_forest = next_frozen
+                            visited_forests.add(next_frozen)
+                            queue.clear()
+                            queue.append(next_frozen)
+                            improved = True
+                            break
+                        elif next_cost == best_cost:
+                            visited_forests.add(next_frozen)
+                            queue.append(next_frozen)
+                    if improved:
+                        break
+
+        if best_dual is None:
+            best_pot, best_res, best_cost = self._forest_potential_and_residuals(set(best_forest), node_list)
+            best_dual = self._try_construct_dual_for_forest(set(best_forest), best_res) or [Fraction(0)] * m
+
+        d_rows: list[list[Fraction]] = []
+        h_vec: list[Fraction] = []
+        w_vec: list[Fraction] = []
+        for e in self.edges:
+            row = [Fraction(0)] * len(node_list)
+            row[node_to_idx[e["source"]]] -= Fraction(1)
+            row[node_to_idx[e["target"]]] += Fraction(1)
+            d_rows.append(row)
+            h_vec.append(e["value"])
+            w_vec.append(e["weight"])
+
+        x_vec = [best_pot.get(v, Fraction(0)) for v in node_list]
+        cert = verify_l1_certificate(d_rows, h_vec, w_vec, x_vec, best_dual)
+        status = (
+            "OPEN_TREE"
+            if not self.cycles
+            else "EXACT_REPAIR"
+            if best_cost == 0
+            else "OBSTRUCTED_MULTI_CYCLE"
+        )
+        body = {
+            "schema": "lggr.global_cochain_l1.v1",
+            "authority_effect": "None",
+            "status": status,
+            "total_edges": m,
+            "total_vertices": len(node_list),
+            "cycles_detected": len(self.cycles),
+            "global_l1_repair_distance": best_cost,
+            "potential": best_pot,
+            "dual_witness": best_dual,
+            "certificate_status": cert.get("status"),
+            "certificate": cert,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    def merge(self, other: "StreamingCochainMonitor") -> dict[str, Any]:
+        """Merge edges from a concurrent branch cochain monitor into this monitor."""
+        if not isinstance(other, StreamingCochainMonitor):
+            raise ValidationError("other must be a StreamingCochainMonitor instance")
+        prior_cycles = len(self.cycles)
+        prior_nonrepairable = sum(1 for c in self.cycles if c["closure_defect"] != 0)
+        merged_edges = 0
+        for e in other.edges:
+            self.add_edge(e["source"], e["target"], e["value"], weight=e["weight"])
+            merged_edges += 1
+        new_cycles = len(self.cycles) - prior_cycles
+        total_nonrepairable = sum(1 for c in self.cycles if c["closure_defect"] != 0)
+        new_nonrepairable = total_nonrepairable - prior_nonrepairable
+        global_l1 = self.solve_global_l1_repair()
+        body = {
+            "schema": "lggr.online_cochain_merge.v1",
+            "authority_effect": "None",
+            "merged_edges_count": merged_edges,
+            "new_cycles_closed": new_cycles,
+            "new_nonrepairable_cycles": new_nonrepairable,
+            "total_cycles": len(self.cycles),
+            "global_l1_repair_distance": global_l1["global_l1_repair_distance"],
+            "global_certificate_status": global_l1["certificate_status"],
+            "status": self.get_receipt()["status"],
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
 
     def get_receipt(self) -> dict[str, Any]:
         """Emit comprehensive summary receipt for cochain monitor."""
         has_nonrepairable = any(c["closure_defect"] != 0 for c in self.cycles)
         status = "OBSTRUCTED_CYCLE" if has_nonrepairable else "EXACT_REPAIR" if self.cycles else "OPEN_TREE"
+        global_l1 = self.solve_global_l1_repair() if self.cycles else None
 
         body = {
             "schema": "lggr.online_cochain_summary.v1",
@@ -674,6 +1087,12 @@ class StreamingCochainMonitor:
             "total_vertices": len(self.vertices),
             "cycles_detected": len(self.cycles),
             "nonrepairable_cycles": sum(1 for c in self.cycles if c["closure_defect"] != 0),
+            "global_l1_repair_distance": (
+                global_l1["global_l1_repair_distance"] if global_l1 is not None else "0"
+            ),
+            "global_certificate_status": (
+                global_l1["certificate_status"] if global_l1 is not None else "OPEN_TREE"
+            ),
             "cycles": self.cycles,
             "scope": "Supplied streaming cochain graph.",
         }
