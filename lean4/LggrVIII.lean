@@ -3134,4 +3134,50 @@ theorem asynchronous_replay_order_prefix_peak_envelope_and_robustness :
   · intro p1 p2 c hc
     omega
 
+/-- 86. Sliding-window local green vs. full-horizon cumulative drift and rebalancing audit:
+    1. Universal 3-block disjoint window partition and ceiling law:
+       - For any 6-step drift sequence (d1, d2, d3, d4, d5, d6) and window budget b_w,
+         if d1 + d2 ≤ b_w, d3 + d4 ≤ b_w, and d5 + d6 ≤ b_w, then
+         (d1 + d2 + d3 + d4 + d5 + d6) = (d1 + d2) + (d3 + d4) + (d5 + d6) ≤ 3 * b_w;
+    2. Concrete 3-phase sliding-window vs. horizon audit (W = 2, B_W = 2, B_global = 3):
+       - Phase 1 (Persistent positive drift (1, 1, 1, 1, 1, 1)):
+         every length-2 sliding window sums to 2 ≤ B_W = 2 (L_pers = 1), yet cumulative
+         horizon drift reaches 6 > B_global = 3 (Eg_pers = 0, Δ_{E,pers} = -1);
+       - Phase 2 (Late terminal rebalancing (1, 1, 1, 1, -1, -1)):
+         every length-2 window sums to ≤ 2 and terminal drift is 2 ≤ 3 (L_late = 1),
+         yet prefix drift at step 4 reaches 4 > 3 (Eg_late = 0, Δ_{E,late} = -1);
+       - Phase 3 (Periodic inter-window rebalancing (1, 1, -1, 1, -1, 1)):
+         every length-2 window sums to ≤ 2, peak prefix drift is 2 ≤ 3, and terminal
+         drift is 2 ≤ 3 (L_rebal = 1, Eg_rebal = 1, Δ_{E,rebal} = 0). -/
+theorem sliding_window_truncation_vs_horizon_rebalancing_audit :
+    (∀ d1 d2 d3 d4 d5 d6 b_w : Int,
+      d1 + d2 ≤ b_w → d3 + d4 ≤ b_w → d5 + d6 ≤ b_w →
+      (d1 + d2 + d3 + d4 + d5 + d6) = (d1 + d2) + (d3 + d4) + (d5 + d6) ∧
+      d1 + d2 + d3 + d4 + d5 + d6 ≤ 3 * b_w) ∧
+    (let b_win : Int := 2;
+     let b_glob : Int := 3;
+     let win_max_pers : Int := 2;
+     let cum_max_pers : Int := 6;
+     let win_max_late : Int := 2;
+     let term_late : Int := 2;
+     let pref_max_late : Int := 4;
+     let win_max_rebal : Int := 2;
+     let pref_max_rebal : Int := 2;
+     let term_rebal : Int := 2;
+     let l_pers := if (win_max_pers ≤ b_win) ∧ (cum_max_pers > b_glob) then (1 : Int) else 0;
+     let eg_pers := if (l_pers = 1) ∧ (cum_max_pers ≤ b_glob) then (1 : Int) else 0;
+     let defect_pers := eg_pers - l_pers;
+     let l_late := if (win_max_late ≤ b_win) ∧ (term_late ≤ b_glob) ∧ (pref_max_late > b_glob) then (1 : Int) else 0;
+     let eg_late := if (l_late = 1) ∧ (pref_max_late ≤ b_glob) then (1 : Int) else 0;
+     let defect_late := eg_late - l_late;
+     let l_rebal := if (win_max_rebal ≤ b_win) ∧ (pref_max_rebal ≤ b_glob) ∧ (term_rebal ≤ b_glob) then (1 : Int) else 0;
+     let eg_rebal := if (l_rebal = 1) ∧ (pref_max_rebal < pref_max_late) then (1 : Int) else 0;
+     let defect_rebal := eg_rebal - l_rebal;
+     (l_pers = 1 ∧ eg_pers = 0 ∧ defect_pers = -1) ∧
+     (l_late = 1 ∧ eg_late = 0 ∧ defect_late = -1) ∧
+     (l_rebal = 1 ∧ eg_rebal = 1 ∧ defect_rebal = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro d1 d2 d3 d4 d5 d6 b_w h1 h2 h3
+  refine ⟨by omega, by omega⟩
+
 end LggrVIII

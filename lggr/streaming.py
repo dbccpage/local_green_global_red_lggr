@@ -14587,6 +14587,174 @@ class StreamingReplayOrderEnvelopeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingWindowedDriftRebalancingMonitor:
+    """Online sliding-window local green vs. full-horizon cumulative drift and rebalancing monitor (Theorem 86).
+
+    Audits long-horizon step-drift trajectories under `StreamingWindowedDriftMonitor`
+    with sliding window size W, window budget B_W, and global horizon budget B_global:
+      1. Phase 1 (Persistent positive drift):
+         Every length-W sliding window stays within B_W (`max_window_sum <= B_W`),
+         yet cumulative drift across K = ceil(N / W) disjoint blocks breaches B_global.
+      2. Phase 2 (Late terminal rebalancing after mid-horizon prefix excursion):
+         Every length-W window stays within B_W and terminal drift S_cum(N) <= B_global,
+         yet an intermediate prefix S_cum(t) > B_global breaches the horizon ceiling.
+      3. Phase 3 (Periodic inter-window rebalancing):
+         Interleaving negative rebalancing steps keeps both max_window_sum <= B_W
+         and max_prefix_horizon_drift <= B_global across the entire horizon.
+    """
+
+    def __init__(
+        self,
+        *,
+        window_size: int = 2,
+        window_budget: Fraction | int | str = 2,
+        global_budget: Fraction | int | str = 3,
+        scope_id: str = "streaming-windowed-drift-rebalancing-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        w_val = exact_int(window_size, "window_size")
+        if w_val < 1:
+            raise ValidationError("window_size must be >= 1")
+        bw_val = rational(window_budget)
+        bg_val = rational(global_budget)
+        if bw_val < 0 or bg_val < 0:
+            raise ValidationError("window_budget and global_budget must be >= 0")
+        self.window_size = w_val
+        self.window_budget = bw_val
+        self.global_budget = bg_val
+        self.evaluations: list[dict[str, Any]] = []
+
+    def _run_drift_stream(
+        self,
+        eval_id: str,
+        phase_tag: str,
+        drifts: Sequence[Fraction | int | str],
+    ) -> dict[str, Any]:
+        mon = StreamingWindowedDriftMonitor(
+            self.window_size,
+            self.window_budget,
+            self.global_budget,
+            scope_id=f"{self.scope_id}:{eval_id}:{phase_tag}",
+        )
+        for idx, d in enumerate(drifts):
+            mon.record_step(f"s{idx + 1}", d)
+        return mon.get_receipt()
+
+    def record_rebalancing_evaluation(
+        self,
+        evaluation_id: str,
+        *,
+        phase_1_drifts: Sequence[Fraction | int | str],
+        phase_2_drifts: Sequence[Fraction | int | str],
+        phase_3_drifts: Sequence[Fraction | int | str],
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        d1 = [rational(v) for v in sequence(phase_1_drifts, "phase_1_drifts")]
+        d2 = [rational(v) for v in sequence(phase_2_drifts, "phase_2_drifts")]
+        d3 = [rational(v) for v in sequence(phase_3_drifts, "phase_3_drifts")]
+        if not d1 or not d2 or not d3:
+            raise ValidationError("All drift sequences must be non-empty")
+
+        rec_p1 = self._run_drift_stream(eval_id, "p1", d1)
+        rec_p2 = self._run_drift_stream(eval_id, "p2", d2)
+        rec_p3 = self._run_drift_stream(eval_id, "p3", d3)
+
+        win_ok_p1 = bool(rec_p1["all_windows_within_budget"])
+        cum_p1 = rational(rec_p1["cumulative_horizon_drift"])
+        pref_p1 = rational(rec_p1["max_prefix_horizon_drift"])
+        l_p1 = 1 if win_ok_p1 and cum_p1 > self.global_budget else 0
+        eg_p1 = 1 if (l_p1 == 1 and bool(rec_p1["horizon_within_budget"])) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        win_ok_p2 = bool(rec_p2["all_windows_within_budget"])
+        cum_p2 = rational(rec_p2["cumulative_horizon_drift"])
+        pref_p2 = rational(rec_p2["max_prefix_horizon_drift"])
+        l_p2 = 1 if (win_ok_p2 and cum_p2 <= self.global_budget and pref_p2 > self.global_budget) else 0
+        eg_p2 = 1 if (l_p2 == 1 and bool(rec_p2["horizon_within_budget"])) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        win_ok_p3 = bool(rec_p3["all_windows_within_budget"])
+        cum_p3 = rational(rec_p3["cumulative_horizon_drift"])
+        pref_p3 = rational(rec_p3["max_prefix_horizon_drift"])
+        l_p3 = 1 if (win_ok_p3 and bool(rec_p3["horizon_within_budget"])) else 0
+        eg_p3 = 1 if (l_p3 == 1 and pref_p3 < pref_p2) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "window_size": self.window_size,
+            "window_budget": self.window_budget,
+            "global_budget": self.global_budget,
+            "phase_1_max_window_sum": rational(rec_p1["max_window_sum"]),
+            "phase_1_max_prefix_drift": pref_p1,
+            "phase_1_cumulative_drift": cum_p1,
+            "phase_2_max_window_sum": rational(rec_p2["max_window_sum"]),
+            "phase_2_max_prefix_drift": pref_p2,
+            "phase_2_cumulative_drift": cum_p2,
+            "phase_3_max_window_sum": rational(rec_p3["max_window_sum"]),
+            "phase_3_max_prefix_drift": pref_p3,
+            "phase_3_cumulative_drift": cum_p3,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "SLIDING_WINDOW_HORIZON_BREACH_LGGR" if defect_p1 == -1 else "WINDOW_AND_HORIZON_WITHIN_BUDGET_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "LATE_REBALANCING_PREFIX_HORIZON_BREACH_LGGR" if defect_p2 == -1 else "WINDOW_AND_HORIZON_WITHIN_BUDGET_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "PERIODIC_REBALANCED_HORIZON_COHERENT_LGGG" if eg_p3 == 1 else "SLIDING_WINDOW_HORIZON_BREACH_LGGR",
+            "phase_1_window_receipt": rec_p1,
+            "phase_2_window_receipt": rec_p2,
+            "phase_3_window_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one windowed drift rebalancing evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_breach = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_late_breach = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        unrebalanced_coherence_rate = Fraction(n - max(p1_breach, p2_late_breach), n)
+        periodic_rebalanced_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_breach == n and p2_late_breach == n:
+            status = "PERIODIC_REBALANCED_HORIZON_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "SLIDING_WINDOW_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_windowed_drift_rebalancing.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_sliding_window_breach_count": p1_breach,
+            "phase_2_late_rebalancing_breach_count": p2_late_breach,
+            "phase_3_periodic_rebalanced_coherent_count": p3_coherent,
+            "unrebalanced_coherence_rate": unrebalanced_coherence_rate,
+            "periodic_rebalanced_coherence_rate": periodic_rebalanced_coherence_rate,
+            "horizon_rebalancing_coherence_gain": (
+                periodic_rebalanced_coherence_rate - unrebalanced_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

@@ -83,6 +83,7 @@ from lggr.streaming import (
     StreamingWatcherDropoutGramAuditMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
+    StreamingWindowedDriftRebalancingMonitor,
 )
 from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
 
@@ -4486,6 +4487,51 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["order_fragile_coherence_rate"], "0")
         self.assertEqual(receipt["permutation_robust_coherence_rate"], "1")
         self.assertEqual(receipt["replay_envelope_coherence_gain"], "1")
+
+    def test_sliding_window_truncation_vs_horizon_rebalancing_audit(self) -> None:
+        """Verify Theorem 86: sliding-window local green vs. full-horizon cumulative drift and rebalancing."""
+        mon = StreamingWindowedDriftRebalancingMonitor(
+            window_size=2,
+            window_budget=2,
+            global_budget=3,
+            scope_id="unit-windowed-drift-rebalancing-scope",
+        )
+        obs = mon.record_rebalancing_evaluation(
+            "windowed-rebal-eval-01",
+            phase_1_drifts=[1, 1, 1, 1, 1, 1],
+            phase_2_drifts=[1, 1, 1, 1, -1, -1],
+            phase_3_drifts=[1, 1, -1, 1, -1, 1],
+        )
+        self.assertEqual(obs["phase_1_max_window_sum"], "2")
+        self.assertEqual(obs["phase_1_cumulative_drift"], "6")
+        self.assertEqual(obs["phase_2_max_window_sum"], "2")
+        self.assertEqual(obs["phase_2_cumulative_drift"], "2")
+        self.assertEqual(obs["phase_2_max_prefix_drift"], "4")
+        self.assertEqual(obs["phase_3_max_window_sum"], "2")
+        self.assertEqual(obs["phase_3_max_prefix_drift"], "2")
+        self.assertEqual(obs["phase_3_cumulative_drift"], "2")
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SLIDING_WINDOW_HORIZON_BREACH_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "LATE_REBALANCING_PREFIX_HORIZON_BREACH_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "PERIODIC_REBALANCED_HORIZON_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "PERIODIC_REBALANCED_HORIZON_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["unrebalanced_coherence_rate"], "0")
+        self.assertEqual(receipt["periodic_rebalanced_coherence_rate"], "1")
+        self.assertEqual(receipt["horizon_rebalancing_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

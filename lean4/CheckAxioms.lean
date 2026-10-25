@@ -102,3 +102,4 @@ import LggrVIII
 #print axioms LggrVIII.cptp_state_blindspot_vs_operator_residual_and_completion
 #print axioms LggrVIII.mayer_vietoris_disconnected_overlap_and_coboundary_reconciliation
 #print axioms LggrVIII.asynchronous_replay_order_prefix_peak_envelope_and_robustness
+#print axioms LggrVIII.sliding_window_truncation_vs_horizon_rebalancing_audit
