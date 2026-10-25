@@ -1,0 +1,1620 @@
+{
+  "schema": "lggr.multi_turn_pairwise_contextuality_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "multi_turn_pairwise_contextuality_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_signaling_metrics": {
+    "N": 5,
+    "LPR": "0",
+    "GPR": "0",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "1",
+    "identity_verified": true
+  },
+  "phase_2_contextual_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_reconciled_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "ungated_contextual_coherence_rate": "0",
+  "sheaf_reconciled_coherence_rate": "1",
+  "sheaf_reconciliation_coherence_gain": "1",
+  "transcript_monitor_receipt": {
+    "schema": "lggr.online_multi_turn_pairwise_transcript.v1",
+    "authority_effect": "None",
+    "scope_id": "multi-turn-pairwise-contextuality-5model-scope",
+    "status": "PRE_GENERATION_SHEAF_RECONCILED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_signaling_mismatch_count": 5,
+    "phase_2_contextual_obstruction_count": 5,
+    "phase_3_sheaf_reconciled_count": 5,
+    "ungated_contextual_coherence_rate": "0",
+    "sheaf_reconciled_coherence_rate": "1",
+    "sheaf_reconciliation_coherence_gain": "1",
+    "sheaf_monitor_receipt": {
+      "schema": "lggr.online_contextual_sheaf.v1",
+      "authority_effect": "None",
+      "scope_id": "multi-turn-pairwise-contextuality-5model-scope-sheaf",
+      "status": "PRESHEAF_SECTION_OBSTRUCTED_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "model_count": 15,
+      "contextual_obstructed_model_ids": [
+        "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_2_contextual",
+        "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_2_contextual",
+        "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+        "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+        "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_2_contextual"
+      ],
+      "signaling_obstructed_model_ids": [
+        "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_1_signaling",
+        "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_1_signaling",
+        "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+        "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+        "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_1_signaling"
+      ],
+      "all_affine_marginal_recoveries_verified": true,
+      "models": [
+        {
+          "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      ],
+      "receipt_sha256": "aec09ab500249cb675b92ff31a249de47c1fe73b0c731f1606b7bf5ea69b9d7f"
+    },
+    "evaluations": [
+      {
+        "transcript_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      {
+        "transcript_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      {
+        "transcript_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      {
+        "transcript_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      {
+        "transcript_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      }
+    ],
+    "receipt_sha256": "050a16b39e8bd2ce98cdfe8f9db9658100ab19d764c8a5d5b83ab40a46aa179c"
+  },
+  "evaluations": [
+    {
+      "transcript_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript",
+      "phase_1_no_signaling_verified": false,
+      "phase_1_local_green": 0,
+      "phase_1_global_green": 0,
+      "phase_1_defect": 0,
+      "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+      "phase_2_no_signaling_verified": true,
+      "phase_2_alpha_min": "0",
+      "phase_2_alpha_max": "-1/2",
+      "phase_2_infeasibility_gap": "1/2",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+      "phase_3_no_signaling_verified": true,
+      "phase_3_alpha_min": "0",
+      "phase_3_alpha_max": "0",
+      "phase_3_infeasibility_gap": "0",
+      "phase_3_witness_global_joint": {
+        "000": "0",
+        "001": "0",
+        "010": "1/2",
+        "011": "0",
+        "100": "0",
+        "101": "1/2",
+        "110": "0",
+        "111": "0"
+      },
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+      "audit_signaling": {
+        "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_1_signaling",
+        "no_signaling_verified": false,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/4"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/4"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": false,
+        "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_contextual": {
+        "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_2_contextual",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "0"
+        },
+        "d000_plus_d111_invariant": "-1/2",
+        "alpha_min": "0",
+        "alpha_max": "-1/2",
+        "infeasibility_gap": "1/2",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": true,
+        "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_reconciled": {
+        "model_id": "openai/gpt-4o-mini::multi_turn_pairwise_transcript::phase_3_reconciled",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/2"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": true,
+        "witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "affine_marginal_recovery_verified": true,
+        "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\"reconciled_table_ca\": [\"1/2\", \"0\", \"0\", \"1/2\"], \"contextual_gap\": \"1/2\", \"reconciled_gap\": \"0\"}"
+    },
+    {
+      "transcript_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript",
+      "phase_1_no_signaling_verified": false,
+      "phase_1_local_green": 0,
+      "phase_1_global_green": 0,
+      "phase_1_defect": 0,
+      "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+      "phase_2_no_signaling_verified": true,
+      "phase_2_alpha_min": "0",
+      "phase_2_alpha_max": "-1/2",
+      "phase_2_infeasibility_gap": "1/2",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+      "phase_3_no_signaling_verified": true,
+      "phase_3_alpha_min": "0",
+      "phase_3_alpha_max": "0",
+      "phase_3_infeasibility_gap": "0",
+      "phase_3_witness_global_joint": {
+        "000": "0",
+        "001": "0",
+        "010": "1/2",
+        "011": "0",
+        "100": "0",
+        "101": "1/2",
+        "110": "0",
+        "111": "0"
+      },
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+      "audit_signaling": {
+        "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_1_signaling",
+        "no_signaling_verified": false,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/4"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/4"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": false,
+        "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_contextual": {
+        "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_2_contextual",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "0"
+        },
+        "d000_plus_d111_invariant": "-1/2",
+        "alpha_min": "0",
+        "alpha_max": "-1/2",
+        "infeasibility_gap": "1/2",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": true,
+        "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_reconciled": {
+        "model_id": "google/gemini-2.5-flash-lite::multi_turn_pairwise_transcript::phase_3_reconciled",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/2"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": true,
+        "witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "affine_marginal_recovery_verified": true,
+        "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\"reconciled_table_ca\": [\"1/2\", \"0\", \"0\", \"1/2\"], \"contextual_gap\": \"1/2\", \"reconciled_gap\": \"0\"}\n```"
+    },
+    {
+      "transcript_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript",
+      "phase_1_no_signaling_verified": false,
+      "phase_1_local_green": 0,
+      "phase_1_global_green": 0,
+      "phase_1_defect": 0,
+      "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+      "phase_2_no_signaling_verified": true,
+      "phase_2_alpha_min": "0",
+      "phase_2_alpha_max": "-1/2",
+      "phase_2_infeasibility_gap": "1/2",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+      "phase_3_no_signaling_verified": true,
+      "phase_3_alpha_min": "0",
+      "phase_3_alpha_max": "0",
+      "phase_3_infeasibility_gap": "0",
+      "phase_3_witness_global_joint": {
+        "000": "0",
+        "001": "0",
+        "010": "1/2",
+        "011": "0",
+        "100": "0",
+        "101": "1/2",
+        "110": "0",
+        "111": "0"
+      },
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+      "audit_signaling": {
+        "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+        "no_signaling_verified": false,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/4"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/4"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": false,
+        "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_contextual": {
+        "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "0"
+        },
+        "d000_plus_d111_invariant": "-1/2",
+        "alpha_min": "0",
+        "alpha_max": "-1/2",
+        "infeasibility_gap": "1/2",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": true,
+        "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_reconciled": {
+        "model_id": "meta-llama/llama-3.3-70b-instruct::multi_turn_pairwise_transcript::phase_3_reconciled",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/2"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": true,
+        "witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "affine_marginal_recovery_verified": true,
+        "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"reconciled_table_ca\": [\"1/2\", \"0\", \"0\", \"1/2\"],\n  \"contextual_gap\": \"1/2\",\n  \"reconciled_gap\": \"0\"\n}\n```"
+    },
+    {
+      "transcript_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript",
+      "phase_1_no_signaling_verified": false,
+      "phase_1_local_green": 0,
+      "phase_1_global_green": 0,
+      "phase_1_defect": 0,
+      "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+      "phase_2_no_signaling_verified": true,
+      "phase_2_alpha_min": "0",
+      "phase_2_alpha_max": "-1/2",
+      "phase_2_infeasibility_gap": "1/2",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+      "phase_3_no_signaling_verified": true,
+      "phase_3_alpha_min": "0",
+      "phase_3_alpha_max": "0",
+      "phase_3_infeasibility_gap": "0",
+      "phase_3_witness_global_joint": {
+        "000": "0",
+        "001": "0",
+        "010": "1/2",
+        "011": "0",
+        "100": "0",
+        "101": "1/2",
+        "110": "0",
+        "111": "0"
+      },
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+      "audit_signaling": {
+        "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_1_signaling",
+        "no_signaling_verified": false,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/4"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/4"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": false,
+        "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_contextual": {
+        "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_2_contextual",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "0"
+        },
+        "d000_plus_d111_invariant": "-1/2",
+        "alpha_min": "0",
+        "alpha_max": "-1/2",
+        "infeasibility_gap": "1/2",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": true,
+        "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_reconciled": {
+        "model_id": "deepseek/deepseek-chat::multi_turn_pairwise_transcript::phase_3_reconciled",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/2"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": true,
+        "witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "affine_marginal_recovery_verified": true,
+        "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\"reconciled_table_ca\": [\"1/2\", \"0\", \"0\", \"1/2\"], \"contextual_gap\": \"1/2\", \"reconciled_gap\": \"0\"}\n```"
+    },
+    {
+      "transcript_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript",
+      "phase_1_no_signaling_verified": false,
+      "phase_1_local_green": 0,
+      "phase_1_global_green": 0,
+      "phase_1_defect": 0,
+      "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+      "phase_2_no_signaling_verified": true,
+      "phase_2_alpha_min": "0",
+      "phase_2_alpha_max": "-1/2",
+      "phase_2_infeasibility_gap": "1/2",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+      "phase_3_no_signaling_verified": true,
+      "phase_3_alpha_min": "0",
+      "phase_3_alpha_max": "0",
+      "phase_3_infeasibility_gap": "0",
+      "phase_3_witness_global_joint": {
+        "000": "0",
+        "001": "0",
+        "010": "1/2",
+        "011": "0",
+        "100": "0",
+        "101": "1/2",
+        "110": "0",
+        "111": "0"
+      },
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+      "audit_signaling": {
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_1_signaling",
+        "no_signaling_verified": false,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/4"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/4"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": false,
+        "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_contextual": {
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_2_contextual",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "0"
+        },
+        "d000_plus_d111_invariant": "-1/2",
+        "alpha_min": "0",
+        "alpha_max": "-1/2",
+        "infeasibility_gap": "1/2",
+        "global_section_exists": false,
+        "witness_global_joint": null,
+        "affine_marginal_recovery_verified": true,
+        "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR"
+      },
+      "audit_reconciled": {
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct::multi_turn_pairwise_transcript::phase_3_reconciled",
+        "no_signaling_verified": true,
+        "marginals_one": {
+          "A": "1/2",
+          "B": "1/2",
+          "C": "1/2"
+        },
+        "joint_ones": {
+          "AB": "0",
+          "BC": "0",
+          "CA": "1/2"
+        },
+        "d000_plus_d111_invariant": "0",
+        "alpha_min": "0",
+        "alpha_max": "0",
+        "infeasibility_gap": "0",
+        "global_section_exists": true,
+        "witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "affine_marginal_recovery_verified": true,
+        "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\"reconciled_table_ca\": [\"1/2\", \"0\", \"0\", \"1/2\"], \"contextual_gap\": \"1/2\", \"reconciled_gap\": \"0\"}\n```"
+    }
+  ],
+  "meaning": "Multi-turn pairwise constraint contextuality benchmark before code generation across 5 model families: Phase 1 separates single-variable overlap drift across turns (L = 0, E_g = 0, Delta_E = 0), Phase 2 separates no-signaling hollow-triangle contextuality on anti-correlated pairwise commitments (pA = pB = pC = 1/2, qAB = qBC = qCA = 0, alpha_min = 0 > -1/2 = alpha_max -> L = 1, E_g = 0, Delta_E = -1), and Phase 3 verifies pre-generation sheaf-gated reconciliation of Turn 3 to qCA = 1/2 (alpha_min = alpha_max = 0, unique global section d(0,1,0) = d(1,0,1) = 1/2 -> L = 1, E_g = 1, Delta_E = 0).",
+  "receipt_sha256": "fbfce4c8a79dfa7ec2e6f4200d872a070d1c01713bee62c3b9e0136c4e02f7af"
+}

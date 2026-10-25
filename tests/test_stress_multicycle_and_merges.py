@@ -46,6 +46,7 @@ from lggr.streaming import (
     StreamingMartingaleOptionalStoppingMonitor,
     StreamingMayerVietorisMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
+    StreamingMultiTurnPairwiseTranscriptMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPathKernelMonitor,
@@ -3868,6 +3869,52 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["unassisted_resolution_rate"], "0")
         self.assertEqual(receipt["tool_assisted_resolution_rate"], "1")
         self.assertEqual(receipt["tool_assisted_resolution_gain"], "1")
+
+    def test_multi_turn_pairwise_transcript_contextuality_audit(self) -> None:
+        """Verify Theorem 71: multi-turn pairwise constraint contextuality audit before code generation."""
+        mon = StreamingMultiTurnPairwiseTranscriptMonitor(
+            scope_id="unit-multi-turn-pairwise-transcript-scope"
+        )
+        obs = mon.evaluate_transcript(
+            transcript_id="transcript-pairwise-01",
+            table_ab=["0", "1/2", "1/2", "0"],
+            table_bc=["0", "1/2", "1/2", "0"],
+            signaling_table_ca=["1/4", "1/2", "0", "1/4"],
+            contextual_table_ca=["0", "1/2", "1/2", "0"],
+            reconciled_table_ca=["1/2", "0", "0", "1/2"],
+        )
+        self.assertFalse(obs["phase_1_no_signaling_verified"])
+        self.assertEqual(obs["phase_1_local_green"], 0)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], 0)
+        self.assertEqual(obs["phase_1_status"], "SIGNALING_MARGINAL_MISMATCH_LGGR")
+
+        self.assertTrue(obs["phase_2_no_signaling_verified"])
+        self.assertEqual(obs["phase_2_alpha_min"], "0")
+        self.assertEqual(obs["phase_2_alpha_max"], "-1/2")
+        self.assertEqual(obs["phase_2_infeasibility_gap"], "1/2")
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR")
+
+        self.assertTrue(obs["phase_3_no_signaling_verified"])
+        self.assertEqual(obs["phase_3_alpha_min"], "0")
+        self.assertEqual(obs["phase_3_alpha_max"], "0")
+        self.assertEqual(obs["phase_3_infeasibility_gap"], "0")
+        self.assertEqual(obs["phase_3_witness_global_joint"]["010"], "1/2")
+        self.assertEqual(obs["phase_3_witness_global_joint"]["101"], "1/2")
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "PRE_GENERATION_SHEAF_RECONCILED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["ungated_contextual_coherence_rate"], "0")
+        self.assertEqual(receipt["sheaf_reconciled_coherence_rate"], "1")
+        self.assertEqual(receipt["sheaf_reconciliation_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

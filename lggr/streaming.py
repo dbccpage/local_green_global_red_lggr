@@ -11889,6 +11889,157 @@ class StreamingToolAssistedFiberSplittingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingMultiTurnPairwiseTranscriptMonitor:
+    """Online RSI Paper 001 / Volume VIII pre-generation multi-turn pairwise constraint contextuality monitor.
+
+    Wraps StreamingContextualSheafMonitor to audit multi-turn tool-use transcripts where an agent is
+    queried across pairwise subsets of binary specification constraints C_AB = {A, B}, C_BC = {B, C},
+    C_CA = {C, A} before code generation:
+      - Phase 1 (Signaling Single-Constraint Overlap Drift Across Turns):
+        Turn 1 (C_AB) and Turn 3 (C_CA) assign conflicting single-variable marginals to constraint A
+        (p_AB^A(1) != p_CA^A(1)), failing presheaf restriction agreement (L_sig = 0, Eg_sig = 0,
+        Delta_{E,sig} = 0, SIGNALING_MARGINAL_MISMATCH_LGGR).
+      - Phase 2 (No-Signaling Contextual Hollow-Triangle Transcript Before Code Generation):
+        Every single-variable overlap agrees across turns (p_A = p_B = p_C = 1/2, L_ctx = 1),
+        yet pairwise commitments form an anti-correlated odd cycle (q_AB = q_BC = q_CA = 0),
+        forcing alpha_min = 0 > -1/2 = alpha_max (infeasibility_gap = 1/2 > 0) so no global code
+        implementation d >= 0 on {0, 1}^3 exists (Eg_ctx = 0, Delta_{E,ctx} = -1,
+        CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR).
+      - Phase 3 (Pre-Generation Sheaf-Gated Constraint Reconciliation):
+        Reconciling Turn 3's pairwise table C_CA to correlated [1/2, 0, 0, 1/2] (q_CA = 1/2)
+        while preserving p_A = p_B = p_C = 1/2 closes the feasibility interval
+        (alpha_min = alpha_max = 0, infeasibility_gap = 0), yielding a valid global joint section
+        d(0, 1, 0) = 1/2, d(1, 0, 1) = 1/2 before code generation proceeds
+        (L_rec = 1, Eg_rec = 1, Delta_{E,rec} = 0, GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG).
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-multi-turn-pairwise-transcript-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.sheaf_monitor = StreamingContextualSheafMonitor(
+            scope_id=f"{self.scope_id}-sheaf"
+        )
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_transcript(
+        self,
+        transcript_id: str,
+        *,
+        table_ab: Iterable[Fraction | int | str] = ("0", "1/2", "1/2", "0"),
+        table_bc: Iterable[Fraction | int | str] = ("0", "1/2", "1/2", "0"),
+        signaling_table_ca: Iterable[Fraction | int | str] = ("1/4", "1/2", "0", "1/4"),
+        contextual_table_ca: Iterable[Fraction | int | str] = ("0", "1/2", "1/2", "0"),
+        reconciled_table_ca: Iterable[Fraction | int | str] = ("1/2", "0", "0", "1/2"),
+    ) -> dict[str, Any]:
+        tid = text(transcript_id, "transcript_id")
+        t_ab = list(sequence(table_ab, "table_ab"))
+        t_bc = list(sequence(table_bc, "table_bc"))
+        t_ca_sig = list(sequence(signaling_table_ca, "signaling_table_ca"))
+        t_ca_ctx = list(sequence(contextual_table_ca, "contextual_table_ca"))
+        t_ca_rec = list(sequence(reconciled_table_ca, "reconciled_table_ca"))
+
+        audit_sig = self.sheaf_monitor.record_three_cycle_model(
+            f"{tid}::phase_1_signaling", t_ab, t_bc, t_ca_sig
+        )
+        audit_ctx = self.sheaf_monitor.record_three_cycle_model(
+            f"{tid}::phase_2_contextual", t_ab, t_bc, t_ca_ctx
+        )
+        audit_rec = self.sheaf_monitor.record_three_cycle_model(
+            f"{tid}::phase_3_reconciled", t_ab, t_bc, t_ca_rec
+        )
+
+        l_p1 = 1 if bool(audit_sig["no_signaling_verified"]) else 0
+        eg_p1 = 1 if (l_p1 == 1 and bool(audit_sig["global_section_exists"])) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if bool(audit_ctx["no_signaling_verified"]) else 0
+        eg_p2 = 1 if (l_p2 == 1 and bool(audit_ctx["global_section_exists"])) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = 1 if bool(audit_rec["no_signaling_verified"]) else 0
+        eg_p3 = 1 if (l_p3 == 1 and bool(audit_rec["global_section_exists"])) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "transcript_id": tid,
+            "phase_1_no_signaling_verified": bool(audit_sig["no_signaling_verified"]),
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": audit_sig["classification"],
+            "phase_2_no_signaling_verified": bool(audit_ctx["no_signaling_verified"]),
+            "phase_2_alpha_min": audit_ctx["alpha_min"],
+            "phase_2_alpha_max": audit_ctx["alpha_max"],
+            "phase_2_infeasibility_gap": audit_ctx["infeasibility_gap"],
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": audit_ctx["classification"],
+            "phase_3_no_signaling_verified": bool(audit_rec["no_signaling_verified"]),
+            "phase_3_alpha_min": audit_rec["alpha_min"],
+            "phase_3_alpha_max": audit_rec["alpha_max"],
+            "phase_3_infeasibility_gap": audit_rec["infeasibility_gap"],
+            "phase_3_witness_global_joint": audit_rec["witness_global_joint"],
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": audit_rec["classification"],
+            "audit_signaling": audit_sig,
+            "audit_contextual": audit_ctx,
+            "audit_reconciled": audit_rec,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one transcript must be evaluated")
+        n = len(self.evaluations)
+        p1_sig_mismatch = sum(
+            1 for e in self.evaluations if not e["phase_1_no_signaling_verified"]
+        )
+        p2_contextual_obstruction = sum(
+            1 for e in self.evaluations if e["phase_2_defect"] == -1
+        )
+        p3_reconciled = sum(
+            1 for e in self.evaluations if e["phase_3_global_green"] == 1
+        )
+
+        ungated_contextual_coherence_rate = Fraction(n - p2_contextual_obstruction, n)
+        sheaf_reconciled_coherence_rate = Fraction(p3_reconciled, n)
+
+        if p3_reconciled == n and p2_contextual_obstruction == n:
+            status = "PRE_GENERATION_SHEAF_RECONCILED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "PRE_GENERATION_CONTEXTUAL_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_multi_turn_pairwise_transcript.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_signaling_mismatch_count": p1_sig_mismatch,
+            "phase_2_contextual_obstruction_count": p2_contextual_obstruction,
+            "phase_3_sheaf_reconciled_count": p3_reconciled,
+            "ungated_contextual_coherence_rate": ungated_contextual_coherence_rate,
+            "sheaf_reconciled_coherence_rate": sheaf_reconciled_coherence_rate,
+            "sheaf_reconciliation_coherence_gain": (
+                sheaf_reconciled_coherence_rate - ungated_contextual_coherence_rate
+            ),
+            "sheaf_monitor_receipt": self.sheaf_monitor.get_receipt(),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
