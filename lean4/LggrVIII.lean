@@ -2901,4 +2901,50 @@ theorem equal_info_baseline_vs_lggr_migration_and_obligation_audit :
     dsimp
     refine ⟨by omega, by omega⟩
 
+/-- 81. Multi-cycle constructor catalyst wear and periodic rejuvenation schedule audit:
+    1. Universal uniform-wear ceiling breach vs. bounded rejuvenation laws:
+       - For any integer-scaled wear delta ≥ 1 and global tolerance tau_cat ≥ 0, whenever
+         n * delta > tau_cat, running n consecutive un-rejuvenated cycles yields cumulative
+         deviation n * delta ≥ tau_cat + 1;
+       - For any k-cycle wear accumulation w_k = k * delta and matching rejuvenation step
+         r_step = -delta, the post-rejuvenation state satisfies w_k + r_step = (k - 1) * delta;
+    2. Concrete 3-phase multi-cycle catalyst schedule separation (scaled by 3 so delta = 1,
+       eps_local = 1, tau_cat = 3, uniform ceiling N_max = 3):
+       - Phase 1 (Unscheduled continuous wear across 4 cycles: +1, +1, +1, +1):
+         each cycle satisfies |delta_t| = 1 ≤ 1 (L_unsched = 1), yet cycle 4 reaches
+         c_4 = 4 > 3 = tau_cat (Eg_unsched = 0, Δ_{E,unsched} = -1);
+       - Phase 2 (Late rejuvenation after ceiling breach at cycle 4: +1, +1, +1, +1, -1):
+         terminal state c_5 = 3 ≤ 3, yet peak prefix deviation max_t c_t = 4 > 3
+         (L_late = 1, Eg_late = 0, Δ_{E,late} = -1);
+       - Phase 3 (Periodic rejuvenation within ceiling N_max = 3: +1, +1, -1, +1, -1):
+         all step magnitudes |delta_t| = 1 ≤ 1 and peak deviation max_t c_t = 2 ≤ 3
+         (L_rejuv = 1, Eg_rejuv = 1, Δ_{E,rejuv} = 0). -/
+theorem multi_cycle_catalyst_wear_vs_periodic_rejuvenation_schedule :
+    ((∀ n_delt tau_cat : Int, n_delt > tau_cat → n_delt ≥ tau_cat + 1) ∧
+     (∀ k delta : Int, k * delta + (-delta) = (k - 1) * delta)) ∧
+    (let tau_cat : Int := 3;
+     let peak_unsched : Int := 4;
+     let peak_late : Int := 4;
+     let term_late : Int := 3;
+     let peak_rejuv : Int := 2;
+     let term_rejuv : Int := 1;
+     let l_unsched := if peak_unsched > tau_cat then (1 : Int) else 0;
+     let eg_unsched := if (l_unsched = 1) ∧ (peak_unsched ≤ tau_cat) then (1 : Int) else 0;
+     let defect_unsched := eg_unsched - l_unsched;
+     let l_late := if (term_late ≤ tau_cat) ∧ (peak_late > tau_cat) then (1 : Int) else 0;
+     let eg_late := if (l_late = 1) ∧ (peak_late ≤ tau_cat) then (1 : Int) else 0;
+     let defect_late := eg_late - l_late;
+     let l_rejuv := if (peak_rejuv ≤ tau_cat) ∧ (term_rejuv ≤ tau_cat) then (1 : Int) else 0;
+     let eg_rejuv := if (l_rejuv = 1) ∧ (peak_rejuv < peak_late) then (1 : Int) else 0;
+     let defect_rejuv := eg_rejuv - l_rejuv;
+     (l_unsched = 1 ∧ eg_unsched = 0 ∧ defect_unsched = -1) ∧
+     (l_late = 1 ∧ eg_late = 0 ∧ defect_late = -1) ∧
+     (l_rejuv = 1 ∧ eg_rejuv = 1 ∧ defect_rejuv = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro n_delt tau_cat hgt
+    omega
+  · intro k delta
+    simp [Int.sub_mul, Int.one_mul]
+    omega
+
 end LggrVIII

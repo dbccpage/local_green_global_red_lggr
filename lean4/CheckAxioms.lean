@@ -97,3 +97,4 @@ import LggrVIII
 #print axioms LggrVIII.dynamic_boundary_schema_synthesis_under_online_collisions
 #print axioms LggrVIII.adversarial_prompt_injection_schema_and_side_channel_audit
 #print axioms LggrVIII.equal_info_baseline_vs_lggr_migration_and_obligation_audit
+#print axioms LggrVIII.multi_cycle_catalyst_wear_vs_periodic_rejuvenation_schedule

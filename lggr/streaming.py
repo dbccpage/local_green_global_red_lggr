@@ -13806,6 +13806,174 @@ class StreamingEqualInfoMigrationObligationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCatalystRejuvenationScheduleMonitor:
+    """Online multi-cycle constructor catalyst wear and periodic rejuvenation schedule monitor (Theorem 81).
+
+    Wraps ``StreamingCatalystDegradationMonitor`` with initial state C_0 = 0, global tolerance
+    tau_cat = 1, and per-cycle local tolerance eps_local = 1/3 (uniform wear delta = 1/3 has
+    cycle ceiling N_max = floor(1 / (1/3)) = 3):
+      - Phase 1 (Unscheduled Continuous Wear Across 4 Cycles: +1/3, +1/3, +1/3, +1/3):
+        Every cycle satisfies |delta_t| = 1/3 <= 1/3 (L_unsched = 1), yet cycle 4 reaches
+        cumulative deviation 4/3 > 1 = tau_cat (Eg_unsched = 0, defect_unsched = -1,
+        status ``UNSCHEDULED_CATALYST_WEAR_EXHAUSTION_LGGR``).
+      - Phase 2 (Late Rejuvenation After Ceiling Breach at Cycle 4: +1/3, +1/3, +1/3, +1/3, -1/3):
+        Applying a -1/3 rejuvenation step at cycle 5 restores terminal state C_5 = 1 <= tau_cat,
+        yet the prefix peak at cycle 4 already breached max_t |C_t - C_0| = 4/3 > 1 = tau_cat
+        (L_late = 1, Eg_late = 0, defect_late = -1, status ``LATE_REJUVENATION_PREFIX_EXHAUSTION_LGGR``).
+      - Phase 3 (Periodic Catalyst Rejuvenation Within Ceiling N_max = 3: +1/3, +1/3, -1/3, +1/3, -1/3):
+        Applies bounded -1/3 rejuvenation steps before cumulative wear exceeds tau_cat = 1,
+        keeping max_t |C_t - C_0| = 2/3 <= 1 = tau_cat across all 5 cycles
+        (L_rejuv = 1, Eg_rejuv = 1, defect_rejuv = 0, status ``PERIODIC_CATALYST_REJUVENATION_COHERENT_LGGG``).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-catalyst-rejuvenation-schedule-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_rejuvenation_schedules(
+        self,
+        evaluation_id: str,
+        *,
+        catalyst_tolerance: Fraction | int | str = 1,
+        per_cycle_wear: Fraction | int | str = "1/3",
+    ) -> dict[str, Any]:
+        """Evaluate unscheduled wear, late rejuvenation, and periodic rejuvenation schedules."""
+        eid = text(evaluation_id, "evaluation_id")
+        tau_cat = rational(catalyst_tolerance)
+        delta = rational(per_cycle_wear)
+        if tau_cat <= 0 or delta <= 0:
+            raise ValidationError("catalyst_tolerance and per_cycle_wear must be positive")
+
+        # Phase 1: 4 unscheduled wear cycles (+delta, +delta, +delta, +delta)
+        mon_p1 = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=0,
+            catalyst_tolerance=tau_cat,
+            per_cycle_local_tolerance=delta,
+            scope_id=f"{self.scope_id}-{eid}-p1",
+        )
+        for idx in range(4):
+            mon_p1.record_cycle(f"p1-c{idx}", f"sub_{idx}", f"sub_{idx+1}", True, delta)
+        rec_p1 = mon_p1.get_receipt()
+
+        # Phase 2: 5 cycles with late rejuvenation after cycle 4 breach (+delta x 4, -delta)
+        mon_p2 = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=0,
+            catalyst_tolerance=tau_cat,
+            per_cycle_local_tolerance=delta,
+            scope_id=f"{self.scope_id}-{eid}-p2",
+        )
+        for idx, step_w in enumerate([delta, delta, delta, delta, -delta]):
+            mon_p2.record_cycle(f"p2-c{idx}", f"sub_{idx}", f"sub_{idx+1}", True, step_w)
+        rec_p2 = mon_p2.get_receipt()
+
+        # Phase 3: 5 cycles with periodic rejuvenation within ceiling (+delta, +delta, -delta, +delta, -delta)
+        mon_p3 = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=0,
+            catalyst_tolerance=tau_cat,
+            per_cycle_local_tolerance=delta,
+            scope_id=f"{self.scope_id}-{eid}-p3",
+        )
+        for idx, step_w in enumerate([delta, delta, -delta, delta, -delta]):
+            mon_p3.record_cycle(f"p3-c{idx}", f"sub_{idx}", f"sub_{idx+1}", True, step_w)
+        rec_p3 = mon_p3.get_receipt()
+
+        peak_p1 = rational(rec_p1["max_catalyst_deviation"])
+        peak_p2 = rational(rec_p2["max_catalyst_deviation"])
+        term_p2 = abs(rational(rec_p2["terminal_catalyst_state"]))
+        peak_p3 = rational(rec_p3["max_catalyst_deviation"])
+        ceiling = int(tau_cat // delta)
+
+        l_p1 = 1 if (rec_p1["local_product_aggregator"] == 1 and peak_p1 > tau_cat) else 0
+        eg_p1 = 1 if (l_p1 == 1 and rec_p1["global_evaluator"] == 1) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = (
+            1
+            if (rec_p2["local_product_aggregator"] == 1 and term_p2 <= tau_cat and peak_p2 > tau_cat)
+            else 0
+        )
+        eg_p2 = 1 if (l_p2 == 1 and rec_p2["global_evaluator"] == 1) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                rec_p3["local_product_aggregator"] == 1
+                and rec_p3["global_evaluator"] == 1
+                and peak_p3 <= tau_cat
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and peak_p3 < peak_p1 and peak_p3 < peak_p2) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "uniform_wear_cycle_ceiling": ceiling,
+            "phase_1_max_deviation": peak_p1,
+            "phase_2_max_deviation": peak_p2,
+            "phase_2_terminal_deviation": term_p2,
+            "phase_3_max_deviation": peak_p3,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "UNSCHEDULED_CATALYST_WEAR_EXHAUSTION_LGGR" if defect_p1 == -1 else "PERIODIC_CATALYST_REJUVENATION_COHERENT_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "LATE_REJUVENATION_PREFIX_EXHAUSTION_LGGR" if defect_p2 == -1 else "PERIODIC_CATALYST_REJUVENATION_COHERENT_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "PERIODIC_CATALYST_REJUVENATION_COHERENT_LGGG" if eg_p3 == 1 else "LATE_REJUVENATION_PREFIX_EXHAUSTION_LGGR",
+            "phase_1_catalyst_receipt": rec_p1,
+            "phase_2_catalyst_receipt": rec_p2,
+            "phase_3_catalyst_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one catalyst rejuvenation schedule evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_unsched_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_late_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        unscheduled_or_late_coherence_rate = Fraction(
+            n - max(p1_unsched_fail, p2_late_fail), n
+        )
+        periodic_rejuvenation_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_unsched_fail == n and p2_late_fail == n:
+            status = "PERIODIC_CATALYST_REJUVENATION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "UNSCHEDULED_CATALYST_WEAR_EXHAUSTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_catalyst_rejuvenation_schedule.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_unscheduled_exhaustion_count": p1_unsched_fail,
+            "phase_2_late_rejuvenation_exhaustion_count": p2_late_fail,
+            "phase_3_periodic_rejuvenation_coherent_count": p3_coherent,
+            "unscheduled_or_late_coherence_rate": unscheduled_or_late_coherence_rate,
+            "periodic_rejuvenation_coherence_rate": periodic_rejuvenation_coherence_rate,
+            "periodic_rejuvenation_coherence_gain": (
+                periodic_rejuvenation_coherence_rate - unscheduled_or_late_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
