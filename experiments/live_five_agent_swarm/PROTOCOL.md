@@ -1,4 +1,4 @@
-# Five-agent live recovery pilot, protocol v2
+# Five-agent live recovery pilot, protocol v3 (runtime maintenance; measured pilot remains v2)
 
 This prospective pilot tests whether five real tool-using model sessions can
 complete a shared synthetic dispatch task, experience an injected disruption,
@@ -81,3 +81,13 @@ intervention occurred. That complete failed run and its frozen source remain in
 adds a calculator tool operating only on model-supplied line items, equally in
 all arms. It does not reveal an allocation, feasible matching, or repair. A second
 development run precedes the still-unseen evaluation seeds.
+
+## Post-evaluation maintenance
+
+The measured six-case evaluation used protocol v2 and source commit af69e3e.
+Its frozen source bundle and all original evidence remain unchanged. Version 3
+repairs the replay CLI's display of a budget-stopped run (which has no
+completed-case summary) and closes SQLite handles on interruption, with an
+offline regression test. No agent prompt, tool,
+gate, intervention, or outcome calculation changed, and no additional live calls
+were made for this maintenance. Use each run's frozen source for exact replay.

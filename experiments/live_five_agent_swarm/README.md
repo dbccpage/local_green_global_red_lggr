@@ -17,7 +17,7 @@ python -m unittest discover -s tests -p test_live_five_agent_swarm.py -v
 python -m experiments.live_five_agent_swarm.runner live experiments/live_five_agent_swarm/evidence/development --development --budget 10
 # Deduct development charges from the $10 ceiling before the evaluation run.
 python -m experiments.live_five_agent_swarm.runner live experiments/live_five_agent_swarm/evidence/evaluation --budget REMAINING_DOLLARS
-python -m experiments.live_five_agent_swarm.runner replay experiments/live_five_agent_swarm/evidence/evaluation/events.jsonl
+python experiments/live_five_agent_swarm/tools/verify_run.py experiments/live_five_agent_swarm/evidence/evaluation
 ```
 
 Live output directories must be new. Credentials come from the existing OpenRouter
@@ -32,3 +32,12 @@ The pilot uses synthetic tasks and injected failures. It can demonstrate concret
 breakage, detection and recovery on those runs; it cannot establish a general swarm
 failure rate, general recovery guarantee, or LGGR superiority. See the run report
 for failed cases and the distinction between host blocking and agent recovery.
+
+The [measured results and limitations](REPORT.md) and [machine-readable tables](RESULTS.json)
+include all 343 live calls across two development runs and the six-case evaluation.
+`tools/verify_run.py` requires a Git checkout containing the recorded source commits;
+it extracts the frozen source, verifies its Git blobs, replays the complete event
+log, and checks the actual SQLite files. The current replay CLI is for runs made
+with the current source hash; use the frozen-source verifier for retained runs.
+Agents run under a serial scheduler with separate persistent histories and shared
+tool state. This pilot does not exercise simultaneous races or distributed failures.

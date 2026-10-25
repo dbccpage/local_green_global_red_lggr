@@ -16,3 +16,6 @@ papers/012_rsi/research/2026_10_23_contextual_review/historical_release/contextu
 
 # Preserve revised laboratory source/evidence hashes across checkout platforms.
 experiments/grok_swarm_lab/current/** -text
+
+# Preserve live pilot source freezes, raw provider evidence, and SQLite outputs.
+experiments/live_five_agent_swarm/** -text

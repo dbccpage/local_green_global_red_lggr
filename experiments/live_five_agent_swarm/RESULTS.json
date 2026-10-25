@@ -1,0 +1,108 @@
+{
+  "schema": "lggr.five_agent_pilot_report.v1",
+  "authority_effect": "None",
+  "runs": {
+    "development": {
+      "api_attempts": 32,
+      "cost_usd": "0.04562550",
+      "provider_records_matched": 32,
+      "source_commit": "16af2980d8a9683e8195df06a02f64d4cfe4e015",
+      "prompt_tokens": 75156,
+      "completion_tokens": 2475,
+      "baseline_failed_seeds": [
+        3101
+      ]
+    },
+    "development-v2": {
+      "api_attempts": 62,
+      "cost_usd": "0.10133122",
+      "provider_records_matched": 62,
+      "source_commit": "af69e3e71d4fc6a09f0c34b3a557b4f448b123cf",
+      "prompt_tokens": 188440,
+      "completion_tokens": 5898,
+      "baseline_failed_seeds": []
+    },
+    "evaluation": {
+      "api_attempts": 249,
+      "cost_usd": "0.43256076",
+      "provider_records_matched": 249,
+      "source_commit": "af69e3e71d4fc6a09f0c34b3a557b4f448b123cf",
+      "prompt_tokens": 686561,
+      "completion_tokens": 23906,
+      "baseline_failed_seeds": []
+    }
+  },
+  "total_api_attempts": 343,
+  "total_cost_usd": "0.57951748",
+  "budget_usd": "10",
+  "evaluation_by_arm": [
+    {
+      "arm": "A",
+      "withdrawal": {
+        "successful": 1,
+        "total": 2
+      },
+      "infeasible": {
+        "successful": 1,
+        "total": 2
+      },
+      "control": {
+        "successful": 2,
+        "total": 2
+      },
+      "api_attempts": 56,
+      "cost_usd": "0.08944829",
+      "blocked_attempts": 8,
+      "initial_local_green_global_red": 4,
+      "invalid_executions": 0,
+      "blocked_attempts_scope": "Pre-repair blocked feedback passes; terminal execution rejections counted separately",
+      "terminal_execution_rejections": 3
+    },
+    {
+      "arm": "B",
+      "withdrawal": {
+        "successful": 1,
+        "total": 2
+      },
+      "infeasible": {
+        "successful": 1,
+        "total": 2
+      },
+      "control": {
+        "successful": 2,
+        "total": 2
+      },
+      "api_attempts": 52,
+      "cost_usd": "0.11280936",
+      "blocked_attempts": 7,
+      "initial_local_green_global_red": 4,
+      "invalid_executions": 0,
+      "blocked_attempts_scope": "Pre-repair blocked feedback passes; terminal execution rejections counted separately",
+      "terminal_execution_rejections": 3
+    },
+    {
+      "arm": "C",
+      "withdrawal": {
+        "successful": 1,
+        "total": 2
+      },
+      "infeasible": {
+        "successful": 1,
+        "total": 2
+      },
+      "control": {
+        "successful": 2,
+        "total": 2
+      },
+      "api_attempts": 51,
+      "cost_usd": "0.12450771",
+      "blocked_attempts": 7,
+      "initial_local_green_global_red": 4,
+      "invalid_executions": 0,
+      "blocked_attempts_scope": "Pre-repair blocked feedback passes; terminal execution rejections counted separately",
+      "terminal_execution_rejections": 3
+    }
+  ],
+  "evaluation_shared_baseline_cost_usd": "0.10579540",
+  "interpretation": "Small paired synthetic fault-injection pilot. Shared admission gate means zero invalid executions cannot be attributed to LGGR. Opposite outcomes across two withdrawal seeds do not establish superiority."
+}

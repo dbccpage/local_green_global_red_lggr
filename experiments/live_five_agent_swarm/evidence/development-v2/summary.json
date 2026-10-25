@@ -1,0 +1,148 @@
+{
+  "schema": "lggr.live_five_agent_pilot.v1",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 3101,
+      "kind": "withdrawal",
+      "baseline_failed": false,
+      "arms": [
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "judge": {
+            "valid_execution": true,
+            "complete": true,
+            "completed_jobs": 5,
+            "errors": [],
+            "feasible": true
+          },
+          "initial_local_green_global_red": true,
+          "blocked_attempts": 2,
+          "agent_turns": 6,
+          "agent_escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.02659771",
+          "rows": [
+            {
+              "worker": "worker-0",
+              "slot": "slot-0",
+              "total_cents": 1139,
+              "epoch": 0
+            },
+            {
+              "worker": "worker-1",
+              "slot": "slot-1",
+              "total_cents": 1549,
+              "epoch": 0
+            },
+            {
+              "worker": "worker-2",
+              "slot": "slot-7",
+              "total_cents": 868,
+              "epoch": 1
+            },
+            {
+              "worker": "worker-3",
+              "slot": "slot-5",
+              "total_cents": 688,
+              "epoch": 1
+            },
+            {
+              "worker": "worker-4",
+              "slot": "slot-4",
+              "total_cents": 903,
+              "epoch": 1
+            }
+          ]
+        },
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "judge": {
+            "valid_execution": true,
+            "complete": false,
+            "completed_jobs": 2,
+            "errors": [],
+            "feasible": true
+          },
+          "initial_local_green_global_red": true,
+          "blocked_attempts": 2,
+          "agent_turns": 6,
+          "agent_escalations": 1,
+          "api_attempts": 15,
+          "cost_usd": "0.02330929",
+          "rows": [
+            {
+              "worker": "worker-0",
+              "slot": "slot-0",
+              "total_cents": 1139,
+              "epoch": 0
+            },
+            {
+              "worker": "worker-1",
+              "slot": "slot-1",
+              "total_cents": 1549,
+              "epoch": 0
+            }
+          ]
+        },
+        {
+          "arm": "B",
+          "outcome": "completed",
+          "judge": {
+            "valid_execution": true,
+            "complete": true,
+            "completed_jobs": 5,
+            "errors": [],
+            "feasible": true
+          },
+          "initial_local_green_global_red": true,
+          "blocked_attempts": 2,
+          "agent_turns": 6,
+          "agent_escalations": 1,
+          "api_attempts": 19,
+          "cost_usd": "0.03406829",
+          "rows": [
+            {
+              "worker": "worker-0",
+              "slot": "slot-0",
+              "total_cents": 1139,
+              "epoch": 0
+            },
+            {
+              "worker": "worker-1",
+              "slot": "slot-1",
+              "total_cents": 1549,
+              "epoch": 0
+            },
+            {
+              "worker": "worker-2",
+              "slot": "slot-7",
+              "total_cents": 868,
+              "epoch": 1
+            },
+            {
+              "worker": "worker-3",
+              "slot": "slot-4",
+              "total_cents": 688,
+              "epoch": 1
+            },
+            {
+              "worker": "worker-4",
+              "slot": "slot-5",
+              "total_cents": 903,
+              "epoch": 1
+            }
+          ]
+        }
+      ],
+      "baseline_calls": 15,
+      "baseline_cost_usd": "0.01735593"
+    }
+  ],
+  "api_attempts": 62,
+  "charged_or_reserved_usd": "0.10133122",
+  "invalid_execution_count": 0,
+  "scope": "Paired synthetic fault-injection pilot; descriptive outcomes, no population rate or superiority claim."
+}

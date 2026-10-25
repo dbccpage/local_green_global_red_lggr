@@ -5,6 +5,8 @@ import itertools
 import json
 from pathlib import Path
 import tempfile
+import subprocess
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -113,6 +115,24 @@ class LiveFiveAgentTests(unittest.TestCase):
         self.assertEqual(charge({"usage": {}}, Decimal("0.1")), (Decimal("0.1"), False))
         self.assertEqual(charge({"usage": {"cost": "NaN"}}, Decimal("0.1")), (Decimal("0.1"), False))
         self.assertEqual(charge({"usage": {"cost": 0.0001}}, Decimal("0.1")), (Decimal("0.0001"), True))
+
+    def test_budget_stopped_run_replays_through_cli(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td)/"events.jsonl"
+            events = Events(path)
+            config = {"seeds": [3101], "development": True, "models": MODELS, "budget_usd": "0.000001"}
+            events.emit("start", {"schema": "lggr.live_five_agent_events.v1", "config": config,
+                                  "source_hashes": source_hashes(), "source_commit": "test-double"})
+            with patch("experiments.live_five_agent_swarm.client.load_openrouter_credentials", return_value=("fake", MODELS[0])):
+                client = LiveClient(events, config["budget_usd"])
+            try:
+                campaign(client, events, config)
+                self.fail("budget should stop before any API call")
+            except RunStopped as error:
+                events.emit("stopped", {"reason": str(error), "api_attempts": client.calls, "charged_or_reserved_usd": str(client.spent)})
+            completed = subprocess.run([sys.executable, "-m", "experiments.live_five_agent_swarm.runner", "replay", str(path)], capture_output=True, text=True)
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertEqual(json.loads(completed.stdout)["status"], "stopped")
 
     def test_actual_model_identity_and_truncation_rejected(self):
         raw = {"model": "other/model", "choices": [{"message": {"role": "assistant"}, "finish_reason": "stop"}]}

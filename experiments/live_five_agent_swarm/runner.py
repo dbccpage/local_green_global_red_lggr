@@ -1,6 +1,7 @@
 """Five live tool-using agents, paired fault recovery arms, and offline replay."""
 import argparse
 from copy import deepcopy
+from contextlib import ExitStack
 import hashlib
 import json
 from pathlib import Path
@@ -125,12 +126,18 @@ def gate(events, before, board, arm):
 
 
 def campaign(client, events, config, output=None):
+    with ExitStack() as resources:
+        return _campaign(client, events, config, output, resources)
+
+
+def _campaign(client, events, config, output, resources):
     results = []
     for seed in config["seeds"]:
         kind = "withdrawal" if seed in (3101, 4101, 4102) else "infeasible" if seed in (4103, 4104) else "control"
         state = fixture(seed)
         events.emit("case_start", {"seed": seed, "kind": kind, "fixture": state})
         board = Board(state, output / f"{seed}-baseline.sqlite" if output else ":memory:")
+        resources.callback(board.close)
         histories = {j["id"]: [{"role": "system", "content": system(j["id"])}] for j in state["jobs"]}
         base_calls, base_cost = client.calls, client.spent
         for initial_pass in range(2):
@@ -158,6 +165,7 @@ def campaign(client, events, config, output=None):
         order = order[seed % 3:] + order[:seed % 3]
         for arm in order:
             work = Board(after, output / f"{seed}-{arm}.sqlite" if output else ":memory:")
+            resources.callback(work.close)
             history = deepcopy(histories)
             events.emit("arm_start", {"seed": seed, "arm": arm, "state": after})
             calls, cost, escalations, blocked, turns = client.calls, client.spent, 0, 0, 0
@@ -235,7 +243,9 @@ def main():
         saved = Path(args.path).with_name("summary.json")
         if saved.exists() and json.loads(saved.read_text(encoding="utf-8")) != summary:
             raise ValueError("saved summary differs from replay")
-        print(json.dumps({"replayed": True, "api_attempts": summary["api_attempts"], "cases": len(summary["cases"])}))
+        print(json.dumps({"replayed": True, "api_attempts": summary["api_attempts"],
+                          "cases": len(summary.get("cases", [])),
+                          "status": "complete" if "cases" in summary else "stopped"}))
         return
     if not 0 < args.budget <= 10:
         raise ValueError("pilot budget must be in (0, 10]")
