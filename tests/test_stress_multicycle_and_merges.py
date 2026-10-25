@@ -37,6 +37,7 @@ from lggr.streaming import (
     StreamingCoalitionalAttributionMonitor,
     StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
+    StreamingCodebaseInterfaceMergeMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
     StreamingCrossRoleDeduplicationMonitor,
@@ -4858,6 +4859,47 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["obstructed_diamond_chord_coherence_rate"], "0")
         self.assertEqual(receipt["glued_diamond_chord_coherence_rate"], "1")
         self.assertEqual(receipt["shared_chord_diamond_coherence_gain"], "1")
+
+    def test_concurrent_code_swarm_symmetry_broken_directive_vs_bilateral_oscillation(self) -> None:
+        """Verify Theorem 94: concurrent code-engineering swarm interface merge and role directives."""
+        mon = StreamingCodebaseInterfaceMergeMonitor(
+            scope_id="unit-concurrent-code-swarm-directive-scope",
+        )
+        obs = mon.record_three_phase_code_swarm_audit(
+            "concurrent-code-swarm-eval-01",
+        )
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_CANONICAL_INTERFACE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+        )
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_MERGE_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_MERGE_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
 
 
 if __name__ == "__main__":
