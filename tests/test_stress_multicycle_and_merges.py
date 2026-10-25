@@ -67,6 +67,7 @@ from lggr.streaming import (
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingStageVsE2EIntegrationMonitor,
+    StreamingThreePartyConstantBoundMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingToolAssistedFiberSplittingMonitor,
     StreamingTransportMonitor,
@@ -4138,6 +4139,45 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["collapsing_dashboard_coherence_rate"], "0")
         self.assertEqual(receipt["four_tuple_kernel_coherence_rate"], "1")
         self.assertEqual(receipt["dashboard_kernel_coherence_gain"], "1")
+
+    def test_three_party_no_signalling_c3_interval_family_audit(self) -> None:
+        """Verify Theorem 77: parameterized 8-context three-party slice bounding c_3 in [228/75, 7]."""
+        mon = StreamingThreePartyConstantBoundMonitor(
+            scope_id="unit-three-party-c3-bound-scope",
+        )
+        obs = mon.evaluate_parameterized_slice(
+            evaluation_id="c3-slice-eval-01",
+            slice_steps=(0, 1, 2, 3, 4),
+        )
+        self.assertEqual(obs["c3_lower_bound"], "76/25")
+        self.assertEqual(obs["c3_upper_bound"], "7")
+        self.assertEqual(obs["interior_k2_ratio"], "140/57")
+        self.assertEqual(obs["endpoint_k4_ratio"], "76/25")
+        self.assertTrue(obs["ratios_strictly_increasing"])
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "BIPARTITE_C2_BOUND_VIOLATION_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "C3_INTEGER_THREE_CEILING_VIOLATION_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "THREE_PARTY_C3_BRACKET_CERTIFIED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "THREE_PARTY_C3_BRACKET_CERTIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["c3_certified_lower_bound"], "76/25")
+        self.assertEqual(receipt["c3_constructive_upper_bound"], "7")
+        self.assertEqual(receipt["surrogate_ceiling_coherence_rate"], "0")
+        self.assertEqual(receipt["certified_bracket_coherence_rate"], "1")
+        self.assertEqual(receipt["c3_bracket_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
