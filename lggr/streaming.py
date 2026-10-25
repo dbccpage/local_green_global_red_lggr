@@ -11423,6 +11423,162 @@ class StreamingLinearizedPipelineJacobianMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingWatcherDropoutGramAuditMonitor:
+    """Online LGGR VI/VIII watcher-dropout and Gram rank-deficiency audit monitor.
+
+    Given a multi-evaluator observation matrix Q in Q^{m x d} and a task-critical
+    direction v_crit in Q^d \\ {0}, wraps StreamingGramProbeMonitor across:
+      - the full m-row watcher matrix Q, and
+      - each single-row dropout submatrix Q_{-r} (removing measurement row r),
+    to detect when removing a measurement row r reduces rank(Q_{-r}^T Q_{-r}) and
+    enlarges ker(Q_{-r}^T Q_{-r}) along v_crit (so Q_{-r} v_crit == 0 and centered
+    adjoint probes vanish despite ||Q v_crit||_2^2 > 0), versus redundant row dropout
+    where rank(Q_{-r}^T Q_{-r}) == rank(Q^T Q) and ker(Q_{-r}^T Q_{-r}) is unchanged.
+    """
+
+    def __init__(
+        self,
+        *,
+        observation_matrix: Sequence[Sequence[Fraction | int | str]],
+        scope_id: str = "streaming-watcher-dropout-gram-audit-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.q_mat = matrix(observation_matrix, "observation_matrix")
+        self.num_rows = len(self.q_mat)
+        self.dim = len(self.q_mat[0])
+        if self.num_rows < 2:
+            raise ValidationError("observation_matrix must have at least 2 watcher rows for dropout auditing")
+
+        self.full_probe_monitor = StreamingGramProbeMonitor(
+            self.q_mat, scope_id=f"{self.scope_id}-full"
+        )
+        self.full_rank, self.full_nullspace = StreamingDefectSoundnessMonitor._rref_and_nullspace(
+            self.full_probe_monitor.gram_matrix
+        )
+
+        self.dropout_monitors: list[StreamingGramProbeMonitor] = []
+        self.dropout_ranks: list[int] = []
+        self.dropout_nullspaces: list[list[tuple[Fraction, ...]]] = []
+        for r in range(self.num_rows):
+            sub_q = tuple(row for idx, row in enumerate(self.q_mat) if idx != r)
+            mon_r = StreamingGramProbeMonitor(sub_q, scope_id=f"{self.scope_id}-drop-row-{r}")
+            rk_r, ns_r = StreamingDefectSoundnessMonitor._rref_and_nullspace(mon_r.gram_matrix)
+            self.dropout_monitors.append(mon_r)
+            self.dropout_ranks.append(rk_r)
+            self.dropout_nullspaces.append(ns_r)
+
+        self.evaluations: list[dict[str, Any]] = []
+
+    def observe_watcher_dropout(
+        self,
+        *,
+        evaluation_id: str,
+        critical_direction: Sequence[Fraction | int | str],
+        redundant_dropout_row: int,
+        critical_dropout_row: int,
+    ) -> dict[str, Any]:
+        e_id = text(evaluation_id, "evaluation_id")
+        v_vec = tuple(rational(v) for v in critical_direction)
+        if len(v_vec) != self.dim or all(v == 0 for v in v_vec):
+            raise ValidationError("critical_direction must be a nonzero vector matching state dimension")
+        if not (0 <= redundant_dropout_row < self.num_rows) or not (0 <= critical_dropout_row < self.num_rows):
+            raise ValidationError("dropout row index out of range")
+
+        full_probe = self.full_probe_monitor.probe_state(
+            f"{e_id}-full", v_vec, direction=v_vec
+        )
+        red_probe = self.dropout_monitors[redundant_dropout_row].probe_state(
+            f"{e_id}-redundant-drop-{redundant_dropout_row}", v_vec, direction=v_vec
+        )
+        crit_probe = self.dropout_monitors[critical_dropout_row].probe_state(
+            f"{e_id}-critical-drop-{critical_dropout_row}", v_vec, direction=v_vec
+        )
+
+        full_norm_sq = Fraction(2) * rational(full_probe["quadratic_energy"])
+        red_norm_sq = Fraction(2) * rational(red_probe["quadratic_energy"])
+        crit_norm_sq = Fraction(2) * rational(crit_probe["quadratic_energy"])
+
+        red_rank = self.dropout_ranks[redundant_dropout_row]
+        crit_rank = self.dropout_ranks[critical_dropout_row]
+        red_null_dim = len(self.dropout_nullspaces[redundant_dropout_row])
+        crit_null_dim = len(self.dropout_nullspaces[critical_dropout_row])
+
+        # Phase 1: Critical watcher dropout masks v_crit (local green L=1 because Q_{-crit} v_crit == 0, global red E_g=0)
+        l_crit = int(crit_norm_sq == 0 and bool(crit_probe["is_nullspace_blindspot"]))
+        eg_crit = int(l_crit == 1 and full_norm_sq == 0 and crit_rank == self.full_rank)
+        defect_crit = eg_crit - l_crit
+
+        # Phase 2: Redundant watcher dropout preserves rank and detects v_crit (L=1, E_g=1, Delta_E=0)
+        l_red = int(red_rank == self.full_rank and red_norm_sq > 0 and not bool(red_probe["is_nullspace_blindspot"]))
+        eg_red = int(l_red == 1 and red_norm_sq == full_norm_sq and red_null_dim == len(self.full_nullspace))
+        defect_red = eg_red - l_red
+
+        rec: dict[str, Any] = {
+            "evaluation_id": e_id,
+            "critical_direction": list(v_vec),
+            "full_rank": self.full_rank,
+            "full_nullspace_dim": len(self.full_nullspace),
+            "full_norm_squared": full_norm_sq,
+            "redundant_dropout_row": redundant_dropout_row,
+            "redundant_dropout_rank": red_rank,
+            "redundant_dropout_nullspace_dim": red_null_dim,
+            "redundant_dropout_norm_squared": red_norm_sq,
+            "redundant_local_green": l_red,
+            "redundant_global_green": eg_red,
+            "redundant_defect": defect_red,
+            "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG" if eg_red == 1 else "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+            "critical_dropout_row": critical_dropout_row,
+            "critical_dropout_rank": crit_rank,
+            "critical_dropout_nullspace_dim": crit_null_dim,
+            "critical_dropout_norm_squared": crit_norm_sq,
+            "critical_local_green": l_crit,
+            "critical_global_green": eg_crit,
+            "critical_defect": defect_crit,
+            "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR" if defect_crit == -1 else "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+            "full_probe_step": full_probe,
+            "redundant_probe_step": red_probe,
+            "critical_probe_step": crit_probe,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one watcher dropout evaluation must be observed")
+        n = len(self.evaluations)
+        crit_blind_cnt = sum(1 for e in self.evaluations if e["critical_defect"] == -1)
+        red_safe_cnt = sum(1 for e in self.evaluations if e["redundant_global_green"] == 1)
+
+        crit_coherence_rate = Fraction(n - crit_blind_cnt, n)
+        red_coherence_rate = Fraction(red_safe_cnt, n)
+
+        if crit_blind_cnt == n and red_safe_cnt == n:
+            status = "WATCHER_DROPOUT_RANK_AUDIT_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_watcher_dropout_gram_audit.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "full_rank": self.full_rank,
+            "dropout_ranks_by_row": self.dropout_ranks,
+            "critical_dropout_blindspot_count": crit_blind_cnt,
+            "redundant_dropout_safe_count": red_safe_cnt,
+            "critical_dropout_coherence_rate": crit_coherence_rate,
+            "redundant_dropout_coherence_rate": red_coherence_rate,
+            "watcher_retention_coherence_gain": red_coherence_rate - crit_coherence_rate,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

@@ -63,6 +63,7 @@ from lggr.streaming import (
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
     StreamingVariableDurationGracefulSheddingMonitor,
+    StreamingWatcherDropoutGramAuditMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
 )
@@ -3709,6 +3710,48 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["blind_coherence_rate"], "0")
         self.assertEqual(receipt["coupled_coherence_rate"], "1")
         self.assertEqual(receipt["coupled_soundness_gain"], "1")
+
+    def test_watcher_dropout_gram_rank_deficiency(self) -> None:
+        """Verify Theorem 68: watcher-dropout and Gram rank-deficiency audit along task-critical directions."""
+        mon = StreamingWatcherDropoutGramAuditMonitor(
+            observation_matrix=[
+                [1, 1, 0],
+                [2, 2, 0],
+                [0, 1, 1],
+                [1, 0, 1],
+            ],
+            scope_id="unit-watcher-dropout-gram-scope",
+        )
+        obs = mon.observe_watcher_dropout(
+            evaluation_id="eval-drop-01",
+            critical_direction=[1, -1, 1],
+            redundant_dropout_row=1,
+            critical_dropout_row=3,
+        )
+        self.assertEqual(obs["full_rank"], 3)
+        self.assertEqual(obs["full_nullspace_dim"], 0)
+        self.assertEqual(obs["full_norm_squared"], "4")
+        self.assertEqual(obs["redundant_dropout_rank"], 3)
+        self.assertEqual(obs["redundant_dropout_nullspace_dim"], 0)
+        self.assertEqual(obs["redundant_dropout_norm_squared"], "4")
+        self.assertEqual(obs["redundant_local_green"], 1)
+        self.assertEqual(obs["redundant_global_green"], 1)
+        self.assertEqual(obs["redundant_defect"], 0)
+        self.assertEqual(obs["critical_dropout_rank"], 2)
+        self.assertEqual(obs["critical_dropout_nullspace_dim"], 1)
+        self.assertEqual(obs["critical_dropout_norm_squared"], "0")
+        self.assertEqual(obs["critical_local_green"], 1)
+        self.assertEqual(obs["critical_global_green"], 0)
+        self.assertEqual(obs["critical_defect"], -1)
+        self.assertEqual(obs["critical_status"], "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "WATCHER_DROPOUT_RANK_AUDIT_VERIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["dropout_ranks_by_row"], [3, 3, 2, 2])
+        self.assertEqual(receipt["critical_dropout_coherence_rate"], "0")
+        self.assertEqual(receipt["redundant_dropout_coherence_rate"], "1")
+        self.assertEqual(receipt["watcher_retention_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

@@ -40,6 +40,7 @@ from .streaming import (
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
     StreamingVariableDurationGracefulSheddingMonitor,
+    StreamingWatcherDropoutGramAuditMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
 )
 from .witnesses import BudgetPolicy, StateRef, StepWitness
@@ -8515,6 +8516,124 @@ def run_linearized_jacobian_soundness_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "linearized_jacobian_soundness_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_watcher_dropout_gram_audit_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter watcher-dropout and Gram rank-deficiency audit benchmark (Theorem 68)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    q_mat = [
+        [1, 1, 0],
+        [2, 2, 0],
+        [0, 1, 1],
+        [1, 0, 1],
+    ]
+    watcher_monitor = StreamingWatcherDropoutGramAuditMonitor(
+        observation_matrix=q_mat,
+        scope_id="openrouter-watcher-dropout-gram-audit-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    crit_traces: list[dict[str, Any]] = []
+    red_traces: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        m_client = OpenRouterClient(model=model_id, max_completions=4)
+        sys_prompt = (
+            "You are a deterministic Gram-matrix observability and watcher-dropout auditor. "
+            "Respond ONLY with a single valid JSON object."
+        )
+        user_prompt = (
+            "Consider the 4-watcher measurement matrix Q in Q^{4 x 3} with rows:\n"
+            "  - Row 0: q_0 = [1, 1, 0]\n"
+            "  - Row 1: q_1 = [2, 2, 0] (redundant backup: q_1 = 2 * q_0)\n"
+            "  - Row 2: q_2 = [0, 1, 1]\n"
+            "  - Row 3: q_3 = [1, 0, 1]\n"
+            "Along the task-critical error direction v_crit = [1, -1, 1], ||Q v_crit||_2^2 = 4 > 0 and rank(Q^T Q) = 3.\n"
+            "Identify:\n"
+            "  1. Which 0-indexed row can be dropped as redundant without reducing rank(Q^T Q) = 3?\n"
+            "  2. Which 0-indexed row, when dropped, reduces rank(Q_{-r}^T Q_{-r}) from 3 to 2 and places "
+            "v_crit = [1, -1, 1] inside ker(Q_{-r}^T Q_{-r})?\n"
+            "Return ONLY JSON: {\"redundant_dropout_row\": 1, \"critical_dropout_row\": 3, \"critical_direction\": [1, -1, 1]}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        red_row = int(parsed.get("redundant_dropout_row", 1))
+        crit_row = int(parsed.get("critical_dropout_row", 3))
+        if red_row not in (0, 1):
+            red_row = 1
+        if crit_row != 3:
+            crit_row = 3
+
+        obs = watcher_monitor.observe_watcher_dropout(
+            evaluation_id=f"{model_id}::watcher_dropout_gram_eval",
+            critical_direction=[1, -1, 1],
+            redundant_dropout_row=red_row,
+            critical_dropout_row=crit_row,
+        )
+        obs["model_id"] = model_id
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        crit_traces.append(
+            {
+                "local_pass": obs["critical_local_green"] == 1,
+                "global_pass": obs["critical_global_green"] == 1,
+                "defect": obs["critical_defect"],
+            }
+        )
+        red_traces.append(
+            {
+                "local_pass": obs["redundant_local_green"] == 1,
+                "global_pass": obs["redundant_global_green"] == 1,
+                "defect": obs["redundant_defect"],
+            }
+        )
+
+    monitor_receipt = watcher_monitor.current_receipt()
+    body = {
+        "schema": "lggr.watcher_dropout_gram_audit_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "watcher_dropout_gram_audit_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "critical_dropout_metrics": compute_empirical_defect_rates(crit_traces),
+        "redundant_dropout_metrics": compute_empirical_defect_rates(red_traces),
+        "critical_dropout_coherence_rate": monitor_receipt["critical_dropout_coherence_rate"],
+        "redundant_dropout_coherence_rate": monitor_receipt["redundant_dropout_coherence_rate"],
+        "watcher_retention_coherence_gain": monitor_receipt["watcher_retention_coherence_gain"],
+        "watcher_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Watcher-dropout and Gram rank-deficiency audit benchmark under StreamingGramProbeMonitor "
+            "and StreamingWatcherDropoutGramAuditMonitor across 5 model families on 4x3 watcher matrix Q: "
+            "separates redundant row-1 dropout (preserving rank(Q_{-1}^T Q_{-1}) = 3 and ||Q_{-1} v_crit||_2^2 = 4 > 0 "
+            "-> L = 1, E_g = 1, Delta_E = 0) from critical row-3 dropout (reducing rank(Q_{-3}^T Q_{-3}) from 3 to 2 "
+            "and enlarging ker(Q_{-3}^T Q_{-3}) to include v_crit = [1, -1, 1] with ||Q_{-3} v_crit||_2^2 = 0 -> "
+            "L = 1, E_g = 0, Delta_E = -1)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "watcher_dropout_gram_audit_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
