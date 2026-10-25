@@ -1576,6 +1576,28 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["status"], "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
 
+    def test_stage_vs_e2e_integration_benchmark_replay(self) -> None:
+        """Verify stage_vs_e2e_integration_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "stage_vs_e2e_integration_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.stage_vs_e2e_integration_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["collapsing_dashboard_coherence_rate"], "0")
+        self.assertEqual(data["four_tuple_kernel_coherence_rate"], "1")
+        self.assertEqual(data["dashboard_kernel_coherence_gain"], "1")
+
+        mon_rec = data["stage_e2e_monitor_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "STAGE_E2E_KERNEL_DASHBOARD_COHERENT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
 
 if __name__ == "__main__":
     unittest.main()

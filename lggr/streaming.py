@@ -12808,3 +12808,166 @@ class StreamingCrossRoleDeduplicationMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+
+class StreamingStageVsE2EIntegrationMonitor:
+    """Online stage-level unit tests vs. end-to-end integration oracle audit (Theorem 76).
+
+    Wraps ``StreamingPathKernelMonitor`` and ``StreamingDashboardAdequacyMonitor`` across
+    4 composite trajectories c_{i,j} = s2_j * s1_i (s1_1: E1=1, s1_2: E1=0; s2_1: E2=1,
+    s2_2: E2=1; Z1 = 1, Z2 = 2, Z2 * Z1 = 2):
+      - Phase 1 (3-tuple pass-rate dashboard & naive stage-kernel multiplication on
+        (n11, n10, n01, n00) = (1, 1, 1, 1)):
+        Both global kernel Z_E = 2 and factored stage product Z2 * Z1 = 2 give LPR = GPR = 1/2
+        with net discrepancy GPR - LPR = 0, masking NGD count n_- = 1 (rate 1/4), PGD count
+        n_+ = 1 (rate 1/4), and EGD = 1/2 (L_mask = 1, Eg_mask = 0, defect_mask = -1).
+      - Phase 2 (Unrepaired NGD integration regression on (n11, n10, n01, n00) = (1, 1, 0, 2)):
+        When downstream fallback on c_{2,1} is disabled, Z_E = 1 < 2 = Z2 * Z1 with negative
+        evaluator residual R_E = -1 < 0 and NGD rate 1/4 (L_ngd = 1, Eg_ngd = 0,
+        defect_ngd = -1).
+      - Phase 3 (4-tuple dashboard (N, sum L, sum E_g, n_-) & path-kernel audit after boundary
+        repair on (n11, n10, n01, n00) = (2, 0, 0, 2)):
+        Reconstructs all four contingency counts from the 4-tuple summary and verifies zero
+        pointwise disagreement (n_- = 0, n_+ = 0, EGD = 0, Z_E = Z2 * Z1 = 2; L_full = 1,
+        Eg_full = 1, defect_full = 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-stage-vs-e2e-integration-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _build_pair(
+        scope_prefix: str,
+        e2e_verdicts: Sequence[int | bool],
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        if len(e2e_verdicts) != 4:
+            raise ValidationError("Expected 4 composite E2E verdicts")
+        pk = StreamingPathKernelMonitor(scope_id=f"{scope_prefix}-pk")
+        pk.add_stage1_segment("s1_1", "src", "bnd", 1, 1)
+        pk.add_stage1_segment("s1_2", "src", "bnd", 1, 0)
+        pk.add_stage2_segment("s2_1", "bnd", "tgt", 1, 1)
+        pk.add_stage2_segment("s2_2", "bnd", "tgt", 1, 1)
+
+        dash = StreamingDashboardAdequacyMonitor(scope_id=f"{scope_prefix}-dash")
+        pairs = [("s1_1", "s2_1", 1, 1), ("s1_1", "s2_2", 1, 1), ("s1_2", "s2_1", 0, 1), ("s1_2", "s2_2", 0, 1)]
+        for idx, ((s1_id, s2_id, e1, e2), eg) in enumerate(zip(pairs, e2e_verdicts)):
+            cid = f"c_{idx + 1}"
+            pk.observe_composite(cid, s1_id, s2_id, eg)
+            dash.record_trace(cid, e1, e2, eg)
+        return pk.audit_kernel_composition("src", "tgt"), dash.get_receipt()
+
+    def evaluate_stage_vs_e2e(
+        self,
+        evaluation_id: str,
+        *,
+        masked_e2e_verdicts: Sequence[int | bool] = (1, 0, 1, 0),
+        ngd_e2e_verdicts: Sequence[int | bool] = (1, 0, 0, 0),
+        repaired_e2e_verdicts: Sequence[int | bool] = (1, 1, 0, 0),
+    ) -> dict[str, Any]:
+        """Evaluate cancellation-masked stage kernels, unmasked NGD regression, and 4-tuple dashboard repair."""
+        eid = text(evaluation_id, "evaluation_id")
+        pk_mask, dash_mask = self._build_pair(
+            f"{self.scope_id}-{eid}-mask", masked_e2e_verdicts
+        )
+        pk_ngd, dash_ngd = self._build_pair(
+            f"{self.scope_id}-{eid}-ngd", ngd_e2e_verdicts
+        )
+        pk_rep, dash_rep = self._build_pair(
+            f"{self.scope_id}-{eid}-rep", repaired_e2e_verdicts
+        )
+
+        # Phase 1: Cancellation-masked NGD + PGD
+        l_p1 = 1 if (pk_mask["cancellation_masked"] and dash_mask["n_neg_ngd"] == 1 and dash_mask["n_pos_pgd"] == 1) else 0
+        eg_p1 = 1 if (l_p1 == 1 and dash_mask["n_neg_ngd"] == 0) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        # Phase 2: Unmasked NGD regression
+        l_p2 = 1 if (int(pk_ngd["evaluator_residual_re"]) == -1 and dash_ngd["n_neg_ngd"] == 1) else 0
+        eg_p2 = 1 if (l_p2 == 1 and int(pk_ngd["evaluator_residual_re"]) == 0) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        # Phase 3: 4-tuple contingency reconstruction + repaired zero-defect kernel
+        l_p3 = (
+            1
+            if (
+                dash_mask["reconstruction_identities_verified"]
+                and dash_rep["n_neg_ngd"] == 0
+                and dash_rep["n_pos_pgd"] == 0
+                and pk_rep["status"] == "KERNEL_COMPOSITION_VERIFIED"
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and dash_mask["disagreement_count_m"] == 2) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "factored_stage_kernel_product": pk_mask["factored_boundary_kernel_sum"],
+            "phase_1_global_kernel": pk_mask["global_evaluated_kernel"],
+            "phase_1_ngd_rate": Fraction(dash_mask["n_neg_ngd"], dash_mask["sample_size"]),
+            "phase_1_pgd_rate": Fraction(dash_mask["n_pos_pgd"], dash_mask["sample_size"]),
+            "phase_1_egd_rate": dash_mask["evaluator_gluing_disagreement_egd"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "CANCELLATION_MASKED_STAGE_KERNEL_LGGR" if defect_p1 == -1 else "STAGE_E2E_KERNEL_DASHBOARD_COHERENT_LGGG",
+            "phase_2_global_kernel": pk_ngd["global_evaluated_kernel"],
+            "phase_2_evaluator_residual": pk_ngd["evaluator_residual_re"],
+            "phase_2_ngd_rate": Fraction(dash_ngd["n_neg_ngd"], dash_ngd["sample_size"]),
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "NGD_INTEGRATION_REGRESSION_LGGR" if defect_p2 == -1 else "STAGE_E2E_KERNEL_DASHBOARD_COHERENT_LGGG",
+            "phase_3_global_kernel": pk_rep["global_evaluated_kernel"],
+            "phase_3_egd_rate": dash_rep["evaluator_gluing_disagreement_egd"],
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "STAGE_E2E_KERNEL_DASHBOARD_COHERENT_LGGG" if eg_p3 == 1 else "CANCELLATION_MASKED_STAGE_KERNEL_LGGR",
+            "masked_path_kernel_receipt": pk_mask,
+            "masked_dashboard_receipt": dash_mask,
+            "ngd_path_kernel_receipt": pk_ngd,
+            "repaired_path_kernel_receipt": pk_rep,
+            "repaired_dashboard_receipt": dash_rep,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one stage-vs-E2E evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mask_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_ngd_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        collapsing_dashboard_coherence_rate = Fraction(n - max(p1_mask_fail, p2_ngd_fail), n)
+        four_tuple_kernel_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_mask_fail == n and p2_ngd_fail == n:
+            status = "STAGE_E2E_KERNEL_DASHBOARD_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CANCELLATION_MASKED_STAGE_KERNEL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_stage_vs_e2e_integration.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_cancellation_masked_count": p1_mask_fail,
+            "phase_2_ngd_regression_count": p2_ngd_fail,
+            "phase_3_repaired_coherent_count": p3_coherent,
+            "collapsing_dashboard_coherence_rate": collapsing_dashboard_coherence_rate,
+            "four_tuple_kernel_coherence_rate": four_tuple_kernel_coherence_rate,
+            "dashboard_kernel_coherence_gain": (
+                four_tuple_kernel_coherence_rate - collapsing_dashboard_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
