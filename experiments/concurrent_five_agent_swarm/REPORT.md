@@ -125,7 +125,7 @@ traces; all **45 SQLite files**, including partial outputs, match replayed
 execution events. All 20 source files in each snapshot match its recorded Git
 commit. See [README.md](README.md) for offline commands.
 
-The integrated root suite passes **472 tests**. Regression tests cover actual
+The integrated root suite passes **474 tests**. Regression tests cover actual
 five-thread overlap, whole-wave budget preflight, settlement of failed waves,
 Hall diagnostics against an independent matching search over 256 active-slot
 sets, preserved continuation conditions, and rejection of rehashed altered
