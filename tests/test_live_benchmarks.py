@@ -27,6 +27,7 @@ from lggr.benchmarks import (
     compute_empirical_defect_rates,
     load_openrouter_credentials,
     verify_frontier_benchmark,
+    verify_closed_loop_repair_benchmark,
 )
 from lggr.common import digest
 from lggr.streaming import (
@@ -442,6 +443,10 @@ class TestOfflineTraceReplay(unittest.TestCase):
         if not artifact.is_file():
             self.skipTest("closed_loop_repair_benchmark.json not generated yet")
         data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        replay = verify_closed_loop_repair_benchmark(data)
+        self.assertEqual(replay["single_round_success_count"], 15)
+        self.assertEqual(replay["final_round_success_count"], 25)
 
         self.assertEqual(data.get("schema"), "lggr.closed_loop_repair_replay.v1")
         self.assertEqual(len(data.get("models_evaluated", [])), 5)

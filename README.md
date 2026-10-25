@@ -449,3 +449,36 @@ The [swarm laboratory review revision](experiments/grok_swarm_lab/current/README
 The frontier prompts often supply exact answers or impose incompatible requirements. The published 24/50 NGD count describes that selected fixture mixture, not a general swarm failure rate or an advantage over conventional checking. Theorem 54 proves an integer positivity statement and a fixed collapse example; the Python monitor's general rational, arbitrary-expert support calculation is not formalized by that theorem.
 
 [Historical RSI research records](papers/012_rsi/research/) and all seven research links in the RSI index have been restored from commit `103daa366d4cd9ef06fc0def10edee497f547d8e`. Their [restoration receipt](receipts/pr51_research_restoration.json) binds the original Git bytes without upgrading their historical verification claims.
+
+## Closed-loop benchmark evidence scope
+
+The published `receipts/live_benchmarks/closed_loop_repair_benchmark.json` is a
+preserved v1 experiment: 15/25 Round-1 and 25/25 Round-2 recorded successes.
+Round 2 supplies the exact answers. This demonstrates following corrective
+guidance on five scripted examples, not an isolated benefit from another
+feedback round or superiority over conventional solving or uninformed retries.
+Theorem 55 checks fixed integer identities and a numerical skew example; it
+neither defines a repair process nor proves convergence or termination.
+
+`verify_closed_loop_repair_benchmark` replays recorded responses and prompts,
+rebuilds complete frontier receipts, derives round verdicts, and recomputes all
+aggregate fields. It verifies both hash layers. Hashes establish internal
+consistency, not external authenticity or provider identity. Historical replay
+explicitly reports two pinned Llama parsing exceptions: Round-2 skew extracts
+valid JSON surrounded by extra text, and Round-1 PoE substitutes the obstructed
+baseline for malformed JSON. The latter is a failed round, not a successful
+model repair. The old artifact and its counts are preserved, not relabeled as
+strictly parsed evidence.
+
+New runs emit `closed_loop_repair_benchmark_v2.json`. They require exact input
+types and mark malformed responses explicitly, retaining the recorded exchanges
+without inventing fallback inputs. A malformed model run contributes no certified
+trajectories; `model_failures`, `validation_status`, and `rate_scope` identify this
+coverage limit. Repair success requires both a passing frontier receipt and the
+requested edit: the tower shift and residue representatives, one parity-target
+flip, minimum capacity and bounded distinct symbols, or the normalized PoE
+quarter-mass transfer. Exact Round-2 witness instructions are checked as well.
+Raw frontier verdicts and repair-constraint checks remain separately visible.
+The generic repair monitor requires actual Boolean verdicts consistent with
+`contract_status`; it summarizes supplied rounds and does not authenticate their
+provenance by itself.

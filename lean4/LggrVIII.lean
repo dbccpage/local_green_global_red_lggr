@@ -1583,22 +1583,14 @@ theorem product_of_experts_disjoint_support_collapse_vs_mixture
      e_global - l_prod = -1) := by
   refine ⟨by omega, ⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩⟩
 
-/-- Theorem 55 (closed_loop_receipt_feedback_repair_convergence_vs_uninformed_retry):
-    Formalizes Closed-Loop Receipt-Feedback Repair Convergence across the 5 Frontier
-    Monitors vs. Uninformed Retry Persistence:
-    1. (Uninformed Retry Defect Invariance): For any obstructed parameter state with
-       local aggregator L = 1 and global evaluator Eg = 0 (Δ_E = Eg - L = -1),
-       retrying with an unchanged parameter preserves Δ_E = -1, whereas applying a
-       receipt-certified repair transition to L' = 1, Eg' = 1 strictly increases the
-       evaluator defect by +1 (Δ_E' - Δ_E = 0 - (-1) = 1).
-    2. (Single-Round vs. Multi-Round Receipt-Guided Repair Witness on Skew Subspace
-       ω = (2, 0) with B_∞ = 2, B_1 = 2, scaled by 15):
-       - Round 0 (α₀ = -2/3): 15 * ‖r(-2/3)‖₁ = 20 + 20 = 40 > 30 = 15 * B₁ (Eg₀ = 0, Δ_E₀ = -1);
-       - Round 1 coarse step (α₁ = -2/5, the ℓ² minimizer): satisfies coordinate bound
-         15 * |r_i(-2/5)| = max(24, 12) = 24 ≤ 30 = 15 * B_∞ (L₁ = 1), yet still breaches
-         the ℓ¹ minimum budget 15 * ‖r(-2/5)‖₁ = 24 + 12 = 36 > 30 = 15 * B₁ (Eg₁ = 0, Δ_E₁ = -1);
-       - Round 2 exact receipt witness feedback (α₂ = 0, the ℓ¹ minimizer): attains
-         15 * ‖r(0)‖₁ = 30 + 0 = 30 ≤ 30 = 15 * B₁ (L₂ = 1, Eg₂ = 1, Δ_E₂ = 0). -/
+/-- Theorem 55: fixed evaluator-defect arithmetic and one scaled skew example.
+    The first conjunct sets L = 1, Eg = 0 and repaired L = Eg = 1, then checks
+    defects -1 and 0 and their difference 1. The second checks three fixed
+    residual vectors (20, -20), (24, -12), and (30, 0) against integer budgets 30.
+    These are finite arithmetic identities. No repair process, convergence,
+    termination, comparison with retry, or result for all five runtime monitors
+    is defined or proved here. The historical declaration name is retained for
+    source compatibility. -/
 theorem closed_loop_receipt_feedback_repair_convergence_vs_uninformed_retry :
     (let l0 : Int := 1; let eg0 : Int := 0;
      let d0 := eg0 - l0;
