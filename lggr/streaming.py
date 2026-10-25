@@ -12397,44 +12397,200 @@ class StreamingBoundedDepthKInductionMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingBoundaryQuorumInterfaceMonitor:
+    """Online multi-agent interface schema audit (Theorem 74).
 
+    Wraps ``StreamingOrganizationalGluingMonitor`` and ``StreamingThresholdGovernanceMonitor``
+    across a 3-phase interface schema separation:
+      - Phase 1 (Pass-flag-only interface schema J_pass(c) = (pass, pass)):
+        Both ``c_matched`` (E_g = 1) and ``c_skew`` (E_g = 0) project to the identical
+        joint pass-flag quotient J_pass = {"left": {"pass": 1}, "right": {"pass": 1}},
+        triggering a carrier-mixing collision (L_mix = 1, Eg_mix = 0, defect_mix = -1).
+      - Phase 2 (k-of-n majority quorum gate on validator votes (1, 1, ..., 0) with E_g = 0):
+        A specialist validator vetoes (e_n = 0) so the strict product aggregator is
+        L_prod = 0 (Delta_prod = 0), yet the k-of-n quorum gate M_{k,n} = 1 overrides
+        the veto and masks the failure (quorum_inflation = 1, L_quor = 1, Eg_quor = 0,
+        defect_quor = -1).
+      - Phase 3 (Full boundary payload J_full(c_matched) != J_full(c_skew) + strict product gate):
+        Separating the boundary payload eliminates carrier-mixing collisions and enforcing
+        the strict product gate honours the specialist veto (L_full = 1, Eg_full = 1,
+        defect_full = 0).
+    """
 
+    def __init__(
+        self,
+        *,
+        n_validators: int = 3,
+        quorum_k: int = 2,
+        scope_id: str = "streaming-boundary-quorum-interface-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        n_val = exact_int(n_validators, "n_validators")
+        k_val = exact_int(quorum_k, "quorum_k")
+        if n_val < 2:
+            raise ValidationError("n_validators must be >= 2")
+        if k_val < 1 or k_val >= n_val:
+            raise ValidationError("quorum_k must satisfy 1 <= quorum_k < n_validators")
+        self.n_validators = n_val
+        self.quorum_k = k_val
+        self.evaluations: list[dict[str, Any]] = []
 
+    def evaluate_interface_schema(
+        self,
+        evaluation_id: str,
+        *,
+        matched_boundary_left: Any,
+        matched_boundary_right: Any,
+        skew_boundary_left: Any,
+        skew_boundary_right: Any,
+        quorum_votes: Iterable[int | bool],
+        eg_matched: int | bool = 1,
+        eg_skew: int | bool = 0,
+    ) -> dict[str, Any]:
+        """Evaluate pass-flag mixing, k-of-n quorum masking, and full boundary product gating."""
+        eid = text(evaluation_id, "evaluation_id")
+        votes = [
+            StreamingThresholdGovernanceMonitor._binary_int(v, f"quorum_votes[{idx}]")
+            for idx, v in enumerate(sequence(quorum_votes, "quorum_votes"))
+        ]
+        if len(votes) != self.n_validators:
+            raise ValidationError(f"Expected {self.n_validators} quorum_votes, got {len(votes)}")
+        vg_matched = StreamingOrganizationalGluingMonitor._binary_int(eg_matched, "eg_matched")
+        vg_skew = StreamingOrganizationalGluingMonitor._binary_int(eg_skew, "eg_skew")
 
+        # Phase 1: Pass-flag-only interface schema
+        pass_gluing = StreamingOrganizationalGluingMonitor(
+            scope_id=f"{self.scope_id}-{eid}-pass-flag"
+        )
+        pass_gluing.observe_boundary(
+            f"{eid}-matched-pass",
+            {"pass": 1},
+            {"pass": 1},
+            1,
+            1,
+            vg_matched,
+        )
+        pass_gluing.observe_boundary(
+            f"{eid}-skew-pass",
+            {"pass": 1},
+            {"pass": 1},
+            1,
+            1,
+            vg_skew,
+        )
+        rec_pass = pass_gluing.get_receipt()
 
+        # Phase 2: k-of-n majority quorum vs. strict product on specialist veto
+        quorum_mon = StreamingThresholdGovernanceMonitor(
+            self.n_validators,
+            self.quorum_k,
+            scope_id=f"{self.scope_id}-{eid}-quorum",
+        )
+        rec_quorum = quorum_mon.record_vote(f"{eid}-skew-quorum", votes, vg_skew)
+        vote_rec = rec_quorum["latest_trace"]
 
+        # Phase 3: Full boundary payload + strict product gate
+        full_gluing = StreamingOrganizationalGluingMonitor(
+            scope_id=f"{self.scope_id}-{eid}-full-payload"
+        )
+        full_gluing.observe_boundary(
+            f"{eid}-matched-full",
+            matched_boundary_left,
+            matched_boundary_right,
+            1,
+            1,
+            vg_matched,
+        )
+        full_gluing.observe_boundary(
+            f"{eid}-skew-full",
+            skew_boundary_left,
+            skew_boundary_right,
+            1,
+            int(vote_rec["product_aggregator_l"]),
+            vg_skew,
+        )
+        rec_full = full_gluing.get_receipt()
 
+        has_pass_collision = rec_pass["carrier_mixing_collisions_count"] > 0
+        l_p1 = 1 if has_pass_collision else 0
+        eg_p1 = 1 if (l_p1 == 1 and vg_matched == vg_skew) else 0
+        defect_p1 = eg_p1 - l_p1
 
+        l_prod = int(vote_rec["product_aggregator_l"])
+        m_quorum = int(vote_rec["quorum_aggregator_m"])
+        quorum_inflation = int(vote_rec["quorum_inflation_gap"])
+        l_p2 = 1 if (m_quorum == 1 and l_prod == 0) else 0
+        eg_p2 = 1 if (l_p2 == 1 and vg_skew == 1) else 0
+        defect_p2 = eg_p2 - l_p2
 
+        full_collision_free = (rec_full["carrier_mixing_collisions_count"] == 0)
+        l_p3 = 1 if (full_collision_free and l_prod == vg_skew) else 0
+        eg_p3 = 1 if (l_p3 == 1 and quorum_inflation == 1 and has_pass_collision) else 0
+        defect_p3 = eg_p3 - l_p3
 
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "n_validators": self.n_validators,
+            "quorum_k": self.quorum_k,
+            "quorum_votes": votes,
+            "local_product": l_prod,
+            "quorum_verdict": m_quorum,
+            "quorum_inflation": quorum_inflation,
+            "phase_1_carrier_mixing_collisions": rec_pass["carrier_mixing_collisions_count"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR" if defect_p1 == -1 else "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+            "phase_2_quorum_masked_count": rec_quorum["quorum_masked_ngd_count"],
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR" if defect_p2 == -1 else "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+            "phase_3_carrier_mixing_collisions": rec_full["carrier_mixing_collisions_count"],
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG" if eg_p3 == 1 else "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+            "pass_flag_gluing_receipt": rec_pass,
+            "quorum_governance_receipt": rec_quorum,
+            "full_boundary_gluing_receipt": rec_full,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
 
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one interface schema evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mix_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_quor_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
 
+        pass_quorum_coherence_rate = Fraction(n - max(p1_mix_fail, p2_quor_fail), n)
+        full_product_coherence_rate = Fraction(p3_coherent, n)
 
+        if p3_coherent == n and p1_mix_fail == n and p2_quor_fail == n:
+            status = "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        body: dict[str, Any] = {
+            "schema": "lggr.online_boundary_quorum_interface.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_carrier_mixing_obstruction_count": p1_mix_fail,
+            "phase_2_quorum_masked_obstruction_count": p2_quor_fail,
+            "phase_3_full_boundary_coherent_count": p3_coherent,
+            "pass_quorum_coherence_rate": pass_quorum_coherence_rate,
+            "full_product_coherence_rate": full_product_coherence_rate,
+            "interface_coherence_gain": (
+                full_product_coherence_rate - pass_quorum_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})

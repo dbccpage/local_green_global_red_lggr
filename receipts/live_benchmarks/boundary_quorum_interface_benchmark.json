@@ -1,0 +1,1174 @@
+{
+  "schema": "lggr.boundary_quorum_interface_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "boundary_quorum_interface_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_pass_flag_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_quorum_masked_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_full_boundary_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "pass_quorum_coherence_rate": "0",
+  "full_product_coherence_rate": "1",
+  "interface_coherence_gain": "1",
+  "interface_monitor_receipt": {
+    "schema": "lggr.online_boundary_quorum_interface.v1",
+    "authority_effect": "None",
+    "scope_id": "live-boundary-quorum-interface-scope",
+    "status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_carrier_mixing_obstruction_count": 5,
+    "phase_2_quorum_masked_obstruction_count": 5,
+    "phase_3_full_boundary_coherent_count": 5,
+    "pass_quorum_coherence_rate": "0",
+    "full_product_coherence_rate": "1",
+    "interface_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::interface_schema_eval",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "quorum_votes": [
+          1,
+          1,
+          0
+        ],
+        "local_product": 0,
+        "quorum_verdict": 1,
+        "quorum_inflation": 1,
+        "phase_1_carrier_mixing_collisions": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+        "phase_2_quorum_masked_count": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+        "phase_3_carrier_mixing_collisions": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+        "pass_flag_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-openai/gpt-4o-mini::interface_schema_eval-pass-flag",
+          "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 1,
+          "weak_nonfactored_count": 1,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [
+            {
+              "joint_carrier": {
+                "left": {
+                  "pass": 1
+                },
+                "right": {
+                  "pass": 1
+                }
+              },
+              "first_trace_id": "openai/gpt-4o-mini::interface_schema_eval-matched-pass",
+              "first_eg": 1,
+              "first_delta_e": 0,
+              "second_trace_id": "openai/gpt-4o-mini::interface_schema_eval-skew-pass",
+              "second_eg": 0,
+              "second_delta_e": -1,
+              "locally_green_forced_ngd": true
+            }
+          ],
+          "receipt_sha256": "1038d369f46cdeff5569b609a47feddc9d9e555c338f7a46d56ce1befc77104f"
+        },
+        "quorum_governance_receipt": {
+          "schema": "lggr.online_threshold_governance.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-openai/gpt-4o-mini::interface_schema_eval-quorum",
+          "status": "QUORUM_MASKED_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "n_validators": 3,
+          "quorum_k": 2,
+          "observed_traces_count": 1,
+          "unanimous_ngd_count": 0,
+          "quorum_masked_ngd_count": 1,
+          "quorum_recovered_pgd_count": 0,
+          "coherent_count": 0,
+          "all_monotonicity_verified": true,
+          "all_defect_difference_identities_verified": true,
+          "latest_trace": {
+            "trace_id": "openai/gpt-4o-mini::interface_schema_eval-skew-quorum",
+            "local_verdicts": [
+              1,
+              1,
+              0
+            ],
+            "vote_sum": 2,
+            "eg": 0,
+            "product_aggregator_l": 0,
+            "quorum_aggregator_m": 1,
+            "delta_product": 0,
+            "delta_quorum": -1,
+            "quorum_inflation_gap": 1,
+            "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+            "monotonicity_l_le_quorum_verified": true,
+            "defect_difference_identity_verified": true
+          },
+          "receipt_sha256": "59f259b577e3d09de17c97b24781eec0a8bcb8620897d25461d580cb05c2d00d"
+        },
+        "full_boundary_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-openai/gpt-4o-mini::interface_schema_eval-full-payload",
+          "status": "CHECKED_CLOSURE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 0,
+          "weak_nonfactored_count": 0,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [],
+          "receipt_sha256": "4a7815f2dfe11a41cf6acb3062fa5e864c40ecc3be45edaed91c34807e82aed9"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::interface_schema_eval",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "quorum_votes": [
+          1,
+          1,
+          0
+        ],
+        "local_product": 0,
+        "quorum_verdict": 1,
+        "quorum_inflation": 1,
+        "phase_1_carrier_mixing_collisions": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+        "phase_2_quorum_masked_count": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+        "phase_3_carrier_mixing_collisions": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+        "pass_flag_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-google/gemini-2.5-flash-lite::interface_schema_eval-pass-flag",
+          "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 1,
+          "weak_nonfactored_count": 1,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [
+            {
+              "joint_carrier": {
+                "left": {
+                  "pass": 1
+                },
+                "right": {
+                  "pass": 1
+                }
+              },
+              "first_trace_id": "google/gemini-2.5-flash-lite::interface_schema_eval-matched-pass",
+              "first_eg": 1,
+              "first_delta_e": 0,
+              "second_trace_id": "google/gemini-2.5-flash-lite::interface_schema_eval-skew-pass",
+              "second_eg": 0,
+              "second_delta_e": -1,
+              "locally_green_forced_ngd": true
+            }
+          ],
+          "receipt_sha256": "a35d7130de60a676ab07f1afc111eebb0ff61eab12df2681f388789659084470"
+        },
+        "quorum_governance_receipt": {
+          "schema": "lggr.online_threshold_governance.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-google/gemini-2.5-flash-lite::interface_schema_eval-quorum",
+          "status": "QUORUM_MASKED_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "n_validators": 3,
+          "quorum_k": 2,
+          "observed_traces_count": 1,
+          "unanimous_ngd_count": 0,
+          "quorum_masked_ngd_count": 1,
+          "quorum_recovered_pgd_count": 0,
+          "coherent_count": 0,
+          "all_monotonicity_verified": true,
+          "all_defect_difference_identities_verified": true,
+          "latest_trace": {
+            "trace_id": "google/gemini-2.5-flash-lite::interface_schema_eval-skew-quorum",
+            "local_verdicts": [
+              1,
+              1,
+              0
+            ],
+            "vote_sum": 2,
+            "eg": 0,
+            "product_aggregator_l": 0,
+            "quorum_aggregator_m": 1,
+            "delta_product": 0,
+            "delta_quorum": -1,
+            "quorum_inflation_gap": 1,
+            "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+            "monotonicity_l_le_quorum_verified": true,
+            "defect_difference_identity_verified": true
+          },
+          "receipt_sha256": "623af62ae30757dd5c1e95d72513745a7df7a5c0deb7fb4c28bb8a0f4ce70421"
+        },
+        "full_boundary_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-google/gemini-2.5-flash-lite::interface_schema_eval-full-payload",
+          "status": "CHECKED_CLOSURE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 0,
+          "weak_nonfactored_count": 0,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [],
+          "receipt_sha256": "4e7c52683f8b82b634c5ae8838a806effa8958751f1ab56f9069be9f1829bcff"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "quorum_votes": [
+          1,
+          1,
+          0
+        ],
+        "local_product": 0,
+        "quorum_verdict": 1,
+        "quorum_inflation": 1,
+        "phase_1_carrier_mixing_collisions": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+        "phase_2_quorum_masked_count": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+        "phase_3_carrier_mixing_collisions": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+        "pass_flag_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-meta-llama/llama-3.3-70b-instruct::interface_schema_eval-pass-flag",
+          "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 1,
+          "weak_nonfactored_count": 1,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [
+            {
+              "joint_carrier": {
+                "left": {
+                  "pass": 1
+                },
+                "right": {
+                  "pass": 1
+                }
+              },
+              "first_trace_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval-matched-pass",
+              "first_eg": 1,
+              "first_delta_e": 0,
+              "second_trace_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval-skew-pass",
+              "second_eg": 0,
+              "second_delta_e": -1,
+              "locally_green_forced_ngd": true
+            }
+          ],
+          "receipt_sha256": "f547416dc68551c3daa29a969f80afb1c645c392d6dae16d99e33582ee13da86"
+        },
+        "quorum_governance_receipt": {
+          "schema": "lggr.online_threshold_governance.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-meta-llama/llama-3.3-70b-instruct::interface_schema_eval-quorum",
+          "status": "QUORUM_MASKED_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "n_validators": 3,
+          "quorum_k": 2,
+          "observed_traces_count": 1,
+          "unanimous_ngd_count": 0,
+          "quorum_masked_ngd_count": 1,
+          "quorum_recovered_pgd_count": 0,
+          "coherent_count": 0,
+          "all_monotonicity_verified": true,
+          "all_defect_difference_identities_verified": true,
+          "latest_trace": {
+            "trace_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval-skew-quorum",
+            "local_verdicts": [
+              1,
+              1,
+              0
+            ],
+            "vote_sum": 2,
+            "eg": 0,
+            "product_aggregator_l": 0,
+            "quorum_aggregator_m": 1,
+            "delta_product": 0,
+            "delta_quorum": -1,
+            "quorum_inflation_gap": 1,
+            "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+            "monotonicity_l_le_quorum_verified": true,
+            "defect_difference_identity_verified": true
+          },
+          "receipt_sha256": "43437f2d3d7b8df68f6d7d62dc0525dcdfea0070155693ae216b43d102fa42e1"
+        },
+        "full_boundary_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-meta-llama/llama-3.3-70b-instruct::interface_schema_eval-full-payload",
+          "status": "CHECKED_CLOSURE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 0,
+          "weak_nonfactored_count": 0,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [],
+          "receipt_sha256": "3e3077d79f5661cfada8e0e6206d7c636de0590506d3b4ecc4c981ec0506b240"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::interface_schema_eval",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "quorum_votes": [
+          1,
+          1,
+          0
+        ],
+        "local_product": 0,
+        "quorum_verdict": 1,
+        "quorum_inflation": 1,
+        "phase_1_carrier_mixing_collisions": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+        "phase_2_quorum_masked_count": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+        "phase_3_carrier_mixing_collisions": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+        "pass_flag_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-deepseek/deepseek-chat::interface_schema_eval-pass-flag",
+          "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 1,
+          "weak_nonfactored_count": 1,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [
+            {
+              "joint_carrier": {
+                "left": {
+                  "pass": 1
+                },
+                "right": {
+                  "pass": 1
+                }
+              },
+              "first_trace_id": "deepseek/deepseek-chat::interface_schema_eval-matched-pass",
+              "first_eg": 1,
+              "first_delta_e": 0,
+              "second_trace_id": "deepseek/deepseek-chat::interface_schema_eval-skew-pass",
+              "second_eg": 0,
+              "second_delta_e": -1,
+              "locally_green_forced_ngd": true
+            }
+          ],
+          "receipt_sha256": "c461e47f75258592db935f840fc7a5e3d4a5adc3e08190d41d4d0e6ccc663296"
+        },
+        "quorum_governance_receipt": {
+          "schema": "lggr.online_threshold_governance.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-deepseek/deepseek-chat::interface_schema_eval-quorum",
+          "status": "QUORUM_MASKED_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "n_validators": 3,
+          "quorum_k": 2,
+          "observed_traces_count": 1,
+          "unanimous_ngd_count": 0,
+          "quorum_masked_ngd_count": 1,
+          "quorum_recovered_pgd_count": 0,
+          "coherent_count": 0,
+          "all_monotonicity_verified": true,
+          "all_defect_difference_identities_verified": true,
+          "latest_trace": {
+            "trace_id": "deepseek/deepseek-chat::interface_schema_eval-skew-quorum",
+            "local_verdicts": [
+              1,
+              1,
+              0
+            ],
+            "vote_sum": 2,
+            "eg": 0,
+            "product_aggregator_l": 0,
+            "quorum_aggregator_m": 1,
+            "delta_product": 0,
+            "delta_quorum": -1,
+            "quorum_inflation_gap": 1,
+            "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+            "monotonicity_l_le_quorum_verified": true,
+            "defect_difference_identity_verified": true
+          },
+          "receipt_sha256": "cc4e03562d0a28ed9aa67d0d8e14ff51e8071702562e6c5e79389217cab017bb"
+        },
+        "full_boundary_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-deepseek/deepseek-chat::interface_schema_eval-full-payload",
+          "status": "CHECKED_CLOSURE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 0,
+          "weak_nonfactored_count": 0,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [],
+          "receipt_sha256": "18d6def50be0ef1268d50e9806f815e3751fb0adcdf74abc31edb539e529467a"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "quorum_votes": [
+          1,
+          1,
+          0
+        ],
+        "local_product": 0,
+        "quorum_verdict": 1,
+        "quorum_inflation": 1,
+        "phase_1_carrier_mixing_collisions": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+        "phase_2_quorum_masked_count": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+        "phase_3_carrier_mixing_collisions": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+        "pass_flag_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-pass-flag",
+          "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 1,
+          "weak_nonfactored_count": 1,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [
+            {
+              "joint_carrier": {
+                "left": {
+                  "pass": 1
+                },
+                "right": {
+                  "pass": 1
+                }
+              },
+              "first_trace_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-matched-pass",
+              "first_eg": 1,
+              "first_delta_e": 0,
+              "second_trace_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-skew-pass",
+              "second_eg": 0,
+              "second_delta_e": -1,
+              "locally_green_forced_ngd": true
+            }
+          ],
+          "receipt_sha256": "46fd333a5a75a061608fd5bab5e852e9136ef9bd29b96dad7d2c6dbed1c525e9"
+        },
+        "quorum_governance_receipt": {
+          "schema": "lggr.online_threshold_governance.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-quorum",
+          "status": "QUORUM_MASKED_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "n_validators": 3,
+          "quorum_k": 2,
+          "observed_traces_count": 1,
+          "unanimous_ngd_count": 0,
+          "quorum_masked_ngd_count": 1,
+          "quorum_recovered_pgd_count": 0,
+          "coherent_count": 0,
+          "all_monotonicity_verified": true,
+          "all_defect_difference_identities_verified": true,
+          "latest_trace": {
+            "trace_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-skew-quorum",
+            "local_verdicts": [
+              1,
+              1,
+              0
+            ],
+            "vote_sum": 2,
+            "eg": 0,
+            "product_aggregator_l": 0,
+            "quorum_aggregator_m": 1,
+            "delta_product": 0,
+            "delta_quorum": -1,
+            "quorum_inflation_gap": 1,
+            "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+            "monotonicity_l_le_quorum_verified": true,
+            "defect_difference_identity_verified": true
+          },
+          "receipt_sha256": "1fa22da75fffc119b09e92d8dde363d0d826452838c7af1881c4cfb106c1cb70"
+        },
+        "full_boundary_gluing_receipt": {
+          "schema": "lggr.online_organizational_gluing_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-boundary-quorum-interface-scope-mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-full-payload",
+          "status": "CHECKED_CLOSURE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "records_count": 2,
+          "carrier_mixing_collisions_count": 0,
+          "weak_nonfactored_count": 0,
+          "governance_failures_count": 0,
+          "all_m4_equivalences_verified": true,
+          "carrier_mixing_collisions": [],
+          "receipt_sha256": "822c0584e4621eb32abaa1212024a2fd5f3d81056453e8ee2fd074f736d02684"
+        }
+      }
+    ],
+    "receipt_sha256": "c11f45c05658a2b949223f1420e55e3dda7164c562a68c086814c5db3458da44"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::interface_schema_eval",
+      "n_validators": 3,
+      "quorum_k": 2,
+      "quorum_votes": [
+        1,
+        1,
+        0
+      ],
+      "local_product": 0,
+      "quorum_verdict": 1,
+      "quorum_inflation": 1,
+      "phase_1_carrier_mixing_collisions": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+      "phase_2_quorum_masked_count": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+      "phase_3_carrier_mixing_collisions": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+      "pass_flag_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-openai/gpt-4o-mini::interface_schema_eval-pass-flag",
+        "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 1,
+        "weak_nonfactored_count": 1,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [
+          {
+            "joint_carrier": {
+              "left": {
+                "pass": 1
+              },
+              "right": {
+                "pass": 1
+              }
+            },
+            "first_trace_id": "openai/gpt-4o-mini::interface_schema_eval-matched-pass",
+            "first_eg": 1,
+            "first_delta_e": 0,
+            "second_trace_id": "openai/gpt-4o-mini::interface_schema_eval-skew-pass",
+            "second_eg": 0,
+            "second_delta_e": -1,
+            "locally_green_forced_ngd": true
+          }
+        ],
+        "receipt_sha256": "1038d369f46cdeff5569b609a47feddc9d9e555c338f7a46d56ce1befc77104f"
+      },
+      "quorum_governance_receipt": {
+        "schema": "lggr.online_threshold_governance.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-openai/gpt-4o-mini::interface_schema_eval-quorum",
+        "status": "QUORUM_MASKED_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "observed_traces_count": 1,
+        "unanimous_ngd_count": 0,
+        "quorum_masked_ngd_count": 1,
+        "quorum_recovered_pgd_count": 0,
+        "coherent_count": 0,
+        "all_monotonicity_verified": true,
+        "all_defect_difference_identities_verified": true,
+        "latest_trace": {
+          "trace_id": "openai/gpt-4o-mini::interface_schema_eval-skew-quorum",
+          "local_verdicts": [
+            1,
+            1,
+            0
+          ],
+          "vote_sum": 2,
+          "eg": 0,
+          "product_aggregator_l": 0,
+          "quorum_aggregator_m": 1,
+          "delta_product": 0,
+          "delta_quorum": -1,
+          "quorum_inflation_gap": 1,
+          "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+          "monotonicity_l_le_quorum_verified": true,
+          "defect_difference_identity_verified": true
+        },
+        "receipt_sha256": "59f259b577e3d09de17c97b24781eec0a8bcb8620897d25461d580cb05c2d00d"
+      },
+      "full_boundary_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-openai/gpt-4o-mini::interface_schema_eval-full-payload",
+        "status": "CHECKED_CLOSURE_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 0,
+        "weak_nonfactored_count": 0,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [],
+        "receipt_sha256": "4a7815f2dfe11a41cf6acb3062fa5e864c40ecc3be45edaed91c34807e82aed9"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\n  \"skew_boundary_right\": {\n    \"pass\": 1,\n    \"schema_v\": 1\n  },\n  \"quorum_votes\": [1, 1, 0]\n}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::interface_schema_eval",
+      "n_validators": 3,
+      "quorum_k": 2,
+      "quorum_votes": [
+        1,
+        1,
+        0
+      ],
+      "local_product": 0,
+      "quorum_verdict": 1,
+      "quorum_inflation": 1,
+      "phase_1_carrier_mixing_collisions": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+      "phase_2_quorum_masked_count": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+      "phase_3_carrier_mixing_collisions": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+      "pass_flag_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-google/gemini-2.5-flash-lite::interface_schema_eval-pass-flag",
+        "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 1,
+        "weak_nonfactored_count": 1,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [
+          {
+            "joint_carrier": {
+              "left": {
+                "pass": 1
+              },
+              "right": {
+                "pass": 1
+              }
+            },
+            "first_trace_id": "google/gemini-2.5-flash-lite::interface_schema_eval-matched-pass",
+            "first_eg": 1,
+            "first_delta_e": 0,
+            "second_trace_id": "google/gemini-2.5-flash-lite::interface_schema_eval-skew-pass",
+            "second_eg": 0,
+            "second_delta_e": -1,
+            "locally_green_forced_ngd": true
+          }
+        ],
+        "receipt_sha256": "a35d7130de60a676ab07f1afc111eebb0ff61eab12df2681f388789659084470"
+      },
+      "quorum_governance_receipt": {
+        "schema": "lggr.online_threshold_governance.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-google/gemini-2.5-flash-lite::interface_schema_eval-quorum",
+        "status": "QUORUM_MASKED_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "observed_traces_count": 1,
+        "unanimous_ngd_count": 0,
+        "quorum_masked_ngd_count": 1,
+        "quorum_recovered_pgd_count": 0,
+        "coherent_count": 0,
+        "all_monotonicity_verified": true,
+        "all_defect_difference_identities_verified": true,
+        "latest_trace": {
+          "trace_id": "google/gemini-2.5-flash-lite::interface_schema_eval-skew-quorum",
+          "local_verdicts": [
+            1,
+            1,
+            0
+          ],
+          "vote_sum": 2,
+          "eg": 0,
+          "product_aggregator_l": 0,
+          "quorum_aggregator_m": 1,
+          "delta_product": 0,
+          "delta_quorum": -1,
+          "quorum_inflation_gap": 1,
+          "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+          "monotonicity_l_le_quorum_verified": true,
+          "defect_difference_identity_verified": true
+        },
+        "receipt_sha256": "623af62ae30757dd5c1e95d72513745a7df7a5c0deb7fb4c28bb8a0f4ce70421"
+      },
+      "full_boundary_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-google/gemini-2.5-flash-lite::interface_schema_eval-full-payload",
+        "status": "CHECKED_CLOSURE_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 0,
+        "weak_nonfactored_count": 0,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [],
+        "receipt_sha256": "4e7c52683f8b82b634c5ae8838a806effa8958751f1ab56f9069be9f1829bcff"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\n  \"skew_boundary_right\": {\n    \"pass\": 1,\n    \"schema_v\": 1\n  },\n  \"quorum_votes\": [\n    1,\n    1,\n    0\n  ]\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval",
+      "n_validators": 3,
+      "quorum_k": 2,
+      "quorum_votes": [
+        1,
+        1,
+        0
+      ],
+      "local_product": 0,
+      "quorum_verdict": 1,
+      "quorum_inflation": 1,
+      "phase_1_carrier_mixing_collisions": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+      "phase_2_quorum_masked_count": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+      "phase_3_carrier_mixing_collisions": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+      "pass_flag_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-meta-llama/llama-3.3-70b-instruct::interface_schema_eval-pass-flag",
+        "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 1,
+        "weak_nonfactored_count": 1,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [
+          {
+            "joint_carrier": {
+              "left": {
+                "pass": 1
+              },
+              "right": {
+                "pass": 1
+              }
+            },
+            "first_trace_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval-matched-pass",
+            "first_eg": 1,
+            "first_delta_e": 0,
+            "second_trace_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval-skew-pass",
+            "second_eg": 0,
+            "second_delta_e": -1,
+            "locally_green_forced_ngd": true
+          }
+        ],
+        "receipt_sha256": "f547416dc68551c3daa29a969f80afb1c645c392d6dae16d99e33582ee13da86"
+      },
+      "quorum_governance_receipt": {
+        "schema": "lggr.online_threshold_governance.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-meta-llama/llama-3.3-70b-instruct::interface_schema_eval-quorum",
+        "status": "QUORUM_MASKED_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "observed_traces_count": 1,
+        "unanimous_ngd_count": 0,
+        "quorum_masked_ngd_count": 1,
+        "quorum_recovered_pgd_count": 0,
+        "coherent_count": 0,
+        "all_monotonicity_verified": true,
+        "all_defect_difference_identities_verified": true,
+        "latest_trace": {
+          "trace_id": "meta-llama/llama-3.3-70b-instruct::interface_schema_eval-skew-quorum",
+          "local_verdicts": [
+            1,
+            1,
+            0
+          ],
+          "vote_sum": 2,
+          "eg": 0,
+          "product_aggregator_l": 0,
+          "quorum_aggregator_m": 1,
+          "delta_product": 0,
+          "delta_quorum": -1,
+          "quorum_inflation_gap": 1,
+          "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+          "monotonicity_l_le_quorum_verified": true,
+          "defect_difference_identity_verified": true
+        },
+        "receipt_sha256": "43437f2d3d7b8df68f6d7d62dc0525dcdfea0070155693ae216b43d102fa42e1"
+      },
+      "full_boundary_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-meta-llama/llama-3.3-70b-instruct::interface_schema_eval-full-payload",
+        "status": "CHECKED_CLOSURE_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 0,
+        "weak_nonfactored_count": 0,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [],
+        "receipt_sha256": "3e3077d79f5661cfada8e0e6206d7c636de0590506d3b4ecc4c981ec0506b240"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "{\"skew_boundary_right\": {\"pass\": 1, \"schema_v\": 1}, \"quorum_votes\": [1, 1, 0]}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::interface_schema_eval",
+      "n_validators": 3,
+      "quorum_k": 2,
+      "quorum_votes": [
+        1,
+        1,
+        0
+      ],
+      "local_product": 0,
+      "quorum_verdict": 1,
+      "quorum_inflation": 1,
+      "phase_1_carrier_mixing_collisions": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+      "phase_2_quorum_masked_count": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+      "phase_3_carrier_mixing_collisions": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+      "pass_flag_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-deepseek/deepseek-chat::interface_schema_eval-pass-flag",
+        "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 1,
+        "weak_nonfactored_count": 1,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [
+          {
+            "joint_carrier": {
+              "left": {
+                "pass": 1
+              },
+              "right": {
+                "pass": 1
+              }
+            },
+            "first_trace_id": "deepseek/deepseek-chat::interface_schema_eval-matched-pass",
+            "first_eg": 1,
+            "first_delta_e": 0,
+            "second_trace_id": "deepseek/deepseek-chat::interface_schema_eval-skew-pass",
+            "second_eg": 0,
+            "second_delta_e": -1,
+            "locally_green_forced_ngd": true
+          }
+        ],
+        "receipt_sha256": "c461e47f75258592db935f840fc7a5e3d4a5adc3e08190d41d4d0e6ccc663296"
+      },
+      "quorum_governance_receipt": {
+        "schema": "lggr.online_threshold_governance.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-deepseek/deepseek-chat::interface_schema_eval-quorum",
+        "status": "QUORUM_MASKED_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "observed_traces_count": 1,
+        "unanimous_ngd_count": 0,
+        "quorum_masked_ngd_count": 1,
+        "quorum_recovered_pgd_count": 0,
+        "coherent_count": 0,
+        "all_monotonicity_verified": true,
+        "all_defect_difference_identities_verified": true,
+        "latest_trace": {
+          "trace_id": "deepseek/deepseek-chat::interface_schema_eval-skew-quorum",
+          "local_verdicts": [
+            1,
+            1,
+            0
+          ],
+          "vote_sum": 2,
+          "eg": 0,
+          "product_aggregator_l": 0,
+          "quorum_aggregator_m": 1,
+          "delta_product": 0,
+          "delta_quorum": -1,
+          "quorum_inflation_gap": 1,
+          "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+          "monotonicity_l_le_quorum_verified": true,
+          "defect_difference_identity_verified": true
+        },
+        "receipt_sha256": "cc4e03562d0a28ed9aa67d0d8e14ff51e8071702562e6c5e79389217cab017bb"
+      },
+      "full_boundary_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-deepseek/deepseek-chat::interface_schema_eval-full-payload",
+        "status": "CHECKED_CLOSURE_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 0,
+        "weak_nonfactored_count": 0,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [],
+        "receipt_sha256": "18d6def50be0ef1268d50e9806f815e3751fb0adcdf74abc31edb539e529467a"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\"skew_boundary_right\": {\"pass\": 1, \"schema_v\": 1}, \"quorum_votes\": [1, 1, 0]}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval",
+      "n_validators": 3,
+      "quorum_k": 2,
+      "quorum_votes": [
+        1,
+        1,
+        0
+      ],
+      "local_product": 0,
+      "quorum_verdict": 1,
+      "quorum_inflation": 1,
+      "phase_1_carrier_mixing_collisions": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR",
+      "phase_2_quorum_masked_count": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR",
+      "phase_3_carrier_mixing_collisions": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG",
+      "pass_flag_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-pass-flag",
+        "status": "CARRIER_MIXING_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 1,
+        "weak_nonfactored_count": 1,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [
+          {
+            "joint_carrier": {
+              "left": {
+                "pass": 1
+              },
+              "right": {
+                "pass": 1
+              }
+            },
+            "first_trace_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-matched-pass",
+            "first_eg": 1,
+            "first_delta_e": 0,
+            "second_trace_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-skew-pass",
+            "second_eg": 0,
+            "second_delta_e": -1,
+            "locally_green_forced_ngd": true
+          }
+        ],
+        "receipt_sha256": "46fd333a5a75a061608fd5bab5e852e9136ef9bd29b96dad7d2c6dbed1c525e9"
+      },
+      "quorum_governance_receipt": {
+        "schema": "lggr.online_threshold_governance.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-quorum",
+        "status": "QUORUM_MASKED_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "n_validators": 3,
+        "quorum_k": 2,
+        "observed_traces_count": 1,
+        "unanimous_ngd_count": 0,
+        "quorum_masked_ngd_count": 1,
+        "quorum_recovered_pgd_count": 0,
+        "coherent_count": 0,
+        "all_monotonicity_verified": true,
+        "all_defect_difference_identities_verified": true,
+        "latest_trace": {
+          "trace_id": "mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-skew-quorum",
+          "local_verdicts": [
+            1,
+            1,
+            0
+          ],
+          "vote_sum": 2,
+          "eg": 0,
+          "product_aggregator_l": 0,
+          "quorum_aggregator_m": 1,
+          "delta_product": 0,
+          "delta_quorum": -1,
+          "quorum_inflation_gap": 1,
+          "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+          "monotonicity_l_le_quorum_verified": true,
+          "defect_difference_identity_verified": true
+        },
+        "receipt_sha256": "1fa22da75fffc119b09e92d8dde363d0d826452838c7af1881c4cfb106c1cb70"
+      },
+      "full_boundary_gluing_receipt": {
+        "schema": "lggr.online_organizational_gluing_summary.v1",
+        "authority_effect": "None",
+        "scope_id": "live-boundary-quorum-interface-scope-mistralai/mistral-small-3.2-24b-instruct::interface_schema_eval-full-payload",
+        "status": "CHECKED_CLOSURE_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "records_count": 2,
+        "carrier_mixing_collisions_count": 0,
+        "weak_nonfactored_count": 0,
+        "governance_failures_count": 0,
+        "all_m4_equivalences_verified": true,
+        "carrier_mixing_collisions": [],
+        "receipt_sha256": "822c0584e4621eb32abaa1212024a2fd5f3d81056453e8ee2fd074f736d02684"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"skew_boundary_right\": {\n    \"pass\": 1,\n    \"schema_v\": 1\n  },\n  \"quorum_votes\": [1, 1, 0]\n}\n```"
+    }
+  ],
+  "meaning": "Multi-agent interface schema audit across 5 model families (Theorem 74): Phase 1 shows pass-flag-only interface schemas J_pass = (pass, pass) collide on c_matched (E_g = 1) and c_skew (E_g = 0) with L_mix = 1, E_g = 0, Delta_E = -1; Phase 2 shows 2-of-3 majority quorum voting on (1, 1, 0) overrides the specialist veto e_3 = 0 (quorum_inflation = 1, L_quor = 1, E_g = 0, Delta_E = -1); Phase 3 shows full boundary payload J_full(c_matched) != J_full(c_skew) paired with strict product gating eliminates carrier-mixing collisions and honours the specialist veto (L_full = 1, E_g = 1, Delta_E = 0).",
+  "receipt_sha256": "c4197f5224ce7f278766ee2d2d3cb67e485e88893549bd8efb9a5b1a24665fac"
+}

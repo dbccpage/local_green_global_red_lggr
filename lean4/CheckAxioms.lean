@@ -90,3 +90,4 @@ import LggrVIII
 #print axioms LggrVIII.multi_turn_pairwise_transcript_contextuality_and_reconciliation
 #print axioms LggrVIII.disagreement_preserving_side_channel_council_vs_collapsing_consensus
 #print axioms LggrVIII.bounded_depth_k_induction_tower_and_carrier_completion
+#print axioms LggrVIII.boundary_mixing_and_quorum_masking_interface_schema_audit

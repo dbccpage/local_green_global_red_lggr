@@ -27,6 +27,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingBellPolytopeMonitor,
+    StreamingBoundaryQuorumInterfaceMonitor,
     StreamingBoundedDepthKInductionMonitor,
     StreamingCPTPTraceMonitor,
     StreamingCatalystDegradationMonitor,
@@ -3997,6 +3998,51 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["out_of_carrier_coherence_rate"], "0")
         self.assertEqual(receipt["reachable_carrier_coherence_rate"], "1")
         self.assertEqual(receipt["reachable_carrier_coherence_gain"], "1")
+
+    def test_boundary_mixing_and_quorum_masking_interface_schema_audit(self) -> None:
+        """Verify Theorem 74: pass-flag carrier mixing and 2-of-3 quorum masking vs. full boundary payload and strict product."""
+        mon = StreamingBoundaryQuorumInterfaceMonitor(
+            n_validators=3,
+            quorum_k=2,
+            scope_id="unit-boundary-quorum-interface-scope",
+        )
+        obs = mon.evaluate_interface_schema(
+            evaluation_id="iface-eval-01",
+            matched_boundary_left={"pass": 1, "schema_v": 2},
+            matched_boundary_right={"pass": 1, "schema_v": 2},
+            skew_boundary_left={"pass": 1, "schema_v": 2},
+            skew_boundary_right={"pass": 1, "schema_v": 1},
+            quorum_votes=(1, 1, 0),
+            eg_matched=1,
+            eg_skew=0,
+        )
+        self.assertEqual(obs["local_product"], 0)
+        self.assertEqual(obs["quorum_verdict"], 1)
+        self.assertEqual(obs["quorum_inflation"], 1)
+        self.assertEqual(obs["phase_1_carrier_mixing_collisions"], 1)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "PASS_FLAG_CARRIER_MIXING_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_2_quorum_masked_count"], 1)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "QUORUM_MASKED_VETO_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_3_carrier_mixing_collisions"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["pass_quorum_coherence_rate"], "0")
+        self.assertEqual(receipt["full_product_coherence_rate"], "1")
+        self.assertEqual(receipt["interface_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
