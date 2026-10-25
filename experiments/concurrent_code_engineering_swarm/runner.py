@@ -24,8 +24,21 @@ from experiments.live_five_agent_swarm.client import (
     reservation,
     response_message,
 )
-from lggr.streaming import StreamingCodebaseInterfaceMergeMonitor
-from .domain import CODE_SWARM_MODELS, WORKER_MODULES, CodeWorkspace, fixture
+from lggr.streaming import (
+    StreamingCodebaseInterfaceMergeMonitor,
+    StreamingDiamondCodebasePullbackMonitor,
+)
+from .domain import (
+    CODE_SWARM_MODELS,
+    DIAMOND_SWARM_MODELS,
+    DIAMOND_WORKER_MODULES,
+    DIAMOND_WORKTREE_BRANCHES,
+    WORKER_MODULES,
+    CodeWorkspace,
+    DiamondCodeWorkspace,
+    diamond_fixture,
+    fixture,
+)
 
 CODE_SWARM_TOOLS: list[dict[str, Any]] = [
     {
@@ -135,32 +148,40 @@ class CodeBatchClient:
 
     def send(self, payload: dict[str, Any]) -> dict[str, Any]:
         started = time.monotonic_ns()
-        req = urllib.request.Request(
-            "https://openrouter.ai/api/v1/chat/completions",
-            data=json.dumps(payload).encode(),
-            headers={
-                "Authorization": "Bearer " + str(self.key),
-                "Content-Type": "application/json",
-            },
-            method="POST",
-        )
-        try:
-            with open_private(req, timeout=60) as stream:
-                body = stream.read().decode("utf-8")
+        result: dict[str, Any] = {"error": "uninitialized"}
+        for attempt in range(6):
+            req = urllib.request.Request(
+                "https://openrouter.ai/api/v1/chat/completions",
+                data=json.dumps(payload).encode(),
+                headers={
+                    "Authorization": "Bearer " + str(self.key),
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
             try:
-                result: dict[str, Any] = {"response": json.loads(body)}
-            except ValueError:
-                result = {"error": "invalid_json", "response_text": body}
-        except Exception as error:
-            result = {"error": type(error).__name__, "http_status": getattr(error, "code", None)}
-            if isinstance(error, urllib.error.HTTPError):
-                error.close()
+                with open_private(req, timeout=60) as stream:
+                    body = stream.read().decode("utf-8")
+                try:
+                    result = {"response": json.loads(body)}
+                except ValueError:
+                    result = {"error": "invalid_json", "response_text": body}
+                break
+            except Exception as error:
+                code = getattr(error, "code", None)
+                result = {"error": type(error).__name__, "http_status": code}
+                if isinstance(error, urllib.error.HTTPError):
+                    error.close()
+                if code in (429, 502, 503) and attempt < 5:
+                    time.sleep(3.0 * (attempt + 1))
+                    continue
+                break
         return {**result, "started_ns": started, "finished_ns": time.monotonic_ns()}
 
     def batch(self, calls: list[tuple[str, list[dict[str, Any]]]]) -> list[Any]:
         with self.lock:
-            if not 1 <= len(calls) <= 3:
-                raise ValueError("one to three requests per wave required")
+            if not 1 <= len(calls) <= 4:
+                raise ValueError("one to four requests per wave required")
             payloads = [code_request(model, messages) for model, messages in calls]
             reserves = [reservation(p) for p in payloads]
             if self.calls + len(calls) > MAX_CALLS or self.spent + sum(reserves) > self.limit:
@@ -281,13 +302,14 @@ def merge_gate(events: Events, workspace: CodeWorkspace, arm: str, step_tag: str
 
 def agent_session(
     events: Events,
-    workspace: CodeWorkspace,
+    workspace: CodeWorkspace | DiamondCodeWorkspace,
     history: list[dict[str, Any]],
     worker: str,
     feedback: dict[str, Any],
+    models: list[str] = CODE_SWARM_MODELS,
 ):
     idx = int(worker.rsplit("-", 1)[1])
-    model = CODE_SWARM_MODELS[idx]
+    model = models[idx]
     history.append(
         {
             "role": "user",
@@ -356,13 +378,14 @@ def agent_session(
 def round_turns(
     client: CodeBatchClient,
     events: Events,
-    workspace: CodeWorkspace,
+    workspace: CodeWorkspace | DiamondCodeWorkspace,
     histories: dict[str, list[dict[str, Any]]],
     workers: list[str],
     per_worker_feedback: dict[str, dict[str, Any]],
+    models: list[str] = CODE_SWARM_MODELS,
 ) -> int:
     generators = {
-        w: agent_session(events, workspace, histories[w], w, per_worker_feedback[w])
+        w: agent_session(events, workspace, histories[w], w, per_worker_feedback[w], models=models)
         for w in workers
     }
     pending: dict[str, Any] = {}
@@ -382,6 +405,167 @@ def round_turns(
                 escalations += int(bool(stop.value))
         pending = following
     return escalations
+
+
+def diamond_system_prompt(worker: str) -> str:
+    module_name = DIAMOND_WORKER_MODULES[worker]
+    branch_name = DIAMOND_WORKTREE_BRANCHES[worker]
+    return (
+        f"You are software engineering agent {worker}, owner of Python module `{module_name}.py` "
+        f"on isolated git worktree branch `{branch_name}` in a 4-module diamond-dependency settlement "
+        "codebase (`quote_anchor` A -> `tax_branch` B, `quote_anchor` A -> `fee_branch` C, "
+        "and B, C -> `diamond_aggregator` D). "
+        "Always call `inspect_workspace` first. "
+        "ONLY call `escalate` if `infeasible_constraint` in `inspect_workspace` is non-null. "
+        "Otherwise, NEVER call `escalate`: always call `submit_module_patch` with the complete Python "
+        "source code for your module (if your module needs no change or your role directive says "
+        "`HOLD_CANONICAL_INTERFACE`, submit your existing `source_code` unchanged via `submit_module_patch`)."
+    )
+
+
+def diamond_merge_gate(
+    events: Events, workspace: DiamondCodeWorkspace, arm: str, step_tag: str
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    monitor = StreamingDiamondCodebasePullbackMonitor(
+        scope_id=f"diamond-code-swarm-gate-{arm}-{step_tag}"
+    )
+    eval_rec = monitor.evaluate_diamond_codebase_merge(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=workspace.local_verdicts(),
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    full_receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "status": eval_rec["status"],
+            "in_pullback_square": eval_rec["in_pullback_square"],
+            "interface_fiber_size": eval_rec["interface_fiber_size"],
+            "interface_uniquely_identifies_pair": eval_rec["interface_uniquely_identifies_pair"],
+            "universal_cone_mediator": eval_rec["universal_cone_mediator"],
+            "contract_mismatches": eval_rec["contract_mismatches"],
+            "conservation_defects": eval_rec["conservation_defects"],
+            "host_lggr_receipt_sha256": full_receipt["receipt_sha256"],
+            "host_lggr_receipt": full_receipt,
+        },
+    )
+    return eval_rec, full_receipt
+
+
+def diamond_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = ["worker-0", "worker-1", "worker-2", "worker-3"]
+    for seed in config["seeds"]:
+        base_state = diamond_fixture(seed)
+        events.emit(
+            "case_start",
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "worktree_branches": base_state["worktree_branches"],
+                "fixture": base_state,
+            },
+        )
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = DiamondCodeWorkspace(base_state)
+            histories = {w: [{"role": "system", "content": diamond_system_prompt(w)}] for w in workers}
+            events.emit("arm_start", {"seed": seed, "arm": arm, "kind": base_state["kind"]})
+            start_calls = client.calls
+            start_cost = client.spent
+            escalations = 0
+            waves_run = 0
+            eval_rec, _ = diamond_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+            feasible_case = base_state["infeasible_constraint"] is None
+
+            for wave_idx in range(1, 3):
+                if eval_rec["global_green"] == 1 or (not feasible_case and escalations > 0):
+                    break
+                waves_run += 1
+                per_worker_fb: dict[str, dict[str, Any]] = {}
+                for w in workers:
+                    if arm == "A":
+                        per_worker_fb[w] = {
+                            "arm": "A_generic_ci_red",
+                            "worktree_branch": DIAMOND_WORKTREE_BRANCHES[w],
+                            "message": (
+                                "Diamond worktree merge integration failed across A -> (B, C) -> D. "
+                                "Inspect your workspace and submit a module patch or escalate if infeasible."
+                            ),
+                        }
+                    elif arm == "B":
+                        per_worker_fb[w] = {
+                            "arm": "B_sequential_branch_traceback",
+                            "worktree_branch": DIAMOND_WORKTREE_BRANCHES[w],
+                            "first_sequential_traceback": eval_rec["integration_trace"].get(
+                                "first_sequential_traceback"
+                            ),
+                            "infeasible_constraint": base_state["infeasible_constraint"],
+                        }
+                    else:
+                        per_worker_fb[w] = {
+                            "arm": "C_pullback_mediated_lggr_directive",
+                            "worktree_branch": DIAMOND_WORKTREE_BRANCHES[w],
+                            "role_directive": eval_rec["compact_role_directives"][w],
+                        }
+                escalations += round_turns(
+                    client, events, ws, histories, workers, per_worker_fb, models=DIAMOND_SWARM_MODELS
+                )
+                eval_rec, _ = diamond_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+            if eval_rec["global_green"] == 1 and feasible_case:
+                outcome = "completed"
+            elif not feasible_case and escalations > 0 and eval_rec["global_green"] == 0:
+                outcome = "safe_escalated"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_in_pullback_square": eval_rec["in_pullback_square"],
+                "final_interface_fiber_size": eval_rec["interface_fiber_size"],
+                "final_universal_cone_mediator": eval_rec["universal_cone_mediator"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.diamond_code_engineering_swarm.v1",
+        "topology": "diamond",
+        "authority_effect": "None",
+        "worktree_branches": dict(DIAMOND_WORKTREE_BRANCHES),
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 4-agent diamond-dependency Python code-engineering swarm across isolated git worktree "
+            "branches (A -> B, A -> C, B, C -> D) comparing generic CI failure (A), sequential branch traceback (B), "
+            "and pullback-mediated LGGR directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
 
 
 def campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
@@ -485,7 +669,10 @@ def replay(path: str | Path) -> dict[str, Any]:
     events.emit("start", metadata)
     client = CodeBatchClient(events, config["budget_usd"], source=records)
     try:
-        summary = campaign(client, events, config)
+        if config.get("topology") == "diamond":
+            summary = diamond_campaign(client, events, config)
+        else:
+            summary = campaign(client, events, config)
     except RunStopped as error:
         summary = {
             "reason": str(error),
@@ -505,7 +692,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=["live", "replay"])
     parser.add_argument("path")
-    parser.add_argument("--seeds", nargs="+", type=int, default=[6100, 6101, 6102])
+    parser.add_argument("--topology", choices=["linear", "diamond"], default="linear")
+    parser.add_argument("--seeds", nargs="+", type=int, default=None)
     parser.add_argument("--budget", default="0.50")
     args = parser.parse_args()
     target = Path(args.path)
@@ -525,15 +713,29 @@ def main() -> None:
     events_path = target / "events.jsonl"
     if events_path.exists():
         raise ValueError(f"evidence log {events_path} already exists")
-    config = {
-        "seeds": args.seeds,
-        "models": CODE_SWARM_MODELS,
-        "budget_usd": str(args.budget),
-    }
-    events = Events(events_path)
-    events.emit("start", {"config": config})
-    client = CodeBatchClient(events, args.budget)
-    summary = campaign(client, events, config)
+    seeds = args.seeds if args.seeds is not None else ([7200, 7201, 7202] if args.topology == "diamond" else [6100, 6101, 6102])
+    if args.topology == "diamond":
+        config = {
+            "topology": "diamond",
+            "seeds": seeds,
+            "models": DIAMOND_SWARM_MODELS,
+            "worktree_branches": dict(DIAMOND_WORKTREE_BRANCHES),
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = diamond_campaign(client, events, config)
+    else:
+        config = {
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = campaign(client, events, config)
     (target / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(
         json.dumps(

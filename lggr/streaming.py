@@ -16857,6 +16857,958 @@ class StreamingCodebaseInterfaceMergeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDiamondCodebasePullbackMonitor:
+    """Diamond-dependency 4-module codebase (A -> B, A -> C, B, C -> D) pullback-mediator
+    interface synthesis and worktree merge monitor (Theorem 95).
+
+    Combines ``StreamingPullbackSquareMonitor``, ``StreamingPullbackMediatorFactorizationMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across 4 concurrent
+    git worktree branches:
+      - ``worker-0`` (``wt/branch-a-anchor``, module ``quote_anchor``):
+        ``emit_base_quote(items, discount_bps)`` -> ``{'subtotal_cents', 'discount_cents', 'net_cents'}``
+      - ``worker-1`` (``wt/branch-b-tax``, module ``tax_branch``):
+        ``compute_tax_branch(base_quote, tax_bps)`` -> ``{'net_cents', 'tax_cents', 'basis_tag'}``
+      - ``worker-2`` (``wt/branch-c-fee``, module ``fee_branch``):
+        ``compute_fee_branch(base_quote, fee_bps)`` -> ``{'net_cents', 'platform_fee_cents', 'basis_tag'}``
+      - ``worker-3`` (``wt/branch-d-aggregator``, module ``diamond_aggregator``):
+        ``aggregate_diamond_settlement(tax_leg, fee_leg)`` ->
+        ``{'net_cents', 'tax_cents', 'platform_fee_cents', 'gross_cents', 'merchant_payout_cents'}``
+    """
+
+    CANONICAL_DIAMOND_SPEC: dict[str, dict[str, Any]] = {
+        "worker-0": {
+            "worktree_branch": "wt/branch-a-anchor",
+            "module": "quote_anchor",
+            "function": "emit_base_quote",
+            "params": ["items", "discount_bps"],
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+            "priority_rank": 0,
+        },
+        "worker-1": {
+            "worktree_branch": "wt/branch-b-tax",
+            "module": "tax_branch",
+            "function": "compute_tax_branch",
+            "params": ["base_quote", "tax_bps"],
+            "upstream_keys_read": ["net_cents"],
+            "return_keys": ["net_cents", "tax_cents", "basis_tag"],
+            "canonical_basis_tag": "NET_V1",
+            "priority_rank": 1,
+        },
+        "worker-2": {
+            "worktree_branch": "wt/branch-c-fee",
+            "module": "fee_branch",
+            "function": "compute_fee_branch",
+            "params": ["base_quote", "fee_bps"],
+            "upstream_keys_read": ["net_cents"],
+            "return_keys": ["net_cents", "platform_fee_cents", "basis_tag"],
+            "canonical_basis_tag": "NET_V1",
+            "priority_rank": 1,
+        },
+        "worker-3": {
+            "worktree_branch": "wt/branch-d-aggregator",
+            "module": "diamond_aggregator",
+            "function": "aggregate_diamond_settlement",
+            "params": ["tax_leg", "fee_leg"],
+            "upstream_keys_read": ["net_cents", "tax_cents", "platform_fee_cents", "basis_tag"],
+            "return_keys": [
+                "net_cents",
+                "tax_cents",
+                "platform_fee_cents",
+                "gross_cents",
+                "merchant_payout_cents",
+            ],
+            "priority_rank": 2,
+        },
+    }
+
+    REFINED_PULLBACK_F_MAP: dict[str, str] = {
+        "b_net_v1_900": "NET_V1:net_cents:900",
+        "b_branch_alias_900": "ALIAS_NET:branch_net_cents:900",
+        "b_gross_v2_1000": "GROSS_V2:net_cents:1000",
+        "b_exception": "BRANCH_B_EXCEPTION",
+    }
+    REFINED_PULLBACK_G_MAP: dict[str, str] = {
+        "c_net_v1_900": "NET_V1:net_cents:900",
+        "c_branch_alias_900": "ALIAS_NET:branch_net_cents:900",
+        "c_gross_v2_1000": "GROSS_V2:net_cents:1000",
+        "c_exception": "BRANCH_C_EXCEPTION",
+    }
+    COARSE_PULLBACK_F_MAP: dict[str, str] = {
+        "b_net_v1_900": "DICT_RETURNED",
+        "b_gross_v2_1000": "DICT_RETURNED",
+        "b_branch_alias_900": "ALIAS_DICT",
+        "b_exception": "BRANCH_B_EXCEPTION",
+    }
+    COARSE_PULLBACK_G_MAP: dict[str, str] = {
+        "c_net_v1_900": "DICT_RETURNED",
+        "c_gross_v2_1000": "DICT_RETURNED",
+        "c_branch_alias_900": "ALIAS_DICT",
+        "c_exception": "BRANCH_C_EXCEPTION",
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-diamond-codebase-pullback-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.factorization_monitor = StreamingPullbackMediatorFactorizationMonitor(
+            scope_id=f"{self.scope_id}-factorization"
+        )
+        self.evaluations: list[dict[str, Any]] = []
+
+    @classmethod
+    def _classify_tax_branch_state(cls, t_out: dict[str, Any] | None) -> str:
+        if not isinstance(t_out, dict):
+            return "b_exception"
+        if (
+            t_out.get("net_cents") == 900
+            and t_out.get("tax_cents") == 180
+            and t_out.get("basis_tag") == "NET_V1"
+        ):
+            return "b_net_v1_900"
+        if "branch_net_cents" in t_out and "net_cents" not in t_out:
+            return "b_branch_alias_900"
+        if t_out.get("net_cents") == 1000 or t_out.get("basis_tag") == "GROSS_V2":
+            return "b_gross_v2_1000"
+        return "b_branch_alias_900"
+
+    @classmethod
+    def _classify_fee_branch_state(cls, c_out: dict[str, Any] | None) -> str:
+        if not isinstance(c_out, dict):
+            return "c_exception"
+        if (
+            c_out.get("net_cents") == 900
+            and c_out.get("platform_fee_cents") == 27
+            and c_out.get("basis_tag") == "NET_V1"
+        ):
+            return "c_net_v1_900"
+        if (
+            c_out.get("net_cents") == 1000
+            or c_out.get("platform_fee_cents") == 30
+            or c_out.get("basis_tag") == "GROSS_V2"
+        ):
+            return "c_gross_v2_1000"
+        if "branch_net_cents" in c_out and "net_cents" not in c_out:
+            return "c_branch_alias_900"
+        return "c_gross_v2_1000"
+
+    def evaluate_diamond_codebase_merge(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        worktree_branches: Mapping[str, str] | None = None,
+        infeasible_constraint: dict[str, Any] | None = None,
+        use_coarse_interface: bool = False,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit 4-module diamond codebase merge across worktrees using pullback-mediator factorization."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        wt_map = {
+            wid: (
+                worktree_branches.get(wid, spec["worktree_branch"])
+                if isinstance(worktree_branches, Mapping)
+                else spec["worktree_branch"]
+            )
+            for wid, spec in self.CANONICAL_DIAMOND_SPEC.items()
+        }
+
+        ast_reports: dict[str, dict[str, Any]] = {}
+        namespaces: dict[str, dict[str, Any]] = {}
+        contract_mismatches: list[dict[str, Any]] = []
+        conservation_defects: list[dict[str, Any]] = []
+
+        for wid, spec in self.CANONICAL_DIAMOND_SPEC.items():
+            mname = spec["module"]
+            src = sources.get(mname, "")
+            info = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(mname, src)
+            ast_reports[mname] = info
+            if info["syntax_ok"] and info["sandbox_ok"]:
+                try:
+                    namespaces[mname] = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+                        mname, src
+                    )
+                except Exception as exc:
+                    contract_mismatches.append(
+                        {
+                            "worker": wid,
+                            "worktree_branch": wt_map[wid],
+                            "module": mname,
+                            "kind": "MODULE_LOAD_ERROR",
+                            "detail": str(exc),
+                        }
+                    )
+            else:
+                contract_mismatches.append(
+                    {
+                        "worker": wid,
+                        "worktree_branch": wt_map[wid],
+                        "module": mname,
+                        "kind": "AST_OR_SANDBOX_FAILURE",
+                        "detail": info.get("error") or str(info.get("sandbox_violations")),
+                    }
+                )
+
+        if infeasible_constraint is not None:
+            contract_mismatches.append(
+                {
+                    "worker": "all",
+                    "worktree_branch": "all",
+                    "module": "diamond_contract",
+                    "kind": "INFEASIBLE_SPECIFICATION_CONTRADICTION",
+                    "detail": infeasible_constraint,
+                }
+            )
+
+        sample_items = [
+            {"unit_cents": 400, "quantity": 2},
+            {"unit_cents": 200, "quantity": 1},
+        ]
+        canonical_base = {"subtotal_cents": 1000, "discount_cents": 100, "net_cents": 900}
+        canonical_tax_leg = {"net_cents": 900, "tax_cents": 180, "basis_tag": "NET_V1"}
+        canonical_fee_leg = {"net_cents": 900, "platform_fee_cents": 27, "basis_tag": "NET_V1"}
+
+        a_out: dict[str, Any] | None = None
+        b_out: dict[str, Any] | None = None
+        c_out: dict[str, Any] | None = None
+        d_out: dict[str, Any] | None = None
+        first_sequential_traceback: str | None = None
+
+        if len(namespaces) == 4 and infeasible_constraint is None:
+            fn_a = namespaces["quote_anchor"].get("emit_base_quote")
+            fn_b = namespaces["tax_branch"].get("compute_tax_branch")
+            fn_c = namespaces["fee_branch"].get("compute_fee_branch")
+            fn_d = namespaces["diamond_aggregator"].get("aggregate_diamond_settlement")
+
+            # Node A: quote_anchor.emit_base_quote
+            try:
+                a_out = fn_a(sample_items, 1000)
+                for req_k in ("subtotal_cents", "discount_cents", "net_cents"):
+                    if not isinstance(a_out, dict) or req_k not in a_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-0",
+                                "worktree_branch": wt_map["worker-0"],
+                                "module": "quote_anchor",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                                "observed_keys": sorted(a_out.keys()) if isinstance(a_out, dict) else [],
+                                "expected_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+                            }
+                        )
+            except Exception as exc:
+                first_sequential_traceback = f"quote_anchor.emit_base_quote raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-0",
+                        "worktree_branch": wt_map["worker-0"],
+                        "module": "quote_anchor",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": first_sequential_traceback,
+                    }
+                )
+
+            base_for_branches = (
+                a_out
+                if (isinstance(a_out, dict) and all(k in a_out for k in ("subtotal_cents", "discount_cents", "net_cents")))
+                else canonical_base
+            )
+
+            # Branch B (A -> B): tax_branch.compute_tax_branch
+            try:
+                b_out = fn_b(dict(base_for_branches), 2000)
+                for req_k in ("net_cents", "tax_cents", "basis_tag"):
+                    if not isinstance(b_out, dict) or req_k not in b_out:
+                        if first_sequential_traceback is None:
+                            first_sequential_traceback = (
+                                f"KeyError in diamond merge (B -> D): tax_branch output missing required key '{req_k}' "
+                                f"(observed keys: {sorted(b_out.keys()) if isinstance(b_out, dict) else []})"
+                            )
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-1",
+                                "worktree_branch": wt_map["worker-1"],
+                                "module": "tax_branch",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                                "observed_keys": sorted(b_out.keys()) if isinstance(b_out, dict) else [],
+                                "expected_keys": ["net_cents", "tax_cents", "basis_tag"],
+                            }
+                        )
+                if isinstance(b_out, dict) and all(k in b_out for k in ("net_cents", "tax_cents", "basis_tag")):
+                    if b_out["net_cents"] != 900 or b_out["tax_cents"] != 180 or b_out["basis_tag"] != "NET_V1":
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-1",
+                                "worktree_branch": wt_map["worker-1"],
+                                "module": "tax_branch",
+                                "kind": "PULLBACK_BASIS_OR_VALUE_MISMATCH",
+                                "observed_output": b_out,
+                                "expected_output": canonical_tax_leg,
+                            }
+                        )
+            except KeyError as exc:
+                missing_key = exc.args[0] if exc.args else str(exc)
+                if first_sequential_traceback is None:
+                    first_sequential_traceback = (
+                        f"KeyError in tax_branch.compute_tax_branch: '{missing_key}' not in base_quote"
+                    )
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-1",
+                        "worktree_branch": wt_map["worker-1"],
+                        "module": "tax_branch",
+                        "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+                        "missing_key": str(missing_key),
+                        "upstream_module": "quote_anchor",
+                        "canonical_upstream_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+                    }
+                )
+            except Exception as exc:
+                if first_sequential_traceback is None:
+                    first_sequential_traceback = f"tax_branch.compute_tax_branch raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-1",
+                        "worktree_branch": wt_map["worker-1"],
+                        "module": "tax_branch",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": str(exc),
+                    }
+                )
+
+            # Branch C (A -> C): fee_branch.compute_fee_branch (audited in parallel on canonical base_quote!)
+            try:
+                c_out = fn_c(dict(base_for_branches), 300)
+                for req_k in ("net_cents", "platform_fee_cents", "basis_tag"):
+                    if not isinstance(c_out, dict) or req_k not in c_out:
+                        if first_sequential_traceback is None:
+                            first_sequential_traceback = (
+                                f"KeyError in diamond merge (C -> D): fee_branch output missing required key '{req_k}'"
+                            )
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-2",
+                                "worktree_branch": wt_map["worker-2"],
+                                "module": "fee_branch",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                                "observed_keys": sorted(c_out.keys()) if isinstance(c_out, dict) else [],
+                                "expected_keys": ["net_cents", "platform_fee_cents", "basis_tag"],
+                            }
+                        )
+                if isinstance(c_out, dict) and all(k in c_out for k in ("net_cents", "platform_fee_cents", "basis_tag")):
+                    if (
+                        c_out["net_cents"] != 900
+                        or c_out["platform_fee_cents"] != 27
+                        or c_out["basis_tag"] != "NET_V1"
+                    ):
+                        if first_sequential_traceback is None:
+                            first_sequential_traceback = (
+                                f"PullbackMismatchError in fee_branch: observed {c_out} != canonical {canonical_fee_leg}"
+                            )
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-2",
+                                "worktree_branch": wt_map["worker-2"],
+                                "module": "fee_branch",
+                                "kind": "PULLBACK_BASIS_OR_FEE_DRIFT",
+                                "observed_output": c_out,
+                                "expected_output": canonical_fee_leg,
+                                "fee_drift_cents": int(c_out["platform_fee_cents"]) - 27,
+                            }
+                        )
+            except KeyError as exc:
+                missing_key = exc.args[0] if exc.args else str(exc)
+                if first_sequential_traceback is None:
+                    first_sequential_traceback = (
+                        f"KeyError in fee_branch.compute_fee_branch: '{missing_key}' not in base_quote"
+                    )
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-2",
+                        "worktree_branch": wt_map["worker-2"],
+                        "module": "fee_branch",
+                        "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+                        "missing_key": str(missing_key),
+                        "upstream_module": "quote_anchor",
+                        "canonical_upstream_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+                    }
+                )
+            except Exception as exc:
+                if first_sequential_traceback is None:
+                    first_sequential_traceback = f"fee_branch.compute_fee_branch raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-2",
+                        "worktree_branch": wt_map["worker-2"],
+                        "module": "fee_branch",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": str(exc),
+                    }
+                )
+
+            # Aggregator D (B, C -> D): diamond_aggregator.aggregate_diamond_settlement
+            # Audited on canonical mediated legs even if B or C failed!
+            b_leg_for_d = (
+                b_out
+                if (
+                    isinstance(b_out, dict)
+                    and b_out.get("net_cents") == 900
+                    and b_out.get("tax_cents") == 180
+                    and b_out.get("basis_tag") == "NET_V1"
+                )
+                else canonical_tax_leg
+            )
+            c_leg_for_d = (
+                c_out
+                if (
+                    isinstance(c_out, dict)
+                    and c_out.get("net_cents") == 900
+                    and c_out.get("platform_fee_cents") == 27
+                    and c_out.get("basis_tag") == "NET_V1"
+                )
+                else canonical_fee_leg
+            )
+            try:
+                d_out = fn_d(dict(b_leg_for_d), dict(c_leg_for_d))
+                req_d_keys = (
+                    "net_cents",
+                    "tax_cents",
+                    "platform_fee_cents",
+                    "gross_cents",
+                    "merchant_payout_cents",
+                )
+                for req_k in req_d_keys:
+                    if not isinstance(d_out, dict) or req_k not in d_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-3",
+                                "worktree_branch": wt_map["worker-3"],
+                                "module": "diamond_aggregator",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                                "observed_keys": sorted(d_out.keys()) if isinstance(d_out, dict) else [],
+                                "expected_keys": list(req_d_keys),
+                            }
+                        )
+                if isinstance(d_out, dict) and all(k in d_out for k in req_d_keys):
+                    gross_val = int(d_out["gross_cents"])
+                    payout_val = int(d_out["merchant_payout_cents"])
+                    fee_val = int(d_out["platform_fee_cents"])
+                    tax_val = int(d_out["tax_cents"])
+                    net_val = int(d_out["net_cents"])
+                    cons_res = (payout_val + fee_val + tax_val) - gross_val
+                    payout_drift = payout_val - (900 - 27)
+                    gross_drift = gross_val - (900 + 180)
+                    if cons_res != 0 or payout_drift != 0 or gross_drift != 0 or net_val != 900:
+                        if first_sequential_traceback is None:
+                            first_sequential_traceback = (
+                                f"AssertionError in diamond_aggregator: observed {d_out}, "
+                                f"conservation_residual={cons_res}, payout_drift={payout_drift}"
+                            )
+                        conservation_defects.append(
+                            {
+                                "worker": "worker-3",
+                                "worktree_branch": wt_map["worker-3"],
+                                "module": "diamond_aggregator",
+                                "kind": "DIAMOND_CONSERVATION_OR_PAYOUT_DRIFT",
+                                "conservation_residual_cents": cons_res,
+                                "payout_drift_cents": payout_drift,
+                                "gross_drift_cents": gross_drift,
+                                "observed_settlement": d_out,
+                            }
+                        )
+            except Exception as exc:
+                if first_sequential_traceback is None:
+                    first_sequential_traceback = (
+                        f"diamond_aggregator.aggregate_diamond_settlement raised {type(exc).__name__}: {exc}"
+                    )
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-3",
+                        "worktree_branch": wt_map["worker-3"],
+                        "module": "diamond_aggregator",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": str(exc),
+                    }
+                )
+
+        # Evaluate middle-tier worktree pullback square B -> C_interface <- C
+        b_state = self._classify_tax_branch_state(b_out)
+        c_state = self._classify_fee_branch_state(c_out)
+        f_map = self.COARSE_PULLBACK_F_MAP if use_coarse_interface else self.REFINED_PULLBACK_F_MAP
+        g_map = self.COARSE_PULLBACK_G_MAP if use_coarse_interface else self.REFINED_PULLBACK_G_MAP
+        pb_mon = StreamingPullbackSquareMonitor(
+            f_map,
+            g_map,
+            scope_id=f"{self.scope_id}:{eval_id}:pullback",
+        )
+        pb_pair = pb_mon.record_branch_pair(
+            f"{eval_id}_bc_pair",
+            b_state,
+            c_state,
+            local_a_pass=bool(local_test_results.get("tax_branch", False)),
+            local_b_pass=bool(local_test_results.get("fee_branch", False)),
+        )
+        pb_cone = pb_mon.verify_cone_mediator(
+            f"{eval_id}_bc_cone",
+            {"w_diamond": b_state},
+            {"w_diamond": c_state},
+        )
+        pb_receipt = pb_mon.get_receipt()
+
+        # Also record a pullback mediator factorization check
+        fact_rec = self.factorization_monitor.record_factorization_evaluation(
+            f"{eval_id}_factorization",
+            model_id=mid,
+        )
+
+        local_vec = [
+            bool(local_test_results.get("quote_anchor", False)),
+            bool(local_test_results.get("tax_branch", False)),
+            bool(local_test_results.get("fee_branch", False)),
+            bool(local_test_results.get("diamond_aggregator", False)),
+        ]
+        l_green = 1 if all(local_vec) else 0
+        pullback_unique = (
+            bool(pb_pair["in_pullback_square"])
+            and bool(pb_pair["interface_uniquely_identifies_pair"])
+            and bool(pb_cone["mediator_uniqueness_and_projection_verified"])
+            and b_state == "b_net_v1_900"
+            and c_state == "c_net_v1_900"
+        )
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and pullback_unique
+                and not contract_mismatches
+                and not conservation_defects
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {"local_unit_tests": local_vec, "worktree_branches": list(wt_map.values())},
+            {"diamond_pullback_coherent": eg_green == 1},
+        )
+
+        synthesized_contract = {
+            "cospan_shared_interface": "NET_V1:net_cents:900",
+            "universal_cone_mediator": pb_cone["universal_mediator"],
+            "upstream_anchor_contract": {
+                "module": "quote_anchor",
+                "return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+            },
+            "branch_b_tax_contract": {
+                "module": "tax_branch",
+                "read_keys": ["net_cents"],
+                "return_keys": ["net_cents", "tax_cents", "basis_tag"],
+                "basis_tag": "NET_V1",
+            },
+            "branch_c_fee_contract": {
+                "module": "fee_branch",
+                "read_keys": ["net_cents"],
+                "return_keys": ["net_cents", "platform_fee_cents", "basis_tag"],
+                "basis_tag": "NET_V1",
+            },
+            "downstream_aggregator_contract": {
+                "module": "diamond_aggregator",
+                "pullback_assertions": [
+                    "tax_leg['net_cents'] == fee_leg['net_cents']",
+                    "tax_leg['basis_tag'] == fee_leg['basis_tag'] == 'NET_V1'",
+                ],
+                "return_keys": [
+                    "net_cents",
+                    "tax_cents",
+                    "platform_fee_cents",
+                    "gross_cents",
+                    "merchant_payout_cents",
+                ],
+            },
+        }
+
+        role_directives = self._build_diamond_directives(
+            worktree_branches=wt_map,
+            contract_mismatches=contract_mismatches,
+            conservation_defects=conservation_defects,
+            infeasible_constraint=infeasible_constraint,
+            integration_passed=(eg_green == 1),
+        )
+
+        if eg_green == 1:
+            status = "DIAMOND_PULLBACK_CONTRACT_SYNTHESIZED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_DIAMOND_CONTRACT_CONTRADICTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif bool(pb_pair["in_pullback_square"]) and not bool(pb_pair["interface_uniquely_identifies_pair"]):
+            status = "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "worktree_branches": wt_map,
+            "local_unit_test_verdicts": {
+                "quote_anchor": local_vec[0],
+                "tax_branch": local_vec[1],
+                "fee_branch": local_vec[2],
+                "diamond_aggregator": local_vec[3],
+            },
+            "b_branch_state": b_state,
+            "c_branch_state": c_state,
+            "in_pullback_square": bool(pb_pair["in_pullback_square"]),
+            "interface_fiber_size": int(pb_pair["interface_fiber_size"]),
+            "interface_uniquely_identifies_pair": bool(pb_pair["interface_uniquely_identifies_pair"]),
+            "universal_cone_mediator": pb_cone["universal_mediator"],
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "contract_mismatches": contract_mismatches,
+            "conservation_defects": conservation_defects,
+            "synthesized_pullback_contract": synthesized_contract,
+            "compact_role_directives": role_directives,
+            "integration_trace": {
+                "quote_anchor_output": a_out,
+                "tax_branch_output": b_out,
+                "fee_branch_output": c_out,
+                "diamond_aggregator_output": d_out,
+                "first_sequential_traceback": first_sequential_traceback,
+            },
+            "pullback_square_receipt": pb_receipt,
+            "pullback_factorization_evaluation": fact_rec,
+            "ast_reports": ast_reports,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_diamond_directives(
+        cls,
+        *,
+        worktree_branches: Mapping[str, str],
+        contract_mismatches: Sequence[Mapping[str, Any]],
+        conservation_defects: Sequence[Mapping[str, Any]],
+        infeasible_constraint: Mapping[str, Any] | None,
+        integration_passed: bool,
+    ) -> dict[str, dict[str, Any]]:
+        if integration_passed:
+            return {
+                wid: {
+                    "role": "VERIFIED_DIAMOND_MODULE_OWNER",
+                    "worktree_branch": worktree_branches[wid],
+                    "action": "NO_CHANGE_REQUIRED",
+                    "module": spec["module"],
+                }
+                for wid, spec in cls.CANONICAL_DIAMOND_SPEC.items()
+            }
+
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "DIAMOND_CONFLICT_AUDITOR",
+                    "worktree_branch": worktree_branches[wid],
+                    "action": "ESCALATE_INFEASIBLE_CONTRACT",
+                    "module": spec["module"],
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_DIAMOND_SPEC.items()
+            }
+
+        w0_mis = [m for m in contract_mismatches if m.get("worker") == "worker-0"]
+        w1_mis = [m for m in contract_mismatches if m.get("worker") == "worker-1"]
+        w2_mis = [m for m in contract_mismatches if m.get("worker") == "worker-2"]
+        w3_mis = [m for m in contract_mismatches if m.get("worker") == "worker-3"]
+        w3_cons = list(conservation_defects)
+
+        directives: dict[str, dict[str, Any]] = {}
+        directives["worker-0"] = {
+            "role": "DIAMOND_UPSTREAM_ANCHOR_A",
+            "worktree_branch": worktree_branches["worker-0"],
+            "action": "RESTORE_ANCHOR_SCHEMA" if w0_mis else "HOLD_CANONICAL_INTERFACE",
+            "module": "quote_anchor",
+            "required_return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+        }
+        directives["worker-1"] = {
+            "role": "DIAMOND_LEFT_BRANCH_B_TAX",
+            "worktree_branch": worktree_branches["worker-1"],
+            "action": (
+                "SYNTHESIZE_PULLBACK_MEDIATOR_TAX_CONTRACT"
+                if w1_mis
+                else "HOLD_CANONICAL_INTERFACE"
+            ),
+            "module": "tax_branch",
+            "read_from_base_quote": ["net_cents"],
+            "required_return_keys": ["net_cents", "tax_cents", "basis_tag"],
+            "required_basis_tag": "NET_V1",
+            "exact_invariants": [
+                "net = int(base_quote['net_cents'])",
+                "tax = (net * int(tax_bps)) // 10000",
+                "return {'net_cents': net, 'tax_cents': tax, 'basis_tag': 'NET_V1'}",
+            ],
+            "defects": w1_mis,
+        }
+        directives["worker-2"] = {
+            "role": "DIAMOND_RIGHT_BRANCH_C_FEE",
+            "worktree_branch": worktree_branches["worker-2"],
+            "action": (
+                "SYNTHESIZE_PULLBACK_MEDIATOR_FEE_CONTRACT"
+                if w2_mis
+                else "HOLD_CANONICAL_INTERFACE"
+            ),
+            "module": "fee_branch",
+            "read_from_base_quote": ["net_cents"],
+            "required_return_keys": ["net_cents", "platform_fee_cents", "basis_tag"],
+            "required_basis_tag": "NET_V1",
+            "exact_invariants": [
+                "net = int(base_quote['net_cents'])",
+                "fee = (net * int(fee_bps)) // 10000",
+                "return {'net_cents': net, 'platform_fee_cents': fee, 'basis_tag': 'NET_V1'}",
+            ],
+            "defects": w2_mis,
+        }
+        directives["worker-3"] = {
+            "role": "DIAMOND_DOWNSTREAM_AGGREGATOR_D",
+            "worktree_branch": worktree_branches["worker-3"],
+            "action": (
+                "ENFORCE_PULLBACK_MEDIATOR_AND_DIAMOND_CONSERVATION"
+                if (w3_mis or w3_cons)
+                else "HOLD_CANONICAL_INTERFACE"
+            ),
+            "module": "diamond_aggregator",
+            "read_from_legs": ["net_cents", "tax_cents", "platform_fee_cents", "basis_tag"],
+            "required_return_keys": [
+                "net_cents",
+                "tax_cents",
+                "platform_fee_cents",
+                "gross_cents",
+                "merchant_payout_cents",
+            ],
+            "required_patch": (
+                "Replace `payout = gross - fee` with `payout = net - fee` (or `gross - tax - fee`) "
+                "so `merchant_payout_cents + platform_fee_cents + tax_cents == gross_cents`."
+                if (w3_mis or w3_cons)
+                else "Keep canonical implementation unchanged."
+            ),
+            "exact_invariants": [
+                "net = int(tax_leg['net_cents'])",
+                "tax = int(tax_leg['tax_cents'])",
+                "fee = int(fee_leg['platform_fee_cents'])",
+                "gross = net + tax",
+                "payout = net - fee",
+            ],
+            "defects": w3_mis + w3_cons,
+        }
+        return directives
+
+    def record_three_phase_diamond_codebase_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase diamond codebase pullback-mediator synthesis audit (Theorem 95):
+        - Phase 1: Middle-tier worktree branches B (`tax_branch`) and C (`fee_branch`) propose
+          incompatible schema extensions (`branch_net_cents` / `NET_V1` vs `net_amount_cents` / `GROSS_V2`)
+          while passing isolated local unit tests (`PULLBACK_INTERFACE_MISMATCH_NGD_LGGR`, defect = -1).
+        - Phase 2: Sequential one-branch repair aligns key names under a coarse interface check
+          (`interface_fiber_size = 4 > 1`), leaving fee_branch computing fee on `subtotal_cents = 1000`
+          (`fee = 30 != 27`) (`AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR`, defect = -1).
+        - Phase 3: Pullback-mediator contract synthesis aligns all 4 worktree branches over
+          singleton fiber `NET_V1:net_cents:900` (`interface_fiber_size = 1`, `payout = 873`,
+          `873 + 27 + 180 = 1080`) (`DIAMOND_PULLBACK_CONTRACT_SYNTHESIZED_LGGG`, defect = 0).
+        """
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_a_canonical = (
+            "def emit_base_quote(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_cents': net}\n"
+        )
+        src_b_incompatible = (
+            "def compute_tax_branch(base_quote, tax_bps):\n"
+            "    net = int(base_quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    return {'branch_net_cents': net, 'tax_cents': tax, 'basis_tag': 'NET_V1'}\n"
+        )
+        src_b_canonical = (
+            "def compute_tax_branch(base_quote, tax_bps):\n"
+            "    net = int(base_quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'basis_tag': 'NET_V1'}\n"
+        )
+        src_c_incompatible = (
+            "def compute_fee_branch(base_quote, fee_bps):\n"
+            "    gross_base = int(base_quote['net_amount_cents'])\n"
+            "    fee = (gross_base * int(fee_bps)) // 10000\n"
+            "    return {'net_cents': gross_base, 'platform_fee_cents': fee, 'basis_tag': 'GROSS_V2'}\n"
+        )
+        src_c_ambiguous_gross = (
+            "def compute_fee_branch(base_quote, fee_bps):\n"
+            "    gross_base = int(base_quote['subtotal_cents'])\n"
+            "    fee = (gross_base * int(fee_bps)) // 10000\n"
+            "    return {'net_cents': gross_base, 'platform_fee_cents': fee, 'basis_tag': 'GROSS_V2'}\n"
+        )
+        src_c_canonical = (
+            "def compute_fee_branch(base_quote, fee_bps):\n"
+            "    net = int(base_quote['net_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    return {'net_cents': net, 'platform_fee_cents': fee, 'basis_tag': 'NET_V1'}\n"
+        )
+        src_d_unmediated = (
+            "def aggregate_diamond_settlement(tax_leg, fee_leg):\n"
+            "    net = int(tax_leg.get('net_cents', tax_leg.get('branch_net_cents', 900)))\n"
+            "    tax = int(tax_leg['tax_cents'])\n"
+            "    fee = int(fee_leg['platform_fee_cents'])\n"
+            "    gross = net + tax\n"
+            "    payout = gross - tax - fee + 1\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'gross_cents': gross,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+        src_d_canonical = (
+            "def aggregate_diamond_settlement(tax_leg, fee_leg):\n"
+            "    if int(tax_leg['net_cents']) != int(fee_leg['net_cents']):\n"
+            "        raise ValueError('pullback net_cents mismatch between tax_leg and fee_leg')\n"
+            "    if tax_leg.get('basis_tag') != 'NET_V1' or fee_leg.get('basis_tag') != 'NET_V1':\n"
+            "        raise ValueError('pullback basis_tag mismatch')\n"
+            "    net = int(tax_leg['net_cents'])\n"
+            "    tax = int(tax_leg['tax_cents'])\n"
+            "    fee = int(fee_leg['platform_fee_cents'])\n"
+            "    gross = net + tax\n"
+            "    payout = net - fee\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'gross_cents': gross,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "quote_anchor": True,
+            "tax_branch": True,
+            "fee_branch": True,
+            "diamond_aggregator": True,
+        }
+
+        p1 = self.evaluate_diamond_codebase_merge(
+            f"{eval_id}_phase1_incompatible_extensions",
+            sources={
+                "quote_anchor": src_a_canonical,
+                "tax_branch": src_b_incompatible,
+                "fee_branch": src_c_incompatible,
+                "diamond_aggregator": src_d_unmediated,
+            },
+            local_test_results=all_local_green,
+            use_coarse_interface=False,
+            model_id=mid,
+        )
+        p2 = self.evaluate_diamond_codebase_merge(
+            f"{eval_id}_phase2_ambiguous_coarse_fiber",
+            sources={
+                "quote_anchor": src_a_canonical,
+                "tax_branch": src_b_canonical,
+                "fee_branch": src_c_ambiguous_gross,
+                "diamond_aggregator": src_d_unmediated,
+            },
+            local_test_results=all_local_green,
+            use_coarse_interface=True,
+            model_id=mid,
+        )
+        p3 = self.evaluate_diamond_codebase_merge(
+            f"{eval_id}_phase3_pullback_mediator_synthesized",
+            sources={
+                "quote_anchor": src_a_canonical,
+                "tax_branch": src_b_canonical,
+                "fee_branch": src_c_canonical,
+                "diamond_aggregator": src_d_canonical,
+            },
+            local_test_results=all_local_green,
+            use_coarse_interface=False,
+            model_id=mid,
+        )
+
+        return json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_in_pullback": p1["in_pullback_square"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_interface_fiber_size": p2["interface_fiber_size"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_interface_fiber_size": p3["interface_fiber_size"],
+                "phase_3_universal_mediator": p3["universal_cone_mediator"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "phase_3_synthesized_contract": p3["synthesized_pullback_contract"],
+                "phase_3_integration_trace": p3["integration_trace"],
+            }
+        )
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one diamond codebase evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_diamond_codebase_pullback.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": (
+                "DIAMOND_PULLBACK_CONTRACT_SYNTHESIZED_LGGG"
+                if self.evaluations[-1]["global_green"] == 1
+                else "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR"
+            ),
+            "contract_status": (
+                "COMPOSABLE_LGGG"
+                if self.evaluations[-1]["global_green"] == 1
+                else "OBSTRUCTED_LGGR"
+            ),
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "pullback_mediator_factorization_receipt": self.factorization_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 

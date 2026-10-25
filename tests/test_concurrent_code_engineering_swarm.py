@@ -8,21 +8,34 @@ import tempfile
 import unittest
 
 from experiments.concurrent_code_engineering_swarm.domain import (
+    CANONICAL_DIAMOND_AGGREGATOR_SOURCE,
+    CANONICAL_FEE_BRANCH_SOURCE,
     CANONICAL_PRICING_SOURCE,
+    CANONICAL_QUOTE_ANCHOR_SOURCE,
     CANONICAL_SETTLEMENT_SOURCE,
+    CANONICAL_TAX_BRANCH_SOURCE,
     CANONICAL_TAX_SOURCE,
     CODE_SWARM_MODELS,
+    DIAMOND_SWARM_MODELS,
+    DIAMOND_WORKTREE_BRANCHES,
     CodeWorkspace,
+    DiamondCodeWorkspace,
+    diamond_fixture,
     fixture,
+    run_diamond_local_unit_tests,
     run_local_unit_tests,
 )
 from experiments.concurrent_code_engineering_swarm.runner import (
     CodeBatchClient,
     campaign,
+    diamond_campaign,
     replay,
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
-from lggr.streaming import StreamingCodebaseInterfaceMergeMonitor
+from lggr.streaming import (
+    StreamingCodebaseInterfaceMergeMonitor,
+    StreamingDiamondCodebasePullbackMonitor,
+)
 
 
 def stub_code_transport(payload: dict) -> dict:
@@ -170,6 +183,157 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if pilot_events.exists():
             replayed = replay(pilot_events)
             self.assertEqual(replayed["schema"], "lggr.concurrent_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+
+    def test_diamond_local_green_worktree_tests_vs_pullback_mediator_merge_gate(self) -> None:
+        state = diamond_fixture(7200)  # 7200 % 3 == 0 -> incompatible_middle_branch_extensions
+        self.assertEqual(state["kind"], "incompatible_middle_branch_extensions")
+        ws = DiamondCodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {
+                "quote_anchor": True,
+                "tax_branch": True,
+                "fee_branch": True,
+                "diamond_aggregator": True,
+            },
+        )
+
+        mon = StreamingDiamondCodebasePullbackMonitor(scope_id="unit-diamond-gate")
+        rec = mon.evaluate_diamond_codebase_merge(
+            "eval-7200-wave0",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec["local_green"], 1)
+        self.assertEqual(rec["global_green"], 0)
+        self.assertEqual(rec["defect"], -1)
+        self.assertFalse(rec["in_pullback_square"])
+        self.assertEqual(rec["interface_fiber_size"], 0)
+        self.assertEqual(len(rec["contract_mismatches"]), 2)
+        self.assertEqual(len(rec["conservation_defects"]), 1)
+        self.assertEqual(rec["conservation_defects"][0]["worker"], "worker-3")
+        self.assertEqual(rec["conservation_defects"][0]["payout_drift_cents"], 180)
+
+        # Verify 3-phase audit on StreamingDiamondCodebasePullbackMonitor
+        audit = mon.record_three_phase_diamond_codebase_audit("diamond-3phase-unit")
+        self.assertEqual(audit["phase_1_defect"], -1)
+        self.assertEqual(audit["phase_2_defect"], -1)
+        self.assertEqual(audit["phase_2_interface_fiber_size"], 4)
+        self.assertEqual(audit["phase_3_defect"], 0)
+        self.assertEqual(audit["phase_3_interface_fiber_size"], 1)
+        self.assertEqual(
+            audit["phase_3_universal_mediator"],
+            {"w_diamond": ["b_net_v1_900", "c_net_v1_900"]},
+        )
+
+    def test_diamond_campaign_and_tamper_evident_replay(self) -> None:
+        def stub_diamond_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_msg = messages[0]["content"]
+            worker = sys_msg.split("agent ")[1].split(",")[0]
+            if messages[-1]["role"] == "user":
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(messages[-1]["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Immutable upstream 2-decimal precision conflicts with downstream 4-decimal requirement."}
+                            ),
+                        },
+                    }
+                else:
+                    canonical_map = {
+                        "worker-0": CANONICAL_QUOTE_ANCHOR_SOURCE,
+                        "worker-1": CANONICAL_TAX_BRANCH_SOURCE,
+                        "worker-2": CANONICAL_FEE_BRANCH_SOURCE,
+                        "worker-3": CANONICAL_DIAMOND_AGGREGATOR_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {"cost": "0.0001"},
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "diamond",
+                "seeds": [7200, 7201, 7202],
+                "models": DIAMOND_SWARM_MODELS,
+                "worktree_branches": dict(DIAMOND_WORKTREE_BRANCHES),
+                "budget_usd": "0.60",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.60", transport=stub_diamond_transport)
+            summary = diamond_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.diamond_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 4)
+
+            # Tamper check on diamond gate receipt
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["in_pullback_square"] = not gate_rec["in_pullback_square"]
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_diamond_pilot_evidence_replay_if_present(self) -> None:
+        diamond_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "diamond_pilot_run"
+            / "events.jsonl"
+        )
+        diamond_summary = diamond_events.with_name("summary.json")
+        if diamond_events.exists() and diamond_summary.exists():
+            replayed = replay(diamond_events)
+            self.assertEqual(replayed["schema"], "lggr.diamond_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 3)
 
 
