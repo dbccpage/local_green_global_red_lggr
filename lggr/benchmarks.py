@@ -806,6 +806,13 @@ def _frontier_json(response: str, fields: dict[str, str], *, modulus: int | None
     def rational(value):
         if type(value) not in (int, str):
             return False
+        # Bound work before Fraction can expand exponents or large integers.
+        # Short exact decimal strings occur in the preserved v1 evidence.
+        if type(value) is int and abs(value) >= 10 ** 64:
+            return False
+        if type(value) is str and (len(value) > 130 or not re.fullmatch(
+                r"-?[0-9]{1,64}(?:/[0-9]{1,64}|\.[0-9]{1,64})?", value)):
+            return False
         try:
             Fraction(value)
             return True

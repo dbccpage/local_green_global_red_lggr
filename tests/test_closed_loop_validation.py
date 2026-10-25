@@ -195,6 +195,18 @@ class ClosedLoopValidationTests(unittest.TestCase):
         self.assertIsNone(result["closed_loop_monitor_receipt"])
         self.assertTrue(bench.verify_closed_loop_repair_benchmark(result)["replayed"])
 
+    def test_rational_work_is_bounded_before_fraction_parsing(self):
+        values = ["1e9999999", "1e-9999999", "9" * 65, "1/" + "9" * 65,
+                  "0." + "9" * 65, "9" * 100000, 10 ** 64]
+        for value in values:
+            with self.subTest(value=str(value)[:30]), patch.object(bench, "Fraction") as fraction:
+                with self.assertRaises(bench.FrontierInputError):
+                    bench._frontier_json(json.dumps({"candidate_alpha": value}), {"candidate_alpha": "rational"})
+                fraction.assert_not_called()
+        for value in (0, -2, "-2/3", "3/4", "0.75", "-0.5", "9" * 64):
+            self.assertEqual(bench._frontier_json(json.dumps({"candidate_alpha": value}),
+                             {"candidate_alpha": "rational"})["candidate_alpha"], value)
+
     def test_model_identity_mismatch_rejected(self):
         class Client:
             model = "other/model"
