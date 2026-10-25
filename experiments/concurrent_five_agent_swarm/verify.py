@@ -66,6 +66,7 @@ def verify(directory):
             raise ValueError("SQLite output differs: " + filename)
         database_count += 1
     replay["completed_cases"] = sum(e["kind"] == "case_result" for e in rows)
+    replay["cases"] = replay["completed_cases"]
     replay["attempted_cases"] = sum(e["kind"] == "case_start" for e in rows)
     replay["stopped"] = rows[-1]["kind"] == "stopped"
     return {"run": directory.name, "source_commit_verified": True, "source_files": len(metadata["source_hashes"]),
