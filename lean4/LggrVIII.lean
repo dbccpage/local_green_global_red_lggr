@@ -3591,4 +3591,65 @@ theorem concurrent_code_swarm_symmetry_broken_directive_vs_bilateral_oscillation
   intro hneq hsym
   exact hneq hsym.symm
 
+/-- 95. Diamond-dependency codebase (A -> B, A -> C, B, C -> D) pullback-mediator contract synthesis audit:
+    1. Symbolic diamond pullback-mediator commutativity and conservation identity:
+       - If middle-tier worktree branches B (tax) and C (fee) project upstream base quote `net_A`
+         as `net_B` and `net_C`, any branch base divergence `net_B ≠ net_C` yields non-zero
+         pullback cospan defect `net_B - net_C ≠ 0`;
+       - Under pullback-mediator factorization (`net_B = net_A` and `net_C = net_A`), both branches
+         commute over `net_A` (`net_B = net_C`) and downstream aggregator D satisfies exact
+         diamond conservation `(net_A - fee_C) + fee_C + tax_B = net_A + tax_B`;
+    2. Concrete 3-phase 4-module diamond codebase merge audit (`quote_anchor`, `tax_branch`,
+       `fee_branch`, `diamond_aggregator`):
+       - Phase 1 (Incompatible middle-tier schema extensions across worktree branches B and C):
+         all 4 modules pass isolated local unit tests (`L_mis = 1`), yet B emits `s_B = 1`
+         (`net_B = 900`) and C emits `s_C = 2` (`net_C = 1000`), obstructing pullback gluing
+         (`Eg_mis = 0`, `Δ_{E,mis} = -1`);
+       - Phase 2 (Ambiguous coarse interface fiber `fib_p2 = 4 > 1` with unmediated base mismatch):
+         key names align (`s_B = 0`, `s_C = 0`, `L_amb = 1`), yet C computes fee on `subtotal = 1000`
+         (`fee_C = 30`) instead of `net_A = 900` (`expected_fee = 27`), leaving non-singleton
+         fiber ambiguity `fib_p2 = 4 > 1` and fee drift `30 - 27 = 3 ≠ 0` (`Eg_amb = 0`, `Δ_{E,amb} = -1`);
+       - Phase 3 (Pullback-mediator synthesized interface contract with singleton fiber `fib_p3 = 1`):
+         `net_B = net_C = 900`, `tax_B = 180`, `fee_C = 27`, `gross_D = 1080`, `payout_D = 873`,
+         and `873 + 27 + 180 = 1080` (`L_med = 1`, `Eg_med = 1`, `Δ_{E,med} = 0`). -/
+theorem diamond_codebase_pullback_mediator_contract_synthesis_audit :
+    (∀ net_A net_B net_C tax_B fee_C : Int,
+      (net_B ≠ net_C → net_B - net_C ≠ 0) ∧
+      ((net_B = net_A ∧ net_C = net_A) →
+        net_B = net_C ∧ (net_A - fee_C) + fee_C + tax_B = net_A + tax_B)) ∧
+    (let s_B_p1 : Int := 1;
+     let s_C_p1 : Int := 2;
+     let net_B_p1 : Int := 900;
+     let net_C_p1 : Int := 1000;
+     let fib_p2 : Int := 4;
+     let fee_C_p2 : Int := 30;
+     let exp_fee_p2 : Int := 27;
+     let fib_p3 : Int := 1;
+     let net_A_p3 : Int := 900;
+     let net_B_p3 : Int := 900;
+     let net_C_p3 : Int := 900;
+     let tax_B_p3 : Int := 180;
+     let fee_C_p3 : Int := 27;
+     let gross_D_p3 : Int := 1080;
+     let payout_D_p3 : Int := 873;
+     let l_mis := if (s_B_p1 = 1) ∧ (s_C_p1 = 2) ∧ (net_B_p1 = 900) ∧ (net_C_p1 = 1000) then (1 : Int) else 0;
+     let eg_mis := if (l_mis = 1) ∧ (s_B_p1 = s_C_p1) ∧ (net_B_p1 = net_C_p1) then (1 : Int) else 0;
+     let defect_mis := eg_mis - l_mis;
+     let l_amb := if (fib_p2 = 4) ∧ (fee_C_p2 = 30) then (1 : Int) else 0;
+     let eg_amb := if (l_amb = 1) ∧ (fib_p2 = 1) ∧ (fee_C_p2 = exp_fee_p2) then (1 : Int) else 0;
+     let defect_amb := eg_amb - l_amb;
+     let l_med := if (fib_p3 = 1) ∧ (net_B_p3 = net_A_p3) ∧ (net_C_p3 = net_A_p3) ∧ (payout_D_p3 + fee_C_p3 + tax_B_p3 = gross_D_p3) then (1 : Int) else 0;
+     let eg_med := if (l_med = 1) ∧ (net_B_p3 = net_C_p3) ∧ (fee_C_p3 = exp_fee_p2) then (1 : Int) else 0;
+     let defect_med := eg_med - l_med;
+     (l_mis = 1 ∧ eg_mis = 0 ∧ defect_mis = -1) ∧
+     (l_amb = 1 ∧ eg_amb = 0 ∧ defect_amb = -1) ∧
+     (l_med = 1 ∧ eg_med = 1 ∧ defect_med = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro net_A net_B net_C tax_B fee_C
+  refine ⟨?_, ?_⟩
+  · intro hneq
+    omega
+  · intro hpair
+    refine ⟨by omega, by omega⟩
+
 end LggrVIII

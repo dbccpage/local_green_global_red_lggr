@@ -46,6 +46,7 @@ from lggr.streaming import (
     StreamingDashboardAdequacyMonitor,
     StreamingDeadlinePriorityQueueMonitor,
     StreamingDefectSoundnessMonitor,
+    StreamingDiamondCodebasePullbackMonitor,
     StreamingDisagreementPreservingCouncilMonitor,
     StreamingDiscreteCurvatureMonitor,
     StreamingDynamicSchemaSynthesisMonitor,
@@ -4897,6 +4898,58 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_MERGE_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_diamond_codebase_pullback_mediator_contract_synthesis_audit(self) -> None:
+        """Verify Theorem 95: diamond-dependency codebase pullback-mediator contract synthesis."""
+        mon = StreamingDiamondCodebasePullbackMonitor(
+            scope_id="unit-diamond-codebase-pullback-scope",
+        )
+        obs = mon.record_three_phase_diamond_codebase_audit(
+            "diamond-codebase-pullback-eval-01",
+        )
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertFalse(obs["phase_1_in_pullback"])
+        self.assertEqual(obs["phase_1_status"], "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_CANONICAL_INTERFACE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "SYNTHESIZE_PULLBACK_MEDIATOR_TAX_CONTRACT",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "SYNTHESIZE_PULLBACK_MEDIATOR_FEE_CONTRACT",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-3"]["action"],
+            "ENFORCE_PULLBACK_MEDIATOR_AND_DIAMOND_CONSERVATION",
+        )
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_interface_fiber_size"], 4)
+        self.assertEqual(obs["phase_2_status"], "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_interface_fiber_size"], 1)
+        self.assertEqual(obs["phase_3_status"], "DIAMOND_PULLBACK_CONTRACT_SYNTHESIZED_LGGG")
+        self.assertEqual(
+            obs["phase_3_universal_mediator"],
+            {"w_diamond": ["b_net_v1_900", "c_net_v1_900"]},
+        )
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "DIAMOND_PULLBACK_CONTRACT_SYNTHESIZED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
