@@ -35,6 +35,7 @@ from lggr.streaming import (
     StreamingContextualSheafMonitor,
     StreamingDFAGrammarGluingMonitor,
     StreamingDashboardAdequacyMonitor,
+    StreamingDeadlinePriorityQueueMonitor,
     StreamingDefectSoundnessMonitor,
     StreamingDiscreteCurvatureMonitor,
     StreamingFiberMonitor,
@@ -3217,6 +3218,146 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["single_round_split_coherence_rate"], "0")
         self.assertEqual(receipt["multi_round_priority_queued_coherence_rate"], "1")
         self.assertEqual(receipt["priority_queue_coherence_gain"], "1")
+
+    def test_deadline_priority_queue_static_vs_edf(self) -> None:
+        """Theorem 64: Deadline-constrained priority queueing under simultaneous bursts (static priority vs. EDF)."""
+        mon = StreamingDeadlinePriorityQueueMonitor(scope_id="unit_deadline_priority_queue")
+        rec = mon.record_deadline_queue_comparison(
+            queue_id="deadline_queue_3inc_unit",
+            model_id="openai/gpt-4o-mini",
+            prior_split_receipt_sha256="sha256_prior_split_eval",
+            baseline_policy_sha256="sha256_p0_2_3_0",
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            individual_lease_budget=4,
+            horizon_drift_ceiling=6,
+            static_priority_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "static_priority_rank": 1,
+                    "sla_deadline_tick": 3,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "edf_policy_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "static_priority_rank": 2,
+                    "sla_deadline_tick": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "edf_policy_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "static_priority_rank": 3,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 2,
+                    "completion_tick": 3,
+                    "edf_policy_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+            edf_queued_incidents=[
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "static_priority_rank": 3,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "edf_policy_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "static_priority_rank": 2,
+                    "sla_deadline_tick": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "edf_policy_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "static_priority_rank": 1,
+                    "sla_deadline_tick": 3,
+                    "arrival_tick": 0,
+                    "execution_tick": 2,
+                    "completion_tick": 3,
+                    "edf_policy_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+        )
+        p1 = rec["phase_1_static_priority_queue"]
+        self.assertTrue(p1["simultaneous_arrival_verified"])
+        self.assertFalse(p1["edf_order_verified"])
+        self.assertEqual(p1["local_queue_indicator_L"], 1)
+        self.assertEqual(p1["global_queue_indicator_E_g"], 0)
+        self.assertEqual(p1["queue_evaluator_defect"], -1)
+        self.assertEqual(p1["max_lateness_ticks"], 2)
+        self.assertEqual(p1["deadline_miss_count"], 1)
+        self.assertEqual(p1["queue_status"], "STATIC_PRIORITY_SLA_DEADLINE_BREACH_LGGR")
+
+        p2 = rec["phase_2_edf_deadline_queue"]
+        self.assertTrue(p2["simultaneous_arrival_verified"])
+        self.assertTrue(p2["edf_order_verified"])
+        self.assertEqual(p2["local_queue_indicator_L"], 1)
+        self.assertEqual(p2["global_queue_indicator_E_g"], 1)
+        self.assertEqual(p2["queue_evaluator_defect"], 0)
+        self.assertEqual(p2["max_lateness_ticks"], 0)
+        self.assertEqual(p2["deadline_miss_count"], 0)
+        self.assertEqual(p2["queue_status"], "EDF_DEADLINE_COHERENT_QUEUE_VERIFIED_LGGG")
+
+        self.assertEqual(rec["max_lateness_reduction_ticks"], 2)
+        self.assertTrue(rec["phase_1_static_deadline_breach"])
+        self.assertFalse(rec["converged_single_round"])
+        self.assertTrue(rec["converged_multi_round"])
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(receipt["status"], "EDF_DEADLINE_COHERENT_QUEUE_VERIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["phase_1_static_deadline_breach_rate"], "1")
+        self.assertEqual(receipt["single_round_static_deadline_coherence_rate"], "0")
+        self.assertEqual(receipt["multi_round_edf_deadline_coherence_rate"], "1")
+        self.assertEqual(receipt["edf_deadline_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

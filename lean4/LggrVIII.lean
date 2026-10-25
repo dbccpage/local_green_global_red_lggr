@@ -1988,4 +1988,53 @@ theorem non_preemptible_simultaneous_budget_split_vs_priority_queueing :
   · intro ⟨hc, hf⟩
     omega
 
+/-- 64. Deadline-constrained priority queueing under simultaneous bursts (static priority vs. EDF):
+    1. Jackson EDF exchange / inversion law: for any simultaneous arrival tick s0 : Int and two
+       unit-duration tasks with urgent deadline d_urg and lax deadline d_lax satisfying
+       s0 + 1 ≤ d_urg < s0 + 2 ≤ d_lax, scheduling the lax task first in slot [s0, s0 + 1) and
+       deferring the urgent task to slot [s0 + 1, s0 + 2) causes the urgent task to miss its
+       SLA deadline (s0 + 2 > d_urg), whereas Earliest-Deadline-First (EDF) scheduling places
+       the urgent task in [s0, s0 + 1) and the lax task in [s0 + 1, s0 + 2), satisfying both
+       SLA deadlines (s0 + 1 ≤ d_urg ∧ s0 + 2 ≤ d_lax);
+    2. Concrete 3-incident simultaneous burst separation at s1 = s2 = s3 = 0 on P_0 = (2, 3, 0)
+       with risk weights w = (2, 3, 4), individual lease budget τ_lease = 4, and global horizon
+       ceiling τ_horizon = 6 across Pareto floors Δ*_{w,1} = 4, Δ*_{w,2} = 3, Δ*_{w,3} = 4,
+       static priority ranks (π_1, π_2, π_3) = (1, 2, 3), and strict SLA completion deadlines
+       (D_1, D_2, D_3) = (3, 2, 1):
+       - Under static priority ordering (1, 2, 3) across slots [0, 1), [1, 2), [2, 3), every
+         incident meets its Pareto floor and respects τ_horizon = 6 (L_static = 1), yet
+         Incident 3 completes at C_3 = 3 > D_3 = 1 (lateness = 2 > 0), yielding Eg_static = 0
+         and Δ_{E,static} = -1;
+       - Under Earliest-Deadline-First (EDF) ordering (3, 2, 1) across slots [0, 1), [1, 2),
+         [2, 3) (since D_3 = 1 < D_2 = 2 < D_1 = 3), completion ticks are C_3 = 1 ≤ D_3 = 1,
+         C_2 = 2 ≤ D_2 = 2, and C_1 = 3 ≤ D_1 = 3 (lateness = 0 on all 3 incidents), yielding
+         L_edf = 1, Eg_edf = 1, and Δ_{E,edf} = 0. -/
+theorem deadline_constrained_priority_queue_static_inversion_vs_edf :
+    (∀ s0 d_urg d_lax : Int,
+      (s0 + 1 ≤ d_urg ∧ d_urg < s0 + 2 ∧ s0 + 2 ≤ d_lax) →
+      ((s0 + 2 > d_urg) ∧ (s0 + 1 ≤ d_urg ∧ s0 + 2 ≤ d_lax))) ∧
+    (let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_lease : Int := 4; let tau_horizon : Int := 6;
+     let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let d1 : Int := 3; let d2 : Int := 2; let d3 : Int := 1;
+     let s1 := w1 * 2 + w2 * 0 + w3 * 0;
+     let s2 := w1 * 0 + w2 * 1 + w3 * 0;
+     let s3 := w1 * 0 + w2 * 0 + w3 * 1;
+     let c1_stat : Int := 1; let c2_stat : Int := 2; let c3_stat : Int := 3;
+     let late3_stat := c3_stat - d3;
+     let l_static := if (s1 ≥ f1) ∧ (s2 ≥ f2) ∧ (s3 ≥ f3) ∧ (s1 ≤ tau_lease) ∧ (s2 ≤ tau_lease) ∧ (s3 ≤ tau_lease) ∧ (s1 ≤ tau_horizon) ∧ (s2 ≤ tau_horizon) ∧ (s3 ≤ tau_horizon) then (1 : Int) else 0;
+     let eg_static := if (l_static = 1) ∧ (c1_stat ≤ d1) ∧ (c2_stat ≤ d2) ∧ (c3_stat ≤ d3) then (1 : Int) else 0;
+     let defect_static := eg_static - l_static;
+     let c3_edf : Int := 1; let c2_edf : Int := 2; let c1_edf : Int := 3;
+     let late_max_edf := (if c1_edf > d1 then c1_edf - d1 else (0 : Int)) + (if c2_edf > d2 then c2_edf - d2 else 0) + (if c3_edf > d3 then c3_edf - d3 else 0);
+     let l_edf := l_static;
+     let eg_edf := if (l_edf = 1) ∧ (c1_edf ≤ d1) ∧ (c2_edf ≤ d2) ∧ (c3_edf ≤ d3) ∧ (d3 ≤ d2) ∧ (d2 ≤ d1) then (1 : Int) else 0;
+     let defect_edf := eg_edf - l_edf;
+     (s1 = 4 ∧ s2 = 3 ∧ s3 = 4 ∧ late3_stat = 2) ∧
+     (l_static = 1 ∧ eg_static = 0 ∧ defect_static = -1) ∧
+     (late_max_edf = 0 ∧ l_edf = 1 ∧ eg_edf = 1 ∧ defect_edf = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro s0 d_urg d_lax ⟨h1, h2, h3⟩
+  omega
+
 end LggrVIII

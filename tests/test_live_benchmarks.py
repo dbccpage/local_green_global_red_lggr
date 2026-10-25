@@ -41,6 +41,7 @@ from lggr.streaming import (
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
+    StreamingDeadlinePriorityQueueMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
@@ -1204,6 +1205,72 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["single_round_split_coherence_rate"], "0")
         self.assertEqual(mon_rec["multi_round_priority_queued_coherence_rate"], "1")
         self.assertEqual(mon_rec["priority_queue_coherence_gain"], "1")
+
+    def test_deadline_priority_queue_benchmark_replay(self):
+        """F25: Replay all 5 simultaneous deadline-constrained incident bursts (15 incident evaluations per phase) across 5 model families."""
+        artifact = RECEIPTS_DIR / "deadline_priority_queue_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("deadline_priority_queue_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.deadline_priority_queue_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("queue_count"), 5)
+        self.assertEqual(data.get("incident_evaluation_count"), 15)
+
+        self.assertTrue(
+            data["phase_1_static_priority_queue_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_edf_deadline_queue_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_1_static_priority_incident_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_edf_deadline_incident_metrics"]["identity_verified"]
+        )
+
+        replay_mon = StreamingDeadlinePriorityQueueMonitor(
+            scope_id=data["deadline_monitor_receipt"]["scope_id"]
+        )
+        for q in data.get("queues", []):
+            p1_incs = q["phase_1_static_priority_queue"]["incidents"]
+            p2_incs = q["phase_2_edf_deadline_queue"]["incidents"]
+            replay_mon.record_deadline_queue_comparison(
+                queue_id=q["queue_id"],
+                model_id=q["model_id"],
+                prior_split_receipt_sha256=q["prior_split_receipt_sha256"],
+                baseline_policy_sha256=q["baseline_policy_sha256"],
+                baseline_policy_vector=q["baseline_policy_vector"],
+                risk_weight_vector=q["risk_weight_vector"],
+                individual_lease_budget=q["individual_lease_budget"],
+                horizon_drift_ceiling=q["horizon_drift_ceiling"],
+                static_priority_incidents=p1_incs,
+                edf_queued_incidents=p2_incs,
+            )
+            self.assertTrue(q["phase_1_static_deadline_breach"])
+            self.assertFalse(q["converged_single_round"])
+            self.assertTrue(q["converged_multi_round"])
+            self.assertEqual(q["max_lateness_reduction_ticks"], 2)
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["deadline_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "EDF_DEADLINE_COHERENT_QUEUE_VERIFIED_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(
+            mon_rec["phase_1_static_deadline_breach_rate"], "1"
+        )
+        self.assertEqual(mon_rec["single_round_static_deadline_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_edf_deadline_coherence_rate"], "1")
+        self.assertEqual(mon_rec["edf_deadline_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

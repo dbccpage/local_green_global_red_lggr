@@ -80,3 +80,4 @@ import LggrVIII
 #print axioms LggrVIII.cumulative_policy_ratchet_drift_vs_lease_revocation
 #print axioms LggrVIII.concurrent_lease_overlap_horizon_breach_vs_overlap_accounting
 #print axioms LggrVIII.non_preemptible_simultaneous_budget_split_vs_priority_queueing
+#print axioms LggrVIII.deadline_constrained_priority_queue_static_inversion_vs_edf

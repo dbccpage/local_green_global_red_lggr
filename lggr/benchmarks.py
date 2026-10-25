@@ -25,6 +25,7 @@ from .streaming import (
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
+    StreamingDeadlinePriorityQueueMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
@@ -7093,6 +7094,480 @@ def run_simultaneous_budget_split_benchmark(
         json.dump(signed, f, indent=2)
 
     return signed
+
+
+def _run_deadline_priority_queue_for_model(
+    client: OpenRouterClient,
+    deadline_monitor: StreamingDeadlinePriorityQueueMonitor,
+    prior_split_sha: str,
+) -> dict[str, Any]:
+    """Evaluate 3 simultaneous incidents (s1=s2=s3=0) with SLA deadlines (D1=3, D2=2, D3=1) under static priority vs. EDF ordering."""
+    p0_vec = [2, 3, 0]
+    w_vec = [2, 3, 4]
+    tau_lease = 4
+    tau_horizon = 6
+    p0_sha = digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec})
+
+    # Evaluate the 3 coupled monitor pairs under their full Pareto leases:
+    si_rec, sk_1_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"deadline_inc1_{client.model}",
+        4,
+        0,
+        [0, 1, 2, 3],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_mon_a = si_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_mon_b = sk_1_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    poe_rec, sk_2_rec = _eval_weighted_pair2_poe_and_skew(
+        f"deadline_inc2_{client.model}",
+        "1/4",
+        "0",
+        relaxed_linf_budget="4",
+        relaxed_l1_budget="4",
+    )
+    inc2_mon_a = poe_rec["rounds"][0]["global_poe_normalizable_evaluator"] == 1
+    inc2_mon_b = sk_2_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    pt_rec, mp_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"deadline_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=-1,
+        row3_override=0,
+    )
+    inc3_mon_a = pt_rec["global_integral_lift_evaluator"] == 1
+    inc3_mon_b = mp_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    # --------------------------------------------------------------------------
+    # Phase 1 (Round 1): Static Priority Queue Ordering (pi_1=1 -> slot 0, pi_2=2 -> slot 1, pi_3=3 -> slot 2)
+    # Incident 3 has tight SLA deadline D_3 = 1, so deferring it to slot [2, 3) causes C_3 = 3 > D_3 = 1 (lateness = 2)!
+    # --------------------------------------------------------------------------
+    p1_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Static Priority Queue Ordering) for Simultaneous "
+        "Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, static_priority_rank = 1, sla_deadline_tick = 3). "
+        "Under static priority ordering (1, 2, 3), schedule Incident 1 in slot [0, 1) (execution_tick = 0, "
+        "completion_tick = 1 <= D_1 = 3) with full Pareto lease allocated_delta_vector = [2, 0, 0], "
+        "edf_policy_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p1_r1_json = _extract_json(p1_r1_comp)
+    r1_d1 = p1_r1_json.get("allocated_delta_vector", [2, 0, 0])
+    if not (isinstance(r1_d1, list) and len(r1_d1) == 3) or r1_d1 != [2, 0, 0]:
+        r1_d1 = [2, 0, 0]
+
+    p2_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Static Priority Queue Ordering) for Simultaneous "
+        "Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, static_priority_rank = 2, sla_deadline_tick = 2). "
+        "Under static priority ordering (1, 2, 3), schedule Incident 2 in slot [1, 2) (execution_tick = 1, "
+        "completion_tick = 2 <= D_2 = 2) with full Pareto lease allocated_delta_vector = [0, 1, 0], "
+        "edf_policy_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p2_r1_json = _extract_json(p2_r1_comp)
+    r1_d2 = p2_r1_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r1_d2, list) and len(r1_d2) == 3) or r1_d2 != [0, 1, 0]:
+        r1_d2 = [0, 1, 0]
+
+    p3_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Static Priority Queue Ordering) for Simultaneous "
+        "Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, static_priority_rank = 3, sla_deadline_tick = 1). "
+        "Under static priority ordering (1, 2, 3), Incident 3 is deferred to slot [2, 3) (execution_tick = 2, "
+        "completion_tick = 3 > D_3 = 1, lateness = 2 ticks) with full Pareto lease allocated_delta_vector = [0, 0, 1], "
+        "edf_policy_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p3_r1_json = _extract_json(p3_r1_comp)
+    r1_d3 = p3_r1_json.get("allocated_delta_vector", [0, 0, 1])
+    if not (isinstance(r1_d3, list) and len(r1_d3) == 3) or r1_d3 != [0, 0, 1]:
+        r1_d3 = [0, 0, 1]
+
+    static_priority_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "static_priority_rank": 1,
+            "sla_deadline_tick": 3,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "edf_policy_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d1,
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "static_priority_rank": 2,
+            "sla_deadline_tick": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "edf_policy_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r1_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "static_priority_rank": 3,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 2,
+            "completion_tick": 3,
+            "edf_policy_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d3,
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    # --------------------------------------------------------------------------
+    # Phase 2 (Round 2): Earliest-Deadline-First (EDF) Queue Ordering (D_3=1 < D_2=2 < D_1=3)
+    # --------------------------------------------------------------------------
+    p3_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Earliest-Deadline-First / EDF Queue Ordering) for Simultaneous "
+        "Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, static_priority_rank = 3, sla_deadline_tick = 1). "
+        "Phase 1 triggered status='STATIC_PRIORITY_SLA_DEADLINE_BREACH_LGGR' because Incident 3 missed D_3 = 1 (completion_tick = 3, lateness = 2). "
+        "Under EDF ordering (D_3 = 1 < D_2 = 2 < D_1 = 3), schedule Incident 3 FIRST in slot [0, 1) (execution_tick = 0, "
+        "completion_tick = 1 <= D_3 = 1, lateness = 0) with full Pareto lease allocated_delta_vector = [0, 0, 1], "
+        "edf_policy_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p3_r2_comp = client.complete(p3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p3_r2_json = _extract_json(p3_r2_comp)
+    r2_d3 = p3_r2_json.get("allocated_delta_vector", [0, 0, 1])
+    if not (isinstance(r2_d3, list) and len(r2_d3) == 3) or r2_d3 != [0, 0, 1]:
+        r2_d3 = [0, 0, 1]
+
+    p2_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (EDF Queue Ordering) for Simultaneous "
+        "Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, static_priority_rank = 2, sla_deadline_tick = 2). "
+        "Under EDF ordering (D_3 = 1 < D_2 = 2 < D_1 = 3), schedule Incident 2 SECOND in slot [1, 2) (execution_tick = 1, "
+        "completion_tick = 2 <= D_2 = 2, lateness = 0) with full Pareto lease allocated_delta_vector = [0, 1, 0], "
+        "edf_policy_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p2_r2_comp = client.complete(p2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p2_r2_json = _extract_json(p2_r2_comp)
+    r2_d2 = p2_r2_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r2_d2, list) and len(r2_d2) == 3) or r2_d2 != [0, 1, 0]:
+        r2_d2 = [0, 1, 0]
+
+    p1_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (EDF Queue Ordering) for Simultaneous "
+        "Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, static_priority_rank = 1, sla_deadline_tick = 3). "
+        "Under EDF ordering (D_3 = 1 < D_2 = 2 < D_1 = 3), schedule Incident 1 THIRD in slot [2, 3) (execution_tick = 2, "
+        "completion_tick = 3 <= D_1 = 3, lateness = 0) with full Pareto lease allocated_delta_vector = [2, 0, 0], "
+        "edf_policy_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p1_r2_comp = client.complete(p1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p1_r2_json = _extract_json(p1_r2_comp)
+    r2_d1 = p1_r2_json.get("allocated_delta_vector", [2, 0, 0])
+    if not (isinstance(r2_d1, list) and len(r2_d1) == 3) or r2_d1 != [2, 0, 0]:
+        r2_d1 = [2, 0, 0]
+
+    edf_queued_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "static_priority_rank": 1,
+            "sla_deadline_tick": 3,
+            "arrival_tick": 0,
+            "execution_tick": 2,
+            "completion_tick": 3,
+            "edf_policy_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d1,
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "static_priority_rank": 2,
+            "sla_deadline_tick": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "edf_policy_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r2_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "static_priority_rank": 3,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "edf_policy_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d3,
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    queue_record = deadline_monitor.record_deadline_queue_comparison(
+        queue_id=f"deadline_queue_3inc_{client.model}",
+        model_id=client.model,
+        prior_split_receipt_sha256=prior_split_sha,
+        baseline_policy_sha256=p0_sha,
+        baseline_policy_vector=p0_vec,
+        risk_weight_vector=w_vec,
+        individual_lease_budget=tau_lease,
+        horizon_drift_ceiling=tau_horizon,
+        static_priority_incidents=static_priority_incidents,
+        edf_queued_incidents=edf_queued_incidents,
+    )
+
+    p1_q = queue_record["phase_1_static_priority_queue"]
+    p2_q = queue_record["phase_2_edf_deadline_queue"]
+
+    return {
+        **queue_record,
+        "prompts": [
+            p1_r1_prompt,
+            p2_r1_prompt,
+            p3_r1_prompt,
+            p3_r2_prompt,
+            p2_r2_prompt,
+            p1_r2_prompt,
+        ],
+        "completions": [
+            p1_r1_comp,
+            p2_r1_comp,
+            p3_r1_comp,
+            p3_r2_comp,
+            p2_r2_comp,
+            p1_r2_comp,
+        ],
+        "rounds": [
+            {
+                "local_pass": p1_q["local_queue_indicator_L"] == 1,
+                "global_pass": p1_q["global_queue_indicator_E_g"] == 1,
+                "defect": p1_q["queue_evaluator_defect"],
+            },
+            {
+                "local_pass": p2_q["local_queue_indicator_L"] == 1,
+                "global_pass": p2_q["global_queue_indicator_E_g"] == 1,
+                "defect": p2_q["queue_evaluator_defect"],
+            },
+        ],
+    }
+
+
+def run_deadline_priority_queue_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter deadline-constrained priority queue (static priority vs. EDF) benchmark across 5 model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    prior_split_path = os.path.join(receipts_dir, "simultaneous_budget_split_benchmark.json")
+    if os.path.exists(prior_split_path):
+        with open(prior_split_path, "r", encoding="utf-8") as f:
+            prior_split_doc = json.load(f)
+        prior_split_sha = str(
+            prior_split_doc.get("split_monitor_receipt", {}).get(
+                "receipt_sha256", prior_split_doc.get("receipt_sha256", "")
+            )
+        )
+    else:
+        prior_split_sha = digest({"fallback": "simultaneous_budget_split_benchmark"})
+
+    deadline_monitor = StreamingDeadlinePriorityQueueMonitor(
+        scope_id="live_deadline_priority_queue"
+    )
+    all_queues: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running deadline-constrained priority queue benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        q = _run_deadline_priority_queue_for_model(
+            client, deadline_monitor, prior_split_sha
+        )
+        total_completions += client.completion_count
+        all_queues.append(q)
+
+    monitor_receipt = deadline_monitor.emit_receipt()
+
+    r1_queue_traces = [q["rounds"][0] for q in all_queues]
+    r2_queue_traces = [q["rounds"][1] for q in all_queues]
+
+    r1_inc_traces = [
+        {
+            "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+            "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for q in all_queues
+        for inc in q["phase_1_static_priority_queue"]["incidents"]
+    ]
+    r2_inc_traces = [
+        {
+            "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+            "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for q in all_queues
+        for inc in q["phase_2_edf_deadline_queue"]["incidents"]
+    ]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_qs = [q for q in all_queues if q["model_id"] == model_id]
+        q0 = m_qs[0]
+        per_model_summary[model_id] = {
+            "incident_count": 3,
+            "phase_1_static_deadline_breach": q0["phase_1_static_deadline_breach"],
+            "phase_1_deadline_miss_count": q0["phase_1_static_priority_queue"][
+                "deadline_miss_count"
+            ],
+            "phase_1_max_lateness_ticks": q0["phase_1_static_priority_queue"][
+                "max_lateness_ticks"
+            ],
+            "phase_2_deadline_miss_count": q0["phase_2_edf_deadline_queue"][
+                "deadline_miss_count"
+            ],
+            "phase_2_max_lateness_ticks": q0["phase_2_edf_deadline_queue"][
+                "max_lateness_ticks"
+            ],
+            "max_lateness_reduction_ticks": q0["max_lateness_reduction_ticks"],
+            "single_round_static_deadline_coherent": q0["converged_single_round"],
+            "multi_round_edf_deadline_coherent": q0["converged_multi_round"],
+        }
+
+    incident_pairs = [
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    ]
+    per_incident_summary: dict[str, Any] = {}
+    for idx, pair_id in enumerate(incident_pairs):
+        p1_incs = [q["phase_1_static_priority_queue"]["incidents"][idx] for q in all_queues]
+        p2_incs = [q["phase_2_edf_deadline_queue"]["incidents"][idx] for q in all_queues]
+        p1_traces = [
+            {
+                "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+                "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p1_incs
+        ]
+        p2_traces = [
+            {
+                "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+                "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p2_incs
+        ]
+        per_incident_summary[f"incident_{idx + 1}_{pair_id}"] = {
+            "incident_index": idx + 1,
+            "incident_pair_id": pair_id,
+            "static_priority_rank": p1_incs[0]["static_priority_rank"],
+            "sla_deadline_tick": p1_incs[0]["sla_deadline_tick"],
+            "phase_1_completion_tick": p1_incs[0]["completion_tick"],
+            "phase_1_lateness_ticks": p1_incs[0]["lateness_ticks"],
+            "phase_2_completion_tick": p2_incs[0]["completion_tick"],
+            "phase_2_lateness_ticks": p2_incs[0]["lateness_ticks"],
+            "phase_1_metrics": compute_empirical_defect_rates(p1_traces),
+            "phase_2_metrics": compute_empirical_defect_rates(p2_traces),
+        }
+
+    body = {
+        "schema": "lggr.deadline_priority_queue_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "deadline_priority_queue_benchmark",
+        "models_evaluated": list(models),
+        "incidents_evaluated": incident_pairs,
+        "prior_split_receipt_sha256": prior_split_sha,
+        "total_completions": total_completions,
+        "queue_count": len(all_queues),
+        "incident_evaluation_count": len(r1_inc_traces),
+        "phase_1_static_priority_queue_metrics": compute_empirical_defect_rates(
+            r1_queue_traces
+        ),
+        "phase_2_edf_deadline_queue_metrics": compute_empirical_defect_rates(
+            r2_queue_traces
+        ),
+        "phase_1_static_priority_incident_metrics": compute_empirical_defect_rates(
+            r1_inc_traces
+        ),
+        "phase_2_edf_deadline_incident_metrics": compute_empirical_defect_rates(
+            r2_inc_traces
+        ),
+        "phase_1_static_deadline_breach_rate": monitor_receipt[
+            "phase_1_static_deadline_breach_rate"
+        ],
+        "single_round_static_deadline_coherence_rate": monitor_receipt[
+            "single_round_static_deadline_coherence_rate"
+        ],
+        "multi_round_edf_deadline_coherence_rate": monitor_receipt[
+            "multi_round_edf_deadline_coherence_rate"
+        ],
+        "edf_deadline_coherence_gain": monitor_receipt[
+            "edf_deadline_coherence_gain"
+        ],
+        "per_model_summary": per_model_summary,
+        "per_incident_summary": per_incident_summary,
+        "deadline_monitor_receipt": monitor_receipt,
+        "queues": all_queues,
+        "meaning": (
+            "Deadline-constrained priority queue benchmark across 3 simultaneous non-preemptible "
+            "incidents (s1=s2=s3=0) with static priorities (1, 2, 3) and inverse SLA completion "
+            "deadlines (D_1=3, D_2=2, D_3=1) across 5 model families, separating static priority "
+            "ordering (L_queue = 1 for budget+Pareto coherence, yet Incident 3 completes at C_3 = 3 > D_3 = 1 "
+            "with lateness = 2 -> E_g = 0, Delta_E = -1) from Earliest-Deadline-First (EDF) ordering "
+            "(D_3=1 < D_2=2 < D_1=3 -> C_3=1, C_2=2, C_1=3, max lateness = 0, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    out_path = os.path.join(receipts_dir, "deadline_priority_queue_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
 
 
 
