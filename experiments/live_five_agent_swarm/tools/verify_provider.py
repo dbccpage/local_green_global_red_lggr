@@ -11,6 +11,7 @@ import urllib.parse
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 from lggr.benchmarks import load_openrouter_credentials
+from experiments.live_five_agent_swarm.client import open_private
 
 
 def verify(directory):
@@ -27,7 +28,7 @@ def verify(directory):
         req = urllib.request.Request("https://openrouter.ai/api/v1/generation?"+urllib.parse.urlencode({"id": identifier}),
                                      headers={"Authorization": "Bearer "+key})
         try:
-            with urllib.request.urlopen(req, timeout=30) as stream:
+            with open_private(req, timeout=30) as stream:
                 data = json.load(stream)["data"]
             kept = {k:data.get(k) for k in ("id", "model", "provider_name", "total_cost", "tokens_prompt", "tokens_completion", "native_tokens_prompt", "native_tokens_completion", "created_at", "finish_reason")}
             cost_matches = Decimal(str(data["total_cost"])) == Decimal(str(response["usage"]["cost"]))

@@ -214,6 +214,33 @@ class LiveFiveAgentTests(unittest.TestCase):
             self.assertEqual(completed.returncode, 0, completed.stderr)
             self.assertEqual(json.loads(completed.stdout)["status"], "stopped")
 
+    def test_malformed_tool_shapes_and_failed_inspection_cannot_act(self):
+        class Responses:
+            def __init__(self, calls): self.calls = calls
+            def complete(self, *args): return {"role": "assistant", "tool_calls": self.calls}
+        def call(name, args):
+            return {"id": name, "type": "function", "function": {"name": name, "arguments": json.dumps(args)}}
+        board = Board(fixture(3101))
+        self.addCleanup(board.close)
+        for calls in ([None], [{"function": None}], [call("inspect_board", {"extra": True}), call("escalate", {"reason": "no slots"})]):
+            events = Events()
+            self.assertFalse(agent_turn(Responses(calls), events, board, [], "worker-0", {}))
+            self.assertFalse(any(e["kind"] == "tool" and e["data"]["result"].get("escalated") for e in events.records))
+        for reason in ("", " ", "\n", " "*1000+"hidden"):
+            self.assertFalse(board.tool("worker-0", "escalate", {"reason": reason}).get("escalated", False))
+        self.assertTrue(board.tool("worker-0", "escalate", {"reason": "No capacity"})["escalated"])
+
+    def test_redirects_are_rejected_and_malformed_provider_shapes_are_safe(self):
+        import urllib.request
+        import urllib.error
+        from experiments.live_five_agent_swarm.client import RejectRedirects
+        req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", headers={"Authorization": "Bearer fake"})
+        with self.assertRaises(urllib.error.HTTPError):
+            RejectRedirects().redirect_request(req, None, 302, "redirect", {}, "https://other.invalid")
+        for raw in (None, [], {"model": None}, {"model": MODELS[0], "choices": [None]}):
+            with self.assertRaises(ValueError): response_message(raw, MODELS[0])
+            self.assertEqual(charge(raw, Decimal("0.1")), (Decimal("0.1"), False))
+
     def test_actual_model_identity_and_truncation_rejected(self):
         raw = {"model": "other/model", "choices": [{"message": {"role": "assistant"}, "finish_reason": "stop"}]}
         with self.assertRaises(ValueError):response_message(raw, MODELS[0])

@@ -59,13 +59,17 @@ def agent_turn(client, events, board, history, worker, feedback):
         if not isinstance(calls, list) or len(calls) > 8:
             events.emit("invalid_model_output", {"worker": worker, "reason": "invalid tool call list"})
             return False
-        if any(not isinstance(call, dict) or not isinstance(call.get("function"), dict) for call in calls):
-            events.emit("invalid_model_output", {"worker": worker, "reason": "invalid tool call shape"})
-            return False
         if not calls:
             history.append({"role": "user", "content": "Use inspect_board and then propose or escalate; prose alone cannot change the workspace."})
             continue
         done, escalation = False, False
+        if any(not isinstance(call, dict) or not isinstance(call.get("function"), dict)
+               or not isinstance(call.get("id"), str) or not call["id"]
+               or call.get("type") != "function"
+               or not isinstance(call["function"].get("name"), str)
+               or not isinstance(call["function"].get("arguments"), str) for call in calls):
+            events.emit("invalid_model_output", {"worker": worker, "reason": "invalid tool call shape"})
+            return False
         for call in calls:
             function = call.get("function", {})
             name = function.get("name")
@@ -252,6 +256,12 @@ def main():
         return
     if not 0 < args.budget <= 10:
         raise ValueError("pilot budget must be in (0, 10]")
+    # Bind executable source bytes to the recorded commit before spending money.
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    for name, digest in source_hashes().items():
+        blob = subprocess.check_output(["git", "show", commit+":"+name], cwd=ROOT)
+        if hashlib.sha256(blob).hexdigest() != digest:
+            raise ValueError("live source is not committed: " + name)
     output = Path(args.path)
     output.mkdir(parents=True, exist_ok=False)
     config = {"seeds": [3101] if args.development else list(range(4101, 4107)),
