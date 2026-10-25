@@ -85,14 +85,31 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `51
 | `8302` | `infeasible_catalyst_budget_lock` | **B** | `late_last_ticket_module_cleanup` | `safe_escalated` | `3` | `6` | 1 | 6 | `$0.007136` |
 | `8302` | `infeasible_catalyst_budget_lock` | **C** | `scheduled_lggr_catalyst_rejuvenation_directive` | `safe_escalated` | `3` | `4` | 1 | 6 | `$0.007332` |
 
+## Stateful Transaction/Session Codebase & DFA Reset-Token Gluing (`--topology dfa`, `evidence/dfa_pilot_run/summary.json`)
+
+The package also models stateful transaction/session modules (`--topology dfa`) sharing a 4-state lock/commit/release `TransactionSession` DFA ($\mathcal{A} = (Q, \Sigma, \delta, q_0, F)$ with $Q = \{\text{'q0\_idle'}, \text{'q1\_lock'}, \text{'q2\_done'}, \text{'q3\_err'}\}$, $q_0 = \text{'q0\_idle'}$, $F = \{\text{'q0\_idle'}, \text{'q2\_done'}\}$) across `pricing_tx.py`, `tax_tx.py`, and `settlement_tx.py`, audited by `StreamingStatefulCodebaseDFAMonitor` (`StreamingDFAGrammarGluingMonitor` + `StreamingDFAResetTokenGluingMonitor` + `StreamingCodebaseInterfaceMergeMonitor` + `StreamingFiberMonitor`):
+- In isolated local unit tests (`run_dfa_local_unit_tests`), each module is invoked on a fresh `TransactionSession` initialized at `'q0_idle'`. A module that executes `session.acquire()` followed by `session.commit()` without `session.release()` emits $w_i = [\text{'acquire'}, \text{'commit'}]$, which reaches `'q2_done' \in F$ and passes its isolated unit test (`local_green = 1`), yet `'q2_done' \ne \text{'q0\_idle'}$ is not reset-idempotent on $q_0$.
+- When composed sequentially on a shared session ($w_1 ++ w_2 ++ w_3$), `pricing_tx` leaves `session.state = 'q2_done'`, causing `tax_tx`'s `session.acquire()` to transition into trap state `'q3_err' \notin F$ (`global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `52` live API attempts, `$0.058084` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | Non-Reset Modules | Terminal State | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| `9400` | `infeasible_dfa_hold_lock` | **A / B / C** | All policies | `safe_escalated` | `3` | `'q3_err'` | 1 | 6–7 | `$0.0057–$0.0065` |
+| `9401` | `clean_dfa_reset_control` | **A / B / C** | All policies | `completed` | `0` | `'q0_idle'` | 0 | 0 | `$0.000000` |
+| `9402` | `unreleased_session_lock_trap` | **A** | `isolated_fixture_acceptance_gate` | `blocked_unresolved` | `3` | `'q3_err'` | 2 | 13 | `$0.014272` |
+| `9402` | `unreleased_session_lock_trap` | **B** | `exception_site_traceback_routing` | `blocked_unresolved` | `1` | `'q3_err'` | 2 | 14 | `$0.019483` |
+| `9402` | `unreleased_session_lock_trap` | **C** | `explicit_lggr_dfa_reset_gluing_directive` | **`completed`** | **`0`** | **`'q0_idle'`** | **1** | **6** | **`$0.006128`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, and 3-agent catalyst evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, and 3-agent stateful DFA evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/dfa_pilot_run/events.jsonl
 ```

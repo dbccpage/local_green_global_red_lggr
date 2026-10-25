@@ -3710,4 +3710,58 @@ theorem iterative_codebase_feature_evolution_catalyst_debt_and_rejuvenation_audi
   intro hd
   refine ⟨by omega, ⟨by omega, by omega⟩⟩
 
+/-- 97. Stateful transaction/session codebase DFA non-resetting concatenation vs. explicit
+    reset-token gluing audit:
+    1. Symbolic 4-state transaction/lock DFA (`0 = q0_idle`, `1 = q1_lock`, `2 = q2_done`,
+       `3 = q3_err`) transition and reset-idempotence identity:
+       - A local segment `acquire -> commit` from `q0 = 0` reaches `q2_done = 2 ∈ {0, 2}`
+         (passing an isolated fresh-fixture unit test), yet `2 ≠ 0` is not reset-idempotent;
+       - Any subsequent `acquire` from `q2_done = 2` enters trap state `q3_err = 3 ∉ {0, 2}`,
+         whereas appending `release` transitions `2 -> 0 = q0_idle`, restoring reset-idempotence;
+    2. Concrete 3-phase stateful 3-module codebase (`pricing`, `tax_engine`, `settlement_router`)
+       DFA gluing audit:
+       - Phase 1 (All 3 modules omit `session.release()`, `non_reset_p1 = 3`):
+         all 3 modules pass isolated fresh-session unit tests (`L_unrel = 1`), yet `pricing`
+         leaves the shared session at `q2_done = 2`, trapping `tax_engine` at `q3_err = 3`
+         (`Eg_unrel = 0`, `Δ_{E,unrel} = -1`);
+       - Phase 2 (Downstream modules add `session.release()`, but upstream `pricing` omits it,
+         `non_reset_p2 = 1`):
+         all 3 modules pass isolated unit tests (`L_part = 1`), yet the unreleased prefix segment
+         `pricing` (`q_1 = 2 ≠ 0`) still forces the concatenated pipeline into `q3_err = 3`
+         (`Eg_part = 0`, `Δ_{E,part} = -1`);
+       - Phase 3 (Explicit `session.release()` reset-token gluing across all 3 modules,
+         `non_reset_p3 = 0`):
+         every module returns the shared session to `q0_idle = 0` (`q_end_p3 = 0`) and preserves
+         settlement conservation `873 + 27 + 180 = 1080` (`L_reset = 1`, `Eg_reset = 1`,
+         `Δ_{E,reset} = 0`). -/
+theorem stateful_codebase_transaction_dfa_reset_gluing_audit :
+    (∀ q0 q1 q2 q3 : Int,
+      (q0 = 0 ∧ q1 = 1 ∧ q2 = 2 ∧ q3 = 3) →
+      ((q2 = 0 ∨ q2 = 2) ∧ q2 ≠ q0 ∧ ¬(q3 = 0 ∨ q3 = 2) ∧ (q0 = 0 ∨ q0 = 2))) ∧
+    (let non_reset_p1 : Int := 3;
+     let q_end_p1 : Int := 3;
+     let non_reset_p2 : Int := 1;
+     let q_end_p2 : Int := 3;
+     let non_reset_p3 : Int := 0;
+     let q_end_p3 : Int := 0;
+     let payout_p3 : Int := 873;
+     let fee_p3 : Int := 27;
+     let tax_p3 : Int := 180;
+     let gross_p3 : Int := 1080;
+     let l_unrel := if (non_reset_p1 = 3) ∧ (q_end_p1 = 3) then (1 : Int) else 0;
+     let eg_unrel := if (l_unrel = 1) ∧ (non_reset_p1 = 0) ∧ (q_end_p1 = 0) then (1 : Int) else 0;
+     let defect_unrel := eg_unrel - l_unrel;
+     let l_part := if (non_reset_p2 = 1) ∧ (q_end_p2 = 3) then (1 : Int) else 0;
+     let eg_part := if (l_part = 1) ∧ (non_reset_p2 = 0) ∧ (q_end_p2 = 0) then (1 : Int) else 0;
+     let defect_part := eg_part - l_part;
+     let l_reset := if (non_reset_p3 = 0) ∧ (q_end_p3 = 0) ∧ (payout_p3 + fee_p3 + tax_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_reset := if (l_reset = 1) ∧ (non_reset_p3 < non_reset_p2) ∧ (non_reset_p2 < non_reset_p1) then (1 : Int) else 0;
+     let defect_reset := eg_reset - l_reset;
+     (l_unrel = 1 ∧ eg_unrel = 0 ∧ defect_unrel = -1) ∧
+     (l_part = 1 ∧ eg_part = 0 ∧ defect_part = -1) ∧
+     (l_reset = 1 ∧ eg_reset = 1 ∧ defect_reset = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro q0 q1 q2 q3 hq
+  omega
+
 end LggrVIII

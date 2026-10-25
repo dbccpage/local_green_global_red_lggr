@@ -85,6 +85,7 @@ from lggr.streaming import (
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingStageVsE2EIntegrationMonitor,
+    StreamingStatefulCodebaseDFAMonitor,
     StreamingThreePartyConstantBoundMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingToolAssistedFiberSplittingMonitor,
@@ -5003,6 +5004,53 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["current_catalyst_debt"], 0)
         self.assertEqual(receipt["max_catalyst_debt_seen"], 4)
+
+    def test_stateful_codebase_transaction_dfa_reset_gluing_audit(self) -> None:
+        """Verify Theorem 97: stateful transaction codebase DFA non-resetting concatenation vs reset gluing."""
+        mon = StreamingStatefulCodebaseDFAMonitor(
+            scope_id="unit-stateful-codebase-dfa-scope",
+        )
+        obs = mon.record_three_phase_stateful_codebase_dfa_audit(
+            "stateful-codebase-dfa-eval-01",
+        )
+        self.assertEqual(obs["phase_1_non_reset_count"], 3)
+        self.assertEqual(obs["phase_1_terminal_state"], "q3_err")
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "ENFORCE_DFA_RESET_TOKEN_RELEASE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "ENFORCE_DFA_RESET_TOKEN_RELEASE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "ENFORCE_DFA_RESET_TOKEN_RELEASE",
+        )
+
+        self.assertEqual(obs["phase_2_non_reset_count"], 1)
+        self.assertEqual(obs["phase_2_terminal_state"], "q3_err")
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "UNRELEASED_PREFIX_TRAP_STATE_LGGR")
+
+        self.assertEqual(obs["phase_3_non_reset_count"], 0)
+        self.assertEqual(obs["phase_3_terminal_state"], "q0_idle")
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
 
 
 if __name__ == "__main__":
