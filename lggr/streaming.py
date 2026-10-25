@@ -18471,6 +18471,667 @@ class StreamingCodebaseCatalystEvolutionMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class _TransactionSessionProbe:
+    """Deterministic 4-state lock/commit/release DFA session probe for stateful codebase modules."""
+
+    def __init__(self, *, raise_on_trap: bool = False) -> None:
+        self.state: str = "q0_idle"
+        self.tokens: list[str] = []
+        self.raise_on_trap = bool(raise_on_trap)
+
+    def _step(self, token: str) -> str:
+        prev = self.state
+        nxt = StreamingDFAResetTokenGluingMonitor.DEFAULT_TRANSITIONS[prev][token]
+        self.state = nxt
+        self.tokens.append(token)
+        if self.raise_on_trap and nxt == "q3_err":
+            raise RuntimeError(
+                f"TransactionProtocolTrapError: token '{token}' from state '{prev}' entered trap state 'q3_err'"
+            )
+        return nxt
+
+    def acquire(self) -> str:
+        return self._step("acquire")
+
+    def commit(self) -> str:
+        return self._step("commit")
+
+    def release(self) -> str:
+        return self._step("release")
+
+
+class StreamingStatefulCodebaseDFAMonitor:
+    """Stateful transaction/session codebase DFA non-resetting concatenation vs. explicit
+    reset-token gluing monitor (Theorem 97).
+
+    Combines ``StreamingDFAGrammarGluingMonitor``, ``StreamingDFAResetTokenGluingMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across a 3-module
+    stateful settlement codebase sharing a transaction/lock/cursor session:
+      - ``worker-0`` (``pricing_tx.py``): ``execute_pricing_tx(session, items, discount_bps)`` ->
+        canonical return keys ``['subtotal_cents', 'discount_cents', 'net_cents']``
+      - ``worker-1`` (``tax_tx.py``): ``execute_tax_tx(session, quote, tax_bps)`` ->
+        canonical return keys ``['net_cents', 'tax_cents', 'gross_cents']``
+      - ``worker-2`` (``settlement_tx.py``): ``execute_settlement_tx(session, taxed_quote, fee_bps)`` ->
+        canonical return keys ``['gross_cents', 'platform_fee_cents', 'tax_reserve_cents', 'merchant_payout_cents']``
+
+    In isolated local unit tests, each module is invoked on a fresh ``session`` initialized at
+    ``q0_idle``. A module that calls ``session.acquire()`` followed by ``session.commit()`` without
+    ``session.release()`` emits segment ``w_i = ['acquire', 'commit']``, which terminates at
+    ``q2_done in F = {'q0_idle', 'q2_done'}`` (passing its isolated unit test!), yet ``q2_done != q0_idle``
+    is not reset-idempotent on ``q0_idle``. When the 3 modules compose sequentially on a shared
+    pipeline session (``w_1 ++ w_2 ++ w_3``), ``tax_tx``'s ``session.acquire()`` on ``q2_done``
+    transitions into trap state ``q3_err not in F`` unless every module appends the explicit reset
+    token ``session.release()`` returning the shared session to ``q0_idle``.
+    """
+
+    CANONICAL_STATEFUL_MODULE_SPEC: dict[str, dict[str, Any]] = {
+        "worker-0": {
+            "module": "pricing_tx",
+            "function": "execute_pricing_tx",
+            "params": ["session", "items", "discount_bps"],
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+        },
+        "worker-1": {
+            "module": "tax_tx",
+            "function": "execute_tax_tx",
+            "params": ["session", "quote", "tax_bps"],
+            "return_keys": ["net_cents", "tax_cents", "gross_cents"],
+        },
+        "worker-2": {
+            "module": "settlement_tx",
+            "function": "execute_settlement_tx",
+            "params": ["session", "taxed_quote", "fee_bps"],
+            "return_keys": [
+                "gross_cents",
+                "platform_fee_cents",
+                "tax_reserve_cents",
+                "merchant_payout_cents",
+            ],
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-stateful-codebase-dfa-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.reset_monitor = StreamingDFAResetTokenGluingMonitor(
+            scope_id=f"{self.scope_id}-reset"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def new_session(*, raise_on_trap: bool = False) -> _TransactionSessionProbe:
+        return _TransactionSessionProbe(raise_on_trap=raise_on_trap)
+
+    def evaluate_stateful_codebase_dfa(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: dict[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit 3 stateful transaction modules for isolated DFA acceptance vs concatenated session gluing."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        ast_reports: dict[str, dict[str, Any]] = {}
+        namespaces: dict[str, dict[str, Any]] = {}
+        contract_mismatches: list[dict[str, Any]] = []
+        conservation_defects: list[dict[str, Any]] = []
+
+        for wid, spec in self.CANONICAL_STATEFUL_MODULE_SPEC.items():
+            mname = spec["module"]
+            src = sources.get(mname, "")
+            info = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(mname, src)
+            ast_reports[mname] = info
+            if info["syntax_ok"] and info["sandbox_ok"]:
+                try:
+                    namespaces[mname] = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+                        mname, src
+                    )
+                except Exception as exc:
+                    contract_mismatches.append(
+                        {
+                            "worker": wid,
+                            "module": mname,
+                            "kind": "MODULE_LOAD_ERROR",
+                            "detail": str(exc),
+                        }
+                    )
+            else:
+                contract_mismatches.append(
+                    {
+                        "worker": wid,
+                        "module": mname,
+                        "kind": "AST_OR_SANDBOX_FAILURE",
+                        "detail": info.get("error") or str(info.get("sandbox_violations")),
+                    }
+                )
+
+        if infeasible_constraint is not None:
+            contract_mismatches.append(
+                {
+                    "worker": "all",
+                    "module": "transaction_protocol_contract",
+                    "kind": "INFEASIBLE_SPECIFICATION_CONTRADICTION",
+                    "detail": infeasible_constraint,
+                }
+            )
+
+        sample_items = [
+            {"unit_cents": 400, "quantity": 2},
+            {"unit_cents": 200, "quantity": 1},
+        ]
+        canonical_quote = {"subtotal_cents": 1000, "discount_cents": 100, "net_cents": 900}
+        canonical_taxed = {"net_cents": 900, "tax_cents": 180, "gross_cents": 1080}
+
+        dfa_mon = StreamingDFAGrammarGluingMonitor(
+            states=StreamingDFAResetTokenGluingMonitor.DEFAULT_STATES,
+            alphabet=StreamingDFAResetTokenGluingMonitor.DEFAULT_ALPHABET,
+            transitions=StreamingDFAResetTokenGluingMonitor.DEFAULT_TRANSITIONS,
+            initial_state="q0_idle",
+            accepting_states=StreamingDFAResetTokenGluingMonitor.DEFAULT_ACCEPTING,
+            scope_id=f"{self.scope_id}:{eval_id}:dfa",
+        )
+
+        p_out: dict[str, Any] | None = None
+        t_out: dict[str, Any] | None = None
+        s_out: dict[str, Any] | None = None
+        segment_records: dict[str, dict[str, Any]] = {}
+        first_sequential_traceback: str | None = None
+
+        if len(namespaces) == 3 and infeasible_constraint is None:
+            fn_p = namespaces["pricing_tx"].get("execute_pricing_tx")
+            fn_t = namespaces["tax_tx"].get("execute_tax_tx")
+            fn_s = namespaces["settlement_tx"].get("execute_settlement_tx")
+
+            # Probe Stage 1 in an isolated session from q0_idle to extract w_1 and arithmetic output
+            sess_p = self.new_session(raise_on_trap=False)
+            try:
+                p_out = fn_p(sess_p, sample_items, 1000)
+                for req_k in ("subtotal_cents", "discount_cents", "net_cents"):
+                    if not isinstance(p_out, dict) or req_k not in p_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-0",
+                                "module": "pricing_tx",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                            }
+                        )
+            except Exception as exc:
+                first_sequential_traceback = f"pricing_tx.execute_pricing_tx raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-0",
+                        "module": "pricing_tx",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": first_sequential_traceback,
+                    }
+                )
+            w1_tokens = list(sess_p.tokens) if sess_p.tokens else ["commit"]
+            seg1 = dfa_mon.record_segment("pricing_tx", w1_tokens)
+            segment_records["pricing_tx"] = seg1
+
+            # Probe Stage 2 in an isolated session from q0_idle to extract w_2 and arithmetic output
+            q_input = (
+                p_out
+                if (isinstance(p_out, dict) and all(k in p_out for k in ("subtotal_cents", "discount_cents", "net_cents")))
+                else canonical_quote
+            )
+            sess_t = self.new_session(raise_on_trap=False)
+            try:
+                t_out = fn_t(sess_t, dict(q_input), 2000)
+                for req_k in ("net_cents", "tax_cents", "gross_cents"):
+                    if not isinstance(t_out, dict) or req_k not in t_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-1",
+                                "module": "tax_tx",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                            }
+                        )
+            except Exception as exc:
+                if first_sequential_traceback is None:
+                    first_sequential_traceback = f"tax_tx.execute_tax_tx raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-1",
+                        "module": "tax_tx",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": str(exc),
+                    }
+                )
+            w2_tokens = list(sess_t.tokens) if sess_t.tokens else ["commit"]
+            seg2 = dfa_mon.record_segment("tax_tx", w2_tokens)
+            segment_records["tax_tx"] = seg2
+            if seg2["entry_state"] != "q0_idle" and seg2["chained_end_state"] == "q3_err" and first_sequential_traceback is None:
+                first_sequential_traceback = (
+                    f"TransactionProtocolTrapError in tax_tx.execute_tax_tx: session.acquire() called while "
+                    f"shared session was in non-idle state '{seg2['entry_state']}' -> entered trap state 'q3_err'"
+                )
+
+            # Probe Stage 3 in an isolated session from q0_idle to extract w_3 and arithmetic output
+            t_input = (
+                t_out
+                if (isinstance(t_out, dict) and all(k in t_out for k in ("net_cents", "tax_cents", "gross_cents")))
+                else canonical_taxed
+            )
+            sess_s = self.new_session(raise_on_trap=False)
+            try:
+                s_out = fn_s(sess_s, dict(t_input), 300)
+                req_s_keys = (
+                    "gross_cents",
+                    "platform_fee_cents",
+                    "tax_reserve_cents",
+                    "merchant_payout_cents",
+                )
+                for req_k in req_s_keys:
+                    if not isinstance(s_out, dict) or req_k not in s_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-2",
+                                "module": "settlement_tx",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                            }
+                        )
+                if isinstance(s_out, dict) and all(k in s_out for k in req_s_keys):
+                    expected_fee = (int(t_input["net_cents"]) * 300) // 10000
+                    residual = (
+                        int(s_out["merchant_payout_cents"])
+                        + int(s_out["platform_fee_cents"])
+                        + int(s_out["tax_reserve_cents"])
+                    ) - int(s_out["gross_cents"])
+                    fee_drift = int(s_out["platform_fee_cents"]) - expected_fee
+                    if residual != 0 or fee_drift != 0:
+                        conservation_defects.append(
+                            {
+                                "worker": "worker-2",
+                                "module": "settlement_tx",
+                                "kind": "CONSERVATION_OR_FEE_DRIFT",
+                                "conservation_residual_cents": residual,
+                                "fee_drift_cents": fee_drift,
+                            }
+                        )
+            except Exception as exc:
+                if first_sequential_traceback is None:
+                    first_sequential_traceback = f"settlement_tx.execute_settlement_tx raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-2",
+                        "module": "settlement_tx",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": str(exc),
+                    }
+                )
+            w3_tokens = list(sess_s.tokens) if sess_s.tokens else ["commit"]
+            seg3 = dfa_mon.record_segment("settlement_tx", w3_tokens)
+            segment_records["settlement_tx"] = seg3
+            if seg3["entry_state"] != "q0_idle" and seg3["chained_end_state"] == "q3_err" and first_sequential_traceback is None:
+                first_sequential_traceback = (
+                    f"TransactionProtocolTrapError in settlement_tx.execute_settlement_tx: session.acquire() called "
+                    f"while shared session was in state '{seg3['entry_state']}' -> entered trap state 'q3_err'"
+                )
+            if seg3["chained_end_state"] == "q2_done" and first_sequential_traceback is None:
+                first_sequential_traceback = (
+                    "TransactionProtocolLeakError at pipeline exit: settlement_tx committed without calling "
+                    "session.release(), leaving shared session in non-reset state 'q2_done'"
+                )
+        else:
+            for mname in ("pricing_tx", "tax_tx", "settlement_tx"):
+                segment_records[mname] = dfa_mon.record_segment(mname, ["acquire", "commit"])
+
+        dfa_receipt = dfa_mon.get_receipt()
+        reset_sched_eval = self.reset_monitor.evaluate_dfa_reset_gluing(f"{eval_id}_reset_eval")
+
+        non_reset_modules = list(dfa_receipt["non_reset_accepting_segment_ids"])
+        non_reset_count = len(non_reset_modules)
+        terminal_state = str(dfa_receipt["terminal_state"])
+
+        local_vec = [
+            bool(local_test_results.get("pricing_tx", False)),
+            bool(local_test_results.get("tax_tx", False)),
+            bool(local_test_results.get("settlement_tx", False)),
+        ]
+        l_green = (
+            1
+            if (
+                all(local_vec)
+                and int(dfa_receipt["local_product_aggregator"]) == 1
+                and not contract_mismatches
+                and not conservation_defects
+            )
+            else 0
+        )
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and int(dfa_receipt["global_concatenated_evaluator"]) == 1
+                and non_reset_count == 0
+                and terminal_state == "q0_idle"
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {"local_unit_tests": local_vec, "local_dfa_product": dfa_receipt["local_product_aggregator"]},
+            {
+                "dfa_reset_glued_coherent": eg_green == 1,
+                "terminal_state": terminal_state,
+                "non_reset_module_count": non_reset_count,
+            },
+        )
+
+        role_directives = self._build_stateful_dfa_directives(
+            segment_records=segment_records,
+            non_reset_modules=non_reset_modules,
+            contract_mismatches=contract_mismatches,
+            conservation_defects=conservation_defects,
+            infeasible_constraint=infeasible_constraint,
+            integration_passed=(eg_green == 1),
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_DFA_PROTOCOL_CONTRADICTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif non_reset_count == 3:
+            status = "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "UNRELEASED_PREFIX_TRAP_STATE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "local_unit_test_verdicts": {
+                "pricing_tx": local_vec[0],
+                "tax_tx": local_vec[1],
+                "settlement_tx": local_vec[2],
+            },
+            "segment_tokens": {m: segment_records[m]["tokens"] for m in ("pricing_tx", "tax_tx", "settlement_tx")},
+            "non_reset_accepting_modules": non_reset_modules,
+            "non_reset_module_count": non_reset_count,
+            "terminal_session_state": terminal_state,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "contract_mismatches": contract_mismatches,
+            "conservation_defects": conservation_defects,
+            "compact_role_directives": role_directives,
+            "integration_trace": {
+                "pricing_tx_output": p_out,
+                "tax_tx_output": t_out,
+                "settlement_tx_output": s_out,
+                "first_sequential_traceback": first_sequential_traceback,
+            },
+            "dfa_grammar_receipt": dfa_receipt,
+            "dfa_reset_schedule_evaluation": reset_sched_eval,
+            "ast_reports": ast_reports,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_stateful_dfa_directives(
+        cls,
+        *,
+        segment_records: Mapping[str, Mapping[str, Any]],
+        non_reset_modules: Sequence[str],
+        contract_mismatches: Sequence[Mapping[str, Any]],
+        conservation_defects: Sequence[Mapping[str, Any]],
+        infeasible_constraint: Mapping[str, Any] | None,
+        integration_passed: bool,
+    ) -> dict[str, dict[str, Any]]:
+        if integration_passed:
+            return {
+                wid: {
+                    "role": "VERIFIED_DFA_RESET_MODULE_OWNER",
+                    "action": "NO_CHANGE_REQUIRED",
+                    "module": spec["module"],
+                    "function": spec["function"],
+                }
+                for wid, spec in cls.CANONICAL_STATEFUL_MODULE_SPEC.items()
+            }
+
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "DFA_PROTOCOL_CONFLICT_AUDITOR",
+                    "action": "ESCALATE_INFEASIBLE_DFA_PROTOCOL",
+                    "module": spec["module"],
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_STATEFUL_MODULE_SPEC.items()
+            }
+
+        non_reset_set = set(non_reset_modules)
+        directives: dict[str, dict[str, Any]] = {}
+        for wid, spec in cls.CANONICAL_STATEFUL_MODULE_SPEC.items():
+            mname = spec["module"]
+            seg = segment_records.get(mname, {})
+            toks = list(seg.get("tokens", []))
+            needs_reset = (mname in non_reset_set) or (toks != ["acquire", "commit", "release"])
+            directives[wid] = {
+                "role": "STATEFUL_TRANSACTION_MODULE_OWNER",
+                "action": "ENFORCE_DFA_RESET_TOKEN_RELEASE" if needs_reset else "HOLD_RESET_IDEMPOTENT_MODULE",
+                "module": mname,
+                "function": spec["function"],
+                "observed_segment_tokens": toks,
+                "observed_local_end_state": seg.get("local_end_state_from_q0"),
+                "required_segment_tokens": ["acquire", "commit", "release"],
+                "required_terminal_state": "q0_idle",
+                "required_return_keys": list(spec["return_keys"]),
+                "instruction": (
+                    f"Ensure `{spec['function']}` in `{mname}.py` executes `session.acquire()`, "
+                    f"`session.commit()`, and `session.release()` before returning so the shared "
+                    f"`TransactionSession` resets from `'q2_done'` to `'q0_idle'`."
+                    if needs_reset
+                    else f"Keep `{spec['function']}` in `{mname}.py` unchanged with `['acquire', 'commit', 'release']`."
+                ),
+            }
+        return directives
+
+    def record_three_phase_stateful_codebase_dfa_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase stateful transaction codebase DFA reset-token gluing audit (Theorem 97):
+        - Phase 1 (All 3 modules omit `session.release()`, `non_reset_module_count = 3`):
+          Each module executes `['acquire', 'commit']` and passes its isolated fresh-session unit test
+          (`L = 1`), yet in the shared session `pricing_tx` leaves `session.state = 'q2_done'`,
+          trapping `tax_tx` at `'q3_err'` (`NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR`, `defect = -1`).
+        - Phase 2 (Downstream `tax_tx` and `settlement_tx` add `session.release()`, but upstream
+          `pricing_tx` omits it, `non_reset_module_count = 1`):
+          All 3 modules pass isolated unit tests (`L = 1`), yet the unreleased prefix `pricing_tx`
+          still traps `tax_tx` at `'q3_err'` (`UNRELEASED_PREFIX_TRAP_STATE_LGGR`, `defect = -1`).
+        - Phase 3 (Explicit `session.release()` reset-token gluing across all 3 modules,
+          `non_reset_module_count = 0`, `terminal_session_state = 'q0_idle'`):
+          All 3 modules return the shared session to `'q0_idle'` and preserve exact settlement
+          conservation `873 + 27 + 180 = 1080` (`CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG`, `defect = 0`).
+        """
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p_unrel = (
+            "def execute_pricing_tx(session, items, discount_bps):\n"
+            "    session.acquire()\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    session.commit()\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_cents': net}\n"
+        )
+        src_p_reset = (
+            "def execute_pricing_tx(session, items, discount_bps):\n"
+            "    session.acquire()\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    session.commit()\n"
+            "    session.release()\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_cents': net}\n"
+        )
+        src_t_unrel = (
+            "def execute_tax_tx(session, quote, tax_bps):\n"
+            "    session.acquire()\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    session.commit()\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': gross}\n"
+        )
+        src_t_reset = (
+            "def execute_tax_tx(session, quote, tax_bps):\n"
+            "    session.acquire()\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    session.commit()\n"
+            "    session.release()\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': gross}\n"
+        )
+        src_s_unrel = (
+            "def execute_settlement_tx(session, taxed_quote, fee_bps):\n"
+            "    session.acquire()\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    session.commit()\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+        src_s_reset = (
+            "def execute_settlement_tx(session, taxed_quote, fee_bps):\n"
+            "    session.acquire()\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    session.commit()\n"
+            "    session.release()\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+
+        all_local_green = {"pricing_tx": True, "tax_tx": True, "settlement_tx": True}
+
+        p1 = self.evaluate_stateful_codebase_dfa(
+            f"{eval_id}_phase1_all_unreleased",
+            sources={
+                "pricing_tx": src_p_unrel,
+                "tax_tx": src_t_unrel,
+                "settlement_tx": src_s_unrel,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_stateful_codebase_dfa(
+            f"{eval_id}_phase2_upstream_prefix_unreleased",
+            sources={
+                "pricing_tx": src_p_unrel,
+                "tax_tx": src_t_reset,
+                "settlement_tx": src_s_reset,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_stateful_codebase_dfa(
+            f"{eval_id}_phase3_all_explicit_reset_glued",
+            sources={
+                "pricing_tx": src_p_reset,
+                "tax_tx": src_t_reset,
+                "settlement_tx": src_s_reset,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_non_reset_count": p1["non_reset_module_count"],
+                "phase_1_terminal_state": p1["terminal_session_state"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_non_reset_count": p2["non_reset_module_count"],
+                "phase_2_terminal_state": p2["terminal_session_state"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_non_reset_count": p3["non_reset_module_count"],
+                "phase_3_terminal_state": p3["terminal_session_state"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "phase_3_integration_trace": p3["integration_trace"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one stateful codebase DFA evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_stateful_codebase_dfa.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "dfa_reset_schedule_receipt": self.reset_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

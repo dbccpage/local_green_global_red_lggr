@@ -1,0 +1,165 @@
+{
+  "schema": "lggr.stateful_dfa_code_engineering_swarm.v1",
+  "topology": "dfa",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 9400,
+      "kind": "infeasible_dfa_hold_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_non_reset_module_count": 3,
+          "final_terminal_session_state": "q3_err",
+          "final_status": "INFEASIBLE_DFA_PROTOCOL_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 7,
+          "cost_usd": "0.0065363550"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_non_reset_module_count": 3,
+          "final_terminal_session_state": "q3_err",
+          "final_status": "INFEASIBLE_DFA_PROTOCOL_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0057347073"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_non_reset_module_count": 3,
+          "final_terminal_session_state": "q3_err",
+          "final_status": "INFEASIBLE_DFA_PROTOCOL_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0059286584"
+        }
+      ]
+    },
+    {
+      "seed": 9401,
+      "kind": "clean_dfa_reset_control",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_non_reset_module_count": 0,
+          "final_terminal_session_state": "q0_idle",
+          "final_status": "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-10"
+        },
+        {
+          "arm": "B",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_non_reset_module_count": 0,
+          "final_terminal_session_state": "q0_idle",
+          "final_status": "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-10"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_non_reset_module_count": 0,
+          "final_terminal_session_state": "q0_idle",
+          "final_status": "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-10"
+        }
+      ]
+    },
+    {
+      "seed": 9402,
+      "kind": "unreleased_session_lock_trap",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_non_reset_module_count": 3,
+          "final_terminal_session_state": "q3_err",
+          "final_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.0142723466"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_non_reset_module_count": 1,
+          "final_terminal_session_state": "q3_err",
+          "final_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+          "waves_run": 2,
+          "escalations": 1,
+          "api_attempts": 14,
+          "cost_usd": "0.0194833811"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_non_reset_module_count": 0,
+          "final_terminal_session_state": "q0_idle",
+          "final_status": "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0061283274"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 52,
+  "charged_or_reserved_usd": "0.0580837758",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 17,
+  "scope": "Concurrent 3-agent stateful transaction Python code-engineering swarm (`pricing_tx` -> `tax_tx` -> `settlement_tx`) comparing fresh-fixture acceptance gating (A), exception-site traceback routing (B), and explicit LGGR DFA reset-token gluing directives (C) with full cryptographic receipts retained in the host audit log."
+}

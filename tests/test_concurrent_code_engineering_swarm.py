@@ -11,19 +11,25 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_DIAMOND_AGGREGATOR_SOURCE,
     CANONICAL_FEE_BRANCH_SOURCE,
     CANONICAL_PRICING_SOURCE,
+    CANONICAL_PRICING_TX_SOURCE,
     CANONICAL_QUOTE_ANCHOR_SOURCE,
     CANONICAL_SETTLEMENT_SOURCE,
+    CANONICAL_SETTLEMENT_TX_SOURCE,
     CANONICAL_TAX_BRANCH_SOURCE,
     CANONICAL_TAX_SOURCE,
+    CANONICAL_TAX_TX_SOURCE,
     CODE_SWARM_MODELS,
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKTREE_BRANCHES,
     CatalystCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    StatefulDFACodeWorkspace,
     catalyst_fixture,
+    dfa_fixture,
     diamond_fixture,
     fixture,
+    run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
     run_local_unit_tests,
 )
@@ -31,6 +37,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     CodeBatchClient,
     campaign,
     catalyst_campaign,
+    dfa_campaign,
     diamond_campaign,
     replay,
 )
@@ -39,6 +46,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingDiamondCodebasePullbackMonitor,
+    StreamingStatefulCodebaseDFAMonitor,
 )
 
 
@@ -433,6 +441,145 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if cat_events.exists() and cat_summary.exists():
             replayed = replay(cat_events)
             self.assertEqual(replayed["schema"], "lggr.catalyst_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+
+    def test_dfa_workspace_and_stateful_monitor_detects_unreleased_lock_trap(self) -> None:
+        state = dfa_fixture(9402)  # unreleased_session_lock_trap (9402 % 3 == 0)
+        ws = StatefulDFACodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_tx": True, "tax_tx": True, "settlement_tx": True},
+        )
+
+        mon = StreamingStatefulCodebaseDFAMonitor(scope_id="unit-dfa-gate")
+        rec = mon.evaluate_stateful_codebase_dfa(
+            "eval-9402-wave0",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec["local_green"], 1)
+        self.assertEqual(rec["global_green"], 0)
+        self.assertEqual(rec["defect"], -1)
+        self.assertEqual(rec["non_reset_module_count"], 3)
+        self.assertEqual(rec["terminal_session_state"], "q3_err")
+        self.assertEqual(rec["status"], "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR")
+
+        audit = mon.record_three_phase_stateful_codebase_dfa_audit("dfa-3phase-unit")
+        self.assertEqual(audit["phase_1_defect"], -1)
+        self.assertEqual(audit["phase_1_non_reset_count"], 3)
+        self.assertEqual(audit["phase_1_terminal_state"], "q3_err")
+        self.assertEqual(audit["phase_2_defect"], -1)
+        self.assertEqual(audit["phase_2_non_reset_count"], 1)
+        self.assertEqual(audit["phase_2_terminal_state"], "q3_err")
+        self.assertEqual(audit["phase_3_defect"], 0)
+        self.assertEqual(audit["phase_3_non_reset_count"], 0)
+        self.assertEqual(audit["phase_3_terminal_state"], "q0_idle")
+
+    def test_dfa_campaign_and_tamper_evident_replay(self) -> None:
+        def stub_dfa_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_msg = messages[0]["content"]
+            worker = sys_msg.split("agent ")[1].split(",")[0]
+            if messages[-1]["role"] == "user":
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(messages[-1]["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Upstream lock hold conflicts with downstream idle entry requirement."}
+                            ),
+                        },
+                    }
+                else:
+                    canonical_map = {
+                        "worker-0": CANONICAL_PRICING_TX_SOURCE,
+                        "worker-1": CANONICAL_TAX_TX_SOURCE,
+                        "worker-2": CANONICAL_SETTLEMENT_TX_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {"cost": "0.0001"},
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "dfa",
+                "seeds": [9400, 9401, 9402],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_dfa_transport)
+            summary = dfa_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.stateful_dfa_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on DFA gate non_reset_module_count field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["non_reset_module_count"] = int(gate_rec["non_reset_module_count"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_dfa_pilot_evidence_replay_if_present(self) -> None:
+        dfa_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "dfa_pilot_run"
+            / "events.jsonl"
+        )
+        dfa_summary = dfa_events.with_name("summary.json")
+        if dfa_events.exists() and dfa_summary.exists():
+            replayed = replay(dfa_events)
+            self.assertEqual(replayed["schema"], "lggr.stateful_dfa_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 3)
 
 

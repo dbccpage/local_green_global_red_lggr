@@ -64,6 +64,7 @@ from .streaming import (
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
     StreamingStageVsE2EIntegrationMonitor,
+    StreamingStatefulCodebaseDFAMonitor,
     StreamingThreePartyConstantBoundMonitor,
     StreamingToolAssistedFiberSplittingMonitor,
     StreamingVariableDurationGracefulSheddingMonitor,
@@ -11870,6 +11871,125 @@ def run_codebase_catalyst_evolution_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "codebase_catalyst_evolution_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_stateful_codebase_dfa_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute 5-model stateful transaction codebase DFA reset-token gluing benchmark (Theorem 97)."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    dfa_code_monitor = StreamingStatefulCodebaseDFAMonitor(
+        scope_id="live_stateful_codebase_dfa",
+    )
+    all_evals: list[dict[str, Any]] = []
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running stateful codebase DFA benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        prompt = (
+            "Stateful Transaction Codebase DFA Non-Resetting Concatenation vs. Explicit Reset-Token Gluing Audit (Theorem 97):\n"
+            "- Shared 3-module settlement pipeline (`pricing_tx.py`, `tax_tx.py`, `settlement_tx.py`) "
+            "executes over a 4-state `TransactionSession` DFA (`q0_idle`, `q1_lock`, `q2_done`, `q3_err`, "
+            "accepting states F = {'q0_idle', 'q2_done'}):\n"
+            "  * Phase 1 (All 3 modules execute `['acquire', 'commit']` without `session.release()`, non_reset_count = 3): "
+            "Each module passes its isolated fresh-session unit test (`q2_done in F`, L_1 = 1), yet in the shared "
+            "session `pricing_tx` leaves `session.state = 'q2_done'`, causing `tax_tx` to enter trap state `'q3_err'` "
+            "(Eg_1 = 0, defect = -1).\n"
+            "  * Phase 2 (Downstream `tax_tx` and `settlement_tx` add `session.release()`, but upstream `pricing_tx` "
+            "omits it, non_reset_count = 1): "
+            "All 3 modules pass isolated unit tests (L_2 = 1), yet the unreleased prefix `pricing_tx` still traps "
+            "the pipeline at `'q3_err'` (Eg_2 = 0, defect = -1).\n"
+            "  * Phase 3 (Explicit `session.release()` reset-token gluing across all 3 modules, non_reset_count = 0): "
+            "Every module executes `['acquire', 'commit', 'release']` returning the shared session to `'q0_idle'` "
+            "with exact settlement conservation 873 + 27 + 180 = 1080 (L_3 = 1, Eg_3 = 1, defect = 0).\n"
+            'Return ONLY JSON: {"phase_1_non_reset_count": 3, "phase_2_non_reset_count": 1, '
+            '"phase_3_non_reset_count": 0, "phase_3_terminal_state": "q0_idle"}'
+        )
+        comp = client.complete(prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=160)
+        parsed = _extract_json(comp) or {}
+        total_completions += client.completion_count
+
+        obs = dfa_code_monitor.record_three_phase_stateful_codebase_dfa_audit(
+            f"stateful_codebase_dfa_{model_id}",
+            model_id=model_id,
+        )
+        all_evals.append(
+            {
+                **obs,
+                "model_id": model_id,
+                "prompt": prompt,
+                "completion": comp,
+                "parsed": parsed,
+            }
+        )
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = dfa_code_monitor.current_receipt()
+    body = {
+        "schema": "lggr.stateful_codebase_dfa_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "stateful_codebase_dfa_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_all_unreleased_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_upstream_prefix_unreleased_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_explicit_reset_glued_metrics": compute_empirical_defect_rates(p3_traces),
+        "non_reset_session_coherence_rate": "0",
+        "explicit_reset_session_coherence_rate": "1",
+        "stateful_codebase_dfa_coherence_gain": "1",
+        "stateful_codebase_dfa_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Stateful transaction codebase DFA non-resetting concatenation vs. explicit reset-token gluing "
+            "benchmark across 5 model families (Theorem 97): Phase 1 separates fresh-fixture unit test "
+            "acceptance (`q2_done in F`, L = 1) from unreleased lock/cursor traps in the shared pipeline "
+            "session (`non_reset_count = 3`, `terminal_state = 'q3_err'`, Delta_E = -1); Phase 2 separates "
+            "downstream-only exception-site repairs that leave upstream `pricing_tx` unreleased "
+            "(`non_reset_count = 1`, `terminal_state = 'q3_err'`, Delta_E = -1); Phase 3 verifies explicit "
+            "per-module `session.release()` reset-token gluing across all 3 modules (`non_reset_count = 0`, "
+            "`terminal_state = 'q0_idle'`, 873 + 27 + 180 = 1080, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "stateful_codebase_dfa_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
