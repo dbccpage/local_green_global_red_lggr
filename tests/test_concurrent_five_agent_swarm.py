@@ -4,6 +4,7 @@ from decimal import Decimal
 import itertools
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import threading
 import time
@@ -12,8 +13,10 @@ import unittest
 from experiments.live_five_agent_swarm.client import Events, MODELS, RunStopped, event_digest
 from experiments.live_five_agent_swarm.domain import fixture
 from experiments.live_five_agent_swarm.oracle import feasible
+
 from experiments.concurrent_five_agent_swarm.client import BatchClient
 from experiments.concurrent_five_agent_swarm.runner import campaign, replay, source_hashes, capacity_diagnostics
+from experiments.concurrent_five_agent_swarm.verify import snapshot_matches_commit, source_commit_blob
 from tests.test_live_five_agent_swarm import StubClient
 
 
@@ -38,6 +41,25 @@ def fake_transport(payload):
 
 
 class ConcurrentSwarmTests(unittest.TestCase):
+    def test_missing_source_commit_keeps_the_hashed_snapshot(self):
+        missing = "0123456789abcdef0123456789abcdef01234567"
+        self.assertIsNone(source_commit_blob(missing, "README.md"))
+        self.assertFalse(snapshot_matches_commit(missing, "README.md", b"hashed-snapshot"))
+
+    def test_reachable_source_commit_accepts_its_blob_and_rejects_a_substitute(self):
+        root = Path(__file__).resolve().parents[1]
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+        raw = subprocess.check_output(["git", "show", f"{commit}:README.md"], cwd=root)
+        self.assertTrue(snapshot_matches_commit(commit, "README.md", raw))
+        with self.assertRaisesRegex(ValueError, "source differs"):
+            snapshot_matches_commit(commit, "README.md", b"not-the-readme")
+
+    def test_present_commit_missing_path_stays_a_mismatch(self):
+        root = Path(__file__).resolve().parents[1]
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+        with self.assertRaisesRegex(ValueError, "not in that commit"):
+            source_commit_blob(commit, "this/path/is/not/recorded.py")
+
     def test_real_thread_overlap_and_atomic_wave_budget(self):
         barrier = threading.Barrier(5)
         seen = []

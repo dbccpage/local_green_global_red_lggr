@@ -24,11 +24,15 @@ python -m experiments.concurrent_five_agent_swarm.verify experiments/concurrent_
 python -m experiments.concurrent_five_agent_swarm.tools.summarize
 ```
 
-The verifier checks source snapshots against their Git commits, executes each
-run's frozen source, regenerates all prompts/tools/gates/verdicts/summaries, and
-checks actual SQLite rows. Use it for archived evidence: directly replaying with
-newer source appropriately rejects a source-hash mismatch. Hashes are not
-provider signatures. Timing overlap is a recorded client observation.
+The verifier hashes source_snapshot.zip against the recorded source hashes, then
+compares those bytes with the recorded Git commit when that commit is in the
+clone. A missing commit does not fail the replay: the hashed snapshot is the
+source. A present commit whose blob differs still fails. The verifier then
+executes each run's frozen source, regenerates all prompts, tools, gates,
+verdicts, and summaries, and checks actual SQLite rows. Use it for archived
+evidence: directly replaying with newer source appropriately rejects a
+source-hash mismatch. Hashes are not provider signatures. Timing overlap is a
+recorded client observation.
 
 Provider-side verification is read-only and requires the same OpenRouter account:
 
