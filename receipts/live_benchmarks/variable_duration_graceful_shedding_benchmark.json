@@ -1,0 +1,727 @@
+{
+  "schema": "lggr.variable_duration_graceful_shedding_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "variable_duration_graceful_shedding_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "prior_overload_receipt_sha256": "95e8900f7821c900c2ebaabf518287d4939c33f503f5f9d6aa603b04b8f8a4fb",
+  "total_completions": 40,
+  "burst_count": 5,
+  "phase_1_deferral_burst_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_inverted_shedding_burst_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_governed_shedding_burst_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "single_round_coherence_rate": "0",
+  "multi_round_graceful_shedding_coherence_rate": "1",
+  "graceful_shedding_coherence_gain": "1",
+  "shedding_monitor_receipt": {
+    "schema": "lggr.online_variable_duration_graceful_shedding.v1",
+    "authority_effect": "None",
+    "scope_id": "openrouter-variable-duration-graceful-shedding-scope",
+    "status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "burst_count": 5,
+    "single_round_deferral_coherent_count": 0,
+    "phase_1_deadline_breach_count": 5,
+    "phase_2_inverted_shedding_defect_count": 5,
+    "multi_round_graceful_shedding_coherent_count": 5,
+    "single_round_coherence_rate": "0",
+    "multi_round_graceful_shedding_coherence_rate": "1",
+    "graceful_shedding_coherence_gain": "1",
+    "monotonic_coherence_verified": true,
+    "bursts": [
+      {
+        "burst_id": "openai/gpt-4o-mini::variable_duration_graceful_shedding_burst",
+        "incident_count": 3,
+        "arrival_tick": 0,
+        "expansion_denied": true,
+        "per_incident_lease_budget": "4",
+        "horizon_drift_ceiling": "7",
+        "durations": [
+          2,
+          1,
+          1
+        ],
+        "deadlines": [
+          2,
+          1,
+          2
+        ],
+        "criticalities": [
+          "10",
+          "8",
+          "3"
+        ],
+        "total_criticality": "21",
+        "full_retention_schedulable_under_horizon": false,
+        "optimal_shed_incident_indices": [
+          2
+        ],
+        "minimum_criticality_loss": "3",
+        "optimal_retained_criticality": "18",
+        "optimal_retained_starts": {
+          "0": 0,
+          "1": 0
+        },
+        "optimal_tick_loads": [
+          "7",
+          "4"
+        ],
+        "phase_1_peak_drift": "7",
+        "phase_1_missed_deadline_count": 1,
+        "phase_1_max_lateness": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+        "phase_2_shed_criticality_loss": "10",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+        "phase_3_shed_incident_indices": [
+          2
+        ],
+        "phase_3_shed_criticality_loss": "3",
+        "phase_3_retained_criticality": "18",
+        "phase_3_peak_drift": "7",
+        "phase_3_missed_deadline_count": 0,
+        "phase_3_max_lateness": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+        "converged_single_round": false,
+        "converged_multi_round": true
+      },
+      {
+        "burst_id": "google/gemini-2.5-flash-lite::variable_duration_graceful_shedding_burst",
+        "incident_count": 3,
+        "arrival_tick": 0,
+        "expansion_denied": true,
+        "per_incident_lease_budget": "4",
+        "horizon_drift_ceiling": "7",
+        "durations": [
+          2,
+          1,
+          1
+        ],
+        "deadlines": [
+          2,
+          1,
+          2
+        ],
+        "criticalities": [
+          "10",
+          "8",
+          "3"
+        ],
+        "total_criticality": "21",
+        "full_retention_schedulable_under_horizon": false,
+        "optimal_shed_incident_indices": [
+          2
+        ],
+        "minimum_criticality_loss": "3",
+        "optimal_retained_criticality": "18",
+        "optimal_retained_starts": {
+          "0": 0,
+          "1": 0
+        },
+        "optimal_tick_loads": [
+          "7",
+          "4"
+        ],
+        "phase_1_peak_drift": "7",
+        "phase_1_missed_deadline_count": 1,
+        "phase_1_max_lateness": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+        "phase_2_shed_criticality_loss": "10",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+        "phase_3_shed_incident_indices": [
+          2
+        ],
+        "phase_3_shed_criticality_loss": "3",
+        "phase_3_retained_criticality": "18",
+        "phase_3_peak_drift": "7",
+        "phase_3_missed_deadline_count": 0,
+        "phase_3_max_lateness": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+        "converged_single_round": false,
+        "converged_multi_round": true
+      },
+      {
+        "burst_id": "meta-llama/llama-3.3-70b-instruct::variable_duration_graceful_shedding_burst",
+        "incident_count": 3,
+        "arrival_tick": 0,
+        "expansion_denied": true,
+        "per_incident_lease_budget": "4",
+        "horizon_drift_ceiling": "7",
+        "durations": [
+          2,
+          1,
+          1
+        ],
+        "deadlines": [
+          2,
+          1,
+          2
+        ],
+        "criticalities": [
+          "10",
+          "8",
+          "3"
+        ],
+        "total_criticality": "21",
+        "full_retention_schedulable_under_horizon": false,
+        "optimal_shed_incident_indices": [
+          2
+        ],
+        "minimum_criticality_loss": "3",
+        "optimal_retained_criticality": "18",
+        "optimal_retained_starts": {
+          "0": 0,
+          "1": 0
+        },
+        "optimal_tick_loads": [
+          "7",
+          "4"
+        ],
+        "phase_1_peak_drift": "7",
+        "phase_1_missed_deadline_count": 1,
+        "phase_1_max_lateness": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+        "phase_2_shed_criticality_loss": "10",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+        "phase_3_shed_incident_indices": [
+          2
+        ],
+        "phase_3_shed_criticality_loss": "3",
+        "phase_3_retained_criticality": "18",
+        "phase_3_peak_drift": "7",
+        "phase_3_missed_deadline_count": 0,
+        "phase_3_max_lateness": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+        "converged_single_round": false,
+        "converged_multi_round": true
+      },
+      {
+        "burst_id": "deepseek/deepseek-chat::variable_duration_graceful_shedding_burst",
+        "incident_count": 3,
+        "arrival_tick": 0,
+        "expansion_denied": true,
+        "per_incident_lease_budget": "4",
+        "horizon_drift_ceiling": "7",
+        "durations": [
+          2,
+          1,
+          1
+        ],
+        "deadlines": [
+          2,
+          1,
+          2
+        ],
+        "criticalities": [
+          "10",
+          "8",
+          "3"
+        ],
+        "total_criticality": "21",
+        "full_retention_schedulable_under_horizon": false,
+        "optimal_shed_incident_indices": [
+          2
+        ],
+        "minimum_criticality_loss": "3",
+        "optimal_retained_criticality": "18",
+        "optimal_retained_starts": {
+          "0": 0,
+          "1": 0
+        },
+        "optimal_tick_loads": [
+          "7",
+          "4"
+        ],
+        "phase_1_peak_drift": "7",
+        "phase_1_missed_deadline_count": 1,
+        "phase_1_max_lateness": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+        "phase_2_shed_criticality_loss": "10",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+        "phase_3_shed_incident_indices": [
+          2
+        ],
+        "phase_3_shed_criticality_loss": "3",
+        "phase_3_retained_criticality": "18",
+        "phase_3_peak_drift": "7",
+        "phase_3_missed_deadline_count": 0,
+        "phase_3_max_lateness": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+        "converged_single_round": false,
+        "converged_multi_round": true
+      },
+      {
+        "burst_id": "mistralai/mistral-small-3.2-24b-instruct::variable_duration_graceful_shedding_burst",
+        "incident_count": 3,
+        "arrival_tick": 0,
+        "expansion_denied": true,
+        "per_incident_lease_budget": "4",
+        "horizon_drift_ceiling": "7",
+        "durations": [
+          2,
+          1,
+          1
+        ],
+        "deadlines": [
+          2,
+          1,
+          2
+        ],
+        "criticalities": [
+          "10",
+          "8",
+          "3"
+        ],
+        "total_criticality": "21",
+        "full_retention_schedulable_under_horizon": false,
+        "optimal_shed_incident_indices": [
+          2
+        ],
+        "minimum_criticality_loss": "3",
+        "optimal_retained_criticality": "18",
+        "optimal_retained_starts": {
+          "0": 0,
+          "1": 0
+        },
+        "optimal_tick_loads": [
+          "7",
+          "4"
+        ],
+        "phase_1_peak_drift": "7",
+        "phase_1_missed_deadline_count": 1,
+        "phase_1_max_lateness": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+        "phase_2_shed_criticality_loss": "10",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+        "phase_3_shed_incident_indices": [
+          2
+        ],
+        "phase_3_shed_criticality_loss": "3",
+        "phase_3_retained_criticality": "18",
+        "phase_3_peak_drift": "7",
+        "phase_3_missed_deadline_count": 0,
+        "phase_3_max_lateness": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+        "converged_single_round": false,
+        "converged_multi_round": true
+      }
+    ],
+    "receipt_sha256": "1106f9e742088cb0c2104b7a09afb3e2c104ea6c5bd03ba85b23540026797529"
+  },
+  "bursts": [
+    {
+      "burst_id": "openai/gpt-4o-mini::variable_duration_graceful_shedding_burst",
+      "incident_count": 3,
+      "arrival_tick": 0,
+      "expansion_denied": true,
+      "per_incident_lease_budget": "4",
+      "horizon_drift_ceiling": "7",
+      "durations": [
+        2,
+        1,
+        1
+      ],
+      "deadlines": [
+        2,
+        1,
+        2
+      ],
+      "criticalities": [
+        "10",
+        "8",
+        "3"
+      ],
+      "total_criticality": "21",
+      "full_retention_schedulable_under_horizon": false,
+      "optimal_shed_incident_indices": [
+        2
+      ],
+      "minimum_criticality_loss": "3",
+      "optimal_retained_criticality": "18",
+      "optimal_retained_starts": {
+        "0": 0,
+        "1": 0
+      },
+      "optimal_tick_loads": [
+        "7",
+        "4"
+      ],
+      "phase_1_peak_drift": "7",
+      "phase_1_missed_deadline_count": 1,
+      "phase_1_max_lateness": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+      "phase_2_shed_criticality_loss": "10",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+      "phase_3_shed_incident_indices": [
+        2
+      ],
+      "phase_3_shed_criticality_loss": "3",
+      "phase_3_retained_criticality": "18",
+      "phase_3_peak_drift": "7",
+      "phase_3_missed_deadline_count": 0,
+      "phase_3_max_lateness": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+      "converged_single_round": false,
+      "converged_multi_round": true,
+      "model_id": "openai/gpt-4o-mini",
+      "raw_controller_response": "{\n  \"shed_incident_index\": 3,\n  \"retained_start_ticks\": {\n    \"1\": 0,\n    \"2\": 0\n  },\n  \"shed_criticality_loss\": 3,\n  \"retained_criticality\": 18\n}"
+    },
+    {
+      "burst_id": "google/gemini-2.5-flash-lite::variable_duration_graceful_shedding_burst",
+      "incident_count": 3,
+      "arrival_tick": 0,
+      "expansion_denied": true,
+      "per_incident_lease_budget": "4",
+      "horizon_drift_ceiling": "7",
+      "durations": [
+        2,
+        1,
+        1
+      ],
+      "deadlines": [
+        2,
+        1,
+        2
+      ],
+      "criticalities": [
+        "10",
+        "8",
+        "3"
+      ],
+      "total_criticality": "21",
+      "full_retention_schedulable_under_horizon": false,
+      "optimal_shed_incident_indices": [
+        2
+      ],
+      "minimum_criticality_loss": "3",
+      "optimal_retained_criticality": "18",
+      "optimal_retained_starts": {
+        "0": 0,
+        "1": 0
+      },
+      "optimal_tick_loads": [
+        "7",
+        "4"
+      ],
+      "phase_1_peak_drift": "7",
+      "phase_1_missed_deadline_count": 1,
+      "phase_1_max_lateness": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+      "phase_2_shed_criticality_loss": "10",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+      "phase_3_shed_incident_indices": [
+        2
+      ],
+      "phase_3_shed_criticality_loss": "3",
+      "phase_3_retained_criticality": "18",
+      "phase_3_peak_drift": "7",
+      "phase_3_missed_deadline_count": 0,
+      "phase_3_max_lateness": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+      "converged_single_round": false,
+      "converged_multi_round": true,
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_controller_response": "```json\n{\n  \"shed_incident_index\": 3,\n  \"retained_start_ticks\": {\n    \"1\": 0,\n    \"2\": 0\n  },\n  \"shed_criticality_loss\": 3,\n  \"retained_criticality\": 18\n}\n```"
+    },
+    {
+      "burst_id": "meta-llama/llama-3.3-70b-instruct::variable_duration_graceful_shedding_burst",
+      "incident_count": 3,
+      "arrival_tick": 0,
+      "expansion_denied": true,
+      "per_incident_lease_budget": "4",
+      "horizon_drift_ceiling": "7",
+      "durations": [
+        2,
+        1,
+        1
+      ],
+      "deadlines": [
+        2,
+        1,
+        2
+      ],
+      "criticalities": [
+        "10",
+        "8",
+        "3"
+      ],
+      "total_criticality": "21",
+      "full_retention_schedulable_under_horizon": false,
+      "optimal_shed_incident_indices": [
+        2
+      ],
+      "minimum_criticality_loss": "3",
+      "optimal_retained_criticality": "18",
+      "optimal_retained_starts": {
+        "0": 0,
+        "1": 0
+      },
+      "optimal_tick_loads": [
+        "7",
+        "4"
+      ],
+      "phase_1_peak_drift": "7",
+      "phase_1_missed_deadline_count": 1,
+      "phase_1_max_lateness": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+      "phase_2_shed_criticality_loss": "10",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+      "phase_3_shed_incident_indices": [
+        2
+      ],
+      "phase_3_shed_criticality_loss": "3",
+      "phase_3_retained_criticality": "18",
+      "phase_3_peak_drift": "7",
+      "phase_3_missed_deadline_count": 0,
+      "phase_3_max_lateness": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+      "converged_single_round": false,
+      "converged_multi_round": true,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_controller_response": "{\"shed_incident_index\": 3, \"retained_start_ticks\": {\"1\": 0, \"2\": 0}, \"shed_criticality_loss\": 3, \"retained_criticality\": 18}"
+    },
+    {
+      "burst_id": "deepseek/deepseek-chat::variable_duration_graceful_shedding_burst",
+      "incident_count": 3,
+      "arrival_tick": 0,
+      "expansion_denied": true,
+      "per_incident_lease_budget": "4",
+      "horizon_drift_ceiling": "7",
+      "durations": [
+        2,
+        1,
+        1
+      ],
+      "deadlines": [
+        2,
+        1,
+        2
+      ],
+      "criticalities": [
+        "10",
+        "8",
+        "3"
+      ],
+      "total_criticality": "21",
+      "full_retention_schedulable_under_horizon": false,
+      "optimal_shed_incident_indices": [
+        2
+      ],
+      "minimum_criticality_loss": "3",
+      "optimal_retained_criticality": "18",
+      "optimal_retained_starts": {
+        "0": 0,
+        "1": 0
+      },
+      "optimal_tick_loads": [
+        "7",
+        "4"
+      ],
+      "phase_1_peak_drift": "7",
+      "phase_1_missed_deadline_count": 1,
+      "phase_1_max_lateness": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+      "phase_2_shed_criticality_loss": "10",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+      "phase_3_shed_incident_indices": [
+        2
+      ],
+      "phase_3_shed_criticality_loss": "3",
+      "phase_3_retained_criticality": "18",
+      "phase_3_peak_drift": "7",
+      "phase_3_missed_deadline_count": 0,
+      "phase_3_max_lateness": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+      "converged_single_round": false,
+      "converged_multi_round": true,
+      "model_id": "deepseek/deepseek-chat",
+      "raw_controller_response": "```json\n{\"shed_incident_index\": 3, \"retained_start_ticks\": {\"1\": 0, \"2\": 0}, \"shed_criticality_loss\": 3, \"retained_criticality\": 18}\n```"
+    },
+    {
+      "burst_id": "mistralai/mistral-small-3.2-24b-instruct::variable_duration_graceful_shedding_burst",
+      "incident_count": 3,
+      "arrival_tick": 0,
+      "expansion_denied": true,
+      "per_incident_lease_budget": "4",
+      "horizon_drift_ceiling": "7",
+      "durations": [
+        2,
+        1,
+        1
+      ],
+      "deadlines": [
+        2,
+        1,
+        2
+      ],
+      "criticalities": [
+        "10",
+        "8",
+        "3"
+      ],
+      "total_criticality": "21",
+      "full_retention_schedulable_under_horizon": false,
+      "optimal_shed_incident_indices": [
+        2
+      ],
+      "minimum_criticality_loss": "3",
+      "optimal_retained_criticality": "18",
+      "optimal_retained_starts": {
+        "0": 0,
+        "1": 0
+      },
+      "optimal_tick_loads": [
+        "7",
+        "4"
+      ],
+      "phase_1_peak_drift": "7",
+      "phase_1_missed_deadline_count": 1,
+      "phase_1_max_lateness": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR",
+      "phase_2_shed_criticality_loss": "10",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR",
+      "phase_3_shed_incident_indices": [
+        2
+      ],
+      "phase_3_shed_criticality_loss": "3",
+      "phase_3_retained_criticality": "18",
+      "phase_3_peak_drift": "7",
+      "phase_3_missed_deadline_count": 0,
+      "phase_3_max_lateness": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG",
+      "converged_single_round": false,
+      "converged_multi_round": true,
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_controller_response": "```json\n{\n  \"shed_incident_index\": 3,\n  \"retained_start_ticks\": {\"1\": 0, \"2\": 0},\n  \"shed_criticality_loss\": 3,\n  \"retained_criticality\": 18\n}\n```"
+    }
+  ],
+  "meaning": "Multi-tick variable-duration (p=(2, 1, 1)) and graceful-degradation shedding benchmark under denied horizon expansion (tau_horizon = 7 fixed): Phase 1 separates multi-tick deferral without shedding (Incident 1 spans [0, 2) with load 4, blocking Incident 3 in slot 1 since 4 + 4 = 8 > 7 and forcing C_3 = 3 > D_3 = 2 -> E_g = 0, Delta_E = -1), Phase 2 separates priority-inverted shedding (shedding kappa_2 = 8 > 3 -> E_g = 0, Delta_E = -1), and Phase 3 verifies minimum-criticality graceful-degradation shedding (dropping Incident 3 with kappa_3 = 3, preserving kappa_1 + kappa_2 = 18/21 and completing C_1 = 2 <= 2, C_2 = 1 <= 1 -> E_g = 1, Delta_E = 0).",
+  "receipt_sha256": "0bb3c3707bff02a4bfb57aeee3bc4f0df3b1e4ce2ae8ce6ce845204f05869e6d"
+}

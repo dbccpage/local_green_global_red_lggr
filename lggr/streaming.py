@@ -10873,6 +10873,557 @@ class StreamingOverloadedDeadlineBinPackingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingVariableDurationGracefulSheddingMonitor:
+    """Online LGGR VIII monitor for multi-tick variable-duration incidents and graceful-degradation shedding.
+
+    Evaluates simultaneous non-preemptible bursts where each incident k carries:
+      - a multi-tick execution duration p_k in {1, 2, ...} (holding lease delta_k across [t_k, t_k + p_k)),
+      - a strict SLA completion deadline D_k >= p_k (requiring C_k = t_k + p_k <= D_k),
+      - a minimum weighted Pareto floor Delta_{w,k}^* > 0, and
+      - a criticality weight kappa_k > 0.
+    When no multi-tick bin-packed schedule can satisfy all K deadlines under the fixed global
+    horizon ceiling tau_horizon and the authority gate denies emergency horizon expansion
+    (Delta tau_horizon^* > 0 denied), the monitor computes the minimum-criticality-loss shed subset
+    S^* subset {1, ..., K} whose retained complement R^* = {1, ..., K} \\ S^* admits a feasible
+    multi-tick schedule under tau_horizon with zero lateness on all retained incidents.
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-variable-duration-graceful-shedding-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.bursts: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _weighted_l1(
+        weights: tuple[Fraction, ...],
+        delta: tuple[Fraction, ...],
+    ) -> Fraction:
+        return sum((w * abs(d) for w, d in zip(weights, delta)), Fraction(0))
+
+    @staticmethod
+    def _find_multitick_schedule(
+        retained_indices: tuple[int, ...],
+        durations: tuple[int, ...],
+        deadlines: tuple[int, ...],
+        slacks: tuple[Fraction, ...],
+        arrival_tick: int,
+        tau_h: Fraction,
+    ) -> tuple[bool, dict[int, int], list[Fraction]]:
+        if not retained_indices:
+            return True, {}, []
+        max_deadline = max(deadlines[i] for i in retained_indices)
+        horizon_ticks = max_deadline - arrival_tick
+        if horizon_ticks <= 0:
+            return False, {}, []
+
+        # Enumerate start ticks t_i in [arrival_tick, deadlines[i] - durations[i]]
+        domains: list[list[int]] = []
+        for idx in retained_indices:
+            latest_start = deadlines[idx] - durations[idx]
+            if latest_start < arrival_tick:
+                return False, {}, []
+            domains.append(list(range(arrival_tick, latest_start + 1)))
+
+        best_starts: dict[int, int] | None = None
+        best_tick_loads: list[Fraction] | None = None
+        best_score: tuple[Fraction, int] | None = None
+
+        def backtrack(pos: int, current_starts: dict[int, int], loads: list[Fraction]) -> None:
+            nonlocal best_starts, best_tick_loads, best_score
+            if pos == len(retained_indices):
+                peak = max(loads, default=Fraction(0))
+                sum_starts = sum(current_starts.values())
+                score = (peak, sum_starts)
+                if best_score is None or score < best_score:
+                    best_score = score
+                    best_starts = dict(current_starts)
+                    best_tick_loads = list(loads)
+                return
+
+            idx = retained_indices[pos]
+            dur = durations[idx]
+            slk = slacks[idx]
+            for st in domains[pos]:
+                rel = st - arrival_tick
+                if rel + dur > horizon_ticks:
+                    continue
+                feasible = True
+                for u in range(rel, rel + dur):
+                    if loads[u] + slk > tau_h:
+                        feasible = False
+                        break
+                if not feasible:
+                    continue
+                for u in range(rel, rel + dur):
+                    loads[u] += slk
+                current_starts[idx] = st
+                backtrack(pos + 1, current_starts, loads)
+                del current_starts[idx]
+                for u in range(rel, rel + dur):
+                    loads[u] -= slk
+
+        backtrack(0, {}, [Fraction(0) for _ in range(horizon_ticks)])
+        if best_starts is None or best_tick_loads is None:
+            return False, {}, []
+        return True, best_starts, best_tick_loads
+
+    def observe_burst(
+        self,
+        *,
+        burst_id: str,
+        baseline_policy: Sequence[Fraction | int | str],
+        risk_weights: Sequence[Fraction | int | str],
+        per_incident_lease_budget: Fraction | int | str,
+        horizon_drift_ceiling: Fraction | int | str,
+        arrival_tick: int = 0,
+        expansion_denied: bool = True,
+        incidents: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        b_id = text(burst_id, "burst_id")
+        base_pol = tuple(rational(v) for v in baseline_policy)
+        weights = tuple(rational(w) for w in risk_weights)
+        if not base_pol or len(base_pol) != len(weights):
+            raise ValidationError("baseline_policy and risk_weights must have equal non-zero length")
+        if any(w <= 0 for w in weights):
+            raise ValidationError("all risk_weights must be strictly positive")
+
+        tau_lease = rational(per_incident_lease_budget)
+        tau_h = rational(horizon_drift_ceiling)
+        if tau_lease <= 0 or tau_h <= 0:
+            raise ValidationError("budgets must be strictly positive")
+        if arrival_tick < 0:
+            raise ValidationError("arrival_tick must be non-negative")
+        if len(incidents) < 2:
+            raise ValidationError("at least 2 incidents are required")
+
+        k_count = len(incidents)
+        durations: list[int] = []
+        deadlines: list[int] = []
+        floors: list[Fraction] = []
+        criticalities: list[Fraction] = []
+
+        p1_slacks: list[Fraction] = []
+        p1_starts: list[int] = []
+        p1_feasible_flags: list[bool] = []
+
+        p2_slacks: list[Fraction] = []
+        p2_starts: list[int] = []
+        p2_shed_flags: list[bool] = []
+        p2_feasible_flags: list[bool] = []
+
+        p3_slacks: list[Fraction] = []
+        p3_starts: list[int] = []
+        p3_shed_flags: list[bool] = []
+        p3_feasible_flags: list[bool] = []
+
+        for idx, inc in enumerate(incidents):
+            dur = int(inc.get("duration_ticks", 1))
+            dl = int(inc["sla_deadline_tick"])
+            flr = rational(inc["min_weighted_pareto_floor"])
+            crit = rational(inc["criticality_weight"])
+            if dur <= 0 or dl < arrival_tick + dur or flr <= 0 or crit <= 0:
+                raise ValidationError(f"invalid incident parameters at index {idx}")
+            durations.append(dur)
+            deadlines.append(dl)
+            floors.append(flr)
+            criticalities.append(crit)
+
+            d1 = tuple(rational(v) for v in inc["phase_1_deferral_lease_delta"])
+            d2 = tuple(rational(v) for v in inc["phase_2_inverted_shed_lease_delta"])
+            d3 = tuple(rational(v) for v in inc["phase_3_governed_shed_lease_delta"])
+            if len(d1) != len(base_pol) or len(d2) != len(base_pol) or len(d3) != len(base_pol):
+                raise ValidationError("lease delta dimension mismatch")
+
+            p1_slacks.append(self._weighted_l1(weights, d1))
+            p2_slacks.append(self._weighted_l1(weights, d2))
+            p3_slacks.append(self._weighted_l1(weights, d3))
+
+            p1_starts.append(int(inc["phase_1_start_tick"]))
+            p2_starts.append(int(inc.get("phase_2_start_tick", arrival_tick)))
+            p3_starts.append(int(inc.get("phase_3_start_tick", arrival_tick)))
+
+            p2_shed_flags.append(bool(inc.get("phase_2_shed", False)))
+            p3_shed_flags.append(bool(inc.get("phase_3_shed", False)))
+
+            p1_feasible_flags.append(bool(inc["phase_1_restores_pareto"]) and bool(inc["phase_1_candidate_passes"]))
+            p2_feasible_flags.append(bool(inc["phase_2_restores_pareto"]) and bool(inc["phase_2_candidate_passes"]))
+            p3_feasible_flags.append(bool(inc["phase_3_restores_pareto"]) and bool(inc["phase_3_candidate_passes"]))
+
+        total_criticality = sum(criticalities, Fraction(0))
+
+        # Compute optimal minimum-criticality-loss shed subset S^* under fixed tau_h
+        all_indices = tuple(range(k_count))
+        full_sched_ok, _, _ = self._find_multitick_schedule(
+            all_indices,
+            tuple(durations),
+            tuple(deadlines),
+            tuple(floors),
+            arrival_tick,
+            tau_h,
+        )
+
+        best_shed_mask: tuple[bool, ...] | None = None
+        min_criticality_loss: Fraction | None = None
+        optimal_starts: dict[int, int] = {}
+        optimal_loads: list[Fraction] = []
+
+        for mask_int in range(1 << k_count):
+            shed_mask = tuple(bool((mask_int >> i) & 1) for i in range(k_count))
+            retained = tuple(i for i in range(k_count) if not shed_mask[i])
+            if not retained:
+                continue
+            loss = sum((criticalities[i] for i in range(k_count) if shed_mask[i]), Fraction(0))
+            ok, st_map, ld_list = self._find_multitick_schedule(
+                retained,
+                tuple(durations),
+                tuple(deadlines),
+                tuple(floors),
+                arrival_tick,
+                tau_h,
+            )
+            if ok:
+                if min_criticality_loss is None or loss < min_criticality_loss:
+                    min_criticality_loss = loss
+                    best_shed_mask = shed_mask
+                    optimal_starts = st_map
+                    optimal_loads = ld_list
+
+        assert min_criticality_loss is not None and best_shed_mask is not None
+        optimal_retained_criticality = total_criticality - min_criticality_loss
+
+        # Evaluate Phase 1 (multi-tick deferral without shedding)
+        p1_max_end = max(p1_starts[i] + durations[i] for i in range(k_count))
+        p1_tick_loads = [Fraction(0) for _ in range(max(1, p1_max_end - arrival_tick))]
+        p1_missed_count = 0
+        p1_max_lateness = 0
+        for i in range(k_count):
+            c_i = p1_starts[i] + durations[i]
+            late_i = max(0, c_i - deadlines[i])
+            if late_i > 0:
+                p1_missed_count += 1
+            if late_i > p1_max_lateness:
+                p1_max_lateness = late_i
+            for u in range(p1_starts[i] - arrival_tick, c_i - arrival_tick):
+                p1_tick_loads[u] += p1_slacks[i]
+
+        p1_peak_drift = max(p1_tick_loads, default=Fraction(0))
+        l_p1 = int(
+            all(p1_feasible_flags[i] and p1_slacks[i] >= floors[i] and p1_slacks[i] <= tau_lease for i in range(k_count))
+            and p1_peak_drift <= tau_h
+        )
+        eg_p1 = int(l_p1 == 1 and p1_missed_count == 0)
+        defect_p1 = eg_p1 - l_p1
+
+        # Evaluate Phase 2 (priority-inverted shedding)
+        p2_retained = [i for i in range(k_count) if not p2_shed_flags[i]]
+        p2_shed_loss = sum((criticalities[i] for i in range(k_count) if p2_shed_flags[i]), Fraction(0))
+        p2_max_end = max((p2_starts[i] + durations[i] for i in p2_retained), default=arrival_tick + 1)
+        p2_tick_loads = [Fraction(0) for _ in range(max(1, p2_max_end - arrival_tick))]
+        p2_missed_count = 0
+        for i in p2_retained:
+            c_i = p2_starts[i] + durations[i]
+            if c_i > deadlines[i]:
+                p2_missed_count += 1
+            for u in range(p2_starts[i] - arrival_tick, c_i - arrival_tick):
+                p2_tick_loads[u] += p2_slacks[i]
+        p2_peak_drift = max(p2_tick_loads, default=Fraction(0))
+        l_p2 = int(
+            bool(p2_retained)
+            and all(p2_feasible_flags[i] and p2_slacks[i] >= floors[i] and p2_slacks[i] <= tau_lease for i in p2_retained)
+            and p2_peak_drift <= tau_h
+            and p2_missed_count == 0
+        )
+        eg_p2 = int(l_p2 == 1 and p2_shed_loss <= min_criticality_loss)
+        defect_p2 = eg_p2 - l_p2
+
+        # Evaluate Phase 3 (governed minimum-criticality graceful-degradation shedding)
+        p3_retained = [i for i in range(k_count) if not p3_shed_flags[i]]
+        p3_shed_loss = sum((criticalities[i] for i in range(k_count) if p3_shed_flags[i]), Fraction(0))
+        p3_retained_crit = total_criticality - p3_shed_loss
+        p3_max_end = max((p3_starts[i] + durations[i] for i in p3_retained), default=arrival_tick + 1)
+        p3_tick_loads = [Fraction(0) for _ in range(max(1, p3_max_end - arrival_tick))]
+        p3_missed_count = 0
+        p3_max_lateness = 0
+        for i in p3_retained:
+            c_i = p3_starts[i] + durations[i]
+            late_i = max(0, c_i - deadlines[i])
+            if late_i > 0:
+                p3_missed_count += 1
+            if late_i > p3_max_lateness:
+                p3_max_lateness = late_i
+            for u in range(p3_starts[i] - arrival_tick, c_i - arrival_tick):
+                p3_tick_loads[u] += p3_slacks[i]
+        p3_peak_drift = max(p3_tick_loads, default=Fraction(0))
+        l_p3 = int(
+            bool(p3_retained)
+            and all(p3_feasible_flags[i] and p3_slacks[i] >= floors[i] and p3_slacks[i] <= tau_lease for i in p3_retained)
+            and p3_peak_drift <= tau_h
+        )
+        eg_p3 = int(
+            l_p3 == 1
+            and p3_missed_count == 0
+            and p3_shed_loss == min_criticality_loss
+            and tuple(p3_shed_flags) == best_shed_mask
+        )
+        defect_p3 = eg_p3 - l_p3
+
+        record: dict[str, Any] = {
+            "burst_id": b_id,
+            "incident_count": k_count,
+            "arrival_tick": arrival_tick,
+            "expansion_denied": expansion_denied,
+            "per_incident_lease_budget": tau_lease,
+            "horizon_drift_ceiling": tau_h,
+            "durations": durations,
+            "deadlines": deadlines,
+            "criticalities": criticalities,
+            "total_criticality": total_criticality,
+            "full_retention_schedulable_under_horizon": full_sched_ok,
+            "optimal_shed_incident_indices": [i for i, sh in enumerate(best_shed_mask) if sh],
+            "minimum_criticality_loss": min_criticality_loss,
+            "optimal_retained_criticality": optimal_retained_criticality,
+            "optimal_retained_starts": {str(k): v for k, v in optimal_starts.items()},
+            "optimal_tick_loads": optimal_loads,
+            "phase_1_peak_drift": p1_peak_drift,
+            "phase_1_missed_deadline_count": p1_missed_count,
+            "phase_1_max_lateness": p1_max_lateness,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": (
+                "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR"
+                if (l_p1 == 1 and eg_p1 == 0)
+                else "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG"
+            ),
+            "phase_2_shed_criticality_loss": p2_shed_loss,
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": (
+                "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR"
+                if (l_p2 == 1 and eg_p2 == 0)
+                else "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG"
+            ),
+            "phase_3_shed_incident_indices": [i for i, sh in enumerate(p3_shed_flags) if sh],
+            "phase_3_shed_criticality_loss": p3_shed_loss,
+            "phase_3_retained_criticality": p3_retained_crit,
+            "phase_3_peak_drift": p3_peak_drift,
+            "phase_3_missed_deadline_count": p3_missed_count,
+            "phase_3_max_lateness": p3_max_lateness,
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": (
+                "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG"
+                if eg_p3 == 1
+                else "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR"
+            ),
+            "converged_single_round": eg_p1 == 1,
+            "converged_multi_round": eg_p3 == 1,
+        }
+        self.bursts.append(record)
+        return json_value(record)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.bursts:
+            raise ValidationError("at least one burst must be observed before generating a receipt")
+        n = len(self.bursts)
+        p1_coherent = sum(1 for b in self.bursts if b["converged_single_round"])
+        p1_breach = sum(1 for b in self.bursts if b["phase_1_defect"] == -1)
+        p2_inverted = sum(1 for b in self.bursts if b["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for b in self.bursts if b["converged_multi_round"])
+
+        single_rate = Fraction(p1_coherent, n)
+        multi_rate = Fraction(p3_coherent, n)
+        gain_rate = multi_rate - single_rate
+
+        if p3_coherent == n:
+            status = "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_variable_duration_graceful_shedding.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "burst_count": n,
+            "single_round_deferral_coherent_count": p1_coherent,
+            "phase_1_deadline_breach_count": p1_breach,
+            "phase_2_inverted_shedding_defect_count": p2_inverted,
+            "multi_round_graceful_shedding_coherent_count": p3_coherent,
+            "single_round_coherence_rate": single_rate,
+            "multi_round_graceful_shedding_coherence_rate": multi_rate,
+            "graceful_shedding_coherence_gain": gain_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "bursts": self.bursts,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingLinearizedPipelineJacobianMonitor:
+    """Online LGGR V/VIII monitor instantiating (D, Q) on linearized state-estimation pipelines.
+
+    Wraps StreamingDefectSoundnessMonitor on a linearized state-estimation defect Jacobian
+    D in Q^{m x n} across three observer measurement Jacobians:
+      - Q_blind (collapsing observer with dim(im(D) cap ker(Q_blind)) > 0),
+      - Q_coupled (compensating observer with dim(ker(Q_coupled)) > 0 yet im(D) cap ker(Q_coupled) == {0}),
+      - Q_full (full-rank observer with ker(Q_full) == {0}),
+    and evaluates live state-perturbation trajectories s in Q^n across all three regimes.
+    """
+
+    def __init__(
+        self,
+        *,
+        defect_matrix: Sequence[Sequence[Fraction | int | str]],
+        blind_measurement_matrix: Sequence[Sequence[Fraction | int | str]],
+        coupled_measurement_matrix: Sequence[Sequence[Fraction | int | str]],
+        full_measurement_matrix: Sequence[Sequence[Fraction | int | str]],
+        scope_id: str = "streaming-linearized-pipeline-jacobian-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.d_mat = matrix(defect_matrix, "defect_matrix")
+        self.q_blind = matrix(blind_measurement_matrix, "blind_measurement_matrix", cols=len(self.d_mat))
+        self.q_coupled = matrix(coupled_measurement_matrix, "coupled_measurement_matrix", cols=len(self.d_mat))
+        self.q_full = matrix(full_measurement_matrix, "full_measurement_matrix", cols=len(self.d_mat))
+
+        self.blind_monitor = StreamingDefectSoundnessMonitor(
+            self.d_mat, self.q_blind, scope_id=f"{self.scope_id}-blind"
+        )
+        self.coupled_monitor = StreamingDefectSoundnessMonitor(
+            self.d_mat, self.q_coupled, scope_id=f"{self.scope_id}-coupled"
+        )
+        self.full_monitor = StreamingDefectSoundnessMonitor(
+            self.d_mat, self.q_full, scope_id=f"{self.scope_id}-full"
+        )
+
+        self.blind_audit = self.blind_monitor.audit_soundness(target_severity=2)
+        self.coupled_audit = self.coupled_monitor.audit_soundness(target_severity=2)
+        self.full_audit = self.full_monitor.audit_soundness(target_severity=2)
+        self.evaluations: list[dict[str, Any]] = []
+
+    def observe_pipeline_perturbation(
+        self,
+        *,
+        evaluation_id: str,
+        state_perturbation: Sequence[Fraction | int | str],
+        blind_claimed_sound: bool = True,
+        coupled_verified_sound: bool = True,
+        full_verified_sound: bool = True,
+    ) -> dict[str, Any]:
+        e_id = text(evaluation_id, "evaluation_id")
+        s_vec = tuple(rational(v) for v in state_perturbation)
+        if len(s_vec) != len(self.d_mat[0]):
+            raise ValidationError("state_perturbation length must match defect_matrix column count")
+
+        omega = matvec(self.d_mat, s_vec)
+        y_blind = matvec(self.q_blind, omega)
+        y_coupled = matvec(self.q_coupled, omega)
+        y_full = matvec(self.q_full, omega)
+
+        i_defect = sum((abs(v) for v in omega), Fraction(0))
+        score_blind = sum((abs(v) for v in y_blind), Fraction(0))
+        score_coupled = sum((abs(v) for v in y_coupled), Fraction(0))
+        score_full = sum((abs(v) for v in y_full), Fraction(0))
+
+        blind_dim = int(self.blind_audit["realizable_blindspot_dimension"])
+        coupled_dim = int(self.coupled_audit["realizable_blindspot_dimension"])
+        full_dim = int(self.full_audit["realizable_blindspot_dimension"])
+
+        # Regime 1: Blind observer passes locally when score_blind == 0, but fails globally when i_defect > 0
+        l_blind = int(blind_claimed_sound and score_blind == 0)
+        eg_blind = int(l_blind == 1 and i_defect == 0 and blind_dim == 0)
+        defect_blind = eg_blind - l_blind
+
+        # Regime 2: Coupled observer verifies im(D) cap ker(Q_coupled) == {0} and detects i_defect > 0
+        l_coupled = int(coupled_verified_sound and coupled_dim == 0 and (i_defect == 0 or score_coupled > 0))
+        eg_coupled = int(l_coupled == 1 and bool(self.coupled_audit["soundness_holds"]))
+        defect_coupled = eg_coupled - l_coupled
+
+        # Regime 3: Full-rank observer verifies ker(Q_full) == {0} and im(D) cap ker(Q_full) == {0}
+        l_full = int(full_verified_sound and full_dim == 0 and (i_defect == 0 or score_full > 0))
+        eg_full = int(l_full == 1 and bool(self.full_audit["soundness_holds"]))
+        defect_full = eg_full - l_full
+
+        rec: dict[str, Any] = {
+            "evaluation_id": e_id,
+            "state_perturbation": list(s_vec),
+            "interface_defect_omega": list(omega),
+            "true_l1_inconsistency": i_defect,
+            "blind_measured_output": list(y_blind),
+            "blind_measured_l1_score": score_blind,
+            "blind_realizable_blindspot_dim": blind_dim,
+            "blind_local_green": l_blind,
+            "blind_global_green": eg_blind,
+            "blind_defect": defect_blind,
+            "blind_status": self.blind_audit["status"],
+            "coupled_measured_output": list(y_coupled),
+            "coupled_measured_l1_score": score_coupled,
+            "coupled_ambient_blindspot_dim": int(self.coupled_audit["ambient_blindspot_dimension"]),
+            "coupled_realizable_blindspot_dim": coupled_dim,
+            "coupled_local_green": l_coupled,
+            "coupled_global_green": eg_coupled,
+            "coupled_defect": defect_coupled,
+            "coupled_status": self.coupled_audit["status"],
+            "full_measured_output": list(y_full),
+            "full_measured_l1_score": score_full,
+            "full_realizable_blindspot_dim": full_dim,
+            "full_local_green": l_full,
+            "full_global_green": eg_full,
+            "full_defect": defect_full,
+            "full_status": self.full_audit["status"],
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one pipeline perturbation must be observed")
+        n = len(self.evaluations)
+        blind_stealth_cnt = sum(1 for e in self.evaluations if e["blind_defect"] == -1)
+        coupled_sound_cnt = sum(1 for e in self.evaluations if e["coupled_global_green"] == 1)
+        full_sound_cnt = sum(1 for e in self.evaluations if e["full_global_green"] == 1)
+
+        blind_coherence_rate = Fraction(n - blind_stealth_cnt, n)
+        coupled_coherence_rate = Fraction(coupled_sound_cnt, n)
+        full_coherence_rate = Fraction(full_sound_cnt, n)
+
+        if coupled_sound_cnt == n and full_sound_cnt == n and blind_stealth_cnt == n:
+            status = "COUPLED_SOUNDNESS_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "STEALTH_REALIZABLE_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_linearized_pipeline_jacobian.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "blind_stealth_defect_count": blind_stealth_cnt,
+            "coupled_sound_coherent_count": coupled_sound_cnt,
+            "full_sound_coherent_count": full_sound_cnt,
+            "blind_coherence_rate": blind_coherence_rate,
+            "coupled_coherence_rate": coupled_coherence_rate,
+            "full_coherence_rate": full_coherence_rate,
+            "coupled_soundness_gain": coupled_coherence_rate - blind_coherence_rate,
+            "blind_audit": self.blind_audit,
+            "coupled_audit": self.coupled_audit,
+            "full_audit": self.full_audit,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

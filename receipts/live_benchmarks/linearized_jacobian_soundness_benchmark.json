@@ -1,0 +1,604 @@
+{
+  "schema": "lggr.linearized_jacobian_soundness_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "linearized_jacobian_soundness_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "blind_observer_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "coupled_observer_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "full_observer_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "blind_coherence_rate": "0",
+  "coupled_coherence_rate": "1",
+  "full_coherence_rate": "1",
+  "coupled_soundness_gain": "1",
+  "jacobian_monitor_receipt": {
+    "schema": "lggr.online_linearized_pipeline_jacobian.v1",
+    "authority_effect": "None",
+    "scope_id": "openrouter-linearized-pipeline-jacobian-scope",
+    "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "blind_stealth_defect_count": 5,
+    "coupled_sound_coherent_count": 5,
+    "full_sound_coherent_count": 5,
+    "blind_coherence_rate": "0",
+    "coupled_coherence_rate": "1",
+    "full_coherence_rate": "1",
+    "coupled_soundness_gain": "1",
+    "blind_audit": {
+      "schema": "lggr.online_defect_soundness.v1",
+      "authority_effect": "None",
+      "scope_id": "openrouter-linearized-pipeline-jacobian-scope-blind",
+      "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "soundness_holds": false,
+      "rank_d": 2,
+      "rank_q": 1,
+      "rank_qd": 1,
+      "ambient_blindspot_dimension": 2,
+      "realizable_blindspot_dimension": 1,
+      "coupled_compensation_active": false,
+      "target_severity": "2",
+      "stealth_assignment": [
+        "0",
+        "1",
+        "0"
+      ],
+      "stealth_defect": [
+        "-1",
+        "1",
+        "0"
+      ],
+      "stealth_global_inconsistency": "2",
+      "stealth_evaluator_score": "0",
+      "receipt_sha256": "552d33d03bcc3d49deb3eb2def8ca8b6bf9201e9bbd4be5ad75ffb86cd04b8ce"
+    },
+    "coupled_audit": {
+      "schema": "lggr.online_defect_soundness.v1",
+      "authority_effect": "None",
+      "scope_id": "openrouter-linearized-pipeline-jacobian-scope-coupled",
+      "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "soundness_holds": true,
+      "rank_d": 2,
+      "rank_q": 2,
+      "rank_qd": 2,
+      "ambient_blindspot_dimension": 1,
+      "realizable_blindspot_dimension": 0,
+      "coupled_compensation_active": true,
+      "target_severity": "2",
+      "stealth_assignment": null,
+      "stealth_defect": null,
+      "stealth_global_inconsistency": null,
+      "stealth_evaluator_score": null,
+      "receipt_sha256": "52fb034804da79c3422e937a37009a65680029c0b515e83de18e89a8c86d129d"
+    },
+    "full_audit": {
+      "schema": "lggr.online_defect_soundness.v1",
+      "authority_effect": "None",
+      "scope_id": "openrouter-linearized-pipeline-jacobian-scope-full",
+      "status": "TRIVIAL_BLINDSPOT_SOUND_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "soundness_holds": true,
+      "rank_d": 2,
+      "rank_q": 3,
+      "rank_qd": 2,
+      "ambient_blindspot_dimension": 0,
+      "realizable_blindspot_dimension": 0,
+      "coupled_compensation_active": false,
+      "target_severity": "2",
+      "stealth_assignment": null,
+      "stealth_defect": null,
+      "stealth_global_inconsistency": null,
+      "stealth_evaluator_score": null,
+      "receipt_sha256": "0e16b70cc2543d99107e4f600c5b680167b7147d3ff3ef38940f939c120f8740"
+    },
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::linearized_jacobian_eval",
+        "state_perturbation": [
+          "1",
+          "0",
+          "1"
+        ],
+        "interface_defect_omega": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "true_l1_inconsistency": "2",
+        "blind_measured_output": [
+          "0"
+        ],
+        "blind_measured_l1_score": "0",
+        "blind_realizable_blindspot_dim": 1,
+        "blind_local_green": 1,
+        "blind_global_green": 0,
+        "blind_defect": -1,
+        "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+        "coupled_measured_output": [
+          "1",
+          "-1"
+        ],
+        "coupled_measured_l1_score": "2",
+        "coupled_ambient_blindspot_dim": 1,
+        "coupled_realizable_blindspot_dim": 0,
+        "coupled_local_green": 1,
+        "coupled_global_green": 1,
+        "coupled_defect": 0,
+        "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+        "full_measured_output": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "full_measured_l1_score": "2",
+        "full_realizable_blindspot_dim": 0,
+        "full_local_green": 1,
+        "full_global_green": 1,
+        "full_defect": 0,
+        "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::linearized_jacobian_eval",
+        "state_perturbation": [
+          "1",
+          "0",
+          "1"
+        ],
+        "interface_defect_omega": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "true_l1_inconsistency": "2",
+        "blind_measured_output": [
+          "0"
+        ],
+        "blind_measured_l1_score": "0",
+        "blind_realizable_blindspot_dim": 1,
+        "blind_local_green": 1,
+        "blind_global_green": 0,
+        "blind_defect": -1,
+        "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+        "coupled_measured_output": [
+          "1",
+          "-1"
+        ],
+        "coupled_measured_l1_score": "2",
+        "coupled_ambient_blindspot_dim": 1,
+        "coupled_realizable_blindspot_dim": 0,
+        "coupled_local_green": 1,
+        "coupled_global_green": 1,
+        "coupled_defect": 0,
+        "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+        "full_measured_output": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "full_measured_l1_score": "2",
+        "full_realizable_blindspot_dim": 0,
+        "full_local_green": 1,
+        "full_global_green": 1,
+        "full_defect": 0,
+        "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::linearized_jacobian_eval",
+        "state_perturbation": [
+          "1",
+          "0",
+          "1"
+        ],
+        "interface_defect_omega": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "true_l1_inconsistency": "2",
+        "blind_measured_output": [
+          "0"
+        ],
+        "blind_measured_l1_score": "0",
+        "blind_realizable_blindspot_dim": 1,
+        "blind_local_green": 1,
+        "blind_global_green": 0,
+        "blind_defect": -1,
+        "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+        "coupled_measured_output": [
+          "1",
+          "-1"
+        ],
+        "coupled_measured_l1_score": "2",
+        "coupled_ambient_blindspot_dim": 1,
+        "coupled_realizable_blindspot_dim": 0,
+        "coupled_local_green": 1,
+        "coupled_global_green": 1,
+        "coupled_defect": 0,
+        "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+        "full_measured_output": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "full_measured_l1_score": "2",
+        "full_realizable_blindspot_dim": 0,
+        "full_local_green": 1,
+        "full_global_green": 1,
+        "full_defect": 0,
+        "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::linearized_jacobian_eval",
+        "state_perturbation": [
+          "1",
+          "0",
+          "1"
+        ],
+        "interface_defect_omega": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "true_l1_inconsistency": "2",
+        "blind_measured_output": [
+          "0"
+        ],
+        "blind_measured_l1_score": "0",
+        "blind_realizable_blindspot_dim": 1,
+        "blind_local_green": 1,
+        "blind_global_green": 0,
+        "blind_defect": -1,
+        "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+        "coupled_measured_output": [
+          "1",
+          "-1"
+        ],
+        "coupled_measured_l1_score": "2",
+        "coupled_ambient_blindspot_dim": 1,
+        "coupled_realizable_blindspot_dim": 0,
+        "coupled_local_green": 1,
+        "coupled_global_green": 1,
+        "coupled_defect": 0,
+        "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+        "full_measured_output": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "full_measured_l1_score": "2",
+        "full_realizable_blindspot_dim": 0,
+        "full_local_green": 1,
+        "full_global_green": 1,
+        "full_defect": 0,
+        "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::linearized_jacobian_eval",
+        "state_perturbation": [
+          "1",
+          "0",
+          "1"
+        ],
+        "interface_defect_omega": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "true_l1_inconsistency": "2",
+        "blind_measured_output": [
+          "0"
+        ],
+        "blind_measured_l1_score": "0",
+        "blind_realizable_blindspot_dim": 1,
+        "blind_local_green": 1,
+        "blind_global_green": 0,
+        "blind_defect": -1,
+        "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+        "coupled_measured_output": [
+          "1",
+          "-1"
+        ],
+        "coupled_measured_l1_score": "2",
+        "coupled_ambient_blindspot_dim": 1,
+        "coupled_realizable_blindspot_dim": 0,
+        "coupled_local_green": 1,
+        "coupled_global_green": 1,
+        "coupled_defect": 0,
+        "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+        "full_measured_output": [
+          "1",
+          "-1",
+          "0"
+        ],
+        "full_measured_l1_score": "2",
+        "full_realizable_blindspot_dim": 0,
+        "full_local_green": 1,
+        "full_global_green": 1,
+        "full_defect": 0,
+        "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+      }
+    ],
+    "receipt_sha256": "15796d4c3f5ecceb4ae5b0221b83bce6b48080bfa74797ca459e02cbc1fbc678"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::linearized_jacobian_eval",
+      "state_perturbation": [
+        "1",
+        "0",
+        "1"
+      ],
+      "interface_defect_omega": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "true_l1_inconsistency": "2",
+      "blind_measured_output": [
+        "0"
+      ],
+      "blind_measured_l1_score": "0",
+      "blind_realizable_blindspot_dim": 1,
+      "blind_local_green": 1,
+      "blind_global_green": 0,
+      "blind_defect": -1,
+      "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+      "coupled_measured_output": [
+        "1",
+        "-1"
+      ],
+      "coupled_measured_l1_score": "2",
+      "coupled_ambient_blindspot_dim": 1,
+      "coupled_realizable_blindspot_dim": 0,
+      "coupled_local_green": 1,
+      "coupled_global_green": 1,
+      "coupled_defect": 0,
+      "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+      "full_measured_output": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "full_measured_l1_score": "2",
+      "full_realizable_blindspot_dim": 0,
+      "full_local_green": 1,
+      "full_global_green": 1,
+      "full_defect": 0,
+      "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG",
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\n  \"stealth_state_perturbation\": [1, 0, 1],\n  \"blind_intersection_dim\": 1,\n  \"coupled_intersection_dim\": 0\n}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::linearized_jacobian_eval",
+      "state_perturbation": [
+        "1",
+        "0",
+        "1"
+      ],
+      "interface_defect_omega": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "true_l1_inconsistency": "2",
+      "blind_measured_output": [
+        "0"
+      ],
+      "blind_measured_l1_score": "0",
+      "blind_realizable_blindspot_dim": 1,
+      "blind_local_green": 1,
+      "blind_global_green": 0,
+      "blind_defect": -1,
+      "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+      "coupled_measured_output": [
+        "1",
+        "-1"
+      ],
+      "coupled_measured_l1_score": "2",
+      "coupled_ambient_blindspot_dim": 1,
+      "coupled_realizable_blindspot_dim": 0,
+      "coupled_local_green": 1,
+      "coupled_global_green": 1,
+      "coupled_defect": 0,
+      "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+      "full_measured_output": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "full_measured_l1_score": "2",
+      "full_realizable_blindspot_dim": 0,
+      "full_local_green": 1,
+      "full_global_green": 1,
+      "full_defect": 0,
+      "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\n  \"stealth_state_perturbation\": [1, 0, 1],\n  \"blind_intersection_dim\": 1,\n  \"coupled_intersection_dim\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::linearized_jacobian_eval",
+      "state_perturbation": [
+        "1",
+        "0",
+        "1"
+      ],
+      "interface_defect_omega": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "true_l1_inconsistency": "2",
+      "blind_measured_output": [
+        "0"
+      ],
+      "blind_measured_l1_score": "0",
+      "blind_realizable_blindspot_dim": 1,
+      "blind_local_green": 1,
+      "blind_global_green": 0,
+      "blind_defect": -1,
+      "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+      "coupled_measured_output": [
+        "1",
+        "-1"
+      ],
+      "coupled_measured_l1_score": "2",
+      "coupled_ambient_blindspot_dim": 1,
+      "coupled_realizable_blindspot_dim": 0,
+      "coupled_local_green": 1,
+      "coupled_global_green": 1,
+      "coupled_defect": 0,
+      "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+      "full_measured_output": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "full_measured_l1_score": "2",
+      "full_realizable_blindspot_dim": 0,
+      "full_local_green": 1,
+      "full_global_green": 1,
+      "full_defect": 0,
+      "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "{\"stealth_state_perturbation\": [1, 0, 1], \"blind_intersection_dim\": 1, \"coupled_intersection_dim\": 0}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::linearized_jacobian_eval",
+      "state_perturbation": [
+        "1",
+        "0",
+        "1"
+      ],
+      "interface_defect_omega": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "true_l1_inconsistency": "2",
+      "blind_measured_output": [
+        "0"
+      ],
+      "blind_measured_l1_score": "0",
+      "blind_realizable_blindspot_dim": 1,
+      "blind_local_green": 1,
+      "blind_global_green": 0,
+      "blind_defect": -1,
+      "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+      "coupled_measured_output": [
+        "1",
+        "-1"
+      ],
+      "coupled_measured_l1_score": "2",
+      "coupled_ambient_blindspot_dim": 1,
+      "coupled_realizable_blindspot_dim": 0,
+      "coupled_local_green": 1,
+      "coupled_global_green": 1,
+      "coupled_defect": 0,
+      "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+      "full_measured_output": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "full_measured_l1_score": "2",
+      "full_realizable_blindspot_dim": 0,
+      "full_local_green": 1,
+      "full_global_green": 1,
+      "full_defect": 0,
+      "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG",
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\"stealth_state_perturbation\": [1, 0, 1], \"blind_intersection_dim\": 1, \"coupled_intersection_dim\": 0}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::linearized_jacobian_eval",
+      "state_perturbation": [
+        "1",
+        "0",
+        "1"
+      ],
+      "interface_defect_omega": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "true_l1_inconsistency": "2",
+      "blind_measured_output": [
+        "0"
+      ],
+      "blind_measured_l1_score": "0",
+      "blind_realizable_blindspot_dim": 1,
+      "blind_local_green": 1,
+      "blind_global_green": 0,
+      "blind_defect": -1,
+      "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+      "coupled_measured_output": [
+        "1",
+        "-1"
+      ],
+      "coupled_measured_l1_score": "2",
+      "coupled_ambient_blindspot_dim": 1,
+      "coupled_realizable_blindspot_dim": 0,
+      "coupled_local_green": 1,
+      "coupled_global_green": 1,
+      "coupled_defect": 0,
+      "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+      "full_measured_output": [
+        "1",
+        "-1",
+        "0"
+      ],
+      "full_measured_l1_score": "2",
+      "full_realizable_blindspot_dim": 0,
+      "full_local_green": 1,
+      "full_global_green": 1,
+      "full_defect": 0,
+      "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"stealth_state_perturbation\": [1, 0, 1],\n  \"blind_intersection_dim\": 1,\n  \"coupled_intersection_dim\": 0\n}\n```"
+    }
+  ],
+  "meaning": "Linearized state-estimation Jacobian soundness benchmark under StreamingDefectSoundnessMonitor and StreamingLinearizedPipelineJacobianMonitor across 5 model families: separates collapsing observer Q_blind = [[1, 1, 0]] (where dim(im(D) cap ker(Q_blind)) = 1 > 0 permits stealth internal drift s = [1, 0, 1] with ||D s||_1 = 2 > 0 and Q_blind D s = [0] -> L = 1, E_g = 0, Delta_E = -1) from coupled observer Q_coupled = [[1, 0, 0], [0, 1, 0]] (where dim(ker(Q_coupled)) = 1 > 0 yet im(D) cap ker(Q_coupled) = {0} via rank(Q_coupled D) = rank(D) = 2 -> L = 1, E_g = 1, Delta_E = 0).",
+  "receipt_sha256": "32e32fabb76c8726a81c6e500a5a0a156af14f68e7a799991ca0866994d899e7"
+}

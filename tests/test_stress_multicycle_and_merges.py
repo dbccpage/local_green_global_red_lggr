@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingGramProbeMonitor,
     StreamingHodgeDecompositionMonitor,
+    StreamingLinearizedPipelineJacobianMonitor,
     StreamingMartingaleOptionalStoppingMonitor,
     StreamingMayerVietorisMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
@@ -61,6 +62,7 @@ from lggr.streaming import (
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
+    StreamingVariableDurationGracefulSheddingMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
 )
@@ -3571,6 +3573,142 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["single_round_serial_edf_coherence_rate"], "0")
         self.assertEqual(receipt["multi_round_bin_packed_edf_coherence_rate"], "1")
         self.assertEqual(receipt["bin_packed_edf_coherence_gain"], "1")
+
+    def test_variable_duration_graceful_degradation_shedding(self) -> None:
+        """Verify Theorem 66: multi-tick variable duration (p=(2, 1, 1)) and graceful-degradation shedding under denied horizon expansion."""
+        mon = StreamingVariableDurationGracefulSheddingMonitor(
+            scope_id="unit-variable-duration-shedding-scope"
+        )
+        rec = mon.observe_burst(
+            burst_id="burst-var-dur-01",
+            baseline_policy=[2, 3, 0],
+            risk_weights=[2, 3, 4],
+            per_incident_lease_budget=4,
+            horizon_drift_ceiling=7,
+            arrival_tick=0,
+            expansion_denied=True,
+            incidents=[
+                {
+                    "duration_ticks": 2,
+                    "sla_deadline_tick": 2,
+                    "min_weighted_pareto_floor": 4,
+                    "criticality_weight": 10,
+                    "phase_1_deferral_lease_delta": [2, 0, 0],
+                    "phase_1_start_tick": 0,
+                    "phase_1_restores_pareto": True,
+                    "phase_1_candidate_passes": True,
+                    "phase_2_inverted_shed_lease_delta": [0, 0, 0],
+                    "phase_2_start_tick": 0,
+                    "phase_2_shed": True,
+                    "phase_2_restores_pareto": True,
+                    "phase_2_candidate_passes": True,
+                    "phase_3_governed_shed_lease_delta": [2, 0, 0],
+                    "phase_3_start_tick": 0,
+                    "phase_3_shed": False,
+                    "phase_3_restores_pareto": True,
+                    "phase_3_candidate_passes": True,
+                },
+                {
+                    "duration_ticks": 1,
+                    "sla_deadline_tick": 1,
+                    "min_weighted_pareto_floor": 3,
+                    "criticality_weight": 8,
+                    "phase_1_deferral_lease_delta": [0, 1, 0],
+                    "phase_1_start_tick": 0,
+                    "phase_1_restores_pareto": True,
+                    "phase_1_candidate_passes": True,
+                    "phase_2_inverted_shed_lease_delta": [0, 1, 0],
+                    "phase_2_start_tick": 0,
+                    "phase_2_shed": False,
+                    "phase_2_restores_pareto": True,
+                    "phase_2_candidate_passes": True,
+                    "phase_3_governed_shed_lease_delta": [0, 1, 0],
+                    "phase_3_start_tick": 0,
+                    "phase_3_shed": False,
+                    "phase_3_restores_pareto": True,
+                    "phase_3_candidate_passes": True,
+                },
+                {
+                    "duration_ticks": 1,
+                    "sla_deadline_tick": 2,
+                    "min_weighted_pareto_floor": 4,
+                    "criticality_weight": 3,
+                    "phase_1_deferral_lease_delta": [0, 0, 1],
+                    "phase_1_start_tick": 2,
+                    "phase_1_restores_pareto": True,
+                    "phase_1_candidate_passes": True,
+                    "phase_2_inverted_shed_lease_delta": [0, 0, 1],
+                    "phase_2_start_tick": 0,
+                    "phase_2_shed": False,
+                    "phase_2_restores_pareto": True,
+                    "phase_2_candidate_passes": True,
+                    "phase_3_governed_shed_lease_delta": [0, 0, 0],
+                    "phase_3_start_tick": 0,
+                    "phase_3_shed": True,
+                    "phase_3_restores_pareto": True,
+                    "phase_3_candidate_passes": True,
+                },
+            ],
+        )
+        self.assertFalse(rec["full_retention_schedulable_under_horizon"])
+        self.assertEqual(rec["optimal_shed_incident_indices"], [2])
+        self.assertEqual(rec["minimum_criticality_loss"], "3")
+        self.assertEqual(rec["optimal_retained_criticality"], "18")
+        self.assertEqual(rec["phase_1_local_green"], 1)
+        self.assertEqual(rec["phase_1_global_green"], 0)
+        self.assertEqual(rec["phase_1_defect"], -1)
+        self.assertEqual(rec["phase_1_status"], "VARIABLE_DURATION_DEADLINE_OVERLOAD_LGGR")
+        self.assertEqual(rec["phase_2_local_green"], 1)
+        self.assertEqual(rec["phase_2_global_green"], 0)
+        self.assertEqual(rec["phase_2_defect"], -1)
+        self.assertEqual(rec["phase_2_status"], "SUBOPTIMAL_CRITICALITY_SHEDDING_LGGR")
+        self.assertEqual(rec["phase_3_local_green"], 1)
+        self.assertEqual(rec["phase_3_global_green"], 1)
+        self.assertEqual(rec["phase_3_defect"], 0)
+        self.assertEqual(rec["phase_3_status"], "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "GRACEFUL_DEGRADATION_SHEDDING_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["single_round_coherence_rate"], "0")
+        self.assertEqual(receipt["multi_round_graceful_shedding_coherence_rate"], "1")
+        self.assertEqual(receipt["graceful_shedding_coherence_gain"], "1")
+
+    def test_linearized_pipeline_jacobian_soundness(self) -> None:
+        """Verify Theorem 67: linearized state-estimation Jacobian soundness im(D) cap ker(Q) == {0} vs. stealth blindspot."""
+        mon = StreamingLinearizedPipelineJacobianMonitor(
+            defect_matrix=[[1, -1, 0], [0, 1, -1], [1, 0, -1]],
+            blind_measurement_matrix=[[1, 1, 0]],
+            coupled_measurement_matrix=[[1, 0, 0], [0, 1, 0]],
+            full_measurement_matrix=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+            scope_id="unit-linearized-jacobian-scope",
+        )
+        obs = mon.observe_pipeline_perturbation(
+            evaluation_id="eval-01",
+            state_perturbation=[1, 0, 1],
+        )
+        self.assertEqual(obs["interface_defect_omega"], ["1", "-1", "0"])
+        self.assertEqual(obs["true_l1_inconsistency"], "2")
+        self.assertEqual(obs["blind_measured_l1_score"], "0")
+        self.assertEqual(obs["blind_realizable_blindspot_dim"], 1)
+        self.assertEqual(obs["blind_local_green"], 1)
+        self.assertEqual(obs["blind_global_green"], 0)
+        self.assertEqual(obs["blind_defect"], -1)
+        self.assertEqual(obs["coupled_measured_l1_score"], "2")
+        self.assertEqual(obs["coupled_ambient_blindspot_dim"], 1)
+        self.assertEqual(obs["coupled_realizable_blindspot_dim"], 0)
+        self.assertEqual(obs["coupled_local_green"], 1)
+        self.assertEqual(obs["coupled_global_green"], 1)
+        self.assertEqual(obs["coupled_defect"], 0)
+        self.assertEqual(obs["full_realizable_blindspot_dim"], 0)
+        self.assertEqual(obs["full_defect"], 0)
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "COUPLED_SOUNDNESS_VERIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["blind_coherence_rate"], "0")
+        self.assertEqual(receipt["coupled_coherence_rate"], "1")
+        self.assertEqual(receipt["coupled_soundness_gain"], "1")
 
 
 if __name__ == "__main__":

@@ -26,6 +26,7 @@ from .streaming import (
     StreamingGramProbeMonitor,
     StreamingHodgeDecompositionMonitor,
     StreamingJointMultiMonitorRepairGuard,
+    StreamingLinearizedPipelineJacobianMonitor,
     StreamingMartingaleOptionalStoppingMonitor,
     StreamingMayerVietorisMonitor,
     StreamingMerminPeresParityMonitor,
@@ -49,6 +50,7 @@ from .streaming import (
     StreamingSkewRepairMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
+    StreamingVariableDurationGracefulSheddingMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
 )
@@ -67,6 +69,7 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingGovernedPolicyRelaxationMonitor",
            "StreamingGramProbeMonitor", "StreamingHodgeDecompositionMonitor",
            "StreamingJointMultiMonitorRepairGuard",
+           "StreamingLinearizedPipelineJacobianMonitor",
            "StreamingMartingaleOptionalStoppingMonitor", "StreamingMayerVietorisMonitor",
            "StreamingMerminPeresParityMonitor",
            "StreamingMinimumSlackPolicyRelaxationMonitor",
@@ -82,5 +85,6 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingSimultaneousBudgetSplitMonitor",
            "StreamingSixRoleOverlayMonitor", "StreamingSkewRepairMonitor", "StreamingThresholdGovernanceMonitor",
            "StreamingTransportMonitor",
+           "StreamingVariableDurationGracefulSheddingMonitor",
            "StreamingWeightedPolicyRelaxationMonitor",
            "StreamingWindowedDriftMonitor"]
