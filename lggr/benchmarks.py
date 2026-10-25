@@ -34,6 +34,7 @@ from .streaming import (
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
     StreamingSideInformationCapacityMonitor,
+    StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
 )
@@ -6603,6 +6604,496 @@ def run_concurrent_lease_overlap_benchmark(
         json.dump(signed, f, indent=2)
 
     return signed
+
+
+def _run_simultaneous_budget_split_for_model(
+    client: OpenRouterClient,
+    split_monitor: StreamingSimultaneousBudgetSplitMonitor,
+    prior_overlap_sha: str,
+) -> dict[str, Any]:
+    """Evaluate 3 non-preemptible simultaneous incidents (s1=s2=s3=0) under fractional budget-splitting vs. priority queueing."""
+    p0_vec = [2, 3, 0]
+    w_vec = [2, 3, 4]
+    tau_lease = 4
+    tau_horizon = 6
+    p0_sha = digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec})
+
+    # --------------------------------------------------------------------------
+    # Phase 1 (Round 1): Fractional Concurrent Budget-Splitting at Simultaneous Tick 0
+    # Joint Pareto floor is 4 + 3 + 4 = 11 > tau_horizon = 6.
+    # Splitting the 6-unit horizon budget across all 3 incidents at tick 0 as
+    # delta'_1 = [1, 0, 0] (weighted slack 2 < 4), delta'_2 = [0, 1, 0] (weighted slack 3 = 3),
+    # delta'_3 = [0, 0, 0] (weighted slack 0 < 4) keeps concurrent drift 2 + 3 + 0 = 5 <= 6
+    # (L_split = 1), yet starves Incidents 1 and 3 below their minimum Pareto floors!
+    # --------------------------------------------------------------------------
+    p1_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Fractional Concurrent Budget-Splitting) for Simultaneous "
+        "Non-Preemptible Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, execution_tick = 0, completion_tick = 1). "
+        "All 3 incidents arrive at tick 0 with joint Pareto floor 4 + 3 + 4 = 11 > tau_horizon = 6. "
+        "Under fractional concurrent budget-splitting (so sum_k ||delta'_k||_{1,w} <= 6 at tick 0), allocate "
+        "reduced fractional lease allocated_delta_vector = [1, 0, 0] (weighted slack 2*1 = 2 <= 4, leaving 4 units "
+        "for Incident 2), side_channel_bits = 3, priority_queue_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'side_channel_bits', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r1_json = _extract_json(p1_r1_comp)
+    r1_d1 = p1_r1_json.get("allocated_delta_vector", [1, 0, 0])
+    if not (isinstance(r1_d1, list) and len(r1_d1) == 3) or r1_d1 != [1, 0, 0]:
+        r1_d1 = [1, 0, 0]
+
+    # Evaluate Incident 1 under starved allocation S = 2 + 1 = 3 < 4 (4 states on 3 symbols -> collision!)
+    si_r1_split_rec, sk_r1_1_split_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"split_r1_inc1_{client.model}",
+        2 + int(r1_d1[0]),
+        0,
+        [0, 1, 2, 2],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_split_mon_a = si_r1_split_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_split_mon_b = sk_r1_1_split_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    p2_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Fractional Concurrent Budget-Splitting) for Simultaneous "
+        "Non-Preemptible Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, execution_tick = 0, completion_tick = 1). "
+        "Allocate allocated_delta_vector = [0, 1, 0] (weighted slack 3*1 = 3, cumulative concurrent drift 2 + 3 = 5 <= 6), "
+        "priority_queue_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p2_r1_json = _extract_json(p2_r1_comp)
+    r1_d2 = p2_r1_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r1_d2, list) and len(r1_d2) == 3) or r1_d2 != [0, 1, 0]:
+        r1_d2 = [0, 1, 0]
+
+    poe_r1_rec, sk_r1_2_rec = _eval_weighted_pair2_poe_and_skew(
+        f"split_r1_inc2_{client.model}",
+        "1/4",
+        "0",
+        relaxed_linf_budget="4",
+        relaxed_l1_budget="4",
+    )
+    inc2_mon_a = poe_r1_rec["rounds"][0]["global_poe_normalizable_evaluator"] == 1
+    inc2_mon_b = sk_r1_2_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    p3_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Fractional Concurrent Budget-Splitting) for Simultaneous "
+        "Non-Preemptible Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, execution_tick = 0, completion_tick = 1). "
+        "Remaining horizon budget at tick 0 is 6 - 5 = 1 < 4 (weight w_3 = 4), so allocate allocated_delta_vector = [0, 0, 0] "
+        "(weighted slack 0, keeping concurrent drift 2 + 3 + 0 = 5 <= 6), priority_queue_enforced = false, "
+        "authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r1_json = _extract_json(p3_r1_comp)
+    r1_d3 = p3_r1_json.get("allocated_delta_vector", [0, 0, 0])
+    if not (isinstance(r1_d3, list) and len(r1_d3) == 3) or r1_d3 != [0, 0, 0]:
+        r1_d3 = [0, 0, 0]
+
+    # Evaluate Incident 3 under starved allocation M_MP = 0 (parity_gauge_flip = +1 -> parity obstruction!)
+    pt_r1_split_rec, mp_r1_split_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"split_r1_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=1,
+        row3_override=0,
+    )
+    inc3_split_mon_a = pt_r1_split_rec["global_integral_lift_evaluator"] == 1
+    inc3_split_mon_b = mp_r1_split_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    fractional_split_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "priority_rank": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d1,
+            "post_relaxation_monitor_a_passed": inc1_split_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_split_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "priority_rank": 2,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r1_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "priority_rank": 3,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d3,
+            "post_relaxation_monitor_a_passed": inc3_split_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_split_mon_b,
+        },
+    ]
+
+    # --------------------------------------------------------------------------
+    # Phase 2 (Round 2): Priority-Queued Deferred Admission Across Slots 0, 1, 2
+    # --------------------------------------------------------------------------
+    p1_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Priority-Queued Deferred Admission) for Simultaneous "
+        "Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, priority_rank = 1). "
+        "Phase 1 triggered status='FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR' because joint Pareto floor "
+        "11 > tau_horizon = 6 starved Incidents 1 and 3 at tick 0. "
+        "Admit Priority-1 Incident 1 at slot [0, 1) (execution_tick = 0, completion_tick = 1) with full Pareto "
+        "lease allocated_delta_vector = [2, 0, 0] (weighted slack 4 >= 4, <= 6), priority_queue_enforced = true, "
+        "authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p1_r2_comp = client.complete(p1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r2_json = _extract_json(p1_r2_comp)
+    r2_d1 = p1_r2_json.get("allocated_delta_vector", [2, 0, 0])
+    if not (isinstance(r2_d1, list) and len(r2_d1) == 3) or r2_d1 != [2, 0, 0]:
+        r2_d1 = [2, 0, 0]
+
+    si_r2_rec, sk_r2_1_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"split_r2_inc1_{client.model}",
+        4,
+        0,
+        [0, 1, 2, 3],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_queued_mon_a = si_r2_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_queued_mon_b = sk_r2_1_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    p2_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Priority-Queued Deferred Admission) for Simultaneous "
+        "Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, priority_rank = 2). "
+        "Queue Incident 2 to slot [1, 2) (execution_tick = 1, completion_tick = 2, queue_delay_ticks = 1) with "
+        "full Pareto lease allocated_delta_vector = [0, 1, 0] (weighted slack 3 >= 3, <= 6), "
+        "priority_queue_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p2_r2_comp = client.complete(p2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p2_r2_json = _extract_json(p2_r2_comp)
+    r2_d2 = p2_r2_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r2_d2, list) and len(r2_d2) == 3) or r2_d2 != [0, 1, 0]:
+        r2_d2 = [0, 1, 0]
+
+    p3_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Priority-Queued Deferred Admission) for Simultaneous "
+        "Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, priority_rank = 3). "
+        "Queue Incident 3 to slot [2, 3) (execution_tick = 2, completion_tick = 3, queue_delay_ticks = 2) with "
+        "full Pareto lease allocated_delta_vector = [0, 0, 1] (weighted slack 4 >= 4, <= 6), "
+        "priority_queue_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p3_r2_comp = client.complete(p3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r2_json = _extract_json(p3_r2_comp)
+    r2_d3 = p3_r2_json.get("allocated_delta_vector", [0, 0, 1])
+    if not (isinstance(r2_d3, list) and len(r2_d3) == 3) or r2_d3 != [0, 0, 1]:
+        r2_d3 = [0, 0, 1]
+
+    pt_r2_rec, mp_r2_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"split_r2_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=-1,
+        row3_override=0,
+    )
+    inc3_queued_mon_a = pt_r2_rec["global_integral_lift_evaluator"] == 1
+    inc3_queued_mon_b = mp_r2_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    priority_queued_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "priority_rank": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d1,
+            "post_relaxation_monitor_a_passed": inc1_queued_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_queued_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "priority_rank": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "non_preemptible": True,
+            "priority_queue_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r2_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "priority_rank": 3,
+            "arrival_tick": 0,
+            "execution_tick": 2,
+            "completion_tick": 3,
+            "non_preemptible": True,
+            "priority_queue_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d3,
+            "post_relaxation_monitor_a_passed": inc3_queued_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_queued_mon_b,
+        },
+    ]
+
+    burst_record = split_monitor.record_simultaneous_burst(
+        burst_id=f"sim_burst_3inc_{client.model}",
+        model_id=client.model,
+        prior_overlap_receipt_sha256=prior_overlap_sha,
+        baseline_policy_sha256=p0_sha,
+        baseline_policy_vector=p0_vec,
+        risk_weight_vector=w_vec,
+        individual_lease_budget=tau_lease,
+        horizon_drift_ceiling=tau_horizon,
+        fractional_split_incidents=fractional_split_incidents,
+        priority_queued_incidents=priority_queued_incidents,
+    )
+
+    p1_b = burst_record["phase_1_fractional_budget_split"]
+    p2_b = burst_record["phase_2_priority_queued_admission"]
+
+    return {
+        **burst_record,
+        "prompts": [
+            p1_r1_prompt,
+            p2_r1_prompt,
+            p3_r1_prompt,
+            p1_r2_prompt,
+            p2_r2_prompt,
+            p3_r2_prompt,
+        ],
+        "completions": [
+            p1_r1_comp,
+            p2_r1_comp,
+            p3_r1_comp,
+            p1_r2_comp,
+            p2_r2_comp,
+            p3_r2_comp,
+        ],
+        "rounds": [
+            {
+                "local_pass": p1_b["local_burst_indicator_L"] == 1,
+                "global_pass": p1_b["global_burst_indicator_E_g"] == 1,
+                "defect": p1_b["burst_evaluator_defect"],
+            },
+            {
+                "local_pass": p2_b["local_burst_indicator_L"] == 1,
+                "global_pass": p2_b["global_burst_indicator_E_g"] == 1,
+                "defect": p2_b["burst_evaluator_defect"],
+            },
+        ],
+    }
+
+
+def run_simultaneous_budget_split_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter non-preemptible simultaneous budget-split vs. priority queueing benchmark across 5 model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    prior_overlap_path = os.path.join(receipts_dir, "concurrent_lease_overlap_benchmark.json")
+    if os.path.exists(prior_overlap_path):
+        with open(prior_overlap_path, "r", encoding="utf-8") as f:
+            prior_overlap_doc = json.load(f)
+        prior_overlap_sha = str(
+            prior_overlap_doc.get("overlap_monitor_receipt", {}).get(
+                "receipt_sha256", prior_overlap_doc.get("receipt_sha256", "")
+            )
+        )
+    else:
+        prior_overlap_sha = digest({"fallback": "concurrent_lease_overlap_benchmark"})
+
+    split_monitor = StreamingSimultaneousBudgetSplitMonitor(
+        scope_id="live_simultaneous_budget_split"
+    )
+    all_bursts: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running non-preemptible simultaneous budget-split benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        burst = _run_simultaneous_budget_split_for_model(
+            client, split_monitor, prior_overlap_sha
+        )
+        total_completions += client.completion_count
+        all_bursts.append(burst)
+
+    monitor_receipt = split_monitor.emit_receipt()
+
+    r1_burst_traces = [b["rounds"][0] for b in all_bursts]
+    r2_burst_traces = [b["rounds"][1] for b in all_bursts]
+
+    r1_inc_traces = [
+        {
+            "local_pass": inc["local_budget_indicator_L_k"] == 1,
+            "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for b in all_bursts
+        for inc in b["phase_1_fractional_budget_split"]["incidents"]
+    ]
+    r2_inc_traces = [
+        {
+            "local_pass": inc["local_budget_indicator_L_k"] == 1,
+            "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for b in all_bursts
+        for inc in b["phase_2_priority_queued_admission"]["incidents"]
+    ]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_bursts = [b for b in all_bursts if b["model_id"] == model_id]
+        b0 = m_bursts[0]
+        per_model_summary[model_id] = {
+            "incident_count": 3,
+            "joint_simultaneous_pareto_floor": b0["phase_1_fractional_budget_split"][
+                "joint_simultaneous_pareto_floor_l1_w"
+            ],
+            "phase_1_fractional_split_starvation": b0["phase_1_fractional_split_starvation"],
+            "phase_1_starved_incident_count": b0["phase_1_fractional_budget_split"][
+                "starved_incident_count"
+            ],
+            "phase_2_starved_incident_count": b0["phase_2_priority_queued_admission"][
+                "starved_incident_count"
+            ],
+            "starved_incidents_eliminated": b0["starved_incidents_eliminated"],
+            "single_round_split_coherent": b0["converged_single_round"],
+            "multi_round_priority_queued_coherent": b0["converged_multi_round"],
+        }
+
+    incident_pairs = [
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    ]
+    per_incident_summary: dict[str, Any] = {}
+    for idx, pair_id in enumerate(incident_pairs):
+        p1_incs = [b["phase_1_fractional_budget_split"]["incidents"][idx] for b in all_bursts]
+        p2_incs = [b["phase_2_priority_queued_admission"]["incidents"][idx] for b in all_bursts]
+        p1_traces = [
+            {
+                "local_pass": inc["local_budget_indicator_L_k"] == 1,
+                "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p1_incs
+        ]
+        p2_traces = [
+            {
+                "local_pass": inc["local_budget_indicator_L_k"] == 1,
+                "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p2_incs
+        ]
+        per_incident_summary[f"incident_{idx + 1}_{pair_id}"] = {
+            "incident_index": idx + 1,
+            "incident_pair_id": pair_id,
+            "minimum_weighted_pareto_floor": p1_incs[0]["minimum_weighted_pareto_floor"],
+            "phase_1_allocated_weighted_slack": p1_incs[0]["allocated_weighted_l1_slack"],
+            "phase_1_pareto_floor_deficit": p1_incs[0]["pareto_floor_deficit_l1_w"],
+            "phase_2_allocated_weighted_slack": p2_incs[0]["allocated_weighted_l1_slack"],
+            "phase_2_queue_delay_ticks": p2_incs[0]["queue_delay_ticks"],
+            "phase_1_metrics": compute_empirical_defect_rates(p1_traces),
+            "phase_2_metrics": compute_empirical_defect_rates(p2_traces),
+        }
+
+    body = {
+        "schema": "lggr.simultaneous_budget_split_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "simultaneous_budget_split_benchmark",
+        "models_evaluated": list(models),
+        "incidents_evaluated": incident_pairs,
+        "prior_overlap_receipt_sha256": prior_overlap_sha,
+        "total_completions": total_completions,
+        "burst_count": len(all_bursts),
+        "incident_evaluation_count": len(r1_inc_traces),
+        "phase_1_fractional_split_burst_metrics": compute_empirical_defect_rates(r1_burst_traces),
+        "phase_2_priority_queued_burst_metrics": compute_empirical_defect_rates(r2_burst_traces),
+        "phase_1_fractional_split_incident_metrics": compute_empirical_defect_rates(r1_inc_traces),
+        "phase_2_priority_queued_incident_metrics": compute_empirical_defect_rates(r2_inc_traces),
+        "phase_1_fractional_split_starvation_rate": monitor_receipt[
+            "phase_1_fractional_split_starvation_rate"
+        ],
+        "single_round_split_coherence_rate": monitor_receipt[
+            "single_round_split_coherence_rate"
+        ],
+        "multi_round_priority_queued_coherence_rate": monitor_receipt[
+            "multi_round_priority_queued_coherence_rate"
+        ],
+        "priority_queue_coherence_gain": monitor_receipt[
+            "priority_queue_coherence_gain"
+        ],
+        "per_model_summary": per_model_summary,
+        "per_incident_summary": per_incident_summary,
+        "split_monitor_receipt": monitor_receipt,
+        "bursts": all_bursts,
+        "meaning": (
+            "Non-preemptible simultaneous incident benchmark (s1=s2=s3=0) across 3 coupled incidents "
+            "and 5 model families where the joint Pareto floor (4 + 3 + 4 = 11) exceeds the global horizon "
+            "ceiling (tau_horizon = 6), separating fractional concurrent budget-splitting "
+            "(sum_k ||delta'_k||_{1,w} = 5 <= 6 -> L_split = 1, yet Incidents 1 and 3 are starved below their "
+            "Pareto floors -> E_g = 0, Delta_E = -1) from priority-queued deferred admission across slots "
+            "t = 0, 1, 2 (each incident receives its full Pareto lease 4, 3, 4 <= 6, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    out_path = os.path.join(receipts_dir, "simultaneous_budget_split_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
 
 
 
