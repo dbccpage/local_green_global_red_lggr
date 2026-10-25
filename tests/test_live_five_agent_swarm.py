@@ -71,6 +71,13 @@ class LiveFiveAgentTests(unittest.TestCase):
         self.assertEqual(len(board.rows()), 2)
         board.close()
 
+    def test_calculator_is_bounded_arithmetic_not_allocation(self):
+        board = Board(fixture(3101))
+        self.assertEqual(board.tool("worker-0", "calculate_total", {"items": [{"unit_cents": 17, "quantity": 3}]})["value"], 51)
+        self.assertEqual(board.state["proposals"], {})
+        self.assertFalse(board.tool("worker-0", "calculate_total", {"items": [{"unit_cents": True, "quantity": 3}]})["accepted"])
+        board.close()
+
     def test_injection_preserves_done_work_and_distinguishes_feasibility(self):
         board = Board(self.filled());board.execute(["worker-0", "worker-1"])
         before = deepcopy(board.state)

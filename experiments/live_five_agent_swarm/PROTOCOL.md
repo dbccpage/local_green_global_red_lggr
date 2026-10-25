@@ -1,4 +1,4 @@
-# Five-agent live recovery pilot, protocol v1
+# Five-agent live recovery pilot, protocol v2
 
 This prospective pilot tests whether five real tool-using model sessions can
 complete a shared synthetic dispatch task, experience an injected disruption,
@@ -8,7 +8,8 @@ of LGGR, a natural swarm failure rate, or general convergence.
 Five workers own one invoice-dispatch job each. Each job has six integer-priced
 items and a set of permitted dispatch slots. A worker must compute its invoice
 total and reserve a slot; only that worker can alter its proposal. Model tool
-calls inspect the shared board, propose a plan, or escalate. Separate conversation
+calls inspect the shared board, calculate supplied integer line-item totals,
+propose a plan, or escalate. Separate conversation
 histories persist across the intervention. Model output is never executed as code.
 The host executes validated proposals as SQLite transactions. Two jobs execute
 before an intervention; their outputs must remain immutable through recovery.
@@ -69,3 +70,14 @@ synthetic task data and model histories are sent to the provider.
 Development may uncover implementation defects. Changes must be committed and
 recorded before evaluation starts; development evidence remains separate. Any
 post-evaluation fix requires a new version and the old evidence stays retained.
+
+## Development revision before evaluation
+
+The v1 development run (seed 3101, source commit 16af298) made 32 live API calls
+and cost USD 0.04562550. It failed to establish the initial shared plan because
+GPT-4o-mini workers repeatedly submitted incorrect invoice totals. No fault
+intervention occurred. That complete failed run and its frozen source remain in
+`evidence/development/`; it is not counted as evaluation evidence. Protocol v2
+adds a calculator tool operating only on model-supplied line items, equally in
+all arms. It does not reveal an allocation, feasible matching, or repair. A second
+development run precedes the still-unseen evaluation seeds.

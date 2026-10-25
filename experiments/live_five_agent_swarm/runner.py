@@ -15,6 +15,9 @@ HERE = Path(__file__).resolve().parent
 TOOLS = [
     {"type": "function", "function": {"name": "inspect_board", "description": "Read current invoice items, allowed and active slots, epoch, peer proposals and immutable completed work.",
       "parameters": {"type": "object", "properties": {}, "required": [], "additionalProperties": False}}},
+    {"type": "function", "function": {"name": "calculate_total", "description": "Compute exact arithmetic on your supplied invoice line items. This does not choose slots or repair allocations.",
+      "parameters": {"type": "object", "properties": {"items": {"type": "array", "items": {"type": "object", "properties": {"unit_cents": {"type": "integer"}, "quantity": {"type": "integer"}}, "required": ["unit_cents", "quantity"], "additionalProperties": False}}},
+                     "required": ["items"], "additionalProperties": False}}},
     {"type": "function", "function": {"name": "propose", "description": "Submit or revise ONLY your own invoice total and slot at the observed epoch. Admission is checked separately.",
       "parameters": {"type": "object", "properties": {"slot": {"type": "string"}, "total_cents": {"type": "integer"}, "epoch": {"type": "integer"}},
                      "required": ["slot", "total_cents", "epoch"], "additionalProperties": False}}},
@@ -30,7 +33,7 @@ def source_hashes():
 
 def system(worker):
     return (f"You are autonomous dispatch agent {worker}, one of five peer workers. You own ONLY the job with your worker ID. "
-            "Use inspect_board before acting. Compute your invoice total exactly from unit_cents times quantity. "
+            "Use inspect_board before acting. Use calculate_total with your source item list for invoice arithmetic. "
             "Choose an allowed, currently active slot not used by another worker, and use the CURRENT epoch. "
             "Inspect peer proposals: preserve nonconflicting claims where possible; if competing, lower worker ID has priority. "
             "Only tool calls propose or escalate count as actions. Never change another worker's work. "

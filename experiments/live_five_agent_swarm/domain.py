@@ -81,6 +81,15 @@ class Board:
         job = next(j for j in self.state["jobs"] if j["id"] == worker)
         if name == "inspect_board" and arguments == {}:
             return deepcopy(self.state)
+        if name == "calculate_total":
+            items = arguments.get("items")
+            if set(arguments) != {"items"} or not isinstance(items, list) or not 1 <= len(items) <= 20:
+                return {"accepted": False, "error": "provide 1 to 20 line items"}
+            if any(not isinstance(item, dict) or set(item) != {"unit_cents", "quantity"}
+                   or any(type(v) is not int or not 0 <= v <= 100000 for v in item.values()) for item in items):
+                return {"accepted": False, "error": "bounded exact integer line items required"}
+            return {"value": sum(item["unit_cents"] * item["quantity"] for item in items),
+                    "scope": "arithmetic on supplied items only; no resource assignment"}
         if name == "escalate" and set(arguments) == {"reason"} and isinstance(arguments["reason"], str):
             return {"escalated": True, "reason": arguments["reason"][:1000]}
         if name != "propose" or set(arguments) != {"slot", "total_cents", "epoch"}:
