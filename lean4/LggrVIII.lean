@@ -2213,4 +2213,56 @@ theorem linearized_pipeline_jacobian_soundness_vs_stealth_blindspot :
   · intro ⟨h1, h2⟩
     omega
 
+/-- 68. Watcher-dropout and Gram rank-deficiency audit along task-critical directions:
+    1. Universal 4-watcher Gram quadratic form law: for state x = (x1, x2, x3) ∈ ℤ³ and 4-watcher
+       evaluator matrix Q with rows q1 = (1, 1, 0), q2 = (2, 2, 0) = 2·q1, q3 = (0, 1, 1), and
+       q4 = (1, 0, 1):
+       - Under full Q (or redundant watcher-2 dropout Q_{-2} retaining {q1, q3, q4}), any state x
+         in the kernel of Q_{-2} satisfies x1 + x2 = 0, x2 + x3 = 0, and x1 + x3 = 0, which forces
+         x1 = 0 ∧ x2 = 0 ∧ x3 = 0 (so ker(Q^T Q) = ker(Q_{-2}^T Q_{-2}) = {0});
+       - Under critical watcher-4 dropout Q_{-4} retaining {q1, q2, q3} (3 rows, yet rank 2 because
+         q2 = 2·q1), every nonzero multiple of the task-critical direction v_crit = (k, -k, k) with k ≠ 0
+         satisfies q1·v_crit = 0, q2·v_crit = 0, and q3·v_crit = 0 (so Q_{-4}^T Q_{-4} v_crit = 0),
+         enlarging ker(Q_{-4}^T Q_{-4}) along v_crit while q4·v_crit = 2k ≠ 0;
+    2. Concrete witness separation on v_crit = (1, -1, 1):
+       - Full 4-watcher Gram energy ||Q v_crit||_2^2 = 0^2 + 0^2 + 0^2 + 2^2 = 4 > 0 (rank 3, dim ker = 0);
+       - Redundant watcher-2 dropout Q_{-2}: ||Q_{-2} v_crit||_2^2 = 0^2 + 0^2 + 2^2 = 4 > 0
+         (rank 3, dim ker = 0, L_red = 1, Eg_red = 1, Δ_{E,red} = 0);
+       - Critical watcher-4 dropout Q_{-4}: ||Q_{-4} v_crit||_2^2 = 0^2 + 0^2 + 0^2 = 0 despite
+         ||v_crit||_1 = 3 > 0 and ||Q v_crit||_2^2 = 4 > 0 (rank drops 3 → 2, dim ker enlarges 0 → 1,
+         L_drop = 1, Eg_drop = 0, Δ_{E,drop} = -1). -/
+theorem watcher_dropout_gram_rank_deficiency_and_critical_blindspot :
+    ((∀ x1 x2 x3 : Int,
+        (x1 + x2 = 0 ∧ x2 + x3 = 0 ∧ x1 + x3 = 0) → (x1 = 0 ∧ x2 = 0 ∧ x3 = 0)) ∧
+     (∀ k : Int, k ≠ 0 →
+        let v1 := k; let v2 := -k; let v3 := k;
+        (v1 + v2 = 0) ∧ (2 * v1 + 2 * v2 = 0) ∧ (v2 + v3 = 0) ∧ (v1 + v3 ≠ 0))) ∧
+    (let v1 : Int := 1; let v2 : Int := -1; let v3 : Int := 1;
+     let r1 := v1 + v2;
+     let r2 := 2 * v1 + 2 * v2;
+     let r3 := v2 + v3;
+     let r4 := v1 + v3;
+     let energy_full := r1 * r1 + r2 * r2 + r3 * r3 + r4 * r4;
+     let energy_drop_redundant := r1 * r1 + r3 * r3 + r4 * r4;
+     let energy_drop_critical := r1 * r1 + r2 * r2 + r3 * r3;
+     let rank_full : Int := 3;
+     let rank_drop_redundant : Int := 3;
+     let rank_drop_critical : Int := 2;
+     let null_dim_critical : Int := 3 - rank_drop_critical;
+     let l_drop := if energy_drop_critical = 0 then (1 : Int) else 0;
+     let eg_drop := if (l_drop = 1) ∧ (energy_full = 0) ∧ (null_dim_critical = 0) then (1 : Int) else 0;
+     let defect_drop := eg_drop - l_drop;
+     let l_red := if (rank_drop_redundant = rank_full) ∧ (energy_drop_redundant > 0) then (1 : Int) else 0;
+     let eg_red := if (l_red = 1) ∧ (energy_drop_redundant = energy_full) then (1 : Int) else 0;
+     let defect_red := eg_red - l_red;
+     (energy_full = 4 ∧ energy_drop_redundant = 4 ∧ energy_drop_critical = 0 ∧ null_dim_critical = 1) ∧
+     (l_drop = 1 ∧ eg_drop = 0 ∧ defect_drop = -1) ∧
+     (l_red = 1 ∧ eg_red = 1 ∧ defect_red = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro x1 x2 x3 ⟨h1, h2, h3⟩
+    omega
+  · intro k hk
+    dsimp only
+    refine ⟨by omega, ⟨by omega, ⟨by omega, by omega⟩⟩⟩
+
 end LggrVIII

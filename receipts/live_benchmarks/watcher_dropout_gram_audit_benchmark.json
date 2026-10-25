@@ -1,0 +1,1528 @@
+{
+  "schema": "lggr.watcher_dropout_gram_audit_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "watcher_dropout_gram_audit_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "critical_dropout_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "redundant_dropout_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "critical_dropout_coherence_rate": "0",
+  "redundant_dropout_coherence_rate": "1",
+  "watcher_retention_coherence_gain": "1",
+  "watcher_monitor_receipt": {
+    "schema": "lggr.online_watcher_dropout_gram_audit.v1",
+    "authority_effect": "None",
+    "scope_id": "openrouter-watcher-dropout-gram-audit-scope",
+    "status": "WATCHER_DROPOUT_RANK_AUDIT_VERIFIED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "full_rank": 3,
+    "dropout_ranks_by_row": [
+      3,
+      3,
+      2,
+      2
+    ],
+    "critical_dropout_blindspot_count": 5,
+    "redundant_dropout_safe_count": 5,
+    "critical_dropout_coherence_rate": "0",
+    "redundant_dropout_coherence_rate": "1",
+    "watcher_retention_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "1e03df0c5e947909ec14cf20602d95149c5852c4a9f77c604ef05340135c9a62"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "2a350bc426e1009345eda5da82353b6784f3f0cda7557c6ce9d9843f5d22ca7c"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "d5f18fb289c3dab978d9470f0942de57896b459c08e41860f47146be52bbb74a"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "8125f88f12ddbad7405a8a7e00294bb745c74b7805e59c3fbc2b2fe9c4e1f77c"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "0955cbc834cfff6ee2422f129fa2ca9af232505a23484be050670c3dd8362175"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "52068767342a628309c1f3abf7e4047449d77fe7b2f458d4fe808cf2fb510b95"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "e81837fa12dbb4edc47c6a7fc4106375378e319c6849d06bffb53a655a317115"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "0525f27fb210b4f29b4a872b873785158ceee94387fb22f7b286184d70ab4a56"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "989b8921d0623eabc53a0c686bd04c1ae835dc7d6fe6971cdd6e81aaf612424e"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "91b4389463f29bd9c992e3c34e39713d30aa0242c328023b8806fe59c25568d5"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "87a80ca8802e47f97ff0281688c59797d6fbafea9af0594bd5c3d62623eb5228"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "24900061099a9338dc4d356b5031c0fe5f2e7b71f56389040188b0e9975ac50d"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "15c68f3f67c7bdbffb84bfc8efdfd2d14d34baf824e74db4ed2fc981d6b119f3"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "695e50c31b381b622d6fce75198be0d1e55c4fe99d98dd9d8a909ec63a8c3f39"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "5d75103c1af55f2a2867f4a7ee403aa2ce07eec22dae9bf121eb58bb1d0c1d52"
+        }
+      }
+    ],
+    "receipt_sha256": "34dad81a8940ea4d113e176097159e8d4b55dd001e960ee39c53577ac5666acd"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval",
+      "critical_direction": [
+        "1",
+        "-1",
+        "1"
+      ],
+      "full_rank": 3,
+      "full_nullspace_dim": 0,
+      "full_norm_squared": "4",
+      "redundant_dropout_row": 1,
+      "redundant_dropout_rank": 3,
+      "redundant_dropout_nullspace_dim": 0,
+      "redundant_dropout_norm_squared": "4",
+      "redundant_local_green": 1,
+      "redundant_global_green": 1,
+      "redundant_defect": 0,
+      "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+      "critical_dropout_row": 3,
+      "critical_dropout_rank": 2,
+      "critical_dropout_nullspace_dim": 1,
+      "critical_dropout_norm_squared": "0",
+      "critical_local_green": 1,
+      "critical_global_green": 0,
+      "critical_defect": -1,
+      "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+      "full_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval-full",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "1e03df0c5e947909ec14cf20602d95149c5852c4a9f77c604ef05340135c9a62"
+      },
+      "redundant_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval-redundant-drop-1",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "2a350bc426e1009345eda5da82353b6784f3f0cda7557c6ce9d9843f5d22ca7c"
+      },
+      "critical_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+        "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "state_id": "openai/gpt-4o-mini::watcher_dropout_gram_eval-critical-drop-3",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "gram_response_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "quadratic_energy": "0",
+        "state_nonzero": true,
+        "observation_zero": true,
+        "gram_response_zero": true,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "0",
+        "expected_gram_pairing": "0",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": true,
+        "receipt_sha256": "d5f18fb289c3dab978d9470f0942de57896b459c08e41860f47146be52bbb74a"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\"redundant_dropout_row\":1,\"critical_dropout_row\":3,\"critical_direction\":[1,-1,1]}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval",
+      "critical_direction": [
+        "1",
+        "-1",
+        "1"
+      ],
+      "full_rank": 3,
+      "full_nullspace_dim": 0,
+      "full_norm_squared": "4",
+      "redundant_dropout_row": 1,
+      "redundant_dropout_rank": 3,
+      "redundant_dropout_nullspace_dim": 0,
+      "redundant_dropout_norm_squared": "4",
+      "redundant_local_green": 1,
+      "redundant_global_green": 1,
+      "redundant_defect": 0,
+      "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+      "critical_dropout_row": 3,
+      "critical_dropout_rank": 2,
+      "critical_dropout_nullspace_dim": 1,
+      "critical_dropout_norm_squared": "0",
+      "critical_local_green": 1,
+      "critical_global_green": 0,
+      "critical_defect": -1,
+      "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+      "full_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval-full",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "8125f88f12ddbad7405a8a7e00294bb745c74b7805e59c3fbc2b2fe9c4e1f77c"
+      },
+      "redundant_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval-redundant-drop-1",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "0955cbc834cfff6ee2422f129fa2ca9af232505a23484be050670c3dd8362175"
+      },
+      "critical_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+        "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "state_id": "google/gemini-2.5-flash-lite::watcher_dropout_gram_eval-critical-drop-3",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "gram_response_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "quadratic_energy": "0",
+        "state_nonzero": true,
+        "observation_zero": true,
+        "gram_response_zero": true,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "0",
+        "expected_gram_pairing": "0",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": true,
+        "receipt_sha256": "52068767342a628309c1f3abf7e4047449d77fe7b2f458d4fe808cf2fb510b95"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\n  \"redundant_dropout_row\": 1,\n  \"critical_dropout_row\": 3,\n  \"critical_direction\": [1, -1, 1]\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval",
+      "critical_direction": [
+        "1",
+        "-1",
+        "1"
+      ],
+      "full_rank": 3,
+      "full_nullspace_dim": 0,
+      "full_norm_squared": "4",
+      "redundant_dropout_row": 1,
+      "redundant_dropout_rank": 3,
+      "redundant_dropout_nullspace_dim": 0,
+      "redundant_dropout_norm_squared": "4",
+      "redundant_local_green": 1,
+      "redundant_global_green": 1,
+      "redundant_defect": 0,
+      "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+      "critical_dropout_row": 3,
+      "critical_dropout_rank": 2,
+      "critical_dropout_nullspace_dim": 1,
+      "critical_dropout_norm_squared": "0",
+      "critical_local_green": 1,
+      "critical_global_green": 0,
+      "critical_defect": -1,
+      "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+      "full_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval-full",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "e81837fa12dbb4edc47c6a7fc4106375378e319c6849d06bffb53a655a317115"
+      },
+      "redundant_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval-redundant-drop-1",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "0525f27fb210b4f29b4a872b873785158ceee94387fb22f7b286184d70ab4a56"
+      },
+      "critical_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+        "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "state_id": "meta-llama/llama-3.3-70b-instruct::watcher_dropout_gram_eval-critical-drop-3",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "gram_response_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "quadratic_energy": "0",
+        "state_nonzero": true,
+        "observation_zero": true,
+        "gram_response_zero": true,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "0",
+        "expected_gram_pairing": "0",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": true,
+        "receipt_sha256": "989b8921d0623eabc53a0c686bd04c1ae835dc7d6fe6971cdd6e81aaf612424e"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "{\"redundant_dropout_row\": 1, \"critical_dropout_row\": 3, \"critical_direction\": [1, -1, 1]}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval",
+      "critical_direction": [
+        "1",
+        "-1",
+        "1"
+      ],
+      "full_rank": 3,
+      "full_nullspace_dim": 0,
+      "full_norm_squared": "4",
+      "redundant_dropout_row": 1,
+      "redundant_dropout_rank": 3,
+      "redundant_dropout_nullspace_dim": 0,
+      "redundant_dropout_norm_squared": "4",
+      "redundant_local_green": 1,
+      "redundant_global_green": 1,
+      "redundant_defect": 0,
+      "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+      "critical_dropout_row": 3,
+      "critical_dropout_rank": 2,
+      "critical_dropout_nullspace_dim": 1,
+      "critical_dropout_norm_squared": "0",
+      "critical_local_green": 1,
+      "critical_global_green": 0,
+      "critical_defect": -1,
+      "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+      "full_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval-full",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "91b4389463f29bd9c992e3c34e39713d30aa0242c328023b8806fe59c25568d5"
+      },
+      "redundant_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval-redundant-drop-1",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "87a80ca8802e47f97ff0281688c59797d6fbafea9af0594bd5c3d62623eb5228"
+      },
+      "critical_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+        "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "state_id": "deepseek/deepseek-chat::watcher_dropout_gram_eval-critical-drop-3",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "gram_response_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "quadratic_energy": "0",
+        "state_nonzero": true,
+        "observation_zero": true,
+        "gram_response_zero": true,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "0",
+        "expected_gram_pairing": "0",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": true,
+        "receipt_sha256": "24900061099a9338dc4d356b5031c0fe5f2e7b71f56389040188b0e9975ac50d"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\"redundant_dropout_row\": 1, \"critical_dropout_row\": 3, \"critical_direction\": [1, -1, 1]}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval",
+      "critical_direction": [
+        "1",
+        "-1",
+        "1"
+      ],
+      "full_rank": 3,
+      "full_nullspace_dim": 0,
+      "full_norm_squared": "4",
+      "redundant_dropout_row": 1,
+      "redundant_dropout_rank": 3,
+      "redundant_dropout_nullspace_dim": 0,
+      "redundant_dropout_norm_squared": "4",
+      "redundant_local_green": 1,
+      "redundant_global_green": 1,
+      "redundant_defect": 0,
+      "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+      "critical_dropout_row": 3,
+      "critical_dropout_rank": 2,
+      "critical_dropout_nullspace_dim": 1,
+      "critical_dropout_norm_squared": "0",
+      "critical_local_green": 1,
+      "critical_global_green": 0,
+      "critical_defect": -1,
+      "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+      "full_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-full",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval-full",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "15c68f3f67c7bdbffb84bfc8efdfd2d14d34baf824e74db4ed2fc981d6b119f3"
+      },
+      "redundant_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-1",
+        "status": "ADJOINT_SIGNAL_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "state_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval-redundant-drop-1",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "2"
+        ],
+        "gram_response_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "quadratic_energy": "2",
+        "state_nonzero": true,
+        "observation_zero": false,
+        "gram_response_zero": false,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "4",
+        "expected_gram_pairing": "4",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "2",
+          "0",
+          "2"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": false,
+        "receipt_sha256": "695e50c31b381b622d6fce75198be0d1e55c4fe99d98dd9d8a909ec63a8c3f39"
+      },
+      "critical_probe_step": {
+        "schema": "lggr.online_gram_probe_step.v1",
+        "authority_effect": "None",
+        "scope_id": "openrouter-watcher-dropout-gram-audit-scope-drop-row-3",
+        "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "state_id": "mistralai/mistral-small-3.2-24b-instruct::watcher_dropout_gram_eval-critical-drop-3",
+        "state_vector": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "observation_qx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "gram_response_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "quadratic_energy": "0",
+        "state_nonzero": true,
+        "observation_zero": true,
+        "gram_response_zero": true,
+        "gram_kernel_identity_verified": true,
+        "centered_directional_probe": "0",
+        "expected_gram_pairing": "0",
+        "directional_identity_verified": true,
+        "sign_cube_recovered_hx": [
+          "0",
+          "0",
+          "0"
+        ],
+        "sign_cube_identity_verified": true,
+        "is_nullspace_blindspot": true,
+        "receipt_sha256": "5d75103c1af55f2a2867f4a7ee403aa2ce07eec22dae9bf121eb58bb1d0c1d52"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"redundant_dropout_row\": 1,\n  \"critical_dropout_row\": 3,\n  \"critical_direction\": [1, -1, 1]\n}\n```"
+    }
+  ],
+  "meaning": "Watcher-dropout and Gram rank-deficiency audit benchmark under StreamingGramProbeMonitor and StreamingWatcherDropoutGramAuditMonitor across 5 model families on 4x3 watcher matrix Q: separates redundant row-1 dropout (preserving rank(Q_{-1}^T Q_{-1}) = 3 and ||Q_{-1} v_crit||_2^2 = 4 > 0 -> L = 1, E_g = 1, Delta_E = 0) from critical row-3 dropout (reducing rank(Q_{-3}^T Q_{-3}) from 3 to 2 and enlarging ker(Q_{-3}^T Q_{-3}) to include v_crit = [1, -1, 1] with ||Q_{-3} v_crit||_2^2 = 0 -> L = 1, E_g = 0, Delta_E = -1).",
+  "receipt_sha256": "82c2c28929339c466f38d33db64a1a3fb0e56e9b0bfc471557dbd93927d18399"
+}

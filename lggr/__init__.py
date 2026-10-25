@@ -51,6 +51,7 @@ from .streaming import (
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
     StreamingVariableDurationGracefulSheddingMonitor,
+    StreamingWatcherDropoutGramAuditMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
 )
@@ -86,5 +87,6 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingSixRoleOverlayMonitor", "StreamingSkewRepairMonitor", "StreamingThresholdGovernanceMonitor",
            "StreamingTransportMonitor",
            "StreamingVariableDurationGracefulSheddingMonitor",
+           "StreamingWatcherDropoutGramAuditMonitor",
            "StreamingWeightedPolicyRelaxationMonitor",
            "StreamingWindowedDriftMonitor"]
