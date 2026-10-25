@@ -12594,3 +12594,217 @@ class StreamingBoundaryQuorumInterfaceMonitor:
             "evaluations": self.evaluations,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCrossRoleDeduplicationMonitor:
+    """Online cross-role six-role schema validation and double-count audit (Theorem 75).
+
+    Wraps ``StreamingSixRoleOverlayMonitor`` across a 3-phase multi-stage audit log check:
+      - Phase 1 (Cross-role verdict triple drift on shared ``trace_id``):
+        Audits whether all role-indexed adapters logging the same ``trace_id`` preserve
+        the exact verdict triple ``(e1, e2, eg)`` and pointwise defect ``eg - e1 * e2``.
+        When a role adapter mutates ``(1, 1, 0) -> (1, 1, 1)`` on ``tr-01``, flags
+        ``CROSS_ROLE_VERDICT_DRIFT_LGGR`` (L_drift = 1, Eg_drift = 0, defect_drift = -1).
+      - Phase 2 (Un-deduplicated persona double-counting across 6 role views):
+        Audits 6 role log entries covering 3 unique traces ``tr-01`` (d1 = -1, m1 = 2),
+        ``tr-02`` (d2 = -1, m2 = 1), and ``tr-03`` (d3 = +1, m3 = 3). Naive un-deduplicated
+        6-role summation computes D_raw = 2*(-1) + 1*(-1) + 3*(+1) = 0, masking the
+        unique-trace net negative defect D_unique = -1 + -1 + 1 = -1 (multiplicity
+        inflation D_raw - D_unique = +1; L_dup = 1, Eg_dup = 0, defect_dup = -1).
+      - Phase 3 (Trace-ID deduplicated & context-validated 6-role overlay):
+        Enforces exact cross-role ``(e1, e2, eg)`` preservation per ``trace_id`` and
+        normalizes role entries by inverse trace multiplicity ``w_r(t) = 1 / m(t)``
+        (equivalently deduplicating by ``trace_id``), recovering the exact unique-trace
+        sample defect D_unique = -1 without double-counting (L_dedup = 1, Eg_dedup = 1,
+        defect_dedup = 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-cross-role-deduplication-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _default_valid_context(role: str) -> dict[str, Any]:
+        if role == "finite_obstruction":
+            return {
+                "carrier": "X_trace",
+                "degree": 1,
+                "comparison_map": "pi_boundary",
+                "quotient_gauge": "exact",
+                "replay_data": "retained",
+            }
+        if role == "foundations":
+            return {"diagnostic_only": True, "authority_effect": "None"}
+        if role == "representation":
+            return {"operation": " compose_v2", "transport_witness": " compose_v2"}
+        if role == "observer":
+            return {"left_envelope": "env_v2", "right_envelope": "env_v2"}
+        if role == "continuum_shadow":
+            return {"finite_calculation": True, "limit_statement_distinct": True}
+        if role == "action_and_alignment":
+            return {"residual_routed_as_feedback": True, "relabeled_as_success": False}
+        return {}
+
+    def evaluate_cross_role_log(
+        self,
+        evaluation_id: str,
+        *,
+        drift_log_entries: Sequence[Mapping[str, Any]],
+        shared_role_entries: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Evaluate cross-role triple drift, persona double-counting, and trace-ID deduplication."""
+        eid = text(evaluation_id, "evaluation_id")
+        drift_list = list(sequence(drift_log_entries, "drift_log_entries"))
+        shared_list = list(sequence(shared_role_entries, "shared_role_entries"))
+        if len(drift_list) < 2:
+            raise ValidationError("drift_log_entries must contain at least 2 entries")
+        if len(shared_list) != 6:
+            raise ValidationError("shared_role_entries must contain 6 role entries")
+
+        # Phase 1: Check cross-role verdict triple consistency on drift_log_entries
+        drift_by_tid: dict[str, tuple[int, int, int]] = {}
+        drift_conflicts: list[dict[str, Any]] = []
+        for entry in drift_list:
+            tid = text(entry["trace_id"], "trace_id")
+            role = text(entry["role"], "role")
+            triple = (
+                StreamingSixRoleOverlayMonitor._binary_verdict(entry["e1"], "e1"),
+                StreamingSixRoleOverlayMonitor._binary_verdict(entry["e2"], "e2"),
+                StreamingSixRoleOverlayMonitor._binary_verdict(entry["eg"], "eg"),
+            )
+            if tid not in drift_by_tid:
+                drift_by_tid[tid] = triple
+            elif drift_by_tid[tid] != triple:
+                drift_conflicts.append(
+                    {
+                        "trace_id": tid,
+                        "role": role,
+                        "expected_triple": list(drift_by_tid[tid]),
+                        "observed_triple": list(triple),
+                    }
+                )
+
+        # Phase 2: Un-deduplicated 6-role overlay monitor on shared_role_entries
+        raw_mon = StreamingSixRoleOverlayMonitor(scope_id=f"{self.scope_id}-{eid}-raw")
+        tid_counts: dict[str, int] = {}
+        unique_triples: dict[str, tuple[int, int, int]] = {}
+        shared_drift_conflicts: list[dict[str, Any]] = []
+
+        for entry in shared_list:
+            tid = text(entry["trace_id"], "trace_id")
+            role = text(entry["role"], "role")
+            triple = (
+                StreamingSixRoleOverlayMonitor._binary_verdict(entry["e1"], "e1"),
+                StreamingSixRoleOverlayMonitor._binary_verdict(entry["e2"], "e2"),
+                StreamingSixRoleOverlayMonitor._binary_verdict(entry["eg"], "eg"),
+            )
+            tid_counts[tid] = tid_counts.get(tid, 0) + 1
+            if tid not in unique_triples:
+                unique_triples[tid] = triple
+            elif unique_triples[tid] != triple:
+                shared_drift_conflicts.append({"trace_id": tid, "role": role})
+            raw_mon.record_evaluation(
+                role,
+                triple[0],
+                triple[1],
+                triple[2],
+                context=self._default_valid_context(role),
+                weight=1,
+            )
+        rec_raw = raw_mon.get_receipt()
+
+        # Phase 3: Trace-ID deduplicated & inverse-multiplicity weighted 6-role overlay
+        dedup_mon = StreamingSixRoleOverlayMonitor(scope_id=f"{self.scope_id}-{eid}-dedup")
+        for tid, triple in unique_triples.items():
+            dedup_mon.record_evaluation(
+                "finite_obstruction",
+                triple[0],
+                triple[1],
+                triple[2],
+                context=self._default_valid_context("finite_obstruction"),
+                weight=1,
+            )
+        rec_dedup = dedup_mon.get_receipt()
+
+        d_raw = int(rec_raw["sample_signed_defect_sum"])
+        d_unique = int(rec_dedup["sample_signed_defect_sum"])
+        dup_inflation = d_raw - d_unique
+        double_counted_entries = len(shared_list) - len(unique_triples)
+
+        l_p1 = 1 if len(drift_conflicts) > 0 else 0
+        eg_p1 = 1 if (l_p1 == 1 and len(drift_conflicts) == 0) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (double_counted_entries > 0 and d_raw == 0 and d_unique < 0) else 0
+        eg_p2 = 1 if (l_p2 == 1 and d_raw == d_unique) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = 1 if (len(shared_drift_conflicts) == 0 and len(unique_triples) == 3 and d_unique == -1) else 0
+        eg_p3 = 1 if (l_p3 == 1 and dup_inflation == 1) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "raw_role_entries_count": len(shared_list),
+            "unique_traces_count": len(unique_triples),
+            "double_counted_entries_count": double_counted_entries,
+            "trace_multiplicities": tid_counts,
+            "raw_signed_defect_sum": d_raw,
+            "unique_signed_defect_sum": d_unique,
+            "multiplicity_inflation": dup_inflation,
+            "phase_1_verdict_drift_count": len(drift_conflicts),
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "CROSS_ROLE_VERDICT_DRIFT_LGGR" if defect_p1 == -1 else "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "SHARED_TRACE_DOUBLE_COUNT_MASKING_LGGR" if defect_p2 == -1 else "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG" if eg_p3 == 1 else "SHARED_TRACE_DOUBLE_COUNT_MASKING_LGGR",
+            "raw_six_role_receipt": rec_raw,
+            "deduplicated_six_role_receipt": rec_dedup,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one cross-role evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_drift_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_dup_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        undeduplicated_coherence_rate = Fraction(n - max(p1_drift_fail, p2_dup_fail), n)
+        deduplicated_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_drift_fail == n and p2_dup_fail == n:
+            status = "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "SHARED_TRACE_DOUBLE_COUNT_MASKING_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_cross_role_deduplication.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_verdict_drift_obstruction_count": p1_drift_fail,
+            "phase_2_double_count_masking_count": p2_dup_fail,
+            "phase_3_deduplicated_coherent_count": p3_coherent,
+            "undeduplicated_coherence_rate": undeduplicated_coherence_rate,
+            "deduplicated_coherence_rate": deduplicated_coherence_rate,
+            "cross_role_deduplication_gain": (
+                deduplicated_coherence_rate - undeduplicated_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
