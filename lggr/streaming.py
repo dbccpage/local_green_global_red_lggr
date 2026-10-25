@@ -14754,6 +14754,161 @@ class StreamingWindowedDriftRebalancingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingOptionalStoppingDrawdownMonitor:
+    """Online optional-stopping early-gain halting vs. tail-drawdown cap monitor (Theorem 87).
+
+    Audits 2-step fair binary martingale trees under `StreamingMartingaleOptionalStoppingMonitor`
+    with maximum tail-drawdown budget `max_tail_drawdown_budget`:
+      1. Phase 1 (Double-down recovery stake on loss):
+         Early-gain halting at X_u = +1 and continuing at X_d = -1 to (X_du = +1, X_dd = -3)
+         conserves E[X_tau] = 0 = X_0 with win probability 3/4 (L = 1), yet reaches
+         tail drawdown 3 > B_tail = 1 (Eg = 0, Delta_E = -1).
+      2. Phase 2 (Reduced break-even stake on loss):
+         Halting at X_u = +1 and continuing at X_d = -1 to (X_du = 0, X_dd = -2)
+         conserves E[X_tau] = 0 = X_0 (L = 1), yet residual tail drawdown 2 > 1
+         breaches B_tail = 1 (Eg = 0, Delta_E = -1).
+      3. Phase 3 (Loss-capped halting at step 1 / zero step-2 stake):
+         Halting at both X_u = +1 and X_d = -1 (or X_du = -1, X_dd = -1) conserves
+         E[X_tau] = 0 = X_0 and bounds tail drawdown 1 <= B_tail = 1 (L = 1, Eg = 1, Delta_E = 0).
+    """
+
+    def __init__(
+        self,
+        *,
+        max_tail_drawdown_budget: Fraction | int | str = 1,
+        scope_id: str = "streaming-optional-stopping-drawdown-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        bt = rational(max_tail_drawdown_budget)
+        if bt < 0:
+            raise ValidationError("max_tail_drawdown_budget must be >= 0")
+        self.max_tail_drawdown_budget = bt
+        self.evaluations: list[dict[str, Any]] = []
+
+    def record_stopping_evaluation(
+        self,
+        evaluation_id: str,
+        *,
+        x0: Fraction | int | str = 0,
+        x_u: Fraction | int | str = 1,
+        x_d: Fraction | int | str = -1,
+        x_uu: Fraction | int | str = 2,
+        x_ud: Fraction | int | str = 0,
+        phase_1_du_dd: Sequence[Fraction | int | str] = (1, -3),
+        phase_2_du_dd: Sequence[Fraction | int | str] = (0, -2),
+        phase_3_du_dd: Sequence[Fraction | int | str] = (-1, -1),
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        du1, dd1 = vector(phase_1_du_dd, "phase_1_du_dd", 2)
+        du2, dd2 = vector(phase_2_du_dd, "phase_2_du_dd", 2)
+        du3, dd3 = vector(phase_3_du_dd, "phase_3_du_dd", 2)
+
+        mon = StreamingMartingaleOptionalStoppingMonitor(
+            self.max_tail_drawdown_budget,
+            scope_id=f"{self.scope_id}:{eval_id}",
+        )
+        rec_p1 = mon.record_stopped_tree(
+            "phase_1_double_down",
+            x0, x_u, x_d, x_uu, x_ud, du1, dd1,
+            stop_on_step1_up=True, stop_on_step1_down=False,
+        )
+        rec_p2 = mon.record_stopped_tree(
+            "phase_2_break_even_stake",
+            x0, x_u, x_d, x_uu, x_ud, du2, dd2,
+            stop_on_step1_up=True, stop_on_step1_down=False,
+        )
+        rec_p3 = mon.record_stopped_tree(
+            "phase_3_loss_capped_halt",
+            x0, x_u, x_d, x_uu, x_ud, du3, dd3,
+            stop_on_step1_up=True, stop_on_step1_down=True,
+        )
+        summary_rec = mon.get_receipt()
+
+        t_dd_1 = rational(rec_p1["tail_drawdown"])
+        t_dd_2 = rational(rec_p2["tail_drawdown"])
+        t_dd_3 = rational(rec_p3["tail_drawdown"])
+
+        l_p1 = int(rec_p1["local_martingale_product"])
+        eg_p1 = int(rec_p1["global_drawdown_evaluator"])
+        defect_p1 = int(rec_p1["evaluator_defect"])
+
+        l_p2 = int(rec_p2["local_martingale_product"])
+        eg_p2 = int(rec_p2["global_drawdown_evaluator"])
+        defect_p2 = int(rec_p2["evaluator_defect"])
+
+        l_p3 = int(rec_p3["local_martingale_product"])
+        eg_p3 = int(rec_p3["global_drawdown_evaluator"])
+        defect_p3 = int(rec_p3["evaluator_defect"])
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "max_tail_drawdown_budget": self.max_tail_drawdown_budget,
+            "phase_1_stopped_expectation": rational(rec_p1["stopped_expectation"]),
+            "phase_1_win_probability": rational(rec_p1["stopped_win_probability"]),
+            "phase_1_tail_drawdown": t_dd_1,
+            "phase_2_stopped_expectation": rational(rec_p2["stopped_expectation"]),
+            "phase_2_tail_drawdown": t_dd_2,
+            "phase_3_stopped_expectation": rational(rec_p3["stopped_expectation"]),
+            "phase_3_tail_drawdown": t_dd_3,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR" if defect_p1 == -1 else "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "RESIDUAL_TAIL_DRAWDOWN_BREACH_LGGR" if defect_p2 == -1 else "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG" if eg_p3 == 1 else "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR",
+            "martingale_tree_receipt": summary_rec,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one optional-stopping evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_breach = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_breach = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        uncapped_stopping_coherence_rate = Fraction(n - max(p1_breach, p2_breach), n)
+        loss_capped_stopping_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_breach == n and p2_breach == n:
+            status = "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_optional_stopping_drawdown.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_double_down_breach_count": p1_breach,
+            "phase_2_residual_drawdown_breach_count": p2_breach,
+            "phase_3_loss_capped_coherent_count": p3_coherent,
+            "uncapped_stopping_coherence_rate": uncapped_stopping_coherence_rate,
+            "loss_capped_stopping_coherence_rate": loss_capped_stopping_coherence_rate,
+            "drawdown_cap_coherence_gain": (
+                loss_capped_stopping_coherence_rate - uncapped_stopping_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

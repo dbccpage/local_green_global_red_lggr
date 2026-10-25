@@ -3180,4 +3180,51 @@ theorem sliding_window_truncation_vs_horizon_rebalancing_audit :
   intro d1 d2 d3 d4 d5 d6 b_w h1 h2 h3
   refine ⟨by omega, by omega⟩
 
+/-- 87. Optional-stopping early-gain halting vs. tail-drawdown conservation audit:
+    1. Universal fair-martingale optional-stopping conservation and asymmetric tail-loss law:
+       - For any root x0 and branch states satisfying xu + xd = 2 * x0 and xdu + xdd = 2 * xd,
+         early-gain stopping (halting at xu and continuing at xd) conserves scaled expectation
+         2 * xu + xdu + xdd = 4 * x0;
+       - When x0 = 0 and xu = g, xdu = g (recovery to +g on down-up), martingale conservation
+         forces xd = -g and xdd = -3 * g, so terminal tail loss 0 - xdd = 3 * g;
+    2. Concrete 3-phase adaptive stopping vs. tail-drawdown cap audit under B_tail = 1:
+       - Phase 1 (Double-down recovery stake: xu = 1, xd = -1, xdu = 1, xdd = -3):
+         scaled expectation is 2 * 1 + 1 + (-3) = 0 = 4 * x0 (L_skew = 1), yet tail drawdown
+         is 3 > B_tail = 1 (Eg_skew = 0, Δ_{E,skew} = -1);
+       - Phase 2 (Reduced break-even stake: xu = 1, xd = -1, xdu = 0, xdd = -2):
+         scaled expectation is 2 * 1 + 0 + (-2) = 0 = 4 * x0 (L_part = 1), yet residual
+         tail drawdown is 2 > B_tail = 1 (Eg_part = 0, Δ_{E,part} = -1);
+       - Phase 3 (Loss-capped step-1 stopping: xu = 1, xd = -1, xdu = -1, xdd = -1):
+         scaled expectation is 2 * 1 + (-1) + (-1) = 0 = 4 * x0 and tail drawdown is
+         1 ≤ B_tail = 1 (L_cap = 1, Eg_cap = 1, Δ_{E,cap} = 0). -/
+theorem optional_stopping_early_gain_skew_vs_tail_drawdown_cap :
+    ((∀ x0 xu xd xdu xdd : Int,
+        xu + xd = 2 * x0 → xdu + xdd = 2 * xd → 2 * xu + xdu + xdd = 4 * x0) ∧
+     (∀ g xd xdd : Int,
+        g + xd = 0 → g + xdd = 2 * xd → xdd = -3 * g ∧ 0 - xdd = 3 * g)) ∧
+    (let b_tail : Int := 1;
+     let dd_skew : Int := 3;
+     let dd_part : Int := 2;
+     let dd_cap : Int := 1;
+     let exp_skew : Int := 2 * 1 + 1 + (-3);
+     let exp_part : Int := 2 * 1 + 0 + (-2);
+     let exp_cap : Int := 2 * 1 + (-1) + (-1);
+     let l_skew := if (exp_skew = 0) ∧ (dd_skew > b_tail) then (1 : Int) else 0;
+     let eg_skew := if (l_skew = 1) ∧ (dd_skew ≤ b_tail) then (1 : Int) else 0;
+     let defect_skew := eg_skew - l_skew;
+     let l_part := if (exp_part = 0) ∧ (dd_part > b_tail) ∧ (dd_part < dd_skew) then (1 : Int) else 0;
+     let eg_part := if (l_part = 1) ∧ (dd_part ≤ b_tail) then (1 : Int) else 0;
+     let defect_part := eg_part - l_part;
+     let l_cap := if (exp_cap = 0) ∧ (dd_cap ≤ b_tail) then (1 : Int) else 0;
+     let eg_cap := if (l_cap = 1) ∧ (dd_cap < dd_part) then (1 : Int) else 0;
+     let defect_cap := eg_cap - l_cap;
+     (l_skew = 1 ∧ eg_skew = 0 ∧ defect_skew = -1) ∧
+     (l_part = 1 ∧ eg_part = 0 ∧ defect_part = -1) ∧
+     (l_cap = 1 ∧ eg_cap = 1 ∧ defect_cap = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro x0 xu xd xdu xdd h1 h2
+    omega
+  · intro g xd xdd h1 h2
+    refine ⟨by omega, by omega⟩
+
 end LggrVIII
