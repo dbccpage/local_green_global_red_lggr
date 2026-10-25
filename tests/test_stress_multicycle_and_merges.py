@@ -77,6 +77,7 @@ from lggr.streaming import (
     StreamingReggeGaussBonnetHolonomyMonitor,
     StreamingReplayOrderEnvelopeMonitor,
     StreamingReplayOrderMonitor,
+    StreamingSharedChordDiamondHodgeMonitor,
     StreamingSimplicialCupMonitor,
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSixRoleOverlayMonitor,
@@ -4800,6 +4801,63 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["obstructed_wedge_coherence_rate"], "0")
         self.assertEqual(receipt["synchronized_wedge_gauge_coherence_rate"], "1")
         self.assertEqual(receipt["figure_eight_wedge_coherence_gain"], "1")
+
+    def test_shared_chord_bicyclic_diamond_hodge_and_mayer_vietoris_audit(self) -> None:
+        """Verify Theorem 93: shared-chord bicyclic diamond Hodge and Mayer-Vietoris coupling audit."""
+        mon = StreamingSharedChordDiamondHodgeMonitor(
+            scope_id="unit-shared-chord-diamond-hodge-scope",
+        )
+        obs = mon.record_diamond_evaluation(
+            "shared-chord-diamond-eval-01",
+        )
+        self.assertEqual(obs["overlap_vertices"], ["v0", "v1"])
+        self.assertEqual(obs["phase_1_norm2_exact"], "3")
+        self.assertEqual(obs["phase_1_norm2_coexact"], "3")
+        self.assertEqual(obs["phase_1_norm2_harmonic"], "24")
+        self.assertEqual(obs["phase_1_norm2_total"], "30")
+        self.assertFalse(obs["phase_1_u_locally_exact"])
+        self.assertFalse(obs["phase_1_v_locally_exact"])
+
+        self.assertEqual(obs["phase_2_norm2_exact"], "3")
+        self.assertEqual(obs["phase_2_norm2_coexact"], "0")
+        self.assertEqual(obs["phase_2_norm2_harmonic"], "24")
+        self.assertEqual(obs["phase_2_h_harmonic"], ["-2", "1", "1", "-3", "-3"])
+        self.assertTrue(obs["phase_2_u_locally_exact"])
+        self.assertFalse(obs["phase_2_v_locally_exact"])
+
+        self.assertEqual(obs["phase_3_norm2_exact"], "7")
+        self.assertEqual(obs["phase_3_norm2_coexact"], "0")
+        self.assertEqual(obs["phase_3_norm2_harmonic"], "0")
+        self.assertTrue(obs["phase_3_u_locally_exact"])
+        self.assertTrue(obs["phase_3_v_locally_exact"])
+        self.assertTrue(obs["phase_3_union_globally_exact"])
+        self.assertEqual(obs["phase_3_connecting_coboundary_spread"], "0")
+        self.assertEqual(
+            obs["phase_3_glued_global_potential"],
+            {"v0": "0", "v1": "1", "v2": "2", "v3": "0"},
+        )
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "DIAMOND_CHORD_GLUED_EXACT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "DIAMOND_CHORD_GLUED_EXACT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["obstructed_diamond_chord_coherence_rate"], "0")
+        self.assertEqual(receipt["glued_diamond_chord_coherence_rate"], "1")
+        self.assertEqual(receipt["shared_chord_diamond_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

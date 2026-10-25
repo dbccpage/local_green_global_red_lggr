@@ -1950,6 +1950,28 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["status"], "WEDGE_GAUGE_GLUED_EXACT_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
 
+    def test_shared_chord_diamond_hodge_benchmark_replay(self) -> None:
+        """Verify shared_chord_diamond_hodge_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "shared_chord_diamond_hodge_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.shared_chord_diamond_hodge_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["obstructed_diamond_chord_coherence_rate"], "0")
+        self.assertEqual(data["glued_diamond_chord_coherence_rate"], "1")
+        self.assertEqual(data["shared_chord_diamond_coherence_gain"], "1")
+
+        mon_rec = data["shared_chord_diamond_monitor_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "DIAMOND_CHORD_GLUED_EXACT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
 
 if __name__ == "__main__":
     unittest.main()

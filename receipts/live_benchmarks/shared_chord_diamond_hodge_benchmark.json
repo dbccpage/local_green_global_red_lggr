@@ -1,0 +1,3339 @@
+{
+  "schema": "lggr.shared_chord_diamond_hodge_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "shared_chord_diamond_hodge_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_mixed_obstruction_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_harmonic_counterflow_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_glued_exact_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_diamond_chord_coherence_rate": "0",
+  "glued_diamond_chord_coherence_rate": "1",
+  "shared_chord_diamond_coherence_gain": "1",
+  "shared_chord_diamond_monitor_receipt": {
+    "schema": "lggr.online_shared_chord_diamond_hodge.v1",
+    "authority_effect": "None",
+    "scope_id": "live-shared-chord-diamond-hodge-scope",
+    "status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_mixed_obstruction_count": 5,
+    "phase_2_harmonic_counterflow_count": 5,
+    "phase_3_glued_exact_count": 5,
+    "obstructed_diamond_chord_coherence_rate": "0",
+    "glued_diamond_chord_coherence_rate": "1",
+    "shared_chord_diamond_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::shared_chord_diamond_eval",
+        "model_id": "openai/gpt-4o-mini",
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "phase_1_norm2_exact": "3",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "24",
+        "phase_1_norm2_total": "30",
+        "phase_1_u_locally_exact": false,
+        "phase_1_v_locally_exact": false,
+        "phase_2_norm2_exact": "3",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "24",
+        "phase_2_h_harmonic": [
+          "-2",
+          "1",
+          "1",
+          "-3",
+          "-3"
+        ],
+        "phase_2_u_locally_exact": true,
+        "phase_2_v_locally_exact": false,
+        "phase_3_norm2_exact": "7",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_u_locally_exact": true,
+        "phase_3_v_locally_exact": true,
+        "phase_3_union_globally_exact": true,
+        "phase_3_connecting_coboundary_spread": "0",
+        "phase_3_glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "openai/gpt-4o-mini::shared_chord_diamond_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "openai/gpt-4o-mini::shared_chord_diamond_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "openai/gpt-4o-mini::shared_chord_diamond_eval_p1",
+              "h": [
+                "0",
+                "2",
+                "1",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "30",
+              "norm2_exact": "3",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "eb5387c6982894b26e90eca74b2ebcd3a4fff02a8f94418b5646a9296df6403f"
+        },
+        "phase_1_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": false,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "openai/gpt-4o-mini::shared_chord_diamond_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "openai/gpt-4o-mini::shared_chord_diamond_eval_p2",
+              "h": [
+                "-1",
+                "1",
+                "0",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "27",
+              "norm2_exact": "3",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "85cc8d96aa22897ff3875dc55f661ad933d63e3ce565b840c99521d9a3c14594"
+        },
+        "phase_2_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "openai/gpt-4o-mini::shared_chord_diamond_eval_p3",
+              "h": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "2",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "7",
+              "norm2_exact": "7",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "c9466229b2e848ce9d1b52404db9ace64c0d7b6517695cfcb96cbb97257fee1e"
+        },
+        "phase_3_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {
+            "v0": "0",
+            "v1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "v0": "0",
+            "v1": "1",
+            "v2": "2",
+            "v3": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "phase_1_norm2_exact": "3",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "24",
+        "phase_1_norm2_total": "30",
+        "phase_1_u_locally_exact": false,
+        "phase_1_v_locally_exact": false,
+        "phase_2_norm2_exact": "3",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "24",
+        "phase_2_h_harmonic": [
+          "-2",
+          "1",
+          "1",
+          "-3",
+          "-3"
+        ],
+        "phase_2_u_locally_exact": true,
+        "phase_2_v_locally_exact": false,
+        "phase_3_norm2_exact": "7",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_u_locally_exact": true,
+        "phase_3_v_locally_exact": true,
+        "phase_3_union_globally_exact": true,
+        "phase_3_connecting_coboundary_spread": "0",
+        "phase_3_glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p1",
+              "h": [
+                "0",
+                "2",
+                "1",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "30",
+              "norm2_exact": "3",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "986992951822696c19290425d14249a93b70858a079ae9d26eeb72bb87c9d29b"
+        },
+        "phase_1_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": false,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p2",
+              "h": [
+                "-1",
+                "1",
+                "0",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "27",
+              "norm2_exact": "3",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "c98a44e7564b7aa3153c043d2869c77fa44a84c612d8384e81d06665fbcac3e6"
+        },
+        "phase_2_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p3",
+              "h": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "2",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "7",
+              "norm2_exact": "7",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "f2ea8b552ed265ff50aaf747908e8e2cdda3cb9cb061c6b71d4448a6b25fa9fd"
+        },
+        "phase_3_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {
+            "v0": "0",
+            "v1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "v0": "0",
+            "v1": "1",
+            "v2": "2",
+            "v3": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "phase_1_norm2_exact": "3",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "24",
+        "phase_1_norm2_total": "30",
+        "phase_1_u_locally_exact": false,
+        "phase_1_v_locally_exact": false,
+        "phase_2_norm2_exact": "3",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "24",
+        "phase_2_h_harmonic": [
+          "-2",
+          "1",
+          "1",
+          "-3",
+          "-3"
+        ],
+        "phase_2_u_locally_exact": true,
+        "phase_2_v_locally_exact": false,
+        "phase_3_norm2_exact": "7",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_u_locally_exact": true,
+        "phase_3_v_locally_exact": true,
+        "phase_3_union_globally_exact": true,
+        "phase_3_connecting_coboundary_spread": "0",
+        "phase_3_glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p1",
+              "h": [
+                "0",
+                "2",
+                "1",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "30",
+              "norm2_exact": "3",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "c0f3f28101a316cb057d15d745896e14c717e0ca5ce3fd8475255addedc7338b"
+        },
+        "phase_1_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": false,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p2",
+              "h": [
+                "-1",
+                "1",
+                "0",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "27",
+              "norm2_exact": "3",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "36770648e36444acdaf575b4360520812a6212053e8b3edb20b95f3312bc031f"
+        },
+        "phase_2_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p3",
+              "h": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "2",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "7",
+              "norm2_exact": "7",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "a02e38a548204c8284db3b9d3009f74e6d0f572376acfa07c8d33eb467d2b0d2"
+        },
+        "phase_3_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {
+            "v0": "0",
+            "v1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "v0": "0",
+            "v1": "1",
+            "v2": "2",
+            "v3": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::shared_chord_diamond_eval",
+        "model_id": "deepseek/deepseek-chat",
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "phase_1_norm2_exact": "3",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "24",
+        "phase_1_norm2_total": "30",
+        "phase_1_u_locally_exact": false,
+        "phase_1_v_locally_exact": false,
+        "phase_2_norm2_exact": "3",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "24",
+        "phase_2_h_harmonic": [
+          "-2",
+          "1",
+          "1",
+          "-3",
+          "-3"
+        ],
+        "phase_2_u_locally_exact": true,
+        "phase_2_v_locally_exact": false,
+        "phase_3_norm2_exact": "7",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_u_locally_exact": true,
+        "phase_3_v_locally_exact": true,
+        "phase_3_union_globally_exact": true,
+        "phase_3_connecting_coboundary_spread": "0",
+        "phase_3_glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "deepseek/deepseek-chat::shared_chord_diamond_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "deepseek/deepseek-chat::shared_chord_diamond_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "deepseek/deepseek-chat::shared_chord_diamond_eval_p1",
+              "h": [
+                "0",
+                "2",
+                "1",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "30",
+              "norm2_exact": "3",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "c8281bb4a805458f1760bf0ac959ab19ae2ac3634942ec8f8ae2943dc608695d"
+        },
+        "phase_1_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": false,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "deepseek/deepseek-chat::shared_chord_diamond_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "deepseek/deepseek-chat::shared_chord_diamond_eval_p2",
+              "h": [
+                "-1",
+                "1",
+                "0",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "27",
+              "norm2_exact": "3",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "3c0985058fa38feba9e508b665f5a780ac73a5cd96995f3f3eb758c40da32142"
+        },
+        "phase_2_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "deepseek/deepseek-chat::shared_chord_diamond_eval_p3",
+              "h": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "2",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "7",
+              "norm2_exact": "7",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "fbc14892576882b28c6e661737fcab112209a27508b6f5f0c5702410cb1b02c3"
+        },
+        "phase_3_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {
+            "v0": "0",
+            "v1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "v0": "0",
+            "v1": "1",
+            "v2": "2",
+            "v3": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "phase_1_norm2_exact": "3",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "24",
+        "phase_1_norm2_total": "30",
+        "phase_1_u_locally_exact": false,
+        "phase_1_v_locally_exact": false,
+        "phase_2_norm2_exact": "3",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "24",
+        "phase_2_h_harmonic": [
+          "-2",
+          "1",
+          "1",
+          "-3",
+          "-3"
+        ],
+        "phase_2_u_locally_exact": true,
+        "phase_2_v_locally_exact": false,
+        "phase_3_norm2_exact": "7",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_u_locally_exact": true,
+        "phase_3_v_locally_exact": true,
+        "phase_3_union_globally_exact": true,
+        "phase_3_connecting_coboundary_spread": "0",
+        "phase_3_glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p1",
+              "h": [
+                "0",
+                "2",
+                "1",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "30",
+              "norm2_exact": "3",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "25ac76f9631b6177cfcc204c0b0fbf27eb090a719a46c4e655d199c25e32191a"
+        },
+        "phase_1_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": false,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p2",
+              "h": [
+                "-1",
+                "1",
+                "0",
+                "-4",
+                "-3"
+              ],
+              "h_exact": [
+                "1",
+                "0",
+                "-1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "-2",
+                "1",
+                "1",
+                "-3",
+                "-3"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "27",
+              "norm2_exact": "3",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "24",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "5676302a277ebf123041b43098111b49052e4d25723b8af0b9b03f29d9fd23db"
+        },
+        "phase_2_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+          "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": false,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {},
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p3",
+              "h": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "1",
+                "1",
+                "-2",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "0",
+                "1",
+                "2",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "7",
+              "norm2_exact": "7",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "e154aea7c56422a83fd8dd86d69f564d6827affa946d0c6f0e56acc15281f2d0"
+        },
+        "phase_3_mayer_vietoris_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "v0",
+            "v1"
+          ],
+          "intersection_difference_cocycle": {
+            "v0": "0",
+            "v1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "v0": "0",
+            "v1": "1",
+            "v2": "2",
+            "v3": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+        }
+      }
+    ],
+    "receipt_sha256": "2706de6f3a557ba4d9c101ffba3b2c0a8e24c431c77ccaa1ee73c5aaeda11467"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::shared_chord_diamond_eval",
+      "model_id": "openai/gpt-4o-mini",
+      "overlap_vertices": [
+        "v0",
+        "v1"
+      ],
+      "phase_1_norm2_exact": "3",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "24",
+      "phase_1_norm2_total": "30",
+      "phase_1_u_locally_exact": false,
+      "phase_1_v_locally_exact": false,
+      "phase_2_norm2_exact": "3",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "24",
+      "phase_2_h_harmonic": [
+        "-2",
+        "1",
+        "1",
+        "-3",
+        "-3"
+      ],
+      "phase_2_u_locally_exact": true,
+      "phase_2_v_locally_exact": false,
+      "phase_3_norm2_exact": "7",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_u_locally_exact": true,
+      "phase_3_v_locally_exact": true,
+      "phase_3_union_globally_exact": true,
+      "phase_3_connecting_coboundary_spread": "0",
+      "phase_3_glued_global_potential": {
+        "v0": "0",
+        "v1": "1",
+        "v2": "2",
+        "v3": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "openai/gpt-4o-mini::shared_chord_diamond_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "openai/gpt-4o-mini::shared_chord_diamond_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "openai/gpt-4o-mini::shared_chord_diamond_eval_p1",
+            "h": [
+              "0",
+              "2",
+              "1",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "30",
+            "norm2_exact": "3",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "eb5387c6982894b26e90eca74b2ebcd3a4fff02a8f94418b5646a9296df6403f"
+      },
+      "phase_1_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": false,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "openai/gpt-4o-mini::shared_chord_diamond_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "openai/gpt-4o-mini::shared_chord_diamond_eval_p2",
+            "h": [
+              "-1",
+              "1",
+              "0",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "27",
+            "norm2_exact": "3",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "85cc8d96aa22897ff3875dc55f661ad933d63e3ce565b840c99521d9a3c14594"
+      },
+      "phase_2_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "openai/gpt-4o-mini::shared_chord_diamond_eval_p3",
+            "h": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "2",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "7",
+            "norm2_exact": "7",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "c9466229b2e848ce9d1b52404db9ace64c0d7b6517695cfcb96cbb97257fee1e"
+      },
+      "phase_3_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {
+          "v0": "0",
+          "v1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+      },
+      "raw_auditor_response": "{\n  \"phase_1_norm2_harmonic\": 24,\n  \"phase_2_v_locally_exact\": false,\n  \"phase_3_norm2_exact\": 7\n}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "overlap_vertices": [
+        "v0",
+        "v1"
+      ],
+      "phase_1_norm2_exact": "3",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "24",
+      "phase_1_norm2_total": "30",
+      "phase_1_u_locally_exact": false,
+      "phase_1_v_locally_exact": false,
+      "phase_2_norm2_exact": "3",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "24",
+      "phase_2_h_harmonic": [
+        "-2",
+        "1",
+        "1",
+        "-3",
+        "-3"
+      ],
+      "phase_2_u_locally_exact": true,
+      "phase_2_v_locally_exact": false,
+      "phase_3_norm2_exact": "7",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_u_locally_exact": true,
+      "phase_3_v_locally_exact": true,
+      "phase_3_union_globally_exact": true,
+      "phase_3_connecting_coboundary_spread": "0",
+      "phase_3_glued_global_potential": {
+        "v0": "0",
+        "v1": "1",
+        "v2": "2",
+        "v3": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p1",
+            "h": [
+              "0",
+              "2",
+              "1",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "30",
+            "norm2_exact": "3",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "986992951822696c19290425d14249a93b70858a079ae9d26eeb72bb87c9d29b"
+      },
+      "phase_1_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": false,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p2",
+            "h": [
+              "-1",
+              "1",
+              "0",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "27",
+            "norm2_exact": "3",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "c98a44e7564b7aa3153c043d2869c77fa44a84c612d8384e81d06665fbcac3e6"
+      },
+      "phase_2_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "google/gemini-2.5-flash-lite::shared_chord_diamond_eval_p3",
+            "h": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "2",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "7",
+            "norm2_exact": "7",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "f2ea8b552ed265ff50aaf747908e8e2cdda3cb9cb061c6b71d4448a6b25fa9fd"
+      },
+      "phase_3_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {
+          "v0": "0",
+          "v1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_norm2_harmonic\": 24,\n  \"phase_2_v_locally_exact\": false,\n  \"phase_3_norm2_exact\": 7\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "overlap_vertices": [
+        "v0",
+        "v1"
+      ],
+      "phase_1_norm2_exact": "3",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "24",
+      "phase_1_norm2_total": "30",
+      "phase_1_u_locally_exact": false,
+      "phase_1_v_locally_exact": false,
+      "phase_2_norm2_exact": "3",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "24",
+      "phase_2_h_harmonic": [
+        "-2",
+        "1",
+        "1",
+        "-3",
+        "-3"
+      ],
+      "phase_2_u_locally_exact": true,
+      "phase_2_v_locally_exact": false,
+      "phase_3_norm2_exact": "7",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_u_locally_exact": true,
+      "phase_3_v_locally_exact": true,
+      "phase_3_union_globally_exact": true,
+      "phase_3_connecting_coboundary_spread": "0",
+      "phase_3_glued_global_potential": {
+        "v0": "0",
+        "v1": "1",
+        "v2": "2",
+        "v3": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p1",
+            "h": [
+              "0",
+              "2",
+              "1",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "30",
+            "norm2_exact": "3",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "c0f3f28101a316cb057d15d745896e14c717e0ca5ce3fd8475255addedc7338b"
+      },
+      "phase_1_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": false,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p2",
+            "h": [
+              "-1",
+              "1",
+              "0",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "27",
+            "norm2_exact": "3",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "36770648e36444acdaf575b4360520812a6212053e8b3edb20b95f3312bc031f"
+      },
+      "phase_2_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "meta-llama/llama-3.3-70b-instruct::shared_chord_diamond_eval_p3",
+            "h": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "2",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "7",
+            "norm2_exact": "7",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "a02e38a548204c8284db3b9d3009f74e6d0f572376acfa07c8d33eb467d2b0d2"
+      },
+      "phase_3_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {
+          "v0": "0",
+          "v1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+      },
+      "raw_auditor_response": "{\"phase_1_norm2_harmonic\": 24, \"phase_2_v_locally_exact\": false, \"phase_3_norm2_exact\": 7}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::shared_chord_diamond_eval",
+      "model_id": "deepseek/deepseek-chat",
+      "overlap_vertices": [
+        "v0",
+        "v1"
+      ],
+      "phase_1_norm2_exact": "3",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "24",
+      "phase_1_norm2_total": "30",
+      "phase_1_u_locally_exact": false,
+      "phase_1_v_locally_exact": false,
+      "phase_2_norm2_exact": "3",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "24",
+      "phase_2_h_harmonic": [
+        "-2",
+        "1",
+        "1",
+        "-3",
+        "-3"
+      ],
+      "phase_2_u_locally_exact": true,
+      "phase_2_v_locally_exact": false,
+      "phase_3_norm2_exact": "7",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_u_locally_exact": true,
+      "phase_3_v_locally_exact": true,
+      "phase_3_union_globally_exact": true,
+      "phase_3_connecting_coboundary_spread": "0",
+      "phase_3_glued_global_potential": {
+        "v0": "0",
+        "v1": "1",
+        "v2": "2",
+        "v3": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "deepseek/deepseek-chat::shared_chord_diamond_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "deepseek/deepseek-chat::shared_chord_diamond_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "deepseek/deepseek-chat::shared_chord_diamond_eval_p1",
+            "h": [
+              "0",
+              "2",
+              "1",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "30",
+            "norm2_exact": "3",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "c8281bb4a805458f1760bf0ac959ab19ae2ac3634942ec8f8ae2943dc608695d"
+      },
+      "phase_1_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": false,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "deepseek/deepseek-chat::shared_chord_diamond_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "deepseek/deepseek-chat::shared_chord_diamond_eval_p2",
+            "h": [
+              "-1",
+              "1",
+              "0",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "27",
+            "norm2_exact": "3",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "3c0985058fa38feba9e508b665f5a780ac73a5cd96995f3f3eb758c40da32142"
+      },
+      "phase_2_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "deepseek/deepseek-chat::shared_chord_diamond_eval_p3",
+            "h": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "2",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "7",
+            "norm2_exact": "7",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "fbc14892576882b28c6e661737fcab112209a27508b6f5f0c5702410cb1b02c3"
+      },
+      "phase_3_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {
+          "v0": "0",
+          "v1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+      },
+      "raw_auditor_response": "```json\n{\"phase_1_norm2_harmonic\": 24, \"phase_2_v_locally_exact\": false, \"phase_3_norm2_exact\": 7}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "overlap_vertices": [
+        "v0",
+        "v1"
+      ],
+      "phase_1_norm2_exact": "3",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "24",
+      "phase_1_norm2_total": "30",
+      "phase_1_u_locally_exact": false,
+      "phase_1_v_locally_exact": false,
+      "phase_2_norm2_exact": "3",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "24",
+      "phase_2_h_harmonic": [
+        "-2",
+        "1",
+        "1",
+        "-3",
+        "-3"
+      ],
+      "phase_2_u_locally_exact": true,
+      "phase_2_v_locally_exact": false,
+      "phase_3_norm2_exact": "7",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_u_locally_exact": true,
+      "phase_3_v_locally_exact": true,
+      "phase_3_union_globally_exact": true,
+      "phase_3_connecting_coboundary_spread": "0",
+      "phase_3_glued_global_potential": {
+        "v0": "0",
+        "v1": "1",
+        "v2": "2",
+        "v3": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DIAMOND_CHORD_GLUED_EXACT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p1",
+            "h": [
+              "0",
+              "2",
+              "1",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "30",
+            "norm2_exact": "3",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "25ac76f9631b6177cfcc204c0b0fbf27eb090a719a46c4e655d199c25e32191a"
+      },
+      "phase_1_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p1",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": false,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "67f081370a77b44b97ef5ba86388cdb7bd07fc4dff35e6878c5fc242ba8d691c"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p2",
+            "h": [
+              "-1",
+              "1",
+              "0",
+              "-4",
+              "-3"
+            ],
+            "h_exact": [
+              "1",
+              "0",
+              "-1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "-2",
+              "1",
+              "1",
+              "-3",
+              "-3"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "27",
+            "norm2_exact": "3",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "24",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "5676302a277ebf123041b43098111b49052e4d25723b8af0b9b03f29d9fd23db"
+      },
+      "phase_2_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p2",
+        "status": "SUBCOMPLEX_LOCALLY_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": false,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {},
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "f63692fc1fb0972f08f7170c4850ad30e417c24d1d0776bf2489a134d7b4fadf"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "mistralai/mistral-small-3.2-24b-instruct::shared_chord_diamond_eval_p3",
+            "h": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "1",
+              "1",
+              "-2",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "0",
+              "1",
+              "2",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "7",
+            "norm2_exact": "7",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "e154aea7c56422a83fd8dd86d69f564d6827affa946d0c6f0e56acc15281f2d0"
+      },
+      "phase_3_mayer_vietoris_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-shared-chord-diamond-hodge-scope-mv-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "v0",
+          "v1"
+        ],
+        "intersection_difference_cocycle": {
+          "v0": "0",
+          "v1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "v0": "0",
+          "v1": "1",
+          "v2": "2",
+          "v3": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "fab4c0f582a8aa812d099e3c29922848e517750110c181e4cc62a5a0719a689b"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_norm2_harmonic\": 24,\n  \"phase_2_v_locally_exact\": false,\n  \"phase_3_norm2_exact\": 7\n}\n```"
+    }
+  ],
+  "meaning": "Shared-chord bicyclic diamond K = T_filled U_{e01} T_unfilled Hodge decomposition and Mayer-Vietoris coupling benchmark across 5 model families (Theorem 93): Phase 1 separates shared-chord coupled 2-cell coexact curl (norm^2 = 3) and harmonic counter-flow [-2, 1, 1, -3, -3] (norm^2 = 24) over U cap V = {v0, v1} (Delta_E = -1); Phase 2 separates streams where U = T_filled is curl-cleared and locally exact while the shared-chord harmonic counter-flow [-2, 1, 1, -3, -3] obstructs V = T_unfilled (Delta_E = -1); Phase 3 verifies coordinated exact potential phi = [0, 1, 2, 0] with norm^2_exact = 7 and locally constant Mayer-Vietoris overlap cocycle across e01 (Delta_E = 0).",
+  "receipt_sha256": "ebf84657ac7a6209e0935ce4426eadd90cfd4b0443911abdae2f9681980b4c79"
+}
