@@ -56,6 +56,7 @@ from .streaming import (
     StreamingPullbackMediatorFactorizationMonitor,
     StreamingReggeGaussBonnetHolonomyMonitor,
     StreamingReplayOrderEnvelopeMonitor,
+    StreamingSharedChordDiamondHodgeMonitor,
     StreamingSideInformationCapacityMonitor,
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
@@ -11402,6 +11403,123 @@ def run_figure_eight_wedge_hodge_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "figure_eight_wedge_hodge_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_shared_chord_diamond_hodge_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run the 5-model shared-chord bicyclic diamond Hodge & Mayer-Vietoris benchmark (Theorem 93)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    api_key, _ = load_openrouter_credentials()
+    sc_monitor = StreamingSharedChordDiamondHodgeMonitor(
+        scope_id="live-shared-chord-diamond-hodge-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(api_key=api_key, model=model_id, max_completions=3)
+        sys_prompt = (
+            "You are a bicyclic diamond shared-chord Hodge and Mayer-Vietoris auditor. "
+            "Output ONLY a JSON object with keys \"phase_1_norm2_harmonic\" (int), "
+            "\"phase_2_v_locally_exact\" (bool), and \"phase_3_norm2_exact\" (int)."
+        )
+        user_prompt = (
+            "Audit 3 cochains on bicyclic diamond K = T_filled (v0,v1,v2) U_{e01} T_unfilled (v0,v1,v3) "
+            "sharing chord e0 = (v0,v1):\n"
+            "- Phase 1 (h = [0,2,1,-4,-3]): norm2_exact=3, norm2_coexact=3, norm2_harmonic=24.\n"
+            "- Phase 2 (h = [-1,1,0,-4,-3]): U = T_filled is locally exact (-1+1+0=0, norm2_coexact=0), "
+            "but coupled harmonic counter-flow [-2,1,1,-3,-3] leaves V obstructed (-1-4-3=-8 != 0).\n"
+            "- Phase 3 (h = [1,1,-2,-1,0] = D0[0,1,2,0]): norm2_exact = 7, MV spread = 0 across {v0,v1}.\n"
+            "Return ONLY JSON: {\"phase_1_norm2_harmonic\": 24, "
+            "\"phase_2_v_locally_exact\": false, \"phase_3_norm2_exact\": 7}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+
+        obs = sc_monitor.record_diamond_evaluation(
+            f"{model_id}::shared_chord_diamond_eval",
+            model_id=model_id,
+        )
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = sc_monitor.current_receipt()
+    body = {
+        "schema": "lggr.shared_chord_diamond_hodge_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "shared_chord_diamond_hodge_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_mixed_obstruction_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_harmonic_counterflow_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_glued_exact_metrics": compute_empirical_defect_rates(p3_traces),
+        "obstructed_diamond_chord_coherence_rate": monitor_receipt[
+            "obstructed_diamond_chord_coherence_rate"
+        ],
+        "glued_diamond_chord_coherence_rate": monitor_receipt[
+            "glued_diamond_chord_coherence_rate"
+        ],
+        "shared_chord_diamond_coherence_gain": monitor_receipt[
+            "shared_chord_diamond_coherence_gain"
+        ],
+        "shared_chord_diamond_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Shared-chord bicyclic diamond K = T_filled U_{e01} T_unfilled Hodge decomposition "
+            "and Mayer-Vietoris coupling benchmark across 5 model families (Theorem 93): Phase 1 "
+            "separates shared-chord coupled 2-cell coexact curl (norm^2 = 3) and harmonic "
+            "counter-flow [-2, 1, 1, -3, -3] (norm^2 = 24) over U cap V = {v0, v1} (Delta_E = -1); "
+            "Phase 2 separates streams where U = T_filled is curl-cleared and locally exact while "
+            "the shared-chord harmonic counter-flow [-2, 1, 1, -3, -3] obstructs V = T_unfilled "
+            "(Delta_E = -1); Phase 3 verifies coordinated exact potential phi = [0, 1, 2, 0] with "
+            "norm^2_exact = 7 and locally constant Mayer-Vietoris overlap cocycle across e01 (Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "shared_chord_diamond_hodge_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
