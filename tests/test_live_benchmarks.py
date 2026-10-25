@@ -1554,6 +1554,28 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["status"], "FULL_BOUNDARY_STRICT_PRODUCT_COHERENT_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
 
+    def test_cross_role_deduplication_benchmark_replay(self) -> None:
+        """Verify cross_role_deduplication_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "cross_role_deduplication_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.cross_role_deduplication_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["undeduplicated_coherence_rate"], "0")
+        self.assertEqual(data["deduplicated_coherence_rate"], "1")
+        self.assertEqual(data["cross_role_deduplication_gain"], "1")
+
+        mon_rec = data["cross_role_monitor_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
 
 if __name__ == "__main__":
     unittest.main()

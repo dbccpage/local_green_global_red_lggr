@@ -2565,4 +2565,64 @@ theorem boundary_mixing_and_quorum_masking_interface_schema_audit :
   · intro e1 e2 e3 ⟨h1, h2, h3, hsum⟩
     rcases h1 with rfl | rfl <;> rcases h2 with rfl | rfl <;> rcases h3 with rfl | rfl <;> omega
 
+/-- 75. Cross-role six-role schema validation and shared-observation double-count audit:
+    1. Universal cross-role verdict invariance & multiplicity inflation law:
+       - If two role adapters r_a, r_b log the same underlying trace_id with verdict triples
+         (e1_a, e2_a, eg_a) = (e1_b, e2_b, eg_b), their pointwise evaluator defects agree:
+         (eg_a - e1_a * e2_a) = (eg_b - e1_b * e2_b);
+       - If traces t1, t2, t3 with defects d1, d2, d3 ∈ {-1, 0, 1} are logged across 6 role views
+         with multiplicities m1, m2, m3 ≥ 1 (m1 + m2 + m3 = 6), the raw un-deduplicated role sum
+         D_raw = m1 * d1 + m2 * d2 + m3 * d3 differs from the deduplicated unique-trace sum
+         D_unique = d1 + d2 + d3 by the exact multiplicity inflation:
+         D_raw - D_unique = (m1 - 1) * d1 + (m2 - 1) * d2 + (m3 - 1) * d3;
+    2. Concrete 3-phase six-role audit separation across 3 unique traces
+       (tr-01: (1, 1, 0), d1 = -1; tr-02: (1, 1, 0), d2 = -1; tr-03: (0, 1, 1), d3 = +1):
+       - Phase 1 (Cross-role verdict triple drift on shared trace_id tr-01):
+         role 1 logs (1, 1, 0) while role 6 mutates tr-01 to (1, 1, 1) (d1_mut - d1 = 1 ≠ 0,
+         L_drift = 1, Eg_drift = 0, Δ_{E,drift} = -1);
+       - Phase 2 (Un-deduplicated 6-role persona double-counting with m1 = 2, m2 = 1, m3 = 3):
+         raw 6-role sum is D_raw = 2*(-1) + 1*(-1) + 3*(+1) = 0, masking the unique-trace net
+         negative defect D_unique = (-1) + (-1) + (+1) = -1 < 0 (inflation = +1,
+         L_dup = 1, Eg_dup = 0, Δ_{E,dup} = -1);
+       - Phase 3 (Trace-ID deduplicated & context-validated 6-role overlay):
+         0 cross-role verdict drift, 3 unique traces extracted from 6 role entries, and exact
+         unique-trace defect D_unique = -1 preserved without double-counting
+         (L_dedup = 1, Eg_dedup = 1, Δ_{E,dedup} = 0). -/
+theorem cross_role_schema_validation_and_double_count_audit :
+    ((∀ e1a e2a ega e1b e2b egb : Int,
+        e1a = e1b ∧ e2a = e2b ∧ ega = egb →
+        (ega - e1a * e2a) = (egb - e1b * e2b)) ∧
+     (∀ m1 m2 m3 d1 d2 d3 : Int,
+        (m1 * d1 + m2 * d2 + m3 * d3) - (d1 + d2 + d3) =
+          (m1 - 1) * d1 + (m2 - 1) * d2 + (m3 - 1) * d3)) ∧
+    (let d1 : Int := 0 - 1 * 1;
+     let d1_mut : Int := 1 - 1 * 1;
+     let d2 : Int := 0 - 1 * 1;
+     let d3 : Int := 1 - 0 * 1;
+     let m1 : Int := 2; let m2 : Int := 1; let m3 : Int := 3;
+     let n_roles := m1 + m2 + m3;
+     let n_unique : Int := 3;
+     let d_unique := d1 + d2 + d3;
+     let d_raw := m1 * d1 + m2 * d2 + m3 * d3;
+     let dup_inflation := d_raw - d_unique;
+     let l_drift := if d1_mut ≠ d1 then (1 : Int) else 0;
+     let eg_drift := if (l_drift = 1) ∧ (d1_mut = d1) then (1 : Int) else 0;
+     let defect_drift := eg_drift - l_drift;
+     let l_dup := if (n_roles = 6) ∧ (d_raw = 0) ∧ (d_unique = -1) then (1 : Int) else 0;
+     let eg_dup := if (l_dup = 1) ∧ (d_raw = d_unique) then (1 : Int) else 0;
+     let defect_dup := eg_dup - l_dup;
+     let l_dedup := if (n_unique = 3) ∧ (d_unique = -1) ∧ (dup_inflation = 1) then (1 : Int) else 0;
+     let eg_dedup := if (l_dedup = 1) ∧ ((m1 - 1) * d1 + (m2 - 1) * d2 + (m3 - 1) * d3 = dup_inflation) then (1 : Int) else 0;
+     let defect_dedup := eg_dedup - l_dedup;
+     (d_unique = -1 ∧ d_raw = 0 ∧ dup_inflation = 1) ∧
+     (l_drift = 1 ∧ eg_drift = 0 ∧ defect_drift = -1) ∧
+     (l_dup = 1 ∧ eg_dup = 0 ∧ defect_dup = -1) ∧
+     (l_dedup = 1 ∧ eg_dedup = 1 ∧ defect_dedup = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro e1a e2a ega e1b e2b egb ⟨h1, h2, h3⟩
+    subst h1; subst h2; subst h3; rfl
+  · intro m1 m2 m3 d1 d2 d3
+    simp [Int.sub_mul, Int.one_mul]
+    omega
+
 end LggrVIII

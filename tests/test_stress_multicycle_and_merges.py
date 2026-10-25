@@ -35,6 +35,7 @@ from lggr.streaming import (
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
+    StreamingCrossRoleDeduplicationMonitor,
     StreamingDFAGrammarGluingMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDeadlinePriorityQueueMonitor,
@@ -4043,6 +4044,56 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["pass_quorum_coherence_rate"], "0")
         self.assertEqual(receipt["full_product_coherence_rate"], "1")
         self.assertEqual(receipt["interface_coherence_gain"], "1")
+
+    def test_cross_role_schema_validation_and_double_count_audit(self) -> None:
+        """Verify Theorem 75: cross-role verdict triple drift and persona double-counting vs. trace-ID deduplication."""
+        mon = StreamingCrossRoleDeduplicationMonitor(
+            scope_id="unit-cross-role-deduplication-scope",
+        )
+        obs = mon.evaluate_cross_role_log(
+            evaluation_id="cross-role-eval-01",
+            drift_log_entries=[
+                {"trace_id": "tr-01", "role": "finite_obstruction", "e1": 1, "e2": 1, "eg": 0},
+                {"trace_id": "tr-01", "role": "action_and_alignment", "e1": 1, "e2": 1, "eg": 1},
+            ],
+            shared_role_entries=[
+                {"trace_id": "tr-01", "role": "finite_obstruction", "e1": 1, "e2": 1, "eg": 0},
+                {"trace_id": "tr-01", "role": "foundations", "e1": 1, "e2": 1, "eg": 0},
+                {"trace_id": "tr-02", "role": "representation", "e1": 1, "e2": 1, "eg": 0},
+                {"trace_id": "tr-03", "role": "observer", "e1": 0, "e2": 1, "eg": 1},
+                {"trace_id": "tr-03", "role": "continuum_shadow", "e1": 0, "e2": 1, "eg": 1},
+                {"trace_id": "tr-03", "role": "action_and_alignment", "e1": 0, "e2": 1, "eg": 1},
+            ],
+        )
+        self.assertEqual(obs["raw_role_entries_count"], 6)
+        self.assertEqual(obs["unique_traces_count"], 3)
+        self.assertEqual(obs["double_counted_entries_count"], 3)
+        self.assertEqual(obs["raw_signed_defect_sum"], 0)
+        self.assertEqual(obs["unique_signed_defect_sum"], -1)
+        self.assertEqual(obs["multiplicity_inflation"], 1)
+
+        self.assertEqual(obs["phase_1_verdict_drift_count"], 1)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CROSS_ROLE_VERDICT_DRIFT_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SHARED_TRACE_DOUBLE_COUNT_MASKING_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CROSS_ROLE_DEDUPLICATED_AUDIT_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["undeduplicated_coherence_rate"], "0")
+        self.assertEqual(receipt["deduplicated_coherence_rate"], "1")
+        self.assertEqual(receipt["cross_role_deduplication_gain"], "1")
 
 
 if __name__ == "__main__":
