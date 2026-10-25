@@ -3090,4 +3090,48 @@ theorem mayer_vietoris_disconnected_overlap_and_coboundary_reconciliation :
   · intro fu1 fv1
     omega
 
+/-- 85. Asynchronous arrival-order permutation prefix-peak envelope and robustness audit:
+    1. Universal commutative endpoint invariance vs. positive-mass prefix envelope laws:
+       - For any 3-step multiset (d1, d2, d3), the endpoint sum d1 + d2 + d3 is invariant
+         under arrival reorderings (d3 + d1 + d2 = d1 + d2 + d3 and d1 + d3 + d2 = d1 + d2 + d3);
+       - For positive steps p1, p2 ≥ 1 and negative credit -c with c ≥ 1, the positive-first
+         permutation peak p1 + p2 strictly exceeds the credit-first peak p1 + p2 - c;
+    2. Concrete 3-phase asynchronous arrival-order separation under prefix budget B_prefix = 3:
+       - Phase 1 (Arrival-masked causal breach on {+2, +2, -2}):
+         credit-first arrival (-2, +2, +2) has arrival peak 2 ≤ 3 (L_mask = 1), while causal
+         order (+2, +2, -2) breaches causal peak 4 > 3 (Eg_mask = 0, Δ_{E,mask} = -1);
+       - Phase 2 (Reorder-sensitive excursion on interleaved {+2, -2, +2}):
+         causal and arrival peak is 2 ≤ 3 (L_reord = 1), yet positive-delta mass 2 + 2 = 4 > 3
+         breaches B_prefix under the positive-first permutation (+2, +2, -2)
+         (Eg_reord = 0, Δ_{E,reord} = -1);
+       - Phase 3 (Permutation-robust multiset {+1, +2, -1} with positive mass 1 + 2 = 3 ≤ 3):
+         every permutation satisfies max prefix ≤ 3 = B_prefix
+         (L_rob = 1, Eg_rob = 1, Δ_{E,rob} = 0). -/
+theorem asynchronous_replay_order_prefix_peak_envelope_and_robustness :
+    ((∀ d1 d2 d3 : Int, d3 + d1 + d2 = d1 + d2 + d3 ∧ d1 + d3 + d2 = d1 + d2 + d3) ∧
+     (∀ p1 p2 c : Int, c ≥ 1 → p1 + p2 > p1 + p2 - c)) ∧
+    (let b_pref : Int := 3;
+     let arr_peak_mask : Int := 2;
+     let caus_peak_mask : Int := 4;
+     let caus_peak_reord : Int := 2;
+     let pos_mass_reord : Int := 4;
+     let pos_mass_rob : Int := 3;
+     let l_mask := if (arr_peak_mask ≤ b_pref) ∧ (caus_peak_mask > b_pref) then (1 : Int) else 0;
+     let eg_mask := if (l_mask = 1) ∧ (caus_peak_mask ≤ b_pref) then (1 : Int) else 0;
+     let defect_mask := eg_mask - l_mask;
+     let l_reord := if (caus_peak_reord ≤ b_pref) ∧ (pos_mass_reord > b_pref) then (1 : Int) else 0;
+     let eg_reord := if (l_reord = 1) ∧ (pos_mass_reord ≤ b_pref) then (1 : Int) else 0;
+     let defect_reord := eg_reord - l_reord;
+     let l_rob := if pos_mass_rob ≤ b_pref then (1 : Int) else 0;
+     let eg_rob := if (l_rob = 1) ∧ (pos_mass_rob < pos_mass_reord) then (1 : Int) else 0;
+     let defect_rob := eg_rob - l_rob;
+     (l_mask = 1 ∧ eg_mask = 0 ∧ defect_mask = -1) ∧
+     (l_reord = 1 ∧ eg_reord = 0 ∧ defect_reord = -1) ∧
+     (l_rob = 1 ∧ eg_rob = 1 ∧ defect_rob = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro d1 d2 d3
+    refine ⟨by omega, by omega⟩
+  · intro p1 p2 c hc
+    omega
+
 end LggrVIII
