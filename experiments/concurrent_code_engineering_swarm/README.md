@@ -67,13 +67,32 @@ Executed across 4 concurrent LLM worker models (`max_inflight_requests = 4`, `63
 
 On `seed 7200`, Arm B (`sequential_branch_traceback`) fails to converge within 2 waves (`blocked_unresolved`, `15` API calls, `$0.014608`) because Wave 0 sequential execution halts at Branch $B$'s missing `'net_cents'` key (`B -> D`), masking Branch $C$'s upstream `KeyError: 'net_amount_cents'` until Wave 1 and masking Branch $D$'s payout conservation drift across both waves. By contrast, Arm C (`pullback_mediated_lggr_directive`) evaluates all 4 worktree branches over canonical mediated fibers in parallel via `StreamingDiamondCodebasePullbackMonitor` (`StreamingPullbackSquareMonitor` + `StreamingPullbackMediatorFactorizationMonitor` + `StreamingCodebaseInterfaceMergeMonitor`), synthesizing the unique cone mediator $u(w_{\mathrm{diamond}}) = (\text{b\_net\_v1\_900}, \text{c\_net\_v1\_900})$ over singleton interface fiber `'NET_V1:net_cents:900'` in **1 wave** (`8` API calls, `$0.006600`).
 
+## Multi-Round Iterative Feature-Evolution & Catalyst Technical-Debt Rejuvenation (`--topology catalyst`, `evidence/catalyst_pilot_run/summary.json`)
+
+The package also models multi-round iterative feature evolution (`--topology catalyst`) across sequential feature tickets ($t = 1, 2, 3$) on the 3-module settlement codebase (`pricing.py`, `tax_engine.py`, `settlement_router.py`), audited by `StreamingCodebaseCatalystEvolutionMonitor` (`StreamingCatalystDegradationMonitor` + `StreamingCatalystRejuvenationScheduleMonitor` + `StreamingCodebaseInterfaceMergeMonitor` + `StreamingFiberMonitor`):
+- Each module's technical-debt catalyst state is measured directly from its Python AST (`dead_helper_functions` not reachable from the canonical entrypoint via AST call edges) plus its runtime return dictionary (`deprecated_alias_keys` outside the canonical interface schema).
+- Across Tickets $t = 1, 2, 3$ (`seed 8301`, `multi_ticket_catalyst_debt_breach`), each ticket's quick-fix shim adds $\delta C_t = 2 \le \tau_{\mathrm{step}} = 2$ debt (`_legacy_discount_shim` + `'legacy_subtotal_cents'` in `pricing.py`; `_deprecated_tax_hook` + `'deprecated_gross_v0'` in `tax_engine.py`; `_compat_fee_fallback` + `'shim_payout_cents'` in `settlement_router.py`) while passing 100% of local unit tests and functional E2E settlement conservation (`local_green = 1`), yet cumulative workspace debt reaches $C_3 = 6 > \tau_{\mathrm{cat}} = 4$ (`global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `51` live API attempts, `$0.062291` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | Final Debt $C_3$ | Max Debt $\max_t C_t$ | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| `8300` | `clean_catalyst_control` | **A / B / C** | All policies | `completed` | `0` | `0` | 0 | 0 | `$0.000000` |
+| `8301` | `multi_ticket_catalyst_debt_breach` | **A** | `functional_and_step_delta_gate` | `blocked_unresolved` | `6` | `6` | 2 | 13 | `$0.016318` |
+| `8301` | `multi_ticket_catalyst_debt_breach` | **B** | `late_last_ticket_module_cleanup` | `blocked_unresolved` | `4` | `6` | 2 | 13 | `$0.016381` |
+| `8301` | `multi_ticket_catalyst_debt_breach` | **C** | `scheduled_lggr_catalyst_rejuvenation_directive` | **`completed`** | **`0`** | **`4`** | **1** | **6** | **`$0.006219`** |
+| `8302` | `infeasible_catalyst_budget_lock` | **A** | `functional_and_step_delta_gate` | `safe_escalated` | `3` | `4` | 1 | 7 | `$0.008905` |
+| `8302` | `infeasible_catalyst_budget_lock` | **B** | `late_last_ticket_module_cleanup` | `safe_escalated` | `3` | `6` | 1 | 6 | `$0.007136` |
+| `8302` | `infeasible_catalyst_budget_lock` | **C** | `scheduled_lggr_catalyst_rejuvenation_directive` | `safe_escalated` | `3` | `4` | 1 | 6 | `$0.007332` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear and 4-agent diamond evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, and 3-agent catalyst evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
 ```

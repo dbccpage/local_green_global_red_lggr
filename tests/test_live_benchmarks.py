@@ -2016,6 +2016,28 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["status"], "DIAMOND_PULLBACK_CONTRACT_SYNTHESIZED_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
 
+    def test_codebase_catalyst_evolution_benchmark_replay(self) -> None:
+        """Verify codebase_catalyst_evolution_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "codebase_catalyst_evolution_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.codebase_catalyst_evolution_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["unrejuvenated_evolution_coherence_rate"], "0")
+        self.assertEqual(data["scheduled_rejuvenation_coherence_rate"], "1")
+        self.assertEqual(data["codebase_catalyst_rejuvenation_gain"], "1")
+
+        mon_rec = data["codebase_catalyst_evolution_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,165 @@
+{
+  "schema": "lggr.catalyst_code_engineering_swarm.v1",
+  "topology": "catalyst",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 8300,
+      "kind": "clean_catalyst_control",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_total_catalyst_debt": 0,
+          "final_max_catalyst_debt_seen": 0,
+          "final_status": "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        },
+        {
+          "arm": "B",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_total_catalyst_debt": 0,
+          "final_max_catalyst_debt_seen": 0,
+          "final_status": "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_total_catalyst_debt": 0,
+          "final_max_catalyst_debt_seen": 0,
+          "final_status": "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        }
+      ]
+    },
+    {
+      "seed": 8301,
+      "kind": "multi_ticket_catalyst_debt_breach",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_total_catalyst_debt": 6,
+          "final_max_catalyst_debt_seen": 6,
+          "final_status": "CATALYST_TECHNICAL_DEBT_CEILING_BREACH_NGD_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.0163181662"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_total_catalyst_debt": 4,
+          "final_max_catalyst_debt_seen": 6,
+          "final_status": "LATE_CATALYST_CLEANUP_PREFIX_BREACH_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.0163814608"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_total_catalyst_debt": 0,
+          "final_max_catalyst_debt_seen": 4,
+          "final_status": "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0062187666"
+        }
+      ]
+    },
+    {
+      "seed": 8302,
+      "kind": "infeasible_catalyst_budget_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_total_catalyst_debt": 3,
+          "final_max_catalyst_debt_seen": 4,
+          "final_status": "INFEASIBLE_CATALYST_SPECIFICATION_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 7,
+          "cost_usd": "0.0089047316"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_total_catalyst_debt": 3,
+          "final_max_catalyst_debt_seen": 6,
+          "final_status": "INFEASIBLE_CATALYST_SPECIFICATION_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0071360593"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_total_catalyst_debt": 3,
+          "final_max_catalyst_debt_seen": 4,
+          "final_status": "INFEASIBLE_CATALYST_SPECIFICATION_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 6,
+          "cost_usd": "0.0073317013"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 51,
+  "charged_or_reserved_usd": "0.0622908858",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 16,
+  "scope": "Concurrent 3-agent iterative feature-evolution Python code-engineering swarm across sequential feature tickets (t = 1, 2, 3) comparing functional/step-delta gating (A), late single-module cleanup after ceiling breach (B), and scheduled LGGR catalyst rejuvenation directives (C) with full cryptographic receipts retained in the host audit log."
+}

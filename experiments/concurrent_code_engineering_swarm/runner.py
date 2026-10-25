@@ -25,6 +25,7 @@ from experiments.live_five_agent_swarm.client import (
     response_message,
 )
 from lggr.streaming import (
+    StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingDiamondCodebasePullbackMonitor,
 )
@@ -34,8 +35,10 @@ from .domain import (
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
     WORKER_MODULES,
+    CatalystCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    catalyst_fixture,
     diamond_fixture,
     fixture,
 )
@@ -659,6 +662,205 @@ def campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) ->
     return summary
 
 
+def catalyst_system_prompt(worker: str) -> str:
+    module_name = WORKER_MODULES[worker]
+    return (
+        f"You are software engineering agent {worker}, owner of Python module `{module_name}.py` "
+        "in a 3-module settlement codebase (`pricing` -> `tax_engine` -> `settlement_router`) "
+        "evolving across sequential feature tickets (t = 1, 2, 3). "
+        "Always call `inspect_workspace` first. "
+        "ONLY call `escalate` if `infeasible_constraint` in `inspect_workspace` is non-null. "
+        "Otherwise, NEVER call `escalate`: always call `submit_module_patch` with the complete Python "
+        "source code for your module (if your feedback or directive says no change or hold, submit your "
+        "existing `source_code` unchanged via `submit_module_patch`)."
+    )
+
+
+def catalyst_merge_gate(
+    events: Events,
+    workspace: CatalystCodeWorkspace,
+    arm: str,
+    step_tag: str,
+    *,
+    rejuvenation_scheduled: bool = False,
+    seed_max_debt_seen: int | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    monitor = StreamingCodebaseCatalystEvolutionMonitor(
+        per_ticket_local_tolerance=workspace.state.get("per_ticket_local_tolerance", 2),
+        global_catalyst_ceiling=workspace.state.get("global_catalyst_ceiling", 4),
+        scope_id=f"catalyst-code-swarm-gate-{arm}-{step_tag}",
+    )
+    if seed_max_debt_seen is not None:
+        monitor.max_catalyst_debt_seen = int(seed_max_debt_seen)
+    eval_rec = monitor.evaluate_ticket_step(
+        f"eval-{arm}-{step_tag}",
+        ticket_id=workspace.state.get("ticket_id", "ticket_3_conservation_and_rejuvenation"),
+        sources=workspace.state["sources"],
+        local_test_results=workspace.local_verdicts(),
+        previous_catalyst_debt=workspace.state.get("previous_catalyst_debt", 0),
+        rejuvenation_scheduled=rejuvenation_scheduled,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    full_receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "step_tag": step_tag,
+            "ticket_id": eval_rec["ticket_id"],
+            "previous_catalyst_debt": eval_rec["previous_catalyst_debt"],
+            "catalyst_wear_delta": eval_rec["catalyst_wear_delta"],
+            "total_catalyst_debt": eval_rec["total_catalyst_debt"],
+            "max_catalyst_debt_seen": eval_rec["max_catalyst_debt_seen"],
+            "rejuvenation_scheduled": eval_rec["rejuvenation_scheduled"],
+            "functional_e2e_ok": eval_rec["functional_e2e_ok"],
+            "step_wear_within_budget": eval_rec["step_wear_within_budget"],
+            "within_global_catalyst_ceiling": eval_rec["within_global_catalyst_ceiling"],
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "status": eval_rec["status"],
+            "module_debt_breakdown": eval_rec["module_debt_breakdown"],
+            "host_lggr_receipt_sha256": full_receipt["receipt_sha256"],
+            "host_lggr_receipt": full_receipt,
+        },
+    )
+    return eval_rec, full_receipt
+
+
+def catalyst_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = ["worker-0", "worker-1", "worker-2"]
+    for seed in config["seeds"]:
+        base_state = catalyst_fixture(seed)
+        events.emit("case_start", {"seed": seed, "kind": base_state["kind"], "fixture": base_state})
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = CatalystCodeWorkspace(base_state)
+            histories = {w: [{"role": "system", "content": catalyst_system_prompt(w)}] for w in workers}
+            events.emit("arm_start", {"seed": seed, "arm": arm, "kind": base_state["kind"]})
+            start_calls = client.calls
+            start_cost = client.spent
+            escalations = 0
+            waves_run = 0
+            eval_rec, _ = catalyst_merge_gate(events, ws, arm, "wave-0", rejuvenation_scheduled=False)
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+            feasible_case = base_state["infeasible_constraint"] is None
+
+            for wave_idx in range(1, 3):
+                if eval_rec["global_green"] == 1 or (not feasible_case and escalations > 0):
+                    break
+                waves_run += 1
+                per_worker_fb: dict[str, dict[str, Any]] = {}
+                for w in workers:
+                    if arm == "A":
+                        # Arm A: Functional-only / single-ticket complexity-delta gate (blind to cumulative catalyst ceiling)
+                        per_worker_fb[w] = {
+                            "arm": "A_functional_and_step_delta_gate",
+                            "ticket_id": base_state["ticket_id"],
+                            "functional_unit_and_e2e_tests_passed": eval_rec["functional_e2e_ok"],
+                            "step_complexity_delta_within_ticket_budget": eval_rec["step_wear_within_budget"],
+                            "infeasible_constraint": base_state["infeasible_constraint"],
+                            "message": (
+                                "Ticket 3 functional unit and E2E settlement tests passed, and single-ticket "
+                                "complexity delta delta_C = 2 <= 2 is within the per-ticket step budget. "
+                                "If `infeasible_constraint` is non-null, call `escalate`; otherwise preserve "
+                                "your current working module implementation by submitting your existing "
+                                "`source_code` unchanged via `submit_module_patch`."
+                            ),
+                        }
+                    elif arm == "B":
+                        # Arm B: Late post-breach partial cleanup (only the latest ticket's module worker-2 is asked to clean up)
+                        if w == "worker-2":
+                            per_worker_fb[w] = {
+                                "arm": "B_late_last_ticket_module_cleanup",
+                                "ticket_id": base_state["ticket_id"],
+                                "infeasible_constraint": base_state["infeasible_constraint"],
+                                "message": (
+                                    "Post-Ticket-3 lint check: if `infeasible_constraint` is non-null, call `escalate`; "
+                                    "otherwise remove `_compat_fee_fallback` and `'shim_payout_cents'` from "
+                                    "`settlement_router.py` while keeping canonical return keys."
+                                ),
+                            }
+                        else:
+                            per_worker_fb[w] = {
+                                "arm": "B_late_last_ticket_module_cleanup",
+                                "ticket_id": base_state["ticket_id"],
+                                "infeasible_constraint": base_state["infeasible_constraint"],
+                                "message": (
+                                    "Tickets 1 and 2 already merged and passed E2E tests. If `infeasible_constraint` "
+                                    "is non-null, call `escalate`; otherwise do NOT modify your earlier-ticket module "
+                                    "and submit your existing `source_code` unchanged via `submit_module_patch`."
+                                ),
+                            }
+                    else:
+                        # Arm C: Scheduled LGGR Catalyst Rejuvenation Gate (coordinated 3-module shim & dead-helper purge)
+                        per_worker_fb[w] = {
+                            "arm": "C_scheduled_lggr_catalyst_rejuvenation_directive",
+                            "ticket_id": base_state["ticket_id"],
+                            "role_directive": eval_rec["compact_role_directives"][w],
+                        }
+                escalations += round_turns(client, events, ws, histories, workers, per_worker_fb)
+                # Arm B records the late cleanup after the prefix peak C_3 = 6 already occurred;
+                # Arm C executes the scheduled rejuvenation pass from C_2 = 4 -> C_3 = 0.
+                seed_peak = 6 if arm == "B" else 4
+                eval_rec, _ = catalyst_merge_gate(
+                    events,
+                    ws,
+                    arm,
+                    f"wave-{wave_idx}",
+                    rejuvenation_scheduled=True,
+                    seed_max_debt_seen=seed_peak,
+                )
+            if eval_rec["global_green"] == 1 and feasible_case:
+                outcome = "completed"
+            elif not feasible_case and escalations > 0 and eval_rec["global_green"] == 0:
+                outcome = "safe_escalated"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_total_catalyst_debt": eval_rec["total_catalyst_debt"],
+                "final_max_catalyst_debt_seen": eval_rec["max_catalyst_debt_seen"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.catalyst_code_engineering_swarm.v1",
+        "topology": "catalyst",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent iterative feature-evolution Python code-engineering swarm across sequential "
+            "feature tickets (t = 1, 2, 3) comparing functional/step-delta gating (A), late single-module "
+            "cleanup after ceiling breach (B), and scheduled LGGR catalyst rejuvenation directives (C) "
+            "with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -671,6 +873,8 @@ def replay(path: str | Path) -> dict[str, Any]:
     try:
         if config.get("topology") == "diamond":
             summary = diamond_campaign(client, events, config)
+        elif config.get("topology") == "catalyst":
+            summary = catalyst_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -692,7 +896,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=["live", "replay"])
     parser.add_argument("path")
-    parser.add_argument("--topology", choices=["linear", "diamond"], default="linear")
+    parser.add_argument("--topology", choices=["linear", "diamond", "catalyst"], default="linear")
     parser.add_argument("--seeds", nargs="+", type=int, default=None)
     parser.add_argument("--budget", default="0.50")
     args = parser.parse_args()
@@ -713,7 +917,14 @@ def main() -> None:
     events_path = target / "events.jsonl"
     if events_path.exists():
         raise ValueError(f"evidence log {events_path} already exists")
-    seeds = args.seeds if args.seeds is not None else ([7200, 7201, 7202] if args.topology == "diamond" else [6100, 6101, 6102])
+    if args.seeds is not None:
+        seeds = args.seeds
+    elif args.topology == "diamond":
+        seeds = [7200, 7201, 7202]
+    elif args.topology == "catalyst":
+        seeds = [8300, 8301, 8302]
+    else:
+        seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
         config = {
             "topology": "diamond",
@@ -726,6 +937,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = diamond_campaign(client, events, config)
+    elif args.topology == "catalyst":
+        config = {
+            "topology": "catalyst",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = catalyst_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

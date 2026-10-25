@@ -18,8 +18,10 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CODE_SWARM_MODELS,
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKTREE_BRANCHES,
+    CatalystCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    catalyst_fixture,
     diamond_fixture,
     fixture,
     run_diamond_local_unit_tests,
@@ -28,11 +30,13 @@ from experiments.concurrent_code_engineering_swarm.domain import (
 from experiments.concurrent_code_engineering_swarm.runner import (
     CodeBatchClient,
     campaign,
+    catalyst_campaign,
     diamond_campaign,
     replay,
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
 from lggr.streaming import (
+    StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingDiamondCodebasePullbackMonitor,
 )
@@ -334,6 +338,101 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if diamond_events.exists() and diamond_summary.exists():
             replayed = replay(diamond_events)
             self.assertEqual(replayed["schema"], "lggr.diamond_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+
+    def test_catalyst_workspace_and_evolution_monitor_detects_shim_debt(self) -> None:
+        state = catalyst_fixture(8301)  # multi_ticket_catalyst_debt_breach
+        ws = CatalystCodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing": True, "tax_engine": True, "settlement_router": True},
+        )
+
+        mon = StreamingCodebaseCatalystEvolutionMonitor(scope_id="unit-catalyst-gate")
+        rec = mon.evaluate_ticket_step(
+            "eval-8301-wave0",
+            ticket_id=state["ticket_id"],
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+            previous_catalyst_debt=state["previous_catalyst_debt"],
+        )
+        self.assertEqual(rec["local_green"], 1)
+        self.assertEqual(rec["global_green"], 0)
+        self.assertEqual(rec["defect"], -1)
+        self.assertEqual(rec["previous_catalyst_debt"], 4)
+        self.assertEqual(rec["catalyst_wear_delta"], 2)
+        self.assertEqual(rec["total_catalyst_debt"], 6)
+        self.assertEqual(rec["status"], "CATALYST_TECHNICAL_DEBT_CEILING_BREACH_NGD_LGGR")
+        self.assertEqual(
+            rec["module_debt_breakdown"]["pricing"]["dead_helper_functions"],
+            ["_legacy_discount_shim"],
+        )
+        self.assertEqual(
+            rec["module_debt_breakdown"]["pricing"]["deprecated_alias_keys"],
+            ["legacy_subtotal_cents"],
+        )
+
+        # Verify 3-phase audit on StreamingCodebaseCatalystEvolutionMonitor
+        audit = mon.record_three_phase_codebase_catalyst_audit("catalyst-3phase-unit")
+        self.assertEqual(audit["phase_1_defect"], -1)
+        self.assertEqual(audit["phase_1_terminal_debt"], 6)
+        self.assertEqual(audit["phase_2_defect"], -1)
+        self.assertEqual(audit["phase_2_terminal_debt"], 4)
+        self.assertEqual(audit["phase_2_max_debt"], 6)
+        self.assertEqual(audit["phase_3_defect"], 0)
+        self.assertEqual(audit["phase_3_terminal_debt"], 0)
+        self.assertEqual(audit["phase_3_max_debt"], 4)
+
+    def test_catalyst_campaign_and_tamper_evident_replay(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "catalyst",
+                "seeds": [8300, 8301, 8302],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_code_transport)
+            summary = catalyst_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.catalyst_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on catalyst gate debt field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["total_catalyst_debt"] = int(gate_rec["total_catalyst_debt"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_catalyst_pilot_evidence_replay_if_present(self) -> None:
+        cat_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "catalyst_pilot_run"
+            / "events.jsonl"
+        )
+        cat_summary = cat_events.with_name("summary.json")
+        if cat_events.exists() and cat_summary.exists():
+            replayed = replay(cat_events)
+            self.assertEqual(replayed["schema"], "lggr.catalyst_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 3)
 
 
