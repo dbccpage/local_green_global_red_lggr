@@ -13973,6 +13973,175 @@ class StreamingCatalystRejuvenationScheduleMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDFAResetTokenGluingMonitor:
+    """Online tool-call DFA non-resetting concatenation vs. explicit reset-token gluing monitor (Theorem 82).
+
+    Wraps ``StreamingDFAGrammarGluingMonitor`` on a 4-state lock/commit/release protocol DFA
+    Q = {"q0_idle", "q1_lock", "q2_done", "q3_err"}, Sigma = {"acquire", "commit", "release"},
+    initial_state = "q0_idle", accepting_states = {"q0_idle", "q2_done"}:
+      - Phase 1 (Direct Concatenation of Non-Resetting Accepting Segments):
+        w1 = ["acquire", "commit"] and w2 = ["acquire", "commit"] each terminate at
+        "q2_done" in F from "q0_idle" (L_direct = 1), yet "q2_done" != "q0_idle" is not
+        reset-idempotent, so w1 ++ w2 transitions "q2_done" --acquire--> "q3_err" not in F
+        (Eg_direct = 0, defect_direct = -1, status ``NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR``).
+      - Phase 2 (Late Reset Token Appended Only to Segment 2):
+        w1 = ["acquire", "commit"] and w2 = ["acquire", "commit", "release"] still leave
+        1 non-reset segment (w1 ends at "q2_done"), so w2 enters "q3_err" at its first token
+        (L_late = 1, Eg_late = 0, defect_late = -1, status ``UNRELEASED_PREFIX_TRAP_STATE_LGGR``).
+      - Phase 3 (Explicit Reset-Token Gluing on Every Segment):
+        w1 = ["acquire", "commit", "release"] and w2 = ["acquire", "commit", "release"] both
+        return to "q0_idle" in F (0 non-reset segments), achieving coherent concatenation
+        (L_reset = 1, Eg_reset = 1, defect_reset = 0, status ``EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG``).
+    """
+
+    DEFAULT_STATES: tuple[str, ...] = ("q0_idle", "q1_lock", "q2_done", "q3_err")
+    DEFAULT_ALPHABET: tuple[str, ...] = ("acquire", "commit", "release")
+    DEFAULT_ACCEPTING: tuple[str, ...] = ("q0_idle", "q2_done")
+    DEFAULT_TRANSITIONS: dict[str, dict[str, str]] = {
+        "q0_idle": {"acquire": "q1_lock", "commit": "q3_err", "release": "q0_idle"},
+        "q1_lock": {"acquire": "q3_err", "commit": "q2_done", "release": "q0_idle"},
+        "q2_done": {"acquire": "q3_err", "commit": "q3_err", "release": "q0_idle"},
+        "q3_err": {"acquire": "q3_err", "commit": "q3_err", "release": "q3_err"},
+    }
+
+    def __init__(self, *, scope_id: str = "streaming-dfa-reset-token-gluing-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def _new_dfa_monitor(self, suffix: str) -> StreamingDFAGrammarGluingMonitor:
+        return StreamingDFAGrammarGluingMonitor(
+            states=self.DEFAULT_STATES,
+            alphabet=self.DEFAULT_ALPHABET,
+            transitions=self.DEFAULT_TRANSITIONS,
+            initial_state="q0_idle",
+            accepting_states=self.DEFAULT_ACCEPTING,
+            scope_id=f"{self.scope_id}-{suffix}",
+        )
+
+    def evaluate_dfa_reset_gluing(
+        self,
+        evaluation_id: str,
+        *,
+        base_segment: Sequence[str] = ("acquire", "commit"),
+        reset_token: str = "release",
+    ) -> dict[str, Any]:
+        """Evaluate direct concatenation, late reset, and explicit per-segment reset-token gluing."""
+        eid = text(evaluation_id, "evaluation_id")
+        base_toks = [text(t, f"base_segment[{idx}]") for idx, t in enumerate(sequence(base_segment, "base_segment"))]
+        rst_tok = text(reset_token, "reset_token")
+        reset_seg = [*base_toks, rst_tok]
+
+        # Phase 1: Direct concatenation w1 = base_toks, w2 = base_toks
+        mon_p1 = self._new_dfa_monitor(f"{eid}-p1")
+        mon_p1.record_segment("seg_1", base_toks)
+        mon_p1.record_segment("seg_2", base_toks)
+        rec_p1 = mon_p1.get_receipt()
+
+        # Phase 2: Late reset token appended only to w2 (w1 = base_toks, w2 = reset_seg)
+        mon_p2 = self._new_dfa_monitor(f"{eid}-p2")
+        mon_p2.record_segment("seg_1", base_toks)
+        mon_p2.record_segment("seg_2", reset_seg)
+        rec_p2 = mon_p2.get_receipt()
+
+        # Phase 3: Explicit reset token appended to every segment (w1 = reset_seg, w2 = reset_seg)
+        mon_p3 = self._new_dfa_monitor(f"{eid}-p3")
+        mon_p3.record_segment("seg_1", reset_seg)
+        mon_p3.record_segment("seg_2", reset_seg)
+        rec_p3 = mon_p3.get_receipt()
+
+        non_reset_p1 = len(rec_p1["non_reset_accepting_segment_ids"])
+        non_reset_p2 = len(rec_p2["non_reset_accepting_segment_ids"])
+        non_reset_p3 = len(rec_p3["non_reset_accepting_segment_ids"])
+
+        l_p1 = 1 if (rec_p1["local_product_aggregator"] == 1 and non_reset_p1 == 2) else 0
+        eg_p1 = 1 if (l_p1 == 1 and rec_p1["global_concatenated_evaluator"] == 1) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (rec_p2["local_product_aggregator"] == 1 and non_reset_p2 == 1) else 0
+        eg_p2 = 1 if (l_p2 == 1 and rec_p2["global_concatenated_evaluator"] == 1) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                rec_p3["local_product_aggregator"] == 1
+                and rec_p3["global_concatenated_evaluator"] == 1
+                and non_reset_p3 == 0
+                and rec_p3["terminal_state"] == "q0_idle"
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and non_reset_p3 < non_reset_p2 and non_reset_p2 < non_reset_p1) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "phase_1_terminal_state": rec_p1["terminal_state"],
+            "phase_2_terminal_state": rec_p2["terminal_state"],
+            "phase_3_terminal_state": rec_p3["terminal_state"],
+            "phase_1_non_reset_count": non_reset_p1,
+            "phase_2_non_reset_count": non_reset_p2,
+            "phase_3_non_reset_count": non_reset_p3,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR" if defect_p1 == -1 else "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR" if defect_p2 == -1 else "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG" if eg_p3 == 1 else "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+            "phase_1_dfa_receipt": rec_p1,
+            "phase_2_dfa_receipt": rec_p2,
+            "phase_3_dfa_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one DFA reset-token gluing evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_direct_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_late_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        non_reset_concatenation_coherence_rate = Fraction(
+            n - max(p1_direct_fail, p2_late_fail), n
+        )
+        explicit_reset_gluing_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_direct_fail == n and p2_late_fail == n:
+            status = "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_dfa_reset_token_gluing.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_direct_mismatch_count": p1_direct_fail,
+            "phase_2_late_reset_trap_count": p2_late_fail,
+            "phase_3_explicit_reset_coherent_count": p3_coherent,
+            "non_reset_concatenation_coherence_rate": non_reset_concatenation_coherence_rate,
+            "explicit_reset_gluing_coherence_rate": explicit_reset_gluing_coherence_rate,
+            "explicit_reset_gluing_coherence_gain": (
+                explicit_reset_gluing_coherence_rate - non_reset_concatenation_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

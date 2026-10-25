@@ -39,6 +39,7 @@ from lggr.streaming import (
     StreamingContextualSheafMonitor,
     StreamingCrossRoleDeduplicationMonitor,
     StreamingDFAGrammarGluingMonitor,
+    StreamingDFAResetTokenGluingMonitor,
     StreamingDashboardAdequacyMonitor,
     StreamingDeadlinePriorityQueueMonitor,
     StreamingDefectSoundnessMonitor,
@@ -4336,6 +4337,43 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["unscheduled_or_late_coherence_rate"], "0")
         self.assertEqual(receipt["periodic_rejuvenation_coherence_rate"], "1")
         self.assertEqual(receipt["periodic_rejuvenation_coherence_gain"], "1")
+
+    def test_dfa_non_resetting_concatenation_vs_explicit_reset_gluing(self) -> None:
+        """Verify Theorem 82: tool-call DFA non-resetting concatenation vs. explicit reset-token gluing."""
+        mon = StreamingDFAResetTokenGluingMonitor(
+            scope_id="unit-dfa-reset-token-gluing-scope",
+        )
+        obs = mon.evaluate_dfa_reset_gluing(
+            evaluation_id="dfa-reset-eval-01",
+        )
+        self.assertEqual(obs["phase_1_terminal_state"], "q3_err")
+        self.assertEqual(obs["phase_2_terminal_state"], "q3_err")
+        self.assertEqual(obs["phase_3_terminal_state"], "q0_idle")
+        self.assertEqual(obs["phase_1_non_reset_count"], 2)
+        self.assertEqual(obs["phase_2_non_reset_count"], 1)
+        self.assertEqual(obs["phase_3_non_reset_count"], 0)
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "UNRELEASED_PREFIX_TRAP_STATE_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["non_reset_concatenation_coherence_rate"], "0")
+        self.assertEqual(receipt["explicit_reset_gluing_coherence_rate"], "1")
+        self.assertEqual(receipt["explicit_reset_gluing_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

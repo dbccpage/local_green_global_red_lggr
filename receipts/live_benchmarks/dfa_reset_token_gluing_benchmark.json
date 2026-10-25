@@ -1,0 +1,1964 @@
+{
+  "schema": "lggr.dfa_reset_token_gluing_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "dfa_reset_token_gluing_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_direct_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_late_reset_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_explicit_reset_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "non_reset_concatenation_coherence_rate": "0",
+  "explicit_reset_gluing_coherence_rate": "1",
+  "explicit_reset_gluing_coherence_gain": "1",
+  "dfa_reset_monitor_receipt": {
+    "schema": "lggr.online_dfa_reset_token_gluing.v1",
+    "authority_effect": "None",
+    "scope_id": "live-dfa-reset-token-gluing-scope",
+    "status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_direct_mismatch_count": 5,
+    "phase_2_late_reset_trap_count": 5,
+    "phase_3_explicit_reset_coherent_count": 5,
+    "non_reset_concatenation_coherence_rate": "0",
+    "explicit_reset_gluing_coherence_rate": "1",
+    "explicit_reset_gluing_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::dfa_reset_gluing_eval",
+        "phase_1_terminal_state": "q3_err",
+        "phase_2_terminal_state": "q3_err",
+        "phase_3_terminal_state": "q0_idle",
+        "phase_1_non_reset_count": 2,
+        "phase_2_non_reset_count": 1,
+        "phase_3_non_reset_count": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+        "phase_1_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-openai/gpt-4o-mini::dfa_reset_gluing_eval-p1",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 4,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1",
+            "seg_2"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "9d9a90e315c5f5333f997e7583229f057e13e03127835c066c36a141a19f5775"
+        },
+        "phase_2_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-openai/gpt-4o-mini::dfa_reset_gluing_eval-p2",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 5,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "c7f82e56cade49a27bf7400d160ca4ddad752447c5a79dc3b5d265c95340b335"
+        },
+        "phase_3_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-openai/gpt-4o-mini::dfa_reset_gluing_eval-p3",
+          "status": "DFA_CONCATENATION_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 6,
+          "terminal_state": "q0_idle",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 1,
+          "evaluator_defect": 0,
+          "non_reset_accepting_segment_ids": [],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "49f8177f6a01d59b9e4077aac74a8cf8a418eef0cef357513417f4b71f311804"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::dfa_reset_gluing_eval",
+        "phase_1_terminal_state": "q3_err",
+        "phase_2_terminal_state": "q3_err",
+        "phase_3_terminal_state": "q0_idle",
+        "phase_1_non_reset_count": 2,
+        "phase_2_non_reset_count": 1,
+        "phase_3_non_reset_count": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+        "phase_1_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-google/gemini-2.5-flash-lite::dfa_reset_gluing_eval-p1",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 4,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1",
+            "seg_2"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "54a1e111617eeb1ec95e2d6d35ebf9d4612b082e9b935cdb042c6669ba282b58"
+        },
+        "phase_2_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-google/gemini-2.5-flash-lite::dfa_reset_gluing_eval-p2",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 5,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "9eb2dad21ee3ae37577c138fe1f0a3f220f8ee806e1e8d62ae07e647cda98ab2"
+        },
+        "phase_3_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-google/gemini-2.5-flash-lite::dfa_reset_gluing_eval-p3",
+          "status": "DFA_CONCATENATION_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 6,
+          "terminal_state": "q0_idle",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 1,
+          "evaluator_defect": 0,
+          "non_reset_accepting_segment_ids": [],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "bb4699d7331d3dd93ec5ed265300de1eb40f4ae0ed45af481f98720b2df16a56"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval",
+        "phase_1_terminal_state": "q3_err",
+        "phase_2_terminal_state": "q3_err",
+        "phase_3_terminal_state": "q0_idle",
+        "phase_1_non_reset_count": 2,
+        "phase_2_non_reset_count": 1,
+        "phase_3_non_reset_count": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+        "phase_1_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval-p1",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 4,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1",
+            "seg_2"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "17394dd983f7a782ced1e10bc09434080eda6df20232edad8919804047aec157"
+        },
+        "phase_2_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval-p2",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 5,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "de1b43ac6f73357156be1294a76677255603abfded1f696bd448d09687efe920"
+        },
+        "phase_3_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval-p3",
+          "status": "DFA_CONCATENATION_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 6,
+          "terminal_state": "q0_idle",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 1,
+          "evaluator_defect": 0,
+          "non_reset_accepting_segment_ids": [],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "35ee078afcba819be413fd952dd636440ea9d00bc8a6290f3ac47db4582b9be1"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::dfa_reset_gluing_eval",
+        "phase_1_terminal_state": "q3_err",
+        "phase_2_terminal_state": "q3_err",
+        "phase_3_terminal_state": "q0_idle",
+        "phase_1_non_reset_count": 2,
+        "phase_2_non_reset_count": 1,
+        "phase_3_non_reset_count": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+        "phase_1_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-deepseek/deepseek-chat::dfa_reset_gluing_eval-p1",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 4,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1",
+            "seg_2"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "4687ff2d10bdd66cc8d125b10e5dcf0e8b6d51e7706b2a045212895b1ef787cc"
+        },
+        "phase_2_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-deepseek/deepseek-chat::dfa_reset_gluing_eval-p2",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 5,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "7b6d58f2b8c634b50841cc595f4204c5009073cb854543cc77cc509a33c2027a"
+        },
+        "phase_3_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-deepseek/deepseek-chat::dfa_reset_gluing_eval-p3",
+          "status": "DFA_CONCATENATION_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 6,
+          "terminal_state": "q0_idle",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 1,
+          "evaluator_defect": 0,
+          "non_reset_accepting_segment_ids": [],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "69ef9562ddb611bf893cc8335cb9e3a6dd470b720b10dd8acf32afd7361c8ade"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval",
+        "phase_1_terminal_state": "q3_err",
+        "phase_2_terminal_state": "q3_err",
+        "phase_3_terminal_state": "q0_idle",
+        "phase_1_non_reset_count": 2,
+        "phase_2_non_reset_count": 1,
+        "phase_3_non_reset_count": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+        "phase_1_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval-p1",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 4,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1",
+            "seg_2"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "39ef72da1dcee6570fd7e8c35e3be4198355adfa7e6d42f6647042fe9ff98377"
+        },
+        "phase_2_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval-p2",
+          "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 5,
+          "terminal_state": "q3_err",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 0,
+          "evaluator_defect": -1,
+          "non_reset_accepting_segment_ids": [
+            "seg_1"
+          ],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q2_done",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": false,
+              "chained_end_state": "q2_done",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q2_done",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q3_err",
+              "chained_prefix_accepted": 0,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "05e66ab23b5bbdd043c8b5baa4d263225f9a70bb9f203aa749aa3f0fd12374e5"
+        },
+        "phase_3_dfa_receipt": {
+          "schema": "lggr.online_dfa_grammar_gluing.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dfa-reset-token-gluing-scope-mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval-p3",
+          "status": "DFA_CONCATENATION_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "initial_state": "q0_idle",
+          "accepting_states": [
+            "q0_idle",
+            "q2_done"
+          ],
+          "segment_count": 2,
+          "total_tokens": 6,
+          "terminal_state": "q0_idle",
+          "local_product_aggregator": 1,
+          "global_concatenated_evaluator": 1,
+          "evaluator_defect": 0,
+          "non_reset_accepting_segment_ids": [],
+          "all_monoid_homomorphisms_verified": true,
+          "segments": [
+            {
+              "segment_index": 0,
+              "segment_id": "seg_1",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            },
+            {
+              "segment_index": 1,
+              "segment_id": "seg_2",
+              "tokens": [
+                "acquire",
+                "commit",
+                "release"
+              ],
+              "entry_state": "q0_idle",
+              "local_end_state_from_q0": "q0_idle",
+              "local_pass_from_q0": 1,
+              "is_reset_idempotent_on_q0": true,
+              "chained_end_state": "q0_idle",
+              "chained_prefix_accepted": 1,
+              "monoid_homomorphism_verified": true
+            }
+          ],
+          "receipt_sha256": "698105750044bcdcd4e1178e730641190f600c1bb7443c9962fd11db4223bc3b"
+        }
+      }
+    ],
+    "receipt_sha256": "c9378a0d007b1b6fe8de542e892e208141768d901860f9b7da9fe645fc4727f6"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::dfa_reset_gluing_eval",
+      "phase_1_terminal_state": "q3_err",
+      "phase_2_terminal_state": "q3_err",
+      "phase_3_terminal_state": "q0_idle",
+      "phase_1_non_reset_count": 2,
+      "phase_2_non_reset_count": 1,
+      "phase_3_non_reset_count": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+      "phase_1_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-openai/gpt-4o-mini::dfa_reset_gluing_eval-p1",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 4,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1",
+          "seg_2"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "9d9a90e315c5f5333f997e7583229f057e13e03127835c066c36a141a19f5775"
+      },
+      "phase_2_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-openai/gpt-4o-mini::dfa_reset_gluing_eval-p2",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 5,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "c7f82e56cade49a27bf7400d160ca4ddad752447c5a79dc3b5d265c95340b335"
+      },
+      "phase_3_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-openai/gpt-4o-mini::dfa_reset_gluing_eval-p3",
+        "status": "DFA_CONCATENATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 6,
+        "terminal_state": "q0_idle",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 1,
+        "evaluator_defect": 0,
+        "non_reset_accepting_segment_ids": [],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "49f8177f6a01d59b9e4077aac74a8cf8a418eef0cef357513417f4b71f311804"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\n  \"phase_1_terminal_state\": \"q3_err\",\n  \"phase_3_terminal_state\": \"q0_idle\",\n  \"phase_3_non_reset_count\": 0\n}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::dfa_reset_gluing_eval",
+      "phase_1_terminal_state": "q3_err",
+      "phase_2_terminal_state": "q3_err",
+      "phase_3_terminal_state": "q0_idle",
+      "phase_1_non_reset_count": 2,
+      "phase_2_non_reset_count": 1,
+      "phase_3_non_reset_count": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+      "phase_1_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-google/gemini-2.5-flash-lite::dfa_reset_gluing_eval-p1",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 4,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1",
+          "seg_2"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "54a1e111617eeb1ec95e2d6d35ebf9d4612b082e9b935cdb042c6669ba282b58"
+      },
+      "phase_2_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-google/gemini-2.5-flash-lite::dfa_reset_gluing_eval-p2",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 5,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "9eb2dad21ee3ae37577c138fe1f0a3f220f8ee806e1e8d62ae07e647cda98ab2"
+      },
+      "phase_3_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-google/gemini-2.5-flash-lite::dfa_reset_gluing_eval-p3",
+        "status": "DFA_CONCATENATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 6,
+        "terminal_state": "q0_idle",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 1,
+        "evaluator_defect": 0,
+        "non_reset_accepting_segment_ids": [],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "bb4699d7331d3dd93ec5ed265300de1eb40f4ae0ed45af481f98720b2df16a56"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\n  \"phase_1_terminal_state\": \"q3_err\",\n  \"phase_3_terminal_state\": \"q0_idle\",\n  \"phase_3_non_reset_count\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval",
+      "phase_1_terminal_state": "q3_err",
+      "phase_2_terminal_state": "q3_err",
+      "phase_3_terminal_state": "q0_idle",
+      "phase_1_non_reset_count": 2,
+      "phase_2_non_reset_count": 1,
+      "phase_3_non_reset_count": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+      "phase_1_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval-p1",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 4,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1",
+          "seg_2"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "17394dd983f7a782ced1e10bc09434080eda6df20232edad8919804047aec157"
+      },
+      "phase_2_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval-p2",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 5,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "de1b43ac6f73357156be1294a76677255603abfded1f696bd448d09687efe920"
+      },
+      "phase_3_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-meta-llama/llama-3.3-70b-instruct::dfa_reset_gluing_eval-p3",
+        "status": "DFA_CONCATENATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 6,
+        "terminal_state": "q0_idle",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 1,
+        "evaluator_defect": 0,
+        "non_reset_accepting_segment_ids": [],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "35ee078afcba819be413fd952dd636440ea9d00bc8a6290f3ac47db4582b9be1"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "{\"phase_1_terminal_state\": \"q3_err\", \"phase_3_terminal_state\": \"q0_idle\", \"phase_3_non_reset_count\": 0}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::dfa_reset_gluing_eval",
+      "phase_1_terminal_state": "q3_err",
+      "phase_2_terminal_state": "q3_err",
+      "phase_3_terminal_state": "q0_idle",
+      "phase_1_non_reset_count": 2,
+      "phase_2_non_reset_count": 1,
+      "phase_3_non_reset_count": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+      "phase_1_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-deepseek/deepseek-chat::dfa_reset_gluing_eval-p1",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 4,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1",
+          "seg_2"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "4687ff2d10bdd66cc8d125b10e5dcf0e8b6d51e7706b2a045212895b1ef787cc"
+      },
+      "phase_2_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-deepseek/deepseek-chat::dfa_reset_gluing_eval-p2",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 5,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "7b6d58f2b8c634b50841cc595f4204c5009073cb854543cc77cc509a33c2027a"
+      },
+      "phase_3_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-deepseek/deepseek-chat::dfa_reset_gluing_eval-p3",
+        "status": "DFA_CONCATENATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 6,
+        "terminal_state": "q0_idle",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 1,
+        "evaluator_defect": 0,
+        "non_reset_accepting_segment_ids": [],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "69ef9562ddb611bf893cc8335cb9e3a6dd470b720b10dd8acf32afd7361c8ade"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\n  \"phase_1_terminal_state\": \"q3_err\",\n  \"phase_3_terminal_state\": \"q0_idle\",\n  \"phase_3_non_reset_count\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval",
+      "phase_1_terminal_state": "q3_err",
+      "phase_2_terminal_state": "q3_err",
+      "phase_3_terminal_state": "q0_idle",
+      "phase_1_non_reset_count": 2,
+      "phase_2_non_reset_count": 1,
+      "phase_3_non_reset_count": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_RESET_DFA_CONCATENATION_MISMATCH_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNRELEASED_PREFIX_TRAP_STATE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXPLICIT_RESET_DFA_GLUING_COHERENT_LGGG",
+      "phase_1_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval-p1",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 4,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1",
+          "seg_2"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "39ef72da1dcee6570fd7e8c35e3be4198355adfa7e6d42f6647042fe9ff98377"
+      },
+      "phase_2_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval-p2",
+        "status": "DFA_BOUNDARY_STATE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 5,
+        "terminal_state": "q3_err",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 0,
+        "evaluator_defect": -1,
+        "non_reset_accepting_segment_ids": [
+          "seg_1"
+        ],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q2_done",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": false,
+            "chained_end_state": "q2_done",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q2_done",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q3_err",
+            "chained_prefix_accepted": 0,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "05e66ab23b5bbdd043c8b5baa4d263225f9a70bb9f203aa749aa3f0fd12374e5"
+      },
+      "phase_3_dfa_receipt": {
+        "schema": "lggr.online_dfa_grammar_gluing.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dfa-reset-token-gluing-scope-mistralai/mistral-small-3.2-24b-instruct::dfa_reset_gluing_eval-p3",
+        "status": "DFA_CONCATENATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "initial_state": "q0_idle",
+        "accepting_states": [
+          "q0_idle",
+          "q2_done"
+        ],
+        "segment_count": 2,
+        "total_tokens": 6,
+        "terminal_state": "q0_idle",
+        "local_product_aggregator": 1,
+        "global_concatenated_evaluator": 1,
+        "evaluator_defect": 0,
+        "non_reset_accepting_segment_ids": [],
+        "all_monoid_homomorphisms_verified": true,
+        "segments": [
+          {
+            "segment_index": 0,
+            "segment_id": "seg_1",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          },
+          {
+            "segment_index": 1,
+            "segment_id": "seg_2",
+            "tokens": [
+              "acquire",
+              "commit",
+              "release"
+            ],
+            "entry_state": "q0_idle",
+            "local_end_state_from_q0": "q0_idle",
+            "local_pass_from_q0": 1,
+            "is_reset_idempotent_on_q0": true,
+            "chained_end_state": "q0_idle",
+            "chained_prefix_accepted": 1,
+            "monoid_homomorphism_verified": true
+          }
+        ],
+        "receipt_sha256": "698105750044bcdcd4e1178e730641190f600c1bb7443c9962fd11db4223bc3b"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"phase_1_terminal_state\": \"q3_err\",\n  \"phase_3_terminal_state\": \"q0_idle\",\n  \"phase_3_non_reset_count\": 0\n}\n```"
+    }
+  ],
+  "meaning": "Tool-call DFA non-resetting concatenation vs. explicit reset-token gluing benchmark across 5 model families (Theorem 82): on the 4-state lock/commit/release DFA with accepting F = {q0_idle, q2_done}, Phase 1 separates direct concatenation of two non-resetting segments [acquire, commit] landing in q3_err (Delta_E = -1), Phase 2 separates late reset appended only to segment 2 (Delta_E = -1), and Phase 3 verifies explicit reset-token gluing [acquire, commit, release] on every segment returning to q0_idle (Delta_E = 0).",
+  "receipt_sha256": "8fe8107e412ce1c50496d56737fbd11e853c83ff5568f93de55148539e96987b"
+}
