@@ -30,6 +30,7 @@ from lggr.streaming import (
     StreamingBellPolytopeMonitor,
     StreamingBoundaryQuorumInterfaceMonitor,
     StreamingBoundedDepthKInductionMonitor,
+    StreamingCPTPBlindspotCompletionMonitor,
     StreamingCPTPTraceMonitor,
     StreamingCatalystDegradationMonitor,
     StreamingCatalystRejuvenationScheduleMonitor,
@@ -4374,6 +4375,41 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["non_reset_concatenation_coherence_rate"], "0")
         self.assertEqual(receipt["explicit_reset_gluing_coherence_rate"], "1")
         self.assertEqual(receipt["explicit_reset_gluing_coherence_gain"], "1")
+
+    def test_cptp_state_blindspot_vs_operator_residual_and_completion(self) -> None:
+        """Verify Theorem 83: state-dependent CPTP trace preservation vs. operator residual and completion."""
+        mon = StreamingCPTPBlindspotCompletionMonitor(
+            scope_id="unit-cptp-blindspot-completion-scope",
+        )
+        obs = mon.evaluate_cptp_completion(
+            evaluation_id="cptp-comp-eval-01",
+        )
+        self.assertEqual(obs["incomplete_residual_l1_norm"], "1")
+        self.assertEqual(obs["completed_residual_l1_norm"], "0")
+        self.assertEqual(obs["phase_1_trace_discrepancy"], "0")
+        self.assertEqual(obs["phase_2_trace_discrepancy"], "-1")
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "STATE_BLINDSPOT_NON_TP_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "EXCITED_STATE_TRACE_LEAKAGE_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["incomplete_channel_coherence_rate"], "0")
+        self.assertEqual(receipt["completed_channel_coherence_rate"], "1")
+        self.assertEqual(receipt["cptp_completion_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
