@@ -2437,6 +2437,105 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contract_status"], "OBSTRUCTED_LGGR")
         self.assertEqual(receipt["poe_collapsed_round_ids"], ["disjoint_experts"])
 
+    def test_infeasible_coupled_empty_intersection_oscillation_and_escalation(self) -> None:
+        """Verify Theorem 57 infeasible coupled empty-intersection oscillation detection & escalation."""
+        from lggr import StreamingJointMultiMonitorRepairGuard
+
+        guard = StreamingJointMultiMonitorRepairGuard(scope_id="infeasible-coupled-audit")
+
+        candidates = [
+            {"action_id": "S=2_alpha=0", "global_a_pass": False, "global_b_pass": True},
+            {"action_id": "S=4_alpha=-4/3", "global_a_pass": True, "global_b_pass": False},
+        ]
+
+        # Disagreement between feasible_intersection_empty and candidate_actions must raise ValidationError
+        with self.assertRaises(ValidationError):
+            guard.record_coupled_trajectory(
+                "bad_mismatch",
+                pair_name="Infeasible_SideInfo_x_SkewRepair",
+                monitor_a_name="StreamingSideInformationCapacityMonitor",
+                monitor_b_name="StreamingSkewRepairMonitor",
+                model_id="synthetic",
+                feasible_intersection_empty=False,
+                candidate_actions=candidates,
+                rounds=[
+                    {
+                        "feedback_mode": "r0",
+                        "status_a": "OBSTRUCTED",
+                        "status_b": "OBSTRUCTED",
+                        "local_a_pass": True,
+                        "global_a_pass": False,
+                        "local_b_pass": True,
+                        "global_b_pass": False,
+                    },
+                    {
+                        "feedback_mode": "r1",
+                        "status_a": "PASS",
+                        "status_b": "OBSTRUCTED",
+                        "local_a_pass": True,
+                        "global_a_pass": True,
+                        "local_b_pass": True,
+                        "global_b_pass": False,
+                    },
+                ],
+            )
+
+        rec = guard.record_coupled_trajectory(
+            "oscillating_infeasible_traj",
+            pair_name="Infeasible_SideInfo_x_SkewRepair",
+            monitor_a_name="StreamingSideInformationCapacityMonitor",
+            monitor_b_name="StreamingSkewRepairMonitor",
+            model_id="synthetic",
+            feasible_intersection_empty=True,
+            candidate_actions=candidates,
+            rounds=[
+                {
+                    "feedback_mode": "r0_baseline",
+                    "status_a": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                    "status_b": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                    "local_a_pass": True,
+                    "global_a_pass": False,
+                    "local_b_pass": True,
+                    "global_b_pass": False,
+                },
+                {
+                    "feedback_mode": "r1_priority_a",
+                    "status_a": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+                    "status_b": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                    "local_a_pass": True,
+                    "global_a_pass": True,
+                    "local_b_pass": True,
+                    "global_b_pass": False,
+                },
+                {
+                    "feedback_mode": "r2_priority_b",
+                    "status_a": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                    "status_b": "SKEW_REPAIR_BUDGET_COHERENT_LGGG",
+                    "local_a_pass": True,
+                    "global_a_pass": False,
+                    "local_b_pass": True,
+                    "global_b_pass": True,
+                },
+            ],
+        )
+        self.assertTrue(rec["feasible_intersection_empty"])
+        self.assertTrue(rec["whack_a_mole_oscillation_detected"])
+        self.assertEqual(rec["oscillation_l1_step_distance"], 2)
+        self.assertTrue(rec["halted_and_escalated"])
+        self.assertEqual(
+            rec["trajectory_status"],
+            "INFEASIBLE_EMPTY_INTERSECTION_OSCILLATION_HALTED_AND_ESCALATED_LGGR",
+        )
+        self.assertEqual(
+            rec["escalation_action"],
+            "HALT_OSCILLATING_REPAIR_AND_ESCALATE_INFEASIBLE_COUPLED_CONSTRAINTS",
+        )
+
+        receipt = guard.get_receipt()
+        self.assertEqual(receipt["status"], "INFEASIBLE_COUPLED_REGIME_HALTED_AND_ESCALATED_LGGR")
+        self.assertEqual(receipt["whack_a_mole_oscillation_rate"], "1")
+        self.assertEqual(receipt["halt_and_escalate_rate"], "1")
+
 
 if __name__ == "__main__":
     unittest.main()
