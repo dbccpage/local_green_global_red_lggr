@@ -27,6 +27,9 @@ from lggr.benchmarks import (
     _eval_relaxed_pair1_side_info_and_skew,
     _eval_relaxed_pair2_poe_and_skew,
     _eval_relaxed_pair3_tower_and_mermin_peres,
+    _eval_weighted_pair1_side_info_and_skew,
+    _eval_weighted_pair2_poe_and_skew,
+    _eval_weighted_pair3_tower_and_mermin_peres,
     compute_empirical_defect_rates,
     load_openrouter_credentials,
     verify_frontier_benchmark,
@@ -46,6 +49,7 @@ from lggr.streaming import (
     StreamingProjectiveTowerMonitor,
     StreamingSideInformationCapacityMonitor,
     StreamingSkewRepairMonitor,
+    StreamingWeightedPolicyRelaxationMonitor,
 )
 from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
 
@@ -910,6 +914,109 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["single_round_minimum_slack_rate"], "0")
         self.assertEqual(mon_rec["multi_round_minimum_slack_rate"], "1")
         self.assertEqual(mon_rec["multi_round_minimum_slack_gain"], "1")
+
+    def test_weighted_policy_relaxation_benchmark_replay(self):
+        """F21: Replay all 15 asymmetric risk-weighted policy relaxation evaluations across 5 model families."""
+        artifact = RECEIPTS_DIR / "weighted_policy_relaxation_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("weighted_policy_relaxation_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.weighted_policy_relaxation_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("pairs_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("evaluation_count"), 15)
+
+        evals = data.get("evaluations", [])
+        self.assertEqual(len(evals), 15)
+
+        self.assertTrue(data["round_1_unweighted_tie_metrics"]["identity_verified"])
+        self.assertTrue(data["round_2_risk_weighted_audited_metrics"]["identity_verified"])
+
+        replay_mon = StreamingWeightedPolicyRelaxationMonitor(
+            scope_id=data["weighted_monitor_receipt"]["scope_id"]
+        )
+        for ev in evals:
+            replay_mon.record_weighted_relaxation_evaluation(
+                evaluation_id=ev["evaluation_id"],
+                pair_name=ev["pair_name"],
+                model_id=ev["model_id"],
+                prior_escalation_receipt_sha256=ev["prior_escalation_receipt_sha256"],
+                prior_policy_sha256=ev["prior_policy_sha256"],
+                prior_policy_vector=ev["prior_policy_vector"],
+                risk_weight_vector=ev["risk_weight_vector"],
+                candidate_policies=ev["candidate_policies"],
+                rounds=ev["rounds"],
+            )
+            self.assertEqual(len(ev["unweighted_minimum_tie_policy_ids"]), 2)
+            self.assertTrue(ev["round_1_unweighted_tie_high_risk_breach"])
+            self.assertFalse(ev["converged_single_round"])
+            self.assertTrue(ev["converged_multi_round"])
+            self.assertEqual(
+                ev["evaluation_status"],
+                "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+            )
+
+            pname = ev["pair_name"]
+            mdl = ev["model_id"]
+            for r_idx in range(2):
+                act = ev["rounds"][r_idx]["action"]
+                r_saved = ev["round_receipts"][r_idx]
+                sel_pid = act["selected_policy_id"]
+                if pname == "Weighted_SideInfo_x_SkewRepair":
+                    rec_a, rec_b = _eval_weighted_pair1_side_info_and_skew(
+                        f"wp1_r{r_idx + 1}_{mdl}",
+                        act["channel_capacity_s"],
+                        act["error_budget"],
+                        act["symbols"],
+                        act["candidate_alpha"],
+                        relaxed_l1_budget="4",
+                    )
+                elif pname == "Weighted_PoE_x_SkewRepair":
+                    b_pair = (
+                        ("3", "3")
+                        if sel_pid == "PA_low_risk_quanta_refinement"
+                        else ("4", "4")
+                    )
+                    rec_a, rec_b = _eval_weighted_pair2_poe_and_skew(
+                        f"wp2_r{r_idx + 1}_{mdl}",
+                        act["compromise_eps"],
+                        act["candidate_alpha"],
+                        relaxed_linf_budget=b_pair[0],
+                        relaxed_l1_budget=b_pair[1],
+                    )
+                elif pname == "Weighted_ProjectiveTower_x_MerminPeres":
+                    rec_a, rec_b = _eval_weighted_pair3_tower_and_mermin_peres(
+                        f"wp3_r{r_idx + 1}_{mdl}",
+                        act["const_b"],
+                        act["x_mod2"],
+                        act["x_mod4"],
+                        parity_gauge_flip=act["parity_gauge_flip"],
+                        row3_override=act["row3_override"],
+                    )
+                else:
+                    self.fail(f"Unknown weighted coupled pair: {pname}")
+                self.assertEqual(
+                    rec_a["receipt_sha256"], r_saved["receipt_a"]["receipt_sha256"]
+                )
+                self.assertEqual(
+                    rec_b["receipt_sha256"], r_saved["receipt_b"]["receipt_sha256"]
+                )
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["weighted_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["round_1_unweighted_tie_high_risk_breach_rate"], "1")
+        self.assertEqual(mon_rec["single_round_weighted_convergence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_weighted_convergence_rate"], "1")
+        self.assertEqual(mon_rec["multi_round_weighted_convergence_gain"], "1")
 
 
 if __name__ == "__main__":

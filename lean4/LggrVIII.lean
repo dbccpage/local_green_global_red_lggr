@@ -1777,4 +1777,50 @@ theorem minimum_slack_pareto_policy_relaxation_vs_over_permissive_grant :
   · intro s ⟨h1, h2⟩
     omega
 
+/-- Theorem 60 (asymmetric_weighted_policy_relaxation_tie_breaking_vs_unweighted_slack):
+    Formalizes Asymmetric Risk-Weighted (ℓ¹_w) Policy-Relaxation Trade-Offs on Equal-Unweighted-Slack Ties:
+    1. (Equal Unweighted ℓ¹ Slack vs. Strict Weighted ℓ¹_w Separation Over ℤ):
+       For any positive integer relaxation step d > 0 and asymmetric integer risk weights w_1 < w_2,
+       relaxing coordinate 1 by (d, 0) vs. coordinate 2 by (0, d) yields identical unweighted ℓ¹ slack
+       d + 0 = 0 + d, while the risk-weighted costs strictly separate: w_1 * d < w_2 * d:
+       ∀ d w1 w2 : Int, (d > 0 ∧ w1 < w2) → (d + 0 = 0 + d ∧ w1 * d < w2 * d).
+    2. (Concrete Equal-Unweighted-Slack Pareto Policy Tie P_A vs. P_B Under Risk Weights w = (1, 5, 1)):
+       Starting from P_0 = (2, 0, 2) with risk weights w = (w_S, w_err, w_B1) = (1, 5, 1):
+       - Candidate P_A = (4, 0, 4) (expanding bandwidth S: 2 → 4, error_budget = 0, B_1: 2 → 4)
+         has unweighted slack |4 - 2| + |0 - 0| + |4 - 2| = 4 and weighted slack
+         1*2 + 5*0 + 1*2 = 4 = Δ*_w (weighted_excess_A = 0), yielding
+         L_unweighted(P_A) = 1, Eg_weighted(P_A) = 1, Δ_{E,weighted}(P_A) = 0;
+       - Candidate P_B = (2, 2, 4) (keeping S = 2, relaxing error_budget: 0 → 2, B_1: 2 → 4)
+         has the exact same unweighted slack |2 - 2| + |2 - 0| + |4 - 2| = 4 (unweighted_tie = 1,
+         L_unweighted(P_B) = 1), yet incurs weighted slack 1*0 + 5*2 + 1*2 = 12 > 4
+         (weighted_excess_B = 8 > 0), yielding Eg_weighted(P_B) = 0 and Δ_{E,weighted}(P_B) = -1. -/
+theorem asymmetric_weighted_policy_relaxation_tie_breaking_vs_unweighted_slack :
+    (∀ d w1 w2 : Int, (d > 0 ∧ w1 < w2) → (d + 0 = 0 + d ∧ w1 * d < w2 * d)) ∧
+    (let s0 : Int := 2; let e0 : Int := 0; let b0 : Int := 2;
+     let ws : Int := 1; let we : Int := 5; let wb : Int := 1;
+     let sa : Int := 4; let ea : Int := 0; let ba : Int := 4;
+     let sb : Int := 2; let eb : Int := 2; let bb : Int := 4;
+     let unw_a := absInt (sa - s0) + absInt (ea - e0) + absInt (ba - b0);
+     let unw_b := absInt (sb - s0) + absInt (eb - e0) + absInt (bb - b0);
+     let w_a := ws * absInt (sa - s0) + we * absInt (ea - e0) + wb * absInt (ba - b0);
+     let w_b := ws * absInt (sb - s0) + we * absInt (eb - e0) + wb * absInt (bb - b0);
+     let min_unw : Int := 4;
+     let min_w : Int := 4;
+     let unw_tie := if unw_a = unw_b ∧ unw_a = min_unw then (1 : Int) else 0;
+     let w_excess_a := w_a - min_w;
+     let w_excess_b := w_b - min_w;
+     let l_unw_a := if (sa + ea ≥ 4) ∧ (sa ≤ ba) ∧ (unw_a = min_unw) then (1 : Int) else 0;
+     let eg_w_a := if (l_unw_a = 1) ∧ (w_excess_a = 0) then (1 : Int) else 0;
+     let defect_a := eg_w_a - l_unw_a;
+     let l_unw_b := if (sb + eb ≥ 4) ∧ (sb ≤ bb) ∧ (unw_b = min_unw) then (1 : Int) else 0;
+     let eg_w_b := if (l_unw_b = 1) ∧ (w_excess_b = 0) then (1 : Int) else 0;
+     let defect_b := eg_w_b - l_unw_b;
+     (unw_a = 4 ∧ unw_b = 4 ∧ unw_tie = 1) ∧
+     (w_a = 4 ∧ w_excess_a = 0 ∧ l_unw_a = 1 ∧ eg_w_a = 1 ∧ defect_a = 0) ∧
+     (w_b = 12 ∧ w_excess_b = 8 ∧ l_unw_b = 1 ∧ eg_w_b = 0 ∧ defect_b = -1)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro d w1 w2 ⟨hd, hw⟩
+  refine ⟨by omega, ?_⟩
+  exact Int.mul_lt_mul_of_pos_right hw hd
+
 end LggrVIII

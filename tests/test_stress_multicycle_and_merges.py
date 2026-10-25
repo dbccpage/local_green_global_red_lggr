@@ -56,6 +56,7 @@ from lggr.streaming import (
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
+    StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
 )
 from lggr.witnesses import BudgetPolicy, StateRef, StepWitness
@@ -2743,6 +2744,108 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["single_round_minimum_slack_rate"], "0")
         self.assertEqual(receipt["multi_round_minimum_slack_rate"], "1")
         self.assertEqual(receipt["multi_round_minimum_slack_gain"], "1")
+
+    def test_weighted_policy_relaxation_tie_breaking_vs_unweighted_slack(self) -> None:
+        """Verify StreamingWeightedPolicyRelaxationMonitor separates equal-unweighted-slack ties under asymmetric risk weights."""
+        mon = StreamingWeightedPolicyRelaxationMonitor(
+            scope_id="unit_weighted_policy_relaxation"
+        )
+        esc_sha = "a" * 64
+        p0_sha = "b" * 64
+        pa_sha = "c" * 64
+        pb_sha = "d" * 64
+
+        rec = mon.record_weighted_relaxation_evaluation(
+            evaluation_id="eval_weighted_1",
+            pair_name="Weighted_SideInfo_x_SkewRepair",
+            model_id="synthetic",
+            prior_escalation_receipt_sha256=esc_sha,
+            prior_policy_sha256=p0_sha,
+            prior_policy_vector=[2, 0, 2],
+            risk_weight_vector=[1, 5, 1],
+            candidate_policies=[
+                {
+                    "policy_id": "PA_low_risk_capacity_expansion",
+                    "policy_sha256": pa_sha,
+                    "policy_vector": [4, 0, 4],
+                    "restores_pareto_intersection": True,
+                },
+                {
+                    "policy_id": "PB_high_risk_error_relaxation",
+                    "policy_sha256": pb_sha,
+                    "policy_vector": [2, 2, 4],
+                    "restores_pareto_intersection": True,
+                },
+            ],
+            rounds=[
+                {
+                    "round_index": 0,
+                    "feedback_mode": "round_1_unweighted_tie_selection",
+                    "selected_policy_id": "PB_high_risk_error_relaxation",
+                    "authority_grant_verified": True,
+                    "local_a_pass": True,
+                    "global_a_pass": True,
+                    "local_b_pass": True,
+                    "global_b_pass": True,
+                },
+                {
+                    "round_index": 1,
+                    "feedback_mode": "round_2_risk_weighted_receipt_audited",
+                    "selected_policy_id": "PA_low_risk_capacity_expansion",
+                    "authority_grant_verified": True,
+                    "local_a_pass": True,
+                    "global_a_pass": True,
+                    "local_b_pass": True,
+                    "global_b_pass": True,
+                },
+            ],
+        )
+        self.assertEqual(rec["minimum_unweighted_l1_slack"], "4")
+        self.assertEqual(
+            rec["unweighted_minimum_tie_policy_ids"],
+            ["PA_low_risk_capacity_expansion", "PB_high_risk_error_relaxation"],
+        )
+        self.assertEqual(rec["minimum_weighted_l1_slack"], "4")
+        self.assertEqual(rec["optimal_weighted_policy_ids"], ["PA_low_risk_capacity_expansion"])
+        self.assertTrue(rec["round_1_unweighted_tie_high_risk_breach"])
+        self.assertFalse(rec["converged_single_round"])
+        self.assertTrue(rec["converged_multi_round"])
+
+        # Round 1 (PB): unweighted_excess=0 (local_pass=True), weighted_excess=8 > 0 (global_pass=False, defect=-1)
+        r0 = rec["rounds"][0]
+        self.assertTrue(r0["local_pass"])
+        self.assertFalse(r0["global_pass"])
+        self.assertEqual(r0["defect"], -1)
+        self.assertEqual(r0["selected_unweighted_l1_slack"], "4")
+        self.assertEqual(r0["unweighted_excess_slack_l1"], "0")
+        self.assertEqual(r0["selected_weighted_l1_slack"], "12")
+        self.assertEqual(r0["weighted_excess_slack_l1"], "8")
+        self.assertEqual(
+            r0["round_status"], "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+        )
+
+        # Round 2 (PA): unweighted_excess=0 (local_pass=True), weighted_excess=0 (global_pass=True, defect=0)
+        r1 = rec["rounds"][1]
+        self.assertTrue(r1["local_pass"])
+        self.assertTrue(r1["global_pass"])
+        self.assertEqual(r1["defect"], 0)
+        self.assertEqual(r1["selected_unweighted_l1_slack"], "4")
+        self.assertEqual(r1["unweighted_excess_slack_l1"], "0")
+        self.assertEqual(r1["selected_weighted_l1_slack"], "4")
+        self.assertEqual(r1["weighted_excess_slack_l1"], "0")
+        self.assertEqual(
+            r1["round_status"], "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        )
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(
+            receipt["status"], "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        )
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["round_1_unweighted_tie_high_risk_breach_rate"], "1")
+        self.assertEqual(receipt["single_round_weighted_convergence_rate"], "0")
+        self.assertEqual(receipt["multi_round_weighted_convergence_rate"], "1")
+        self.assertEqual(receipt["multi_round_weighted_convergence_gain"], "1")
 
 
 if __name__ == "__main__":
