@@ -1734,4 +1734,47 @@ theorem governed_policy_relaxation_handoff_restores_pareto_vs_self_relaxation :
   · intro s
     exact ⟨fun ⟨h1, h2⟩ => by omega, fun h => by omega⟩
 
+/-- Theorem 59 (minimum_slack_pareto_policy_relaxation_vs_over_permissive_grant):
+    Formalizes Minimum-Cost (ℓ¹ Minimum-Slack) Pareto Policy Relaxation vs. Over-Permissive Budget Grants:
+    1. (ℓ¹ Policy-Slack Lower Bound Across All Pareto-Restoring Relaxations Over ℤ):
+       Starting from initial budget b_0 = 2 with query demand K = 4, any relaxed budget b ∈ ℤ
+       that admits a joint feasible integer state s ∈ ℤ satisfying s ≥ 4 ∧ s ≤ b must have
+       b ≥ 4 and policy slack b - b_0 = b - 2 ≥ 2:
+       ∀ b s : Int, (s ≥ 4 ∧ s ≤ b) → (b ≥ 4 ∧ b - 2 ≥ 2).
+    2. (Under-Relaxed Infeasibility at b_1 = 3):
+       Candidate P_1 with b_1 = 3 (slack |3 - 2| = 1 < 2) remains infeasible:
+       ∀ s : Int, ¬ (s ≥ 4 ∧ s ≤ 3).
+    3. (Minimum-Slack Pareto Candidate P_2 vs. Over-Permissive Candidate P_3):
+       - Candidate P_2 (b_2 = 4) has slack |4 - 2| = 2 = Δ*_policy and excess slack 0,
+         so at S_* = 4 both local feasibility and global minimum-slack checks pass:
+         L_relax(P_2) = 1, Eg_min_slack(P_2) = 1, Δ_{E,min_slack}(P_2) = 0;
+       - Candidate P_3 (b_3 = 8) restores feasibility at S_* = 4 (L_relax(P_3) = 1),
+         but has slack |8 - 2| = 6 and positive excess slack 6 - 2 = 4 > 0, so the
+         minimum-slack gate rejects it with Eg_min_slack(P_3) = 0 and Δ_{E,min_slack}(P_3) = -1. -/
+theorem minimum_slack_pareto_policy_relaxation_vs_over_permissive_grant :
+    (∀ b s : Int, (s ≥ 4 ∧ s ≤ b) → (b ≥ 4 ∧ b - 2 ≥ 2)) ∧
+    (∀ s : Int, ¬ (s ≥ 4 ∧ s ≤ 3)) ∧
+    (let b0 : Int := 2;
+     let min_slack_star : Int := 2;
+     let s_star : Int := 4;
+     let b2 : Int := 4;
+     let slack2 := absInt (b2 - b0);
+     let excess2 := slack2 - min_slack_star;
+     let l_relax2 := if (s_star ≥ 4) ∧ (absInt s_star ≤ b2) then (1 : Int) else 0;
+     let eg_min2 := if (l_relax2 = 1) ∧ (excess2 = 0) then (1 : Int) else 0;
+     let defect2 := eg_min2 - l_relax2;
+     let b3 : Int := 8;
+     let slack3 := absInt (b3 - b0);
+     let excess3 := slack3 - min_slack_star;
+     let l_relax3 := if (s_star ≥ 4) ∧ (absInt s_star ≤ b3) then (1 : Int) else 0;
+     let eg_min3 := if (l_relax3 = 1) ∧ (excess3 = 0) then (1 : Int) else 0;
+     let defect3 := eg_min3 - l_relax3;
+     (slack2 = 2 ∧ excess2 = 0 ∧ l_relax2 = 1 ∧ eg_min2 = 1 ∧ defect2 = 0) ∧
+     (slack3 = 6 ∧ excess3 = 4 ∧ l_relax3 = 1 ∧ eg_min3 = 0 ∧ defect3 = -1)) := by
+  refine ⟨?_, ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  · intro b s ⟨h1, h2⟩
+    omega
+  · intro s ⟨h1, h2⟩
+    omega
+
 end LggrVIII
