@@ -5,6 +5,7 @@ from copy import deepcopy
 from typing import Any
 
 from lggr.streaming import (
+    StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingDiamondCodebasePullbackMonitor,
 )
@@ -548,4 +549,147 @@ class DiamondCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+DEBT_SHIM_PRICING_SOURCE = """def _legacy_discount_shim(raw_subtotal):
+    return int(raw_subtotal)
+
+def compute_quote(items, discount_bps):
+    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)
+    discount = (subtotal * int(discount_bps)) // 10000
+    net = subtotal - discount
+    return {
+        'subtotal_cents': subtotal,
+        'discount_cents': discount,
+        'net_cents': net,
+        'legacy_subtotal_cents': subtotal,
+    }
+"""
+
+DEBT_SHIM_TAX_ENGINE_SOURCE = """def _deprecated_tax_hook(net_val):
+    return int(net_val)
+
+def apply_tax(quote, tax_bps):
+    net = int(quote['net_cents'])
+    tax = (net * int(tax_bps)) // 10000
+    gross = net + tax
+    return {
+        'net_cents': net,
+        'tax_cents': tax,
+        'gross_cents': gross,
+        'deprecated_gross_v0': gross,
+    }
+"""
+
+DEBT_SHIM_SETTLEMENT_ROUTER_SOURCE = """def _compat_fee_fallback(gross_val):
+    return int(gross_val)
+
+def route_settlement(taxed_quote, fee_bps):
+    gross = int(taxed_quote['gross_cents'])
+    tax = int(taxed_quote['tax_cents'])
+    net = int(taxed_quote['net_cents'])
+    fee = (net * int(fee_bps)) // 10000
+    payout = net - fee
+    return {
+        'gross_cents': gross,
+        'platform_fee_cents': fee,
+        'tax_reserve_cents': tax,
+        'merchant_payout_cents': payout,
+        'shim_payout_cents': payout,
+    }
+"""
+
+
+def catalyst_fixture(seed: int) -> dict[str, Any]:
+    """Construct the 3-module codebase state after iterative feature tickets (t = 1, 2, 3)."""
+    kind = (
+        "multi_ticket_catalyst_debt_breach",
+        "infeasible_catalyst_budget_lock",
+        "clean_catalyst_control",
+    )[seed % 3]
+    if kind == "multi_ticket_catalyst_debt_breach":
+        sources = {
+            "pricing": DEBT_SHIM_PRICING_SOURCE,
+            "tax_engine": DEBT_SHIM_TAX_ENGINE_SOURCE,
+            "settlement_router": DEBT_SHIM_SETTLEMENT_ROUTER_SOURCE,
+        }
+        previous_catalyst_debt = 4
+        infeasible = None
+        locked_workers: list[str] = []
+    elif kind == "infeasible_catalyst_budget_lock":
+        sources = {
+            "pricing": DEBT_SHIM_PRICING_SOURCE,
+            "tax_engine": DEBT_SHIM_TAX_ENGINE_SOURCE,
+            "settlement_router": DEBT_SHIM_SETTLEMENT_ROUTER_SOURCE,
+        }
+        previous_catalyst_debt = 4
+        infeasible = {
+            "locked_legacy_consumers_require_all_shims": True,
+            "minimum_required_shim_symbols": 6,
+            "global_catalyst_ceiling": 4,
+            "reason": (
+                "Immutable external legacy callers lock all 6 compatibility shims "
+                "(_legacy_discount_shim, legacy_subtotal_cents, _deprecated_tax_hook, "
+                "deprecated_gross_v0, _compat_fee_fallback, shim_payout_cents -> C_t >= 6) "
+                "while governance enforces global catalyst complexity ceiling tau_cat = 4."
+            ),
+        }
+        locked_workers = ["worker-0"]
+    else:
+        sources = {
+            "pricing": CANONICAL_PRICING_SOURCE,
+            "tax_engine": CANONICAL_TAX_SOURCE,
+            "settlement_router": CANONICAL_SETTLEMENT_SOURCE,
+        }
+        previous_catalyst_debt = 0
+        infeasible = None
+        locked_workers = []
+
+    return {
+        "seed": seed,
+        "kind": kind,
+        "ticket_id": "ticket_3_conservation_and_rejuvenation",
+        "previous_catalyst_debt": previous_catalyst_debt,
+        "per_ticket_local_tolerance": 2,
+        "global_catalyst_ceiling": 4,
+        "sources": sources,
+        "locked_workers": locked_workers,
+        "infeasible_constraint": infeasible,
+        "escalations": {},
+    }
+
+
+class CatalystCodeWorkspace(CodeWorkspace):
+    """Sandboxed 3-agent Python codebase workspace tracking iterative feature-ticket catalyst state."""
+
+    def inspect_module_debt(self, module_name: str, src: str) -> dict[str, Any]:
+        spec = next(
+            s
+            for s in StreamingCodebaseCatalystEvolutionMonitor.CANONICAL_CATALYST_MODULE_SPEC.values()
+            if s["module"] == module_name
+        )
+        local_res = run_local_unit_tests(module_name, src)
+        sample_out = local_res.get("sample_output") if isinstance(local_res, dict) else None
+        return StreamingCodebaseCatalystEvolutionMonitor.inspect_module_catalyst_debt(
+            module_name,
+            src,
+            sample_out if isinstance(sample_out, dict) else None,
+            spec["function"],
+            spec["return_keys"],
+        )
+
+    def tool(self, worker: str, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        if worker not in WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            base = super().tool(worker, name, arguments)
+            own_src = self.state["sources"][module_name]
+            base["ticket_id"] = self.state.get("ticket_id", "ticket_3_conservation_and_rejuvenation")
+            base["per_ticket_local_tolerance"] = self.state.get("per_ticket_local_tolerance", 2)
+            base["global_catalyst_ceiling"] = self.state.get("global_catalyst_ceiling", 4)
+            base["module_catalyst_debt_report"] = self.inspect_module_debt(module_name, own_src)
+            return base
+        return super().tool(worker, name, arguments)
+
 

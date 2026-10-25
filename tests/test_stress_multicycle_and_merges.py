@@ -37,6 +37,7 @@ from lggr.streaming import (
     StreamingCoalitionalAttributionMonitor,
     StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
+    StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
@@ -4953,6 +4954,55 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_iterative_codebase_feature_evolution_catalyst_debt_and_rejuvenation_audit(self) -> None:
+        """Verify Theorem 96: multi-round codebase feature-evolution catalyst technical-debt & rejuvenation."""
+        mon = StreamingCodebaseCatalystEvolutionMonitor(
+            scope_id="unit-codebase-catalyst-evolution-scope",
+        )
+        obs = mon.record_three_phase_codebase_catalyst_audit(
+            "codebase-catalyst-eval-01",
+        )
+        self.assertEqual(obs["uniform_wear_ticket_ceiling"], 2)
+        self.assertEqual(obs["phase_1_terminal_debt"], 6)
+        self.assertEqual(obs["phase_1_max_debt"], 6)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CATALYST_TECHNICAL_DEBT_CEILING_BREACH_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "REJUVENATE_CATALYST_PURGE_SHIMS",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "REJUVENATE_CATALYST_PURGE_SHIMS",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "REJUVENATE_CATALYST_PURGE_SHIMS",
+        )
+
+        self.assertEqual(obs["phase_2_terminal_debt"], 4)
+        self.assertEqual(obs["phase_2_max_debt"], 6)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "LATE_CATALYST_CLEANUP_PREFIX_BREACH_LGGR")
+
+        self.assertEqual(obs["phase_3_pre_rejuvenation_debt"], 4)
+        self.assertEqual(obs["phase_3_terminal_debt"], 0)
+        self.assertEqual(obs["phase_3_max_debt"], 4)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["current_catalyst_debt"], 0)
+        self.assertEqual(receipt["max_catalyst_debt_seen"], 4)
 
 
 if __name__ == "__main__":

@@ -3652,4 +3652,62 @@ theorem diamond_codebase_pullback_mediator_contract_synthesis_audit :
   · intro hpair
     refine ⟨by omega, by omega⟩
 
+/-- 96. Multi-round iterative codebase feature-evolution catalyst technical-debt drift and
+    scheduled rejuvenation audit:
+    1. Symbolic constructor-catalyst technical-debt telescoping and rejuvenation ceiling identity:
+       - For any initial catalyst debt `c0` and 3 ticket wear deltas `d1 d2 d3`,
+         `(((c0 + d1) + d2) + d3) - c0 = d1 + d2 + d3`;
+       - Under uniform positive per-ticket shim wear `d > 0` and global maintainability ceiling
+         `tau_cat = 2 * d`, 3 unscheduled tickets reach `3 * d > tau_cat`, whereas a scheduled
+         rejuvenation step `d3 = -2 * d` at ticket 3 restores `(d + d) + (-2 * d) = 0 ≤ tau_cat`;
+    2. Concrete 3-phase iterative codebase evolution audit (`pricing`, `tax_engine`,
+       `settlement_router`, `tau_step = 2`, `tau_cat = 4`, cycle ceiling `N_max = 2`):
+       - Phase 1 (Unscheduled technical-debt accumulation across 3 feature tickets `+2, +2, +2`):
+         every ticket passes local unit and functional tests with per-ticket wear `|δ_t| = 2 ≤ 2`
+         (`L_unsched = 1`), yet ticket 3 breaches the global maintainability ceiling `C_3 = 6 > 4`
+         (`Eg_unsched = 0`, `Δ_{E,unsched} = -1`);
+       - Phase 2 (Late post-breach cleanup `+2, +2, +2, -2`):
+         terminal debt returns to `C_4 = 4 ≤ 4` (`L_late = 1`), yet the prefix peak at ticket 3
+         already breached `max_t C_t = 6 > 4` (`Eg_late = 0`, `Δ_{E,late} = -1`);
+       - Phase 3 (Scheduled catalyst rejuvenation at ticket 3 `+2, +2, -4` with E2E settlement
+         conservation `873 + 27 + 180 = 1080`):
+         `max_t C_t = 4 ≤ 4`, `C_3 = 0 ≤ 4` (`L_rejuv = 1`, `Eg_rejuv = 1`, `Δ_{E,rejuv} = 0`). -/
+theorem iterative_codebase_feature_evolution_catalyst_debt_and_rejuvenation_audit :
+    (∀ c0 d1 d2 d3 d : Int,
+      (((c0 + d1) + d2) + d3) - c0 = d1 + d2 + d3 ∧
+      (d > 0 → (d + d + d > 2 * d ∧ (d + d) + (-2 * d) = 0 ∧ 0 ≤ 2 * d))) ∧
+    (let tau_step : Int := 2;
+     let tau_cat : Int := 4;
+     let c1_p1 : Int := 2;
+     let c2_p1 : Int := 4;
+     let c3_p1 : Int := 6;
+     let peak_p1 : Int := 6;
+     let term_p2 : Int := 4;
+     let peak_p2 : Int := 6;
+     let c1_p3 : Int := 2;
+     let c2_p3 : Int := 4;
+     let c3_p3 : Int := 0;
+     let peak_p3 : Int := 4;
+     let payout_p3 : Int := 873;
+     let fee_p3 : Int := 27;
+     let tax_p3 : Int := 180;
+     let gross_p3 : Int := 1080;
+     let l_unsched := if (c1_p1 ≤ tau_step) ∧ (c2_p1 - c1_p1 ≤ tau_step) ∧ (c3_p1 - c2_p1 ≤ tau_step) then (1 : Int) else 0;
+     let eg_unsched := if (l_unsched = 1) ∧ (peak_p1 ≤ tau_cat) then (1 : Int) else 0;
+     let defect_unsched := eg_unsched - l_unsched;
+     let l_late := if (term_p2 ≤ tau_cat) ∧ (peak_p2 = 6) then (1 : Int) else 0;
+     let eg_late := if (l_late = 1) ∧ (peak_p2 ≤ tau_cat) then (1 : Int) else 0;
+     let defect_late := eg_late - l_late;
+     let l_rejuv := if (c1_p3 = 2) ∧ (c2_p3 = 4) ∧ (c3_p3 = 0) ∧ (payout_p3 + fee_p3 + tax_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_rejuv := if (l_rejuv = 1) ∧ (peak_p3 ≤ tau_cat) ∧ (c3_p3 ≤ tau_cat) then (1 : Int) else 0;
+     let defect_rejuv := eg_rejuv - l_rejuv;
+     (l_unsched = 1 ∧ eg_unsched = 0 ∧ defect_unsched = -1) ∧
+     (l_late = 1 ∧ eg_late = 0 ∧ defect_late = -1) ∧
+     (l_rejuv = 1 ∧ eg_rejuv = 1 ∧ defect_rejuv = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro c0 d1 d2 d3 d
+  refine ⟨by omega, ?_⟩
+  intro hd
+  refine ⟨by omega, ⟨by omega, by omega⟩⟩
+
 end LggrVIII

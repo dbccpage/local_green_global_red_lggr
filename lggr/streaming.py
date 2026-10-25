@@ -6,6 +6,7 @@ AuthorityEffect: None. Replay and online evidence verification only.
 """
 from __future__ import annotations
 
+import ast
 from collections import deque
 from fractions import Fraction
 import json
@@ -17807,6 +17808,668 @@ class StreamingDiamondCodebasePullbackMonitor:
             "evaluations": self.evaluations,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCodebaseCatalystEvolutionMonitor:
+    """Multi-round iterative codebase feature-evolution catalyst technical-debt drift
+    and scheduled rejuvenation monitor (Theorem 96).
+
+    Combines ``StreamingCatalystDegradationMonitor``, ``StreamingCatalystRejuvenationScheduleMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across a 3-module
+    shared codebase evolving over sequential feature tickets (t = 1, 2, 3):
+      - ``worker-0`` (``pricing.py``): ``compute_quote(items, discount_bps)`` ->
+        canonical keys ``['subtotal_cents', 'discount_cents', 'net_cents']``
+      - ``worker-1`` (``tax_engine.py``): ``apply_tax(quote, tax_bps)`` ->
+        canonical keys ``['net_cents', 'tax_cents', 'gross_cents']``
+      - ``worker-2`` (``settlement_router.py``): ``route_settlement(taxed_quote, fee_bps)`` ->
+        canonical keys ``['gross_cents', 'platform_fee_cents', 'tax_reserve_cents', 'merchant_payout_cents']``
+
+    Measures persistent workspace catalyst technical-debt state C_t directly from each module's
+    Python AST and runtime output dictionary:
+      - ``dead_helper_functions``: top-level ``def`` functions not reachable from the canonical
+        module entrypoint function via AST call edges.
+      - ``deprecated_alias_keys``: extra/deprecated dictionary keys emitted in the runtime return
+        payload outside the canonical interface schema.
+      - ``module_catalyst_debt`` = ``len(dead_helper_functions) + len(deprecated_alias_keys)``.
+      - ``workspace_catalyst_debt`` C_t = sum of ``module_catalyst_debt`` across all 3 modules.
+    """
+
+    CANONICAL_CATALYST_MODULE_SPEC: dict[str, dict[str, Any]] = {
+        "worker-0": {
+            "module": "pricing",
+            "function": "compute_quote",
+            "params": ["items", "discount_bps"],
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+        },
+        "worker-1": {
+            "module": "tax_engine",
+            "function": "apply_tax",
+            "params": ["quote", "tax_bps"],
+            "return_keys": ["net_cents", "tax_cents", "gross_cents"],
+        },
+        "worker-2": {
+            "module": "settlement_router",
+            "function": "route_settlement",
+            "params": ["taxed_quote", "fee_bps"],
+            "return_keys": [
+                "gross_cents",
+                "platform_fee_cents",
+                "tax_reserve_cents",
+                "merchant_payout_cents",
+            ],
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        per_ticket_local_tolerance: int = 2,
+        global_catalyst_ceiling: int = 4,
+        scope_id: str = "streaming-codebase-catalyst-evolution-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        if int(per_ticket_local_tolerance) <= 0 or int(global_catalyst_ceiling) <= 0:
+            raise ValidationError("per_ticket_local_tolerance and global_catalyst_ceiling must be positive")
+        self.per_ticket_local_tolerance = int(per_ticket_local_tolerance)
+        self.global_catalyst_ceiling = int(global_catalyst_ceiling)
+        self.current_catalyst_debt = 0
+        self.max_catalyst_debt_seen = 0
+        self.interface_monitor = StreamingCodebaseInterfaceMergeMonitor(
+            scope_id=f"{self.scope_id}-interface"
+        )
+        self.catalyst_monitor = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=0,
+            catalyst_tolerance=self.global_catalyst_ceiling,
+            per_cycle_local_tolerance=self.per_ticket_local_tolerance,
+            scope_id=f"{self.scope_id}-catalyst",
+        )
+        self.schedule_monitor = StreamingCatalystRejuvenationScheduleMonitor(
+            scope_id=f"{self.scope_id}-schedule"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.ticket_evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @classmethod
+    def inspect_module_catalyst_debt(
+        cls,
+        module_name: str,
+        source_text: str,
+        runtime_output: Mapping[str, Any] | None,
+        canonical_function: str,
+        canonical_return_keys: Sequence[str],
+    ) -> dict[str, Any]:
+        """Inspect a Python module's AST and runtime return payload for catalyst technical debt."""
+        mname = text(module_name, "module_name")
+        src = str(source_text)
+        fn_defs: dict[str, ast.FunctionDef] = {}
+        try:
+            tree = ast.parse(src, filename=f"{mname}.py")
+            for node in tree.body:
+                if isinstance(node, ast.FunctionDef):
+                    fn_defs[node.name] = node
+        except SyntaxError:
+            return {
+                "module": mname,
+                "canonical_function": canonical_function,
+                "dead_helper_functions": [],
+                "deprecated_alias_keys": [],
+                "module_catalyst_debt": 0,
+            }
+
+        reachable: set[str] = set()
+        if canonical_function in fn_defs:
+            queue = [canonical_function]
+            reachable.add(canonical_function)
+            while queue:
+                curr = queue.pop(0)
+                fnode = fn_defs.get(curr)
+                if fnode is None:
+                    continue
+                for sub in ast.walk(fnode):
+                    if isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name):
+                        callee = sub.func.id
+                        if callee in fn_defs and callee not in reachable:
+                            reachable.add(callee)
+                            queue.append(callee)
+
+        dead_helpers = sorted(name for name in fn_defs if name not in reachable)
+        canonical_set = set(canonical_return_keys)
+        deprecated_keys: list[str] = []
+        if isinstance(runtime_output, Mapping):
+            deprecated_keys = sorted(str(k) for k in runtime_output.keys() if str(k) not in canonical_set)
+
+        debt = len(dead_helpers) + len(deprecated_keys)
+        return {
+            "module": mname,
+            "canonical_function": canonical_function,
+            "dead_helper_functions": dead_helpers,
+            "deprecated_alias_keys": deprecated_keys,
+            "module_catalyst_debt": debt,
+        }
+
+    def reset_trajectory(self, initial_debt: int = 0) -> None:
+        """Reset trajectory state before starting a new multi-ticket evolution arm."""
+        self.current_catalyst_debt = int(initial_debt)
+        self.max_catalyst_debt_seen = int(initial_debt)
+        self.catalyst_monitor = StreamingCatalystDegradationMonitor(
+            initial_catalyst_state=0,
+            catalyst_tolerance=self.global_catalyst_ceiling,
+            per_cycle_local_tolerance=self.per_ticket_local_tolerance,
+            scope_id=f"{self.scope_id}-catalyst-{len(self.ticket_evaluations)}",
+        )
+        if initial_debt > 0:
+            self.catalyst_monitor.current_catalyst = Fraction(int(initial_debt))
+            self.catalyst_monitor.cumulative_wear = Fraction(int(initial_debt))
+            self.catalyst_monitor.max_catalyst_deviation = Fraction(int(initial_debt))
+
+    def evaluate_ticket_step(
+        self,
+        evaluation_id: str,
+        *,
+        ticket_id: str,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        previous_catalyst_debt: int | None = None,
+        rejuvenation_scheduled: bool = False,
+        infeasible_constraint: dict[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit a single feature-ticket patch step for both functional E2E merge and catalyst debt."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        tid = text(ticket_id, "ticket_id")
+        mid = text(model_id, "model_id")
+
+        if previous_catalyst_debt is not None:
+            self.current_catalyst_debt = int(previous_catalyst_debt)
+            if self.current_catalyst_debt > self.max_catalyst_debt_seen:
+                self.max_catalyst_debt_seen = self.current_catalyst_debt
+            self.catalyst_monitor.current_catalyst = Fraction(self.current_catalyst_debt)
+            self.catalyst_monitor.cumulative_wear = Fraction(self.current_catalyst_debt)
+            if Fraction(self.current_catalyst_debt) > self.catalyst_monitor.max_catalyst_deviation:
+                self.catalyst_monitor.max_catalyst_deviation = Fraction(self.current_catalyst_debt)
+
+        merge_eval = self.interface_monitor.evaluate_codebase_merge(
+            f"{eval_id}_merge",
+            sources=sources,
+            local_test_results=local_test_results,
+            infeasible_constraint=infeasible_constraint,
+            model_id=mid,
+        )
+        trace = merge_eval["integration_trace"]
+        runtime_outputs = {
+            "pricing": trace.get("quote_output"),
+            "tax_engine": trace.get("tax_output"),
+            "settlement_router": trace.get("settlement_output"),
+        }
+
+        module_debt_breakdown: dict[str, dict[str, Any]] = {}
+        total_debt = 0
+        for wid, spec in self.CANONICAL_CATALYST_MODULE_SPEC.items():
+            mname = spec["module"]
+            d_info = self.inspect_module_catalyst_debt(
+                mname,
+                sources.get(mname, ""),
+                runtime_outputs.get(mname),
+                spec["function"],
+                spec["return_keys"],
+            )
+            module_debt_breakdown[mname] = d_info
+            total_debt += int(d_info["module_catalyst_debt"])
+
+        prev_debt = self.current_catalyst_debt
+        wear_delta = total_debt - prev_debt
+        self.current_catalyst_debt = total_debt
+        if total_debt > self.max_catalyst_debt_seen:
+            self.max_catalyst_debt_seen = total_debt
+
+        functional_e2e_ok = bool(merge_eval["global_green"] == 1)
+        # Positive step wear must be within per_ticket_local_tolerance; negative wear is rejuvenation cleanup
+        effective_wear_for_cycle = (
+            wear_delta
+            if wear_delta >= 0
+            else -min(abs(wear_delta), self.per_ticket_local_tolerance)
+        )
+        cat_cycle = self.catalyst_monitor.record_cycle(
+            f"{eval_id}_{tid}",
+            f"ticket_in_{prev_debt}",
+            f"ticket_out_{total_debt}",
+            functional_e2e_ok,
+            effective_wear_for_cycle,
+        )
+        # Synchronize exact catalyst state in case rejuvenation purged more than 1 step's wear at once
+        self.catalyst_monitor.current_catalyst = Fraction(total_debt)
+        self.catalyst_monitor.cumulative_wear = Fraction(total_debt)
+        if Fraction(self.max_catalyst_debt_seen) > self.catalyst_monitor.max_catalyst_deviation:
+            self.catalyst_monitor.max_catalyst_deviation = Fraction(self.max_catalyst_debt_seen)
+
+        step_wear_ok = wear_delta <= self.per_ticket_local_tolerance
+        local_unit_all_ok = all(
+            bool(local_test_results.get(m, False))
+            for m in ("pricing", "tax_engine", "settlement_router")
+        )
+        l_green = 1 if (local_unit_all_ok and functional_e2e_ok and step_wear_ok) else 0
+        within_ceiling = (
+            total_debt <= self.global_catalyst_ceiling
+            and self.max_catalyst_debt_seen <= self.global_catalyst_ceiling
+        )
+        rejuv_target_met = (not rejuvenation_scheduled) or (total_debt == 0)
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and within_ceiling
+                and rejuv_target_met
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "ticket_id": tid,
+                "local_unit_all_ok": local_unit_all_ok,
+                "functional_e2e_ok": functional_e2e_ok,
+                "step_wear_ok": step_wear_ok,
+            },
+            {
+                "catalyst_coherent": eg_green == 1,
+                "total_catalyst_debt": total_debt,
+                "max_catalyst_debt_seen": self.max_catalyst_debt_seen,
+            },
+        )
+
+        role_directives = self._build_catalyst_directives(
+            ticket_id=tid,
+            module_debt_breakdown=module_debt_breakdown,
+            total_catalyst_debt=total_debt,
+            global_catalyst_ceiling=self.global_catalyst_ceiling,
+            rejuvenation_scheduled=rejuvenation_scheduled,
+            merge_eval=merge_eval,
+            infeasible_constraint=infeasible_constraint,
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_CATALYST_SPECIFICATION_CONTRADICTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not functional_e2e_ok:
+            status = str(merge_eval["status"])
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1 and total_debt == 0:
+            status = "CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif eg_green == 1:
+            status = "BOUNDED_CATALYST_DEBT_WITHIN_CEILING_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif total_debt <= self.global_catalyst_ceiling and (
+            self.max_catalyst_debt_seen > self.global_catalyst_ceiling
+            or (rejuvenation_scheduled and total_debt > 0)
+        ):
+            status = "LATE_CATALYST_CLEANUP_PREFIX_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CATALYST_TECHNICAL_DEBT_CEILING_BREACH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "ticket_id": tid,
+            "model_id": mid,
+            "previous_catalyst_debt": prev_debt,
+            "catalyst_wear_delta": wear_delta,
+            "total_catalyst_debt": total_debt,
+            "max_catalyst_debt_seen": self.max_catalyst_debt_seen,
+            "per_ticket_local_tolerance": self.per_ticket_local_tolerance,
+            "global_catalyst_ceiling": self.global_catalyst_ceiling,
+            "uniform_wear_ticket_ceiling": self.global_catalyst_ceiling // self.per_ticket_local_tolerance,
+            "rejuvenation_scheduled": bool(rejuvenation_scheduled),
+            "functional_e2e_ok": functional_e2e_ok,
+            "step_wear_within_budget": step_wear_ok,
+            "within_global_catalyst_ceiling": within_ceiling,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "module_debt_breakdown": module_debt_breakdown,
+            "compact_role_directives": role_directives,
+            "interface_merge_evaluation": merge_eval,
+            "catalyst_cycle_record": cat_cycle,
+        }
+        self.ticket_evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_catalyst_directives(
+        cls,
+        *,
+        ticket_id: str,
+        module_debt_breakdown: Mapping[str, Mapping[str, Any]],
+        total_catalyst_debt: int,
+        global_catalyst_ceiling: int,
+        rejuvenation_scheduled: bool,
+        merge_eval: Mapping[str, Any],
+        infeasible_constraint: Mapping[str, Any] | None,
+    ) -> dict[str, dict[str, Any]]:
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "CATALYST_CONFLICT_AUDITOR",
+                    "action": "ESCALATE_INFEASIBLE_CATALYST_BUDGET",
+                    "module": spec["module"],
+                    "ticket_id": ticket_id,
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_CATALYST_MODULE_SPEC.items()
+            }
+
+        functional_ok = bool(merge_eval.get("global_green") == 1)
+        base_directives = dict(merge_eval.get("compact_role_directives", {}))
+
+        needs_rejuvenation = total_catalyst_debt > 0 and (
+            rejuvenation_scheduled or total_catalyst_debt > global_catalyst_ceiling
+        )
+        directives: dict[str, dict[str, Any]] = {}
+        for wid, spec in cls.CANONICAL_CATALYST_MODULE_SPEC.items():
+            mname = spec["module"]
+            d_info = module_debt_breakdown.get(mname, {})
+            dead_fns = list(d_info.get("dead_helper_functions", []))
+            dep_keys = list(d_info.get("deprecated_alias_keys", []))
+            m_debt = int(d_info.get("module_catalyst_debt", 0))
+            base_d = dict(base_directives.get(wid, {}))
+
+            if not functional_ok and base_d.get("action") not in ("NO_CHANGE_REQUIRED", "HOLD_CANONICAL_INTERFACE"):
+                directives[wid] = {
+                    **base_d,
+                    "ticket_id": ticket_id,
+                    "dead_helper_functions_to_purge": dead_fns,
+                    "deprecated_alias_keys_to_purge": dep_keys,
+                }
+            elif needs_rejuvenation and m_debt > 0:
+                directives[wid] = {
+                    "role": "CATALYST_REJUVENATION_REFACTORER",
+                    "action": "REJUVENATE_CATALYST_PURGE_SHIMS",
+                    "ticket_id": ticket_id,
+                    "module": mname,
+                    "function": spec["function"],
+                    "dead_helper_functions_to_purge": dead_fns,
+                    "deprecated_alias_keys_to_purge": dep_keys,
+                    "canonical_return_keys": list(spec["return_keys"]),
+                    "instruction": (
+                        f"Delete dead helper functions {dead_fns} and remove deprecated alias return keys "
+                        f"{dep_keys} from `{mname}.py` while keeping `{spec['function']}` returning ONLY "
+                        f"canonical keys {list(spec['return_keys'])}."
+                    ),
+                }
+            else:
+                directives[wid] = {
+                    "role": "VERIFIED_CLEAN_MODULE_OWNER",
+                    "action": "HOLD_CLEAN_CANONICAL_MODULE",
+                    "ticket_id": ticket_id,
+                    "module": mname,
+                    "function": spec["function"],
+                    "canonical_return_keys": list(spec["return_keys"]),
+                    "module_catalyst_debt": m_debt,
+                }
+        return directives
+
+    def record_three_phase_codebase_catalyst_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase multi-ticket codebase catalyst technical-debt & rejuvenation audit (Theorem 96):
+        - Phase 1 (Unscheduled Technical-Debt Accumulation across 3 Feature Tickets: +2, +2, +2 -> C_3 = 6 > 4):
+          Each ticket passes local unit tests, E2E functional conservation (`873 + 27 + 180 = 1080`),
+          and per-ticket step wear (`|delta_t| = 2 <= 2`, `L_unsched = 1`), yet cumulative dead helpers
+          and deprecated alias keys breach the global maintainability ceiling (`C_3 = 6 > 4`,
+          `Eg_unsched = 0`, `defect = -1`, `CATALYST_TECHNICAL_DEBT_CEILING_BREACH_NGD_LGGR`).
+        - Phase 2 (Late Post-Breach Cleanup at Step 4: +2, +2, +2, -2 -> max C_t = 6 > 4, C_4 = 4):
+          Removing 2 debt items after Ticket 3 already breached the ceiling restores terminal debt
+          `C_4 = 4 <= 4` (`L_late = 1`), yet the trajectory prefix peak `max_t C_t = 6 > 4` remains
+          obstructed (`Eg_late = 0`, `defect = -1`, `LATE_CATALYST_CLEANUP_PREFIX_BREACH_LGGR`).
+        - Phase 3 (Scheduled Catalyst Rejuvenation at Ceiling N_max = 2: +2, +2, -4 -> max C_t = 4 <= 4, C_3 = 0):
+          Issuing `REJUVENATE_CATALYST_PURGE_SHIMS` at Ticket 3 purges all dead helpers and deprecated
+          alias keys across `pricing.py`, `tax_engine.py`, and `settlement_router.py` while satisfying
+          E2E settlement conservation (`L_rejuv = 1`, `Eg_rejuv = 1`, `defect = 0`,
+          `CODEBASE_CATALYST_REJUVENATION_COHERENT_LGGG`).
+        """
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_pricing_clean = (
+            "def compute_quote(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_cents': net}\n"
+        )
+        src_pricing_debt = (
+            "def _legacy_discount_shim(raw_subtotal):\n"
+            "    return int(raw_subtotal)\n\n"
+            "def compute_quote(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'legacy_subtotal_cents': subtotal,\n"
+            "    }\n"
+        )
+        src_tax_clean = (
+            "def apply_tax(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': gross}\n"
+        )
+        src_tax_debt = (
+            "def _deprecated_tax_hook(net_val):\n"
+            "    return int(net_val)\n\n"
+            "def apply_tax(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'deprecated_gross_v0': gross,\n"
+            "    }\n"
+        )
+        src_router_clean = (
+            "def route_settlement(taxed_quote, fee_bps):\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = net - fee\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+        src_router_debt = (
+            "def _compat_fee_fallback(gross_val):\n"
+            "    return int(gross_val)\n\n"
+            "def route_settlement(taxed_quote, fee_bps):\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = net - fee\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'shim_payout_cents': payout,\n"
+            "    }\n"
+        )
+
+        all_local_green = {"pricing": True, "tax_engine": True, "settlement_router": True}
+
+        # Phase 1: Unscheduled technical-debt accumulation across 3 tickets (+2, +2, +2 -> C_3 = 6 > 4)
+        self.reset_trajectory(0)
+        self.evaluate_ticket_step(
+            f"{eval_id}_p1_t1",
+            ticket_id="ticket_1_pricing_shim",
+            sources={
+                "pricing": src_pricing_debt,
+                "tax_engine": src_tax_clean,
+                "settlement_router": src_router_clean,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        self.evaluate_ticket_step(
+            f"{eval_id}_p1_t2",
+            ticket_id="ticket_2_tax_shim",
+            sources={
+                "pricing": src_pricing_debt,
+                "tax_engine": src_tax_debt,
+                "settlement_router": src_router_clean,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p1_t3 = self.evaluate_ticket_step(
+            f"{eval_id}_p1_t3",
+            ticket_id="ticket_3_unrejuvenated_router_shim",
+            sources={
+                "pricing": src_pricing_debt,
+                "tax_engine": src_tax_debt,
+                "settlement_router": src_router_debt,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        # Phase 2: Late post-breach cleanup at step 4 (+2, +2, +2, -2 -> max C_t = 6 > 4, C_4 = 4)
+        p2_t4 = self.evaluate_ticket_step(
+            f"{eval_id}_p2_t4_late",
+            ticket_id="ticket_4_late_partial_cleanup",
+            sources={
+                "pricing": src_pricing_debt,
+                "tax_engine": src_tax_debt,
+                "settlement_router": src_router_clean,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        # Phase 3: Scheduled catalyst rejuvenation at Ticket 3 (+2, +2, -4 -> max C_t = 4 <= 4, C_3 = 0)
+        self.reset_trajectory(0)
+        self.evaluate_ticket_step(
+            f"{eval_id}_p3_t1",
+            ticket_id="ticket_1_pricing_shim",
+            sources={
+                "pricing": src_pricing_debt,
+                "tax_engine": src_tax_clean,
+                "settlement_router": src_router_clean,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3_t2 = self.evaluate_ticket_step(
+            f"{eval_id}_p3_t2",
+            ticket_id="ticket_2_ceiling_reached",
+            sources={
+                "pricing": src_pricing_debt,
+                "tax_engine": src_tax_debt,
+                "settlement_router": src_router_clean,
+            },
+            local_test_results=all_local_green,
+            rejuvenation_scheduled=False,
+            model_id=mid,
+        )
+        p3_t3 = self.evaluate_ticket_step(
+            f"{eval_id}_p3_t3_rejuvenated",
+            ticket_id="ticket_3_scheduled_catalyst_rejuvenation",
+            sources={
+                "pricing": src_pricing_clean,
+                "tax_engine": src_tax_clean,
+                "settlement_router": src_router_clean,
+            },
+            local_test_results=all_local_green,
+            rejuvenation_scheduled=True,
+            model_id=mid,
+        )
+
+        sched_eval = self.schedule_monitor.evaluate_rejuvenation_schedules(
+            f"{eval_id}_schedule",
+            catalyst_tolerance=self.global_catalyst_ceiling,
+            per_cycle_wear=self.per_ticket_local_tolerance,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "uniform_wear_ticket_ceiling": self.global_catalyst_ceiling // self.per_ticket_local_tolerance,
+                "phase_1_terminal_debt": p1_t3["total_catalyst_debt"],
+                "phase_1_max_debt": p1_t3["max_catalyst_debt_seen"],
+                "phase_1_local_green": p1_t3["local_green"],
+                "phase_1_global_green": p1_t3["global_green"],
+                "phase_1_defect": p1_t3["defect"],
+                "phase_1_status": p1_t3["status"],
+                "phase_1_directives": p1_t3["compact_role_directives"],
+                "phase_2_terminal_debt": p2_t4["total_catalyst_debt"],
+                "phase_2_max_debt": p2_t4["max_catalyst_debt_seen"],
+                "phase_2_local_green": p2_t4["local_green"],
+                "phase_2_global_green": p2_t4["global_green"],
+                "phase_2_defect": p2_t4["defect"],
+                "phase_2_status": p2_t4["status"],
+                "phase_3_pre_rejuvenation_debt": p3_t2["total_catalyst_debt"],
+                "phase_3_terminal_debt": p3_t3["total_catalyst_debt"],
+                "phase_3_max_debt": p3_t3["max_catalyst_debt_seen"],
+                "phase_3_local_green": p3_t3["local_green"],
+                "phase_3_global_green": p3_t3["global_green"],
+                "phase_3_defect": p3_t3["defect"],
+                "phase_3_status": p3_t3["status"],
+                "phase_3_integration_trace": p3_t3["interface_merge_evaluation"]["integration_trace"],
+                "rejuvenation_schedule_evaluation": sched_eval,
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.ticket_evaluations:
+            raise ValidationError("at least one codebase catalyst ticket evaluation must be recorded")
+        n = len(self.ticket_evaluations)
+        lggr_count = sum(1 for e in self.ticket_evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.ticket_evaluations if e["global_green"] == 1)
+        last = self.ticket_evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_catalyst_evolution.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "ticket_evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "per_ticket_local_tolerance": self.per_ticket_local_tolerance,
+            "global_catalyst_ceiling": self.global_catalyst_ceiling,
+            "current_catalyst_debt": self.current_catalyst_debt,
+            "max_catalyst_debt_seen": self.max_catalyst_debt_seen,
+            "catalyst_degradation_receipt": self.catalyst_monitor.get_receipt(),
+            "interface_merge_receipt": self.interface_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "ticket_evaluations": self.ticket_evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
 
 
 
