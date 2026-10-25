@@ -1,0 +1,21 @@
+{
+  "ceiling_usd": "10",
+  "prior_pilot_usd": "0.57951748",
+  "runs": [
+    {
+      "path": "development",
+      "status": "settled",
+      "charged_or_reserved_usd": "0.17694535"
+    },
+    {
+      "path": "evaluation",
+      "status": "settled",
+      "charged_or_reserved_usd": "2.57415122"
+    },
+    {
+      "path": "continuation",
+      "status": "settled",
+      "charged_or_reserved_usd": "0.08244952"
+    }
+  ]
+}

@@ -1,0 +1,1288 @@
+{
+  "schema": "lggr.provider_generation_crosscheck.v1",
+  "queried_at_utc": "2026-10-25T01:50:21.819885+00:00",
+  "read_only_endpoint": "https://openrouter.ai/api/v1/generation",
+  "canonical_alias_source": "https://openrouter.ai/api/v1/models",
+  "canonical_aliases": {
+    "anthropic/claude-haiku-4.5": "anthropic/claude-4.5-haiku-20251001",
+    "google/gemini-2.5-flash-lite": "google/gemini-2.5-flash-lite",
+    "openai/gpt-4o-mini": "openai/gpt-4o-mini"
+  },
+  "response_count": 67,
+  "all_matched": true,
+  "generations": [
+    {
+      "response_id": "gen-1792892916-SNrdyysAptrLe0o5Ph6m",
+      "generation": {
+        "id": "gen-1792892916-SNrdyysAptrLe0o5Ph6m",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 7.605e-05,
+        "tokens_prompt": 674,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 467,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:48:36.663Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892916-SwL2Q8EaOZscMdNzTvk5",
+      "generation": {
+        "id": "gen-1792892916-SwL2Q8EaOZscMdNzTvk5",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.001485,
+        "tokens_prompt": 674,
+        "tokens_completion": 25,
+        "native_tokens_prompt": 1210,
+        "native_tokens_completion": 55,
+        "created_at": "2026-10-25T01:48:36.667Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892916-suYZaoOlMu1pZQZY2WwO",
+      "generation": {
+        "id": "gen-1792892916-suYZaoOlMu1pZQZY2WwO",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 7.33e-05,
+        "tokens_prompt": 674,
+        "tokens_completion": 35,
+        "native_tokens_prompt": 589,
+        "native_tokens_completion": 36,
+        "created_at": "2026-10-25T01:48:36.662Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892916-QlUyuHC1iscBvONZgEeX",
+      "generation": {
+        "id": "gen-1792892916-QlUyuHC1iscBvONZgEeX",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 7.605e-05,
+        "tokens_prompt": 674,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 467,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:48:36.672Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892916-urjnK6TfZWQ8vjMWc4NL",
+      "generation": {
+        "id": "gen-1792892916-urjnK6TfZWQ8vjMWc4NL",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.001485,
+        "tokens_prompt": 674,
+        "tokens_completion": 25,
+        "native_tokens_prompt": 1210,
+        "native_tokens_completion": 55,
+        "created_at": "2026-10-25T01:48:36.664Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892918-0aZ4vnLvXP45sPnIiBqR",
+      "generation": {
+        "id": "gen-1792892918-0aZ4vnLvXP45sPnIiBqR",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.000228,
+        "tokens_prompt": 1134,
+        "tokens_completion": 54,
+        "native_tokens_prompt": 1224,
+        "native_tokens_completion": 74,
+        "created_at": "2026-10-25T01:48:38.083Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892918-PiOzIYJPfBRRP9Y0A6if",
+      "generation": {
+        "id": "gen-1792892918-PiOzIYJPfBRRP9Y0A6if",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.003352,
+        "tokens_prompt": 1157,
+        "tokens_completion": 116,
+        "native_tokens_prompt": 2032,
+        "native_tokens_completion": 264,
+        "created_at": "2026-10-25T01:48:38.1Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892918-m5ddmsQCwMffxyZGKt8Z",
+      "generation": {
+        "id": "gen-1792892918-m5ddmsQCwMffxyZGKt8Z",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.0002643,
+        "tokens_prompt": 1166,
+        "tokens_completion": 164,
+        "native_tokens_prompt": 1415,
+        "native_tokens_completion": 307,
+        "created_at": "2026-10-25T01:48:38.102Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892918-HnKVqVuoQPmMsUIVgRrU",
+      "generation": {
+        "id": "gen-1792892918-HnKVqVuoQPmMsUIVgRrU",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.000228,
+        "tokens_prompt": 1134,
+        "tokens_completion": 54,
+        "native_tokens_prompt": 1224,
+        "native_tokens_completion": 74,
+        "created_at": "2026-10-25T01:48:38.118Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892918-dLu0o5GeapTK9tf7IecX",
+      "generation": {
+        "id": "gen-1792892918-dLu0o5GeapTK9tf7IecX",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.003352,
+        "tokens_prompt": 1157,
+        "tokens_completion": 123,
+        "native_tokens_prompt": 2032,
+        "native_tokens_completion": 264,
+        "created_at": "2026-10-25T01:48:38.11Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892920-p2uVaenQ7DN4cTGEF0r8",
+      "generation": {
+        "id": "gen-1792892920-p2uVaenQ7DN4cTGEF0r8",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0001194,
+        "tokens_prompt": 1211,
+        "tokens_completion": 14,
+        "native_tokens_prompt": 1328,
+        "native_tokens_completion": 27,
+        "created_at": "2026-10-25T01:48:40.987Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892920-th0rdCSGUOu8lEcRccbE",
+      "generation": {
+        "id": "gen-1792892920-th0rdCSGUOu8lEcRccbE",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.00305,
+        "tokens_prompt": 1296,
+        "tokens_completion": 74,
+        "native_tokens_prompt": 2315,
+        "native_tokens_completion": 147,
+        "created_at": "2026-10-25T01:48:40.994Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892921-Trm09AbSZLTRDr1DdoM8",
+      "generation": {
+        "id": "gen-1792892921-Trm09AbSZLTRDr1DdoM8",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.000188,
+        "tokens_prompt": 1354,
+        "tokens_completion": 14,
+        "native_tokens_prompt": 1756,
+        "native_tokens_completion": 31,
+        "created_at": "2026-10-25T01:48:41.005Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892921-IpTSkYTlWIUBw5y5S78N",
+      "generation": {
+        "id": "gen-1792892921-IpTSkYTlWIUBw5y5S78N",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0001194,
+        "tokens_prompt": 1211,
+        "tokens_completion": 14,
+        "native_tokens_prompt": 1328,
+        "native_tokens_completion": 27,
+        "created_at": "2026-10-25T01:48:40.999Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892921-lzBO6oVI3AN5zDQLBItM",
+      "generation": {
+        "id": "gen-1792892921-lzBO6oVI3AN5zDQLBItM",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.003065,
+        "tokens_prompt": 1302,
+        "tokens_completion": 73,
+        "native_tokens_prompt": 2315,
+        "native_tokens_completion": 150,
+        "created_at": "2026-10-25T01:48:40.998Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892923-xRKLhN3XSNM93FvIGWgM",
+      "generation": {
+        "id": "gen-1792892923-xRKLhN3XSNM93FvIGWgM",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00013065,
+        "tokens_prompt": 1322,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 1471,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:48:43.225Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892923-Uouqiu7BM2YxgqNGMFk5",
+      "generation": {
+        "id": "gen-1792892923-Uouqiu7BM2YxgqNGMFk5",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.002894,
+        "tokens_prompt": 1468,
+        "tokens_completion": 33,
+        "native_tokens_prompt": 2589,
+        "native_tokens_completion": 61,
+        "created_at": "2026-10-25T01:48:43.226Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892923-w7q6MLp4gov2J2Zeu5FG",
+      "generation": {
+        "id": "gen-1792892923-w7q6MLp4gov2J2Zeu5FG",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.0002083,
+        "tokens_prompt": 1465,
+        "tokens_completion": 42,
+        "native_tokens_prompt": 1899,
+        "native_tokens_completion": 46,
+        "created_at": "2026-10-25T01:48:43.233Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892923-Wc4KC1BqWUlbMq8rG7K4",
+      "generation": {
+        "id": "gen-1792892923-Wc4KC1BqWUlbMq8rG7K4",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00013065,
+        "tokens_prompt": 1322,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 1471,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:48:43.24Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892923-L0IaHA49rPJLQ8nl3FJy",
+      "generation": {
+        "id": "gen-1792892923-L0IaHA49rPJLQ8nl3FJy",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.002857,
+        "tokens_prompt": 1474,
+        "tokens_completion": 24,
+        "native_tokens_prompt": 2592,
+        "native_tokens_completion": 53,
+        "created_at": "2026-10-25T01:48:43.24Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892924-Uffn0wROfVUrBTy2tTXM",
+      "generation": {
+        "id": "gen-1792892924-Uffn0wROfVUrBTy2tTXM",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00026685,
+        "tokens_prompt": 1863,
+        "tokens_completion": 20,
+        "native_tokens_prompt": 2367,
+        "native_tokens_completion": 29,
+        "created_at": "2026-10-25T01:48:44.739Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892924-boqBGpwappUwGqh7Vlvh",
+      "generation": {
+        "id": "gen-1792892924-boqBGpwappUwGqh7Vlvh",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.004621,
+        "tokens_prompt": 2039,
+        "tokens_completion": 163,
+        "native_tokens_prompt": 3556,
+        "native_tokens_completion": 213,
+        "created_at": "2026-10-25T01:48:44.746Z",
+        "finish_reason": "stop"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892924-Q7QmTx27MXRLGu6VRv0y",
+      "generation": {
+        "id": "gen-1792892924-Q7QmTx27MXRLGu6VRv0y",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00019722,
+        "tokens_prompt": 2044,
+        "tokens_completion": 139,
+        "native_tokens_prompt": 2884,
+        "native_tokens_completion": 173,
+        "created_at": "2026-10-25T01:48:44.741Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892924-nlxbT6xzlUWT7PRGd7Zu",
+      "generation": {
+        "id": "gen-1792892924-nlxbT6xzlUWT7PRGd7Zu",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00026445,
+        "tokens_prompt": 1863,
+        "tokens_completion": 16,
+        "native_tokens_prompt": 2367,
+        "native_tokens_completion": 25,
+        "created_at": "2026-10-25T01:48:44.759Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892924-3BEiQpV5DDw17g2TBdrN",
+      "generation": {
+        "id": "gen-1792892924-3BEiQpV5DDw17g2TBdrN",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.004871,
+        "tokens_prompt": 2035,
+        "tokens_completion": 219,
+        "native_tokens_prompt": 3551,
+        "native_tokens_completion": 264,
+        "created_at": "2026-10-25T01:48:44.758Z",
+        "finish_reason": "stop"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892927-P95PteWKD46PAGcDmk4G",
+      "generation": {
+        "id": "gen-1792892927-P95PteWKD46PAGcDmk4G",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.004055,
+        "tokens_prompt": 2226,
+        "tokens_completion": 22,
+        "native_tokens_prompt": 3790,
+        "native_tokens_completion": 53,
+        "created_at": "2026-10-25T01:48:47.882Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892927-Nz3xtBq7i6GSzmkt80kt",
+      "generation": {
+        "id": "gen-1792892927-Nz3xtBq7i6GSzmkt80kt",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.004101,
+        "tokens_prompt": 2278,
+        "tokens_completion": 22,
+        "native_tokens_prompt": 3836,
+        "native_tokens_completion": 53,
+        "created_at": "2026-10-25T01:48:47.867Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892929-5RLbyGc495wl1dcdUbFx",
+      "generation": {
+        "id": "gen-1792892929-5RLbyGc495wl1dcdUbFx",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.005359,
+        "tokens_prompt": 2786,
+        "tokens_completion": 84,
+        "native_tokens_prompt": 4749,
+        "native_tokens_completion": 122,
+        "created_at": "2026-10-25T01:48:49.522Z",
+        "finish_reason": "stop"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892929-C9MEQhxEYDRfErGfSjvu",
+      "generation": {
+        "id": "gen-1792892929-C9MEQhxEYDRfErGfSjvu",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.005475,
+        "tokens_prompt": 2837,
+        "tokens_completion": 103,
+        "native_tokens_prompt": 4795,
+        "native_tokens_completion": 136,
+        "created_at": "2026-10-25T01:48:49.515Z",
+        "finish_reason": "stop"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892931-LcL2oOG2FzlUcORkcNMW",
+      "generation": {
+        "id": "gen-1792892931-LcL2oOG2FzlUcORkcNMW",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 8.795e-05,
+        "tokens_prompt": 2256,
+        "tokens_completion": 44,
+        "native_tokens_prompt": 3128,
+        "native_tokens_completion": 42,
+        "created_at": "2026-10-25T01:48:51.847Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892931-PHeCeFpcBV2oMchtvHva",
+      "generation": {
+        "id": "gen-1792892931-PHeCeFpcBV2oMchtvHva",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00020415,
+        "tokens_prompt": 1950,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 2473,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:48:51.857Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892931-uVrpEqVvgWjgvLkSfD57",
+      "generation": {
+        "id": "gen-1792892931-uVrpEqVvgWjgvLkSfD57",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.005243,
+        "tokens_prompt": 3014,
+        "tokens_completion": 15,
+        "native_tokens_prompt": 5003,
+        "native_tokens_completion": 48,
+        "created_at": "2026-10-25T01:48:51.861Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892933-ZKC3Dg6rvt2NEmrt3Hfk",
+      "generation": {
+        "id": "gen-1792892933-ZKC3Dg6rvt2NEmrt3Hfk",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00032883,
+        "tokens_prompt": 2866,
+        "tokens_completion": 175,
+        "native_tokens_prompt": 4163,
+        "native_tokens_completion": 196,
+        "created_at": "2026-10-25T01:48:53.136Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892933-dwvvxA6zSttOJadiJEHo",
+      "generation": {
+        "id": "gen-1792892933-dwvvxA6zSttOJadiJEHo",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00037485,
+        "tokens_prompt": 2521,
+        "tokens_completion": 54,
+        "native_tokens_prompt": 3419,
+        "native_tokens_completion": 74,
+        "created_at": "2026-10-25T01:48:53.134Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892933-L2cSWEVFapme2keQYO7S",
+      "generation": {
+        "id": "gen-1792892933-L2cSWEVFapme2keQYO7S",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.007457,
+        "tokens_prompt": 3596,
+        "tokens_completion": 170,
+        "native_tokens_prompt": 6007,
+        "native_tokens_completion": 290,
+        "created_at": "2026-10-25T01:48:53.142Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892936-kJFw0HrnVTJQbVWbc1Zl",
+      "generation": {
+        "id": "gen-1792892936-kJFw0HrnVTJQbVWbc1Zl",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00028545,
+        "tokens_prompt": 2598,
+        "tokens_completion": 14,
+        "native_tokens_prompt": 3523,
+        "native_tokens_completion": 27,
+        "created_at": "2026-10-25T01:48:56.441Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892938-mXQpGkSuzjVVlIZbow1H",
+      "generation": {
+        "id": "gen-1792892938-mXQpGkSuzjVVlIZbow1H",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00016678,
+        "tokens_prompt": 2333,
+        "tokens_completion": 181,
+        "native_tokens_prompt": 3248,
+        "native_tokens_completion": 212,
+        "created_at": "2026-10-25T01:48:58.754Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892938-WizwUWDT0Bkt6NMqzz5l",
+      "generation": {
+        "id": "gen-1792892938-WizwUWDT0Bkt6NMqzz5l",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0002607,
+        "tokens_prompt": 2028,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 2594,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:48:58.762Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892938-QUnCcMylnbR0eUikFKM5",
+      "generation": {
+        "id": "gen-1792892938-QUnCcMylnbR0eUikFKM5",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.00539,
+        "tokens_prompt": 3092,
+        "tokens_completion": 22,
+        "native_tokens_prompt": 5130,
+        "native_tokens_completion": 52,
+        "created_at": "2026-10-25T01:48:58.765Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892940-0m02oesi6NHkDd8ZlazL",
+      "generation": {
+        "id": "gen-1792892940-0m02oesi6NHkDd8ZlazL",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00031553,
+        "tokens_prompt": 3080,
+        "tokens_completion": 251,
+        "native_tokens_prompt": 4452,
+        "native_tokens_completion": 302,
+        "created_at": "2026-10-25T01:49:00.539Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892940-wjAuyck4jBssBaDlD1Hd",
+      "generation": {
+        "id": "gen-1792892940-wjAuyck4jBssBaDlD1Hd",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0003834,
+        "tokens_prompt": 2598,
+        "tokens_completion": 54,
+        "native_tokens_prompt": 3540,
+        "native_tokens_completion": 74,
+        "created_at": "2026-10-25T01:49:00.532Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892940-yQqXYtEZlhsD92UkbV9Q",
+      "generation": {
+        "id": "gen-1792892940-yQqXYtEZlhsD92UkbV9Q",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.007833,
+        "tokens_prompt": 3680,
+        "tokens_completion": 197,
+        "native_tokens_prompt": 6138,
+        "native_tokens_completion": 339,
+        "created_at": "2026-10-25T01:49:00.541Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892944-NPZK68oKYQWXQcI0RPRf",
+      "generation": {
+        "id": "gen-1792892944-NPZK68oKYQWXQcI0RPRf",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.000294,
+        "tokens_prompt": 2675,
+        "tokens_completion": 14,
+        "native_tokens_prompt": 3644,
+        "native_tokens_completion": 27,
+        "created_at": "2026-10-25T01:49:04.058Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892945-xogMD3cRQKB2p2gjotXK",
+      "generation": {
+        "id": "gen-1792892945-xogMD3cRQKB2p2gjotXK",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00016565,
+        "tokens_prompt": 3426,
+        "tokens_completion": 33,
+        "native_tokens_prompt": 4861,
+        "native_tokens_completion": 37,
+        "created_at": "2026-10-25T01:49:05.225Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892945-fLYMxCMt8sLSf2FTiXXZ",
+      "generation": {
+        "id": "gen-1792892945-fLYMxCMt8sLSf2FTiXXZ",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0003045,
+        "tokens_prompt": 2783,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 3782,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:49:05.223Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892945-arO3ZSZmaKKO8awPwubH",
+      "generation": {
+        "id": "gen-1792892945-arO3ZSZmaKKO8awPwubH",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.006838,
+        "tokens_prompt": 3974,
+        "tokens_completion": 16,
+        "native_tokens_prompt": 6598,
+        "native_tokens_completion": 48,
+        "created_at": "2026-10-25T01:49:05.223Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892946-CxDveh4kgRmZUw7BORZZ",
+      "generation": {
+        "id": "gen-1792892946-CxDveh4kgRmZUw7BORZZ",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00060294,
+        "tokens_prompt": 4026,
+        "tokens_completion": 195,
+        "native_tokens_prompt": 5891,
+        "native_tokens_completion": 247,
+        "created_at": "2026-10-25T01:49:06.859Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892946-T7taQfERXwZeL2rzWFvR",
+      "generation": {
+        "id": "gen-1792892946-T7taQfERXwZeL2rzWFvR",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0004482,
+        "tokens_prompt": 3354,
+        "tokens_completion": 20,
+        "native_tokens_prompt": 4728,
+        "native_tokens_completion": 29,
+        "created_at": "2026-10-25T01:49:06.867Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892946-7mZlJ9WFw0DhYc6cYCyg",
+      "generation": {
+        "id": "gen-1792892946-7mZlJ9WFw0DhYc6cYCyg",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.008582,
+        "tokens_prompt": 4556,
+        "tokens_completion": 149,
+        "native_tokens_prompt": 7602,
+        "native_tokens_completion": 196,
+        "created_at": "2026-10-25T01:49:06.858Z",
+        "finish_reason": "stop"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892949-3lsdwUZUXSOFxfRWdDH2",
+      "generation": {
+        "id": "gen-1792892949-3lsdwUZUXSOFxfRWdDH2",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.008084,
+        "tokens_prompt": 4729,
+        "tokens_completion": 21,
+        "native_tokens_prompt": 7819,
+        "native_tokens_completion": 53,
+        "created_at": "2026-10-25T01:49:09.623Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892951-mAmV6osFYMCajqrMcsfo",
+      "generation": {
+        "id": "gen-1792892951-mAmV6osFYMCajqrMcsfo",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.009418,
+        "tokens_prompt": 5317,
+        "tokens_completion": 103,
+        "native_tokens_prompt": 8828,
+        "native_tokens_completion": 118,
+        "created_at": "2026-10-25T01:49:11.869Z",
+        "finish_reason": "stop"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892954-vv5eWrUSQVFCbSJnDlk0",
+      "generation": {
+        "id": "gen-1792892954-vv5eWrUSQVFCbSJnDlk0",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00021318,
+        "tokens_prompt": 4313,
+        "tokens_completion": 35,
+        "native_tokens_prompt": 6239,
+        "native_tokens_completion": 37,
+        "created_at": "2026-10-25T01:49:14.424Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892954-ScKRXhiX8m7DqhmnnRcz",
+      "generation": {
+        "id": "gen-1792892954-ScKRXhiX8m7DqhmnnRcz",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00038175,
+        "tokens_prompt": 3467,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 4873,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:49:14.423Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892954-lXpIY9V7DBiXnbgKVdle",
+      "generation": {
+        "id": "gen-1792892954-lXpIY9V7DBiXnbgKVdle",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.009289,
+        "tokens_prompt": 5514,
+        "tokens_completion": 16,
+        "native_tokens_prompt": 9049,
+        "native_tokens_completion": 48,
+        "created_at": "2026-10-25T01:49:14.434Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892955-ReoEVlsGhMnJWUOyW8uq",
+      "generation": {
+        "id": "gen-1792892955-ReoEVlsGhMnJWUOyW8uq",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00029627,
+        "tokens_prompt": 4915,
+        "tokens_completion": 163,
+        "native_tokens_prompt": 7269,
+        "native_tokens_completion": 212,
+        "created_at": "2026-10-25T01:49:15.877Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892955-Td4K0tatUjq8f96AXfRg",
+      "generation": {
+        "id": "gen-1792892955-Td4K0tatUjq8f96AXfRg",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00055245,
+        "tokens_prompt": 4038,
+        "tokens_completion": 54,
+        "native_tokens_prompt": 5819,
+        "native_tokens_completion": 74,
+        "created_at": "2026-10-25T01:49:15.88Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892955-2yP1sbfwFBxa1Knq0Ddc",
+      "generation": {
+        "id": "gen-1792892955-2yP1sbfwFBxa1Knq0Ddc",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.010748,
+        "tokens_prompt": 6096,
+        "tokens_completion": 95,
+        "native_tokens_prompt": 10053,
+        "native_tokens_completion": 139,
+        "created_at": "2026-10-25T01:49:15.884Z",
+        "finish_reason": "stop"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892958-YBrq7TW5yRHPtH9Thy8a",
+      "generation": {
+        "id": "gen-1792892958-YBrq7TW5yRHPtH9Thy8a",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.00047265,
+        "tokens_prompt": 4115,
+        "tokens_completion": 14,
+        "native_tokens_prompt": 5923,
+        "native_tokens_completion": 27,
+        "created_at": "2026-10-25T01:49:18.136Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892958-8Ae0PLQMYE9udxzdKmrc",
+      "generation": {
+        "id": "gen-1792892958-8Ae0PLQMYE9udxzdKmrc",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.010433,
+        "tokens_prompt": 6215,
+        "tokens_completion": 11,
+        "native_tokens_prompt": 10213,
+        "native_tokens_completion": 44,
+        "created_at": "2026-10-25T01:49:18.139Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892959-Rp1IhZelOvrvCmwaaqyz",
+      "generation": {
+        "id": "gen-1792892959-Rp1IhZelOvrvCmwaaqyz",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.012778,
+        "tokens_prompt": 6793,
+        "tokens_completion": 175,
+        "native_tokens_prompt": 11213,
+        "native_tokens_completion": 313,
+        "created_at": "2026-10-25T01:49:19.366Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892962-fJH7VHt2mCcOJWChxkgo",
+      "generation": {
+        "id": "gen-1792892962-fJH7VHt2mCcOJWChxkgo",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00019126,
+        "tokens_prompt": 2766,
+        "tokens_completion": 112,
+        "native_tokens_prompt": 3937,
+        "native_tokens_completion": 114,
+        "created_at": "2026-10-25T01:49:22.825Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892962-eiP7Z6Sg5oIa5e6SfzpG",
+      "generation": {
+        "id": "gen-1792892962-eiP7Z6Sg5oIa5e6SfzpG",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.000345,
+        "tokens_prompt": 2461,
+        "tokens_completion": 4,
+        "native_tokens_prompt": 3156,
+        "native_tokens_completion": 10,
+        "created_at": "2026-10-25T01:49:22.821Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892962-FA1wR5WIWA2Je0MOZSBG",
+      "generation": {
+        "id": "gen-1792892962-FA1wR5WIWA2Je0MOZSBG",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.006031,
+        "tokens_prompt": 3525,
+        "tokens_completion": 25,
+        "native_tokens_prompt": 5756,
+        "native_tokens_completion": 55,
+        "created_at": "2026-10-25T01:49:22.833Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892964-8SiSBm2t8LeDcxAbXdYk",
+      "generation": {
+        "id": "gen-1792892964-8SiSBm2t8LeDcxAbXdYk",
+        "model": "google/gemini-2.5-flash-lite",
+        "provider_name": "Google AI Studio",
+        "total_cost": 0.00030204,
+        "tokens_prompt": 3444,
+        "tokens_completion": 89,
+        "native_tokens_prompt": 5045,
+        "native_tokens_completion": 127,
+        "created_at": "2026-10-25T01:49:24.273Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "google/gemini-2.5-flash-lite",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892964-obvXMtYZQ7dTN8X6QNTL",
+      "generation": {
+        "id": "gen-1792892964-obvXMtYZQ7dTN8X6QNTL",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0004293,
+        "tokens_prompt": 3031,
+        "tokens_completion": 54,
+        "native_tokens_prompt": 4102,
+        "native_tokens_completion": 74,
+        "created_at": "2026-10-25T01:49:24.28Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892964-Br04KwKTTp46IkIIIUGM",
+      "generation": {
+        "id": "gen-1792892964-Br04KwKTTp46IkIIIUGM",
+        "model": "anthropic/claude-4.5-haiku-20251001",
+        "provider_name": "Amazon Bedrock",
+        "total_cost": 0.008482,
+        "tokens_prompt": 4116,
+        "tokens_completion": 205,
+        "native_tokens_prompt": 6767,
+        "native_tokens_completion": 343,
+        "created_at": "2026-10-25T01:49:24.283Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "anthropic/claude-haiku-4.5",
+      "model_matches": true,
+      "cost_matches": true
+    },
+    {
+      "response_id": "gen-1792892968-XYPbAROSFlSq2hX5Yp9E",
+      "generation": {
+        "id": "gen-1792892968-XYPbAROSFlSq2hX5Yp9E",
+        "model": "openai/gpt-4o-mini",
+        "provider_name": "OpenAI",
+        "total_cost": 0.0003399,
+        "tokens_prompt": 3108,
+        "tokens_completion": 14,
+        "native_tokens_prompt": 4206,
+        "native_tokens_completion": 27,
+        "created_at": "2026-10-25T01:49:28.077Z",
+        "finish_reason": "tool_calls"
+      },
+      "id_matches": true,
+      "response_model": "openai/gpt-4o-mini",
+      "model_matches": true,
+      "cost_matches": true
+    }
+  ]
+}
