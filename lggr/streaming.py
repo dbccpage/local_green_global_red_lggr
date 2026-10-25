@@ -14441,6 +14441,153 @@ class StreamingMayerVietorisReconciliationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingReplayOrderEnvelopeMonitor:
+    """Online asynchronous arrival-order permutation prefix-peak envelope and robustness monitor (Theorem 85).
+
+    Wraps ``StreamingReplayOrderMonitor`` under prefix budget B_prefix = 3 across 3 step-drift multisets:
+      - Phase 1 (Arrival-Masked Causal Breach on Multiset {+2, +2, -2}):
+        Credit-first arrival (-2, +2, +2) keeps arrival max prefix at 2 <= 3 (L_mask = 1),
+        while causal order (+2, +2, -2) hits causal max prefix 4 > 3 = B_prefix
+        (Eg_mask = 0, defect_mask = -1, status ``ARRIVAL_MASKED_CAUSAL_BREACH_LGGR``).
+      - Phase 2 (Reorder-Sensitive Worst-Permutation Excursion on Interleaved {+2, -2, +2}):
+        Both arrival and causal order (+2, -2, +2) have max prefix 2 <= 3 (L_reord = 1),
+        yet positive-delta mass 2 + 2 = 4 > 3 breaches B_prefix under the positive-first
+        permutation (+2, +2, -2) (Eg_reord = 0, defect_reord = -1,
+        status ``REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR``).
+      - Phase 3 (Permutation-Robust Positive-Mass Bounded Multiset {+1, +2, -1}):
+        Positive-delta mass 1 + 2 = 3 <= 3 = B_prefix, so every arrival permutation stays
+        within B_prefix (L_rob = 1, Eg_rob = 1, defect_rob = 0,
+        status ``PERMUTATION_ROBUST_PREFIX_LGGG``).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-replay-order-envelope-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_replay_envelope(
+        self,
+        evaluation_id: str,
+        *,
+        prefix_budget: Fraction | int | str = 3,
+    ) -> dict[str, Any]:
+        """Evaluate arrival-masked causal breach, reorder-sensitive excursion, and permutation-robust envelope."""
+        eid = text(evaluation_id, "evaluation_id")
+        b_pref = rational(prefix_budget)
+
+        # Phase 1: Arrival (-2, +2, +2) vs Causal (+2, +2, -2)
+        mon_p1 = StreamingReplayOrderMonitor(b_pref, scope_id=f"{self.scope_id}-{eid}-p1")
+        mon_p1.register_event("ev_credit", -2, causal_index=3)
+        mon_p1.register_event("ev_pos_1", 2, causal_index=1)
+        mon_p1.register_event("ev_pos_2", 2, causal_index=2)
+        rec_p1 = mon_p1.get_receipt()
+
+        # Phase 2: Interleaved (+2, -2, +2) with positive mass 4 > 3
+        mon_p2 = StreamingReplayOrderMonitor(b_pref, scope_id=f"{self.scope_id}-{eid}-p2")
+        mon_p2.register_event("ev_pos_1", 2, causal_index=1)
+        mon_p2.register_event("ev_credit", -2, causal_index=2)
+        mon_p2.register_event("ev_pos_2", 2, causal_index=3)
+        rec_p2 = mon_p2.get_receipt()
+
+        # Phase 3: Permutation-robust (+1, +2, -1) with positive mass 3 <= 3
+        mon_p3 = StreamingReplayOrderMonitor(b_pref, scope_id=f"{self.scope_id}-{eid}-p3")
+        mon_p3.register_event("ev_pos_1", 1, causal_index=1)
+        mon_p3.register_event("ev_pos_2", 2, causal_index=2)
+        mon_p3.register_event("ev_credit", -1, causal_index=3)
+        rec_p3 = mon_p3.get_receipt()
+
+        arr_p1 = rational(rec_p1["arrival_max_prefix"])
+        caus_p1 = rational(rec_p1["causal_max_prefix"])
+        caus_p2 = rational(rec_p2["causal_max_prefix"])
+        worst_p2 = rational(rec_p2["worst_permutation_max_prefix"])
+        worst_p3 = rational(rec_p3["worst_permutation_max_prefix"])
+
+        l_p1 = 1 if (rec_p1["arrival_within_budget"] and rec_p1["arrival_masked_causal_breach"]) else 0
+        eg_p1 = 1 if (l_p1 == 1 and rec_p1["causal_within_budget"]) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (rec_p2["causal_within_budget"] and worst_p2 > b_pref) else 0
+        eg_p2 = 1 if (l_p2 == 1 and worst_p2 <= b_pref) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                rec_p3["status"] == "PERMUTATION_ROBUST_PREFIX_LGGG"
+                and worst_p3 <= b_pref
+                and rec_p3["endpoint_permutation_invariance_verified"]
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and worst_p3 < worst_p2) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "phase_1_arrival_max_prefix": arr_p1,
+            "phase_1_causal_max_prefix": caus_p1,
+            "phase_2_causal_max_prefix": caus_p2,
+            "phase_2_worst_max_prefix": worst_p2,
+            "phase_3_worst_max_prefix": worst_p3,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR" if defect_p1 == -1 else "PERMUTATION_ROBUST_PREFIX_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR" if defect_p2 == -1 else "PERMUTATION_ROBUST_PREFIX_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "PERMUTATION_ROBUST_PREFIX_LGGG" if eg_p3 == 1 else "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR",
+            "phase_1_replay_receipt": rec_p1,
+            "phase_2_replay_receipt": rec_p2,
+            "phase_3_replay_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one replay envelope evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mask_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_reord_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        order_fragile_coherence_rate = Fraction(
+            n - max(p1_mask_fail, p2_reord_fail), n
+        )
+        permutation_robust_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_mask_fail == n and p2_reord_fail == n:
+            status = "PERMUTATION_ROBUST_PREFIX_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_replay_order_envelope.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_arrival_masked_breach_count": p1_mask_fail,
+            "phase_2_reorder_sensitive_excursion_count": p2_reord_fail,
+            "phase_3_permutation_robust_count": p3_coherent,
+            "order_fragile_coherence_rate": order_fragile_coherence_rate,
+            "permutation_robust_coherence_rate": permutation_robust_coherence_rate,
+            "replay_envelope_coherence_gain": (
+                permutation_robust_coherence_rate - order_fragile_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

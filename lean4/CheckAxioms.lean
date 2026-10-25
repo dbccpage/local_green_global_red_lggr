@@ -101,3 +101,4 @@ import LggrVIII
 #print axioms LggrVIII.dfa_non_resetting_concatenation_vs_explicit_reset_gluing
 #print axioms LggrVIII.cptp_state_blindspot_vs_operator_residual_and_completion
 #print axioms LggrVIII.mayer_vietoris_disconnected_overlap_and_coboundary_reconciliation
+#print axioms LggrVIII.asynchronous_replay_order_prefix_peak_envelope_and_robustness
