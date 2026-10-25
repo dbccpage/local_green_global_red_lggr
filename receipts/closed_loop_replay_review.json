@@ -1,0 +1,34 @@
+{
+  "schema": "lggr.closed_loop_replay_review.v1",
+  "authority_effect": "None",
+  "published_artifact": "receipts/live_benchmarks/closed_loop_repair_benchmark.json",
+  "published_artifact_sha256": "60484a9988fc63186cc05e4bbbaa5a459725f5d41984554fef937d47d1ecf130",
+  "replay": {
+    "replayed": true,
+    "trajectory_count": 25,
+    "completion_count": 50,
+    "single_round_success_count": 15,
+    "final_round_success_count": 25,
+    "legacy_noncanonical_responses": [
+      {
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "response_index": 3,
+        "reason": "response must contain one JSON object",
+        "response_sha256": "18d444e9b8e65ffe7bf87c6f538caa18a842bf537e0304eaab42f4f3d77eb577",
+        "handling": "extracted_embedded_json"
+      },
+      {
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "response_index": 8,
+        "reason": "response must contain one JSON object",
+        "response_sha256": "d23534f2955ca00993c1350343245586ca88e64799ec56d2fe80653cc11e92b5",
+        "handling": "substituted_fallback_inputs"
+      }
+    ],
+    "malformed_models": [],
+    "authority_effect": "None"
+  },
+  "scope": "Offline internal-consistency replay of preserved historical evidence. No new API calls or provider authentication. Round 2 supplies exact answers; no causal advantage over other solving or retry protocols is established.",
+  "theorem_55_scope": "Fixed evaluator-defect integer identities and one scaled numerical skew example; no repair process or general convergence or termination theorem.",
+  "receipt_sha256": "ae196025eebe3886cf67de5b215983d376b7fe116970bbcfd031c3f9541f9818"
+}

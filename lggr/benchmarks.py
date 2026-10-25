@@ -807,6 +807,13 @@ def _frontier_json(response: str, fields: dict[str, str], *, modulus: int | None
     def rational(value):
         if type(value) not in (int, str):
             return False
+        # Bound work before Fraction can expand exponents or large integers.
+        # Short exact decimal strings occur in the preserved v1 evidence.
+        if type(value) is int and abs(value) >= 10 ** 64:
+            return False
+        if type(value) is str and (len(value) > 130 or not re.fullmatch(
+                r"-?[0-9]{1,64}(?:/[0-9]{1,64}|\.[0-9]{1,64})?", value)):
+            return False
         try:
             Fraction(value)
             return True
@@ -821,6 +828,14 @@ def _frontier_json(response: str, fields: dict[str, str], *, modulus: int | None
         elif kind == "scores":
             valid = (isinstance(value, list) and len(value) == 3
                      and all(rational(x) and Fraction(x) >= 0 for x in value))
+        elif kind == "signs":
+            valid = isinstance(value, list) and len(value) == 3 and all(type(x) is int and x in (-1, 1) for x in value)
+        elif kind == "symbols":
+            valid = isinstance(value, list) and len(value) == 4 and all(type(x) is int for x in value)
+        elif kind == "expert_scores":
+            valid = isinstance(value, list) and len(value) == 2 and all(
+                isinstance(row, list) and len(row) == 3
+                and all(rational(x) and Fraction(x) >= 0 for x in row) for row in value)
         elif kind == "matrix":
             valid = isinstance(value, list) and len(value) == 3 and all(
                 isinstance(row, list) and len(row) == 3
@@ -1427,6 +1442,7 @@ def verify_frontier_benchmark(receipt: Mapping[str, Any]) -> dict[str, Any]:
         if not condition:
             raise ValueError(message)
     def signed(value):
+        check(isinstance(value, Mapping), "closed-loop receipt must be a mapping")
         check(value.get("receipt_sha256") == digest({k: v for k, v in value.items() if k != "receipt_sha256"}),
               "receipt hash mismatch")
     signed(receipt)
@@ -1434,6 +1450,7 @@ def verify_frontier_benchmark(receipt: Mapping[str, Any]) -> dict[str, Any]:
     models = receipt["models_evaluated"]
     check(isinstance(models, list) and all(isinstance(m, str) and m for m in models) and len(set(models)) == len(models), "invalid model identities")
     failures = receipt.get("model_failures", {})
+    check(isinstance(failures, dict), "closed-loop model_failures must be a mapping")
     check(set(failures) <= set(models), "unknown failed model identity")
     regenerated, per_model, groups = [], {}, {}
     total = 0
@@ -1567,11 +1584,128 @@ def run_frontier_monitors_benchmark(
 # Closed-Loop Receipt-Feedback Repair Convergence Benchmark (Theorem 55)
 # ------------------------------------------------------------------------------
 
-def _run_closed_loop_repair_for_model(
+class _ClosedLoopClient(_FrontierRecordingClient):
+    """Validate each response before historical parsing can apply defaults."""
+    def __init__(self, client, requested_model, *, legacy_audit=False):
+        super().__init__(client, requested_model)
+        self.legacy_audit, self.input_errors = legacy_audit, []
+
+    def complete(self, prompt, **kwargs):
+        response = super().complete(prompt, **kwargs)
+        index = len(self.exchanges) - 1
+        schemas = [
+            {"const_b": "integer", "x_mod2": "integer", "x_mod4": "integer"},
+            {"candidate_alpha": "rational"},
+            {"col_targets": "signs", "global_grid": "matrix"},
+            {"channel_capacity_s": "integer", "symbols": "symbols"},
+            {"expert_scores": "expert_scores"},
+        ]
+        try:
+            if not isinstance(response, str) or index >= 10:
+                raise FrontierInputError("closed-loop response must be text within the ten-response protocol")
+            parsed = _frontier_json(response, schemas[index // 2])
+            if index // 2 == 3 and parsed["channel_capacity_s"] < 1:
+                raise FrontierInputError("channel_capacity_s must be positive")
+        except FrontierInputError as error:
+            if not self.legacy_audit:
+                raise
+            self.input_errors.append({"response_index": index, "reason": str(error),
+                                      "response_sha256": digest(response)})
+        return response
+
+
+def _closed_loop_constraints(monitor_name, inputs, round_index):
+    """Check the permitted edit, separately from the frontier property."""
+    if round_index == 0:
+        return {}  # Constructed baseline is not a proposed repair.
+    if monitor_name == "StreamingProjectiveTowerMonitor":
+        return {"smallest_permitted_shift": inputs["const_b"] == 3,
+                "nonnegative_mod2_representative": inputs["x_mod2"] in (0, 1),
+                "nonnegative_mod4_representative": inputs["x_mod4"] in (0, 1, 2, 3)}
+    if monitor_name == "StreamingSkewRepairMonitor":
+        allowed = {Fraction(-2, 3), Fraction(-2, 5), Fraction(-1, 2), Fraction(0)} if round_index == 1 else {Fraction(0)}
+        return {"permitted_alpha": Fraction(inputs["candidate_alpha"]) in allowed}
+    if monitor_name == "StreamingMerminPeresParityMonitor":
+        checks = {"row_targets_preserved": inputs["row_targets"] == [1, 1, 1],
+                  "exactly_one_column_flip": sum(x != y for x, y in zip(inputs["col_targets"], [1, 1, -1])) == 1}
+        if round_index == 2:
+            checks["requested_witness_targets"] = inputs["col_targets"] == [1, 1, 1]
+            checks["requested_witness_grid"] = inputs["row_context_assignments"] == [[1, 1, 1]] * 3
+        return checks
+    if monitor_name == "StreamingSideInformationCapacityMonitor":
+        symbols = [state["side_symbol"] for state in inputs["states"]]
+        checks = {"minimum_capacity": inputs["channel_capacity_s"] == 4,
+                  "distinct_bounded_symbols": sorted(symbols) == [0, 1, 2, 3]}
+        if round_index == 2:
+            checks["requested_witness_symbols"] = symbols == [0, 1, 2, 3]
+        return checks
+    if monitor_name == "StreamingProductOfExpertsMonitor":
+        scores = [[Fraction(v) for v in row] for row in inputs["expert_scores"]]
+        return {"normalized_rows": all(sum(row) == 1 for row in scores),
+                "quarter_mass_transfer": scores == [[Fraction(3, 4), Fraction(1, 4), 0], [0, Fraction(1, 4), Fraction(3, 4)]]}
+    raise ValueError("unknown closed-loop frontier monitor")
+
+
+def _closed_loop_frontier_rounds(monitor_name, receipts):
+    fields = {
+        "StreamingProjectiveTowerMonitor": (None, "global_integral_lift_evaluator"),
+        "StreamingSkewRepairMonitor": ("probes", "global_l1_budget_evaluator"),
+        "StreamingMerminPeresParityMonitor": ("grids", "global_noncontextual_evaluator"),
+        "StreamingSideInformationCapacityMonitor": ("fibers", "global_decodability_evaluator"),
+        "StreamingProductOfExpertsMonitor": ("rounds", "global_poe_normalizable_evaluator"),
+    }
+    container, global_key = fields[monitor_name]
+    modes = ["round_0_obstructed_baseline", "round_1_single_round_raw_receipt", "round_2_multi_round_witness_guided"]
+    result = []
+    for index, receipt in enumerate(receipts):
+        evidence = receipt[container][0] if container else receipt
+        local_pass = evidence["local_product_aggregator"] == 1
+        global_pass = evidence[global_key] == 1
+        result.append({"round_index": index, "feedback_mode": modes[index], "receipt_status": receipt["status"],
+                       "contract_status": receipt["contract_status"], "local_pass": local_pass,
+                       "global_pass": global_pass, "evaluator_defect": int(global_pass) - int(local_pass)})
+    return result
+
+
+def _run_closed_loop_repair_for_model(client, repair_monitor):
+    # Collect into a private monitor so a malformed model run cannot partially
+    # populate the aggregate receipt before its failure has been recorded.
+    checked = client if isinstance(client, _ClosedLoopClient) else _ClosedLoopClient(client, client.model)
+    raw = _collect_closed_loop_frontier_trajectories(checked, StreamingClosedLoopRepairMonitor())
+    result = []
+    for trajectory in raw:
+        frontier = _closed_loop_frontier_rounds(trajectory["monitor_name"], trajectory["round_receipts"])
+        constraints = [_closed_loop_constraints(trajectory["monitor_name"], inp, i)
+                       for i, inp in enumerate(trajectory["round_inputs"])]
+        rounds = []
+        for frontier_round, checks in zip(frontier, constraints):
+            global_pass = frontier_round["global_pass"] and all(checks.values())
+            rounds.append({**frontier_round, "global_pass": global_pass,
+                           "receipt_status": frontier_round["receipt_status"] if all(checks.values()) else "REPAIR_CONSTRAINT_VIOLATION",
+                           "contract_status": "COMPOSABLE_LGGG" if frontier_round["local_pass"] and global_pass else "OBSTRUCTED_LGGR"})
+        summary = repair_monitor.record_trajectory(trajectory["trajectory_id"], monitor_name=trajectory["monitor_name"],
+                                                   model_id=trajectory["model_id"], rounds=rounds)
+        result.append({**trajectory, **summary, "frontier_rounds": frontier, "repair_constraints": constraints})
+    return result
+
+
+def _closed_loop_v2_metadata(body, failures):
+    body.update(schema="lggr.closed_loop_repair_replay.v2", model_failures=failures,
+                validation_status="INCOMPLETE_MALFORMED_INPUT" if failures else "COMPLETE",
+                rate_scope="Complete model runs only; malformed model runs are excluded and listed in model_failures",
+                completion_count_scope="Recorded responses, excluding transport retries",
+                meaning="Finite scripted corrective-guidance demonstration. Round 2 supplies exact answers; these rates do not isolate feedback-round effects or show superiority over conventional solving or uninformed retry. Success requires both frontier checks and the stated permitted repair.")
+
+
+def _collect_closed_loop_frontier_trajectories(
     client: OpenRouterClient,
     repair_monitor: StreamingClosedLoopRepairMonitor,
 ) -> list[dict[str, Any]]:
-    """Run 5 multi-round closed-loop receipt-feedback repair trajectories (R0 -> R1 -> R2) for one model."""
+    """Collect the original fixed prompts and frontier receipts.
+
+    New runs validate responses through _ClosedLoopClient before the historical
+    parser below. Only explicit v1 audit replay permits its old fallback decoding.
+    """
     trajectories: list[dict[str, Any]] = []
 
     # --------------------------------------------------------------------------
@@ -2119,29 +2253,7 @@ def _run_closed_loop_repair_for_model(
     return trajectories
 
 
-def run_closed_loop_repair_benchmark(
-    models: Sequence[str] | None = None,
-    receipts_dir: str | None = None,
-) -> dict[str, Any]:
-    """Execute live OpenRouter closed-loop receipt-feedback repair benchmark across model families."""
-    if models is None:
-        models = FRONTIER_BENCHMARK_MODELS
-
-    repair_monitor = StreamingClosedLoopRepairMonitor(
-        scope_id="live_closed_loop_frontier_repair"
-    )
-    all_trajectories: list[dict[str, Any]] = []
-    total_completions = 0
-
-    for model_id in models:
-        print(f"Running closed-loop receipt-feedback repair on {model_id}...")
-        client = OpenRouterClient(model=model_id, max_completions=40)
-        trajs = _run_closed_loop_repair_for_model(client, repair_monitor)
-        total_completions += client.completion_count
-        all_trajectories.extend(trajs)
-
-    repair_receipt = repair_monitor.get_receipt()
-
+def _closed_loop_benchmark_body(models, all_trajectories, total_completions, repair_receipt):
     # Compute Volume I Section 9 empirical defect rates at Round 0, Round 1, and Round 2
     r0_traces = [
         {
@@ -2192,9 +2304,9 @@ def run_closed_loop_repair_benchmark(
         ]
         per_model_convergence[model_id] = {
             "trajectory_count": n_m,
-            "single_round_convergence_rate": str(Fraction(r1_c, n_m)),
-            "multi_round_convergence_rate": str(Fraction(r2_c, n_m)),
-            "multi_round_gain": str(Fraction(r2_c - r1_c, n_m)),
+            "single_round_convergence_rate": str(Fraction(r1_c, n_m or 1)),
+            "multi_round_convergence_rate": str(Fraction(r2_c, n_m or 1)),
+            "multi_round_gain": str(Fraction(r2_c - r1_c, n_m or 1)),
             "round_1_metrics": compute_empirical_defect_rates(m_r1_traces),
             "round_2_metrics": compute_empirical_defect_rates(m_r2_traces),
         }
@@ -2230,9 +2342,9 @@ def run_closed_loop_repair_benchmark(
         ]
         per_monitor_convergence[mon_name] = {
             "trajectory_count": n_mon,
-            "single_round_convergence_rate": str(Fraction(r1_c, n_mon)),
-            "multi_round_convergence_rate": str(Fraction(r2_c, n_mon)),
-            "multi_round_gain": str(Fraction(r2_c - r1_c, n_mon)),
+            "single_round_convergence_rate": str(Fraction(r1_c, n_mon or 1)),
+            "multi_round_convergence_rate": str(Fraction(r2_c, n_mon or 1)),
+            "multi_round_gain": str(Fraction(r2_c - r1_c, n_mon or 1)),
             "round_1_metrics": compute_empirical_defect_rates(mon_r1_traces),
             "round_2_metrics": compute_empirical_defect_rates(mon_r2_traces),
         }
@@ -2248,10 +2360,10 @@ def run_closed_loop_repair_benchmark(
         "round_0_baseline_metrics": compute_empirical_defect_rates(r0_traces),
         "round_1_single_round_metrics": compute_empirical_defect_rates(r1_traces),
         "round_2_multi_round_metrics": compute_empirical_defect_rates(r2_traces),
-        "single_round_convergence_rate": repair_receipt["single_round_convergence_rate"],
-        "multi_round_convergence_rate": repair_receipt["multi_round_convergence_rate"],
-        "multi_round_convergence_gain": repair_receipt["multi_round_convergence_gain"],
-        "residual_unrepaired_rate": repair_receipt["residual_unrepaired_rate"],
+        "single_round_convergence_rate": (repair_receipt["single_round_convergence_rate"] if repair_receipt else "0"),
+        "multi_round_convergence_rate": (repair_receipt["multi_round_convergence_rate"] if repair_receipt else "0"),
+        "multi_round_convergence_gain": (repair_receipt["multi_round_convergence_gain"] if repair_receipt else "0"),
+        "residual_unrepaired_rate": (repair_receipt["residual_unrepaired_rate"] if repair_receipt else "0"),
         "per_model_convergence": per_model_convergence,
         "per_monitor_convergence": per_monitor_convergence,
         "closed_loop_monitor_receipt": repair_receipt,
@@ -2262,6 +2374,144 @@ def run_closed_loop_repair_benchmark(
             "across 5 model families."
         ),
     }
+    return body
+
+
+
+def verify_closed_loop_repair_benchmark(receipt: Mapping[str, Any]) -> dict[str, Any]:
+    """Recompute raw-response decoding, complete receipts, round labels and summaries.
+
+    v1 audit preserves historical parser behavior and explicitly reports failed
+    responses that used fallback inputs. It never treats those as model evidence
+    of a successful repair. v2 rejects malformed output without substitution.
+    Hashes bind internal consistency, not provider identity or external authenticity.
+    """
+    try:
+        return _verify_closed_loop_repair_benchmark(receipt)
+    except (KeyError, TypeError, IndexError) as error:
+        raise ValueError("malformed closed-loop replay record") from error
+
+
+def _verify_closed_loop_repair_benchmark(receipt):
+    def check(condition, message):
+        if not condition:
+            raise ValueError(message)
+    def signed(value):
+        check(isinstance(value, Mapping), "closed-loop receipt must be a mapping")
+        check(value.get("receipt_sha256") == digest({k: v for k, v in value.items() if k != "receipt_sha256"}), "closed-loop receipt hash mismatch")
+    signed(receipt)
+    check(receipt["schema"] in ("lggr.closed_loop_repair_replay.v1", "lggr.closed_loop_repair_replay.v2"), "unsupported closed-loop schema")
+    legacy = receipt["schema"].endswith(".v1")
+    models = receipt["models_evaluated"]
+    check(isinstance(models, list) and models and all(isinstance(m, str) and m for m in models)
+          and len(models) == len(set(models)), "invalid closed-loop models")
+    failures = receipt.get("model_failures", {})
+    check(isinstance(failures, dict), "closed-loop model_failures must be a mapping")
+    check(set(failures) <= set(models) and (not legacy or not failures), "invalid failed model identities")
+    if receipt["closed_loop_monitor_receipt"] is not None:
+        signed(receipt["closed_loop_monitor_receipt"])
+    monitor = StreamingClosedLoopRepairMonitor(scope_id="live_closed_loop_frontier_repair")
+    regenerated, input_errors, total = [], [], 0
+    for model in models:
+        stored = [t for t in receipt["trajectories"] if t["model_id"] == model]
+        for trajectory in stored:
+            check(len(trajectory["round_receipts"]) == 3 and len(trajectory["prompts"]) == 2
+                  and len(trajectory["completions"]) == 2, "closed-loop trajectory cardinality differs")
+            for round_receipt in trajectory["round_receipts"]:
+                signed(round_receipt)
+        exchanges = failures[model]["exchanges"] if model in failures else [
+            {"prompt": prompt, "response": response, "system_prompt": JSON_ONLY_SYSTEM_PROMPT, "max_tokens": 200}
+            for t in stored for prompt, response in zip(t["prompts"], t["completions"])]
+        class ReplayClient:
+            def __init__(self):
+                self.model, self.index = model, 0
+            def complete(self, prompt, **kwargs):
+                check(self.index < len(exchanges), "missing closed-loop response")
+                exchange = exchanges[self.index]
+                self.index += 1
+                check(digest(exchange) == digest({"prompt": prompt, "response": exchange["response"], **kwargs}), "closed-loop prompt or request differs")
+                check(isinstance(exchange["response"], str), "closed-loop response must be text")
+                return exchange["response"]
+        replay = ReplayClient()
+        client = _ClosedLoopClient(replay, model, legacy_audit=legacy)
+        try:
+            if legacy:
+                trajectories = _collect_closed_loop_frontier_trajectories(client, monitor)
+                for trajectory in trajectories:
+                    frontier = _closed_loop_frontier_rounds(trajectory["monitor_name"], trajectory["round_receipts"])
+                    check(digest(frontier) == digest(trajectory["rounds"]), "round labels disagree with frontier receipts")
+                    for i, r in enumerate(frontier):
+                        checks = _closed_loop_constraints(trajectory["monitor_name"], trajectory["round_inputs"][i], i)
+                        check(not (r["local_pass"] and r["global_pass"]) or all(checks.values()), "historical success violates permitted repair")
+                for error in client.input_errors:
+                    index = error["response_index"]
+                    round_ = trajectories[index // 2]["rounds"][index % 2 + 1]
+                    # Only the two preserved v1 exceptions are auditable. New
+                    # malformed strings must not inherit historical fallback data.
+                    known = {
+                        ("meta-llama/llama-3.3-70b-instruct", 3): "18d444e9b8e65ffe7bf87c6f538caa18a842bf537e0304eaab42f4f3d77eb577",
+                        ("meta-llama/llama-3.3-70b-instruct", 8): "d23534f2955ca00993c1350343245586ca88e64799ec56d2fe80653cc11e92b5",
+                    }
+                    check(known.get((model, index)) == error["response_sha256"], "unrecognized historical malformed response")
+                    handling = "extracted_embedded_json" if index == 3 else "substituted_fallback_inputs"
+                    if handling == "substituted_fallback_inputs":
+                        check(not (round_["local_pass"] and round_["global_pass"]), "historical fallback cannot certify a repair")
+                    input_errors.append({"model_id": model, **error, "handling": handling})
+            else:
+                trajectories = _run_closed_loop_repair_for_model(client, monitor)
+        except FrontierInputError as error:
+            check(not legacy and model in failures and not stored, "malformed response was certified")
+            check(failures[model] == {"status": "MALFORMED_INPUT", "reason": str(error), "exchanges": exchanges}, "malformed closed-loop result differs")
+            trajectories = []
+        else:
+            check(model not in failures, "false malformed closed-loop result")
+        check(replay.index == len(exchanges), "unused closed-loop responses")
+        check(digest(stored) == digest(trajectories), "complete closed-loop trajectories differ")
+        regenerated.extend(trajectories)
+        total += len(exchanges)
+    repair_receipt = monitor.get_receipt() if regenerated else None
+    body = _closed_loop_benchmark_body(models, regenerated, total, repair_receipt)
+    if not legacy:
+        _closed_loop_v2_metadata(body, failures)
+    check(digest(body) == digest({k: v for k, v in receipt.items() if k != "receipt_sha256"}), "recomputed closed-loop summaries differ")
+    return {"replayed": True, "trajectory_count": len(regenerated), "completion_count": total,
+            "single_round_success_count": repair_receipt["single_round_converged_count"] if repair_receipt else 0,
+            "final_round_success_count": repair_receipt["multi_round_converged_count"] if repair_receipt else 0,
+            "legacy_noncanonical_responses": input_errors, "malformed_models": sorted(failures),
+            "authority_effect": "None"}
+
+
+def run_closed_loop_repair_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter closed-loop receipt-feedback repair benchmark across model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    repair_monitor = StreamingClosedLoopRepairMonitor(
+        scope_id="live_closed_loop_frontier_repair"
+    )
+    all_trajectories: list[dict[str, Any]] = []
+    total_completions = 0
+    model_failures = {}
+    if not models or len(set(models)) != len(models):
+        raise ValueError("closed-loop benchmark requires unique nonempty model selections")
+
+    for model_id in models:
+        print(f"Running closed-loop receipt-feedback repair on {model_id}...")
+        client = _ClosedLoopClient(OpenRouterClient(model=model_id, max_completions=40), model_id)
+        try:
+            trajs = _run_closed_loop_repair_for_model(client, repair_monitor)
+        except FrontierInputError as error:
+            trajs = []
+            model_failures[model_id] = {"status": "MALFORMED_INPUT", "reason": str(error), "exchanges": client.exchanges}
+        total_completions += len(client.exchanges)
+        all_trajectories.extend(trajs)
+
+    repair_receipt = repair_monitor.get_receipt() if all_trajectories else None
+    body = _closed_loop_benchmark_body(models, all_trajectories, total_completions, repair_receipt)
+    _closed_loop_v2_metadata(body, model_failures)
     signed = json_value({**body, "receipt_sha256": digest(body)})
 
     if receipts_dir is None:
@@ -2271,7 +2521,7 @@ def run_closed_loop_repair_benchmark(
             "live_benchmarks",
         )
     os.makedirs(receipts_dir, exist_ok=True)
-    out_path = os.path.join(receipts_dir, "closed_loop_repair_benchmark.json")
+    out_path = os.path.join(receipts_dir, "closed_loop_repair_benchmark_v2.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
 

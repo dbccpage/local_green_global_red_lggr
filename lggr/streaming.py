@@ -7656,7 +7656,11 @@ class StreamingProductOfExpertsMonitor:
 
 
 class StreamingClosedLoopRepairMonitor:
-    """Online closed-loop receipt-feedback repair convergence monitor (LGGR VIII §6 & Theorem 55).
+    """Finite observed repair-trajectory summaries (LGGR VIII §6 & Theorem 55).
+
+    Theorem 55 supplies fixed arithmetic examples, not a convergence or termination
+    theorem. These rates summarize supplied rounds; they do not establish a causal
+    advantage over another solver or feedback protocol.
 
     Audits multi-round closed-loop orchestrator repair trajectories
     R_0 (baseline obstructed) -> R_1 (single-round raw receipt feedback) -> R_2 (multi-round witness-guided feedback)
@@ -7695,9 +7699,12 @@ class StreamingClosedLoopRepairMonitor:
             if not isinstance(r, Mapping):
                 raise ValidationError(f"rounds[{idx}] must be a mapping")
             r_status = text(r.get("receipt_status", "UNKNOWN"), f"rounds[{idx}].receipt_status")
-            c_status = text(r.get("contract_status", "OBSTRUCTED_LGGR"), f"rounds[{idx}].contract_status")
-            l_pass = bool(r.get("local_pass", False))
-            g_pass = bool(r.get("global_pass", False))
+            c_status = text(r.get("contract_status"), f"rounds[{idx}].contract_status")
+            l_pass = boolean(r.get("local_pass"), f"rounds[{idx}].local_pass")
+            g_pass = boolean(r.get("global_pass"), f"rounds[{idx}].global_pass")
+            expected_status = "COMPOSABLE_LGGG" if l_pass and g_pass else "OBSTRUCTED_LGGR"
+            if c_status != expected_status:
+                raise ValidationError(f"rounds[{idx}].contract_status contradicts its Boolean verdicts")
             defect = (1 if g_pass else 0) - (1 if l_pass else 0)
             fb_mode = text(r.get("feedback_mode", f"round_{idx}"), f"rounds[{idx}].feedback_mode")
             parsed_rounds.append(
