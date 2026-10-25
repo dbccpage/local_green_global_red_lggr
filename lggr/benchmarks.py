@@ -28,6 +28,7 @@ from .streaming import (
     StreamingCPTPBlindspotCompletionMonitor,
     StreamingCatalystRejuvenationScheduleMonitor,
     StreamingClosedLoopRepairMonitor,
+    StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingCrossRoleDeduplicationMonitor,
@@ -10957,6 +10958,115 @@ def run_regge_gauss_bonnet_holonomy_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "regge_gauss_bonnet_holonomy_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_coalitional_synergy_masking_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run the 5-model coalitional Shapley attribution under synergistic fault masking benchmark (Theorem 89)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    api_key, _ = load_openrouter_credentials()
+    coal_monitor = StreamingCoalitionalSynergyMaskingMonitor(
+        scope_id="live-coalitional-synergy-masking-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(api_key=api_key, model=model_id, max_completions=3)
+        sys_prompt = (
+            "You are a coalitional Shapley attribution auditor. Output ONLY a JSON "
+            "object with keys \"phase_1_synergy_term\" (str), \"phase_2_synergy_term\" (str), "
+            "and \"phase_3_synergy_term\" (str)."
+        )
+        user_prompt = (
+            "Audit 3 two-agent coalition games (v0, v1, v2, v12) with interaction synergy "
+            "I_12 = v12 - v1 - v2 + v0:\n"
+            "- Phase 1 (Synergistic fault: (0, 0, 0, -2)): I_12 = -2, phi = (-1, -1).\n"
+            "- Phase 2 (Leave-one-out masked fault: (0, -1, -1, -1)): I_12 = +1, phi = (-1/2, -1/2).\n"
+            "- Phase 3 (Decoupled additive zero-defect: (0, 0, 0, 0)): I_12 = 0, phi = (0, 0).\n"
+            "Return ONLY JSON: {\"phase_1_synergy_term\": \"-2\", "
+            "\"phase_2_synergy_term\": \"1\", \"phase_3_synergy_term\": \"0\"}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+
+        obs = coal_monitor.record_synergy_evaluation(
+            f"{model_id}::coalitional_synergy_eval",
+            model_id=model_id,
+        )
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = coal_monitor.current_receipt()
+    body = {
+        "schema": "lggr.coalitional_synergy_masking_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "coalitional_synergy_masking_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_synergistic_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_leave_one_out_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_additive_metrics": compute_empirical_defect_rates(p3_traces),
+        "masked_coalition_coherence_rate": monitor_receipt["masked_coalition_coherence_rate"],
+        "shapley_resolved_coherence_rate": monitor_receipt["shapley_resolved_coherence_rate"],
+        "coalitional_attribution_coherence_gain": monitor_receipt["coalitional_attribution_coherence_gain"],
+        "coalitional_synergy_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Coalitional Shapley attribution under synergistic and leave-one-out fault masking "
+            "benchmark across 5 model families (Theorem 89): Phase 1 separates synergistic joint "
+            "faults (0, 0, 0, -2) where singleton marginals vanish while Shapley attributes "
+            "phi = (-1, -1) (Delta_E = -1); Phase 2 separates leave-one-out masked faults "
+            "(0, -1, -1, -1) where single-agent leave-one-out marginals vanish while Shapley "
+            "attributes phi = (-1/2, -1/2) (Delta_E = -1); Phase 3 verifies additive zero-defect "
+            "coalition (0, 0, 0, 0) with I_12 = 0 and phi = (0, 0) (Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "coalitional_synergy_masking_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

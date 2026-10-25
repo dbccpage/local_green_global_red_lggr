@@ -3274,4 +3274,58 @@ theorem regge_hinge_deficit_curvature_and_boundary_gauss_bonnet_holonomy :
   refine ⟨by omega, by omega, ?_⟩
   constructor <;> intro h <;> omega
 
+/-- 89. Coalitional Shapley attribution under synergistic and leave-one-out fault masking audit:
+    1. Universal interaction-synergy decomposition and zero-singleton-marginal law:
+       - For any 2-player coalition values (v0, v1, v2, v12) with interaction synergy
+         i12 = v12 - v1 - v2 + v0, twice-scaled Shapley values satisfy
+         shapley2P1 v0 v1 v2 v12 = 2 * (v1 - v0) + i12 and
+         shapley2P2 v0 v1 v2 v12 = 2 * (v2 - v0) + i12;
+       - Whenever v1 = v0 and v2 = v0 (zero singleton marginals), shapley2P1 = v12 - v0,
+         shapley2P2 = v12 - v0, and shapley2P1 + shapley2P2 = 2 * (v12 - v0);
+    2. Concrete 3-phase synergistic and leave-one-out fault masking audit:
+       - Phase 1 (Synergistic joint fault: v0 = 0, v1 = 0, v2 = 0, v12 = -2):
+         singleton marginals vanish (v1 - v0 = 0, v2 - v0 = 0, L_syn = 1), yet joint
+         execution incurs v12 = -2 < 0 with shapley2P1 = -2, shapley2P2 = -2
+         (Eg_syn = 0, Δ_{E,syn} = -1);
+       - Phase 2 (Leave-one-out masked fault: v0 = 0, v1 = -1, v2 = -1, v12 = -1):
+         single-agent leave-one-out marginals vanish (v12 - v2 = 0, v12 - v1 = 0, L_loo = 1),
+         yet v12 = -1 < 0 with shapley2P1 = -1, shapley2P2 = -1
+         (Eg_loo = 0, Δ_{E,loo} = -1);
+       - Phase 3 (Decoupled additive zero-defect coalition: v0 = 0, v1 = 0, v2 = 0, v12 = 0):
+         interaction synergy i12 = 0, v12 = 0, and shapley2P1 = shapley2P2 = 0
+         (L_add = 1, Eg_add = 1, Δ_{E,add} = 0). -/
+theorem coalitional_shapley_attribution_under_synergistic_fault_masking :
+    ((∀ v0 v1 v2 v12 : Int,
+        let i12 := v12 - v1 - v2 + v0;
+        shapley2P1 v0 v1 v2 v12 = 2 * (v1 - v0) + i12 ∧
+        shapley2P2 v0 v1 v2 v12 = 2 * (v2 - v0) + i12) ∧
+     (∀ v0 v12 : Int,
+        shapley2P1 v0 v0 v0 v12 = v12 - v0 ∧
+        shapley2P2 v0 v0 v0 v12 = v12 - v0 ∧
+        shapley2P1 v0 v0 v0 v12 + shapley2P2 v0 v0 v0 v12 = 2 * (v12 - v0))) ∧
+    (let p1_syn := shapley2P1 0 0 0 (-2);
+     let p2_syn := shapley2P2 0 0 0 (-2);
+     let p1_loo := shapley2P1 0 (-1) (-1) (-1);
+     let p2_loo := shapley2P2 0 (-1) (-1) (-1);
+     let p1_add := shapley2P1 0 0 0 0;
+     let p2_add := shapley2P2 0 0 0 0;
+     let l_syn := if (0 - (0 : Int) = 0) ∧ (p1_syn + p2_syn = -4) then (1 : Int) else 0;
+     let eg_syn := if (l_syn = 1) ∧ (p1_syn + p2_syn = 0) then (1 : Int) else 0;
+     let defect_syn := eg_syn - l_syn;
+     let l_loo := if ((-1 : Int) - (-1) = 0) ∧ (p1_loo + p2_loo = -2) then (1 : Int) else 0;
+     let eg_loo := if (l_loo = 1) ∧ (p1_loo + p2_loo = 0) then (1 : Int) else 0;
+     let defect_loo := eg_loo - l_loo;
+     let l_add := if (p1_add = 0) ∧ (p2_add = 0) then (1 : Int) else 0;
+     let eg_add := if (l_add = 1) ∧ (p1_add + p2_add = 0) then (1 : Int) else 0;
+     let defect_add := eg_add - l_add;
+     (l_syn = 1 ∧ eg_syn = 0 ∧ defect_syn = -1) ∧
+     (l_loo = 1 ∧ eg_loo = 0 ∧ defect_loo = -1) ∧
+     (l_add = 1 ∧ eg_add = 1 ∧ defect_add = 0)) := by
+  dsimp [shapley2P1, shapley2P2]
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro v0 v1 v2 v12
+    refine ⟨by omega, by omega⟩
+  · intro v0 v12
+    refine ⟨by omega, by omega, by omega⟩
+
 end LggrVIII

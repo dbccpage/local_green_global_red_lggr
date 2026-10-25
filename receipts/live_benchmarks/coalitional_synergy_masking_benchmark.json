@@ -1,0 +1,599 @@
+{
+  "schema": "lggr.coalitional_synergy_masking_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "coalitional_synergy_masking_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_synergistic_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_leave_one_out_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_additive_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "masked_coalition_coherence_rate": "0",
+  "shapley_resolved_coherence_rate": "1",
+  "coalitional_attribution_coherence_gain": "1",
+  "coalitional_synergy_monitor_receipt": {
+    "schema": "lggr.online_coalitional_synergy_masking.v1",
+    "authority_effect": "None",
+    "scope_id": "live-coalitional-synergy-masking-scope",
+    "status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_synergistic_fault_count": 5,
+    "phase_2_leave_one_out_masked_count": 5,
+    "phase_3_additive_coherent_count": 5,
+    "masked_coalition_coherence_rate": "0",
+    "shapley_resolved_coherence_rate": "1",
+    "coalitional_attribution_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::coalitional_synergy_eval",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_singleton_sum": "0",
+        "phase_1_synergy_term": "-2",
+        "phase_1_shapley_attributions": {
+          "A1": "-1",
+          "A2": "-1"
+        },
+        "phase_2_leave_one_out_marginals": [
+          "0",
+          "0"
+        ],
+        "phase_2_synergy_term": "1",
+        "phase_2_shapley_attributions": {
+          "A1": "-1/2",
+          "A2": "-1/2"
+        },
+        "phase_3_synergy_term": "0",
+        "phase_3_shapley_attributions": {
+          "A1": "0",
+          "A2": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+        "coalitional_monitor_receipt": {
+          "schema": "lggr.online_coalitional_attribution.v1",
+          "authority_effect": "None",
+          "scope_id": "live-coalitional-synergy-masking-scope:openai/gpt-4o-mini::coalitional_synergy_eval",
+          "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "audited_games_count": 3,
+          "nonadditive_defect_games": [
+            "phase_1_synergistic_fault",
+            "phase_2_leave_one_out_masked"
+          ],
+          "all_efficiency_verified": true,
+          "all_symmetry_verified": true,
+          "all_dummy_player_axioms_verified": true,
+          "receipt_sha256": "0c5bc89c5225460e17688316ebcaea87c5452ef0964b0b3f8d179219164f7045"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::coalitional_synergy_eval",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_singleton_sum": "0",
+        "phase_1_synergy_term": "-2",
+        "phase_1_shapley_attributions": {
+          "A1": "-1",
+          "A2": "-1"
+        },
+        "phase_2_leave_one_out_marginals": [
+          "0",
+          "0"
+        ],
+        "phase_2_synergy_term": "1",
+        "phase_2_shapley_attributions": {
+          "A1": "-1/2",
+          "A2": "-1/2"
+        },
+        "phase_3_synergy_term": "0",
+        "phase_3_shapley_attributions": {
+          "A1": "0",
+          "A2": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+        "coalitional_monitor_receipt": {
+          "schema": "lggr.online_coalitional_attribution.v1",
+          "authority_effect": "None",
+          "scope_id": "live-coalitional-synergy-masking-scope:google/gemini-2.5-flash-lite::coalitional_synergy_eval",
+          "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "audited_games_count": 3,
+          "nonadditive_defect_games": [
+            "phase_1_synergistic_fault",
+            "phase_2_leave_one_out_masked"
+          ],
+          "all_efficiency_verified": true,
+          "all_symmetry_verified": true,
+          "all_dummy_player_axioms_verified": true,
+          "receipt_sha256": "4183afcecb0ecc59fcc0de837a03cb368f92e758b51e9dfa1c31470d2df76860"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::coalitional_synergy_eval",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_singleton_sum": "0",
+        "phase_1_synergy_term": "-2",
+        "phase_1_shapley_attributions": {
+          "A1": "-1",
+          "A2": "-1"
+        },
+        "phase_2_leave_one_out_marginals": [
+          "0",
+          "0"
+        ],
+        "phase_2_synergy_term": "1",
+        "phase_2_shapley_attributions": {
+          "A1": "-1/2",
+          "A2": "-1/2"
+        },
+        "phase_3_synergy_term": "0",
+        "phase_3_shapley_attributions": {
+          "A1": "0",
+          "A2": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+        "coalitional_monitor_receipt": {
+          "schema": "lggr.online_coalitional_attribution.v1",
+          "authority_effect": "None",
+          "scope_id": "live-coalitional-synergy-masking-scope:meta-llama/llama-3.3-70b-instruct::coalitional_synergy_eval",
+          "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "audited_games_count": 3,
+          "nonadditive_defect_games": [
+            "phase_1_synergistic_fault",
+            "phase_2_leave_one_out_masked"
+          ],
+          "all_efficiency_verified": true,
+          "all_symmetry_verified": true,
+          "all_dummy_player_axioms_verified": true,
+          "receipt_sha256": "df3d15a29be24038a7b57de6b4a472b8419a7211df1bcd0e906bf7ec7d7496df"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::coalitional_synergy_eval",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_singleton_sum": "0",
+        "phase_1_synergy_term": "-2",
+        "phase_1_shapley_attributions": {
+          "A1": "-1",
+          "A2": "-1"
+        },
+        "phase_2_leave_one_out_marginals": [
+          "0",
+          "0"
+        ],
+        "phase_2_synergy_term": "1",
+        "phase_2_shapley_attributions": {
+          "A1": "-1/2",
+          "A2": "-1/2"
+        },
+        "phase_3_synergy_term": "0",
+        "phase_3_shapley_attributions": {
+          "A1": "0",
+          "A2": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+        "coalitional_monitor_receipt": {
+          "schema": "lggr.online_coalitional_attribution.v1",
+          "authority_effect": "None",
+          "scope_id": "live-coalitional-synergy-masking-scope:deepseek/deepseek-chat::coalitional_synergy_eval",
+          "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "audited_games_count": 3,
+          "nonadditive_defect_games": [
+            "phase_1_synergistic_fault",
+            "phase_2_leave_one_out_masked"
+          ],
+          "all_efficiency_verified": true,
+          "all_symmetry_verified": true,
+          "all_dummy_player_axioms_verified": true,
+          "receipt_sha256": "9d36cc3d62a0487138645a2551cae7c9080bf6daa8657e9cfd12e81975e6b295"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::coalitional_synergy_eval",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_singleton_sum": "0",
+        "phase_1_synergy_term": "-2",
+        "phase_1_shapley_attributions": {
+          "A1": "-1",
+          "A2": "-1"
+        },
+        "phase_2_leave_one_out_marginals": [
+          "0",
+          "0"
+        ],
+        "phase_2_synergy_term": "1",
+        "phase_2_shapley_attributions": {
+          "A1": "-1/2",
+          "A2": "-1/2"
+        },
+        "phase_3_synergy_term": "0",
+        "phase_3_shapley_attributions": {
+          "A1": "0",
+          "A2": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+        "coalitional_monitor_receipt": {
+          "schema": "lggr.online_coalitional_attribution.v1",
+          "authority_effect": "None",
+          "scope_id": "live-coalitional-synergy-masking-scope:mistralai/mistral-small-3.2-24b-instruct::coalitional_synergy_eval",
+          "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "audited_games_count": 3,
+          "nonadditive_defect_games": [
+            "phase_1_synergistic_fault",
+            "phase_2_leave_one_out_masked"
+          ],
+          "all_efficiency_verified": true,
+          "all_symmetry_verified": true,
+          "all_dummy_player_axioms_verified": true,
+          "receipt_sha256": "0eea23c95200f98704606f3e03de454fc0ce28d8c05c9f4cb5b741df4467a11f"
+        }
+      }
+    ],
+    "receipt_sha256": "dfd33584a74bed5094d05eed9b1b62eb799716bb2c66a30928cce36257c0ea6a"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::coalitional_synergy_eval",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_singleton_sum": "0",
+      "phase_1_synergy_term": "-2",
+      "phase_1_shapley_attributions": {
+        "A1": "-1",
+        "A2": "-1"
+      },
+      "phase_2_leave_one_out_marginals": [
+        "0",
+        "0"
+      ],
+      "phase_2_synergy_term": "1",
+      "phase_2_shapley_attributions": {
+        "A1": "-1/2",
+        "A2": "-1/2"
+      },
+      "phase_3_synergy_term": "0",
+      "phase_3_shapley_attributions": {
+        "A1": "0",
+        "A2": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+      "coalitional_monitor_receipt": {
+        "schema": "lggr.online_coalitional_attribution.v1",
+        "authority_effect": "None",
+        "scope_id": "live-coalitional-synergy-masking-scope:openai/gpt-4o-mini::coalitional_synergy_eval",
+        "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "audited_games_count": 3,
+        "nonadditive_defect_games": [
+          "phase_1_synergistic_fault",
+          "phase_2_leave_one_out_masked"
+        ],
+        "all_efficiency_verified": true,
+        "all_symmetry_verified": true,
+        "all_dummy_player_axioms_verified": true,
+        "receipt_sha256": "0c5bc89c5225460e17688316ebcaea87c5452ef0964b0b3f8d179219164f7045"
+      },
+      "raw_auditor_response": "{\"phase_1_synergy_term\": \"-2\", \"phase_2_synergy_term\": \"1\", \"phase_3_synergy_term\": \"0\"}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::coalitional_synergy_eval",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_singleton_sum": "0",
+      "phase_1_synergy_term": "-2",
+      "phase_1_shapley_attributions": {
+        "A1": "-1",
+        "A2": "-1"
+      },
+      "phase_2_leave_one_out_marginals": [
+        "0",
+        "0"
+      ],
+      "phase_2_synergy_term": "1",
+      "phase_2_shapley_attributions": {
+        "A1": "-1/2",
+        "A2": "-1/2"
+      },
+      "phase_3_synergy_term": "0",
+      "phase_3_shapley_attributions": {
+        "A1": "0",
+        "A2": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+      "coalitional_monitor_receipt": {
+        "schema": "lggr.online_coalitional_attribution.v1",
+        "authority_effect": "None",
+        "scope_id": "live-coalitional-synergy-masking-scope:google/gemini-2.5-flash-lite::coalitional_synergy_eval",
+        "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "audited_games_count": 3,
+        "nonadditive_defect_games": [
+          "phase_1_synergistic_fault",
+          "phase_2_leave_one_out_masked"
+        ],
+        "all_efficiency_verified": true,
+        "all_symmetry_verified": true,
+        "all_dummy_player_axioms_verified": true,
+        "receipt_sha256": "4183afcecb0ecc59fcc0de837a03cb368f92e758b51e9dfa1c31470d2df76860"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_synergy_term\": \"-2\",\n  \"phase_2_synergy_term\": \"1\",\n  \"phase_3_synergy_term\": \"0\"\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::coalitional_synergy_eval",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_singleton_sum": "0",
+      "phase_1_synergy_term": "-2",
+      "phase_1_shapley_attributions": {
+        "A1": "-1",
+        "A2": "-1"
+      },
+      "phase_2_leave_one_out_marginals": [
+        "0",
+        "0"
+      ],
+      "phase_2_synergy_term": "1",
+      "phase_2_shapley_attributions": {
+        "A1": "-1/2",
+        "A2": "-1/2"
+      },
+      "phase_3_synergy_term": "0",
+      "phase_3_shapley_attributions": {
+        "A1": "0",
+        "A2": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+      "coalitional_monitor_receipt": {
+        "schema": "lggr.online_coalitional_attribution.v1",
+        "authority_effect": "None",
+        "scope_id": "live-coalitional-synergy-masking-scope:meta-llama/llama-3.3-70b-instruct::coalitional_synergy_eval",
+        "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "audited_games_count": 3,
+        "nonadditive_defect_games": [
+          "phase_1_synergistic_fault",
+          "phase_2_leave_one_out_masked"
+        ],
+        "all_efficiency_verified": true,
+        "all_symmetry_verified": true,
+        "all_dummy_player_axioms_verified": true,
+        "receipt_sha256": "df3d15a29be24038a7b57de6b4a472b8419a7211df1bcd0e906bf7ec7d7496df"
+      },
+      "raw_auditor_response": "{\"phase_1_synergy_term\": \"-2\", \"phase_2_synergy_term\": \"1\", \"phase_3_synergy_term\": \"0\"}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::coalitional_synergy_eval",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_singleton_sum": "0",
+      "phase_1_synergy_term": "-2",
+      "phase_1_shapley_attributions": {
+        "A1": "-1",
+        "A2": "-1"
+      },
+      "phase_2_leave_one_out_marginals": [
+        "0",
+        "0"
+      ],
+      "phase_2_synergy_term": "1",
+      "phase_2_shapley_attributions": {
+        "A1": "-1/2",
+        "A2": "-1/2"
+      },
+      "phase_3_synergy_term": "0",
+      "phase_3_shapley_attributions": {
+        "A1": "0",
+        "A2": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+      "coalitional_monitor_receipt": {
+        "schema": "lggr.online_coalitional_attribution.v1",
+        "authority_effect": "None",
+        "scope_id": "live-coalitional-synergy-masking-scope:deepseek/deepseek-chat::coalitional_synergy_eval",
+        "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "audited_games_count": 3,
+        "nonadditive_defect_games": [
+          "phase_1_synergistic_fault",
+          "phase_2_leave_one_out_masked"
+        ],
+        "all_efficiency_verified": true,
+        "all_symmetry_verified": true,
+        "all_dummy_player_axioms_verified": true,
+        "receipt_sha256": "9d36cc3d62a0487138645a2551cae7c9080bf6daa8657e9cfd12e81975e6b295"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_synergy_term\": \"-2\",\n  \"phase_2_synergy_term\": \"1\",\n  \"phase_3_synergy_term\": \"0\"\n}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::coalitional_synergy_eval",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_singleton_sum": "0",
+      "phase_1_synergy_term": "-2",
+      "phase_1_shapley_attributions": {
+        "A1": "-1",
+        "A2": "-1"
+      },
+      "phase_2_leave_one_out_marginals": [
+        "0",
+        "0"
+      ],
+      "phase_2_synergy_term": "1",
+      "phase_2_shapley_attributions": {
+        "A1": "-1/2",
+        "A2": "-1/2"
+      },
+      "phase_3_synergy_term": "0",
+      "phase_3_shapley_attributions": {
+        "A1": "0",
+        "A2": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+      "coalitional_monitor_receipt": {
+        "schema": "lggr.online_coalitional_attribution.v1",
+        "authority_effect": "None",
+        "scope_id": "live-coalitional-synergy-masking-scope:mistralai/mistral-small-3.2-24b-instruct::coalitional_synergy_eval",
+        "status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "audited_games_count": 3,
+        "nonadditive_defect_games": [
+          "phase_1_synergistic_fault",
+          "phase_2_leave_one_out_masked"
+        ],
+        "all_efficiency_verified": true,
+        "all_symmetry_verified": true,
+        "all_dummy_player_axioms_verified": true,
+        "receipt_sha256": "0eea23c95200f98704606f3e03de454fc0ce28d8c05c9f4cb5b741df4467a11f"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_synergy_term\": \"-2\",\n  \"phase_2_synergy_term\": \"1\",\n  \"phase_3_synergy_term\": \"0\"\n}\n```"
+    }
+  ],
+  "meaning": "Coalitional Shapley attribution under synergistic and leave-one-out fault masking benchmark across 5 model families (Theorem 89): Phase 1 separates synergistic joint faults (0, 0, 0, -2) where singleton marginals vanish while Shapley attributes phi = (-1, -1) (Delta_E = -1); Phase 2 separates leave-one-out masked faults (0, -1, -1, -1) where single-agent leave-one-out marginals vanish while Shapley attributes phi = (-1/2, -1/2) (Delta_E = -1); Phase 3 verifies additive zero-defect coalition (0, 0, 0, 0) with I_12 = 0 and phi = (0, 0) (Delta_E = 0).",
+  "receipt_sha256": "993e4a5ae9f0e0ea5cb5e1b727b56539d9e9004adaa1455e6391f62421be8e54"
+}

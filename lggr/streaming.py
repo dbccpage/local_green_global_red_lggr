@@ -15055,6 +15055,173 @@ class StreamingReggeGaussBonnetHolonomyMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCoalitionalSynergyMaskingMonitor:
+    """Online coalitional Shapley attribution under synergistic & leave-one-out fault masking monitor (Theorem 89).
+
+    Audits 2-agent failure coalitions {A1, A2} under `StreamingCoalitionalAttributionMonitor`:
+      1. Phase 1 (Synergistic joint fault with zero singleton marginals: v0=0, v1=0, v2=0, v12=-2):
+         Each agent tested alone has zero defect (naive singleton sum = 0, L = 1), yet joint
+         execution triggers v({A1, A2}) = -2 (interaction synergy I_12 = -2 != 0), and
+         Shapley attribution assigns phi_1 = -1, phi_2 = -1
+         (`NONADDITIVE_COALITIONAL_DEFECT_LGGR`, Eg = 0, Delta_E = -1).
+      2. Phase 2 (Leave-one-out masked fault: v0=0, v1=-1, v2=-1, v12=-1):
+         Single-agent leave-one-out marginals v12 - v2 = 0 and v12 - v1 = 0 vanish while
+         naive singleton sum -2 != -1 double-counts the fault (I_12 = +1 != 0, L = 1);
+         Shapley attribution assigns phi_1 = -1/2, phi_2 = -1/2
+         (`LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR`, Eg = 0, Delta_E = -1).
+      3. Phase 3 (Decoupled additive zero-defect coalition: v0=0, v1=0, v2=0, v12=0):
+         Interaction synergy I_12 = 0, v12 = 0, and phi_1 = phi_2 = 0
+         (`ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG`, L = 1, Eg = 1, Delta_E = 0).
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-coalitional-synergy-masking-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def record_synergy_evaluation(
+        self,
+        evaluation_id: str,
+        *,
+        phase_1_values: Sequence[Fraction | int | str] = (0, 0, 0, -2),
+        phase_2_values: Sequence[Fraction | int | str] = (0, -1, -1, -1),
+        phase_3_values: Sequence[Fraction | int | str] = (0, 0, 0, 0),
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        v1 = vector(phase_1_values, "phase_1_values", 4)
+        v2 = vector(phase_2_values, "phase_2_values", 4)
+        v3 = vector(phase_3_values, "phase_3_values", 4)
+
+        mon = StreamingCoalitionalAttributionMonitor(
+            scope_id=f"{self.scope_id}:{eval_id}",
+        )
+        rec_p1 = mon.observe_coalition_game(
+            "phase_1_synergistic_fault",
+            ["A1", "A2"],
+            {
+                frozenset(): v1[0],
+                frozenset(["A1"]): v1[1],
+                frozenset(["A2"]): v1[2],
+                frozenset(["A1", "A2"]): v1[3],
+            },
+        )
+        rec_p2 = mon.observe_coalition_game(
+            "phase_2_leave_one_out_masked",
+            ["A1", "A2"],
+            {
+                frozenset(): v2[0],
+                frozenset(["A1"]): v2[1],
+                frozenset(["A2"]): v2[2],
+                frozenset(["A1", "A2"]): v2[3],
+            },
+        )
+        rec_p3 = mon.observe_coalition_game(
+            "phase_3_additive_coherent",
+            ["A1", "A2"],
+            {
+                frozenset(): v3[0],
+                frozenset(["A1"]): v3[1],
+                frozenset(["A2"]): v3[2],
+                frozenset(["A1", "A2"]): v3[3],
+            },
+        )
+        summary_rec = mon.get_receipt()
+
+        sing_p1 = rational(rec_p1["naive_singleton_marginal_sum"])
+        syn_p1 = rational(rec_p1["synergy_interaction_term"])
+        net_p1 = rational(rec_p1["net_coalitional_value"])
+        l_p1 = 1 if (sing_p1 == 0 and net_p1 < 0) else 0
+        eg_p1 = 1 if (l_p1 == 1 and net_p1 == 0 and syn_p1 == 0) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        loo_1 = v2[3] - v2[2]
+        loo_2 = v2[3] - v2[1]
+        syn_p2 = rational(rec_p2["synergy_interaction_term"])
+        net_p2 = rational(rec_p2["net_coalitional_value"])
+        l_p2 = 1 if (loo_1 == 0 and loo_2 == 0 and net_p2 < 0) else 0
+        eg_p2 = 1 if (l_p2 == 1 and net_p2 == 0 and syn_p2 == 0) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        syn_p3 = rational(rec_p3["synergy_interaction_term"])
+        net_p3 = rational(rec_p3["net_coalitional_value"])
+        l_p3 = 1 if (syn_p3 == 0 and net_p3 == 0) else 0
+        eg_p3 = 1 if (l_p3 == 1 and bool(rec_p3["efficiency_verified"])) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "phase_1_singleton_sum": sing_p1,
+            "phase_1_synergy_term": syn_p1,
+            "phase_1_shapley_attributions": rec_p1["shapley_attributions"],
+            "phase_2_leave_one_out_marginals": [loo_1, loo_2],
+            "phase_2_synergy_term": syn_p2,
+            "phase_2_shapley_attributions": rec_p2["shapley_attributions"],
+            "phase_3_synergy_term": syn_p3,
+            "phase_3_shapley_attributions": rec_p3["shapley_attributions"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "NONADDITIVE_COALITIONAL_DEFECT_LGGR" if defect_p1 == -1 else "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR" if defect_p2 == -1 else "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG" if eg_p3 == 1 else "NONADDITIVE_COALITIONAL_DEFECT_LGGR",
+            "coalitional_monitor_receipt": summary_rec,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one coalitional synergy evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_syn_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_loo_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        masked_coalition_coherence_rate = Fraction(
+            n - max(p1_syn_fail, p2_loo_fail), n
+        )
+        shapley_resolved_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_syn_fail == n and p2_loo_fail == n:
+            status = "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "NONADDITIVE_COALITIONAL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_coalitional_synergy_masking.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_synergistic_fault_count": p1_syn_fail,
+            "phase_2_leave_one_out_masked_count": p2_loo_fail,
+            "phase_3_additive_coherent_count": p3_coherent,
+            "masked_coalition_coherence_rate": masked_coalition_coherence_rate,
+            "shapley_resolved_coherence_rate": shapley_resolved_coherence_rate,
+            "coalitional_attribution_coherence_gain": (
+                shapley_resolved_coherence_rate - masked_coalition_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
