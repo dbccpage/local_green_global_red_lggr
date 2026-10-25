@@ -66,6 +66,7 @@ from lggr.streaming import (
     StreamingSimplicialCupMonitor,
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSixRoleOverlayMonitor,
+    StreamingStageVsE2EIntegrationMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingToolAssistedFiberSplittingMonitor,
     StreamingTransportMonitor,
@@ -4094,6 +4095,49 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["undeduplicated_coherence_rate"], "0")
         self.assertEqual(receipt["deduplicated_coherence_rate"], "1")
         self.assertEqual(receipt["cross_role_deduplication_gain"], "1")
+
+    def test_stage_unit_vs_e2e_integration_kernel_and_dashboard_audit(self) -> None:
+        """Verify Theorem 76: stage-level unit tests vs. E2E integration oracles under path-kernel and 4-tuple dashboard."""
+        mon = StreamingStageVsE2EIntegrationMonitor(
+            scope_id="unit-stage-vs-e2e-integration-scope",
+        )
+        obs = mon.evaluate_stage_vs_e2e(
+            evaluation_id="stage-e2e-eval-01",
+            masked_e2e_verdicts=(1, 0, 1, 0),
+            ngd_e2e_verdicts=(1, 0, 0, 0),
+            repaired_e2e_verdicts=(1, 1, 0, 0),
+        )
+        self.assertEqual(obs["factored_stage_kernel_product"], "2")
+        self.assertEqual(obs["phase_1_global_kernel"], "2")
+        self.assertEqual(obs["phase_1_ngd_rate"], "1/4")
+        self.assertEqual(obs["phase_1_pgd_rate"], "1/4")
+        self.assertEqual(obs["phase_1_egd_rate"], "1/2")
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CANCELLATION_MASKED_STAGE_KERNEL_LGGR")
+
+        self.assertEqual(obs["phase_2_global_kernel"], "1")
+        self.assertEqual(obs["phase_2_evaluator_residual"], "-1")
+        self.assertEqual(obs["phase_2_ngd_rate"], "1/4")
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "NGD_INTEGRATION_REGRESSION_LGGR")
+
+        self.assertEqual(obs["phase_3_global_kernel"], "2")
+        self.assertEqual(obs["phase_3_egd_rate"], "0")
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "STAGE_E2E_KERNEL_DASHBOARD_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "STAGE_E2E_KERNEL_DASHBOARD_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["collapsing_dashboard_coherence_rate"], "0")
+        self.assertEqual(receipt["four_tuple_kernel_coherence_rate"], "1")
+        self.assertEqual(receipt["dashboard_kernel_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
