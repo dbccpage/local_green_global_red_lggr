@@ -16099,6 +16099,765 @@ class StreamingSharedChordDiamondHodgeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseInterfaceMergeMonitor:
+    """Real multi-agent codebase AST, local unit-test, cross-module interface contract,
+    and conservation invariant LGGR monitor (Theorem 94).
+
+    Separates:
+      1. Full cryptographic LGGR receipts (stored in the host audit log), and
+      2. Compact, role-scoped, symmetry-broken repair directives projected to each
+         concurrent coding agent prompt (preventing bilateral wave oscillation and
+         context-window receipt bloat).
+    """
+
+    FORBIDDEN_AST_NAMES: frozenset[str] = frozenset(
+        {"eval", "exec", "open", "compile", "__import__", "input", "breakpoint"}
+    )
+    FORBIDDEN_IMPORTS: frozenset[str] = frozenset(
+        {"os", "sys", "subprocess", "socket", "shutil", "pathlib", "ctypes", " builtins"}
+    )
+
+    CANONICAL_PIPELINE_SPEC: dict[str, Any] = {
+        "worker-0": {
+            "module": "pricing",
+            "function": "compute_quote",
+            "params": ["items", "discount_bps"],
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+            "priority_rank": 0,
+        },
+        "worker-1": {
+            "module": "tax_engine",
+            "function": "apply_tax",
+            "params": ["quote", "tax_bps"],
+            "upstream_keys_read": ["net_cents"],
+            "return_keys": ["net_cents", "tax_cents", "gross_cents"],
+            "priority_rank": 1,
+        },
+        "worker-2": {
+            "module": "settlement_router",
+            "function": "route_settlement",
+            "params": ["taxed_quote", "fee_bps"],
+            "upstream_keys_read": ["net_cents", "tax_cents", "gross_cents"],
+            "return_keys": [
+                "gross_cents",
+                "platform_fee_cents",
+                "tax_reserve_cents",
+                "merchant_payout_cents",
+            ],
+            "priority_rank": 2,
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-interface-merge-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+
+    @classmethod
+    def inspect_module_ast(cls, module_name: str, source_code: str) -> dict[str, Any]:
+        """Parse Python module source and extract function signatures and dict literal keys."""
+        import ast as _ast
+
+        mname = text(module_name, "module_name")
+        src = text(source_code, "source_code")
+        try:
+            tree = _ast.parse(src, filename=f"{mname}.py")
+        except SyntaxError as exc:
+            return {
+                "module": mname,
+                "syntax_ok": False,
+                "sandbox_ok": False,
+                "error": f"SyntaxError: {exc.msg} (line {exc.lineno})",
+                "functions": {},
+            }
+
+        sandbox_violations: list[str] = []
+        functions: dict[str, dict[str, Any]] = {}
+
+        for node in _ast.walk(tree):
+            if isinstance(node, (_ast.Import, _ast.ImportFrom)):
+                names = (
+                    [alias.name.split(".")[0] for alias in node.names]
+                    if isinstance(node, _ast.Import)
+                    else ([node.module.split(".")[0]] if node.module else [])
+                )
+                for n in names:
+                    if n in cls.FORBIDDEN_IMPORTS:
+                        sandbox_violations.append(f"forbidden_import:{n}")
+            elif isinstance(node, _ast.Call) and isinstance(node.func, _ast.Name):
+                if node.func.id in cls.FORBIDDEN_AST_NAMES:
+                    sandbox_violations.append(f"forbidden_call:{node.func.id}")
+
+        for node in tree.body:
+            if isinstance(node, _ast.FunctionDef):
+                params = [arg.arg for arg in node.args.args]
+                ret_keys: list[str] = []
+                read_subscripts: list[str] = []
+                for sub in _ast.walk(node):
+                    if isinstance(sub, _ast.Return) and isinstance(sub.value, _ast.Dict):
+                        for k in sub.value.keys:
+                            if isinstance(k, _ast.Constant) and isinstance(k.value, str):
+                                if k.value not in ret_keys:
+                                    ret_keys.append(k.value)
+                    elif isinstance(sub, _ast.Subscript):
+                        sl = sub.slice
+                        if isinstance(sl, _ast.Constant) and isinstance(sl.value, str):
+                            if sl.value not in read_subscripts:
+                                read_subscripts.append(sl.value)
+                    elif (
+                        isinstance(sub, _ast.Call)
+                        and isinstance(sub.func, _ast.Attribute)
+                        and sub.func.attr == "get"
+                        and sub.args
+                        and isinstance(sub.args[0], _ast.Constant)
+                        and isinstance(sub.args[0].value, str)
+                    ):
+                        kval = sub.args[0].value
+                        if kval not in read_subscripts:
+                            read_subscripts.append(kval)
+                functions[node.name] = {
+                    "params": params,
+                    "return_keys": ret_keys,
+                    "read_keys": read_subscripts,
+                }
+
+        return {
+            "module": mname,
+            "syntax_ok": True,
+            "sandbox_ok": len(sandbox_violations) == 0,
+            "sandbox_violations": sandbox_violations,
+            "functions": functions,
+        }
+
+    @classmethod
+    def execute_module_namespace(cls, module_name: str, source_code: str) -> dict[str, Any]:
+        """Execute verified sandboxed Python module source in a restricted builtin dictionary."""
+        ast_info = cls.inspect_module_ast(module_name, source_code)
+        if not ast_info["syntax_ok"] or not ast_info["sandbox_ok"]:
+            raise ValidationError(
+                f"Module {module_name} failed AST/sandbox check: {ast_info.get('error') or ast_info.get('sandbox_violations')}"
+            )
+        safe_builtins = {
+            "abs": abs,
+            "all": all,
+            "any": any,
+            "bool": bool,
+            "dict": dict,
+            "enumerate": enumerate,
+            "Exception": Exception,
+            "int": int,
+            "isinstance": isinstance,
+            "len": len,
+            "list": list,
+            "max": max,
+            "min": min,
+            "range": range,
+            "round": round,
+            "set": set,
+            "sorted": sorted,
+            "str": str,
+            "sum": sum,
+            "tuple": tuple,
+            "type": type,
+            "ValueError": ValueError,
+            "KeyError": KeyError,
+            "TypeError": TypeError,
+            "zip": zip,
+        }
+        ns: dict[str, Any] = {"__builtins__": safe_builtins}
+        exec(compile(source_code, f"{module_name}.py", "exec"), ns, ns)
+        return ns
+
+    def evaluate_codebase_merge(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: dict[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit local unit test verdicts, AST interface schemas, and end-to-end integration."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        ast_reports: dict[str, dict[str, Any]] = {}
+        namespaces: dict[str, dict[str, Any]] = {}
+        contract_mismatches: list[dict[str, Any]] = []
+        conservation_defects: list[dict[str, Any]] = []
+
+        for wid, spec in self.CANONICAL_PIPELINE_SPEC.items():
+            mname = spec["module"]
+            src = sources.get(mname, "")
+            info = self.inspect_module_ast(mname, src)
+            ast_reports[mname] = info
+            if info["syntax_ok"] and info["sandbox_ok"]:
+                try:
+                    namespaces[mname] = self.execute_module_namespace(mname, src)
+                except Exception as exc:
+                    contract_mismatches.append(
+                        {
+                            "worker": wid,
+                            "module": mname,
+                            "kind": "MODULE_LOAD_ERROR",
+                            "detail": str(exc),
+                        }
+                    )
+            else:
+                contract_mismatches.append(
+                    {
+                        "worker": wid,
+                        "module": mname,
+                        "kind": "AST_OR_SANDBOX_FAILURE",
+                        "detail": info.get("error") or str(info.get("sandbox_violations")),
+                    }
+                )
+
+        # Check infeasible upstream/downstream constraint if present
+        if infeasible_constraint is not None:
+            contract_mismatches.append(
+                {
+                    "worker": "all",
+                    "module": "pipeline_contract",
+                    "kind": "INFEASIBLE_SPECIFICATION_CONTRADICTION",
+                    "detail": infeasible_constraint,
+                }
+            )
+
+        # Run end-to-end integration test across pricing -> tax_engine -> settlement_router
+        integration_passed = False
+        integration_trace: dict[str, Any] = {}
+        pipeline_traceback_error: str | None = None
+        if len(namespaces) == 3 and infeasible_constraint is None:
+            fn_q = namespaces["pricing"].get("compute_quote")
+            fn_t = namespaces["tax_engine"].get("apply_tax")
+            fn_s = namespaces["settlement_router"].get("route_settlement")
+
+            sample_items = [
+                {"unit_cents": 400, "quantity": 2},
+                {"unit_cents": 200, "quantity": 1},
+            ]
+            q_out: dict[str, Any] | None = None
+            t_out: dict[str, Any] | None = None
+            s_out: dict[str, Any] | None = None
+
+            # Stage 1: pricing.compute_quote
+            try:
+                q_out = fn_q(sample_items, 1000)
+                for req_k in ("subtotal_cents", "discount_cents", "net_cents"):
+                    if req_k not in q_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-0",
+                                "module": "pricing",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                                "observed_keys": sorted(q_out.keys()),
+                                "expected_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+                            }
+                        )
+            except Exception as exc:
+                pipeline_traceback_error = f"pricing.compute_quote raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-0",
+                        "module": "pricing",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": pipeline_traceback_error,
+                    }
+                )
+
+            # Stage 2: tax_engine.apply_tax
+            stage2_input = (
+                q_out
+                if (isinstance(q_out, dict) and "net_cents" in q_out)
+                else {"subtotal_cents": 1000, "discount_cents": 100, "net_cents": 900}
+            )
+            try:
+                if q_out is not None:
+                    t_out = fn_t(q_out, 2000)
+                else:
+                    t_out = fn_t(stage2_input, 2000)
+                for req_k in ("net_cents", "tax_cents", "gross_cents"):
+                    if req_k not in t_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-1",
+                                "module": "tax_engine",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                                "observed_keys": sorted(t_out.keys()),
+                                "expected_keys": ["net_cents", "tax_cents", "gross_cents"],
+                            }
+                        )
+            except KeyError as exc:
+                missing_key = exc.args[0] if exc.args else str(exc)
+                if pipeline_traceback_error is None:
+                    pipeline_traceback_error = (
+                        f"KeyError in tax_engine.apply_tax: key '{missing_key}' not found in pricing quote output"
+                    )
+                # Check if pricing failed to emit canonical 'net_cents' or tax_engine read non-canonical key
+                if isinstance(q_out, dict) and "net_cents" not in q_out and missing_key == "net_cents":
+                    pass  # Already recorded under worker-0 RETURN_SCHEMA_MISMATCH
+                else:
+                    contract_mismatches.append(
+                        {
+                            "worker": "worker-1",
+                            "module": "tax_engine",
+                            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+                            "missing_key": str(missing_key),
+                            "upstream_module": "pricing",
+                            "canonical_upstream_keys": [
+                                "subtotal_cents",
+                                "discount_cents",
+                                "net_cents",
+                            ],
+                        }
+                    )
+            except Exception as exc:
+                if pipeline_traceback_error is None:
+                    pipeline_traceback_error = f"tax_engine.apply_tax raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-1",
+                        "module": "tax_engine",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": str(exc),
+                    }
+                )
+
+            # Stage 3: settlement_router.route_settlement (audited even if Stage 2 failed using canonical fiber!)
+            stage3_input = (
+                t_out
+                if (
+                    isinstance(t_out, dict)
+                    and all(k in t_out for k in ("net_cents", "tax_cents", "gross_cents"))
+                )
+                else {"net_cents": 900, "tax_cents": 180, "gross_cents": 1080}
+            )
+            try:
+                s_out = fn_s(stage3_input, 300)
+                for req_k in (
+                    "gross_cents",
+                    "platform_fee_cents",
+                    "tax_reserve_cents",
+                    "merchant_payout_cents",
+                ):
+                    if req_k not in s_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-2",
+                                "module": "settlement_router",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                                "observed_keys": sorted(s_out.keys()),
+                                "expected_keys": [
+                                    "gross_cents",
+                                    "platform_fee_cents",
+                                    "tax_reserve_cents",
+                                    "merchant_payout_cents",
+                                ],
+                            }
+                        )
+                if all(
+                    k in s_out
+                    for k in (
+                        "gross_cents",
+                        "platform_fee_cents",
+                        "tax_reserve_cents",
+                        "merchant_payout_cents",
+                    )
+                ):
+                    expected_fee = (int(stage3_input["net_cents"]) * 300) // 10000
+                    expected_tax = int(stage3_input["tax_cents"])
+                    expected_gross = int(stage3_input["net_cents"]) + expected_tax
+                    observed_sum = (
+                        int(s_out["merchant_payout_cents"])
+                        + int(s_out["platform_fee_cents"])
+                        + int(s_out["tax_reserve_cents"])
+                    )
+                    residual = observed_sum - int(s_out["gross_cents"])
+                    fee_drift = int(s_out["platform_fee_cents"]) - expected_fee
+                    gross_drift = int(s_out["gross_cents"]) - expected_gross
+
+                    if residual != 0 or fee_drift != 0 or gross_drift != 0:
+                        if pipeline_traceback_error is None:
+                            pipeline_traceback_error = (
+                                f"AssertionError in settlement_router: platform_fee_cents={s_out['platform_fee_cents']} "
+                                f"!= expected {expected_fee} (300 bps on net_cents={stage3_input['net_cents']}) "
+                                f"or conservation residual={residual}"
+                            )
+                        conservation_defects.append(
+                            {
+                                "worker": "worker-2",
+                                "module": "settlement_router",
+                                "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+                                "conservation_residual_cents": residual,
+                                "fee_base_drift_cents": fee_drift,
+                                "gross_drift_cents": gross_drift,
+                                "expected_fee_cents": expected_fee,
+                                "observed_settlement": s_out,
+                            }
+                        )
+            except KeyError as exc:
+                missing_key = exc.args[0] if exc.args else str(exc)
+                if pipeline_traceback_error is None:
+                    pipeline_traceback_error = f"KeyError in settlement_router: '{missing_key}'"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-2",
+                        "module": "settlement_router",
+                        "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+                        "missing_key": str(missing_key),
+                        "upstream_module": "tax_engine",
+                        "canonical_upstream_keys": [
+                            "net_cents",
+                            "tax_cents",
+                            "gross_cents",
+                        ],
+                    }
+                )
+            except Exception as exc:
+                if pipeline_traceback_error is None:
+                    pipeline_traceback_error = f"settlement_router raised {type(exc).__name__}: {exc}"
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-2",
+                        "module": "settlement_router",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": str(exc),
+                    }
+                )
+
+            if not contract_mismatches and not conservation_defects and t_out is not None and s_out is not None:
+                integration_passed = True
+
+            integration_trace = {
+                "quote_output": q_out,
+                "tax_output": t_out,
+                "settlement_output": s_out,
+                "first_sequential_traceback": pipeline_traceback_error,
+            }
+
+        local_vec = [
+            bool(local_test_results.get("pricing", False)),
+            bool(local_test_results.get("tax_engine", False)),
+            bool(local_test_results.get("settlement_router", False)),
+        ]
+        l_green = 1 if all(local_vec) else 0
+        eg_green = (
+            1
+            if (l_green == 1 and integration_passed and not contract_mismatches and not conservation_defects)
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {"local_unit_tests": local_vec},
+            {"global_integration_passed": eg_green == 1},
+        )
+
+        # Build compact, role-scoped, symmetry-broken directives for each worker
+        role_directives = self._build_role_directives(
+            contract_mismatches=contract_mismatches,
+            conservation_defects=conservation_defects,
+            infeasible_constraint=infeasible_constraint,
+            integration_passed=(eg_green == 1),
+        )
+
+        if eg_green == 1:
+            status = "CODEBASE_MERGE_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_SPECIFICATION_CONTRADICTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "local_unit_test_verdicts": {
+                "pricing": local_vec[0],
+                "tax_engine": local_vec[1],
+                "settlement_router": local_vec[2],
+            },
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "contract_mismatches": contract_mismatches,
+            "conservation_defects": conservation_defects,
+            "integration_trace": integration_trace,
+            "compact_role_directives": role_directives,
+            "ast_reports": ast_reports,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_role_directives(
+        cls,
+        *,
+        contract_mismatches: Sequence[Mapping[str, Any]],
+        conservation_defects: Sequence[Mapping[str, Any]],
+        infeasible_constraint: Mapping[str, Any] | None,
+        integration_passed: bool,
+    ) -> dict[str, dict[str, Any]]:
+        """Project compact, symmetry-broken, role-scoped directives without receipt hash bloat."""
+        if integration_passed:
+            return {
+                wid: {
+                    "role": "VERIFIED_MODULE_OWNER",
+                    "action": "NO_CHANGE_REQUIRED",
+                    "module": spec["module"],
+                }
+                for wid, spec in cls.CANONICAL_PIPELINE_SPEC.items()
+            }
+
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "CONFLICT_AUDITOR",
+                    "action": "ESCALATE_INFEASIBLE_CONTRACT",
+                    "module": spec["module"],
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_PIPELINE_SPEC.items()
+            }
+
+        directives: dict[str, dict[str, Any]] = {}
+        w0_mismatch = [m for m in contract_mismatches if m.get("worker") == "worker-0"]
+        w1_mismatch = [m for m in contract_mismatches if m.get("worker") == "worker-1"]
+        w2_mismatch = [m for m in contract_mismatches if m.get("worker") == "worker-2"]
+        w2_cons = list(conservation_defects)
+
+        # Priority rank 0: worker-0 (pricing) is the canonical upstream anchor
+        if w0_mismatch:
+            directives["worker-0"] = {
+                "role": "UPSTREAM_CANONICAL_ANCHOR",
+                "action": "RESTORE_CANONICAL_RETURN_KEYS",
+                "module": "pricing",
+                "required_return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+            }
+        else:
+            directives["worker-0"] = {
+                "role": "UPSTREAM_CANONICAL_ANCHOR",
+                "action": "HOLD_CANONICAL_INTERFACE",
+                "module": "pricing",
+                "required_return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+                "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema.",
+            }
+
+        # Priority rank 1: worker-1 (tax_engine) aligns to worker-0 and holds its output for worker-2
+        if w1_mismatch:
+            directives["worker-1"] = {
+                "role": "MIDDLE_STAGE_ADAPTER",
+                "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+                "module": "tax_engine",
+                "read_from_quote": ["net_cents"],
+                "required_return_keys": ["net_cents", "tax_cents", "gross_cents"],
+                "mismatch": w1_mismatch[0],
+            }
+        else:
+            directives["worker-1"] = {
+                "role": "MIDDLE_STAGE_ADAPTER",
+                "action": "HOLD_CANONICAL_INTERFACE",
+                "module": "tax_engine",
+                "read_from_quote": ["net_cents"],
+                "required_return_keys": ["net_cents", "tax_cents", "gross_cents"],
+            }
+
+        # Priority rank 2: worker-2 (settlement_router) aligns to worker-1 and enforces conservation
+        if w2_mismatch or w2_cons:
+            directives["worker-2"] = {
+                "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+                "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+                "module": "settlement_router",
+                "read_from_taxed_quote": ["net_cents", "tax_cents", "gross_cents"],
+                "required_return_keys": [
+                    "gross_cents",
+                    "platform_fee_cents",
+                    "tax_reserve_cents",
+                    "merchant_payout_cents",
+                ],
+                "exact_invariants": [
+                    "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+                    "tax_reserve_cents = taxed_quote['tax_cents']",
+                    "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents",
+                ],
+                "defects": w2_mismatch + w2_cons,
+            }
+        else:
+            directives["worker-2"] = {
+                "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+                "action": "HOLD_CANONICAL_INTERFACE",
+                "module": "settlement_router",
+            }
+
+        return directives
+
+    def record_three_phase_code_swarm_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase concurrent code-engineering swarm audit (Theorem 94):
+        - Phase 1: Initial Local Green modules with cross-module schema mismatch (`net_amount_cents` vs `net_cents`)
+          and fee-base conservation drift (`gross_cents * fee_bps` vs `net_cents * fee_bps`).
+        - Phase 2: Uncoordinated bilateral wave repair where worker-0 renames `net_cents -> net_amount_cents`
+          at the same time worker-1 renames `net_amount_cents -> net_cents` (concurrent wave oscillation).
+        - Phase 3: Symmetry-broken role-scoped LGGR directive where worker-0 holds canonical `net_cents`,
+          worker-1 aligns to `net_cents`, and worker-2 enforces exact net-base fee & payout conservation.
+        """
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_pricing_canonical = (
+            "def compute_quote(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_cents': net}\n"
+        )
+        src_pricing_flipped = (
+            "def compute_quote(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_amount_cents': net}\n"
+        )
+        src_tax_mismatched = (
+            "def apply_tax(quote, tax_bps):\n"
+            "    net = int(quote['net_amount_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': net + tax}\n"
+        )
+        src_tax_canonical = (
+            "def apply_tax(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': net + tax}\n"
+        )
+        src_settlement_drifted = (
+            "def route_settlement(taxed_quote, fee_bps):\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    fee = (gross * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax + 1\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+        src_settlement_canonical = (
+            "def route_settlement(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+
+        p1 = self.evaluate_codebase_merge(
+            f"{eval_id}_phase1_initial_drift",
+            sources={
+                "pricing": src_pricing_canonical,
+                "tax_engine": src_tax_mismatched,
+                "settlement_router": src_settlement_drifted,
+            },
+            local_test_results={"pricing": True, "tax_engine": True, "settlement_router": True},
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_merge(
+            f"{eval_id}_phase2_bilateral_oscillation",
+            sources={
+                "pricing": src_pricing_flipped,
+                "tax_engine": src_tax_canonical,
+                "settlement_router": src_settlement_canonical,
+            },
+            local_test_results={"pricing": True, "tax_engine": True, "settlement_router": True},
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_merge(
+            f"{eval_id}_phase3_symmetry_broken_directive",
+            sources={
+                "pricing": src_pricing_canonical,
+                "tax_engine": src_tax_canonical,
+                "settlement_router": src_settlement_canonical,
+            },
+            local_test_results={"pricing": True, "tax_engine": True, "settlement_router": True},
+            model_id=mid,
+        )
+
+        return json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "phase_3_integration_trace": p3["integration_trace"],
+            }
+        )
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase merge evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_interface_merge.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": (
+                "CODEBASE_MERGE_COHERENT_LGGG"
+                if self.evaluations[-1]["global_green"] == 1
+                else "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR"
+            ),
+            "contract_status": (
+                "COMPOSABLE_LGGG"
+                if self.evaluations[-1]["global_green"] == 1
+                else "OBSTRUCTED_LGGR"
+            ),
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

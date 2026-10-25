@@ -1,0 +1,3074 @@
+{
+  "schema": "lggr.concurrent_code_swarm_directive_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "concurrent_code_swarm_directive_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_initial_drift_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_bilateral_oscillation_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_symmetry_broken_directive_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "uncoordinated_wave_coherence_rate": "0",
+  "symmetry_broken_directive_coherence_rate": "1",
+  "code_swarm_directive_coherence_gain": "1",
+  "codebase_merge_monitor_receipt": {
+    "schema": "lggr.online_codebase_interface_merge.v1",
+    "authority_effect": "None",
+    "scope_id": "live-concurrent-code-swarm-directive-scope",
+    "status": "CODEBASE_MERGE_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "live-concurrent-code-swarm-directive-scope-fiber",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini::concurrent_code_swarm_eval_phase1_initial_drift",
+          "report": {
+            "local_unit_tests": [
+              true,
+              true,
+              true
+            ]
+          },
+          "query": {
+            "global_integration_passed": false
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini::concurrent_code_swarm_eval_phase3_symmetry_broken_directive",
+          "report": {
+            "local_unit_tests": [
+              true,
+              true,
+              true
+            ]
+          },
+          "query": {
+            "global_integration_passed": true
+          }
+        }
+      },
+      "input_sha256": "efddfb058f68523dfbdf7aaad10d5d7eb82b1cc0b0dbd3189a03ad82fc20210d",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "d3b9e5cf4580d29a168ad6911d6db2383fe5ba3e423438a6593a998be473385c"
+    },
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::concurrent_code_swarm_eval_phase1_initial_drift",
+        "model_id": "openai/gpt-4o-mini",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [
+          {
+            "worker": "worker-2",
+            "module": "settlement_router",
+            "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+            "conservation_residual_cents": 1,
+            "fee_base_drift_cents": 5,
+            "gross_drift_cents": 0,
+            "expected_fee_cents": 27,
+            "observed_settlement": {
+              "gross_cents": 1080,
+              "platform_fee_cents": 32,
+              "tax_reserve_cents": 180,
+              "merchant_payout_cents": 869
+            }
+          }
+        ],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 32,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 869
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_amount_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ],
+            "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "mismatch": {
+              "worker": "worker-1",
+              "module": "tax_engine",
+              "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+              "missing_key": "net_amount_cents",
+              "upstream_module": "pricing",
+              "canonical_upstream_keys": [
+                "subtotal_cents",
+                "discount_cents",
+                "net_cents"
+              ]
+            }
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+            "module": "settlement_router",
+            "read_from_taxed_quote": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "required_return_keys": [
+              "gross_cents",
+              "platform_fee_cents",
+              "tax_reserve_cents",
+              "merchant_payout_cents"
+            ],
+            "exact_invariants": [
+              "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+              "tax_reserve_cents = taxed_quote['tax_cents']",
+              "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+            ],
+            "defects": [
+              {
+                "worker": "worker-2",
+                "module": "settlement_router",
+                "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+                "conservation_residual_cents": 1,
+                "fee_base_drift_cents": 5,
+                "gross_drift_cents": 0,
+                "expected_fee_cents": 27,
+                "observed_settlement": {
+                  "gross_cents": 1080,
+                  "platform_fee_cents": 32,
+                  "tax_reserve_cents": 180,
+                  "merchant_payout_cents": 869
+                }
+              }
+            ]
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_amount_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "gross_cents",
+                  "tax_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini::concurrent_code_swarm_eval_phase2_bilateral_oscillation",
+        "model_id": "openai/gpt-4o-mini",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-0",
+            "module": "pricing",
+            "kind": "RETURN_SCHEMA_MISMATCH",
+            "missing_key": "net_cents",
+            "observed_keys": [
+              "discount_cents",
+              "net_amount_cents",
+              "subtotal_cents"
+            ],
+            "expected_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_amount_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "RESTORE_CANONICAL_RETURN_KEYS",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ]
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_amount_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini::concurrent_code_swarm_eval_phase3_symmetry_broken_directive",
+        "model_id": "openai/gpt-4o-mini",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_MERGE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "contract_mismatches": [],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": {
+            "net_cents": 900,
+            "tax_cents": 180,
+            "gross_cents": 1080
+          },
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": null
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "pricing"
+          },
+          "worker-1": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "tax_engine"
+          },
+          "worker-2": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::concurrent_code_swarm_eval_phase1_initial_drift",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [
+          {
+            "worker": "worker-2",
+            "module": "settlement_router",
+            "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+            "conservation_residual_cents": 1,
+            "fee_base_drift_cents": 5,
+            "gross_drift_cents": 0,
+            "expected_fee_cents": 27,
+            "observed_settlement": {
+              "gross_cents": 1080,
+              "platform_fee_cents": 32,
+              "tax_reserve_cents": 180,
+              "merchant_payout_cents": 869
+            }
+          }
+        ],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 32,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 869
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_amount_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ],
+            "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "mismatch": {
+              "worker": "worker-1",
+              "module": "tax_engine",
+              "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+              "missing_key": "net_amount_cents",
+              "upstream_module": "pricing",
+              "canonical_upstream_keys": [
+                "subtotal_cents",
+                "discount_cents",
+                "net_cents"
+              ]
+            }
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+            "module": "settlement_router",
+            "read_from_taxed_quote": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "required_return_keys": [
+              "gross_cents",
+              "platform_fee_cents",
+              "tax_reserve_cents",
+              "merchant_payout_cents"
+            ],
+            "exact_invariants": [
+              "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+              "tax_reserve_cents = taxed_quote['tax_cents']",
+              "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+            ],
+            "defects": [
+              {
+                "worker": "worker-2",
+                "module": "settlement_router",
+                "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+                "conservation_residual_cents": 1,
+                "fee_base_drift_cents": 5,
+                "gross_drift_cents": 0,
+                "expected_fee_cents": 27,
+                "observed_settlement": {
+                  "gross_cents": 1080,
+                  "platform_fee_cents": 32,
+                  "tax_reserve_cents": 180,
+                  "merchant_payout_cents": 869
+                }
+              }
+            ]
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_amount_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "gross_cents",
+                  "tax_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::concurrent_code_swarm_eval_phase2_bilateral_oscillation",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-0",
+            "module": "pricing",
+            "kind": "RETURN_SCHEMA_MISMATCH",
+            "missing_key": "net_cents",
+            "observed_keys": [
+              "discount_cents",
+              "net_amount_cents",
+              "subtotal_cents"
+            ],
+            "expected_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_amount_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "RESTORE_CANONICAL_RETURN_KEYS",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ]
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_amount_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::concurrent_code_swarm_eval_phase3_symmetry_broken_directive",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_MERGE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "contract_mismatches": [],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": {
+            "net_cents": 900,
+            "tax_cents": 180,
+            "gross_cents": 1080
+          },
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": null
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "pricing"
+          },
+          "worker-1": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "tax_engine"
+          },
+          "worker-2": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::concurrent_code_swarm_eval_phase1_initial_drift",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [
+          {
+            "worker": "worker-2",
+            "module": "settlement_router",
+            "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+            "conservation_residual_cents": 1,
+            "fee_base_drift_cents": 5,
+            "gross_drift_cents": 0,
+            "expected_fee_cents": 27,
+            "observed_settlement": {
+              "gross_cents": 1080,
+              "platform_fee_cents": 32,
+              "tax_reserve_cents": 180,
+              "merchant_payout_cents": 869
+            }
+          }
+        ],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 32,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 869
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_amount_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ],
+            "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "mismatch": {
+              "worker": "worker-1",
+              "module": "tax_engine",
+              "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+              "missing_key": "net_amount_cents",
+              "upstream_module": "pricing",
+              "canonical_upstream_keys": [
+                "subtotal_cents",
+                "discount_cents",
+                "net_cents"
+              ]
+            }
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+            "module": "settlement_router",
+            "read_from_taxed_quote": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "required_return_keys": [
+              "gross_cents",
+              "platform_fee_cents",
+              "tax_reserve_cents",
+              "merchant_payout_cents"
+            ],
+            "exact_invariants": [
+              "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+              "tax_reserve_cents = taxed_quote['tax_cents']",
+              "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+            ],
+            "defects": [
+              {
+                "worker": "worker-2",
+                "module": "settlement_router",
+                "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+                "conservation_residual_cents": 1,
+                "fee_base_drift_cents": 5,
+                "gross_drift_cents": 0,
+                "expected_fee_cents": 27,
+                "observed_settlement": {
+                  "gross_cents": 1080,
+                  "platform_fee_cents": 32,
+                  "tax_reserve_cents": 180,
+                  "merchant_payout_cents": 869
+                }
+              }
+            ]
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_amount_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "gross_cents",
+                  "tax_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::concurrent_code_swarm_eval_phase2_bilateral_oscillation",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-0",
+            "module": "pricing",
+            "kind": "RETURN_SCHEMA_MISMATCH",
+            "missing_key": "net_cents",
+            "observed_keys": [
+              "discount_cents",
+              "net_amount_cents",
+              "subtotal_cents"
+            ],
+            "expected_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_amount_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "RESTORE_CANONICAL_RETURN_KEYS",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ]
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_amount_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::concurrent_code_swarm_eval_phase3_symmetry_broken_directive",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_MERGE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "contract_mismatches": [],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": {
+            "net_cents": 900,
+            "tax_cents": 180,
+            "gross_cents": 1080
+          },
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": null
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "pricing"
+          },
+          "worker-1": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "tax_engine"
+          },
+          "worker-2": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::concurrent_code_swarm_eval_phase1_initial_drift",
+        "model_id": "deepseek/deepseek-chat",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [
+          {
+            "worker": "worker-2",
+            "module": "settlement_router",
+            "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+            "conservation_residual_cents": 1,
+            "fee_base_drift_cents": 5,
+            "gross_drift_cents": 0,
+            "expected_fee_cents": 27,
+            "observed_settlement": {
+              "gross_cents": 1080,
+              "platform_fee_cents": 32,
+              "tax_reserve_cents": 180,
+              "merchant_payout_cents": 869
+            }
+          }
+        ],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 32,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 869
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_amount_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ],
+            "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "mismatch": {
+              "worker": "worker-1",
+              "module": "tax_engine",
+              "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+              "missing_key": "net_amount_cents",
+              "upstream_module": "pricing",
+              "canonical_upstream_keys": [
+                "subtotal_cents",
+                "discount_cents",
+                "net_cents"
+              ]
+            }
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+            "module": "settlement_router",
+            "read_from_taxed_quote": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "required_return_keys": [
+              "gross_cents",
+              "platform_fee_cents",
+              "tax_reserve_cents",
+              "merchant_payout_cents"
+            ],
+            "exact_invariants": [
+              "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+              "tax_reserve_cents = taxed_quote['tax_cents']",
+              "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+            ],
+            "defects": [
+              {
+                "worker": "worker-2",
+                "module": "settlement_router",
+                "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+                "conservation_residual_cents": 1,
+                "fee_base_drift_cents": 5,
+                "gross_drift_cents": 0,
+                "expected_fee_cents": 27,
+                "observed_settlement": {
+                  "gross_cents": 1080,
+                  "platform_fee_cents": 32,
+                  "tax_reserve_cents": 180,
+                  "merchant_payout_cents": 869
+                }
+              }
+            ]
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_amount_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "gross_cents",
+                  "tax_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::concurrent_code_swarm_eval_phase2_bilateral_oscillation",
+        "model_id": "deepseek/deepseek-chat",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-0",
+            "module": "pricing",
+            "kind": "RETURN_SCHEMA_MISMATCH",
+            "missing_key": "net_cents",
+            "observed_keys": [
+              "discount_cents",
+              "net_amount_cents",
+              "subtotal_cents"
+            ],
+            "expected_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_amount_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "RESTORE_CANONICAL_RETURN_KEYS",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ]
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_amount_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::concurrent_code_swarm_eval_phase3_symmetry_broken_directive",
+        "model_id": "deepseek/deepseek-chat",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_MERGE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "contract_mismatches": [],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": {
+            "net_cents": 900,
+            "tax_cents": 180,
+            "gross_cents": 1080
+          },
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": null
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "pricing"
+          },
+          "worker-1": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "tax_engine"
+          },
+          "worker-2": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::concurrent_code_swarm_eval_phase1_initial_drift",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [
+          {
+            "worker": "worker-2",
+            "module": "settlement_router",
+            "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+            "conservation_residual_cents": 1,
+            "fee_base_drift_cents": 5,
+            "gross_drift_cents": 0,
+            "expected_fee_cents": 27,
+            "observed_settlement": {
+              "gross_cents": 1080,
+              "platform_fee_cents": 32,
+              "tax_reserve_cents": 180,
+              "merchant_payout_cents": 869
+            }
+          }
+        ],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 32,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 869
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_amount_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ],
+            "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "mismatch": {
+              "worker": "worker-1",
+              "module": "tax_engine",
+              "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+              "missing_key": "net_amount_cents",
+              "upstream_module": "pricing",
+              "canonical_upstream_keys": [
+                "subtotal_cents",
+                "discount_cents",
+                "net_cents"
+              ]
+            }
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+            "module": "settlement_router",
+            "read_from_taxed_quote": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ],
+            "required_return_keys": [
+              "gross_cents",
+              "platform_fee_cents",
+              "tax_reserve_cents",
+              "merchant_payout_cents"
+            ],
+            "exact_invariants": [
+              "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+              "tax_reserve_cents = taxed_quote['tax_cents']",
+              "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+            ],
+            "defects": [
+              {
+                "worker": "worker-2",
+                "module": "settlement_router",
+                "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+                "conservation_residual_cents": 1,
+                "fee_base_drift_cents": 5,
+                "gross_drift_cents": 0,
+                "expected_fee_cents": 27,
+                "observed_settlement": {
+                  "gross_cents": 1080,
+                  "platform_fee_cents": 32,
+                  "tax_reserve_cents": 180,
+                  "merchant_payout_cents": 869
+                }
+              }
+            ]
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_amount_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "gross_cents",
+                  "tax_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::concurrent_code_swarm_eval_phase2_bilateral_oscillation",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "contract_mismatches": [
+          {
+            "worker": "worker-0",
+            "module": "pricing",
+            "kind": "RETURN_SCHEMA_MISMATCH",
+            "missing_key": "net_cents",
+            "observed_keys": [
+              "discount_cents",
+              "net_amount_cents",
+              "subtotal_cents"
+            ],
+            "expected_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        ],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_amount_cents": 900
+          },
+          "tax_output": null,
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": "KeyError in tax_engine.apply_tax: key 'net_cents' not found in pricing quote output"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "UPSTREAM_CANONICAL_ANCHOR",
+            "action": "RESTORE_CANONICAL_RETURN_KEYS",
+            "module": "pricing",
+            "required_return_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          },
+          "worker-1": {
+            "role": "MIDDLE_STAGE_ADAPTER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "tax_engine",
+            "read_from_quote": [
+              "net_cents"
+            ],
+            "required_return_keys": [
+              "net_cents",
+              "tax_cents",
+              "gross_cents"
+            ]
+          },
+          "worker-2": {
+            "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+            "action": "HOLD_CANONICAL_INTERFACE",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_amount_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::concurrent_code_swarm_eval_phase3_symmetry_broken_directive",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "local_unit_test_verdicts": {
+          "pricing": true,
+          "tax_engine": true,
+          "settlement_router": true
+        },
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_MERGE_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "contract_mismatches": [],
+        "conservation_defects": [],
+        "integration_trace": {
+          "quote_output": {
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "net_cents": 900
+          },
+          "tax_output": {
+            "net_cents": 900,
+            "tax_cents": 180,
+            "gross_cents": 1080
+          },
+          "settlement_output": {
+            "gross_cents": 1080,
+            "platform_fee_cents": 27,
+            "tax_reserve_cents": 180,
+            "merchant_payout_cents": 873
+          },
+          "first_sequential_traceback": null
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "pricing"
+          },
+          "worker-1": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "tax_engine"
+          },
+          "worker-2": {
+            "role": "VERIFIED_MODULE_OWNER",
+            "action": "NO_CHANGE_REQUIRED",
+            "module": "settlement_router"
+          }
+        },
+        "ast_reports": {
+          "pricing": {
+            "module": "pricing",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "quantity"
+                ]
+              }
+            }
+          },
+          "tax_engine": {
+            "module": "tax_engine",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_tax": {
+                "params": [
+                  "quote",
+                  "tax_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_router": {
+            "module": "settlement_router",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "518b2abdf771d4b3cd1550b099eac328a0ea4536f909ac38fbe1cbf25d4b3eed"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::concurrent_code_swarm_eval",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "role": "UPSTREAM_CANONICAL_ANCHOR",
+          "action": "HOLD_CANONICAL_INTERFACE",
+          "module": "pricing",
+          "required_return_keys": [
+            "subtotal_cents",
+            "discount_cents",
+            "net_cents"
+          ],
+          "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+        },
+        "worker-1": {
+          "role": "MIDDLE_STAGE_ADAPTER",
+          "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+          "module": "tax_engine",
+          "read_from_quote": [
+            "net_cents"
+          ],
+          "required_return_keys": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "mismatch": {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        },
+        "worker-2": {
+          "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+          "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+          "module": "settlement_router",
+          "read_from_taxed_quote": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "required_return_keys": [
+            "gross_cents",
+            "platform_fee_cents",
+            "tax_reserve_cents",
+            "merchant_payout_cents"
+          ],
+          "exact_invariants": [
+            "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+            "tax_reserve_cents = taxed_quote['tax_cents']",
+            "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+          ],
+          "defects": [
+            {
+              "worker": "worker-2",
+              "module": "settlement_router",
+              "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+              "conservation_residual_cents": 1,
+              "fee_base_drift_cents": 5,
+              "gross_drift_cents": 0,
+              "expected_fee_cents": 27,
+              "observed_settlement": {
+                "gross_cents": 1080,
+                "platform_fee_cents": 32,
+                "tax_reserve_cents": 180,
+                "merchant_payout_cents": 869
+              }
+            }
+          ]
+        }
+      },
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_MERGE_COHERENT_LGGG",
+      "phase_3_integration_trace": {
+        "quote_output": {
+          "subtotal_cents": 1000,
+          "discount_cents": 100,
+          "net_cents": 900
+        },
+        "tax_output": {
+          "net_cents": 900,
+          "tax_cents": 180,
+          "gross_cents": 1080
+        },
+        "settlement_output": {
+          "gross_cents": 1080,
+          "platform_fee_cents": 27,
+          "tax_reserve_cents": 180,
+          "merchant_payout_cents": 873
+        },
+        "first_sequential_traceback": null
+      },
+      "raw_auditor_response": "{\"phase_1_global_green\": 0, \"phase_2_global_green\": 0, \"phase_3_global_green\": 1}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::concurrent_code_swarm_eval",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "role": "UPSTREAM_CANONICAL_ANCHOR",
+          "action": "HOLD_CANONICAL_INTERFACE",
+          "module": "pricing",
+          "required_return_keys": [
+            "subtotal_cents",
+            "discount_cents",
+            "net_cents"
+          ],
+          "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+        },
+        "worker-1": {
+          "role": "MIDDLE_STAGE_ADAPTER",
+          "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+          "module": "tax_engine",
+          "read_from_quote": [
+            "net_cents"
+          ],
+          "required_return_keys": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "mismatch": {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        },
+        "worker-2": {
+          "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+          "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+          "module": "settlement_router",
+          "read_from_taxed_quote": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "required_return_keys": [
+            "gross_cents",
+            "platform_fee_cents",
+            "tax_reserve_cents",
+            "merchant_payout_cents"
+          ],
+          "exact_invariants": [
+            "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+            "tax_reserve_cents = taxed_quote['tax_cents']",
+            "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+          ],
+          "defects": [
+            {
+              "worker": "worker-2",
+              "module": "settlement_router",
+              "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+              "conservation_residual_cents": 1,
+              "fee_base_drift_cents": 5,
+              "gross_drift_cents": 0,
+              "expected_fee_cents": 27,
+              "observed_settlement": {
+                "gross_cents": 1080,
+                "platform_fee_cents": 32,
+                "tax_reserve_cents": 180,
+                "merchant_payout_cents": 869
+              }
+            }
+          ]
+        }
+      },
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_MERGE_COHERENT_LGGG",
+      "phase_3_integration_trace": {
+        "quote_output": {
+          "subtotal_cents": 1000,
+          "discount_cents": 100,
+          "net_cents": 900
+        },
+        "tax_output": {
+          "net_cents": 900,
+          "tax_cents": 180,
+          "gross_cents": 1080
+        },
+        "settlement_output": {
+          "gross_cents": 1080,
+          "platform_fee_cents": 27,
+          "tax_reserve_cents": 180,
+          "merchant_payout_cents": 873
+        },
+        "first_sequential_traceback": null
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_global_green\": 0,\n  \"phase_2_global_green\": 0,\n  \"phase_3_global_green\": 1\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::concurrent_code_swarm_eval",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "role": "UPSTREAM_CANONICAL_ANCHOR",
+          "action": "HOLD_CANONICAL_INTERFACE",
+          "module": "pricing",
+          "required_return_keys": [
+            "subtotal_cents",
+            "discount_cents",
+            "net_cents"
+          ],
+          "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+        },
+        "worker-1": {
+          "role": "MIDDLE_STAGE_ADAPTER",
+          "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+          "module": "tax_engine",
+          "read_from_quote": [
+            "net_cents"
+          ],
+          "required_return_keys": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "mismatch": {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        },
+        "worker-2": {
+          "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+          "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+          "module": "settlement_router",
+          "read_from_taxed_quote": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "required_return_keys": [
+            "gross_cents",
+            "platform_fee_cents",
+            "tax_reserve_cents",
+            "merchant_payout_cents"
+          ],
+          "exact_invariants": [
+            "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+            "tax_reserve_cents = taxed_quote['tax_cents']",
+            "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+          ],
+          "defects": [
+            {
+              "worker": "worker-2",
+              "module": "settlement_router",
+              "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+              "conservation_residual_cents": 1,
+              "fee_base_drift_cents": 5,
+              "gross_drift_cents": 0,
+              "expected_fee_cents": 27,
+              "observed_settlement": {
+                "gross_cents": 1080,
+                "platform_fee_cents": 32,
+                "tax_reserve_cents": 180,
+                "merchant_payout_cents": 869
+              }
+            }
+          ]
+        }
+      },
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_MERGE_COHERENT_LGGG",
+      "phase_3_integration_trace": {
+        "quote_output": {
+          "subtotal_cents": 1000,
+          "discount_cents": 100,
+          "net_cents": 900
+        },
+        "tax_output": {
+          "net_cents": 900,
+          "tax_cents": 180,
+          "gross_cents": 1080
+        },
+        "settlement_output": {
+          "gross_cents": 1080,
+          "platform_fee_cents": 27,
+          "tax_reserve_cents": 180,
+          "merchant_payout_cents": 873
+        },
+        "first_sequential_traceback": null
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_global_green\": 0,\n  \"phase_2_global_green\": 0,\n  \"phase_3_global_green\": 1\n}\n```"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::concurrent_code_swarm_eval",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "role": "UPSTREAM_CANONICAL_ANCHOR",
+          "action": "HOLD_CANONICAL_INTERFACE",
+          "module": "pricing",
+          "required_return_keys": [
+            "subtotal_cents",
+            "discount_cents",
+            "net_cents"
+          ],
+          "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+        },
+        "worker-1": {
+          "role": "MIDDLE_STAGE_ADAPTER",
+          "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+          "module": "tax_engine",
+          "read_from_quote": [
+            "net_cents"
+          ],
+          "required_return_keys": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "mismatch": {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        },
+        "worker-2": {
+          "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+          "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+          "module": "settlement_router",
+          "read_from_taxed_quote": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "required_return_keys": [
+            "gross_cents",
+            "platform_fee_cents",
+            "tax_reserve_cents",
+            "merchant_payout_cents"
+          ],
+          "exact_invariants": [
+            "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+            "tax_reserve_cents = taxed_quote['tax_cents']",
+            "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+          ],
+          "defects": [
+            {
+              "worker": "worker-2",
+              "module": "settlement_router",
+              "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+              "conservation_residual_cents": 1,
+              "fee_base_drift_cents": 5,
+              "gross_drift_cents": 0,
+              "expected_fee_cents": 27,
+              "observed_settlement": {
+                "gross_cents": 1080,
+                "platform_fee_cents": 32,
+                "tax_reserve_cents": 180,
+                "merchant_payout_cents": 869
+              }
+            }
+          ]
+        }
+      },
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_MERGE_COHERENT_LGGG",
+      "phase_3_integration_trace": {
+        "quote_output": {
+          "subtotal_cents": 1000,
+          "discount_cents": 100,
+          "net_cents": 900
+        },
+        "tax_output": {
+          "net_cents": 900,
+          "tax_cents": 180,
+          "gross_cents": 1080
+        },
+        "settlement_output": {
+          "gross_cents": 1080,
+          "platform_fee_cents": 27,
+          "tax_reserve_cents": 180,
+          "merchant_payout_cents": 873
+        },
+        "first_sequential_traceback": null
+      },
+      "raw_auditor_response": "```json\n{\"phase_1_global_green\": 0, \"phase_2_global_green\": 0, \"phase_3_global_green\": 1}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::concurrent_code_swarm_eval",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "role": "UPSTREAM_CANONICAL_ANCHOR",
+          "action": "HOLD_CANONICAL_INTERFACE",
+          "module": "pricing",
+          "required_return_keys": [
+            "subtotal_cents",
+            "discount_cents",
+            "net_cents"
+          ],
+          "directive": "Do NOT rename your return keys; downstream modules are aligning to your canonical schema."
+        },
+        "worker-1": {
+          "role": "MIDDLE_STAGE_ADAPTER",
+          "action": "ALIGN_TO_UPSTREAM_PRICING_SCHEMA",
+          "module": "tax_engine",
+          "read_from_quote": [
+            "net_cents"
+          ],
+          "required_return_keys": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "mismatch": {
+            "worker": "worker-1",
+            "module": "tax_engine",
+            "kind": "UPSTREAM_KEY_LOOKUP_MISMATCH",
+            "missing_key": "net_amount_cents",
+            "upstream_module": "pricing",
+            "canonical_upstream_keys": [
+              "subtotal_cents",
+              "discount_cents",
+              "net_cents"
+            ]
+          }
+        },
+        "worker-2": {
+          "role": "DOWNSTREAM_SETTLEMENT_CONSUMER",
+          "action": "ALIGN_SCHEMA_AND_CONSERVATION_INVARIANT",
+          "module": "settlement_router",
+          "read_from_taxed_quote": [
+            "net_cents",
+            "tax_cents",
+            "gross_cents"
+          ],
+          "required_return_keys": [
+            "gross_cents",
+            "platform_fee_cents",
+            "tax_reserve_cents",
+            "merchant_payout_cents"
+          ],
+          "exact_invariants": [
+            "platform_fee_cents = (taxed_quote['net_cents'] * fee_bps) // 10000",
+            "tax_reserve_cents = taxed_quote['tax_cents']",
+            "merchant_payout_cents = taxed_quote['gross_cents'] - platform_fee_cents - tax_reserve_cents"
+          ],
+          "defects": [
+            {
+              "worker": "worker-2",
+              "module": "settlement_router",
+              "kind": "CONSERVATION_OR_FEE_BASE_DRIFT",
+              "conservation_residual_cents": 1,
+              "fee_base_drift_cents": 5,
+              "gross_drift_cents": 0,
+              "expected_fee_cents": 27,
+              "observed_settlement": {
+                "gross_cents": 1080,
+                "platform_fee_cents": 32,
+                "tax_reserve_cents": 180,
+                "merchant_payout_cents": 869
+              }
+            }
+          ]
+        }
+      },
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CROSS_MODULE_INTERFACE_OR_CONSERVATION_DEFECT_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_MERGE_COHERENT_LGGG",
+      "phase_3_integration_trace": {
+        "quote_output": {
+          "subtotal_cents": 1000,
+          "discount_cents": 100,
+          "net_cents": 900
+        },
+        "tax_output": {
+          "net_cents": 900,
+          "tax_cents": 180,
+          "gross_cents": 1080
+        },
+        "settlement_output": {
+          "gross_cents": 1080,
+          "platform_fee_cents": 27,
+          "tax_reserve_cents": 180,
+          "merchant_payout_cents": 873
+        },
+        "first_sequential_traceback": null
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_global_green\": 0,\n  \"phase_2_global_green\": 0,\n  \"phase_3_global_green\": 1\n}\n```"
+    }
+  ],
+  "meaning": "Concurrent code-engineering swarm interface merge and symmetry-broken role directive benchmark across 5 model families (Theorem 94): Phase 1 separates local unit test passing (L = 1) from cross-module key mismatch ('net_amount_cents' vs 'net_cents') and fee-base conservation drift (Delta_E = -1); Phase 2 separates uncoordinated bilateral wave repairs that simultaneously swap keys (0, 1) -> (1, 0) (Delta_E = -1); Phase 3 verifies compact role-scoped LGGR directives where pricing holds canonical 'net_cents' while tax_engine and settlement_router align in one wave (Delta_E = 0).",
+  "receipt_sha256": "2904feb9aa2e4e66733962bd5ba65ba72dc7a8e13121e24077f13115479165b4"
+}

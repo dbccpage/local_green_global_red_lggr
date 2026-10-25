@@ -3543,4 +3543,52 @@ theorem shared_chord_bicyclic_diamond_hodge_and_mayer_vietoris_audit :
   intro h0 h1 h2 h3 h4 d0
   refine ⟨by omega, by omega, by omega⟩
 
+/-- 94. Concurrent code-engineering swarm bilateral wave oscillation vs. symmetry-broken role directive:
+    1. Bilateral simultaneous schema swap oscillation vs. priority-anchored role projection:
+       - If upstream module U has schema state sU and downstream module D has schema state sD
+         with sU ≠ sD, a simultaneous bilateral wave update (sU', sD') = (sD, sU) preserves
+         the interface mismatch sU' ≠ sD';
+       - Under priority-anchored role-scoped LGGR projection, U holds sU'' = sU and D aligns
+         sD'' = sU, achieving exact interface agreement sU'' = sD'' in one concurrent wave;
+    2. Concrete 3-phase concurrent code-engineering merge and conservation audit:
+       - Phase 1 (Local unit tests pass on pricing, tax_engine, settlement_router, but interface
+         schema key mismatch sU = 0 ≠ 1 = sD and fee rounding drift r_cons = 1 ≠ 0 block integration):
+         L_init = 1, Eg_init = 0, Δ_{E,init} = -1;
+       - Phase 2 (Uncoordinated bilateral wave repair flips (0, 1) ↦ (1, 0)):
+         both local unit test suites still pass (L_osc = 1), yet sU' = 1 ≠ 0 = sD' fails
+         integration (Eg_osc = 0, Δ_{E,osc} = -1);
+       - Phase 3 (Symmetry-broken role directive holds sU'' = 0, aligns sD'' = 0, and enforces
+         exact integer conservation merchant + fee + tax = gross with r_cons = 0):
+         L_dir = 1, Eg_dir = 1, Δ_{E,dir} = 0. -/
+theorem concurrent_code_swarm_symmetry_broken_directive_vs_bilateral_oscillation :
+    (∀ sU sD : Int,
+      (sU ≠ sD → sD ≠ sU) ∧
+      (let sU_dir := sU; let sD_dir := sU; sU_dir = sD_dir)) ∧
+    (let sU_p1 : Int := 0;
+     let sD_p1 : Int := 1;
+     let r_cons_p1 : Int := 1;
+     let sU_p2 : Int := sD_p1;
+     let sD_p2 : Int := sU_p1;
+     let sU_p3 : Int := sU_p1;
+     let sD_p3 : Int := sU_p1;
+     let gross_p3 : Int := 1080;
+     let split_sum_p3 : Int := 970 + 30 + 80;
+     let l_init := if (sU_p1 = 0) ∧ (sD_p1 = 1) then (1 : Int) else 0;
+     let eg_init := if (l_init = 1) ∧ (sU_p1 = sD_p1) ∧ (r_cons_p1 = 0) then (1 : Int) else 0;
+     let defect_init := eg_init - l_init;
+     let l_osc := if (sU_p2 = 1) ∧ (sD_p2 = 0) then (1 : Int) else 0;
+     let eg_osc := if (l_osc = 1) ∧ (sU_p2 = sD_p2) then (1 : Int) else 0;
+     let defect_osc := eg_osc - l_osc;
+     let l_dir := if (sU_p3 = 0) ∧ (sD_p3 = 0) ∧ (split_sum_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_dir := if (l_dir = 1) ∧ (sU_p3 = sD_p3) then (1 : Int) else 0;
+     let defect_dir := eg_dir - l_dir;
+     (l_init = 1 ∧ eg_init = 0 ∧ defect_init = -1) ∧
+     (l_osc = 1 ∧ eg_osc = 0 ∧ defect_osc = -1) ∧
+     (l_dir = 1 ∧ eg_dir = 1 ∧ defect_dir = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro sU sD
+  refine ⟨?_, rfl⟩
+  intro hneq hsym
+  exact hneq hsym.symm
+
 end LggrVIII
