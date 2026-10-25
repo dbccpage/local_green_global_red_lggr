@@ -1,0 +1,1064 @@
+{
+  "schema": "lggr.mayer_vietoris_reconciliation_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "mayer_vietoris_reconciliation_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_obstruction_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_residual_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_reconciled_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "unreconciled_overlap_coherence_rate": "0",
+  "reconciled_coboundary_coherence_rate": "1",
+  "mv_reconciliation_coherence_gain": "1",
+  "mv_reconciliation_monitor_receipt": {
+    "schema": "lggr.online_mayer_vietoris_reconciliation.v1",
+    "authority_effect": "None",
+    "scope_id": "live-mayer-vietoris-reconciliation-scope",
+    "status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_connecting_obstruction_count": 5,
+    "phase_2_residual_spread_count": 5,
+    "phase_3_coboundary_reconciled_count": 5,
+    "unreconciled_overlap_coherence_rate": "0",
+    "reconciled_coboundary_coherence_rate": "1",
+    "mv_reconciliation_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::mv_reconcil_eval",
+        "phase_1_coboundary_spread": "2",
+        "phase_2_coboundary_spread": "1",
+        "phase_3_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+        "phase_1_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-openai/gpt-4o-mini::mv_reconcil_eval-p1",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "2"
+          },
+          "connecting_coboundary_spread": "2",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "1323946964b73998bdabb9fe8dc9c3870391239831ba99d63d203d62c88ea4db"
+        },
+        "phase_2_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-openai/gpt-4o-mini::mv_reconcil_eval-p2",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "1"
+          },
+          "connecting_coboundary_spread": "1",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "d7e286a28b24d34230ad7978a50144bba538d34c2c32690d6339f6c1e12603ae"
+        },
+        "phase_3_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-openai/gpt-4o-mini::mv_reconcil_eval-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "u": "0",
+            "w0": "-1",
+            "w1": "2",
+            "v": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "55a0e86d71d1d1538fe922d5c519a5d442d76c681af43b1ab14dfdbdf5493d14"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::mv_reconcil_eval",
+        "phase_1_coboundary_spread": "2",
+        "phase_2_coboundary_spread": "1",
+        "phase_3_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+        "phase_1_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-google/gemini-2.5-flash-lite::mv_reconcil_eval-p1",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "2"
+          },
+          "connecting_coboundary_spread": "2",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "512eb85f7462437ea98f9162f7ca5c2e1297a6e899d5f217c65bfd117fc7d214"
+        },
+        "phase_2_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-google/gemini-2.5-flash-lite::mv_reconcil_eval-p2",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "1"
+          },
+          "connecting_coboundary_spread": "1",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "a5b59ce6af57d3ccefbb3256324d7b695351a9b5d33f89b84742bcb4b45a7cf5"
+        },
+        "phase_3_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-google/gemini-2.5-flash-lite::mv_reconcil_eval-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "u": "0",
+            "w0": "-1",
+            "w1": "2",
+            "v": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "45224ac3eefd5096bcab9b7ca3af170e42c0e3cc50d929d788b5d91b86ed9d6c"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval",
+        "phase_1_coboundary_spread": "2",
+        "phase_2_coboundary_spread": "1",
+        "phase_3_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+        "phase_1_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval-p1",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "2"
+          },
+          "connecting_coboundary_spread": "2",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "dfb48a1420cc0b7a46bbd415cc5f28e9f8a972edc4baa57beef0efa6e2d75690"
+        },
+        "phase_2_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval-p2",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "1"
+          },
+          "connecting_coboundary_spread": "1",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "1d6e91294750931b1f416c12842d1794c04a8865a7baccceaa321904685be984"
+        },
+        "phase_3_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "u": "0",
+            "w0": "-1",
+            "w1": "2",
+            "v": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "966cd788ad812d1a2f0c5492b5f93add94f8fe7f1c54013487fdf1bbf96a235a"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::mv_reconcil_eval",
+        "phase_1_coboundary_spread": "2",
+        "phase_2_coboundary_spread": "1",
+        "phase_3_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+        "phase_1_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-deepseek/deepseek-chat::mv_reconcil_eval-p1",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "2"
+          },
+          "connecting_coboundary_spread": "2",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "7336c30ba6e4357809f209626099a4b4ef3fa4e6b1be94bd10df494c2b492933"
+        },
+        "phase_2_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-deepseek/deepseek-chat::mv_reconcil_eval-p2",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "1"
+          },
+          "connecting_coboundary_spread": "1",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "6e8a4a0223b8e6c6bb86cc19425469dc0819fcc7b500b1225b7de7985d2d1156"
+        },
+        "phase_3_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-deepseek/deepseek-chat::mv_reconcil_eval-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "u": "0",
+            "w0": "-1",
+            "w1": "2",
+            "v": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "30418c293806576e068433369a444716298a594761ffe6abaf473d5ef2897204"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval",
+        "phase_1_coboundary_spread": "2",
+        "phase_2_coboundary_spread": "1",
+        "phase_3_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+        "phase_1_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval-p1",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "2"
+          },
+          "connecting_coboundary_spread": "2",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "b07639c5953516de60278f73621ab05f3a16cc19f4974f960ec64437e259e14e"
+        },
+        "phase_2_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval-p2",
+          "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": false,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "1"
+          },
+          "connecting_coboundary_spread": "1",
+          "glued_global_potential": null,
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "f680ea59514bd58940d5cdd7b9d0211d6dc1a04e7c7f7291cd0d2cdb18542997"
+        },
+        "phase_3_mv_receipt": {
+          "schema": "lggr.online_mayer_vietoris.v1",
+          "authority_effect": "None",
+          "scope_id": "live-mayer-vietoris-reconciliation-scope-mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval-p3",
+          "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "u_locally_exact": true,
+          "v_locally_exact": true,
+          "union_globally_exact": true,
+          "overlap_vertices": [
+            "w0",
+            "w1"
+          ],
+          "intersection_difference_cocycle": {
+            "w0": "0",
+            "w1": "0"
+          },
+          "connecting_coboundary_spread": "0",
+          "glued_global_potential": {
+            "u": "0",
+            "w0": "-1",
+            "w1": "2",
+            "v": "0"
+          },
+          "intersection_cocycle_locally_constant_verified": true,
+          "mayer_vietoris_equivalence_verified": true,
+          "receipt_sha256": "f3e8be45107c6dbef4d92e62063a3d9be61db0f209ed2df0f27ce176de2d2362"
+        }
+      }
+    ],
+    "receipt_sha256": "b6504639ecf467177335f4fec9716aa82ebddcdb5904b5bf00b0eb3ab99784e3"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::mv_reconcil_eval",
+      "phase_1_coboundary_spread": "2",
+      "phase_2_coboundary_spread": "1",
+      "phase_3_coboundary_spread": "0",
+      "glued_global_potential": {
+        "u": "0",
+        "w0": "-1",
+        "w1": "2",
+        "v": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+      "phase_1_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-openai/gpt-4o-mini::mv_reconcil_eval-p1",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "2"
+        },
+        "connecting_coboundary_spread": "2",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "1323946964b73998bdabb9fe8dc9c3870391239831ba99d63d203d62c88ea4db"
+      },
+      "phase_2_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-openai/gpt-4o-mini::mv_reconcil_eval-p2",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "1"
+        },
+        "connecting_coboundary_spread": "1",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "d7e286a28b24d34230ad7978a50144bba538d34c2c32690d6339f6c1e12603ae"
+      },
+      "phase_3_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-openai/gpt-4o-mini::mv_reconcil_eval-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "55a0e86d71d1d1538fe922d5c519a5d442d76c681af43b1ab14dfdbdf5493d14"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\"phase_1_coboundary_spread\": \"2\", \"phase_2_coboundary_spread\": \"1\", \"phase_3_coboundary_spread\": \"0\"}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::mv_reconcil_eval",
+      "phase_1_coboundary_spread": "2",
+      "phase_2_coboundary_spread": "1",
+      "phase_3_coboundary_spread": "0",
+      "glued_global_potential": {
+        "u": "0",
+        "w0": "-1",
+        "w1": "2",
+        "v": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+      "phase_1_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-google/gemini-2.5-flash-lite::mv_reconcil_eval-p1",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "2"
+        },
+        "connecting_coboundary_spread": "2",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "512eb85f7462437ea98f9162f7ca5c2e1297a6e899d5f217c65bfd117fc7d214"
+      },
+      "phase_2_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-google/gemini-2.5-flash-lite::mv_reconcil_eval-p2",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "1"
+        },
+        "connecting_coboundary_spread": "1",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "a5b59ce6af57d3ccefbb3256324d7b695351a9b5d33f89b84742bcb4b45a7cf5"
+      },
+      "phase_3_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-google/gemini-2.5-flash-lite::mv_reconcil_eval-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "45224ac3eefd5096bcab9b7ca3af170e42c0e3cc50d929d788b5d91b86ed9d6c"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\n  \"phase_1_coboundary_spread\": \"2\",\n  \"phase_2_coboundary_spread\": \"1\",\n  \"phase_3_coboundary_spread\": \"0\"\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval",
+      "phase_1_coboundary_spread": "2",
+      "phase_2_coboundary_spread": "1",
+      "phase_3_coboundary_spread": "0",
+      "glued_global_potential": {
+        "u": "0",
+        "w0": "-1",
+        "w1": "2",
+        "v": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+      "phase_1_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval-p1",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "2"
+        },
+        "connecting_coboundary_spread": "2",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "dfb48a1420cc0b7a46bbd415cc5f28e9f8a972edc4baa57beef0efa6e2d75690"
+      },
+      "phase_2_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval-p2",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "1"
+        },
+        "connecting_coboundary_spread": "1",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "1d6e91294750931b1f416c12842d1794c04a8865a7baccceaa321904685be984"
+      },
+      "phase_3_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-meta-llama/llama-3.3-70b-instruct::mv_reconcil_eval-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "966cd788ad812d1a2f0c5492b5f93add94f8fe7f1c54013487fdf1bbf96a235a"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "{\"phase_1_coboundary_spread\": \"2\", \"phase_2_coboundary_spread\": \"1\", \"phase_3_coboundary_spread\": \"0\"}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::mv_reconcil_eval",
+      "phase_1_coboundary_spread": "2",
+      "phase_2_coboundary_spread": "1",
+      "phase_3_coboundary_spread": "0",
+      "glued_global_potential": {
+        "u": "0",
+        "w0": "-1",
+        "w1": "2",
+        "v": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+      "phase_1_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-deepseek/deepseek-chat::mv_reconcil_eval-p1",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "2"
+        },
+        "connecting_coboundary_spread": "2",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "7336c30ba6e4357809f209626099a4b4ef3fa4e6b1be94bd10df494c2b492933"
+      },
+      "phase_2_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-deepseek/deepseek-chat::mv_reconcil_eval-p2",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "1"
+        },
+        "connecting_coboundary_spread": "1",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "6e8a4a0223b8e6c6bb86cc19425469dc0819fcc7b500b1225b7de7985d2d1156"
+      },
+      "phase_3_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-deepseek/deepseek-chat::mv_reconcil_eval-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "30418c293806576e068433369a444716298a594761ffe6abaf473d5ef2897204"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\"phase_1_coboundary_spread\": \"2\", \"phase_2_coboundary_spread\": \"1\", \"phase_3_coboundary_spread\": \"0\"}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval",
+      "phase_1_coboundary_spread": "2",
+      "phase_2_coboundary_spread": "1",
+      "phase_3_coboundary_spread": "0",
+      "glued_global_potential": {
+        "u": "0",
+        "w0": "-1",
+        "w1": "2",
+        "v": "0"
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+      "phase_1_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval-p1",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "2"
+        },
+        "connecting_coboundary_spread": "2",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "b07639c5953516de60278f73621ab05f3a16cc19f4974f960ec64437e259e14e"
+      },
+      "phase_2_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval-p2",
+        "status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": false,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "1"
+        },
+        "connecting_coboundary_spread": "1",
+        "glued_global_potential": null,
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "f680ea59514bd58940d5cdd7b9d0211d6dc1a04e7c7f7291cd0d2cdb18542997"
+      },
+      "phase_3_mv_receipt": {
+        "schema": "lggr.online_mayer_vietoris.v1",
+        "authority_effect": "None",
+        "scope_id": "live-mayer-vietoris-reconciliation-scope-mistralai/mistral-small-3.2-24b-instruct::mv_reconcil_eval-p3",
+        "status": "MAYER_VIETORIS_EXACT_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "u_locally_exact": true,
+        "v_locally_exact": true,
+        "union_globally_exact": true,
+        "overlap_vertices": [
+          "w0",
+          "w1"
+        ],
+        "intersection_difference_cocycle": {
+          "w0": "0",
+          "w1": "0"
+        },
+        "connecting_coboundary_spread": "0",
+        "glued_global_potential": {
+          "u": "0",
+          "w0": "-1",
+          "w1": "2",
+          "v": "0"
+        },
+        "intersection_cocycle_locally_constant_verified": true,
+        "mayer_vietoris_equivalence_verified": true,
+        "receipt_sha256": "f3e8be45107c6dbef4d92e62063a3d9be61db0f209ed2df0f27ce176de2d2362"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"phase_1_coboundary_spread\": \"2\",\n  \"phase_2_coboundary_spread\": \"1\",\n  \"phase_3_coboundary_spread\": \"0\"\n}\n```"
+    }
+  ],
+  "meaning": "Mayer-Vietoris disconnected interface gluing and connecting-coboundary reconciliation benchmark across 5 model families (Theorem 84): on K = U U V with U = {w0->u->w1} and V = {w0->v->w1} meeting on disconnected overlap {w0, w1}, Phase 1 separates local tree exactness with connecting coboundary spread Delta_MV = 2 > 0 (Delta_E = -1), Phase 2 separates partial boundary adjustment leaving residual spread Delta_MV = 1 > 0 (Delta_E = -1), and Phase 3 verifies exact coboundary reconciliation Delta_MV = 0 with glued global potential f = {u: 1, v: 1, w0: 0, w1: 3} (Delta_E = 0).",
+  "receipt_sha256": "2f2c8e537568bf49290930ce26e5d0b4a3d32207b89a9bbed7a926bdbdc17eaa"
+}

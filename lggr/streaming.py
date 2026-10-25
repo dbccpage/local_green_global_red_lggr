@@ -14283,6 +14283,165 @@ class StreamingCPTPBlindspotCompletionMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingMayerVietorisReconciliationMonitor:
+    """Online Mayer-Vietoris disconnected interface gluing and connecting-coboundary reconciliation monitor (Theorem 84).
+
+    Wraps ``StreamingMayerVietorisMonitor`` on the 4-vertex two-subswarm cover K = U U V with
+    U = {w0 -> u -> w1}, V = {w0 -> v -> w1}, and disconnected overlap U cap V = {w0, w1}:
+      - Phase 1 (Locally Exact Sub-Swarms U, V With Disconnected Overlap Spread Delta_MV = 2 > 0):
+        On U, h(w0->u) = 1, h(u->w1) = 2 (f_U(w1) = 3); on V, h(w0->v) = 1, h(v->w1) = 0
+        (f_V(w1) = 1). Both U and V are locally exact trees (L_mv = 1), yet delta_{U cap V}(w0) = 0
+        != 2 = delta_{U cap V}(w1) yields connecting coboundary spread Delta_MV = 2 > 0
+        (Eg_mv = 0, defect_mv = -1, status ``MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR``).
+      - Phase 2 (Partial Boundary Adjustment Leaving Residual Spread Delta_MV = 1 > 0):
+        Adjusting h(v->w1) from 0 to 1 reduces Delta_MV from 2 to 1 > 0 (L_part = 1), yet
+        delta_{U cap V}(w1) = 1 != 0 still obstructs global gluing on U U V
+        (Eg_part = 0, defect_part = -1, status ``RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR``).
+      - Phase 3 (Exact Connecting-Coboundary Reconciliation h(v->w1) = 2 => Delta_MV = 0):
+        Reconciling h(v->w1) = 0 + Delta_MV = 2 yields f_V(w1) = 3 = f_U(w1), Delta_MV = 0,
+        and a glued global potential f = {u: 1, v: 1, w0: 0, w1: 3} on U U V
+        (L_rec = 1, Eg_rec = 1, defect_rec = 0, status ``MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG``).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-mayer-vietoris-reconciliation-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _build_cover(
+        scope_id: str,
+        v_to_w1_val: Fraction,
+    ) -> dict[str, Any]:
+        mon = StreamingMayerVietorisMonitor(scope_id=scope_id)
+        mon.record_edge("w0", "u", 1, in_u=True, in_v=False)
+        mon.record_edge("u", "w1", 2, in_u=True, in_v=False)
+        mon.record_edge("w0", "v", 1, in_u=False, in_v=True)
+        mon.record_edge("v", "w1", v_to_w1_val, in_u=False, in_v=True)
+        return mon.get_receipt()
+
+    def evaluate_mv_reconciliation(
+        self,
+        evaluation_id: str,
+        *,
+        initial_v_to_w1: Fraction | int | str = 0,
+        partial_v_to_w1: Fraction | int | str = 1,
+        reconciled_v_to_w1: Fraction | int | str = 2,
+    ) -> dict[str, Any]:
+        """Evaluate disconnected overlap obstruction, partial adjustment, and exact coboundary reconciliation."""
+        eid = text(evaluation_id, "evaluation_id")
+        v0 = rational(initial_v_to_w1)
+        v_part = rational(partial_v_to_w1)
+        v_rec = rational(reconciled_v_to_w1)
+
+        rec_p1 = self._build_cover(f"{self.scope_id}-{eid}-p1", v0)
+        rec_p2 = self._build_cover(f"{self.scope_id}-{eid}-p2", v_part)
+        rec_p3 = self._build_cover(f"{self.scope_id}-{eid}-p3", v_rec)
+
+        spread_p1 = rational(rec_p1["connecting_coboundary_spread"])
+        spread_p2 = rational(rec_p2["connecting_coboundary_spread"])
+        spread_p3 = rational(rec_p3["connecting_coboundary_spread"])
+
+        l_p1 = (
+            1
+            if (rec_p1["u_locally_exact"] and rec_p1["v_locally_exact"] and spread_p1 == Fraction(2))
+            else 0
+        )
+        eg_p1 = 1 if (l_p1 == 1 and rec_p1["union_globally_exact"]) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = (
+            1
+            if (
+                rec_p2["u_locally_exact"]
+                and rec_p2["v_locally_exact"]
+                and spread_p2 == Fraction(1)
+                and spread_p2 < spread_p1
+            )
+            else 0
+        )
+        eg_p2 = 1 if (l_p2 == 1 and rec_p2["union_globally_exact"]) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                rec_p3["u_locally_exact"]
+                and rec_p3["v_locally_exact"]
+                and rec_p3["union_globally_exact"]
+                and spread_p3 == Fraction(0)
+                and rec_p3["glued_global_potential"] is not None
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and spread_p3 < spread_p2 and spread_p2 < spread_p1) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "phase_1_coboundary_spread": spread_p1,
+            "phase_2_coboundary_spread": spread_p2,
+            "phase_3_coboundary_spread": spread_p3,
+            "glued_global_potential": rec_p3["glued_global_potential"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR" if defect_p1 == -1 else "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR" if defect_p2 == -1 else "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG" if eg_p3 == 1 else "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR",
+            "phase_1_mv_receipt": rec_p1,
+            "phase_2_mv_receipt": rec_p2,
+            "phase_3_mv_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one Mayer-Vietoris reconciliation evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mv_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_part_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        unreconciled_overlap_coherence_rate = Fraction(
+            n - max(p1_mv_fail, p2_part_fail), n
+        )
+        reconciled_coboundary_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_mv_fail == n and p2_part_fail == n:
+            status = "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_mayer_vietoris_reconciliation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_connecting_obstruction_count": p1_mv_fail,
+            "phase_2_residual_spread_count": p2_part_fail,
+            "phase_3_coboundary_reconciled_count": p3_coherent,
+            "unreconciled_overlap_coherence_rate": unreconciled_overlap_coherence_rate,
+            "reconciled_coboundary_coherence_rate": reconciled_coboundary_coherence_rate,
+            "mv_reconciliation_coherence_gain": (
+                reconciled_coboundary_coherence_rate - unreconciled_overlap_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
