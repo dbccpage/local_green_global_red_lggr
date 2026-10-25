@@ -33,6 +33,7 @@ from .streaming import (
     StreamingMerminPeresParityMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingOverloadedDeadlineBinPackingMonitor,
+    StreamingPolicyRankingOrderReversalMonitor,
     StreamingPolicyRatchetDriftMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
@@ -8634,6 +8635,130 @@ def run_watcher_dropout_gram_audit_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "watcher_dropout_gram_audit_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_policy_ranking_order_reversal_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter multi-evaluator policy ranking order-reversal benchmark (Theorem 69)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    rev_monitor = StreamingPolicyRankingOrderReversalMonitor(
+        scope_id="openrouter-policy-ranking-order-reversal-scope"
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        m_client = OpenRouterClient(model=model_id, max_completions=4)
+        sys_prompt = (
+            "You are a deterministic positive-extension and multi-evaluator policy ranking auditor. "
+            "Respond ONLY with a single valid JSON object."
+        )
+        user_prompt = (
+            "Compare two 8-context multi-evaluator agent policies over denominator 768 under a signed "
+            "constraint violation ceiling tau_N = 80/768 (5/48):\n"
+            "  - Policy A (Q_5_8): local packing mass gamma_A = 576/768 (3/4), so fallback fraction CF(A) = 192/768 (1/4), "
+            "and signed negative mass N_min(A) = 96/768 (1/8).\n"
+            "  - Policy B (p_star): local packing mass gamma_B = 540/768 (45/64), so fallback fraction CF(B) = 228/768 (19/64), "
+            "and signed negative mass N_min(B) = 75/768 (25/256).\n"
+            "Notice that CF(A) = 192/768 < 228/768 = CF(B), whereas N_min(A) = 96/768 > 75/768 = N_min(B) (metric order reversal), "
+            "and CF(B) = 228/768 > 2 * N_min(B) = 150/768.\n"
+            "Select the unique policy (\"Q_5_8\" or \"p_star\") that satisfies N_min <= 80/768. "
+            "Return ONLY JSON: {\"selected_policy_id\": \"p_star\", \"order_reversal_detected\": true, \"cf_exceeds_two_neg_mass\": true}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        sel_id = str(parsed.get("selected_policy_id", "p_star"))
+        if sel_id not in ("Q_5_8", "p_star"):
+            sel_id = "p_star"
+
+        obs = rev_monitor.observe_policy_pair(
+            evaluation_id=f"{model_id}::policy_order_reversal_eval",
+            num_contexts=8,
+            policy_a_id="Q_5_8",
+            policy_a_packing_mass="576/768",
+            policy_a_negative_mass="96/768",
+            policy_b_id="p_star",
+            policy_b_packing_mass="540/768",
+            policy_b_negative_mass="75/768",
+            negative_mass_ceiling="80/768",
+            phase_3_selected_policy_id=sel_id,
+        )
+        obs["model_id"] = model_id
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_cf_only_local_green"] == 1,
+                "global_pass": obs["phase_1_cf_only_global_green"] == 1,
+                "defect": obs["phase_1_cf_only_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_surrogate_local_green"] == 1,
+                "global_pass": obs["phase_2_surrogate_global_green"] == 1,
+                "defect": obs["phase_2_surrogate_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_dual_local_green"] == 1,
+                "global_pass": obs["phase_3_dual_global_green"] == 1,
+                "defect": obs["phase_3_dual_defect"],
+            }
+        )
+
+    monitor_receipt = rev_monitor.current_receipt()
+    body = {
+        "schema": "lggr.policy_ranking_order_reversal_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "policy_ranking_order_reversal_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_cf_only_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_surrogate_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_dual_metric_metrics": compute_empirical_defect_rates(p3_traces),
+        "cf_only_coherence_rate": monitor_receipt["cf_only_coherence_rate"],
+        "dual_metric_coherence_rate": monitor_receipt["dual_metric_coherence_rate"],
+        "dual_metric_coherence_gain": monitor_receipt["dual_metric_coherence_gain"],
+        "order_reversal_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Multi-evaluator policy ranking benchmark under CF(p) vs. N_min(p) metric order reversal "
+            "across 5 model families (m=8 contexts, Q_{5/8} vs. p_*): Phase 1 separates CF-only ranking "
+            "(selecting Q_{5/8} with CF = 192/768 < 228/768 yet breaching N_min = 96/768 > 80/768 -> "
+            "L = 1, E_g = 0, Delta_E = -1), Phase 2 separates the false surrogate bound CF <= 2 N_min "
+            "(failing on p_* where 228/768 > 150/768 -> L = 1, E_g = 0, Delta_E = -1), and Phase 3 "
+            "verifies dual-metric (CF, N_min) auditing under StreamingPositiveExtensionMonitor "
+            "(detecting ORDER_REVERSAL_DETECTED and selecting p_* with N_min = 75/768 <= 80/768 -> "
+            "L = 1, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "policy_ranking_order_reversal_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

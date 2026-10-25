@@ -11578,6 +11578,163 @@ class StreamingWatcherDropoutGramAuditMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingPolicyRankingOrderReversalMonitor:
+    """Online RSI Paper 003 / LGGR VII-VIII multi-evaluator policy ranking order-reversal monitor.
+
+    Wraps StreamingPositiveExtensionMonitor across candidate multi-evaluator agent policies
+    A and B over m measurement contexts under a signed constraint violation ceiling tau_{N_min}:
+      - Phase 1 (CF-Only Misselection): ranking solely by lowest fallback frequency CF(p)
+        selects Policy A when CF(A) < CF(B), yet breaches N_min(A) <= tau_{N_min} whenever
+        CF and N_min reverse relative order (CF(A) < CF(B) while N_min(A) > tau_{N_min} >= N_min(B)).
+      - Phase 2 (Surrogate CF <= 2 N_min Violation): checks whether the false surrogate bound
+        CF(p) <= 2 N_min(p) fails (CF(B) > 2 N_min(B)) while the constructive m-context bound
+        CF(p) <= (m - 1) N_min(p) holds.
+      - Phase 3 (Dual-Metric (CF, N_min) Order-Reversal Audit): audits both CF and N_min via
+        StreamingPositiveExtensionMonitor, detects ORDER_REVERSAL_DETECTED, and selects the
+        safety-admissible policy satisfying N_min <= tau_{N_min}.
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-policy-ranking-order-reversal-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.ext_monitor = StreamingPositiveExtensionMonitor(
+            scope_id=f"{self.scope_id}-positive-extension"
+        )
+        self.evaluations: list[dict[str, Any]] = []
+
+    def observe_policy_pair(
+        self,
+        *,
+        evaluation_id: str,
+        num_contexts: int,
+        policy_a_id: str,
+        policy_a_packing_mass: Fraction | int | str,
+        policy_a_negative_mass: Fraction | int | str,
+        policy_b_id: str,
+        policy_b_packing_mass: Fraction | int | str,
+        policy_b_negative_mass: Fraction | int | str,
+        negative_mass_ceiling: Fraction | int | str,
+        phase_3_selected_policy_id: str,
+    ) -> dict[str, Any]:
+        e_id = text(evaluation_id, "evaluation_id")
+        m_ctx = exact_int(num_contexts, "num_contexts", minimum=2)
+        pa_id = text(policy_a_id, "policy_a_id")
+        pb_id = text(policy_b_id, "policy_b_id")
+        sel_id = text(phase_3_selected_policy_id, "phase_3_selected_policy_id")
+        tau_n = rational(negative_mass_ceiling)
+        if tau_n <= 0:
+            raise ValidationError("negative_mass_ceiling must be strictly positive")
+
+        audit_a = self.ext_monitor.audit_signed_extension(
+            f"{e_id}::{pa_id}", m_ctx, policy_a_packing_mass, policy_a_negative_mass
+        )
+        audit_b = self.ext_monitor.audit_signed_extension(
+            f"{e_id}::{pb_id}", m_ctx, policy_b_packing_mass, policy_b_negative_mass
+        )
+        cmp_rec = self.ext_monitor.compare_extension_order(
+            f"{e_id}::{pa_id}", f"{e_id}::{pb_id}"
+        )
+
+        cf_a = rational(audit_a["contextual_fraction"])
+        n_a = rational(audit_a["negative_mass"])
+        cf_b = rational(audit_b["contextual_fraction"])
+        n_b = rational(audit_b["negative_mass"])
+        order_rev = bool(cmp_rec["order_reversal_detected"])
+
+        # Phase 1: CF-only ranking selects whichever has smaller CF (here Policy A)
+        cf_winner_n = n_a if cf_a <= cf_b else n_b
+        l_p1 = int(cf_a < cf_b)
+        eg_p1 = int(l_p1 == 1 and cf_winner_n <= tau_n)
+        defect_p1 = eg_p1 - l_p1
+
+        # Phase 2: Surrogate CF <= 2 * N_min assumption
+        l_p2 = int(cf_a <= Fraction(2) * n_a)
+        eg_p2 = int(l_p2 == 1 and cf_b <= Fraction(2) * n_b)
+        defect_p2 = eg_p2 - l_p2
+
+        # Phase 3: Dual-metric (CF, N_min) audit
+        sel_n = n_b if sel_id == pb_id else n_a
+        l_p3 = int(
+            order_rev
+            and bool(audit_a["m_context_bound_verified"])
+            and bool(audit_b["m_context_bound_verified"])
+        )
+        eg_p3 = int(l_p3 == 1 and sel_n <= tau_n and sel_id == pb_id)
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": e_id,
+            "num_contexts": m_ctx,
+            "policy_a_id": pa_id,
+            "policy_a_contextual_fraction": cf_a,
+            "policy_a_negative_mass": n_a,
+            "policy_b_id": pb_id,
+            "policy_b_contextual_fraction": cf_b,
+            "policy_b_negative_mass": n_b,
+            "negative_mass_ceiling": tau_n,
+            "order_reversal_detected": order_rev,
+            "policy_b_exceeds_two_negative_mass": bool(audit_b["exceeds_two_negative_mass"]),
+            "m_context_bound_verified": bool(audit_a["m_context_bound_verified"]) and bool(audit_b["m_context_bound_verified"]),
+            "phase_1_cf_only_local_green": l_p1,
+            "phase_1_cf_only_global_green": eg_p1,
+            "phase_1_cf_only_defect": defect_p1,
+            "phase_1_status": "CF_ONLY_ORDER_REVERSAL_MISSELECTION_LGGR" if defect_p1 == -1 else "DUAL_METRIC_ORDER_REVERSAL_COHERENT_LGGG",
+            "phase_2_surrogate_local_green": l_p2,
+            "phase_2_surrogate_global_green": eg_p2,
+            "phase_2_surrogate_defect": defect_p2,
+            "phase_2_status": "SURROGATE_BOUND_VIOLATION_LGGR" if defect_p2 == -1 else "DUAL_METRIC_ORDER_REVERSAL_COHERENT_LGGG",
+            "phase_3_selected_policy_id": sel_id,
+            "phase_3_dual_local_green": l_p3,
+            "phase_3_dual_global_green": eg_p3,
+            "phase_3_dual_defect": defect_p3,
+            "phase_3_status": "DUAL_METRIC_ORDER_REVERSAL_COHERENT_LGGG" if eg_p3 == 1 else "CF_ONLY_ORDER_REVERSAL_MISSELECTION_LGGR",
+            "audit_a": audit_a,
+            "audit_b": audit_b,
+            "comparison_receipt": cmp_rec,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one policy pair must be observed")
+        n = len(self.evaluations)
+        p1_misselection = sum(1 for e in self.evaluations if e["phase_1_cf_only_defect"] == -1)
+        p2_surrogate_fail = sum(1 for e in self.evaluations if e["phase_2_surrogate_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_dual_global_green"] == 1)
+
+        cf_only_coherence_rate = Fraction(n - p1_misselection, n)
+        dual_metric_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_misselection == n:
+            status = "DUAL_METRIC_ORDER_REVERSAL_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CF_ONLY_ORDER_REVERSAL_MISSELECTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_policy_ranking_order_reversal.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_cf_only_misselection_count": p1_misselection,
+            "phase_2_surrogate_violation_count": p2_surrogate_fail,
+            "phase_3_dual_metric_coherent_count": p3_coherent,
+            "cf_only_coherence_rate": cf_only_coherence_rate,
+            "dual_metric_coherence_rate": dual_metric_coherence_rate,
+            "dual_metric_coherence_gain": dual_metric_coherence_rate - cf_only_coherence_rate,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

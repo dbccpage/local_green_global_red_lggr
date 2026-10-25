@@ -2265,4 +2265,52 @@ theorem watcher_dropout_gram_rank_deficiency_and_critical_blindspot :
     dsimp only
     refine ⟨by omega, ⟨by omega, ⟨by omega, by omega⟩⟩⟩
 
+/-- 69. Multi-evaluator policy ranking under CF(p) vs. N_min(p) metric order reversal:
+    1. Universal metric order-reversal misselection law: whenever two m-context behaviors A and B
+       exhibit strict order reversal between contextual fraction CF and signed negative mass N_min
+       (cf_A < cf_B while n_A > n_B) and the safety ceiling tau_n on signed negative mass satisfies
+       n_B ≤ tau_n < n_A:
+       - A single-scalar CF-minimizing selector prefers A (cf_A < cf_B) yet breaches the negative-mass
+         safety ceiling (n_A > tau_n);
+       - A dual-metric (CF, N_min) audit detects the order reversal ((cf_A - cf_B) * (n_A - n_B) < 0)
+         and selects B as the unique safety-admissible policy (n_B ≤ tau_n);
+    2. Concrete 8-context witness separation over common denominator D = 768 comparing Policy A
+       (Q_{5/8}: CF_A = 192/768, N_min_A = 96/768) and Policy B (p_*: CF_B = 228/768, N_min_B = 75/768)
+       under signed violation ceiling tau_n = 80/768:
+       - Phase 1 (Single-scalar CF-only ranking): selects Policy A (192 < 228, L_cf = 1), breaching
+         N_min_A = 96 > 80 = tau_n (Eg_cf = 0, Δ_{E,cf} = -1);
+       - Phase 2 (False CF ≤ 2·N_min surrogate assumption): fails on Policy B since
+         CF_B = 228 > 150 = 2·N_min_B (excess 78/768 = 13/128 > 0), while the constructive m-context
+         bound CF ≤ (m - 1)·N_min = 7·N_min holds on both (192 ≤ 672 and 228 ≤ 525);
+       - Phase 3 (Dual-metric (CF, N_min) order-reversal audit): detects CF_A < CF_B ∧ N_min_A > N_min_B
+         and selects Policy B with N_min_B = 75 ≤ 80 = tau_n (L_dual = 1, Eg_dual = 1, Δ_{E,dual} = 0). -/
+theorem multi_evaluator_policy_ranking_cf_vs_neg_mass_order_reversal :
+    (∀ cf_a cf_b n_a n_b tau_n : Int,
+      (cf_a < cf_b ∧ n_b ≤ tau_n ∧ tau_n < n_a) →
+      (cf_a < cf_b ∧ n_a > n_b ∧ ¬ (n_a ≤ tau_n) ∧ (n_b ≤ tau_n))) ∧
+    (let m_ctx : Int := 8;
+     let cf_a : Int := 192; let n_a : Int := 96;
+     let cf_b : Int := 228; let n_b : Int := 75;
+     let tau_n : Int := 80;
+     let two_n_b := 2 * n_b;
+     let seven_n_a := (m_ctx - 1) * n_a;
+     let seven_n_b := (m_ctx - 1) * n_b;
+     let excess_two_b := cf_b - two_n_b;
+     let l_cf := if cf_a < cf_b then (1 : Int) else 0;
+     let eg_cf := if (l_cf = 1) ∧ (n_a ≤ tau_n) then (1 : Int) else 0;
+     let defect_cf := eg_cf - l_cf;
+     let l_surr := if cf_a ≤ 2 * n_a then (1 : Int) else 0;
+     let eg_surr := if (l_surr = 1) ∧ (cf_b ≤ two_n_b) then (1 : Int) else 0;
+     let defect_surr := eg_surr - l_surr;
+     let l_dual := if (cf_a < cf_b) ∧ (n_a > n_b) ∧ (cf_a ≤ seven_n_a) ∧ (cf_b ≤ seven_n_b) then (1 : Int) else 0;
+     let eg_dual := if (l_dual = 1) ∧ (n_b ≤ tau_n) then (1 : Int) else 0;
+     let defect_dual := eg_dual - l_dual;
+     (excess_two_b = 78 ∧ seven_n_a = 672 ∧ seven_n_b = 525) ∧
+     (l_cf = 1 ∧ eg_cf = 0 ∧ defect_cf = -1) ∧
+     (l_surr = 1 ∧ eg_surr = 0 ∧ defect_surr = -1) ∧
+     (l_dual = 1 ∧ eg_dual = 1 ∧ defect_dual = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro cf_a cf_b n_a n_b tau_n ⟨h1, h2, h3⟩
+  omega
+
 end LggrVIII

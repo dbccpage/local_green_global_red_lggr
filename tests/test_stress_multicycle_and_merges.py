@@ -49,6 +49,7 @@ from lggr.streaming import (
     StreamingOrganizationalGluingMonitor,
     StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPathKernelMonitor,
+    StreamingPolicyRankingOrderReversalMonitor,
     StreamingPolicyRatchetDriftMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
@@ -3752,6 +3753,47 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["critical_dropout_coherence_rate"], "0")
         self.assertEqual(receipt["redundant_dropout_coherence_rate"], "1")
         self.assertEqual(receipt["watcher_retention_coherence_gain"], "1")
+
+    def test_policy_ranking_cf_vs_neg_mass_order_reversal(self) -> None:
+        """Verify Theorem 69: multi-evaluator policy ranking under CF(p) vs. N_min(p) metric order reversal."""
+        mon = StreamingPolicyRankingOrderReversalMonitor(
+            scope_id="unit-policy-ranking-order-reversal-scope"
+        )
+        obs = mon.observe_policy_pair(
+            evaluation_id="eval-order-rev-01",
+            num_contexts=8,
+            policy_a_id="Q_5_8",
+            policy_a_packing_mass="576/768",
+            policy_a_negative_mass="96/768",
+            policy_b_id="p_star",
+            policy_b_packing_mass="540/768",
+            policy_b_negative_mass="75/768",
+            negative_mass_ceiling="80/768",
+            phase_3_selected_policy_id="p_star",
+        )
+        self.assertEqual(obs["policy_a_contextual_fraction"], "1/4")
+        self.assertEqual(obs["policy_a_negative_mass"], "1/8")
+        self.assertEqual(obs["policy_b_contextual_fraction"], "19/64")
+        self.assertEqual(obs["policy_b_negative_mass"], "25/256")
+        self.assertTrue(obs["order_reversal_detected"])
+        self.assertTrue(obs["policy_b_exceeds_two_negative_mass"])
+        self.assertTrue(obs["m_context_bound_verified"])
+        self.assertEqual(obs["phase_1_cf_only_local_green"], 1)
+        self.assertEqual(obs["phase_1_cf_only_global_green"], 0)
+        self.assertEqual(obs["phase_1_cf_only_defect"], -1)
+        self.assertEqual(obs["phase_2_surrogate_local_green"], 1)
+        self.assertEqual(obs["phase_2_surrogate_global_green"], 0)
+        self.assertEqual(obs["phase_2_surrogate_defect"], -1)
+        self.assertEqual(obs["phase_3_dual_local_green"], 1)
+        self.assertEqual(obs["phase_3_dual_global_green"], 1)
+        self.assertEqual(obs["phase_3_dual_defect"], 0)
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "DUAL_METRIC_ORDER_REVERSAL_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["cf_only_coherence_rate"], "0")
+        self.assertEqual(receipt["dual_metric_coherence_rate"], "1")
+        self.assertEqual(receipt["dual_metric_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
