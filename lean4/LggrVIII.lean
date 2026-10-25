@@ -1666,4 +1666,41 @@ theorem coupled_multi_monitor_joint_repair_whack_a_mole_vs_pareto_convergence :
      (ega_pareto = 1 ∧ egb_pareto = 1 ∧ ega_pareto * egb_pareto = 1)) := by
   refine ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩
 
+/-- Theorem 57 (infeasible_coupled_multi_monitor_empty_intersection_oscillation_vs_escalation):
+    Formalizes Infeasible Coupled Multi-Monitor Empty-Intersection Regimes,
+    Whack-a-Mole Oscillation (1, 0) ↔ (0, 1), and Halt-and-Escalate Trigger:
+    1. (Empty Intersection of Global Feasible Sets Over ℤ):
+       When Monitor A requires channel capacity S ≥ 4 (K = 4 queries, zero-error decoding)
+       while Monitor B requires S ≤ 2 (skew cochain ω(S) = (S, 0) under tight ℓ¹ budget B_1 = 2),
+       no integer S ∈ ℤ satisfies both constraints simultaneously:
+       ∀ s : Int, ¬ (s ≥ 4 ∧ s ≤ 2).
+    2. (Whack-a-Mole Oscillation & Halt-and-Escalate Certification):
+       - Round 1 prioritizing Monitor A (S_1 = 4) yields (Eg_A, Eg_B) = (1, 0) and Δ_{E,joint} = -1;
+       - Round 2 prioritizing Monitor B (S_2 = 2) yields (Eg_A, Eg_B) = (0, 1) and Δ_{E,joint} = -1;
+       - The consecutive repair rounds flip Whack-a-Mole polarity with ℓ¹ step distance
+         |Eg_A(S_2) - Eg_A(S_1)| + |Eg_B(S_2) - Eg_B(S_1)| = 2 while Eg_joint = 0 at both rounds,
+         triggering the halt-and-escalate guard (halt_and_escalate = 1). -/
+theorem infeasible_coupled_multi_monitor_empty_intersection_oscillation_vs_escalation :
+    (∀ s : Int, ¬ (s ≥ 4 ∧ s ≤ 2)) ∧
+    (let k_queries : Int := 4;
+     let b1_budget : Int := 2;
+     let s1 : Int := 4;
+     let ega1 := if s1 ≥ k_queries then (1 : Int) else 0;
+     let egb1 := if absInt s1 ≤ b1_budget then (1 : Int) else 0;
+     let eg_joint1 := ega1 * egb1;
+     let defect1 := eg_joint1 - 1;
+     let s2 : Int := 2;
+     let ega2 := if s2 ≥ k_queries then (1 : Int) else 0;
+     let egb2 := if absInt s2 ≤ b1_budget then (1 : Int) else 0;
+     let eg_joint2 := ega2 * egb2;
+     let defect2 := eg_joint2 - 1;
+     let osc_l1 := absInt (ega2 - ega1) + absInt (egb2 - egb1);
+     let halt_and_escalate := if (ega1 ≠ egb1) ∧ (ega2 ≠ egb2) ∧ (ega1 ≠ ega2) then (1 : Int) else 0;
+     (ega1 = 1 ∧ egb1 = 0 ∧ eg_joint1 = 0 ∧ defect1 = -1) ∧
+     (ega2 = 0 ∧ egb2 = 1 ∧ eg_joint2 = 0 ∧ defect2 = -1) ∧
+     (osc_l1 = 2 ∧ halt_and_escalate = 1)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨by decide, by decide⟩⟩⟩⟩
+  intro s ⟨h1, h2⟩
+  omega
+
 end LggrVIII

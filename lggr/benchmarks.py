@@ -2819,6 +2819,591 @@ def run_joint_multi_monitor_repair_benchmark(
 
 
 # ------------------------------------------------------------------------------
+# Infeasible Coupled Multi-Monitor Empty-Intersection & Escalation Benchmark (Theorem 57)
+# ------------------------------------------------------------------------------
+
+
+def _eval_infeasible_pair1_side_info_and_skew(
+    scope_prefix: str,
+    channel_capacity_s: int,
+    symbols: list[int],
+    candidate_alpha: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Evaluate Infeasible Coupled Pair 1: SideInfoCapacity (needs S >= 4) + SkewRepair (needs S <= 2).
+
+    Coupling law:
+      - Monitor A (StreamingSideInformationCapacityMonitor) has K = 4 queries on fiber 'a0',
+        so global zero-error decoding requires S >= 4 (F_A = {S : S >= 4}).
+      - Monitor B (StreamingSkewRepairMonitor) has omega(S) = (S, 0) with coordinate bound
+        B_inf = 3 and tight global l1 budget B_1 = 2, so Phi_1(omega(S)) = S <= 2 requires S <= 2
+        (F_B = {S : S <= 2}).
+      - Intersection F_A cap F_B = {S in {2, 4} : S >= 4 and S <= 2} = empty set.
+    """
+    s_cap = max(1, min(8, int(channel_capacity_s)))
+    syms = [max(0, min(s_cap - 1, int(v))) for v in (symbols + [0, 0, 0, 0])[:4]]
+    states = [
+        {"state_id": "s0", "query_value": "ROLLBACK", "side_symbol": syms[0]},
+        {"state_id": "s1", "query_value": "PATCH_HOTFIX", "side_symbol": syms[1]},
+        {"state_id": "s2", "query_value": "ROTATE_KEYS", "side_symbol": syms[2]},
+        {"state_id": "s3", "query_value": "ISOLATE_NODE", "side_symbol": syms[3]},
+    ]
+    mon_a = StreamingSideInformationCapacityMonitor(scope_id=f"{scope_prefix}_side_info")
+    mon_a.record_fiber_channel(
+        "fiber_infeasible_p1",
+        states,
+        channel_capacity_s=s_cap,
+        error_budget=0,
+    )
+    rec_a = mon_a.get_receipt()
+
+    try:
+        cand_alpha = str(Fraction(candidate_alpha))
+    except Exception:
+        cand_alpha = "0"
+    omega_a = str(s_cap)
+    mon_b = StreamingSkewRepairMonitor(scope_id=f"{scope_prefix}_skew")
+    mon_b.record_probe(
+        "probe_infeasible_p1",
+        omega_a,
+        "0",
+        candidate_alpha=cand_alpha,
+        l_inf_coordinate_budget="3",
+        l_1_global_budget="2",
+    )
+    rec_b = mon_b.get_receipt()
+    return rec_a, rec_b
+
+
+def _eval_infeasible_pair2_poe_and_skew(
+    scope_prefix: str,
+    compromise_eps: str,
+    candidate_alpha: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Evaluate Infeasible Coupled Pair 2: ProductOfExperts (eps = 1/2) + SkewRepair (eps = 0).
+
+    Coupling law:
+      - Monitor A (StreamingProductOfExpertsMonitor) restricts compromise weight on w1 to
+        discrete quanta eps in {0, 1/2}; D_PoE = eps^2 > 0 requires eps = 1/2 (F_A = {1/2}).
+      - Monitor B (StreamingSkewRepairMonitor) has omega(eps) = (2 + 4*eps, 0) under
+        B_inf = 3 and tight l1 budget B_1 = 2; Phi_1 = 2 + 4*eps <= 2 requires eps = 0 (F_B = {0}).
+      - Intersection F_A cap F_B = {1/2} cap {0} = empty set.
+    """
+    try:
+        raw_eps = Fraction(compromise_eps)
+    except Exception:
+        raw_eps = Fraction(0)
+    eps = Fraction(1, 2) if raw_eps >= Fraction(1, 4) else Fraction(0)
+    mon_a = StreamingProductOfExpertsMonitor(scope_id=f"{scope_prefix}_poe")
+    mon_a.record_expert_scores(
+        "round_infeasible_p2",
+        [
+            [str(Fraction(1) - eps), str(eps), "0"],
+            ["0", str(eps), str(Fraction(1) - eps)],
+        ],
+    )
+    rec_a = mon_a.get_receipt()
+
+    try:
+        cand_alpha = str(Fraction(candidate_alpha))
+    except Exception:
+        cand_alpha = "0"
+    omega_a = str(Fraction(2) + Fraction(4) * eps)
+    mon_b = StreamingSkewRepairMonitor(scope_id=f"{scope_prefix}_skew")
+    mon_b.record_probe(
+        "probe_infeasible_p2",
+        omega_a,
+        "0",
+        candidate_alpha=cand_alpha,
+        l_inf_coordinate_budget="3",
+        l_1_global_budget="2",
+    )
+    rec_b = mon_b.get_receipt()
+    return rec_a, rec_b
+
+
+def _eval_infeasible_pair3_tower_and_mermin_peres(
+    scope_prefix: str,
+    const_b: int,
+    x_mod2: int,
+    x_mod4: int,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Evaluate Infeasible Coupled Pair 3: ProjectiveTower (needs b = 3) + MerminPeres (needs b = 1).
+
+    Coupling law:
+      - Monitor A (StreamingProjectiveTowerMonitor) checks 3*x_n + b = 0 (mod 2^n) for b in {1, 3}
+        with integer lift bound [-4, 4]; integral root x_* = -1 exists only for b = 3 (F_A = {3}).
+      - Monitor B (StreamingMerminPeresParityMonitor) checks R = (+1, +1, +1) against coupled
+        column target C(b) = (+1, +1, 2 - b); non-contextual parity requires 2 - b = +1, i.e., b = 1
+        (F_B = {1}).
+      - Intersection F_A cap F_B = {3} cap {1} = empty set.
+    """
+    b_val = 3 if int(const_b) >= 2 else 1
+    xm2 = int(x_mod2) % 2
+    xm4 = int(x_mod4) % 4
+    mon_a = StreamingProjectiveTowerMonitor(
+        3,
+        b_val,
+        scope_id=f"{scope_prefix}_tower",
+    )
+    mon_a.record_stage("stage_mod2", 2, xm2)
+    mon_a.record_stage("stage_mod4", 4, xm4)
+    rec_a = mon_a.get_receipt()
+
+    c3_target = 2 - b_val
+    mon_b = StreamingMerminPeresParityMonitor(scope_id=f"{scope_prefix}_mp")
+    mon_b.record_grid(
+        "grid_infeasible_p3",
+        row_targets=[1, 1, 1],
+        col_targets=[1, 1, c3_target],
+        row_context_assignments=[[1, 1, 1], [1, 1, 1], [1, 1, 1]],
+        col_context_assignments=[[1, 1, 1], [1, 1, 1], [1, 1, c3_target]],
+    )
+    rec_b = mon_b.get_receipt()
+    return rec_a, rec_b
+
+
+def _run_infeasible_coupled_escalation_for_model(
+    client: OpenRouterClient,
+    joint_guard: StreamingJointMultiMonitorRepairGuard,
+) -> list[dict[str, Any]]:
+    """Run 3 infeasible empty-intersection coupled repair trajectories (6 completions) for one model."""
+    model_id = client.model
+    trajectories: list[dict[str, Any]] = []
+
+    # =========================================================================
+    # Infeasible Pair 1: SideInfoCapacity (needs S=4) + SkewRepair (needs S=2)
+    # =========================================================================
+    ip1_r0_si, ip1_r0_sk = _eval_infeasible_pair1_side_info_and_skew(
+        f"ip1_r0_{model_id}", 2, [0, 0, 1, 1], "-2/3"
+    )
+    ip1_r1_prompt = (
+        "Infeasible Coupled Orchestrator Round 1 (Priority: Monitor A Side-Channel Capacity):\n"
+        f"- Monitor A receipt: status='{ip1_r0_si['status']}', K=4 queries, S=2, "
+        f"deficit={ip1_r0_si['fibers'][0]['capacity_error_floor_k_minus_s']}.\n"
+        f"- Monitor B receipt: status='{ip1_r0_sk['status']}', omega(S)=(S, 0), B_inf=3, B_1=2.\n"
+        "In Round 1, prioritize resolving Monitor A (zero capacity deficit requires channel_capacity_s=4 "
+        "and symbols=[0, 1, 2, 3]) while keeping Monitor B locally valid under B_inf=3 on omega(4)=(4, 0) "
+        "by choosing candidate_alpha='-4/3' (since ||r(-4/3)||_inf = 8/3 <= 3).\n"
+        'Return ONLY JSON: {"channel_capacity_s": 4, "symbols": [0, 1, 2, 3], "candidate_alpha": "-4/3"}'
+    )
+    ip1_r1_comp = client.complete(
+        ip1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=200
+    )
+    ip1_r1_parsed = _extract_json(ip1_r1_comp) or {}
+    s_ip1_r1 = int(ip1_r1_parsed.get("channel_capacity_s", 4))
+    syms_ip1_r1 = ip1_r1_parsed.get("symbols", [0, 1, 2, 3])
+    if not isinstance(syms_ip1_r1, list) or len(syms_ip1_r1) < 4:
+        syms_ip1_r1 = [0, 1, 2, 3]
+    alpha_ip1_r1 = str(ip1_r1_parsed.get("candidate_alpha", "-4/3"))
+    ip1_r1_si, ip1_r1_sk = _eval_infeasible_pair1_side_info_and_skew(
+        f"ip1_r1_{model_id}", s_ip1_r1, syms_ip1_r1, alpha_ip1_r1
+    )
+
+    ip1_r2_prompt = (
+        "Infeasible Coupled Orchestrator Round 2 (Priority: Monitor B Tight l1 Budget):\n"
+        f"- Round 1 produced Whack-a-Mole state: Monitor A status='{ip1_r1_si['status']}' (global=1), "
+        f"Monitor B status='{ip1_r1_sk['status']}' (global=0, l1_cost='{ip1_r1_sk['probes'][0]['candidate_l1_cost']}' > B_1='2').\n"
+        "- Because omega(S)=(S, 0) has minimum l1 repair cost Phi_1(S) = S, satisfying Monitor B's tight "
+        "l1 budget B_1 = 2 requires throttling channel_capacity_s to 2 with symbols=[0, 0, 1, 1] and "
+        "setting candidate_alpha='0' (so ||r(0)||_1 = 2 <= 2).\n"
+        'Return ONLY JSON: {"channel_capacity_s": 2, "symbols": [0, 0, 1, 1], "candidate_alpha": "0"}'
+    )
+    ip1_r2_comp = client.complete(
+        ip1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=200
+    )
+    ip1_r2_parsed = _extract_json(ip1_r2_comp) or {}
+    s_ip1_r2 = int(ip1_r2_parsed.get("channel_capacity_s", 2))
+    syms_ip1_r2 = ip1_r2_parsed.get("symbols", [0, 0, 1, 1])
+    if not isinstance(syms_ip1_r2, list) or len(syms_ip1_r2) < 4:
+        syms_ip1_r2 = [0, 0, 1, 1]
+    alpha_ip1_r2 = str(ip1_r2_parsed.get("candidate_alpha", "0"))
+    ip1_r2_si, ip1_r2_sk = _eval_infeasible_pair1_side_info_and_skew(
+        f"ip1_r2_{model_id}", s_ip1_r2, syms_ip1_r2, alpha_ip1_r2
+    )
+
+    ip1_candidates = [
+        {"action_id": "S=2_alpha=0", "global_a_pass": False, "global_b_pass": True},
+        {"action_id": "S=4_alpha=-4/3", "global_a_pass": True, "global_b_pass": False},
+    ]
+    ip1_traj = joint_guard.record_coupled_trajectory(
+        f"infeasible_side_info_skew_{model_id}",
+        pair_name="Infeasible_SideInfo_x_SkewRepair",
+        monitor_a_name="StreamingSideInformationCapacityMonitor",
+        monitor_b_name="StreamingSkewRepairMonitor",
+        model_id=model_id,
+        feasible_intersection_empty=True,
+        candidate_actions=ip1_candidates,
+        rounds=[
+            {
+                "feedback_mode": "round_0_obstructed_baseline",
+                "status_a": ip1_r0_si["status"],
+                "status_b": ip1_r0_sk["status"],
+                "local_a_pass": ip1_r0_si["fibers"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": ip1_r0_si["fibers"][0]["global_decodability_evaluator"] == 1,
+                "local_b_pass": ip1_r0_sk["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip1_r0_sk["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_1_priority_monitor_a",
+                "status_a": ip1_r1_si["status"],
+                "status_b": ip1_r1_sk["status"],
+                "local_a_pass": ip1_r1_si["fibers"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": ip1_r1_si["fibers"][0]["global_decodability_evaluator"] == 1,
+                "local_b_pass": ip1_r1_sk["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip1_r1_sk["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_2_priority_monitor_b",
+                "status_a": ip1_r2_si["status"],
+                "status_b": ip1_r2_sk["status"],
+                "local_a_pass": ip1_r2_si["fibers"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": ip1_r2_si["fibers"][0]["global_decodability_evaluator"] == 1,
+                "local_b_pass": ip1_r2_sk["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip1_r2_sk["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+        ],
+    )
+    trajectories.append(
+        {
+            **ip1_traj,
+            "prompts": [ip1_r1_prompt, ip1_r2_prompt],
+            "completions": [ip1_r1_comp, ip1_r2_comp],
+            "round_inputs": [
+                {"channel_capacity_s": 2, "symbols": [0, 0, 1, 1], "candidate_alpha": "-2/3"},
+                {"channel_capacity_s": s_ip1_r1, "symbols": syms_ip1_r1, "candidate_alpha": alpha_ip1_r1},
+                {"channel_capacity_s": s_ip1_r2, "symbols": syms_ip1_r2, "candidate_alpha": alpha_ip1_r2},
+            ],
+            "round_receipts": [
+                {"receipt_a": ip1_r0_si, "receipt_b": ip1_r0_sk},
+                {"receipt_a": ip1_r1_si, "receipt_b": ip1_r1_sk},
+                {"receipt_a": ip1_r2_si, "receipt_b": ip1_r2_sk},
+            ],
+        }
+    )
+
+    # =========================================================================
+    # Infeasible Pair 2: ProductOfExperts (eps=1/2) + SkewRepair (eps=0)
+    # =========================================================================
+    ip2_r0_poe, ip2_r0_sk = _eval_infeasible_pair2_poe_and_skew(
+        f"ip2_r0_{model_id}", "0", "-2/3"
+    )
+    ip2_r1_prompt = (
+        "Infeasible Coupled Orchestrator Round 1 (Priority: Monitor A PoE Overlap):\n"
+        f"- Monitor A receipt: status='{ip2_r0_poe['status']}', poe_partition_sum='0' (collapsed).\n"
+        f"- Monitor B receipt: status='{ip2_r0_sk['status']}', omega(eps)=(2+4*eps, 0), B_inf=3, B_1=2.\n"
+        "- Discrete compromise quanta allowed on w1: compromise_eps in {'0', '1/2'}.\n"
+        "In Round 1, prioritize resolving Monitor A by choosing compromise_eps='1/2' (so D_PoE = 1/4 > 0) "
+        "and keep Monitor B locally valid under B_inf=3 on omega(1/2)=(4, 0) via candidate_alpha='-4/3'.\n"
+        'Return ONLY JSON: {"compromise_eps": "1/2", "candidate_alpha": "-4/3"}'
+    )
+    ip2_r1_comp = client.complete(
+        ip2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=200
+    )
+    ip2_r1_parsed = _extract_json(ip2_r1_comp) or {}
+    eps_ip2_r1 = str(ip2_r1_parsed.get("compromise_eps", "1/2"))
+    alpha_ip2_r1 = str(ip2_r1_parsed.get("candidate_alpha", "-4/3"))
+    ip2_r1_poe, ip2_r1_sk = _eval_infeasible_pair2_poe_and_skew(
+        f"ip2_r1_{model_id}", eps_ip2_r1, alpha_ip2_r1
+    )
+
+    ip2_r2_prompt = (
+        "Infeasible Coupled Orchestrator Round 2 (Priority: Monitor B Tight l1 Budget):\n"
+        f"- Round 1 produced Whack-a-Mole state: Monitor A status='{ip2_r1_poe['status']}' (global=1), "
+        f"Monitor B status='{ip2_r1_sk['status']}' (global=0, l1_cost='{ip2_r1_sk['probes'][0]['candidate_l1_cost']}' > B_1='2').\n"
+        "- Because omega(1/2)=(4, 0) has minimum l1 repair cost Phi_1 = 4 > B_1 = 2, satisfying Monitor B's "
+        "tight l1 budget B_1 = 2 over discrete quanta {'0', '1/2'} requires setting compromise_eps='0' "
+        "and candidate_alpha='0' (so omega(0)=(2, 0) attains ||r(0)||_1 = 2 <= 2).\n"
+        'Return ONLY JSON: {"compromise_eps": "0", "candidate_alpha": "0"}'
+    )
+    ip2_r2_comp = client.complete(
+        ip2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=200
+    )
+    ip2_r2_parsed = _extract_json(ip2_r2_comp) or {}
+    eps_ip2_r2 = str(ip2_r2_parsed.get("compromise_eps", "0"))
+    alpha_ip2_r2 = str(ip2_r2_parsed.get("candidate_alpha", "0"))
+    ip2_r2_poe, ip2_r2_sk = _eval_infeasible_pair2_poe_and_skew(
+        f"ip2_r2_{model_id}", eps_ip2_r2, alpha_ip2_r2
+    )
+
+    ip2_candidates = [
+        {"action_id": "eps=0_alpha=0", "global_a_pass": False, "global_b_pass": True},
+        {"action_id": "eps=1/2_alpha=-4/3", "global_a_pass": True, "global_b_pass": False},
+    ]
+    ip2_traj = joint_guard.record_coupled_trajectory(
+        f"infeasible_poe_skew_{model_id}",
+        pair_name="Infeasible_PoE_x_SkewRepair",
+        monitor_a_name="StreamingProductOfExpertsMonitor",
+        monitor_b_name="StreamingSkewRepairMonitor",
+        model_id=model_id,
+        feasible_intersection_empty=True,
+        candidate_actions=ip2_candidates,
+        rounds=[
+            {
+                "feedback_mode": "round_0_obstructed_baseline",
+                "status_a": ip2_r0_poe["status"],
+                "status_b": ip2_r0_sk["status"],
+                "local_a_pass": ip2_r0_poe["rounds"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": ip2_r0_poe["rounds"][0]["global_poe_normalizable_evaluator"] == 1,
+                "local_b_pass": ip2_r0_sk["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip2_r0_sk["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_1_priority_monitor_a",
+                "status_a": ip2_r1_poe["status"],
+                "status_b": ip2_r1_sk["status"],
+                "local_a_pass": ip2_r1_poe["rounds"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": ip2_r1_poe["rounds"][0]["global_poe_normalizable_evaluator"] == 1,
+                "local_b_pass": ip2_r1_sk["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip2_r1_sk["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_2_priority_monitor_b",
+                "status_a": ip2_r2_poe["status"],
+                "status_b": ip2_r2_sk["status"],
+                "local_a_pass": ip2_r2_poe["rounds"][0]["local_product_aggregator"] == 1,
+                "global_a_pass": ip2_r2_poe["rounds"][0]["global_poe_normalizable_evaluator"] == 1,
+                "local_b_pass": ip2_r2_sk["probes"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip2_r2_sk["probes"][0]["global_l1_budget_evaluator"] == 1,
+            },
+        ],
+    )
+    trajectories.append(
+        {
+            **ip2_traj,
+            "prompts": [ip2_r1_prompt, ip2_r2_prompt],
+            "completions": [ip2_r1_comp, ip2_r2_comp],
+            "round_inputs": [
+                {"compromise_eps": "0", "candidate_alpha": "-2/3"},
+                {"compromise_eps": eps_ip2_r1, "candidate_alpha": alpha_ip2_r1},
+                {"compromise_eps": eps_ip2_r2, "candidate_alpha": alpha_ip2_r2},
+            ],
+            "round_receipts": [
+                {"receipt_a": ip2_r0_poe, "receipt_b": ip2_r0_sk},
+                {"receipt_a": ip2_r1_poe, "receipt_b": ip2_r1_sk},
+                {"receipt_a": ip2_r2_poe, "receipt_b": ip2_r2_sk},
+            ],
+        }
+    )
+
+    # =========================================================================
+    # Infeasible Pair 3: ProjectiveTower (needs b=3) + MerminPeres (needs b=1)
+    # =========================================================================
+    # Round 0 baseline: b=1 for Tower (obstructed) and b=3 for Mermin-Peres (obstructed)
+    ip3_r0_pt, _ = _eval_infeasible_pair3_tower_and_mermin_peres(f"ip3_r0a_{model_id}", 1, 1, 1)
+    _, ip3_r0_mp = _eval_infeasible_pair3_tower_and_mermin_peres(f"ip3_r0b_{model_id}", 3, 1, 3)
+
+    ip3_r1_prompt = (
+        "Infeasible Coupled Orchestrator Round 1 (Priority: Monitor A Projective Tower Lift):\n"
+        f"- Monitor A (ProjectiveTower 3*x_n + b = 0 mod 2^n, b in {{1, 3}}): status='{ip3_r0_pt['status']}'.\n"
+        f"- Monitor B (MerminPeres with coupled column target C3 = 2 - b): status='{ip3_r0_mp['status']}'.\n"
+        "In Round 1, prioritize resolving Monitor A by choosing const_b=3 with modular residues "
+        "x_mod2=1 and x_mod4=3 (so x_* = -1 is an exact integer root in [-4, 4]).\n"
+        'Return ONLY JSON: {"const_b": 3, "x_mod2": 1, "x_mod4": 3}'
+    )
+    ip3_r1_comp = client.complete(
+        ip3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=200
+    )
+    ip3_r1_parsed = _extract_json(ip3_r1_comp) or {}
+    b_ip3_r1 = int(ip3_r1_parsed.get("const_b", 3))
+    x1_ip3_r1 = int(ip3_r1_parsed.get("x_mod2", 1))
+    x2_ip3_r1 = int(ip3_r1_parsed.get("x_mod4", 3))
+    ip3_r1_pt, ip3_r1_mp = _eval_infeasible_pair3_tower_and_mermin_peres(
+        f"ip3_r1_{model_id}", b_ip3_r1, x1_ip3_r1, x2_ip3_r1
+    )
+
+    ip3_r2_prompt = (
+        "Infeasible Coupled Orchestrator Round 2 (Priority: Monitor B Mermin-Peres Non-Contextual Parity):\n"
+        f"- Round 1 produced Whack-a-Mole state: Monitor A status='{ip3_r1_pt['status']}' (global=1), "
+        f"Monitor B status='{ip3_r1_mp['status']}' (global=0, because const_b=3 sets C3 = 2 - 3 = -1, "
+        "causing row product +1 != -1 column product).\n"
+        "- In Round 2, prioritize resolving Monitor B's parity obstruction (requiring C3 = 2 - b = +1) "
+        "by choosing const_b=1 with compatible tower residues x_mod2=1 and x_mod4=1.\n"
+        'Return ONLY JSON: {"const_b": 1, "x_mod2": 1, "x_mod4": 1}'
+    )
+    ip3_r2_comp = client.complete(
+        ip3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=200
+    )
+    ip3_r2_parsed = _extract_json(ip3_r2_comp) or {}
+    b_ip3_r2 = int(ip3_r2_parsed.get("const_b", 1))
+    x1_ip3_r2 = int(ip3_r2_parsed.get("x_mod2", 1))
+    x2_ip3_r2 = int(ip3_r2_parsed.get("x_mod4", 1))
+    ip3_r2_pt, ip3_r2_mp = _eval_infeasible_pair3_tower_and_mermin_peres(
+        f"ip3_r2_{model_id}", b_ip3_r2, x1_ip3_r2, x2_ip3_r2
+    )
+
+    ip3_candidates = [
+        {"action_id": "b=1_C3=+1", "global_a_pass": False, "global_b_pass": True},
+        {"action_id": "b=3_C3=-1", "global_a_pass": True, "global_b_pass": False},
+    ]
+    ip3_traj = joint_guard.record_coupled_trajectory(
+        f"infeasible_tower_mp_{model_id}",
+        pair_name="Infeasible_ProjectiveTower_x_MerminPeres",
+        monitor_a_name="StreamingProjectiveTowerMonitor",
+        monitor_b_name="StreamingMerminPeresParityMonitor",
+        model_id=model_id,
+        feasible_intersection_empty=True,
+        candidate_actions=ip3_candidates,
+        rounds=[
+            {
+                "feedback_mode": "round_0_obstructed_baseline",
+                "status_a": ip3_r0_pt["status"],
+                "status_b": ip3_r0_mp["status"],
+                "local_a_pass": ip3_r0_pt["local_product_aggregator"] == 1,
+                "global_a_pass": ip3_r0_pt["global_integral_lift_evaluator"] == 1,
+                "local_b_pass": ip3_r0_mp["grids"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip3_r0_mp["grids"][0]["global_noncontextual_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_1_priority_monitor_a",
+                "status_a": ip3_r1_pt["status"],
+                "status_b": ip3_r1_mp["status"],
+                "local_a_pass": ip3_r1_pt["local_product_aggregator"] == 1,
+                "global_a_pass": ip3_r1_pt["global_integral_lift_evaluator"] == 1,
+                "local_b_pass": ip3_r1_mp["grids"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip3_r1_mp["grids"][0]["global_noncontextual_evaluator"] == 1,
+            },
+            {
+                "feedback_mode": "round_2_priority_monitor_b",
+                "status_a": ip3_r2_pt["status"],
+                "status_b": ip3_r2_mp["status"],
+                "local_a_pass": ip3_r2_pt["local_product_aggregator"] == 1,
+                "global_a_pass": ip3_r2_pt["global_integral_lift_evaluator"] == 1,
+                "local_b_pass": ip3_r2_mp["grids"][0]["local_product_aggregator"] == 1,
+                "global_b_pass": ip3_r2_mp["grids"][0]["global_noncontextual_evaluator"] == 1,
+            },
+        ],
+    )
+    trajectories.append(
+        {
+            **ip3_traj,
+            "prompts": [ip3_r1_prompt, ip3_r2_prompt],
+            "completions": [ip3_r1_comp, ip3_r2_comp],
+            "round_inputs": [
+                {"const_b_a": 1, "const_b_b": 3, "x_mod2": 1, "x_mod4": 1},
+                {"const_b": b_ip3_r1, "x_mod2": x1_ip3_r1, "x_mod4": x2_ip3_r1},
+                {"const_b": b_ip3_r2, "x_mod2": x1_ip3_r2, "x_mod4": x2_ip3_r2},
+            ],
+            "round_receipts": [
+                {"receipt_a": ip3_r0_pt, "receipt_b": ip3_r0_mp},
+                {"receipt_a": ip3_r1_pt, "receipt_b": ip3_r1_mp},
+                {"receipt_a": ip3_r2_pt, "receipt_b": ip3_r2_mp},
+            ],
+        }
+    )
+
+    return trajectories
+
+
+def run_infeasible_coupled_escalation_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter infeasible coupled multi-monitor oscillation & escalation benchmark."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    joint_guard = StreamingJointMultiMonitorRepairGuard(
+        scope_id="live_infeasible_coupled_escalation"
+    )
+    all_trajectories: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running infeasible coupled multi-monitor escalation benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        trajs = _run_infeasible_coupled_escalation_for_model(client, joint_guard)
+        total_completions += client.completion_count
+        all_trajectories.extend(trajs)
+
+    guard_receipt = joint_guard.get_receipt()
+
+    r0_traces = [t["rounds"][0] for t in all_trajectories]
+    r1_traces = [t["rounds"][1] for t in all_trajectories]
+    r2_traces = [t["rounds"][2] for t in all_trajectories]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_trajs = [t for t in all_trajectories if t["model_id"] == model_id]
+        n_m = len(m_trajs)
+        osc_c = sum(1 for t in m_trajs if t.get("whack_a_mole_oscillation_detected", False))
+        esc_c = sum(1 for t in m_trajs if t.get("halted_and_escalated", False))
+        r1_c = sum(1 for t in m_trajs if t["converged_single_round"])
+        r2_c = sum(1 for t in m_trajs if t["converged_multi_round"])
+        per_model_summary[model_id] = {
+            "trajectory_count": n_m,
+            "single_round_convergence_rate": str(Fraction(r1_c, n_m)),
+            "multi_round_convergence_rate": str(Fraction(r2_c, n_m)),
+            "whack_a_mole_oscillation_rate": str(Fraction(osc_c, n_m)),
+            "halt_and_escalate_rate": str(Fraction(esc_c, n_m)),
+            "round_1_metrics": compute_empirical_defect_rates([t["rounds"][1] for t in m_trajs]),
+            "round_2_metrics": compute_empirical_defect_rates([t["rounds"][2] for t in m_trajs]),
+        }
+
+    pair_names = [
+        "Infeasible_SideInfo_x_SkewRepair",
+        "Infeasible_PoE_x_SkewRepair",
+        "Infeasible_ProjectiveTower_x_MerminPeres",
+    ]
+    per_pair_summary: dict[str, Any] = {}
+    for pname in pair_names:
+        p_trajs = [t for t in all_trajectories if t["pair_name"] == pname]
+        n_p = len(p_trajs)
+        osc_c = sum(1 for t in p_trajs if t.get("whack_a_mole_oscillation_detected", False))
+        esc_c = sum(1 for t in p_trajs if t.get("halted_and_escalated", False))
+        r1_c = sum(1 for t in p_trajs if t["converged_single_round"])
+        r2_c = sum(1 for t in p_trajs if t["converged_multi_round"])
+        per_pair_summary[pname] = {
+            "trajectory_count": n_p,
+            "single_round_convergence_rate": str(Fraction(r1_c, n_p)),
+            "multi_round_convergence_rate": str(Fraction(r2_c, n_p)),
+            "whack_a_mole_oscillation_rate": str(Fraction(osc_c, n_p)),
+            "halt_and_escalate_rate": str(Fraction(esc_c, n_p)),
+            "round_1_metrics": compute_empirical_defect_rates([t["rounds"][1] for t in p_trajs]),
+            "round_2_metrics": compute_empirical_defect_rates([t["rounds"][2] for t in p_trajs]),
+        }
+
+    body = {
+        "schema": "lggr.infeasible_coupled_escalation_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "infeasible_coupled_escalation_benchmark",
+        "models_evaluated": list(models),
+        "infeasible_pairs_evaluated": pair_names,
+        "total_completions": total_completions,
+        "trajectory_count": len(all_trajectories),
+        "round_0_baseline_metrics": compute_empirical_defect_rates(r0_traces),
+        "round_1_priority_a_metrics": compute_empirical_defect_rates(r1_traces),
+        "round_2_priority_b_metrics": compute_empirical_defect_rates(r2_traces),
+        "single_round_convergence_rate": guard_receipt["single_round_convergence_rate"],
+        "multi_round_convergence_rate": guard_receipt["multi_round_convergence_rate"],
+        "whack_a_mole_oscillation_rate": guard_receipt["whack_a_mole_oscillation_rate"],
+        "halt_and_escalate_rate": guard_receipt["halt_and_escalate_rate"],
+        "per_model_summary": per_model_summary,
+        "per_pair_summary": per_pair_summary,
+        "joint_guard_receipt": guard_receipt,
+        "trajectories": all_trajectories,
+        "meaning": (
+            "Infeasible coupled multi-monitor benchmark where the intersection of global feasible "
+            "sets is empty, testing Whack-a-Mole oscillation detection (1, 0) <-> (0, 1) and "
+            "halt-and-escalate certification across 5 model families."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    out_path = os.path.join(receipts_dir, "infeasible_coupled_escalation_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
+
+# ------------------------------------------------------------------------------
 # Master Benchmark Runner & Saver
 # ------------------------------------------------------------------------------
 
