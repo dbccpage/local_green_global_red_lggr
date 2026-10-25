@@ -71,6 +71,7 @@ from .streaming import (
     StreamingWatcherDropoutGramAuditMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
+    StreamingWindowedDriftRebalancingMonitor,
 )
 from .transport import verify_transport
 from .witnesses import BudgetPolicy, StateRef, StepWitness, audit_document, audit_history, history_document, make_witness
@@ -120,4 +121,5 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingVariableDurationGracefulSheddingMonitor",
            "StreamingWatcherDropoutGramAuditMonitor",
            "StreamingWeightedPolicyRelaxationMonitor",
-           "StreamingWindowedDriftMonitor"]
+           "StreamingWindowedDriftMonitor",
+           "StreamingWindowedDriftRebalancingMonitor"]
