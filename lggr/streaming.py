@@ -8929,6 +8929,320 @@ class StreamingWeightedPolicyRelaxationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingPolicyRatchetDriftMonitor:
+    """Audit multi-step cumulative policy-relaxation drift (ratchet effect) across sequential incidents.
+
+    Separates:
+      1. Unrevoked monotone policy ratchet (L_t = 1 at every incident step t = 1..T via
+         ||P_t - P_{t-1}||_{1,w} <= tau_step, yet cumulative horizon drift
+         ||P_T - P_0||_{1,w} > tau_horizon -> E_{g,T} = 0, Delta_{E,chain} = -1,
+         CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR).
+      2. Scoped lease revocation / rollback after incident resolution (prior temporary
+         relaxations revoked back to P_0 before incident t -> ||P_t - P_0||_{1,w} <= tau_step
+         <= tau_horizon for all t = 1..T -> L_chain = 1, E_{g,chain} = 1, Delta_{E,chain} = 0,
+         SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG).
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not scope_id:
+            raise ValidationError("scope_id must be non-empty")
+        self.scope_id = scope_id
+        self.trajectories: list[dict[str, Any]] = []
+
+    def _audit_incident_chain(
+        self,
+        *,
+        incidents: Sequence[Mapping[str, Any]],
+        p0_vec: list[Fraction],
+        w_vec: list[Fraction],
+        tau_step: Fraction,
+        tau_horizon: Fraction,
+        dim: int,
+        require_revocation: bool,
+    ) -> dict[str, Any]:
+        if len(incidents) < 2:
+            raise ValidationError("incident trajectory must contain at least 2 sequential incidents")
+
+        step_records: list[dict[str, Any]] = []
+        prev_post_vec = list(p0_vec)
+        l_chain = 1
+        eg_chain = 1
+        sum_step_weighted_slacks = Fraction(0)
+        max_horizon_weighted_drift = Fraction(0)
+        first_breach_step: int | None = None
+
+        for idx, inc in enumerate(incidents):
+            step_num = int(inc.get("incident_index", idx + 1))
+            pair_id = str(inc.get("incident_pair_id", f"incident_{step_num}"))
+            prior_revoked = bool(inc.get("prior_lease_revoked", False))
+            sig_valid = bool(inc.get("authority_signature_valid", False))
+            mon_a = bool(inc.get("post_relaxation_monitor_a_passed", False))
+            mon_b = bool(inc.get("post_relaxation_monitor_b_passed", False))
+
+            if idx == 0:
+                expected_pre = list(p0_vec)
+            else:
+                expected_pre = list(p0_vec) if prior_revoked else list(prev_post_vec)
+
+            raw_pre = inc.get("pre_incident_policy_vector")
+            if raw_pre is not None:
+                pre_vec = [rational(v) for v in raw_pre]
+                if len(pre_vec) != dim:
+                    raise ValidationError("pre_incident_policy_vector dimension mismatch")
+            else:
+                pre_vec = expected_pre
+
+            raw_post = inc.get("post_incident_policy_vector")
+            if raw_post is None:
+                raise ValidationError("incident must provide post_incident_policy_vector")
+            post_vec = [rational(v) for v in raw_post]
+            if len(post_vec) != dim:
+                raise ValidationError("post_incident_policy_vector dimension mismatch")
+
+            delta_step_vec = [post_vec[j] - pre_vec[j] for j in range(dim)]
+            delta_horizon_vec = [post_vec[j] - p0_vec[j] for j in range(dim)]
+
+            step_unweighted_slack = sum((abs(d) for d in delta_step_vec), Fraction(0))
+            step_weighted_slack = sum(
+                (w_vec[j] * abs(delta_step_vec[j]) for j in range(dim)), Fraction(0)
+            )
+            horizon_unweighted_drift = sum((abs(d) for d in delta_horizon_vec), Fraction(0))
+            horizon_weighted_drift = sum(
+                (w_vec[j] * abs(delta_horizon_vec[j]) for j in range(dim)), Fraction(0)
+            )
+
+            sum_step_weighted_slacks += step_weighted_slack
+            if horizon_weighted_drift > max_horizon_weighted_drift:
+                max_horizon_weighted_drift = horizon_weighted_drift
+
+            pre_state_consistent = pre_vec == expected_pre
+            revocation_policy_satisfied = True
+            if idx > 0 and require_revocation and not prior_revoked:
+                revocation_policy_satisfied = False
+
+            step_within_budget = step_weighted_slack <= tau_step
+            horizon_within_ceiling = horizon_weighted_drift <= tau_horizon
+            pareto_restored = mon_a and mon_b
+
+            l_t = (
+                1
+                if (sig_valid and pareto_restored and step_within_budget and pre_state_consistent)
+                else 0
+            )
+            eg_t = (
+                1
+                if (
+                    l_t == 1
+                    and horizon_within_ceiling
+                    and revocation_policy_satisfied
+                )
+                else 0
+            )
+            delta_e_t = eg_t - l_t
+
+            if l_t == 0:
+                l_chain = 0
+            if eg_t == 0:
+                eg_chain = 0
+                if first_breach_step is None and l_t == 1 and not horizon_within_ceiling:
+                    first_breach_step = step_num
+
+            if eg_t == 1:
+                step_status = (
+                    "SCOPED_LEASE_REVOKED_STEP_COHERENT_LGGG"
+                    if (idx > 0 and prior_revoked)
+                    else "WITHIN_STEP_AND_HORIZON_BUDGET_LGGG"
+                )
+            elif l_t == 1 and not horizon_within_ceiling:
+                step_status = "CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR"
+            else:
+                step_status = "STEP_OBSTRUCTED_OR_INVALID_LEASE_LGGR"
+
+            step_records.append(
+                {
+                    "incident_index": step_num,
+                    "incident_pair_id": pair_id,
+                    "prior_lease_revoked": prior_revoked,
+                    "authority_signature_valid": sig_valid,
+                    "pre_incident_policy_vector": pre_vec,
+                    "post_incident_policy_vector": post_vec,
+                    "delta_step_vector": delta_step_vec,
+                    "delta_horizon_vector": delta_horizon_vec,
+                    "step_unweighted_l1_slack": step_unweighted_slack,
+                    "step_weighted_l1_slack": step_weighted_slack,
+                    "horizon_unweighted_l1_drift": horizon_unweighted_drift,
+                    "horizon_weighted_l1_drift": horizon_weighted_drift,
+                    "step_within_budget": step_within_budget,
+                    "horizon_within_ceiling": horizon_within_ceiling,
+                    "post_relaxation_monitor_a_passed": mon_a,
+                    "post_relaxation_monitor_b_passed": mon_b,
+                    "pareto_intersection_restored": pareto_restored,
+                    "local_step_indicator_L_t": l_t,
+                    "global_horizon_indicator_E_g_t": eg_t,
+                    "step_evaluator_defect": delta_e_t,
+                    "step_status": step_status,
+                }
+            )
+            prev_post_vec = post_vec
+
+        final_horizon_drift = step_records[-1]["horizon_weighted_l1_drift"]
+        delta_e_chain = eg_chain - l_chain
+        ratchet_horizon_breach = l_chain == 1 and eg_chain == 0 and max_horizon_weighted_drift > tau_horizon
+
+        if eg_chain == 1:
+            chain_status = "SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG"
+        elif ratchet_horizon_breach:
+            chain_status = "CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR"
+        else:
+            chain_status = "CHAIN_STEP_OBSTRUCTED_LGGR"
+
+        return {
+            "incident_count": len(step_records),
+            "sum_step_weighted_l1_slacks": sum_step_weighted_slacks,
+            "final_horizon_weighted_l1_drift": final_horizon_drift,
+            "max_horizon_weighted_l1_drift": max_horizon_weighted_drift,
+            "telescoping_ratchet_equality_holds": final_horizon_drift == sum_step_weighted_slacks,
+            "first_horizon_breach_incident_index": first_breach_step,
+            "local_chain_indicator_L": l_chain,
+            "global_chain_indicator_E_g": eg_chain,
+            "chain_evaluator_defect": delta_e_chain,
+            "ratchet_horizon_breach_detected": ratchet_horizon_breach,
+            "chain_status": chain_status,
+            "incidents": step_records,
+        }
+
+    def record_incident_trajectory(
+        self,
+        *,
+        trajectory_id: str,
+        model_id: str,
+        prior_escalation_receipt_sha256: str,
+        baseline_policy_sha256: str,
+        baseline_policy_vector: Sequence[int | float | str | Fraction],
+        risk_weight_vector: Sequence[int | float | str | Fraction],
+        step_slack_budget: int | float | str | Fraction,
+        horizon_drift_ceiling: int | float | str | Fraction,
+        unrevoked_ratchet_incidents: Sequence[Mapping[str, Any]],
+        lease_revoked_incidents: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not trajectory_id or not model_id:
+            raise ValidationError("trajectory_id and model_id must be non-empty")
+        if not prior_escalation_receipt_sha256 or not baseline_policy_sha256:
+            raise ValidationError("prior_escalation_receipt_sha256 and baseline_policy_sha256 must be non-empty")
+        if not baseline_policy_vector:
+            raise ValidationError("baseline_policy_vector must be non-empty")
+
+        p0_vec = [rational(v) for v in baseline_policy_vector]
+        w_vec = [rational(w) for w in risk_weight_vector]
+        dim = len(p0_vec)
+        if len(w_vec) != dim:
+            raise ValidationError("risk_weight_vector must have the same dimension as baseline_policy_vector")
+        if any(w <= 0 for w in w_vec):
+            raise ValidationError("all coordinates of risk_weight_vector must be strictly positive")
+
+        tau_step = rational(step_slack_budget)
+        tau_horizon = rational(horizon_drift_ceiling)
+        if tau_step <= 0 or tau_horizon <= 0:
+            raise ValidationError("step_slack_budget and horizon_drift_ceiling must be strictly positive")
+        if tau_horizon < tau_step:
+            raise ValidationError("horizon_drift_ceiling must be >= step_slack_budget")
+
+        ratchet_audit = self._audit_incident_chain(
+            incidents=unrevoked_ratchet_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_step=tau_step,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_revocation=False,
+        )
+        revoked_audit = self._audit_incident_chain(
+            incidents=lease_revoked_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_step=tau_step,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_revocation=True,
+        )
+
+        converged_single_round = ratchet_audit["global_chain_indicator_E_g"] == 1
+        converged_multi_round = converged_single_round or (revoked_audit["global_chain_indicator_E_g"] == 1)
+        horizon_drift_reduction = (
+            ratchet_audit["max_horizon_weighted_l1_drift"] - revoked_audit["max_horizon_weighted_l1_drift"]
+        )
+
+        record: dict[str, Any] = {
+            "trajectory_id": trajectory_id,
+            "model_id": model_id,
+            "prior_escalation_receipt_sha256": prior_escalation_receipt_sha256,
+            "baseline_policy_sha256": baseline_policy_sha256,
+            "baseline_policy_vector": p0_vec,
+            "risk_weight_vector": w_vec,
+            "step_slack_budget": tau_step,
+            "horizon_drift_ceiling": tau_horizon,
+            "phase_1_unrevoked_ratchet_chain": ratchet_audit,
+            "phase_2_lease_revoked_chain": revoked_audit,
+            "phase_1_ratchet_horizon_breach": ratchet_audit["ratchet_horizon_breach_detected"],
+            "converged_single_round": converged_single_round,
+            "converged_multi_round": converged_multi_round,
+            "horizon_weighted_drift_reduction": horizon_drift_reduction,
+        }
+        self.trajectories.append(record)
+        return json_value(record)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.trajectories:
+            raise ValidationError("cannot emit receipt without recorded policy ratchet trajectories")
+        n = len(self.trajectories)
+        single_cnt = sum(1 for t in self.trajectories if t["converged_single_round"])
+        multi_cnt = sum(1 for t in self.trajectories if t["converged_multi_round"])
+        ratchet_breach_cnt = sum(1 for t in self.trajectories if t["phase_1_ratchet_horizon_breach"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        ratchet_breach_rate = Fraction(ratchet_breach_cnt, n)
+
+        ratchet_breach_ids = [
+            t["trajectory_id"] for t in self.trajectories if t["phase_1_ratchet_horizon_breach"]
+        ]
+        unconverged_ids = [
+            t["trajectory_id"] for t in self.trajectories if not t["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_policy_ratchet_drift.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "trajectory_count": n,
+            "single_round_horizon_coherent_count": single_cnt,
+            "multi_round_lease_revoked_coherent_count": multi_cnt,
+            "phase_1_ratchet_horizon_breach_count": ratchet_breach_cnt,
+            "single_round_horizon_coherence_rate": single_rate,
+            "multi_round_lease_revoked_coherence_rate": multi_rate,
+            "lease_revocation_coherence_gain": gain_rate,
+            "phase_1_ratchet_horizon_breach_rate": ratchet_breach_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "phase_1_ratchet_horizon_breach_trajectory_ids": ratchet_breach_ids,
+            "unconverged_trajectory_ids": unconverged_ids,
+            "trajectories": self.trajectories,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

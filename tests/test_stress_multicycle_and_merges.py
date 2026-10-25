@@ -45,6 +45,7 @@ from lggr.streaming import (
     StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
+    StreamingPolicyRatchetDriftMonitor,
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
     StreamingProjectiveTowerMonitor,
@@ -2846,6 +2847,115 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["single_round_weighted_convergence_rate"], "0")
         self.assertEqual(receipt["multi_round_weighted_convergence_rate"], "1")
         self.assertEqual(receipt["multi_round_weighted_convergence_gain"], "1")
+
+    def test_policy_ratchet_drift_vs_lease_revocation(self) -> None:
+        """Theorem 61: Multi-step cumulative policy-relaxation drift (ratchet effect) vs. scoped lease revocation."""
+        mon = StreamingPolicyRatchetDriftMonitor(scope_id="unit_policy_ratchet_drift")
+        rec = mon.record_incident_trajectory(
+            trajectory_id="ratchet_3inc_unit",
+            model_id="openai/gpt-4o-mini",
+            prior_escalation_receipt_sha256="sha256_prior_weighted_eval",
+            baseline_policy_sha256="sha256_p0_2_3_0",
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            step_slack_budget=4,
+            horizon_drift_ceiling=4,
+            unrevoked_ratchet_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "prior_lease_revoked": False,
+                    "authority_signature_valid": True,
+                    "pre_incident_policy_vector": [2, 3, 0],
+                    "post_incident_policy_vector": [4, 3, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "prior_lease_revoked": False,
+                    "authority_signature_valid": True,
+                    "pre_incident_policy_vector": [4, 3, 0],
+                    "post_incident_policy_vector": [4, 4, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "prior_lease_revoked": False,
+                    "authority_signature_valid": True,
+                    "pre_incident_policy_vector": [4, 4, 0],
+                    "post_incident_policy_vector": [4, 4, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+            lease_revoked_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "prior_lease_revoked": True,
+                    "authority_signature_valid": True,
+                    "pre_incident_policy_vector": [2, 3, 0],
+                    "post_incident_policy_vector": [4, 3, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "prior_lease_revoked": True,
+                    "authority_signature_valid": True,
+                    "pre_incident_policy_vector": [2, 3, 0],
+                    "post_incident_policy_vector": [2, 4, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "prior_lease_revoked": True,
+                    "authority_signature_valid": True,
+                    "pre_incident_policy_vector": [2, 3, 0],
+                    "post_incident_policy_vector": [2, 3, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+        )
+        p1 = rec["phase_1_unrevoked_ratchet_chain"]
+        self.assertEqual(p1["local_chain_indicator_L"], 1)
+        self.assertEqual(p1["global_chain_indicator_E_g"], 0)
+        self.assertEqual(p1["chain_evaluator_defect"], -1)
+        self.assertEqual(p1["sum_step_weighted_l1_slacks"], "11")
+        self.assertEqual(p1["final_horizon_weighted_l1_drift"], "11")
+        self.assertEqual(p1["max_horizon_weighted_l1_drift"], "11")
+        self.assertTrue(p1["telescoping_ratchet_equality_holds"])
+        self.assertEqual(p1["first_horizon_breach_incident_index"], 2)
+        self.assertEqual(p1["chain_status"], "CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR")
+
+        p2 = rec["phase_2_lease_revoked_chain"]
+        self.assertEqual(p2["local_chain_indicator_L"], 1)
+        self.assertEqual(p2["global_chain_indicator_E_g"], 1)
+        self.assertEqual(p2["chain_evaluator_defect"], 0)
+        self.assertEqual(p2["max_horizon_weighted_l1_drift"], "4")
+        self.assertIsNone(p2["first_horizon_breach_incident_index"])
+        self.assertEqual(p2["chain_status"], "SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG")
+
+        self.assertEqual(rec["horizon_weighted_drift_reduction"], "7")
+        self.assertTrue(rec["phase_1_ratchet_horizon_breach"])
+        self.assertFalse(rec["converged_single_round"])
+        self.assertTrue(rec["converged_multi_round"])
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(receipt["status"], "SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["phase_1_ratchet_horizon_breach_rate"], "1")
+        self.assertEqual(receipt["single_round_horizon_coherence_rate"], "0")
+        self.assertEqual(receipt["multi_round_lease_revoked_coherence_rate"], "1")
+        self.assertEqual(receipt["lease_revocation_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

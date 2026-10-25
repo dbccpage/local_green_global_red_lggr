@@ -1823,4 +1823,61 @@ theorem asymmetric_weighted_policy_relaxation_tie_breaking_vs_unweighted_slack :
   refine ⟨by omega, ?_⟩
   exact Int.mul_lt_mul_of_pos_right hw hd
 
+/-- 61. Multi-step cumulative policy-relaxation drift (ratchet effect) vs. scoped lease revocation:
+    1. For any baseline coordinate p0 : Int and three sequential unrevoked relaxations
+       d1, d2, d3 : Int, the 3-step cumulative policy state ((p0 + d1) + d2 + d3) telescopes
+       to total drift d1 + d2 + d3 above p0, whereas revoking each prior temporary lease
+       back to p0 before the next incident bounds the final drift at d3 (and strictly below
+       d1 + d2 + d3 whenever d1 > 0 and d2 > 0);
+    2. Concrete 3-incident weighted separation on P_0 = (2, 3, 0) with risk weights
+       w = (2, 3, 4), per-incident step budget τ_step = 4, and global horizon ceiling
+       τ_horizon = 4 across sequential relaxations δ_1 = (2, 0, 0), δ_2 = (0, 1, 0),
+       δ_3 = (0, 0, 1):
+       - Under an unrevoked monotone policy ratchet (P_1 = (4, 3, 0), P_2 = (4, 4, 0),
+         P_3 = (4, 4, 1)), every single incident step satisfies ||P_t - P_{t-1}||_{1,w} ≤ 4
+         (step slacks 4, 3, 4 ≤ τ_step → L_ratchet = 1), yet cumulative horizon drift
+         reaches ||P_3 - P_0||_{1,w} = 4 + 3 + 4 = 11 > τ_horizon = 4 (breaching already at
+         incident 2 with drift 7 > 4), yielding Eg_ratchet = 0 and Δ_{E,ratchet} = -1;
+       - Under scoped lease revocation / rollback to P_0 after each incident resolution
+         (P_1^rev = (4, 3, 0), P_2^rev = (2, 4, 0), P_3^rev = (2, 3, 1)), every incident step
+         satisfies both ||P_t^rev - P_0||_{1,w} ≤ τ_step = 4 and ||P_t^rev - P_0||_{1,w} ≤
+         τ_horizon = 4 (horizon drifts 4, 3, 4 ≤ 4), yielding L_revoked = 1, Eg_revoked = 1,
+         and Δ_{E,revoked} = 0. -/
+theorem cumulative_policy_ratchet_drift_vs_lease_revocation :
+    (∀ p0 d1 d2 d3 : Int,
+      (((p0 + d1) + d2 + d3) - p0 = d1 + d2 + d3) ∧
+      ((d1 > 0 ∧ d2 > 0) → ((p0 + d3) - p0 < ((p0 + d1) + d2 + d3) - p0))) ∧
+    (let p0_1 : Int := 2; let p0_2 : Int := 3; let p0_3 : Int := 0;
+     let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_step : Int := 4; let tau_horizon : Int := 4;
+     let r1_1 : Int := 4; let r1_2 : Int := 3; let r1_3 : Int := 0;
+     let r2_1 : Int := 4; let r2_2 : Int := 4; let r2_3 : Int := 0;
+     let r3_1 : Int := 4; let r3_2 : Int := 4; let r3_3 : Int := 1;
+     let step_r1 := w1 * absInt (r1_1 - p0_1) + w2 * absInt (r1_2 - p0_2) + w3 * absInt (r1_3 - p0_3);
+     let step_r2 := w1 * absInt (r2_1 - r1_1) + w2 * absInt (r2_2 - r1_2) + w3 * absInt (r2_3 - r1_3);
+     let step_r3 := w1 * absInt (r3_1 - r2_1) + w2 * absInt (r3_2 - r2_2) + w3 * absInt (r3_3 - r2_3);
+     let hor_r1 := step_r1;
+     let hor_r2 := w1 * absInt (r2_1 - p0_1) + w2 * absInt (r2_2 - p0_2) + w3 * absInt (r2_3 - p0_3);
+     let hor_r3 := w1 * absInt (r3_1 - p0_1) + w2 * absInt (r3_2 - p0_2) + w3 * absInt (r3_3 - p0_3);
+     let l_ratchet := if (step_r1 ≤ tau_step) ∧ (step_r2 ≤ tau_step) ∧ (step_r3 ≤ tau_step) then (1 : Int) else 0;
+     let eg_ratchet := if (l_ratchet = 1) ∧ (hor_r1 ≤ tau_horizon) ∧ (hor_r2 ≤ tau_horizon) ∧ (hor_r3 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_ratchet := eg_ratchet - l_ratchet;
+     let v1_1 : Int := 4; let v1_2 : Int := 3; let v1_3 : Int := 0;
+     let v2_1 : Int := 2; let v2_2 : Int := 4; let v2_3 : Int := 0;
+     let v3_1 : Int := 2; let v3_2 : Int := 3; let v3_3 : Int := 1;
+     let hor_v1 := w1 * absInt (v1_1 - p0_1) + w2 * absInt (v1_2 - p0_2) + w3 * absInt (v1_3 - p0_3);
+     let hor_v2 := w1 * absInt (v2_1 - p0_1) + w2 * absInt (v2_2 - p0_2) + w3 * absInt (v2_3 - p0_3);
+     let hor_v3 := w1 * absInt (v3_1 - p0_1) + w2 * absInt (v3_2 - p0_2) + w3 * absInt (v3_3 - p0_3);
+     let l_revoked := if (hor_v1 ≤ tau_step) ∧ (hor_v2 ≤ tau_step) ∧ (hor_v3 ≤ tau_step) then (1 : Int) else 0;
+     let eg_revoked := if (l_revoked = 1) ∧ (hor_v1 ≤ tau_horizon) ∧ (hor_v2 ≤ tau_horizon) ∧ (hor_v3 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_revoked := eg_revoked - l_revoked;
+     (step_r1 = 4 ∧ step_r2 = 3 ∧ step_r3 = 4 ∧ hor_r2 = 7 ∧ hor_r3 = 11) ∧
+     (l_ratchet = 1 ∧ eg_ratchet = 0 ∧ defect_ratchet = -1) ∧
+     (hor_v1 = 4 ∧ hor_v2 = 3 ∧ hor_v3 = 4 ∧ l_revoked = 1 ∧ eg_revoked = 1 ∧ defect_revoked = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro p0 d1 d2 d3
+  refine ⟨by omega, ?_⟩
+  intro ⟨hd1, hd2⟩
+  omega
+
 end LggrVIII
