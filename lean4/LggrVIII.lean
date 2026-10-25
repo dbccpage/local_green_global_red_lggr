@@ -1933,4 +1933,59 @@ theorem concurrent_lease_overlap_horizon_breach_vs_overlap_accounting :
   · intro h_disj ⟨_, ht1, ht2, _⟩
     omega
 
+/-- 63. Non-preemptible simultaneous incidents under fractional budget-splitting vs. priority queueing:
+    1. For any simultaneous weighted allocations c1, c2, c3 : Int and minimum Pareto floors
+       f1, f2, f3 : Int under horizon ceiling tau_hor : Int, if the joint Pareto floor exceeds
+       the horizon ceiling (f1 + f2 > tau_hor, and for 3 incidents f1 + f2 + f3 > tau_hor) while
+       the fractional budget split respects the horizon ceiling (c1 + c2 ≤ tau_hor, and
+       c1 + c2 + c3 ≤ tau_hor), then at least one incident is starved strictly below its
+       minimum Pareto floor (c1 < f1 ∨ c2 < f2, and c1 < f1 ∨ c2 < f2 ∨ c3 < f3);
+    2. Concrete 3-incident simultaneous burst separation at s1 = s2 = s3 = 0 on P_0 = (2, 3, 0)
+       with risk weights w = (2, 3, 4), individual lease budget τ_lease = 4, and global horizon
+       ceiling τ_horizon = 6 across Pareto floors Δ*_{w,1} = 4, Δ*_{w,2} = 3, Δ*_{w,3} = 4
+       (joint Pareto floor 4 + 3 + 4 = 11 > τ_horizon = 6):
+       - Under fractional concurrent budget-splitting at tick 0 with δ'_1 = (1, 0, 0) (weighted
+         slack 2 < 4), δ'_2 = (0, 1, 0) (weighted slack 3 = 3), and δ'_3 = (0, 0, 0) (weighted
+         slack 0 < 4), the concurrent sum is 2 + 3 + 0 = 5 ≤ τ_horizon = 6 (L_split = 1), yet
+         Incidents 1 and 3 are starved below their Pareto floors (starved_count = 2 > 0),
+         yielding Eg_split = 0 and Δ_{E,split} = -1;
+       - Under priority-queued deferred admission across slots t = 0, 1, 2 with full Pareto
+         leases δ_1 = (2, 0, 0) (slack 4 ≥ 4 at slot 0), δ_2 = (0, 1, 0) (slack 3 ≥ 3 at slot 1),
+         and δ_3 = (0, 0, 1) (slack 4 ≥ 4 at slot 2), every incident meets its Pareto floor
+         (starved_count = 0) and every slot respects τ_horizon = 6 (max slot drift = 4 ≤ 6),
+         yielding L_queued = 1, Eg_queued = 1, and Δ_{E,queued} = 0. -/
+theorem non_preemptible_simultaneous_budget_split_vs_priority_queueing :
+    (∀ c1 c2 c3 f1 f2 f3 tau_hor : Int,
+      ((c1 + c2 ≤ tau_hor ∧ f1 + f2 > tau_hor) → (c1 < f1 ∨ c2 < f2)) ∧
+      ((c1 + c2 + c3 ≤ tau_hor ∧ f1 + f2 + f3 > tau_hor) → (c1 < f1 ∨ c2 < f2 ∨ c3 < f3))) ∧
+    (let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_lease : Int := 4; let tau_horizon : Int := 6;
+     let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let joint_floor := f1 + f2 + f3;
+     let sp1 := w1 * 1 + w2 * 0 + w3 * 0;
+     let sp2 := w1 * 0 + w2 * 1 + w3 * 0;
+     let sp3 := w1 * 0 + w2 * 0 + w3 * 0;
+     let sp_sum := sp1 + sp2 + sp3;
+     let starved_split := (if sp1 < f1 then (1 : Int) else 0) + (if sp2 < f2 then 1 else 0) + (if sp3 < f3 then 1 else 0);
+     let l_split := if (sp1 ≤ tau_lease) ∧ (sp2 ≤ tau_lease) ∧ (sp3 ≤ tau_lease) ∧ (sp_sum ≤ tau_horizon) then (1 : Int) else 0;
+     let eg_split := if (l_split = 1) ∧ (sp1 ≥ f1) ∧ (sp2 ≥ f2) ∧ (sp3 ≥ f3) then (1 : Int) else 0;
+     let defect_split := eg_split - l_split;
+     let q1 := w1 * 2 + w2 * 0 + w3 * 0;
+     let q2 := w1 * 0 + w2 * 1 + w3 * 0;
+     let q3 := w1 * 0 + w2 * 0 + w3 * 1;
+     let starved_queued := (if q1 < f1 then (1 : Int) else 0) + (if q2 < f2 then 1 else 0) + (if q3 < f3 then 1 else 0);
+     let l_queued := if (q1 ≤ tau_lease) ∧ (q2 ≤ tau_lease) ∧ (q3 ≤ tau_lease) ∧ (q1 ≤ tau_horizon) ∧ (q2 ≤ tau_horizon) ∧ (q3 ≤ tau_horizon) then (1 : Int) else 0;
+     let eg_queued := if (l_queued = 1) ∧ (q1 ≥ f1) ∧ (q2 ≥ f2) ∧ (q3 ≥ f3) then (1 : Int) else 0;
+     let defect_queued := eg_queued - l_queued;
+     (joint_floor = 11 ∧ sp1 = 2 ∧ sp2 = 3 ∧ sp3 = 0 ∧ sp_sum = 5 ∧ starved_split = 2) ∧
+     (l_split = 1 ∧ eg_split = 0 ∧ defect_split = -1) ∧
+     (q1 = 4 ∧ q2 = 3 ∧ q3 = 4 ∧ starved_queued = 0 ∧ l_queued = 1 ∧ eg_queued = 1 ∧ defect_queued = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro c1 c2 c3 f1 f2 f3 tau_hor
+  refine ⟨?_, ?_⟩
+  · intro ⟨hc, hf⟩
+    omega
+  · intro ⟨hc, hf⟩
+    omega
+
 end LggrVIII

@@ -9601,6 +9601,391 @@ class StreamingConcurrentLeaseOverlapMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingSimultaneousBudgetSplitMonitor:
+    """Audit non-preemptible simultaneous incidents (s_1 = s_2 = ... = s_M) under fractional budget-splitting vs. priority queueing.
+
+    When multiple non-preemptible incidents arrive at the same tick s_0 and their joint minimum
+    weighted Pareto floor exceeds the global horizon ceiling:
+        sum_{k=1}^M Delta_{w,k}^* > tau_horizon  (while max_k Delta_{w,k}^* <= tau_lease <= tau_horizon),
+    separates:
+      1. Fractional concurrent budget-splitting at tick s_0 (all M incidents admitted simultaneously
+         at execution_tick = s_0 under reduced leases delta_k' satisfying
+         sum_{k=1}^M ||delta_k'||_{1,w} <= tau_horizon -> L_budget_split = 1, yet by additivity
+         at least one incident k receives ||delta_k'||_{1,w} < Delta_{w,k}^*, starving its coupled
+         monitors below their Pareto floor -> E_{g,split} = 0, Delta_{E,split} = -1,
+         FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR).
+      2. Priority-queued deferred admission (assigning priority queue slots execution_tick = s_0 + rank_k
+         so each non-preemptible incident k executes with its full Pareto-restoring lease
+         ||delta_k||_{1,w} >= Delta_{w,k}^* while active concurrent drift at every tick tau satisfies
+         D_w(tau) <= tau_horizon -> L_queued = 1, E_{g,queued} = 1, Delta_{E,queued} = 0,
+         PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG).
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not scope_id:
+            raise ValidationError("scope_id must be non-empty")
+        self.scope_id = scope_id
+        self.bursts: list[dict[str, Any]] = []
+
+    def _audit_burst_admission(
+        self,
+        *,
+        incidents: Sequence[Mapping[str, Any]],
+        p0_vec: list[Fraction],
+        w_vec: list[Fraction],
+        tau_lease: Fraction,
+        tau_horizon: Fraction,
+        dim: int,
+        require_priority_queueing: bool,
+    ) -> dict[str, Any]:
+        if len(incidents) < 2:
+            raise ValidationError("simultaneous burst must contain at least 2 incidents")
+
+        parsed_incidents: list[dict[str, Any]] = []
+        joint_pareto_floor = Fraction(0)
+        arrival_ticks: set[int] = set()
+        min_exec_tick: int | None = None
+        max_comp_tick: int | None = None
+
+        for idx, inc in enumerate(incidents):
+            inc_num = int(inc.get("incident_index", idx + 1))
+            pair_id = str(inc.get("incident_pair_id", f"incident_{inc_num}"))
+            prio_rank = int(inc.get("priority_rank", idx + 1))
+            s_k = int(inc.get("arrival_tick", 0))
+            exec_k = int(inc.get("execution_tick", s_k))
+            comp_k = int(inc.get("completion_tick", exec_k + 1))
+            if exec_k < s_k:
+                raise ValidationError("execution_tick must be >= arrival_tick")
+            if comp_k <= exec_k:
+                raise ValidationError("completion_tick must be strictly greater than execution_tick")
+
+            arrival_ticks.add(s_k)
+            non_preemptible = bool(inc.get("non_preemptible", True))
+            sig_valid = bool(inc.get("authority_signature_valid", False))
+            queue_enforced = bool(inc.get("priority_queue_enforced", False))
+            mon_a = bool(inc.get("post_relaxation_monitor_a_passed", False))
+            mon_b = bool(inc.get("post_relaxation_monitor_b_passed", False))
+
+            pareto_floor_k = rational(inc.get("minimum_weighted_pareto_floor", 0))
+            if pareto_floor_k <= 0:
+                raise ValidationError("minimum_weighted_pareto_floor must be strictly positive")
+            joint_pareto_floor += pareto_floor_k
+
+            raw_delta = inc.get("allocated_delta_vector")
+            if raw_delta is None:
+                raise ValidationError("incident must provide allocated_delta_vector")
+            delta_vec = [rational(v) for v in raw_delta]
+            if len(delta_vec) != dim:
+                raise ValidationError("allocated_delta_vector dimension mismatch")
+
+            allocated_policy_vec = [p0_vec[j] + delta_vec[j] for j in range(dim)]
+            unweighted_slack = sum((abs(d) for d in delta_vec), Fraction(0))
+            weighted_slack = sum((w_vec[j] * abs(delta_vec[j]) for j in range(dim)), Fraction(0))
+
+            within_individual_lease = weighted_slack <= tau_lease
+            meets_pareto_floor = weighted_slack >= pareto_floor_k
+            under_pareto_floor = weighted_slack < pareto_floor_k
+            pareto_deficit = max(Fraction(0), pareto_floor_k - weighted_slack)
+            pareto_restored = mon_a and mon_b and meets_pareto_floor
+
+            if min_exec_tick is None or exec_k < min_exec_tick:
+                min_exec_tick = exec_k
+            if max_comp_tick is None or comp_k > max_comp_tick:
+                max_comp_tick = comp_k
+
+            parsed_incidents.append(
+                {
+                    "incident_index": inc_num,
+                    "incident_pair_id": pair_id,
+                    "priority_rank": prio_rank,
+                    "arrival_tick": s_k,
+                    "execution_tick": exec_k,
+                    "completion_tick": comp_k,
+                    "queue_delay_ticks": exec_k - s_k,
+                    "non_preemptible": non_preemptible,
+                    "authority_signature_valid": sig_valid,
+                    "priority_queue_enforced": queue_enforced,
+                    "minimum_weighted_pareto_floor": pareto_floor_k,
+                    "allocated_delta_vector": delta_vec,
+                    "allocated_policy_vector": allocated_policy_vec,
+                    "allocated_unweighted_l1_slack": unweighted_slack,
+                    "allocated_weighted_l1_slack": weighted_slack,
+                    "within_individual_lease_budget": within_individual_lease,
+                    "meets_pareto_floor": meets_pareto_floor,
+                    "under_pareto_floor": under_pareto_floor,
+                    "pareto_floor_deficit_l1_w": pareto_deficit,
+                    "post_relaxation_monitor_a_passed": mon_a,
+                    "post_relaxation_monitor_b_passed": mon_b,
+                    "pareto_intersection_restored": pareto_restored,
+                }
+            )
+
+        simultaneous_arrival_verified = len(arrival_ticks) == 1
+        assert min_exec_tick is not None and max_comp_tick is not None
+
+        tick_records: list[dict[str, Any]] = []
+        peak_concurrent_drift = Fraction(0)
+        max_concurrent_executing = 0
+
+        for tick in range(min_exec_tick, max_comp_tick):
+            active = [
+                inc
+                for inc in parsed_incidents
+                if inc["execution_tick"] <= tick < inc["completion_tick"]
+            ]
+            if len(active) > max_concurrent_executing:
+                max_concurrent_executing = len(active)
+            agg_delta = [
+                sum((inc["allocated_delta_vector"][j] for inc in active), Fraction(0))
+                for j in range(dim)
+            ]
+            tick_weighted_drift = sum(
+                (w_vec[j] * abs(agg_delta[j]) for j in range(dim)), Fraction(0)
+            )
+            if tick_weighted_drift > peak_concurrent_drift:
+                peak_concurrent_drift = tick_weighted_drift
+            tick_records.append(
+                {
+                    "tick": tick,
+                    "executing_incident_indices": [inc["incident_index"] for inc in active],
+                    "executing_count": len(active),
+                    "aggregate_delta_vector": agg_delta,
+                    "concurrent_weighted_l1_drift": tick_weighted_drift,
+                    "horizon_within_ceiling": tick_weighted_drift <= tau_horizon,
+                }
+            )
+
+        horizon_budget_respected = peak_concurrent_drift <= tau_horizon
+        starved_count = 0
+
+        for inc in parsed_incidents:
+            exec_k = inc["execution_tick"]
+            comp_k = inc["completion_tick"]
+            inc_peak_drift = max(
+                (
+                    tr["concurrent_weighted_l1_drift"]
+                    for tr in tick_records
+                    if exec_k <= tr["tick"] < comp_k
+                ),
+                default=inc["allocated_weighted_l1_slack"],
+            )
+            inc_horizon_ok = inc_peak_drift <= tau_horizon
+            l_k = (
+                1
+                if (
+                    inc["authority_signature_valid"]
+                    and inc["within_individual_lease_budget"]
+                    and inc_horizon_ok
+                )
+                else 0
+            )
+            q_ok = (not require_priority_queueing) or inc["priority_queue_enforced"]
+            eg_k = (
+                1
+                if (
+                    l_k == 1
+                    and inc["pareto_intersection_restored"]
+                    and not inc["under_pareto_floor"]
+                    and q_ok
+                )
+                else 0
+            )
+            if inc["under_pareto_floor"] or not inc["pareto_intersection_restored"]:
+                starved_count += 1
+
+            inc["peak_concurrent_weighted_drift_during_execution"] = inc_peak_drift
+            inc["local_budget_indicator_L_k"] = l_k
+            inc["global_pareto_indicator_E_g_k"] = eg_k
+            inc["incident_evaluator_defect"] = eg_k - l_k
+            if eg_k == 1:
+                inc["incident_status"] = "PRIORITY_QUEUE_PARETO_RESTORED_LGGG"
+            elif l_k == 1 and (inc["under_pareto_floor"] or not inc["pareto_intersection_restored"]):
+                inc["incident_status"] = "FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR"
+            else:
+                inc["incident_status"] = "INCIDENT_BUDGET_OR_SIGNATURE_OBSTRUCTED_LGGR"
+
+        l_burst = (
+            1
+            if (
+                simultaneous_arrival_verified
+                and horizon_budget_respected
+                and all(inc["local_budget_indicator_L_k"] == 1 for inc in parsed_incidents)
+            )
+            else 0
+        )
+        eg_burst = (
+            1
+            if (
+                l_burst == 1
+                and all(inc["global_pareto_indicator_E_g_k"] == 1 for inc in parsed_incidents)
+            )
+            else 0
+        )
+        delta_e_burst = eg_burst - l_burst
+        fractional_starvation_detected = (
+            l_burst == 1 and eg_burst == 0 and starved_count > 0
+        )
+
+        if eg_burst == 1:
+            burst_status = "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG"
+        elif fractional_starvation_detected:
+            burst_status = "FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR"
+        else:
+            burst_status = "BURST_BUDGET_OR_ADMISSION_OBSTRUCTED_LGGR"
+
+        return {
+            "incident_count": len(parsed_incidents),
+            "simultaneous_arrival_verified": simultaneous_arrival_verified,
+            "joint_simultaneous_pareto_floor_l1_w": joint_pareto_floor,
+            "joint_pareto_floor_exceeds_horizon": joint_pareto_floor > tau_horizon,
+            "max_concurrent_executing_incidents": max_concurrent_executing,
+            "peak_concurrent_weighted_l1_drift": peak_concurrent_drift,
+            "starved_incident_count": starved_count,
+            "local_burst_indicator_L": l_burst,
+            "global_burst_indicator_E_g": eg_burst,
+            "burst_evaluator_defect": delta_e_burst,
+            "fractional_split_starvation_detected": fractional_starvation_detected,
+            "burst_status": burst_status,
+            "incidents": parsed_incidents,
+            "ticks": tick_records,
+        }
+
+    def record_simultaneous_burst(
+        self,
+        *,
+        burst_id: str,
+        model_id: str,
+        prior_overlap_receipt_sha256: str,
+        baseline_policy_sha256: str,
+        baseline_policy_vector: Sequence[int | float | str | Fraction],
+        risk_weight_vector: Sequence[int | float | str | Fraction],
+        individual_lease_budget: int | float | str | Fraction,
+        horizon_drift_ceiling: int | float | str | Fraction,
+        fractional_split_incidents: Sequence[Mapping[str, Any]],
+        priority_queued_incidents: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not burst_id or not model_id:
+            raise ValidationError("burst_id and model_id must be non-empty")
+        if not prior_overlap_receipt_sha256 or not baseline_policy_sha256:
+            raise ValidationError("prior_overlap_receipt_sha256 and baseline_policy_sha256 must be non-empty")
+        if not baseline_policy_vector:
+            raise ValidationError("baseline_policy_vector must be non-empty")
+
+        p0_vec = [rational(v) for v in baseline_policy_vector]
+        w_vec = [rational(w) for w in risk_weight_vector]
+        dim = len(p0_vec)
+        if len(w_vec) != dim:
+            raise ValidationError("risk_weight_vector must have the same dimension as baseline_policy_vector")
+        if any(w <= 0 for w in w_vec):
+            raise ValidationError("all coordinates of risk_weight_vector must be strictly positive")
+
+        tau_lease = rational(individual_lease_budget)
+        tau_horizon = rational(horizon_drift_ceiling)
+        if tau_lease <= 0 or tau_horizon <= 0:
+            raise ValidationError("individual_lease_budget and horizon_drift_ceiling must be strictly positive")
+        if tau_horizon < tau_lease:
+            raise ValidationError("horizon_drift_ceiling must be >= individual_lease_budget")
+
+        split_audit = self._audit_burst_admission(
+            incidents=fractional_split_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_priority_queueing=False,
+        )
+        queued_audit = self._audit_burst_admission(
+            incidents=priority_queued_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_priority_queueing=True,
+        )
+
+        converged_single_round = split_audit["global_burst_indicator_E_g"] == 1
+        converged_multi_round = converged_single_round or (
+            queued_audit["global_burst_indicator_E_g"] == 1
+        )
+        starved_eliminated = (
+            split_audit["starved_incident_count"] - queued_audit["starved_incident_count"]
+        )
+
+        record: dict[str, Any] = {
+            "burst_id": burst_id,
+            "model_id": model_id,
+            "prior_overlap_receipt_sha256": prior_overlap_receipt_sha256,
+            "baseline_policy_sha256": baseline_policy_sha256,
+            "baseline_policy_vector": p0_vec,
+            "risk_weight_vector": w_vec,
+            "individual_lease_budget": tau_lease,
+            "horizon_drift_ceiling": tau_horizon,
+            "phase_1_fractional_budget_split": split_audit,
+            "phase_2_priority_queued_admission": queued_audit,
+            "phase_1_fractional_split_starvation": split_audit[
+                "fractional_split_starvation_detected"
+            ],
+            "converged_single_round": converged_single_round,
+            "converged_multi_round": converged_multi_round,
+            "starved_incidents_eliminated": starved_eliminated,
+        }
+        self.bursts.append(record)
+        return json_value(record)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.bursts:
+            raise ValidationError("cannot emit receipt without recorded simultaneous bursts")
+        n = len(self.bursts)
+        single_cnt = sum(1 for b in self.bursts if b["converged_single_round"])
+        multi_cnt = sum(1 for b in self.bursts if b["converged_multi_round"])
+        starv_cnt = sum(1 for b in self.bursts if b["phase_1_fractional_split_starvation"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        starv_rate = Fraction(starv_cnt, n)
+
+        starv_ids = [
+            b["burst_id"] for b in self.bursts if b["phase_1_fractional_split_starvation"]
+        ]
+        unconverged_ids = [
+            b["burst_id"] for b in self.bursts if not b["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_simultaneous_budget_split.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "burst_count": n,
+            "single_round_split_coherent_count": single_cnt,
+            "multi_round_priority_queued_coherent_count": multi_cnt,
+            "phase_1_fractional_split_starvation_count": starv_cnt,
+            "single_round_split_coherence_rate": single_rate,
+            "multi_round_priority_queued_coherence_rate": multi_rate,
+            "priority_queue_coherence_gain": gain_rate,
+            "phase_1_fractional_split_starvation_rate": starv_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "phase_1_fractional_split_starvation_burst_ids": starv_ids,
+            "unconverged_burst_ids": unconverged_ids,
+            "bursts": self.bursts,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

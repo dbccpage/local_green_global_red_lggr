@@ -50,6 +50,7 @@ from lggr.streaming import (
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
     StreamingSideInformationCapacityMonitor,
+    StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
 )
@@ -1139,6 +1140,70 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["single_round_overlap_coherence_rate"], "0")
         self.assertEqual(mon_rec["multi_round_overlap_accounted_coherence_rate"], "1")
         self.assertEqual(mon_rec["overlap_accounting_coherence_gain"], "1")
+
+    def test_simultaneous_budget_split_benchmark_replay(self):
+        """F24: Replay all 5 simultaneous non-preemptible incident bursts (15 incident evaluations per phase) across 5 model families."""
+        artifact = RECEIPTS_DIR / "simultaneous_budget_split_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("simultaneous_budget_split_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.simultaneous_budget_split_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("burst_count"), 5)
+        self.assertEqual(data.get("incident_evaluation_count"), 15)
+
+        self.assertTrue(
+            data["phase_1_fractional_split_burst_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_priority_queued_burst_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_1_fractional_split_incident_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_priority_queued_incident_metrics"]["identity_verified"]
+        )
+
+        replay_mon = StreamingSimultaneousBudgetSplitMonitor(
+            scope_id=data["split_monitor_receipt"]["scope_id"]
+        )
+        for b in data.get("bursts", []):
+            p1_incs = b["phase_1_fractional_budget_split"]["incidents"]
+            p2_incs = b["phase_2_priority_queued_admission"]["incidents"]
+            replay_mon.record_simultaneous_burst(
+                burst_id=b["burst_id"],
+                model_id=b["model_id"],
+                prior_overlap_receipt_sha256=b["prior_overlap_receipt_sha256"],
+                baseline_policy_sha256=b["baseline_policy_sha256"],
+                baseline_policy_vector=b["baseline_policy_vector"],
+                risk_weight_vector=b["risk_weight_vector"],
+                individual_lease_budget=b["individual_lease_budget"],
+                horizon_drift_ceiling=b["horizon_drift_ceiling"],
+                fractional_split_incidents=p1_incs,
+                priority_queued_incidents=p2_incs,
+            )
+            self.assertTrue(b["phase_1_fractional_split_starvation"])
+            self.assertFalse(b["converged_single_round"])
+            self.assertTrue(b["converged_multi_round"])
+            self.assertEqual(b["starved_incidents_eliminated"], 2)
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["split_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["phase_1_fractional_split_starvation_rate"], "1")
+        self.assertEqual(mon_rec["single_round_split_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_priority_queued_coherence_rate"], "1")
+        self.assertEqual(mon_rec["priority_queue_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

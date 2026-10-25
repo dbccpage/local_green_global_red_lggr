@@ -55,6 +55,7 @@ from lggr.streaming import (
     StreamingReggeDeficitCurvatureMonitor,
     StreamingReplayOrderMonitor,
     StreamingSimplicialCupMonitor,
+    StreamingSimultaneousBudgetSplitMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
@@ -3076,6 +3077,146 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["single_round_overlap_coherence_rate"], "0")
         self.assertEqual(receipt["multi_round_overlap_accounted_coherence_rate"], "1")
         self.assertEqual(receipt["overlap_accounting_coherence_gain"], "1")
+
+    def test_simultaneous_budget_split_vs_priority_queueing(self) -> None:
+        """Theorem 63: Non-preemptible simultaneous incidents under fractional budget-splitting vs. priority queueing."""
+        mon = StreamingSimultaneousBudgetSplitMonitor(scope_id="unit_simultaneous_budget_split")
+        rec = mon.record_simultaneous_burst(
+            burst_id="sim_burst_3inc_unit",
+            model_id="openai/gpt-4o-mini",
+            prior_overlap_receipt_sha256="sha256_prior_overlap_eval",
+            baseline_policy_sha256="sha256_p0_2_3_0",
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            individual_lease_budget=4,
+            horizon_drift_ceiling=6,
+            fractional_split_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "priority_rank": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "non_preemptible": True,
+                    "priority_queue_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [1, 0, 0],
+                    "post_relaxation_monitor_a_passed": False,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "priority_rank": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "non_preemptible": True,
+                    "priority_queue_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "priority_rank": 3,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "non_preemptible": True,
+                    "priority_queue_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": False,
+                },
+            ],
+            priority_queued_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "priority_rank": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "non_preemptible": True,
+                    "priority_queue_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "priority_rank": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "non_preemptible": True,
+                    "priority_queue_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "priority_rank": 3,
+                    "arrival_tick": 0,
+                    "execution_tick": 2,
+                    "completion_tick": 3,
+                    "non_preemptible": True,
+                    "priority_queue_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+        )
+        p1 = rec["phase_1_fractional_budget_split"]
+        self.assertTrue(p1["simultaneous_arrival_verified"])
+        self.assertEqual(p1["joint_simultaneous_pareto_floor_l1_w"], "11")
+        self.assertTrue(p1["joint_pareto_floor_exceeds_horizon"])
+        self.assertEqual(p1["local_burst_indicator_L"], 1)
+        self.assertEqual(p1["global_burst_indicator_E_g"], 0)
+        self.assertEqual(p1["burst_evaluator_defect"], -1)
+        self.assertEqual(p1["peak_concurrent_weighted_l1_drift"], "5")
+        self.assertEqual(p1["starved_incident_count"], 2)
+        self.assertEqual(p1["burst_status"], "FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR")
+
+        p2 = rec["phase_2_priority_queued_admission"]
+        self.assertTrue(p2["simultaneous_arrival_verified"])
+        self.assertEqual(p2["local_burst_indicator_L"], 1)
+        self.assertEqual(p2["global_burst_indicator_E_g"], 1)
+        self.assertEqual(p2["burst_evaluator_defect"], 0)
+        self.assertEqual(p2["peak_concurrent_weighted_l1_drift"], "4")
+        self.assertEqual(p2["starved_incident_count"], 0)
+        self.assertEqual(p2["burst_status"], "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG")
+
+        self.assertEqual(rec["starved_incidents_eliminated"], 2)
+        self.assertTrue(rec["phase_1_fractional_split_starvation"])
+        self.assertFalse(rec["converged_single_round"])
+        self.assertTrue(rec["converged_multi_round"])
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(receipt["status"], "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["phase_1_fractional_split_starvation_rate"], "1")
+        self.assertEqual(receipt["single_round_split_coherence_rate"], "0")
+        self.assertEqual(receipt["multi_round_priority_queued_coherence_rate"], "1")
+        self.assertEqual(receipt["priority_queue_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
