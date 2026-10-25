@@ -35,6 +35,7 @@ from lggr.streaming import (
     StreamingCatalystDegradationMonitor,
     StreamingCatalystRejuvenationScheduleMonitor,
     StreamingCoalitionalAttributionMonitor,
+    StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
@@ -4611,6 +4612,45 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["curved_star_coherence_rate"], "0")
         self.assertEqual(receipt["flat_holonomy_coherence_rate"], "1")
         self.assertEqual(receipt["regge_holonomy_coherence_gain"], "1")
+
+    def test_coalitional_shapley_attribution_under_synergistic_fault_masking(self) -> None:
+        """Verify Theorem 89: coalitional Shapley attribution under synergistic and leave-one-out fault masking."""
+        mon = StreamingCoalitionalSynergyMaskingMonitor(
+            scope_id="unit-coalitional-synergy-masking-scope",
+        )
+        obs = mon.record_synergy_evaluation(
+            "coalitional-synergy-eval-01",
+        )
+        self.assertEqual(obs["phase_1_singleton_sum"], "0")
+        self.assertEqual(obs["phase_1_synergy_term"], "-2")
+        self.assertEqual(obs["phase_1_shapley_attributions"], {"A1": "-1", "A2": "-1"})
+        self.assertEqual(obs["phase_2_leave_one_out_marginals"], ["0", "0"])
+        self.assertEqual(obs["phase_2_synergy_term"], "1")
+        self.assertEqual(obs["phase_2_shapley_attributions"], {"A1": "-1/2", "A2": "-1/2"})
+        self.assertEqual(obs["phase_3_synergy_term"], "0")
+        self.assertEqual(obs["phase_3_shapley_attributions"], {"A1": "0", "A2": "0"})
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "NONADDITIVE_COALITIONAL_DEFECT_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "ADDITIVE_COALITIONAL_ATTRIBUTION_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["masked_coalition_coherence_rate"], "0")
+        self.assertEqual(receipt["shapley_resolved_coherence_rate"], "1")
+        self.assertEqual(receipt["coalitional_attribution_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
