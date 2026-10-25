@@ -58,6 +58,7 @@ from lggr.streaming import (
     StreamingMayerVietorisMonitor,
     StreamingMayerVietorisReconciliationMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
+    StreamingMultiLoopCupHodgeMonitor,
     StreamingMultiTurnPairwiseTranscriptMonitor,
     StreamingOptionalStoppingDrawdownMonitor,
     StreamingOrganizationalGluingMonitor,
@@ -4698,6 +4699,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["coarse_interface_coherence_rate"], "0")
         self.assertEqual(receipt["universal_mediator_coherence_rate"], "1")
         self.assertEqual(receipt["pullback_factorization_coherence_gain"], "1")
+
+    def test_multi_loop_two_complex_cup_product_and_hodge_harmonic_kernel_audit(self) -> None:
+        """Verify Theorem 91: multi-loop 2-complex cup-product and discrete Hodge-Laplacian harmonic kernel."""
+        mon = StreamingMultiLoopCupHodgeMonitor(
+            scope_id="unit-multi-loop-cup-hodge-scope",
+        )
+        obs = mon.record_multi_loop_evaluation(
+            "multi-loop-cup-hodge-eval-01",
+        )
+        self.assertEqual(obs["phase_1_norm2_exact"], "6")
+        self.assertEqual(obs["phase_1_norm2_coexact"], "3")
+        self.assertEqual(obs["phase_1_norm2_harmonic"], "3")
+        self.assertEqual(obs["phase_1_norm2_total"], "12")
+        self.assertEqual(obs["phase_1_alpha_cup_beta"], "-2")
+        self.assertEqual(obs["phase_2_norm2_coexact"], "0")
+        self.assertEqual(obs["phase_2_norm2_harmonic"], "3")
+        self.assertEqual(obs["phase_2_harmonic_dirichlet_energy"], "0")
+        self.assertEqual(obs["phase_2_alpha_cup_beta"], "0")
+        self.assertEqual(obs["phase_3_norm2_exact"], "8")
+        self.assertEqual(obs["phase_3_norm2_coexact"], "0")
+        self.assertEqual(obs["phase_3_norm2_harmonic"], "0")
+        self.assertEqual(obs["phase_3_alpha_cup_beta"], "0")
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["obstructed_multi_loop_coherence_rate"], "0")
+        self.assertEqual(receipt["exact_cup_hodge_coherence_rate"], "1")
+        self.assertEqual(receipt["multi_loop_hodge_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

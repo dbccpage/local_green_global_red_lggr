@@ -15379,6 +15379,258 @@ class StreamingPullbackMediatorFactorizationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingMultiLoopCupHodgeMonitor:
+    """Audit higher-dimensional 2-cochain cup-product and discrete Hodge-Laplacian
+    harmonic kernels on a multi-loop 2-complex where exact gradient, 2-cell coexact
+    curl, and unfilled 1-cycle harmonic components coexist (Theorem 91).
+    """
+
+    DEFAULT_D0: tuple[tuple[int, ...], ...] = (
+        (-1, 1, 0, 0, 0, 0),
+        (0, -1, 1, 0, 0, 0),
+        (1, 0, -1, 0, 0, 0),
+        (0, 0, 0, -1, 1, 0),
+        (0, 0, 0, 0, -1, 1),
+        (0, 0, 0, 1, 0, -1),
+    )
+    DEFAULT_D1: tuple[tuple[int, ...], ...] = (
+        (1, 1, 1, 0, 0, 0),
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-multi-loop-cup-hodge-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def record_multi_loop_evaluation(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        d0 = [list(row) for row in self.DEFAULT_D0]
+        d1 = [list(row) for row in self.DEFAULT_D1]
+
+        # Phase 1: Coexisting exact gradient, coexact 2-cell curl, harmonic kernel, and non-trivial cup product
+        h_p1 = [3, 0, 0, 1, 1, 1]
+        hodge_p1 = StreamingHodgeDecompositionMonitor(scope_id=f"{self.scope_id}-hodge-p1")
+        hrec_p1 = hodge_p1.record_complex_cochain(f"{eval_id}_p1", d0, h_p1, D1=d1)
+        curv_p1 = StreamingDiscreteCurvatureMonitor(scope_id=f"{self.scope_id}-curv-p1")
+        crec_p1 = curv_p1.record_laplacian_probe(f"{eval_id}_p1_probe", d0, h_p1, D1=d1)
+        cup_p1 = StreamingSimplicialCupMonitor(scope_id=f"{self.scope_id}-cup-p1")
+        cuprec_p1 = cup_p1.evaluate_two_simplex(
+            f"{eval_id}_p1_simplex",
+            "v0",
+            "v1",
+            "v2",
+            alpha_01=2,
+            alpha_12=3,
+            alpha_02=5,
+            beta_01=4,
+            beta_12=-1,
+            beta_02=3,
+            f_v0=0,
+            f_v1=1,
+            f_v2=2,
+        )
+
+        # Phase 2: 2-cell curl and cup cleared, but unfilled loop harmonic zero-energy kernel persists
+        h_p2 = [2, -1, -1, 1, 1, 1]
+        hodge_p2 = StreamingHodgeDecompositionMonitor(scope_id=f"{self.scope_id}-hodge-p2")
+        hrec_p2 = hodge_p2.record_complex_cochain(f"{eval_id}_p2", d0, h_p2, D1=d1)
+        curv_p2 = StreamingDiscreteCurvatureMonitor(scope_id=f"{self.scope_id}-curv-p2")
+        crec_p2 = curv_p2.record_laplacian_probe(
+            f"{eval_id}_p2_harm_probe", d0, [0, 0, 0, 1, 1, 1], D1=d1
+        )
+        cup_p2 = StreamingSimplicialCupMonitor(scope_id=f"{self.scope_id}-cup-p2")
+        cuprec_p2 = cup_p2.evaluate_two_simplex(
+            f"{eval_id}_p2_simplex",
+            "v0",
+            "v1",
+            "v2",
+            alpha_01=2,
+            alpha_12=-1,
+            alpha_02=1,
+            beta_01=0,
+            beta_12=0,
+            beta_02=0,
+            f_v0=0,
+            f_v1=2,
+            f_v2=1,
+        )
+
+        # Phase 3: Pure exact gradient flow and trivial cup product on both loops
+        h_p3 = [2, -1, -1, 1, -1, 0]
+        hodge_p3 = StreamingHodgeDecompositionMonitor(scope_id=f"{self.scope_id}-hodge-p3")
+        hrec_p3 = hodge_p3.record_complex_cochain(f"{eval_id}_p3", d0, h_p3, D1=d1)
+        curv_p3 = StreamingDiscreteCurvatureMonitor(scope_id=f"{self.scope_id}-curv-p3")
+        crec_p3 = curv_p3.record_laplacian_probe(f"{eval_id}_p3_probe", d0, h_p3, D1=d1)
+        cup_p3 = StreamingSimplicialCupMonitor(scope_id=f"{self.scope_id}-cup-p3")
+        cuprec_p3 = cup_p3.evaluate_two_simplex(
+            f"{eval_id}_p3_simplex",
+            "v0",
+            "v1",
+            "v2",
+            alpha_01=2,
+            alpha_12=-1,
+            alpha_02=1,
+            beta_01=0,
+            beta_12=0,
+            beta_02=0,
+            f_v0=0,
+            f_v1=2,
+            f_v2=1,
+        )
+
+        # Phase 1 local/global evaluation
+        l_p1 = (
+            1
+            if (
+                bool(hrec_p1["pythagorean_energy_verified"])
+                and bool(hrec_p1["orthogonality_verified"])
+                and bool(cuprec_p1["alpha_is_cocycle"])
+                and bool(cuprec_p1["beta_is_cocycle"])
+            )
+            else 0
+        )
+        eg_p1 = (
+            1
+            if (
+                l_p1 == 1
+                and hrec_p1["norm2_coexact"] == "0"
+                and hrec_p1["norm2_harmonic"] == "0"
+                and cuprec_p1["alpha_cup_beta"] == "0"
+            )
+            else 0
+        )
+        defect_p1 = eg_p1 - l_p1
+
+        # Phase 2 local/global evaluation
+        l_p2 = (
+            1
+            if (
+                hrec_p2["norm2_coexact"] == "0"
+                and cuprec_p2["alpha_cup_beta"] == "0"
+                and crec_p2["dirichlet_energy"] == "0"
+                and bool(crec_p2["in_laplacian_kernel"])
+            )
+            else 0
+        )
+        eg_p2 = 1 if (l_p2 == 1 and hrec_p2["norm2_harmonic"] == "0") else 0
+        defect_p2 = eg_p2 - l_p2
+
+        # Phase 3 local/global evaluation
+        l_p3 = (
+            1
+            if (
+                hrec_p3["norm2_coexact"] == "0"
+                and cuprec_p3["alpha_cup_beta"] == "0"
+                and bool(crec_p3["is_exact_coboundary"])
+                and hrec_p3["norm2_exact"] == "8"
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and hrec_p3["norm2_harmonic"] == "0") else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "phase_1_norm2_exact": hrec_p1["norm2_exact"],
+            "phase_1_norm2_coexact": hrec_p1["norm2_coexact"],
+            "phase_1_norm2_harmonic": hrec_p1["norm2_harmonic"],
+            "phase_1_norm2_total": hrec_p1["norm2_total"],
+            "phase_1_alpha_cup_beta": cuprec_p1["alpha_cup_beta"],
+            "phase_2_norm2_coexact": hrec_p2["norm2_coexact"],
+            "phase_2_norm2_harmonic": hrec_p2["norm2_harmonic"],
+            "phase_2_harmonic_dirichlet_energy": crec_p2["dirichlet_energy"],
+            "phase_2_alpha_cup_beta": cuprec_p2["alpha_cup_beta"],
+            "phase_3_norm2_exact": hrec_p3["norm2_exact"],
+            "phase_3_norm2_coexact": hrec_p3["norm2_coexact"],
+            "phase_3_norm2_harmonic": hrec_p3["norm2_harmonic"],
+            "phase_3_alpha_cup_beta": cuprec_p3["alpha_cup_beta"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": (
+                "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR"
+                if defect_p1 == -1
+                else "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG"
+            ),
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": (
+                "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+                if defect_p2 == -1
+                else "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG"
+            ),
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": (
+                "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG"
+                if eg_p3 == 1
+                else "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR"
+            ),
+            "phase_1_hodge_receipt": hodge_p1.get_receipt(),
+            "phase_1_curvature_receipt": curv_p1.get_receipt(),
+            "phase_1_cup_receipt": cup_p1.get_receipt(),
+            "phase_2_hodge_receipt": hodge_p2.get_receipt(),
+            "phase_2_curvature_receipt": curv_p2.get_receipt(),
+            "phase_2_cup_receipt": cup_p2.get_receipt(),
+            "phase_3_hodge_receipt": hodge_p3.get_receipt(),
+            "phase_3_curvature_receipt": curv_p3.get_receipt(),
+            "phase_3_cup_receipt": cup_p3.get_receipt(),
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one multi-loop cup-Hodge evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mix = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_harm = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_ex = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        obstructed_multi_loop_coherence_rate = Fraction(n - max(p1_mix, p2_harm), n)
+        exact_cup_hodge_coherence_rate = Fraction(p3_ex, n)
+
+        if p3_ex == n and p1_mix == n and p2_harm == n:
+            status = "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_multi_loop_cup_hodge.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_mixed_obstruction_count": p1_mix,
+            "phase_2_harmonic_kernel_count": p2_harm,
+            "phase_3_exact_coherent_count": p3_ex,
+            "obstructed_multi_loop_coherence_rate": obstructed_multi_loop_coherence_rate,
+            "exact_cup_hodge_coherence_rate": exact_cup_hodge_coherence_rate,
+            "multi_loop_hodge_coherence_gain": (
+                exact_cup_hodge_coherence_rate - obstructed_multi_loop_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
