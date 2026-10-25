@@ -7842,6 +7842,8 @@ class StreamingJointMultiMonitorRepairGuard:
         monitor_b_name: str,
         model_id: str,
         rounds: Sequence[Mapping[str, Any]],
+        feasible_intersection_empty: bool | None = None,
+        candidate_actions: Sequence[Mapping[str, Any]] | None = None,
     ) -> dict[str, Any]:
         """Record a multi-round joint repair trajectory across two coupled frontier monitors."""
         tid = text(trajectory_id, "trajectory_id")
@@ -7851,6 +7853,33 @@ class StreamingJointMultiMonitorRepairGuard:
         mdl = text(model_id, "model_id")
         if len(rounds) < 2:
             raise ValidationError("A coupled repair trajectory requires at least 2 rounds (R_0 and R_1)")
+
+        escalation_audit_active = (feasible_intersection_empty is not None) or (candidate_actions is not None)
+        is_empty_intersection = False
+        parsed_candidates: list[dict[str, Any]] = []
+        if candidate_actions is not None:
+            if len(candidate_actions) == 0:
+                raise ValidationError("candidate_actions cannot be empty when provided")
+            for c_idx, cand in enumerate(candidate_actions):
+                if not isinstance(cand, Mapping):
+                    raise ValidationError(f"candidate_actions[{c_idx}] must be a mapping")
+                c_id = text(cand.get("action_id", f"action_{c_idx}"), f"candidate_actions[{c_idx}].action_id")
+                c_ga = bool(cand.get("global_a_pass", False))
+                c_gb = bool(cand.get("global_b_pass", False))
+                parsed_candidates.append(
+                    {
+                        "action_id": c_id,
+                        "global_a_pass": c_ga,
+                        "global_b_pass": c_gb,
+                        "joint_global_pass": c_ga and c_gb,
+                    }
+                )
+            computed_empty = not any(c["joint_global_pass"] for c in parsed_candidates)
+            if (feasible_intersection_empty is not None) and (bool(feasible_intersection_empty) != computed_empty):
+                raise ValidationError("feasible_intersection_empty disagrees with candidate_actions table")
+            is_empty_intersection = computed_empty
+        elif feasible_intersection_empty is not None:
+            is_empty_intersection = bool(feasible_intersection_empty)
 
         parsed_rounds: list[dict[str, Any]] = []
         for idx, r in enumerate(rounds):
@@ -7908,6 +7937,21 @@ class StreamingJointMultiMonitorRepairGuard:
         multi_round_ok = r_final["local_pass"] and r_final["global_pass"] and (r_final["defect"] == 0)
         r1_whack_a_mole = r1["whack_a_mole_partial_repair"]
 
+        oscillation_detected = False
+        oscillation_step_l1 = 0
+        for i in range(1, len(parsed_rounds)):
+            for j in range(i + 1, len(parsed_rounds)):
+                pi = parsed_rounds[i]
+                pj = parsed_rounds[j]
+                if pi["whack_a_mole_partial_repair"] and pj["whack_a_mole_partial_repair"]:
+                    if (pi["global_a_pass"] != pj["global_a_pass"]) and (
+                        pi["global_b_pass"] != pj["global_b_pass"]
+                    ):
+                        oscillation_detected = True
+                        oscillation_step_l1 = abs(
+                            (1 if pj["global_a_pass"] else 0) - (1 if pi["global_a_pass"] else 0)
+                        ) + abs((1 if pj["global_b_pass"] else 0) - (1 if pi["global_b_pass"] else 0))
+
         if single_round_ok and multi_round_ok:
             traj_status = "JOINT_SINGLE_ROUND_CONVERGED_LGGG"
             contract_status = "COMPOSABLE_LGGG"
@@ -7918,7 +7962,7 @@ class StreamingJointMultiMonitorRepairGuard:
             traj_status = "JOINT_UNREPAIRED_OBSTRUCTION_LGGR"
             contract_status = "OBSTRUCTED_LGGR"
 
-        rec = {
+        rec: dict[str, Any] = {
             "trajectory_id": tid,
             "pair_name": pname,
             "monitor_a_name": mon_a,
@@ -7933,6 +7977,27 @@ class StreamingJointMultiMonitorRepairGuard:
             "contract_status": contract_status,
             "rounds": parsed_rounds,
         }
+        if escalation_audit_active:
+            halted_and_escalated = (not multi_round_ok) and (oscillation_detected or is_empty_intersection)
+            if halted_and_escalated and oscillation_detected and is_empty_intersection:
+                rec["trajectory_status"] = "INFEASIBLE_EMPTY_INTERSECTION_OSCILLATION_HALTED_AND_ESCALATED_LGGR"
+                esc_action = "HALT_OSCILLATING_REPAIR_AND_ESCALATE_INFEASIBLE_COUPLED_CONSTRAINTS"
+            elif halted_and_escalated and is_empty_intersection:
+                rec["trajectory_status"] = "INFEASIBLE_EMPTY_INTERSECTION_HALTED_AND_ESCALATED_LGGR"
+                esc_action = "HALT_REPAIR_AND_ESCALATE_INFEASIBLE_COUPLED_CONSTRAINTS"
+            elif halted_and_escalated and oscillation_detected:
+                rec["trajectory_status"] = "WHACK_A_MOLE_OSCILLATION_HALTED_AND_ESCALATED_LGGR"
+                esc_action = "HALT_OSCILLATING_REPAIR_AND_ESCALATE"
+            else:
+                esc_action = "NONE"
+            rec["feasible_intersection_empty"] = is_empty_intersection
+            rec["whack_a_mole_oscillation_detected"] = oscillation_detected
+            rec["oscillation_l1_step_distance"] = oscillation_step_l1
+            rec["halted_and_escalated"] = halted_and_escalated
+            rec["escalation_action"] = esc_action
+            if parsed_candidates:
+                rec["candidate_actions"] = parsed_candidates
+
         self.trajectories.append(rec)
         return json_value(rec)
 
@@ -7958,14 +8023,20 @@ class StreamingJointMultiMonitorRepairGuard:
         multi_gain = rt_rate - r1_rate
         wam_rate = Fraction(wam_cnt, n)
 
+        has_escalation = any("halted_and_escalated" in t for t in self.trajectories)
         if len(unrepaired_ids) == 0:
             status = "JOINT_MULTI_MONITOR_PARETO_CONVERGED_LGGG"
             contract_status = "COMPOSABLE_LGGG"
+        elif has_escalation and all(
+            t.get("halted_and_escalated", False) for t in self.trajectories if not t["converged_multi_round"]
+        ):
+            status = "INFEASIBLE_COUPLED_REGIME_HALTED_AND_ESCALATED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
         else:
             status = "JOINT_MULTI_MONITOR_RESIDUAL_OBSTRUCTION_LGGR"
             contract_status = "OBSTRUCTED_LGGR"
 
-        body = {
+        body: dict[str, Any] = {
             "schema": "lggr.online_joint_multi_monitor_repair.v1",
             "authority_effect": "None",
             "scope_id": self.scope_id,
@@ -7984,6 +8055,28 @@ class StreamingJointMultiMonitorRepairGuard:
             "unrepaired_trajectory_ids": unrepaired_ids,
             "trajectories": self.trajectories,
         }
+        if has_escalation:
+            empty_cnt = sum(1 for t in self.trajectories if t.get("feasible_intersection_empty", False))
+            osc_cnt = sum(1 for t in self.trajectories if t.get("whack_a_mole_oscillation_detected", False))
+            esc_cnt = sum(1 for t in self.trajectories if t.get("halted_and_escalated", False))
+            osc_ids = [
+                t["trajectory_id"]
+                for t in self.trajectories
+                if t.get("whack_a_mole_oscillation_detected", False)
+            ]
+            esc_ids = [
+                t["trajectory_id"]
+                for t in self.trajectories
+                if t.get("halted_and_escalated", False)
+            ]
+            body["empty_feasible_intersection_count"] = empty_cnt
+            body["whack_a_mole_oscillation_count"] = osc_cnt
+            body["halted_and_escalated_count"] = esc_cnt
+            body["whack_a_mole_oscillation_rate"] = Fraction(osc_cnt, n)
+            body["halt_and_escalate_rate"] = Fraction(esc_cnt, n)
+            body["oscillating_trajectory_ids"] = osc_ids
+            body["halted_and_escalated_trajectory_ids"] = esc_ids
+
         return json_value({**body, "receipt_sha256": digest(body)})
 
 

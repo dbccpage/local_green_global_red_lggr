@@ -18,6 +18,9 @@ import unittest
 
 from lggr.benchmarks import (
     OpenRouterClient,
+    _eval_infeasible_pair1_side_info_and_skew,
+    _eval_infeasible_pair2_poe_and_skew,
+    _eval_infeasible_pair3_tower_and_mermin_peres,
     _eval_pair1_side_info_and_skew,
     _eval_pair2_poe_and_skew,
     _eval_pair3_tower_and_mermin_peres,
@@ -600,6 +603,107 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(jg_rec["multi_round_convergence_gain"], "13/15")
         self.assertEqual(jg_rec["round_1_whack_a_mole_rate"], "7/15")
         self.assertTrue(jg_rec["monotonic_convergence_verified"])
+
+    def test_infeasible_coupled_escalation_benchmark_replay(self):
+        """F18: Replay all 15 infeasible empty-intersection coupled trajectories across 5 model families."""
+        artifact = RECEIPTS_DIR / "infeasible_coupled_escalation_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("infeasible_coupled_escalation_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.infeasible_coupled_escalation_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("infeasible_pairs_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("trajectory_count"), 15)
+
+        trajs = data.get("trajectories", [])
+        self.assertEqual(len(trajs), 15)
+
+        self.assertTrue(data["round_0_baseline_metrics"]["identity_verified"])
+        self.assertTrue(data["round_1_priority_a_metrics"]["identity_verified"])
+        self.assertTrue(data["round_2_priority_b_metrics"]["identity_verified"])
+
+        replay_guard = StreamingJointMultiMonitorRepairGuard(
+            scope_id=data["joint_guard_receipt"]["scope_id"]
+        )
+        for t in trajs:
+            replay_guard.record_coupled_trajectory(
+                t["trajectory_id"],
+                pair_name=t["pair_name"],
+                monitor_a_name=t["monitor_a_name"],
+                monitor_b_name=t["monitor_b_name"],
+                model_id=t["model_id"],
+                feasible_intersection_empty=t["feasible_intersection_empty"],
+                candidate_actions=t["candidate_actions"],
+                rounds=t["rounds"],
+            )
+            self.assertTrue(t["feasible_intersection_empty"])
+            self.assertTrue(t["whack_a_mole_oscillation_detected"])
+            self.assertEqual(t["oscillation_l1_step_distance"], 2)
+            self.assertTrue(t["halted_and_escalated"])
+            self.assertEqual(
+                t["trajectory_status"],
+                "INFEASIBLE_EMPTY_INTERSECTION_OSCILLATION_HALTED_AND_ESCALATED_LGGR",
+            )
+
+            pname = t["pair_name"]
+            mdl = t["model_id"]
+            for r_idx in range(3):
+                r_inp = t["round_inputs"][r_idx]
+                r_saved = t["round_receipts"][r_idx]
+                if pname == "Infeasible_SideInfo_x_SkewRepair":
+                    rec_a, rec_b = _eval_infeasible_pair1_side_info_and_skew(
+                        f"ip1_r{r_idx}_{mdl}",
+                        r_inp["channel_capacity_s"],
+                        r_inp["symbols"],
+                        r_inp["candidate_alpha"],
+                    )
+                elif pname == "Infeasible_PoE_x_SkewRepair":
+                    rec_a, rec_b = _eval_infeasible_pair2_poe_and_skew(
+                        f"ip2_r{r_idx}_{mdl}",
+                        r_inp["compromise_eps"],
+                        r_inp["candidate_alpha"],
+                    )
+                elif pname == "Infeasible_ProjectiveTower_x_MerminPeres":
+                    if r_idx == 0:
+                        rec_a, _ = _eval_infeasible_pair3_tower_and_mermin_peres(
+                            f"ip3_r0a_{mdl}",
+                            r_inp["const_b_a"],
+                            r_inp["x_mod2"],
+                            r_inp["x_mod4"],
+                        )
+                        _, rec_b = _eval_infeasible_pair3_tower_and_mermin_peres(
+                            f"ip3_r0b_{mdl}",
+                            r_inp["const_b_b"],
+                            1,
+                            3,
+                        )
+                    else:
+                        rec_a, rec_b = _eval_infeasible_pair3_tower_and_mermin_peres(
+                            f"ip3_r{r_idx}_{mdl}",
+                            r_inp["const_b"],
+                            r_inp["x_mod2"],
+                            r_inp["x_mod4"],
+                        )
+                else:
+                    self.fail(f"Unknown infeasible coupled pair: {pname}")
+                self.assertEqual(rec_a["receipt_sha256"], r_saved["receipt_a"]["receipt_sha256"])
+                self.assertEqual(rec_b["receipt_sha256"], r_saved["receipt_b"]["receipt_sha256"])
+
+        jg_rec = replay_guard.get_receipt()
+        self.assertEqual(
+            jg_rec["receipt_sha256"],
+            data["joint_guard_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(jg_rec["status"], "INFEASIBLE_COUPLED_REGIME_HALTED_AND_ESCALATED_LGGR")
+        self.assertEqual(jg_rec["single_round_convergence_rate"], "0")
+        self.assertEqual(jg_rec["multi_round_convergence_rate"], "0")
+        self.assertEqual(jg_rec["whack_a_mole_oscillation_rate"], "1")
+        self.assertEqual(jg_rec["halt_and_escalate_rate"], "1")
+        self.assertEqual(jg_rec["empty_feasible_intersection_count"], 15)
+        self.assertEqual(jg_rec["whack_a_mole_oscillation_count"], 15)
+        self.assertEqual(jg_rec["halted_and_escalated_count"], 15)
 
 
 if __name__ == "__main__":
