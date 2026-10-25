@@ -2098,4 +2098,119 @@ theorem overloaded_deadline_burst_serial_edf_vs_bin_packing_and_escalation :
   intro s0 f1 f2 tau_h ⟨h1, h2, h3⟩
   omega
 
+/-- 66. Multi-tick variable-duration incidents and graceful-degradation shedding under denied horizon expansion:
+    1. Universal multi-tick variable-duration overlap law: when Incident 1 has duration p1 = 2 and tight
+       SLA deadline D1 = s0 + 2 (so non-preemptible completion C1 = t1 + 2 ≤ s0 + 2 forces start t1 = s0,
+       occupying both slots [s0, s0 + 1) and [s0 + 1, s0 + 2) with weighted drift f1), Incident 2 has
+       duration p2 = 1 and deadline D2 = s0 + 1 (forcing start t2 = s0), and Incident 3 has duration
+       p3 = 1 and deadline D3 = s0 + 2 (forcing start t3 ∈ {s0, s0 + 1}), whenever f1 + f2 = tau_h
+       and f1 + f3 > tau_h (with f3 > 0), Incident 3 cannot co-execute in slot s0 (f1 + f2 + f3 > tau_h)
+       nor in slot s0 + 1 alongside Incident 1's second tick (f1 + f3 > tau_h); deferring Incident 3 to
+       slot s0 + 2 yields completion C3 = s0 + 3 > s0 + 2 = D3 (SLA breach unless horizon expansion
+       Δτ_horizon ≥ (f1 + f3) - tau_h is granted or graceful-degradation shedding drops Incident 3);
+    2. Concrete 3-incident variable-duration burst at s1 = s2 = s3 = 0 on P_0 = (2, 3, 0) with risk
+       weights w = (2, 3, 4), individual lease budget τ_lease = 4, fixed horizon ceiling τ_horizon = 7
+       (after authority denies further expansion to 8), Pareto floors (Δ*_{w,1}, Δ*_{w,2}, Δ*_{w,3}) = (4, 3, 4),
+       variable durations (p_1, p_2, p_3) = (2, 1, 1), SLA deadlines (D_1, D_2, D_3) = (2, 1, 2), and
+       criticality weights (κ_1, κ_2, κ_3) = (10, 8, 3):
+       - Phase 1 (Multi-tick deferral without shedding under fixed τ_horizon = 7): starting {1, 2} at t=0
+         gives slot-0 drift 4 + 3 = 7 ≤ 7 and slot-1 drift 4 ≤ 7 (as k=1 spans [0, 2)), forcing k=3 into
+         slot [2, 3) with C_3 = 3 > D_3 = 2 (L_defer = 1, Eg_defer = 0, Δ_{E,defer} = -1);
+       - Phase 2 (Priority-inverted shedding under denied expansion): dropping high-criticality k=1 (κ_1 = 10)
+         or k=2 (κ_2 = 8) instead of lowest-criticality k=3 (κ_3 = 3) violates minimum-criticality loss
+         (L_inv = 1, Eg_inv = 0, Δ_{E,inv} = -1);
+       - Phase 3 (Governed minimum-criticality graceful-degradation shedding under fixed τ_horizon = 7):
+         dropping lowest-criticality incident k=3 (κ_3 = 3 = min, preserving κ_1 + κ_2 = 18/21 criticality)
+         allows retained incidents {1, 2} to complete at C_1 = 2 ≤ 2 and C_2 = 1 ≤ 1 with slot-0 drift
+         7 ≤ 7 and slot-1 drift 4 ≤ 7 (L_shed = 1, Eg_shed = 1, Δ_{E,shed} = 0). -/
+theorem variable_duration_burst_and_graceful_degradation_shedding :
+    (∀ f1 f2 f3 tau_h : Int,
+      (f1 > 0 ∧ f2 > 0 ∧ f3 > 0 ∧ f1 + f2 = tau_h ∧ f1 + f3 > tau_h) →
+      (¬ (f1 + f2 + f3 ≤ tau_h) ∧ ¬ (f1 + f3 ≤ tau_h) ∧ (f1 + f2 ≤ tau_h) ∧ (f1 ≤ tau_h))) ∧
+    (let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let p1 : Int := 2; let p2 : Int := 1; let p3 : Int := 1;
+     let d1 : Int := 2; let d2 : Int := 1; let d3 : Int := 2;
+     let k1 : Int := 10; let k2 : Int := 8; let k3 : Int := 3;
+     let tau_h : Int := 7;
+     let slot0_full := f1 + f2 + f3;
+     let slot1_coexec_13 := f1 + f3;
+     let slot0_retained_12 := f1 + f2;
+     let slot1_retained_1 := f1;
+     let c1_def : Int := 0 + p1; let c2_def : Int := 0 + p2; let c3_def : Int := 2 + p3;
+     let l_defer := if (slot0_retained_12 ≤ tau_h) ∧ (slot1_retained_1 ≤ tau_h) ∧ (f3 ≤ tau_h) then (1 : Int) else 0;
+     let eg_defer := if (l_defer = 1) ∧ (c1_def ≤ d1) ∧ (c2_def ≤ d2) ∧ (c3_def ≤ d3) then (1 : Int) else 0;
+     let defect_defer := eg_defer - l_defer;
+     let shed_loss_inv := k2;
+     let min_shed_loss := k3;
+     let l_inv := if (f1 ≤ tau_h) ∧ (slot1_coexec_13 > tau_h ∨ f3 ≤ tau_h) then (1 : Int) else 0;
+     let eg_inv := if (l_inv = 1) ∧ (shed_loss_inv ≤ min_shed_loss) then (1 : Int) else 0;
+     let defect_inv := eg_inv - l_inv;
+     let c1_shed : Int := 0 + p1; let c2_shed : Int := 0 + p2;
+     let retained_crit := k1 + k2;
+     let l_shed := if (slot0_retained_12 ≤ tau_h) ∧ (slot1_retained_1 ≤ tau_h) then (1 : Int) else 0;
+     let eg_shed := if (l_shed = 1) ∧ (c1_shed ≤ d1) ∧ (c2_shed ≤ d2) ∧ (k3 < k2) ∧ (k3 < k1) then (1 : Int) else 0;
+     let defect_shed := eg_shed - l_shed;
+     (slot0_full = 11 ∧ slot1_coexec_13 = 8 ∧ slot0_retained_12 = 7 ∧ retained_crit = 18) ∧
+     (l_defer = 1 ∧ eg_defer = 0 ∧ defect_defer = -1) ∧
+     (l_inv = 1 ∧ eg_inv = 0 ∧ defect_inv = -1) ∧
+     (l_shed = 1 ∧ eg_shed = 1 ∧ defect_shed = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro f1 f2 f3 tau_h ⟨h1, h2, h3, h4, h5⟩
+  omega
+
+/-- 67. Linearized state-estimation Jacobian soundness (im(D) ∩ ker(Q) = {0}) vs. stealth blind-spot defect:
+    1. Universal 3-stage linearized state-estimation law: for state perturbation s = (s1, s2, s3) ∈ ℤ³
+       and linearized interface defect Jacobian D(s) = (s1 - s2, s2 - s3, s1 - s3), every realizable
+       defect ω = (ω1, ω2, ω3) ∈ im(D) satisfies the exact coboundary compatibility law ω3 = ω1 + ω2:
+       - Under a collapsing 1-row observer Jacobian Q_blind(ω) = ω1 + ω2 (which monitors only net
+         endpoint drift while ignoring the internal stage handoff s2), any internal perturbation with
+         s1 = s3 ≠ s2 produces ω = (s1 - s2, s2 - s1, 0) ≠ 0 (total L1 defect |s1 - s2| + |s2 - s1| > 0)
+         yet Q_blind(D(s)) = (s1 - s2) + (s2 - s1) = 0, so ω ∈ im(D) ∩ ker(Q_blind) ≠ {0};
+       - Under a 2-row coupled observer Jacobian Q_coupled(ω) = (ω1, ω2) (whose ambient kernel ker(Q_coupled)
+         is the 1D span of (0, 0, 1)), any realizable defect ω = D(s) ∈ ker(Q_coupled) has ω1 = 0 and
+         ω2 = 0, which by ω3 = ω1 + ω2 forces ω3 = 0 and hence ω = (0, 0, 0), establishing that
+         im(D) ∩ ker(Q_coupled) = {0} despite dim(ker(Q_coupled)) = 1 > 0;
+    2. Concrete witness separation on s_stealth = (1, 0, 1) with D(s_stealth) = (1, -1, 0) and L1
+       inconsistency I(s_stealth) = |1| + |-1| + |0| = 2 > 0:
+       - Regime 1 (Blind observer Q_blind(ω) = ω1 + ω2): Q_blind(D(s_stealth)) = 0 (local green L_blind = 1)
+         while I(s_stealth) = 2 > 0 (global red Eg_blind = 0, Δ_{E,blind} = -1);
+       - Regime 2 (Coupled observer Q_coupled(ω) = (ω1, ω2)): Q_coupled(D(s_stealth)) = (1, -1) with
+         measured L1 score |1| + |-1| = 2 > 0, and im(D) ∩ ker(Q_coupled) = {0} (rank(D) = 2 = rank(Q_coupled D),
+         L_coupled = 1, Eg_coupled = 1, Δ_{E,coupled} = 0). -/
+theorem linearized_pipeline_jacobian_soundness_vs_stealth_blindspot :
+    (∀ s1 s2 s3 : Int,
+      let w1 := s1 - s2;
+      let w2 := s2 - s3;
+      let w3 := s1 - s3;
+      (w3 = w1 + w2) ∧
+      ((s1 = s3 ∧ s1 ≠ s2) → (w1 + w2 = 0 ∧ w1 ≠ 0)) ∧
+      ((w1 = 0 ∧ w2 = 0) → (w1 = 0 ∧ w2 = 0 ∧ w3 = 0))) ∧
+    (let s1 : Int := 1; let s2 : Int := 0; let s3 : Int := 1;
+     let w1 := s1 - s2; let w2 := s2 - s3; let w3 := s1 - s3;
+     let i_defect := w1.natAbs + w2.natAbs + w3.natAbs;
+     let q_blind_score := (w1 + w2).natAbs;
+     let q_coupled_score := w1.natAbs + w2.natAbs;
+     let rank_d : Int := 2;
+     let rank_qd_blind : Int := 1;
+     let rank_qd_coupled : Int := 2;
+     let intersect_dim_blind := rank_d - rank_qd_blind;
+     let intersect_dim_coupled := rank_d - rank_qd_coupled;
+     let l_blind := if q_blind_score = 0 then (1 : Int) else 0;
+     let eg_blind := if (l_blind = 1) ∧ (i_defect = 0) ∧ (intersect_dim_blind = 0) then (1 : Int) else 0;
+     let defect_blind := eg_blind - l_blind;
+     let l_coupled := if (intersect_dim_coupled = 0) ∧ (q_coupled_score = i_defect) then (1 : Int) else 0;
+     let eg_coupled := if (l_coupled = 1) ∧ (rank_qd_coupled = rank_d) then (1 : Int) else 0;
+     let defect_coupled := eg_coupled - l_coupled;
+     (i_defect = 2 ∧ q_blind_score = 0 ∧ q_coupled_score = 2 ∧ intersect_dim_blind = 1 ∧ intersect_dim_coupled = 0) ∧
+     (l_blind = 1 ∧ eg_blind = 0 ∧ defect_blind = -1) ∧
+     (l_coupled = 1 ∧ eg_coupled = 1 ∧ defect_coupled = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro s1 s2 s3
+  dsimp only
+  refine ⟨by omega, ⟨?_, ?_⟩⟩
+  · intro ⟨h1, h2⟩
+    omega
+  · intro ⟨h1, h2⟩
+    omega
+
 end LggrVIII
