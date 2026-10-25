@@ -50,6 +50,7 @@ from lggr.streaming import (
     StreamingDynamicSchemaSynthesisMonitor,
     StreamingEqualInfoMigrationObligationMonitor,
     StreamingFiberMonitor,
+    StreamingFigureEightWedgeHodgeMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingGramProbeMonitor,
     StreamingHodgeDecompositionMonitor,
@@ -4743,6 +4744,62 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["obstructed_multi_loop_coherence_rate"], "0")
         self.assertEqual(receipt["exact_cup_hodge_coherence_rate"], "1")
         self.assertEqual(receipt["multi_loop_hodge_coherence_gain"], "1")
+
+    def test_figure_eight_wedge_junction_gauge_shift_and_mayer_vietoris_hodge_audit(self) -> None:
+        """Verify Theorem 92: figure-eight wedge junction gauge propagation and Mayer-Vietoris Hodge audit."""
+        mon = StreamingFigureEightWedgeHodgeMonitor(
+            scope_id="unit-figure-eight-wedge-hodge-scope",
+        )
+        obs = mon.record_wedge_evaluation(
+            "figure-eight-wedge-eval-01",
+        )
+        self.assertEqual(obs["overlap_vertices"], ["v0"])
+        self.assertEqual(obs["phase_1_norm2_exact"], "6")
+        self.assertEqual(obs["phase_1_norm2_coexact"], "3")
+        self.assertEqual(obs["phase_1_norm2_harmonic"], "3")
+        self.assertEqual(obs["phase_1_norm2_total"], "12")
+        self.assertFalse(obs["phase_1_u_locally_exact"])
+        self.assertFalse(obs["phase_1_v_locally_exact"])
+
+        self.assertEqual(obs["phase_2_norm2_exact"], "2")
+        self.assertEqual(obs["phase_2_norm2_coexact"], "0")
+        self.assertEqual(obs["phase_2_norm2_harmonic"], "3")
+        self.assertTrue(obs["phase_2_u_locally_exact"])
+        self.assertFalse(obs["phase_2_v_locally_exact"])
+
+        self.assertEqual(obs["phase_3_norm2_exact"], "20")
+        self.assertEqual(obs["phase_3_norm2_coexact"], "0")
+        self.assertEqual(obs["phase_3_norm2_harmonic"], "0")
+        self.assertTrue(obs["phase_3_u_locally_exact"])
+        self.assertTrue(obs["phase_3_v_locally_exact"])
+        self.assertTrue(obs["phase_3_union_globally_exact"])
+        self.assertEqual(obs["phase_3_connecting_coboundary_spread"], "0")
+        self.assertEqual(
+            obs["phase_3_glued_global_potential"],
+            {"v0": "0", "v1": "2", "v2": "1", "v3": "3", "v4": "1"},
+        )
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "WEDGE_CURL_AND_HARMONIC_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "WEDGE_HARMONIC_LOOP_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "WEDGE_GAUGE_GLUED_EXACT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "WEDGE_GAUGE_GLUED_EXACT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["obstructed_wedge_coherence_rate"], "0")
+        self.assertEqual(receipt["synchronized_wedge_gauge_coherence_rate"], "1")
+        self.assertEqual(receipt["figure_eight_wedge_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

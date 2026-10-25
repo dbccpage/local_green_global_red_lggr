@@ -15630,6 +15630,241 @@ class StreamingMultiLoopCupHodgeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingFigureEightWedgeHodgeMonitor:
+    """Audit coupled figure-eight wedge complexes K = T_filled v_{v0} T_unfilled
+    sharing a common junction vertex v0 where exact vertex-potential gauge shifts
+    at v0 propagate simultaneously across both loops under
+    StreamingHodgeDecompositionMonitor and StreamingMayerVietorisMonitor (Theorem 92).
+    """
+
+    WEDGE_D0: tuple[tuple[int, ...], ...] = (
+        (-1, 1, 0, 0, 0),
+        (0, -1, 1, 0, 0),
+        (1, 0, -1, 0, 0),
+        (-1, 0, 0, 1, 0),
+        (0, 0, 0, -1, 1),
+        (1, 0, 0, 0, -1),
+    )
+    WEDGE_D1: tuple[tuple[int, ...], ...] = (
+        (1, 1, 1, 0, 0, 0),
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-figure-eight-wedge-hodge-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _record_wedge_mayer_vietoris(
+        scope_id: str,
+        h_vec: Sequence[int],
+    ) -> dict[str, Any]:
+        mv = StreamingMayerVietorisMonitor(scope_id=scope_id)
+        mv.record_edge("v0", "v1", h_vec[0], in_u=True, in_v=False)
+        mv.record_edge("v1", "v2", h_vec[1], in_u=True, in_v=False)
+        mv.record_edge("v2", "v0", h_vec[2], in_u=True, in_v=False)
+        mv.record_edge("v0", "v3", h_vec[3], in_u=False, in_v=True)
+        mv.record_edge("v3", "v4", h_vec[4], in_u=False, in_v=True)
+        mv.record_edge("v4", "v0", h_vec[5], in_u=False, in_v=True)
+        return mv.get_receipt()
+
+    def record_wedge_evaluation(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        d0 = [list(row) for row in self.WEDGE_D0]
+        d1 = [list(row) for row in self.WEDGE_D1]
+
+        # Phase 1: Coexisting 2-cell curl on U = T_filled and harmonic circulation on V = T_unfilled
+        h_p1 = [3, 0, 0, 1, 1, 1]
+        hodge_p1 = StreamingHodgeDecompositionMonitor(scope_id=f"{self.scope_id}-hodge-p1")
+        hrec_p1 = hodge_p1.record_complex_cochain(f"{eval_id}_p1", d0, h_p1, D1=d1)
+        mvrec_p1 = self._record_wedge_mayer_vietoris(f"{self.scope_id}-mv-p1", h_p1)
+
+        # Phase 2: U = T_filled curl-cleared and locally exact, V = T_unfilled harmonic obstructed
+        h_p2 = [1, 0, -1, 1, 1, 1]
+        hodge_p2 = StreamingHodgeDecompositionMonitor(scope_id=f"{self.scope_id}-hodge-p2")
+        hrec_p2 = hodge_p2.record_complex_cochain(f"{eval_id}_p2", d0, h_p2, D1=d1)
+        mvrec_p2 = self._record_wedge_mayer_vietoris(f"{self.scope_id}-mv-p2", h_p2)
+
+        # Phase 3: Simultaneous junction gauge shift s = -1 at v0 on phi^(0) = [0, 1, 0, 2, 0]
+        # -> phi^(1) = [-1, 1, 0, 2, 0] -> h_p3 = D0 phi^(1) = [2, -1, -1, 3, -2, -1]
+        h_p3 = [2, -1, -1, 3, -2, -1]
+        hodge_p3 = StreamingHodgeDecompositionMonitor(scope_id=f"{self.scope_id}-hodge-p3")
+        hrec_p3 = hodge_p3.record_complex_cochain(f"{eval_id}_p3", d0, h_p3, D1=d1)
+        mvrec_p3 = self._record_wedge_mayer_vietoris(f"{self.scope_id}-mv-p3", h_p3)
+
+        # Phase 1 local/global evaluation
+        l_p1 = (
+            1
+            if (
+                bool(hrec_p1["pythagorean_energy_verified"])
+                and bool(hrec_p1["orthogonality_verified"])
+                and mvrec_p1["overlap_vertices"] == ["v0"]
+            )
+            else 0
+        )
+        eg_p1 = (
+            1
+            if (
+                l_p1 == 1
+                and hrec_p1["norm2_coexact"] == "0"
+                and hrec_p1["norm2_harmonic"] == "0"
+                and bool(mvrec_p1["union_globally_exact"])
+            )
+            else 0
+        )
+        defect_p1 = eg_p1 - l_p1
+
+        # Phase 2 local/global evaluation
+        l_p2 = (
+            1
+            if (
+                bool(mvrec_p2["u_locally_exact"])
+                and hrec_p2["norm2_coexact"] == "0"
+                and mvrec_p2["overlap_vertices"] == ["v0"]
+            )
+            else 0
+        )
+        eg_p2 = (
+            1
+            if (
+                l_p2 == 1
+                and bool(mvrec_p2["v_locally_exact"])
+                and hrec_p2["norm2_harmonic"] == "0"
+                and bool(mvrec_p2["union_globally_exact"])
+            )
+            else 0
+        )
+        defect_p2 = eg_p2 - l_p2
+
+        # Phase 3 local/global evaluation
+        l_p3 = (
+            1
+            if (
+                bool(mvrec_p3["u_locally_exact"])
+                and bool(mvrec_p3["v_locally_exact"])
+                and mvrec_p3["connecting_coboundary_spread"] == "0"
+                and hrec_p3["norm2_exact"] == "20"
+            )
+            else 0
+        )
+        eg_p3 = (
+            1
+            if (
+                l_p3 == 1
+                and bool(mvrec_p3["union_globally_exact"])
+                and hrec_p3["norm2_coexact"] == "0"
+                and hrec_p3["norm2_harmonic"] == "0"
+            )
+            else 0
+        )
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "overlap_vertices": mvrec_p3["overlap_vertices"],
+            "phase_1_norm2_exact": hrec_p1["norm2_exact"],
+            "phase_1_norm2_coexact": hrec_p1["norm2_coexact"],
+            "phase_1_norm2_harmonic": hrec_p1["norm2_harmonic"],
+            "phase_1_norm2_total": hrec_p1["norm2_total"],
+            "phase_1_u_locally_exact": bool(mvrec_p1["u_locally_exact"]),
+            "phase_1_v_locally_exact": bool(mvrec_p1["v_locally_exact"]),
+            "phase_2_norm2_exact": hrec_p2["norm2_exact"],
+            "phase_2_norm2_coexact": hrec_p2["norm2_coexact"],
+            "phase_2_norm2_harmonic": hrec_p2["norm2_harmonic"],
+            "phase_2_u_locally_exact": bool(mvrec_p2["u_locally_exact"]),
+            "phase_2_v_locally_exact": bool(mvrec_p2["v_locally_exact"]),
+            "phase_3_norm2_exact": hrec_p3["norm2_exact"],
+            "phase_3_norm2_coexact": hrec_p3["norm2_coexact"],
+            "phase_3_norm2_harmonic": hrec_p3["norm2_harmonic"],
+            "phase_3_u_locally_exact": bool(mvrec_p3["u_locally_exact"]),
+            "phase_3_v_locally_exact": bool(mvrec_p3["v_locally_exact"]),
+            "phase_3_union_globally_exact": bool(mvrec_p3["union_globally_exact"]),
+            "phase_3_connecting_coboundary_spread": mvrec_p3["connecting_coboundary_spread"],
+            "phase_3_glued_global_potential": mvrec_p3["glued_global_potential"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": (
+                "WEDGE_CURL_AND_HARMONIC_OBSTRUCTION_LGGR"
+                if defect_p1 == -1
+                else "WEDGE_GAUGE_GLUED_EXACT_LGGG"
+            ),
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": (
+                "WEDGE_HARMONIC_LOOP_OBSTRUCTION_LGGR"
+                if defect_p2 == -1
+                else "WEDGE_GAUGE_GLUED_EXACT_LGGG"
+            ),
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": (
+                "WEDGE_GAUGE_GLUED_EXACT_LGGG"
+                if eg_p3 == 1
+                else "WEDGE_HARMONIC_LOOP_OBSTRUCTION_LGGR"
+            ),
+            "phase_1_hodge_receipt": hodge_p1.get_receipt(),
+            "phase_1_mayer_vietoris_receipt": mvrec_p1,
+            "phase_2_hodge_receipt": hodge_p2.get_receipt(),
+            "phase_2_mayer_vietoris_receipt": mvrec_p2,
+            "phase_3_hodge_receipt": hodge_p3.get_receipt(),
+            "phase_3_mayer_vietoris_receipt": mvrec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one figure-eight wedge evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mix = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_harm = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_ex = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        obstructed_wedge_coherence_rate = Fraction(n - max(p1_mix, p2_harm), n)
+        synchronized_wedge_gauge_coherence_rate = Fraction(p3_ex, n)
+
+        if p3_ex == n and p1_mix == n and p2_harm == n:
+            status = "WEDGE_GAUGE_GLUED_EXACT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "WEDGE_CURL_AND_HARMONIC_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_figure_eight_wedge_hodge.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_mixed_obstruction_count": p1_mix,
+            "phase_2_harmonic_loop_count": p2_harm,
+            "phase_3_synchronized_gauge_count": p3_ex,
+            "obstructed_wedge_coherence_rate": obstructed_wedge_coherence_rate,
+            "synchronized_wedge_gauge_coherence_rate": synchronized_wedge_gauge_coherence_rate,
+            "figure_eight_wedge_coherence_gain": (
+                synchronized_wedge_gauge_coherence_rate - obstructed_wedge_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
