@@ -59,6 +59,9 @@ def agent_turn(client, events, board, history, worker, feedback):
         if not isinstance(calls, list) or len(calls) > 8:
             events.emit("invalid_model_output", {"worker": worker, "reason": "invalid tool call list"})
             return False
+        if any(not isinstance(call, dict) or not isinstance(call.get("function"), dict) for call in calls):
+            events.emit("invalid_model_output", {"worker": worker, "reason": "invalid tool call shape"})
+            return False
         if not calls:
             history.append({"role": "user", "content": "Use inspect_board and then propose or escalate; prose alone cannot change the workspace."})
             continue
@@ -81,7 +84,7 @@ def agent_turn(client, events, board, history, worker, feedback):
                     result = {"accepted": False, "error": "inspect the current board before acting"}
                 else:
                     result = board.tool(worker, name, args)
-                    inspected |= name == "inspect_board"
+                    inspected |= name == "inspect_board" and "jobs" in result
             except (ValueError, TypeError, KeyError):
                 result = {"accepted": False, "error": "malformed tool arguments"}
             events.emit("tool", {"worker": worker, "call": call, "result": result})

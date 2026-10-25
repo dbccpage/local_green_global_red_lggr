@@ -90,7 +90,8 @@ class Board:
                 return {"accepted": False, "error": "bounded exact integer line items required"}
             return {"value": sum(item["unit_cents"] * item["quantity"] for item in items),
                     "scope": "arithmetic on supplied items only; no resource assignment"}
-        if name == "escalate" and set(arguments) == {"reason"} and isinstance(arguments["reason"], str):
+        if (name == "escalate" and set(arguments) == {"reason"}
+                and isinstance(arguments["reason"], str) and arguments["reason"].strip()):
             return {"escalated": True, "reason": arguments["reason"][:1000]}
         if name != "propose" or set(arguments) != {"slot", "total_cents", "epoch"}:
             return {"accepted": False, "error": "unsupported tool or fields"}

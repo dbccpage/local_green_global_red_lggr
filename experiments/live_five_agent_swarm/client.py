@@ -23,6 +23,11 @@ class RunStopped(Exception):
     pass
 
 
+class _RejectRedirects(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 class Events:
     def __init__(self, path=None, expected=None):
         self.path, self.expected, self.records = path, expected, []
@@ -101,10 +106,13 @@ class LiveClient:
               data=json.dumps(payload).encode(), headers={"Authorization": "Bearer " + self.key,
               "Content-Type": "application/json"}, method="POST")
         try:
-            with urllib.request.urlopen(req, timeout=60) as response:
+            opener = urllib.request.build_opener(_RejectRedirects())
+            with opener.open(req, timeout=60) as response:
                 raw = json.load(response)
         except (urllib.error.URLError, TimeoutError, OSError) as error:
             code = getattr(error, "code", None)
+            if isinstance(error, urllib.error.HTTPError):
+                error.close()
             self.events.emit("api_error", {"http_status": code, "kind": type(error).__name__,
                              "charged_upper_bound_usd": str(reserved)})
             raise RunStopped("provider request failed; reserved cost retained") from None

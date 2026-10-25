@@ -2,18 +2,20 @@
 from copy import deepcopy
 from decimal import Decimal
 import itertools
+import io
 import json
 from pathlib import Path
 import tempfile
 import subprocess
 import sys
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
+import urllib.response
 
 from experiments.live_five_agent_swarm.client import Events, LiveClient, RunStopped, MODELS, request, reservation, response_message, charge
 from experiments.live_five_agent_swarm.domain import Board, fixture, findings, certificates
 from experiments.live_five_agent_swarm.oracle import feasible, judge
-from experiments.live_five_agent_swarm.runner import campaign, inject, replay, source_hashes
+from experiments.live_five_agent_swarm.runner import agent_turn, campaign, inject, replay, source_hashes, system
 from experiments.live_five_agent_swarm.client import event_digest as digest
 
 
@@ -80,6 +82,60 @@ class LiveFiveAgentTests(unittest.TestCase):
         self.assertFalse(board.tool("worker-0", "calculate_total", {"items": [{"unit_cents": True, "quantity": 3}]})["accepted"])
         board.close()
 
+    def test_escalation_requires_nonblank_reason_and_preserves_truncation(self):
+        board = Board(fixture(3101))
+        self.addCleanup(board.close)
+        for reason in ("", " ", "\t\r\n", "\u2003\u00a0"):
+            with self.subTest(reason=reason):
+                result = board.tool("worker-0", "escalate", {"reason": reason})
+                self.assertFalse(result["accepted"])
+                self.assertNotIn("escalated", result)
+        for reason in ("No available slot", "  No available slot\n", "x" * 1001):
+            with self.subTest(length=len(reason)):
+                self.assertEqual(board.tool("worker-0", "escalate", {"reason": reason}),
+                                 {"escalated": True, "reason": reason[:1000]})
+
+    def test_malformed_tool_calls_record_failed_cases(self):
+        for call in (None, [], "call", 1, {}, {"function": None},
+                     {"function": []}, {"function": "inspect_board"}, {"function": 1}):
+            with self.subTest(call=call):
+                events = Events()
+                client = StubClient(events)
+                message = {"role": "assistant", "tool_calls": [call]}
+                with patch.object(client, "complete", return_value=message):
+                    summary = campaign(client, events, {"seeds": [3101]})
+                self.assertTrue(summary["cases"][0]["baseline_failed"])
+                self.assertEqual(sum(r["kind"] == "invalid_model_output" for r in events.records), 10)
+                self.assertTrue(any(r["kind"] == "case_result" for r in events.records))
+                self.assertFalse(any(r["kind"] == "tool" for r in events.records))
+
+    def test_rejected_inspection_does_not_authorize_proposal(self):
+        board = Board(fixture(3101))
+        self.addCleanup(board.close)
+        events = Events()
+        proposal = self.filled()["proposals"]["worker-0"]
+
+        def call(name, args, id_):
+            return {"id": id_, "type": "function", "function": {"name": name, "arguments": json.dumps(args)}}
+
+        client = Mock()
+        client.complete.side_effect = [
+            {"role": "assistant", "tool_calls": [call("inspect_board", {"extra": 1}, "bad"),
+                                                  call("propose", proposal, "blocked")]},
+            {"role": "assistant", "tool_calls": [call("inspect_board", {}, "good"),
+                                                  call("inspect_board", {"extra": 1}, "bad-again"),
+                                                  call("propose", proposal, "allowed")]},
+        ]
+        history = [{"role": "system", "content": system("worker-0")}]
+        self.assertFalse(agent_turn(client, events, board, history, "worker-0", {}))
+        results = [r["data"]["result"] for r in events.records if r["kind"] == "tool"]
+        self.assertFalse(results[0]["accepted"])
+        self.assertEqual(results[1], {"accepted": False, "error": "inspect the current board before acting"})
+        self.assertIn("jobs", results[2])
+        self.assertFalse(results[3]["accepted"])
+        self.assertTrue(results[4]["accepted"])
+        self.assertEqual(board.state["proposals"], {"worker-0": proposal})
+
     def test_injection_preserves_done_work_and_distinguishes_feasibility(self):
         board = Board(self.filled());board.execute(["worker-0", "worker-1"])
         before = deepcopy(board.state)
@@ -108,13 +164,37 @@ class LiveFiveAgentTests(unittest.TestCase):
     def test_budget_stops_before_network_and_missing_cost_reserves(self):
         with patch("experiments.live_five_agent_swarm.client.load_openrouter_credentials", return_value=("fake", MODELS[0])):
             client = LiveClient(Events(), "0.000001")
-        with patch("urllib.request.urlopen") as send, self.assertRaises(RunStopped):
+        with patch("urllib.request.build_opener") as send, self.assertRaises(RunStopped):
             client.complete(MODELS[0], [{"role": "user", "content": "hi"}])
         send.assert_not_called()
         self.assertEqual(client.calls, 0)
         self.assertEqual(charge({"usage": {}}, Decimal("0.1")), (Decimal("0.1"), False))
         self.assertEqual(charge({"usage": {"cost": "NaN"}}, Decimal("0.1")), (Decimal("0.1"), False))
         self.assertEqual(charge({"usage": {"cost": 0.0001}}, Decimal("0.1")), (Decimal("0.0001"), True))
+
+    def test_credentialed_redirects_stop_without_sending_another_request(self):
+        for status in (301, 302, 303, 307, 308):
+            with self.subTest(status=status):
+                events = Events()
+                with patch("experiments.live_five_agent_swarm.client.load_openrouter_credentials",
+                           return_value=("fake", MODELS[0])):
+                    client = LiveClient(events, "10")
+                response = urllib.response.addinfourl(io.BytesIO(b""),
+                    {"location": "https://other.invalid/collect"},
+                    "https://openrouter.ai/api/v1/chat/completions", status)
+                response.msg = "Redirect"
+                with response, patch("urllib.request.HTTPSHandler.https_open", return_value=response) as send:
+                    with self.assertRaisesRegex(RunStopped, "provider request failed"):
+                        client.complete(MODELS[0], [{"role": "user", "content": "hi"}])
+                send.assert_called_once()
+                req = send.call_args.args[0]
+                self.assertEqual(req.full_url, "https://openrouter.ai/api/v1/chat/completions")
+                self.assertEqual(req.get_header("Authorization"), "Bearer fake")
+                self.assertEqual(req.get_method(), "POST")
+                self.assertEqual(client.calls, 1)
+                self.assertEqual(events.records[-1]["kind"], "api_error")
+                self.assertEqual(events.records[-1]["data"]["http_status"], status)
+                self.assertEqual(str(client.spent), events.records[0]["data"]["reserved_usd"])
 
     def test_budget_stopped_run_replays_through_cli(self):
         with tempfile.TemporaryDirectory() as td:
