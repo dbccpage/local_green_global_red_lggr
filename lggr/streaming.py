@@ -12236,6 +12236,168 @@ class StreamingDisagreementPreservingCouncilMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingBoundedDepthKInductionMonitor:
+    """Online LGGR IV / VIII bounded-depth symbolic execution & k-induction projective tower vs. reachable carrier monitor.
+
+    Wraps StreamingProjectiveTowerMonitor across 4-depth modular unrollings m_k in {2, 4, 8, 16}
+    and a reachable non-negative finite-state carrier X_reach = [0, M_reach]:
+      - Phase 1 (R^1 lim^1 Fractional Coset Obstruction — Completion Witness in Q \\ Z):
+        For 3*x + 1 == 0, the unrolling thread (1, 1, 5, 5) passes all 4 finite depths (L_frac = 1),
+        yet x_inf = -1/3 in Q \\ Z has no integer lift (Eg_frac = 0, Delta_{E,frac} = -1,
+        R1_FRACTIONAL_COMPLETION_OBSTRUCTION_LGGR).
+      - Phase 2 (Out-of-Carrier Signed Integer Completion Witness in Z \\ X_reach):
+        For 3*x + 3 == 0, the unrolling thread (1, 3, 7, 15) passes all 4 finite depths with positive
+        modular witnesses x_k = 2^k - 1 > 0 and admits global integer lift x_* = -1 in Z (L_carr = 1),
+        yet x_* = -1 not in [0, M_reach] lies outside the reachable non-negative carrier and step-lift
+        differences (2, 4, 8) diverge (Eg_carr = 0, Delta_{E,carr} = -1,
+        OUT_OF_CARRIER_COMPLETION_WITNESS_LGGR).
+      - Phase 3 (In-Carrier Stabilized Reachable Witness in X_reach = [0, M_reach]):
+        For 3*x - 6 == 0, the unrolling thread (0, 2, 2, 2) passes all 4 finite depths and stabilizes
+        at x_* = 2 in [0, M_reach] with zero step-lift differences from depth 2 onward
+        (L_reach = 1, Eg_reach = 1, Delta_{E,reach} = 0, REACHABLE_CARRIER_LIFT_COHERENT_LGGG).
+    """
+
+    def __init__(
+        self,
+        *,
+        reachable_carrier_max: int = 10,
+        scope_id: str = "streaming-bounded-depth-k-induction-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.reachable_carrier_max = exact_int(
+            reachable_carrier_max, "reachable_carrier_max", minimum=2
+        )
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_k_induction_harness(
+        self,
+        evaluation_id: str,
+        *,
+        moduli: Sequence[int] = (2, 4, 8, 16),
+        fractional_thread: Sequence[int] = (1, 1, 5, 5),
+        out_of_carrier_thread: Sequence[int] = (1, 3, 7, 15),
+        reachable_thread: Sequence[int] = (0, 2, 2, 2),
+    ) -> dict[str, Any]:
+        eid = text(evaluation_id, "evaluation_id")
+        mods = [exact_int(m, "modulus", minimum=2) for m in sequence(moduli, "moduli")]
+        f_th = [exact_int(x, "fractional_x") for x in sequence(fractional_thread, "fractional_thread")]
+        c_th = [exact_int(x, "carrier_x") for x in sequence(out_of_carrier_thread, "out_of_carrier_thread")]
+        r_th = [exact_int(x, "reachable_x") for x in sequence(reachable_thread, "reachable_thread")]
+        if len(mods) < 2 or not (len(mods) == len(f_th) == len(c_th) == len(r_th)):
+            raise ValidationError("moduli and all 3 threads must have the same length >= 2")
+
+        mon_frac = StreamingProjectiveTowerMonitor(
+            3, 1, scope_id=f"{self.scope_id}-{eid}-frac"
+        )
+        mon_carr = StreamingProjectiveTowerMonitor(
+            3, 3, scope_id=f"{self.scope_id}-{eid}-carr"
+        )
+        mon_reach = StreamingProjectiveTowerMonitor(
+            3, -6, scope_id=f"{self.scope_id}-{eid}-reach"
+        )
+
+        for idx, m_val in enumerate(mods):
+            mon_frac.record_stage(f"depth_{idx + 1}", m_val, f_th[idx])
+            mon_carr.record_stage(f"depth_{idx + 1}", m_val, c_th[idx])
+            mon_reach.record_stage(f"depth_{idx + 1}", m_val, r_th[idx])
+
+        rec_frac = mon_frac.get_receipt()
+        rec_carr = mon_carr.get_receipt()
+        rec_reach = mon_reach.get_receipt()
+
+        l_p1 = int(rec_frac["local_product_aggregator"])
+        eg_p1 = int(rec_frac["global_integral_lift_evaluator"])
+        defect_p1 = eg_p1 - l_p1
+
+        x_star_carr = rec_carr["integral_global_root"]
+        in_carr_p2 = (
+            x_star_carr is not None
+            and 0 <= int(x_star_carr) <= self.reachable_carrier_max
+        )
+        l_p2 = 1 if (int(rec_carr["local_product_aggregator"]) == 1 and int(rec_carr["global_integral_lift_evaluator"]) == 1) else 0
+        eg_p2 = 1 if (l_p2 == 1 and in_carr_p2) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        x_star_reach = rec_reach["integral_global_root"]
+        in_carr_p3 = (
+            x_star_reach is not None
+            and 0 <= int(x_star_reach) <= self.reachable_carrier_max
+        )
+        tail_stabilized = (r_th[-1] - r_th[-2] == 0)
+        l_p3 = 1 if (int(rec_reach["local_product_aggregator"]) == 1 and int(rec_reach["global_integral_lift_evaluator"]) == 1) else 0
+        eg_p3 = 1 if (l_p3 == 1 and in_carr_p3 and tail_stabilized) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "unrolling_depths": len(mods),
+            "reachable_carrier_max": self.reachable_carrier_max,
+            "phase_1_rational_root": rec_frac["rational_completion_root"],
+            "phase_1_integral_root": rec_frac["integral_global_root"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "R1_FRACTIONAL_COMPLETION_OBSTRUCTION_LGGR" if defect_p1 == -1 else "REACHABLE_CARRIER_LIFT_COHERENT_LGGG",
+            "phase_2_integral_root": x_star_carr,
+            "phase_2_in_reachable_carrier": in_carr_p2,
+            "phase_2_tail_step_difference": c_th[-1] - c_th[-2],
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "OUT_OF_CARRIER_COMPLETION_WITNESS_LGGR" if defect_p2 == -1 else "REACHABLE_CARRIER_LIFT_COHERENT_LGGG",
+            "phase_3_integral_root": x_star_reach,
+            "phase_3_in_reachable_carrier": in_carr_p3,
+            "phase_3_tail_step_difference": r_th[-1] - r_th[-2],
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "REACHABLE_CARRIER_LIFT_COHERENT_LGGG" if eg_p3 == 1 else "OUT_OF_CARRIER_COMPLETION_WITNESS_LGGR",
+            "tower_fractional_receipt": rec_frac,
+            "tower_out_of_carrier_receipt": rec_carr,
+            "tower_reachable_receipt": rec_reach,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one k-induction evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_frac_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_carr_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        out_of_carrier_coherence_rate = Fraction(n - p2_carr_fail, n)
+        reachable_carrier_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_frac_fail == n and p2_carr_fail == n:
+            status = "REACHABLE_CARRIER_LIFT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "OUT_OF_CARRIER_COMPLETION_WITNESS_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_bounded_depth_k_induction.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_fractional_obstruction_count": p1_frac_fail,
+            "phase_2_out_of_carrier_obstruction_count": p2_carr_fail,
+            "phase_3_reachable_carrier_coherent_count": p3_coherent,
+            "out_of_carrier_coherence_rate": out_of_carrier_coherence_rate,
+            "reachable_carrier_coherence_rate": reachable_carrier_coherence_rate,
+            "reachable_carrier_coherence_gain": (
+                reachable_carrier_coherence_rate - out_of_carrier_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
