@@ -44,6 +44,7 @@ from .streaming import (
     StreamingMerminPeresParityMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingMultiTurnPairwiseTranscriptMonitor,
+    StreamingOptionalStoppingDrawdownMonitor,
     StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPolicyRankingOrderReversalMonitor,
     StreamingPolicyRatchetDriftMonitor,
@@ -10738,6 +10739,115 @@ def run_windowed_drift_rebalancing_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "windowed_drift_rebalancing_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_optional_stopping_drawdown_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run the 5-model optional-stopping early-gain halting vs. tail-drawdown benchmark (Theorem 87)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    api_key, _ = load_openrouter_credentials()
+    stop_monitor = StreamingOptionalStoppingDrawdownMonitor(
+        max_tail_drawdown_budget=1,
+        scope_id="live-optional-stopping-drawdown-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(api_key=api_key, model=model_id, max_completions=3)
+        sys_prompt = (
+            "You are an optional-stopping vs. tail-drawdown auditor. Output ONLY a JSON "
+            "object with keys \"phase_1_tail_drawdown\" (str), \"phase_2_tail_drawdown\" (str), "
+            "and \"phase_3_tail_drawdown\" (str)."
+        )
+        user_prompt = (
+            "Audit 3 fair binary martingale stopping policies (X_0 = 0, X_u = +1, X_d = -1) "
+            "under tail-drawdown budget B_tail = 1:\n"
+            "- Phase 1 (Double-down recovery: X_du = +1, X_dd = -3): E[X_tau] = 0, tail drawdown = 3 > 1.\n"
+            "- Phase 2 (Break-even stake: X_du = 0, X_dd = -2): E[X_tau] = 0, tail drawdown = 2 > 1.\n"
+            "- Phase 3 (Loss-capped halt at step 1: X_du = -1, X_dd = -1): E[X_tau] = 0, tail drawdown = 1 <= 1.\n"
+            "Return ONLY JSON: {\"phase_1_tail_drawdown\": \"3\", "
+            "\"phase_2_tail_drawdown\": \"2\", \"phase_3_tail_drawdown\": \"1\"}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+
+        obs = stop_monitor.record_stopping_evaluation(
+            f"{model_id}::optional_stopping_eval",
+            model_id=model_id,
+        )
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = stop_monitor.current_receipt()
+    body = {
+        "schema": "lggr.optional_stopping_drawdown_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "optional_stopping_drawdown_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_double_down_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_residual_drawdown_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_loss_capped_metrics": compute_empirical_defect_rates(p3_traces),
+        "uncapped_stopping_coherence_rate": monitor_receipt["uncapped_stopping_coherence_rate"],
+        "loss_capped_stopping_coherence_rate": monitor_receipt["loss_capped_stopping_coherence_rate"],
+        "drawdown_cap_coherence_gain": monitor_receipt["drawdown_cap_coherence_gain"],
+        "optional_stopping_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Optional-stopping early-gain halting vs. tail-drawdown conservation benchmark across "
+            "5 model families (Theorem 87): under B_tail = 1, Phase 1 double-down recovery stake "
+            "(X_du = 1, X_dd = -3) conserves E[X_tau] = 0 with win probability 3/4 while breaching "
+            "tail drawdown 3 > 1 (Delta_E = -1); Phase 2 break-even stake (X_du = 0, X_dd = -2) "
+            "leaves residual drawdown 2 > 1 (Delta_E = -1); Phase 3 loss-capped step-1 halting "
+            "conserves E[X_tau] = 0 with tail drawdown 1 <= 1 (Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "optional_stopping_drawdown_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

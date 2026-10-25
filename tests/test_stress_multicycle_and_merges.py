@@ -58,6 +58,7 @@ from lggr.streaming import (
     StreamingMayerVietorisReconciliationMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingMultiTurnPairwiseTranscriptMonitor,
+    StreamingOptionalStoppingDrawdownMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPathKernelMonitor,
@@ -4532,6 +4533,45 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["unrebalanced_coherence_rate"], "0")
         self.assertEqual(receipt["periodic_rebalanced_coherence_rate"], "1")
         self.assertEqual(receipt["horizon_rebalancing_coherence_gain"], "1")
+
+    def test_optional_stopping_early_gain_skew_vs_tail_drawdown_cap(self) -> None:
+        """Verify Theorem 87: optional-stopping early-gain halting vs. tail-drawdown cap."""
+        mon = StreamingOptionalStoppingDrawdownMonitor(
+            max_tail_drawdown_budget=1,
+            scope_id="unit-optional-stopping-drawdown-scope",
+        )
+        obs = mon.record_stopping_evaluation(
+            "optional-stopping-eval-01",
+        )
+        self.assertEqual(obs["phase_1_stopped_expectation"], "0")
+        self.assertEqual(obs["phase_1_win_probability"], "3/4")
+        self.assertEqual(obs["phase_1_tail_drawdown"], "3")
+        self.assertEqual(obs["phase_2_stopped_expectation"], "0")
+        self.assertEqual(obs["phase_2_tail_drawdown"], "2")
+        self.assertEqual(obs["phase_3_stopped_expectation"], "0")
+        self.assertEqual(obs["phase_3_tail_drawdown"], "1")
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "RESIDUAL_TAIL_DRAWDOWN_BREACH_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "MARTINGALE_STOPPING_WITHIN_DRAWDOWN_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["uncapped_stopping_coherence_rate"], "0")
+        self.assertEqual(receipt["loss_capped_stopping_coherence_rate"], "1")
+        self.assertEqual(receipt["drawdown_cap_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

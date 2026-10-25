@@ -103,3 +103,4 @@ import LggrVIII
 #print axioms LggrVIII.mayer_vietoris_disconnected_overlap_and_coboundary_reconciliation
 #print axioms LggrVIII.asynchronous_replay_order_prefix_peak_envelope_and_robustness
 #print axioms LggrVIII.sliding_window_truncation_vs_horizon_rebalancing_audit
+#print axioms LggrVIII.optional_stopping_early_gain_skew_vs_tail_drawdown_cap
