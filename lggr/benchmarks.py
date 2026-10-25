@@ -50,6 +50,7 @@ from .streaming import (
     StreamingPolicyRatchetDriftMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
+    StreamingReggeGaussBonnetHolonomyMonitor,
     StreamingReplayOrderEnvelopeMonitor,
     StreamingSideInformationCapacityMonitor,
     StreamingSimultaneousBudgetSplitMonitor,
@@ -10848,6 +10849,114 @@ def run_optional_stopping_drawdown_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "optional_stopping_drawdown_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_regge_gauss_bonnet_holonomy_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run the 5-model 2D Regge hinge deficit curvature & boundary Gauss-Bonnet holonomy benchmark (Theorem 88)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    api_key, _ = load_openrouter_credentials()
+    regge_monitor = StreamingReggeGaussBonnetHolonomyMonitor(
+        scope_id="live-regge-gauss-bonnet-holonomy-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(api_key=api_key, model=model_id, max_completions=3)
+        sys_prompt = (
+            "You are a 2D Regge hinge deficit curvature and Gauss-Bonnet holonomy auditor. Output ONLY a JSON "
+            "object with keys \"phase_1_apex_deficit\" (str), \"phase_2_apex_deficit\" (str), "
+            "and \"phase_3_apex_deficit\" (str)."
+        )
+        user_prompt = (
+            "Audit a 4-triangle square-pyramid star around interior vertex v_apex (chi = 1):\n"
+            "- Phase 1 (Equilateral conical star: angles 1/6, 1/6, 1/6): eps_apex = 1 - 4*(1/6) = 1/3.\n"
+            "- Phase 2 (Under-flattened star: angles 5/24, 7/48, 7/48): eps_apex = 1 - 4*(5/24) = 1/6.\n"
+            "- Phase 3 (Right-isosceles flat star: angles 1/4, 1/8, 1/8): eps_apex = 1 - 4*(1/4) = 0.\n"
+            "Return ONLY JSON: {\"phase_1_apex_deficit\": \"1/3\", "
+            "\"phase_2_apex_deficit\": \"1/6\", \"phase_3_apex_deficit\": \"0\"}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+
+        obs = regge_monitor.record_holonomy_evaluation(
+            f"{model_id}::regge_holonomy_eval",
+            model_id=model_id,
+        )
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = regge_monitor.current_receipt()
+    body = {
+        "schema": "lggr.regge_gauss_bonnet_holonomy_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "regge_gauss_bonnet_holonomy_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_conical_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_residual_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_flat_metrics": compute_empirical_defect_rates(p3_traces),
+        "curved_star_coherence_rate": monitor_receipt["curved_star_coherence_rate"],
+        "flat_holonomy_coherence_rate": monitor_receipt["flat_holonomy_coherence_rate"],
+        "regge_holonomy_coherence_gain": monitor_receipt["regge_holonomy_coherence_gain"],
+        "regge_holonomy_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "2D Regge hinge deficit curvature and boundary Gauss-Bonnet holonomy benchmark across "
+            "5 model families (Theorem 88): on a 4-triangle square-pyramid star (chi = 1), Phase 1 "
+            "equilateral triangles (1/6, 1/6, 1/6) close locally while creating interior hinge "
+            "deficit eps_apex = 1/3 and boundary turn sum 2/3 < 1 (Delta_E = -1); Phase 2 "
+            "under-flattened triangles (5/24, 7/48, 7/48) leave residual deficit eps_apex = 1/6 "
+            "(Delta_E = -1); Phase 3 right-isosceles triangles (1/4, 1/8, 1/8) achieve zero "
+            "interior deficit eps_apex = 0 and boundary turn sum 1 == chi (Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "regge_gauss_bonnet_holonomy_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

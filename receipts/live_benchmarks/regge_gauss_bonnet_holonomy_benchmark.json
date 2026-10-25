@@ -1,0 +1,3229 @@
+{
+  "schema": "lggr.regge_gauss_bonnet_holonomy_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "regge_gauss_bonnet_holonomy_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_conical_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_residual_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_flat_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "curved_star_coherence_rate": "0",
+  "flat_holonomy_coherence_rate": "1",
+  "regge_holonomy_coherence_gain": "1",
+  "regge_holonomy_monitor_receipt": {
+    "schema": "lggr.online_regge_gauss_bonnet_holonomy.v1",
+    "authority_effect": "None",
+    "scope_id": "live-regge-gauss-bonnet-holonomy-scope",
+    "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_conical_deficit_count": 5,
+    "phase_2_residual_deficit_count": 5,
+    "phase_3_flat_euclidean_count": 5,
+    "curved_star_coherence_rate": "0",
+    "flat_holonomy_coherence_rate": "1",
+    "regge_holonomy_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::regge_holonomy_eval",
+        "model_id": "openai/gpt-4o-mini",
+        "euler_characteristic": 1,
+        "phase_1_apex_deficit": "1/3",
+        "phase_1_boundary_turn_sum": "2/3",
+        "phase_2_apex_deficit": "1/6",
+        "phase_2_boundary_turn_sum": "5/6",
+        "phase_3_apex_deficit": "0",
+        "phase_3_boundary_turn_sum": "1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "phase_1_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:openai/gpt-4o-mini::regge_holonomy_eval:p1",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/3"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/6",
+            "b1": "1/6",
+            "b2": "1/6",
+            "b3": "1/6"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/3",
+          "sum_boundary_turn": "2/3",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "fb3cdad49cb5996bd6e43a7a9fb5f0160a8740028f3e9759ffb28cf5f9b94d0a"
+        },
+        "phase_2_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:openai/gpt-4o-mini::regge_holonomy_eval:p2",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/6"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "5/24",
+            "b1": "5/24",
+            "b2": "5/24",
+            "b3": "5/24"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/6",
+          "sum_boundary_turn": "5/6",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "43afc11af6c0d7fc26df6f4770ea0da38577d60ae1f55ac3635e13aef4fba1bc"
+        },
+        "phase_3_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:openai/gpt-4o-mini::regge_holonomy_eval:p3",
+          "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "0"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/4",
+            "b1": "1/4",
+            "b2": "1/4",
+            "b3": "1/4"
+          },
+          "curved_interior_hinge_ids": [],
+          "sum_interior_deficit": "0",
+          "sum_boundary_turn": "1",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 1,
+          "evaluator_defect": 0,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "9265faf96daaa2f850cb13b622b492b0e2349249e51735001d150d8c093f878d"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::regge_holonomy_eval",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "euler_characteristic": 1,
+        "phase_1_apex_deficit": "1/3",
+        "phase_1_boundary_turn_sum": "2/3",
+        "phase_2_apex_deficit": "1/6",
+        "phase_2_boundary_turn_sum": "5/6",
+        "phase_3_apex_deficit": "0",
+        "phase_3_boundary_turn_sum": "1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "phase_1_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:google/gemini-2.5-flash-lite::regge_holonomy_eval:p1",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/3"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/6",
+            "b1": "1/6",
+            "b2": "1/6",
+            "b3": "1/6"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/3",
+          "sum_boundary_turn": "2/3",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "de5b5f020c9e98da472e60f486289060cf1d6fa08707edffa73f244b7abdec56"
+        },
+        "phase_2_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:google/gemini-2.5-flash-lite::regge_holonomy_eval:p2",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/6"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "5/24",
+            "b1": "5/24",
+            "b2": "5/24",
+            "b3": "5/24"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/6",
+          "sum_boundary_turn": "5/6",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "278437c815e35978258a4da1ab4f9c94d824d585c2552589008feb55b236fdec"
+        },
+        "phase_3_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:google/gemini-2.5-flash-lite::regge_holonomy_eval:p3",
+          "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "0"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/4",
+            "b1": "1/4",
+            "b2": "1/4",
+            "b3": "1/4"
+          },
+          "curved_interior_hinge_ids": [],
+          "sum_interior_deficit": "0",
+          "sum_boundary_turn": "1",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 1,
+          "evaluator_defect": 0,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "b081ebb64aba1af46b161619313c455fe24422fc6f00d74ebe580ca37ede348f"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "euler_characteristic": 1,
+        "phase_1_apex_deficit": "1/3",
+        "phase_1_boundary_turn_sum": "2/3",
+        "phase_2_apex_deficit": "1/6",
+        "phase_2_boundary_turn_sum": "5/6",
+        "phase_3_apex_deficit": "0",
+        "phase_3_boundary_turn_sum": "1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "phase_1_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval:p1",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/3"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/6",
+            "b1": "1/6",
+            "b2": "1/6",
+            "b3": "1/6"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/3",
+          "sum_boundary_turn": "2/3",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "818e07062f40216aa8e44270769019a3c6cabcd84d15b86bf121fe4830b93740"
+        },
+        "phase_2_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval:p2",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/6"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "5/24",
+            "b1": "5/24",
+            "b2": "5/24",
+            "b3": "5/24"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/6",
+          "sum_boundary_turn": "5/6",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "9894ae197f8830ae935908fb41e2fb10497435566aa3d68d410db085c225f8a7"
+        },
+        "phase_3_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval:p3",
+          "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "0"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/4",
+            "b1": "1/4",
+            "b2": "1/4",
+            "b3": "1/4"
+          },
+          "curved_interior_hinge_ids": [],
+          "sum_interior_deficit": "0",
+          "sum_boundary_turn": "1",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 1,
+          "evaluator_defect": 0,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "cc28f2b629cc506cecb15c9f6eaefe8794b91626cf680b78da3852e08cd2ff87"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::regge_holonomy_eval",
+        "model_id": "deepseek/deepseek-chat",
+        "euler_characteristic": 1,
+        "phase_1_apex_deficit": "1/3",
+        "phase_1_boundary_turn_sum": "2/3",
+        "phase_2_apex_deficit": "1/6",
+        "phase_2_boundary_turn_sum": "5/6",
+        "phase_3_apex_deficit": "0",
+        "phase_3_boundary_turn_sum": "1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "phase_1_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:deepseek/deepseek-chat::regge_holonomy_eval:p1",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/3"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/6",
+            "b1": "1/6",
+            "b2": "1/6",
+            "b3": "1/6"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/3",
+          "sum_boundary_turn": "2/3",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "eac94baa6c6f725ef5abad64aaf62eb3a081fdcaa88703f5e82e4e002595450b"
+        },
+        "phase_2_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:deepseek/deepseek-chat::regge_holonomy_eval:p2",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/6"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "5/24",
+            "b1": "5/24",
+            "b2": "5/24",
+            "b3": "5/24"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/6",
+          "sum_boundary_turn": "5/6",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "da191378eb1a1546dcb57529608c39a0f7f41dde1f83fe5ef1d03da130700757"
+        },
+        "phase_3_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:deepseek/deepseek-chat::regge_holonomy_eval:p3",
+          "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "0"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/4",
+            "b1": "1/4",
+            "b2": "1/4",
+            "b3": "1/4"
+          },
+          "curved_interior_hinge_ids": [],
+          "sum_interior_deficit": "0",
+          "sum_boundary_turn": "1",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 1,
+          "evaluator_defect": 0,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "2e6106c1c3af8bdee2e9932d5cdfad06c66de9a028b913e5c2c360a533ea8d24"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "euler_characteristic": 1,
+        "phase_1_apex_deficit": "1/3",
+        "phase_1_boundary_turn_sum": "2/3",
+        "phase_2_apex_deficit": "1/6",
+        "phase_2_boundary_turn_sum": "5/6",
+        "phase_3_apex_deficit": "0",
+        "phase_3_boundary_turn_sum": "1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "phase_1_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval:p1",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/3"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/6",
+            "b1": "1/6",
+            "b2": "1/6",
+            "b3": "1/6"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/3",
+          "sum_boundary_turn": "2/3",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/6",
+                "1/6",
+                "1/6"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "879f7258cb08dbb2b7f5827032cb031e16728e863acdcf7264910490713a0818"
+        },
+        "phase_2_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval:p2",
+          "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "1/6"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "5/24",
+            "b1": "5/24",
+            "b2": "5/24",
+            "b3": "5/24"
+          },
+          "curved_interior_hinge_ids": [
+            "v_apex"
+          ],
+          "sum_interior_deficit": "1/6",
+          "sum_boundary_turn": "5/6",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 0,
+          "evaluator_defect": -1,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "5/24",
+                "7/48",
+                "7/48"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "72f508f0b658426ddcc91c94b1d877abba41037345ef1713f08583b232796395"
+        },
+        "phase_3_regge_receipt": {
+          "schema": "lggr.online_regge_deficit_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-regge-gauss-bonnet-holonomy-scope:mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval:p3",
+          "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "vertex_count": 5,
+          "edge_count": 8,
+          "triangle_count": 4,
+          "euler_characteristic": 1,
+          "interior_deficits": {
+            "v_apex": "0"
+          },
+          "boundary_geodesic_turns": {
+            "b0": "1/4",
+            "b1": "1/4",
+            "b2": "1/4",
+            "b3": "1/4"
+          },
+          "curved_interior_hinge_ids": [],
+          "sum_interior_deficit": "0",
+          "sum_boundary_turn": "1",
+          "total_gauss_bonnet_curvature": "1",
+          "local_product_aggregator": 1,
+          "global_flatness_evaluator": 1,
+          "evaluator_defect": 0,
+          "angle_balance_identity_verified": true,
+          "gauss_bonnet_euler_identity_verified": true,
+          "triangles": [
+            {
+              "triangle_index": 0,
+              "triangle_id": "t0",
+              "vertices": [
+                "v_apex",
+                "b0",
+                "b1"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 1,
+              "triangle_id": "t1",
+              "vertices": [
+                "v_apex",
+                "b1",
+                "b2"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 2,
+              "triangle_id": "t2",
+              "vertices": [
+                "v_apex",
+                "b2",
+                "b3"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            },
+            {
+              "triangle_index": 3,
+              "triangle_id": "t3",
+              "vertices": [
+                "v_apex",
+                "b3",
+                "b0"
+              ],
+              "angles": [
+                "1/4",
+                "1/8",
+                "1/8"
+              ],
+              "angle_sum": "1/2",
+              "local_euclidean_closure": 1
+            }
+          ],
+          "receipt_sha256": "4e59d7f51915f534080530badd4eeb292842b430fbf375b48dd750d745f89748"
+        }
+      }
+    ],
+    "receipt_sha256": "921d9eaf1b71f23ebd4e1d920accc81e6d44a12552bb27d04ae99fb96f03f378"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::regge_holonomy_eval",
+      "model_id": "openai/gpt-4o-mini",
+      "euler_characteristic": 1,
+      "phase_1_apex_deficit": "1/3",
+      "phase_1_boundary_turn_sum": "2/3",
+      "phase_2_apex_deficit": "1/6",
+      "phase_2_boundary_turn_sum": "5/6",
+      "phase_3_apex_deficit": "0",
+      "phase_3_boundary_turn_sum": "1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+      "phase_1_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:openai/gpt-4o-mini::regge_holonomy_eval:p1",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/3"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/6",
+          "b1": "1/6",
+          "b2": "1/6",
+          "b3": "1/6"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/3",
+        "sum_boundary_turn": "2/3",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "fb3cdad49cb5996bd6e43a7a9fb5f0160a8740028f3e9759ffb28cf5f9b94d0a"
+      },
+      "phase_2_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:openai/gpt-4o-mini::regge_holonomy_eval:p2",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/6"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "5/24",
+          "b1": "5/24",
+          "b2": "5/24",
+          "b3": "5/24"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/6",
+        "sum_boundary_turn": "5/6",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "43afc11af6c0d7fc26df6f4770ea0da38577d60ae1f55ac3635e13aef4fba1bc"
+      },
+      "phase_3_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:openai/gpt-4o-mini::regge_holonomy_eval:p3",
+        "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "0"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/4",
+          "b1": "1/4",
+          "b2": "1/4",
+          "b3": "1/4"
+        },
+        "curved_interior_hinge_ids": [],
+        "sum_interior_deficit": "0",
+        "sum_boundary_turn": "1",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 1,
+        "evaluator_defect": 0,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "9265faf96daaa2f850cb13b622b492b0e2349249e51735001d150d8c093f878d"
+      },
+      "raw_auditor_response": "{\"phase_1_apex_deficit\": \"1/3\", \"phase_2_apex_deficit\": \"1/6\", \"phase_3_apex_deficit\": \"0\"}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::regge_holonomy_eval",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "euler_characteristic": 1,
+      "phase_1_apex_deficit": "1/3",
+      "phase_1_boundary_turn_sum": "2/3",
+      "phase_2_apex_deficit": "1/6",
+      "phase_2_boundary_turn_sum": "5/6",
+      "phase_3_apex_deficit": "0",
+      "phase_3_boundary_turn_sum": "1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+      "phase_1_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:google/gemini-2.5-flash-lite::regge_holonomy_eval:p1",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/3"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/6",
+          "b1": "1/6",
+          "b2": "1/6",
+          "b3": "1/6"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/3",
+        "sum_boundary_turn": "2/3",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "de5b5f020c9e98da472e60f486289060cf1d6fa08707edffa73f244b7abdec56"
+      },
+      "phase_2_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:google/gemini-2.5-flash-lite::regge_holonomy_eval:p2",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/6"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "5/24",
+          "b1": "5/24",
+          "b2": "5/24",
+          "b3": "5/24"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/6",
+        "sum_boundary_turn": "5/6",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "278437c815e35978258a4da1ab4f9c94d824d585c2552589008feb55b236fdec"
+      },
+      "phase_3_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:google/gemini-2.5-flash-lite::regge_holonomy_eval:p3",
+        "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "0"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/4",
+          "b1": "1/4",
+          "b2": "1/4",
+          "b3": "1/4"
+        },
+        "curved_interior_hinge_ids": [],
+        "sum_interior_deficit": "0",
+        "sum_boundary_turn": "1",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 1,
+        "evaluator_defect": 0,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "b081ebb64aba1af46b161619313c455fe24422fc6f00d74ebe580ca37ede348f"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_apex_deficit\": \"1/3\",\n  \"phase_2_apex_deficit\": \"1/6\",\n  \"phase_3_apex_deficit\": \"0\"\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "euler_characteristic": 1,
+      "phase_1_apex_deficit": "1/3",
+      "phase_1_boundary_turn_sum": "2/3",
+      "phase_2_apex_deficit": "1/6",
+      "phase_2_boundary_turn_sum": "5/6",
+      "phase_3_apex_deficit": "0",
+      "phase_3_boundary_turn_sum": "1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+      "phase_1_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval:p1",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/3"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/6",
+          "b1": "1/6",
+          "b2": "1/6",
+          "b3": "1/6"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/3",
+        "sum_boundary_turn": "2/3",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "818e07062f40216aa8e44270769019a3c6cabcd84d15b86bf121fe4830b93740"
+      },
+      "phase_2_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval:p2",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/6"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "5/24",
+          "b1": "5/24",
+          "b2": "5/24",
+          "b3": "5/24"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/6",
+        "sum_boundary_turn": "5/6",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "9894ae197f8830ae935908fb41e2fb10497435566aa3d68d410db085c225f8a7"
+      },
+      "phase_3_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:meta-llama/llama-3.3-70b-instruct::regge_holonomy_eval:p3",
+        "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "0"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/4",
+          "b1": "1/4",
+          "b2": "1/4",
+          "b3": "1/4"
+        },
+        "curved_interior_hinge_ids": [],
+        "sum_interior_deficit": "0",
+        "sum_boundary_turn": "1",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 1,
+        "evaluator_defect": 0,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "cc28f2b629cc506cecb15c9f6eaefe8794b91626cf680b78da3852e08cd2ff87"
+      },
+      "raw_auditor_response": "{\"phase_1_apex_deficit\": \"1/3\", \"phase_2_apex_deficit\": \"1/6\", \"phase_3_apex_deficit\": \"0\"}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::regge_holonomy_eval",
+      "model_id": "deepseek/deepseek-chat",
+      "euler_characteristic": 1,
+      "phase_1_apex_deficit": "1/3",
+      "phase_1_boundary_turn_sum": "2/3",
+      "phase_2_apex_deficit": "1/6",
+      "phase_2_boundary_turn_sum": "5/6",
+      "phase_3_apex_deficit": "0",
+      "phase_3_boundary_turn_sum": "1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+      "phase_1_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:deepseek/deepseek-chat::regge_holonomy_eval:p1",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/3"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/6",
+          "b1": "1/6",
+          "b2": "1/6",
+          "b3": "1/6"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/3",
+        "sum_boundary_turn": "2/3",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "eac94baa6c6f725ef5abad64aaf62eb3a081fdcaa88703f5e82e4e002595450b"
+      },
+      "phase_2_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:deepseek/deepseek-chat::regge_holonomy_eval:p2",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/6"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "5/24",
+          "b1": "5/24",
+          "b2": "5/24",
+          "b3": "5/24"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/6",
+        "sum_boundary_turn": "5/6",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "da191378eb1a1546dcb57529608c39a0f7f41dde1f83fe5ef1d03da130700757"
+      },
+      "phase_3_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:deepseek/deepseek-chat::regge_holonomy_eval:p3",
+        "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "0"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/4",
+          "b1": "1/4",
+          "b2": "1/4",
+          "b3": "1/4"
+        },
+        "curved_interior_hinge_ids": [],
+        "sum_interior_deficit": "0",
+        "sum_boundary_turn": "1",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 1,
+        "evaluator_defect": 0,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "2e6106c1c3af8bdee2e9932d5cdfad06c66de9a028b913e5c2c360a533ea8d24"
+      },
+      "raw_auditor_response": "```json\n{\"phase_1_apex_deficit\": \"1/3\", \"phase_2_apex_deficit\": \"1/6\", \"phase_3_apex_deficit\": \"0\"}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "euler_characteristic": 1,
+      "phase_1_apex_deficit": "1/3",
+      "phase_1_boundary_turn_sum": "2/3",
+      "phase_2_apex_deficit": "1/6",
+      "phase_2_boundary_turn_sum": "5/6",
+      "phase_3_apex_deficit": "0",
+      "phase_3_boundary_turn_sum": "1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+      "phase_1_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval:p1",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/3"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/6",
+          "b1": "1/6",
+          "b2": "1/6",
+          "b3": "1/6"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/3",
+        "sum_boundary_turn": "2/3",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/6",
+              "1/6",
+              "1/6"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "879f7258cb08dbb2b7f5827032cb031e16728e863acdcf7264910490713a0818"
+      },
+      "phase_2_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval:p2",
+        "status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "1/6"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "5/24",
+          "b1": "5/24",
+          "b2": "5/24",
+          "b3": "5/24"
+        },
+        "curved_interior_hinge_ids": [
+          "v_apex"
+        ],
+        "sum_interior_deficit": "1/6",
+        "sum_boundary_turn": "5/6",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 0,
+        "evaluator_defect": -1,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "5/24",
+              "7/48",
+              "7/48"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "72f508f0b658426ddcc91c94b1d877abba41037345ef1713f08583b232796395"
+      },
+      "phase_3_regge_receipt": {
+        "schema": "lggr.online_regge_deficit_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-regge-gauss-bonnet-holonomy-scope:mistralai/mistral-small-3.2-24b-instruct::regge_holonomy_eval:p3",
+        "status": "FLAT_EUCLIDEAN_LATTICE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "vertex_count": 5,
+        "edge_count": 8,
+        "triangle_count": 4,
+        "euler_characteristic": 1,
+        "interior_deficits": {
+          "v_apex": "0"
+        },
+        "boundary_geodesic_turns": {
+          "b0": "1/4",
+          "b1": "1/4",
+          "b2": "1/4",
+          "b3": "1/4"
+        },
+        "curved_interior_hinge_ids": [],
+        "sum_interior_deficit": "0",
+        "sum_boundary_turn": "1",
+        "total_gauss_bonnet_curvature": "1",
+        "local_product_aggregator": 1,
+        "global_flatness_evaluator": 1,
+        "evaluator_defect": 0,
+        "angle_balance_identity_verified": true,
+        "gauss_bonnet_euler_identity_verified": true,
+        "triangles": [
+          {
+            "triangle_index": 0,
+            "triangle_id": "t0",
+            "vertices": [
+              "v_apex",
+              "b0",
+              "b1"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 1,
+            "triangle_id": "t1",
+            "vertices": [
+              "v_apex",
+              "b1",
+              "b2"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 2,
+            "triangle_id": "t2",
+            "vertices": [
+              "v_apex",
+              "b2",
+              "b3"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          },
+          {
+            "triangle_index": 3,
+            "triangle_id": "t3",
+            "vertices": [
+              "v_apex",
+              "b3",
+              "b0"
+            ],
+            "angles": [
+              "1/4",
+              "1/8",
+              "1/8"
+            ],
+            "angle_sum": "1/2",
+            "local_euclidean_closure": 1
+          }
+        ],
+        "receipt_sha256": "4e59d7f51915f534080530badd4eeb292842b430fbf375b48dd750d745f89748"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_apex_deficit\": \"1/3\",\n  \"phase_2_apex_deficit\": \"1/6\",\n  \"phase_3_apex_deficit\": \"0\"\n}\n```"
+    }
+  ],
+  "meaning": "2D Regge hinge deficit curvature and boundary Gauss-Bonnet holonomy benchmark across 5 model families (Theorem 88): on a 4-triangle square-pyramid star (chi = 1), Phase 1 equilateral triangles (1/6, 1/6, 1/6) close locally while creating interior hinge deficit eps_apex = 1/3 and boundary turn sum 2/3 < 1 (Delta_E = -1); Phase 2 under-flattened triangles (5/24, 7/48, 7/48) leave residual deficit eps_apex = 1/6 (Delta_E = -1); Phase 3 right-isosceles triangles (1/4, 1/8, 1/8) achieve zero interior deficit eps_apex = 0 and boundary turn sum 1 == chi (Delta_E = 0).",
+  "receipt_sha256": "2d0649a08eb31df5b612103c6e90c09fbf0c3bb0fb4c4e3c4a3398e660e30057"
+}

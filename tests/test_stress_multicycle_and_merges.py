@@ -70,6 +70,7 @@ from lggr.streaming import (
     StreamingPullbackSquareMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingReggeDeficitCurvatureMonitor,
+    StreamingReggeGaussBonnetHolonomyMonitor,
     StreamingReplayOrderEnvelopeMonitor,
     StreamingReplayOrderMonitor,
     StreamingSimplicialCupMonitor,
@@ -4572,6 +4573,44 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["uncapped_stopping_coherence_rate"], "0")
         self.assertEqual(receipt["loss_capped_stopping_coherence_rate"], "1")
         self.assertEqual(receipt["drawdown_cap_coherence_gain"], "1")
+
+    def test_regge_hinge_deficit_curvature_and_boundary_gauss_bonnet_holonomy(self) -> None:
+        """Verify Theorem 88: 2D Regge hinge deficit curvature and boundary Gauss-Bonnet holonomy."""
+        mon = StreamingReggeGaussBonnetHolonomyMonitor(
+            scope_id="unit-regge-gauss-bonnet-holonomy-scope",
+        )
+        obs = mon.record_holonomy_evaluation(
+            "regge-holonomy-eval-01",
+        )
+        self.assertEqual(obs["euler_characteristic"], 1)
+        self.assertEqual(obs["phase_1_apex_deficit"], "1/3")
+        self.assertEqual(obs["phase_1_boundary_turn_sum"], "2/3")
+        self.assertEqual(obs["phase_2_apex_deficit"], "1/6")
+        self.assertEqual(obs["phase_2_boundary_turn_sum"], "5/6")
+        self.assertEqual(obs["phase_3_apex_deficit"], "0")
+        self.assertEqual(obs["phase_3_boundary_turn_sum"], "1")
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "FLAT_EUCLIDEAN_LATTICE_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "FLAT_EUCLIDEAN_LATTICE_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["curved_star_coherence_rate"], "0")
+        self.assertEqual(receipt["flat_holonomy_coherence_rate"], "1")
+        self.assertEqual(receipt["regge_holonomy_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

@@ -14908,6 +14908,154 @@ class StreamingOptionalStoppingDrawdownMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingReggeGaussBonnetHolonomyMonitor:
+    """Online 2D Regge hinge deficit curvature & boundary Gauss-Bonnet holonomy monitor (Theorem 88).
+
+    Audits a 4-triangle square-pyramid star around interior vertex `v_apex` with boundary
+    vertices `b0, b1, b2, b3` under `StreamingReggeDeficitCurvatureMonitor`:
+      1. Phase 1 (Equilateral conical pyramid star: angles (1/6, 1/6, 1/6) per triangle):
+         Every triangle closes locally (sum = 1/2, L = 1), yet interior hinge deficit is
+         eps_apex = 1 - 4*(1/6) = 1/3 != 0 and boundary turn sum is 2/3 < 1
+         (`REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR`, Eg = 0, Delta_E = -1).
+      2. Phase 2 (Under-flattened star: angles (5/24, 7/48, 7/48) per triangle):
+         Every triangle closes locally (sum = 1/2, L = 1), yet residual interior deficit is
+         eps_apex = 1 - 4*(5/24) = 1/6 != 0 and boundary turn sum is 5/6 < 1
+         (`RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR`, Eg = 0, Delta_E = -1).
+      3. Phase 3 (Right-isosceles flat Euclidean star: angles (1/4, 1/8, 1/8) per triangle):
+         Every triangle closes locally, interior deficit is eps_apex = 1 - 4*(1/4) = 0,
+         and boundary turn sum is 1 == chi(K) (`FLAT_EUCLIDEAN_LATTICE_LGGG`, L = 1, Eg = 1, Delta_E = 0).
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-regge-gauss-bonnet-holonomy-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def _run_four_triangle_star(
+        self,
+        eval_id: str,
+        phase_tag: str,
+        tri_angles: Sequence[Fraction | int | str],
+    ) -> dict[str, Any]:
+        mon = StreamingReggeDeficitCurvatureMonitor(
+            interior_vertices=["v_apex"],
+            boundary_vertices=["b0", "b1", "b2", "b3"],
+            scope_id=f"{self.scope_id}:{eval_id}:{phase_tag}",
+        )
+        ang = [rational(a) for a in sequence(tri_angles, "tri_angles")]
+        if len(ang) != 3:
+            raise ValidationError("tri_angles must have 3 angles [apex_angle, b_i_angle, b_next_angle]")
+        for i in range(4):
+            b_curr = f"b{i}"
+            b_next = f"b{(i + 1) % 4}"
+            mon.record_triangle(f"t{i}", ["v_apex", b_curr, b_next], ang)
+        return mon.get_receipt()
+
+    def record_holonomy_evaluation(
+        self,
+        evaluation_id: str,
+        *,
+        phase_1_angles: Sequence[Fraction | int | str] = ("1/6", "1/6", "1/6"),
+        phase_2_angles: Sequence[Fraction | int | str] = ("5/24", "7/48", "7/48"),
+        phase_3_angles: Sequence[Fraction | int | str] = ("1/4", "1/8", "1/8"),
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        rec_p1 = self._run_four_triangle_star(eval_id, "p1", phase_1_angles)
+        rec_p2 = self._run_four_triangle_star(eval_id, "p2", phase_2_angles)
+        rec_p3 = self._run_four_triangle_star(eval_id, "p3", phase_3_angles)
+
+        eps_p1 = rational(rec_p1["interior_deficits"]["v_apex"])
+        bnd_p1 = rational(rec_p1["sum_boundary_turn"])
+        l_p1 = int(rec_p1["local_product_aggregator"])
+        eg_p1 = int(rec_p1["global_flatness_evaluator"])
+        defect_p1 = int(rec_p1["evaluator_defect"])
+
+        eps_p2 = rational(rec_p2["interior_deficits"]["v_apex"])
+        bnd_p2 = rational(rec_p2["sum_boundary_turn"])
+        l_p2 = int(rec_p2["local_product_aggregator"])
+        eg_p2 = int(rec_p2["global_flatness_evaluator"])
+        defect_p2 = int(rec_p2["evaluator_defect"])
+
+        eps_p3 = rational(rec_p3["interior_deficits"]["v_apex"])
+        bnd_p3 = rational(rec_p3["sum_boundary_turn"])
+        l_p3 = int(rec_p3["local_product_aggregator"])
+        eg_p3 = int(rec_p3["global_flatness_evaluator"])
+        defect_p3 = int(rec_p3["evaluator_defect"])
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "euler_characteristic": int(rec_p1["euler_characteristic"]),
+            "phase_1_apex_deficit": eps_p1,
+            "phase_1_boundary_turn_sum": bnd_p1,
+            "phase_2_apex_deficit": eps_p2,
+            "phase_2_boundary_turn_sum": bnd_p2,
+            "phase_3_apex_deficit": eps_p3,
+            "phase_3_boundary_turn_sum": bnd_p3,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR" if defect_p1 == -1 else "FLAT_EUCLIDEAN_LATTICE_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR" if defect_p2 == -1 else "FLAT_EUCLIDEAN_LATTICE_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "FLAT_EUCLIDEAN_LATTICE_LGGG" if eg_p3 == 1 else "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+            "phase_1_regge_receipt": rec_p1,
+            "phase_2_regge_receipt": rec_p2,
+            "phase_3_regge_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one Regge holonomy evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_cone = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_part = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_flat = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        curved_star_coherence_rate = Fraction(n - max(p1_cone, p2_part), n)
+        flat_holonomy_coherence_rate = Fraction(p3_flat, n)
+
+        if p3_flat == n and p1_cone == n and p2_part == n:
+            status = "FLAT_EUCLIDEAN_LATTICE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_regge_gauss_bonnet_holonomy.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_conical_deficit_count": p1_cone,
+            "phase_2_residual_deficit_count": p2_part,
+            "phase_3_flat_euclidean_count": p3_flat,
+            "curved_star_coherence_rate": curved_star_coherence_rate,
+            "flat_holonomy_coherence_rate": flat_holonomy_coherence_rate,
+            "regge_holonomy_coherence_gain": (
+                flat_holonomy_coherence_rate - curved_star_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
