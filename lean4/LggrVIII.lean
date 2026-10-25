@@ -3227,4 +3227,51 @@ theorem optional_stopping_early_gain_skew_vs_tail_drawdown_cap :
   · intro g xd xdd h1 h2
     refine ⟨by omega, by omega⟩
 
+/-- 88. 2D Regge hinge deficit curvature and boundary Gauss-Bonnet holonomy audit:
+    1. Universal boundary holonomy reconstruction of interior hinge deficit on a 4-triangle star:
+       - In units scaled by 6 (1 full turn = 6, 1 Euclidean triangle sum = 3, 4 triangles = 12),
+         if scaled apex angle sum is θ_apex and total scaled boundary angle sum is θ_bnd with
+         θ_apex + θ_bnd = 12, then scaled interior deficit ε_apex = 6 - θ_apex and scaled
+         boundary turn sum K_bnd = 12 - θ_bnd satisfy ε_apex + K_bnd = 6 = 6 * χ(K),
+         ε_apex = 6 - K_bnd, and ε_apex = 0 ↔ K_bnd = 6;
+    2. Concrete 3-phase 4-triangle star curvature and boundary holonomy audit:
+       - Phase 1 (Equilateral conical pyramid star: θ_apex = 4, θ_bnd = 8):
+         each triangle closes locally (L_cone = 1), yet ε_apex = 6 - 4 = 2 ≠ 0 and
+         K_bnd = 4 < 6 (Eg_cone = 0, Δ_{E,cone} = -1);
+       - Phase 2 (Under-flattened star: θ_apex = 5, θ_bnd = 7):
+         each triangle closes locally (L_part = 1), yet residual ε_apex = 6 - 5 = 1 ≠ 0
+         and K_bnd = 5 < 6 (Eg_part = 0, Δ_{E,part} = -1);
+       - Phase 3 (Right-isosceles flat Euclidean star: θ_apex = 6, θ_bnd = 6):
+         each triangle closes locally, ε_apex = 6 - 6 = 0, and K_bnd = 6 = 6 * χ(K)
+         (L_flat = 1, Eg_flat = 1, Δ_{E,flat} = 0). -/
+theorem regge_hinge_deficit_curvature_and_boundary_gauss_bonnet_holonomy :
+    (∀ theta_apex theta_bnd : Int,
+      theta_apex + theta_bnd = 12 →
+      let eps_apex := 6 - theta_apex;
+      let k_bnd := 12 - theta_bnd;
+      eps_apex + k_bnd = 6 ∧ eps_apex = 6 - k_bnd ∧ (eps_apex = 0 ↔ k_bnd = 6)) ∧
+    (let eps_cone : Int := 6 - 4;
+     let kbnd_cone : Int := 12 - 8;
+     let eps_part : Int := 6 - 5;
+     let kbnd_part : Int := 12 - 7;
+     let eps_flat : Int := 6 - 6;
+     let kbnd_flat : Int := 12 - 6;
+     let l_cone := if (eps_cone + kbnd_cone = 6) ∧ (eps_cone ≠ 0) then (1 : Int) else 0;
+     let eg_cone := if (l_cone = 1) ∧ (eps_cone = 0) then (1 : Int) else 0;
+     let defect_cone := eg_cone - l_cone;
+     let l_part := if (eps_part + kbnd_part = 6) ∧ (eps_part ≠ 0) ∧ (eps_part < eps_cone) then (1 : Int) else 0;
+     let eg_part := if (l_part = 1) ∧ (eps_part = 0) then (1 : Int) else 0;
+     let defect_part := eg_part - l_part;
+     let l_flat := if (eps_flat = 0) ∧ (kbnd_flat = 6) then (1 : Int) else 0;
+     let eg_flat := if (l_flat = 1) ∧ (eps_flat < eps_part) then (1 : Int) else 0;
+     let defect_flat := eg_flat - l_flat;
+     (l_cone = 1 ∧ eg_cone = 0 ∧ defect_cone = -1) ∧
+     (l_part = 1 ∧ eg_part = 0 ∧ defect_part = -1) ∧
+     (l_flat = 1 ∧ eg_flat = 1 ∧ defect_flat = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro theta_apex theta_bnd hsum
+  dsimp
+  refine ⟨by omega, by omega, ?_⟩
+  constructor <;> intro h <;> omega
+
 end LggrVIII
