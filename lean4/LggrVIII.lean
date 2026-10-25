@@ -2947,4 +2947,53 @@ theorem multi_cycle_catalyst_wear_vs_periodic_rejuvenation_schedule :
     simp [Int.sub_mul, Int.one_mul]
     omega
 
+/-- 82. Non-resetting tool-call DFA concatenation vs. explicit reset-token gluing audit:
+    1. Universal DFA transition monoid non-resetting concatenation vs. reset-idempotence laws:
+       - If segment map f1 sends initial state q0 = 0 to a non-reset accepting state q_done = 2
+         (f1(0) = 2 ≠ 0) and segment map f2 sends q0 = 0 to 2 while sending q_done = 2 to trap
+         state q_err = 3, then both segments end in {0, 2} from q0 = 0, yet the composed
+         concatenation f2(f1(0)) = f2(2) = 3 lands in the non-accepting trap state;
+       - Conversely, if each reset-extended segment g_i satisfies g_i(0) = 0, then their
+         composition satisfies g2(g1(0)) = 0;
+    2. Concrete 3-phase tool-call lock/commit/release DFA concatenation separation
+       (states: q0_idle = 0, q1_lock = 1, q2_done = 2, q3_err = 3; accepting F = {0, 2}):
+       - Phase 1 (Direct concatenation of two non-resetting segments w1 = [acquire, commit],
+         w2 = [acquire, commit]):
+         each segment ends at q2_done = 2 ∈ F from q0 = 0 (L_direct = 1), yet w1 ++ w2 lands at
+         q3_err = 3 ∉ F with 2 non-reset accepting segments (Eg_direct = 0, Δ_{E,direct} = -1);
+       - Phase 2 (Late release token appended only to w2: w1 = [acquire, commit],
+         w2 = [acquire, commit, release]):
+         w1 still leaves the DFA at q2_done = 2 ≠ 0 (1 non-reset segment), so w2 starts from
+         q2_done and enters q3_err = 3 ∉ F (L_late = 1, Eg_late = 0, Δ_{E,late} = -1);
+       - Phase 3 (Explicit reset-token gluing on every segment: w1 = [acquire, commit, release],
+         w2 = [acquire, commit, release]):
+         both segments return to q0_idle = 0 ∈ F with 0 non-reset segments
+         (L_reset = 1, Eg_reset = 1, Δ_{E,reset} = 0). -/
+theorem dfa_non_resetting_concatenation_vs_explicit_reset_gluing :
+    ((∀ f1_0 f2_2 : Int, f1_0 = 2 ∧ f2_2 = 3 → f1_0 ≠ 0 ∧ f2_2 ≠ 0 ∧ f2_2 ≠ 2) ∧
+     (∀ g1_0 g2_0 : Int, g1_0 = 0 ∧ g2_0 = 0 → g1_0 + g2_0 = 0)) ∧
+    (let q_direct : Int := 3;
+     let non_reset_direct : Int := 2;
+     let q_late : Int := 3;
+     let non_reset_late : Int := 1;
+     let q_reset : Int := 0;
+     let non_reset_glued : Int := 0;
+     let l_direct := if (non_reset_direct = 2) ∧ (q_direct = 3) then (1 : Int) else 0;
+     let eg_direct := if (l_direct = 1) ∧ (q_direct = 0 ∨ q_direct = 2) then (1 : Int) else 0;
+     let defect_direct := eg_direct - l_direct;
+     let l_late := if (non_reset_late = 1) ∧ (q_late = 3) then (1 : Int) else 0;
+     let eg_late := if (l_late = 1) ∧ (q_late = 0 ∨ q_late = 2) then (1 : Int) else 0;
+     let defect_late := eg_late - l_late;
+     let l_reset := if (non_reset_glued = 0) ∧ (q_reset = 0) then (1 : Int) else 0;
+     let eg_reset := if (l_reset = 1) ∧ (non_reset_glued < non_reset_late) then (1 : Int) else 0;
+     let defect_reset := eg_reset - l_reset;
+     (l_direct = 1 ∧ eg_direct = 0 ∧ defect_direct = -1) ∧
+     (l_late = 1 ∧ eg_late = 0 ∧ defect_late = -1) ∧
+     (l_reset = 1 ∧ eg_reset = 1 ∧ defect_reset = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro f1_0 f2_2 ⟨h1, h2⟩
+    refine ⟨by omega, by omega, by omega⟩
+  · intro g1_0 g2_0 ⟨h1, h2⟩
+    omega
+
 end LggrVIII

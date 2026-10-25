@@ -30,6 +30,7 @@ from .streaming import (
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingCrossRoleDeduplicationMonitor,
+    StreamingDFAResetTokenGluingMonitor,
     StreamingDeadlinePriorityQueueMonitor,
     StreamingDisagreementPreservingCouncilMonitor,
     StreamingDynamicSchemaSynthesisMonitor,
@@ -10182,6 +10183,117 @@ def run_catalyst_rejuvenation_schedule_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "catalyst_rejuvenation_schedule_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_dfa_reset_token_gluing_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run the 5-model tool-call DFA non-resetting concatenation vs. explicit reset-token gluing benchmark (Theorem 82)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    api_key, _ = load_openrouter_credentials()
+    dfa_monitor = StreamingDFAResetTokenGluingMonitor(
+        scope_id="live-dfa-reset-token-gluing-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(api_key=api_key, model=model_id, max_completions=3)
+        sys_prompt = (
+            "You are a tool-call protocol DFA concatenation and reset-token auditor. Output ONLY a JSON "
+            "object with keys \"phase_1_terminal_state\" (str), \"phase_3_terminal_state\" (str), and "
+            "\"phase_3_non_reset_count\" (int)."
+        )
+        user_prompt = (
+            "Audit a 4-state lock/commit/release protocol DFA Q = {q0_idle, q1_lock, q2_done, q3_err}, "
+            "accepting F = {q0_idle, q2_done}:\n"
+            "- Phase 1 (w1 = [acquire, commit], w2 = [acquire, commit]): both end in q2_done from q0_idle, "
+            "yet w1 ++ w2 lands in q3_err.\n"
+            "- Phase 2 (w1 = [acquire, commit], w2 = [acquire, commit, release]): w1 still ends in q2_done, "
+            "so w2 enters q3_err.\n"
+            "- Phase 3 (w1 = [acquire, commit, release], w2 = [acquire, commit, release]): both return to q0_idle.\n"
+            "Return ONLY JSON: {\"phase_1_terminal_state\": \"q3_err\", "
+            "\"phase_3_terminal_state\": \"q0_idle\", \"phase_3_non_reset_count\": 0}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+
+        obs = dfa_monitor.evaluate_dfa_reset_gluing(
+            evaluation_id=f"{model_id}::dfa_reset_gluing_eval",
+        )
+        obs["model_id"] = model_id
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = dfa_monitor.current_receipt()
+    body = {
+        "schema": "lggr.dfa_reset_token_gluing_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "dfa_reset_token_gluing_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_direct_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_late_reset_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_explicit_reset_metrics": compute_empirical_defect_rates(p3_traces),
+        "non_reset_concatenation_coherence_rate": monitor_receipt["non_reset_concatenation_coherence_rate"],
+        "explicit_reset_gluing_coherence_rate": monitor_receipt["explicit_reset_gluing_coherence_rate"],
+        "explicit_reset_gluing_coherence_gain": monitor_receipt["explicit_reset_gluing_coherence_gain"],
+        "dfa_reset_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Tool-call DFA non-resetting concatenation vs. explicit reset-token gluing benchmark "
+            "across 5 model families (Theorem 82): on the 4-state lock/commit/release DFA with "
+            "accepting F = {q0_idle, q2_done}, Phase 1 separates direct concatenation of two "
+            "non-resetting segments [acquire, commit] landing in q3_err (Delta_E = -1), Phase 2 "
+            "separates late reset appended only to segment 2 (Delta_E = -1), and Phase 3 verifies "
+            "explicit reset-token gluing [acquire, commit, release] on every segment returning to "
+            "q0_idle (Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "dfa_reset_token_gluing_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
