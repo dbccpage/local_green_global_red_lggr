@@ -86,3 +86,4 @@ import LggrVIII
 #print axioms LggrVIII.linearized_pipeline_jacobian_soundness_vs_stealth_blindspot
 #print axioms LggrVIII.watcher_dropout_gram_rank_deficiency_and_critical_blindspot
 #print axioms LggrVIII.multi_evaluator_policy_ranking_cf_vs_neg_mass_order_reversal
+#print axioms LggrVIII.rsi_unassisted_self_reflection_vs_tool_assisted_fiber_splitting
