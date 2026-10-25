@@ -482,3 +482,13 @@ Raw frontier verdicts and repair-constraint checks remain separately visible.
 The generic repair monitor requires actual Boolean verdicts consistent with
 `contract_status`; it summarizes supplied rounds and does not authenticate their
 provenance by itself.
+
+## Five-agent live fault and recovery pilot
+
+The [live pilot report](experiments/live_five_agent_swarm/REPORT.md) retains 343
+actual provider calls, paired recovery trials, independent SQLite output checks,
+frozen-source replay, and provider-side usage verification. Five persistent
+agent sessions experience resource withdrawal after partial execution. The six
+evaluation cases show real recovery and unresolved failures, with no demonstrated
+LGGR advantage over the complete conventional checker. All development failures
+remain available; total measured spending was $0.57951748.
