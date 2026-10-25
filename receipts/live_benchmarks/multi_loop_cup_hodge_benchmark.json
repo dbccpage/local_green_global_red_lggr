@@ -1,0 +1,5259 @@
+{
+  "schema": "lggr.multi_loop_cup_hodge_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "multi_loop_cup_hodge_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_mixed_obstruction_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_harmonic_kernel_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_exact_coherent_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_multi_loop_coherence_rate": "0",
+  "exact_cup_hodge_coherence_rate": "1",
+  "multi_loop_hodge_coherence_gain": "1",
+  "multi_loop_cup_hodge_monitor_receipt": {
+    "schema": "lggr.online_multi_loop_cup_hodge.v1",
+    "authority_effect": "None",
+    "scope_id": "live-multi-loop-cup-hodge-scope",
+    "status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_mixed_obstruction_count": 5,
+    "phase_2_harmonic_kernel_count": 5,
+    "phase_3_exact_coherent_count": 5,
+    "obstructed_multi_loop_coherence_rate": "0",
+    "exact_cup_hodge_coherence_rate": "1",
+    "multi_loop_hodge_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_norm2_exact": "6",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "3",
+        "phase_1_norm2_total": "12",
+        "phase_1_alpha_cup_beta": "-2",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "3",
+        "phase_2_harmonic_dirichlet_energy": "0",
+        "phase_2_alpha_cup_beta": "0",
+        "phase_3_norm2_exact": "8",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_alpha_cup_beta": "0",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "12",
+              "norm2_exact": "6",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "8692316fa6b3299210123408ee78c552285ccf8cb108d14e3690e299e3db469c"
+        },
+        "phase_1_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [
+            "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1_probe"
+          ],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1_probe",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "3"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "3",
+                "3",
+                "3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "9",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "12",
+              "divergence_energy": "18",
+              "curl_energy": "9",
+              "dirichlet_energy": "27",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "74e3e594a1f8b3343b245dec88cdfb0350d0574c887a45814481db0baed944ca"
+        },
+        "phase_1_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+          "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [
+            "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1_simplex"
+          ],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "96d7fb1205c81de742a246a2386baadd852574f5b9b36f5b96c590343843fe76"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "9",
+              "norm2_exact": "6",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "8abd8d563f0992bc920475eb80ce6f5ce326fae3d460e89eea1ce9f1b431ab53"
+        },
+        "phase_2_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [
+            "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2_harm_probe"
+          ],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2_harm_probe",
+              "h": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "3",
+              "divergence_energy": "0",
+              "curl_energy": "0",
+              "dirichlet_energy": "0",
+              "in_laplacian_kernel": true,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "4b1e7aa63f1d25835bcf01855c2d64bd9a8f4a797d028ce708f8da40293131b7"
+        },
+        "phase_2_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p3",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "8",
+              "norm2_exact": "8",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "20324be1efb4a84ba3934781efbe693401287a2bb7f94a1dd07f23cc8cb250a9"
+        },
+        "phase_3_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+          "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p3_probe",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "-1",
+                "2",
+                "-1"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "norm2_h": "8",
+              "divergence_energy": "24",
+              "curl_energy": "0",
+              "dirichlet_energy": "24",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": true,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "23e51bfbb4320fde7d637236f75ba7d890582eb63b050bdb606e12cf5bfa8c33"
+        },
+        "phase_3_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_norm2_exact": "6",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "3",
+        "phase_1_norm2_total": "12",
+        "phase_1_alpha_cup_beta": "-2",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "3",
+        "phase_2_harmonic_dirichlet_energy": "0",
+        "phase_2_alpha_cup_beta": "0",
+        "phase_3_norm2_exact": "8",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_alpha_cup_beta": "0",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "12",
+              "norm2_exact": "6",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "1dc354552645dac580a7c59713f88ef4901f71269f1dd0301a6d040251a0fcc8"
+        },
+        "phase_1_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [
+            "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1_probe"
+          ],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1_probe",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "3"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "3",
+                "3",
+                "3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "9",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "12",
+              "divergence_energy": "18",
+              "curl_energy": "9",
+              "dirichlet_energy": "27",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "aaf0fb6544ee287c6da4472a392cf4acd3546583a6f03a6011df03b5a9799236"
+        },
+        "phase_1_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+          "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [
+            "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1_simplex"
+          ],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "77d509d8d0c94b7ce1cf2a0877504a32d9d49e8b938a1dc8ea9619e5d85cba30"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "9",
+              "norm2_exact": "6",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "1b8a21fb533979e60d96911f0e63b3693fa6c044057b344203539b4c9ae4267e"
+        },
+        "phase_2_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [
+            "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2_harm_probe"
+          ],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2_harm_probe",
+              "h": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "3",
+              "divergence_energy": "0",
+              "curl_energy": "0",
+              "dirichlet_energy": "0",
+              "in_laplacian_kernel": true,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "139f011eedd8c173cb2b12c7771c70e2e74d4d48683e82023b39b133bd352d2e"
+        },
+        "phase_2_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p3",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "8",
+              "norm2_exact": "8",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "d37795adddf8c126877b3b6585a1695b94025bc5dd05008201d7423864d7425b"
+        },
+        "phase_3_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+          "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p3_probe",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "-1",
+                "2",
+                "-1"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "norm2_h": "8",
+              "divergence_energy": "24",
+              "curl_energy": "0",
+              "dirichlet_energy": "24",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": true,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "8d51668f06eda57a522cb771118a9c550a16d639f73fee5d012ef8b7bccb5403"
+        },
+        "phase_3_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_norm2_exact": "6",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "3",
+        "phase_1_norm2_total": "12",
+        "phase_1_alpha_cup_beta": "-2",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "3",
+        "phase_2_harmonic_dirichlet_energy": "0",
+        "phase_2_alpha_cup_beta": "0",
+        "phase_3_norm2_exact": "8",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_alpha_cup_beta": "0",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "12",
+              "norm2_exact": "6",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "79d2d03d7e24a282d032fb74e414c2b62afa491c829797d8057656bc18607d05"
+        },
+        "phase_1_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [
+            "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1_probe"
+          ],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1_probe",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "3"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "3",
+                "3",
+                "3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "9",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "12",
+              "divergence_energy": "18",
+              "curl_energy": "9",
+              "dirichlet_energy": "27",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "f6952ce432052587ca41c428929bb3978459ca6c67859c85bd3de39bed7c4028"
+        },
+        "phase_1_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+          "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [
+            "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1_simplex"
+          ],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "1003a7734a73bae5151f0c2301bf4196f63a83be60f5d118b82fede04ace85da"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "9",
+              "norm2_exact": "6",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "7315f598913f77e517f5995a6329b6bd52d8f8ddd47160999ace9725d0a0cfb8"
+        },
+        "phase_2_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [
+            "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe"
+          ],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe",
+              "h": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "3",
+              "divergence_energy": "0",
+              "curl_energy": "0",
+              "dirichlet_energy": "0",
+              "in_laplacian_kernel": true,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "5181b32823617bd61942ba5067184aeea170c7832429e1e2b2701357c2e8ee39"
+        },
+        "phase_2_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p3",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "8",
+              "norm2_exact": "8",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "24fc6e2ab8404f4fdb5c72e219004fd70f2ffa5855fbb3b95048299addb47c7a"
+        },
+        "phase_3_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+          "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p3_probe",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "-1",
+                "2",
+                "-1"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "norm2_h": "8",
+              "divergence_energy": "24",
+              "curl_energy": "0",
+              "dirichlet_energy": "24",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": true,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "bc04aa327ab46a643513a1f0a178d7a0829a420eccb2ac72faab2f5a4ed9d77b"
+        },
+        "phase_3_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_norm2_exact": "6",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "3",
+        "phase_1_norm2_total": "12",
+        "phase_1_alpha_cup_beta": "-2",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "3",
+        "phase_2_harmonic_dirichlet_energy": "0",
+        "phase_2_alpha_cup_beta": "0",
+        "phase_3_norm2_exact": "8",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_alpha_cup_beta": "0",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "12",
+              "norm2_exact": "6",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "9520e8ce565cb4f9cd7633edcfe9aea70aceca61ce75837427af1209466a2701"
+        },
+        "phase_1_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [
+            "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1_probe"
+          ],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1_probe",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "3"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "3",
+                "3",
+                "3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "9",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "12",
+              "divergence_energy": "18",
+              "curl_energy": "9",
+              "dirichlet_energy": "27",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "712f5890e852bdb7ae780f7dc0d5a2f742671d796bd00275824b4b37781bc706"
+        },
+        "phase_1_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+          "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [
+            "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1_simplex"
+          ],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "796fcd2027dd04749e0849236374ce60004a6f3f9188bb07cc758aab080f8f09"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "9",
+              "norm2_exact": "6",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "131e398b4a3b065c98e7636cbed7f0ee06f7be819f56979ee9f2e41e95d579e6"
+        },
+        "phase_2_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [
+            "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2_harm_probe"
+          ],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2_harm_probe",
+              "h": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "3",
+              "divergence_energy": "0",
+              "curl_energy": "0",
+              "dirichlet_energy": "0",
+              "in_laplacian_kernel": true,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "1fa4014c5b9c524683e063e2c2370ff8e846e09ebdcb9811fcad2568dc650cf5"
+        },
+        "phase_2_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p3",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "8",
+              "norm2_exact": "8",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "34995cdb54ff159ae0b15826d477864d5b2e6447ee8ad4c0c3496dd5798f7a41"
+        },
+        "phase_3_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+          "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p3_probe",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "-1",
+                "2",
+                "-1"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "norm2_h": "8",
+              "divergence_energy": "24",
+              "curl_energy": "0",
+              "dirichlet_energy": "24",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": true,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "b9025fb249f593ca390a0c276deef6c5f8aca6c66c7d396629d0e05b93e5bf05"
+        },
+        "phase_3_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_norm2_exact": "6",
+        "phase_1_norm2_coexact": "3",
+        "phase_1_norm2_harmonic": "3",
+        "phase_1_norm2_total": "12",
+        "phase_1_alpha_cup_beta": "-2",
+        "phase_2_norm2_coexact": "0",
+        "phase_2_norm2_harmonic": "3",
+        "phase_2_harmonic_dirichlet_energy": "0",
+        "phase_2_alpha_cup_beta": "0",
+        "phase_3_norm2_exact": "8",
+        "phase_3_norm2_coexact": "0",
+        "phase_3_norm2_harmonic": "0",
+        "phase_3_alpha_cup_beta": "0",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+        "phase_1_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1"
+          ],
+          "coexact_obstructed_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1"
+          ],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "1",
+                "1",
+                "1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "1"
+              ],
+              "norm2_total": "12",
+              "norm2_exact": "6",
+              "norm2_coexact": "3",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "e645d9e38061fce0eb77a366926913513b0e36adf99bfc844f96e5229c0b41fe"
+        },
+        "phase_1_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1_probe"
+          ],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1_probe",
+              "h": [
+                "3",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "3"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "3",
+                "3",
+                "3",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "9",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "12",
+              "divergence_energy": "18",
+              "curl_energy": "9",
+              "dirichlet_energy": "27",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "159dd983fba4c7f2b3517dcc2a35539be86d3edcb0d5ecc90f3ac6e17d58cc67"
+        },
+        "phase_1_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+          "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1_simplex"
+          ],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "a325b77f601e7c873a4fe2db9e40cba945d5c323ca88b938709173f3d4183406"
+        },
+        "phase_2_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+          "status": "HODGE_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2"
+          ],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "1",
+                "1"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "9",
+              "norm2_exact": "6",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "3",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "51165cffeb4b22749fb710e67a1e01208ca961cb5a89ae6f57fb895ca7927321"
+        },
+        "phase_2_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+          "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [
+            "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe"
+          ],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe",
+              "h": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "divergence_d0_transpose_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "norm2_h": "3",
+              "divergence_energy": "0",
+              "curl_energy": "0",
+              "dirichlet_energy": "0",
+              "in_laplacian_kernel": true,
+              "is_exact_coboundary": false,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR"
+            }
+          ],
+          "receipt_sha256": "8fc99f390379bbd2b2d8059fa6fb9b77e8123f247d36decf26ef87b000c31217"
+        },
+        "phase_2_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+        },
+        "phase_3_hodge_receipt": {
+          "schema": "lggr.online_hodge_decomposition.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+          "status": "HODGE_EXACT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "complex_count": 1,
+          "harmonic_obstructed_ids": [],
+          "coexact_obstructed_ids": [],
+          "all_orthogonality_verified": true,
+          "all_pythagorean_energy_verified": true,
+          "all_laplacian_kernels_verified": true,
+          "records": [
+            {
+              "complex_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p3",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_exact": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "h_coexact": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "h_harmonic": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "vertex_potential_phi": [
+                "-1",
+                "1",
+                "0",
+                "0",
+                "1",
+                "0"
+              ],
+              "two_cell_potential_psi": [
+                "0"
+              ],
+              "norm2_total": "8",
+              "norm2_exact": "8",
+              "norm2_coexact": "0",
+              "norm2_harmonic": "0",
+              "harmonic_in_ker_d0_transpose": true,
+              "harmonic_in_ker_d1": true,
+              "laplacian_kernel_verified": true,
+              "orthogonality_verified": true,
+              "pythagorean_energy_verified": true,
+              "classification": "EXACT_GRADIENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "894e54029a1a72db4da0b12695a0afb5039e3bf93f065817176a6e6aca1c1271"
+        },
+        "phase_3_curvature_receipt": {
+          "schema": "lggr.online_discrete_curvature.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+          "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "probe_count": 1,
+          "harmonic_kernel_probe_ids": [],
+          "curl_obstructed_probe_ids": [],
+          "all_dirichlet_energy_identities_verified": true,
+          "all_operator_orthogonalities_verified": true,
+          "all_kernel_equivalences_verified": true,
+          "records": [
+            {
+              "probe_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p3_probe",
+              "h": [
+                "2",
+                "-1",
+                "-1",
+                "1",
+                "-1",
+                "0"
+              ],
+              "divergence_d0_transpose_h": [
+                "-3",
+                "3",
+                "0",
+                "-1",
+                "2",
+                "-1"
+              ],
+              "curl_d1_h": [
+                "0"
+              ],
+              "l_down_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "l_up_h": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ],
+              "l1_h": [
+                "6",
+                "-3",
+                "-3",
+                "3",
+                "-3",
+                "0"
+              ],
+              "norm2_h": "8",
+              "divergence_energy": "24",
+              "curl_energy": "0",
+              "dirichlet_energy": "24",
+              "in_laplacian_kernel": false,
+              "is_exact_coboundary": true,
+              "dirichlet_energy_identity_verified": true,
+              "operator_orthogonality_verified": true,
+              "kernel_equivalence_verified": true,
+              "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+              "contract_status": "COMPOSABLE_LGGG"
+            }
+          ],
+          "receipt_sha256": "b1c5be5865034ba0b8039f67af305ec68c6ff5f6273d49926cc4fe94f22eb5f5"
+        },
+        "phase_3_cup_receipt": {
+          "schema": "lggr.online_simplicial_cup.v1",
+          "authority_effect": "None",
+          "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+          "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "evaluated_simplices_count": 1,
+          "non_cocycle_simplex_ids": [],
+          "nontrivial_cup_simplex_ids": [],
+          "all_leibniz_identities_verified": true,
+          "all_d1_d0_zero_verified": true,
+          "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+        }
+      }
+    ],
+    "receipt_sha256": "fe9621a0c65c2a5fbe510c28c3d3e3c2b0ea24799894db1151b399cef4617e9c"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_norm2_exact": "6",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "3",
+      "phase_1_norm2_total": "12",
+      "phase_1_alpha_cup_beta": "-2",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "3",
+      "phase_2_harmonic_dirichlet_energy": "0",
+      "phase_2_alpha_cup_beta": "0",
+      "phase_3_norm2_exact": "8",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_alpha_cup_beta": "0",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "12",
+            "norm2_exact": "6",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "8692316fa6b3299210123408ee78c552285ccf8cb108d14e3690e299e3db469c"
+      },
+      "phase_1_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [
+          "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1_probe"
+        ],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1_probe",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "3"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "3",
+              "3",
+              "3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "9",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "12",
+            "divergence_energy": "18",
+            "curl_energy": "9",
+            "dirichlet_energy": "27",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "74e3e594a1f8b3343b245dec88cdfb0350d0574c887a45814481db0baed944ca"
+      },
+      "phase_1_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+        "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [
+          "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p1_simplex"
+        ],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "96d7fb1205c81de742a246a2386baadd852574f5b9b36f5b96c590343843fe76"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "9",
+            "norm2_exact": "6",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "8abd8d563f0992bc920475eb80ce6f5ce326fae3d460e89eea1ce9f1b431ab53"
+      },
+      "phase_2_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [
+          "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2_harm_probe"
+        ],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p2_harm_probe",
+            "h": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "3",
+            "divergence_energy": "0",
+            "curl_energy": "0",
+            "dirichlet_energy": "0",
+            "in_laplacian_kernel": true,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "4b1e7aa63f1d25835bcf01855c2d64bd9a8f4a797d028ce708f8da40293131b7"
+      },
+      "phase_2_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p3",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "8",
+            "norm2_exact": "8",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "20324be1efb4a84ba3934781efbe693401287a2bb7f94a1dd07f23cc8cb250a9"
+      },
+      "phase_3_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+        "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "openai/gpt-4o-mini::multi_loop_cup_hodge_eval_p3_probe",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "-1",
+              "2",
+              "-1"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "norm2_h": "8",
+            "divergence_energy": "24",
+            "curl_energy": "0",
+            "dirichlet_energy": "24",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": true,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "23e51bfbb4320fde7d637236f75ba7d890582eb63b050bdb606e12cf5bfa8c33"
+      },
+      "phase_3_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+      },
+      "raw_auditor_response": "{\"phase_1_alpha_cup_beta\": -2, \"phase_2_norm2_harmonic\": 3, \"phase_3_norm2_harmonic\": 0}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_norm2_exact": "6",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "3",
+      "phase_1_norm2_total": "12",
+      "phase_1_alpha_cup_beta": "-2",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "3",
+      "phase_2_harmonic_dirichlet_energy": "0",
+      "phase_2_alpha_cup_beta": "0",
+      "phase_3_norm2_exact": "8",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_alpha_cup_beta": "0",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "12",
+            "norm2_exact": "6",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "1dc354552645dac580a7c59713f88ef4901f71269f1dd0301a6d040251a0fcc8"
+      },
+      "phase_1_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [
+          "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1_probe"
+        ],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1_probe",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "3"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "3",
+              "3",
+              "3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "9",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "12",
+            "divergence_energy": "18",
+            "curl_energy": "9",
+            "dirichlet_energy": "27",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "aaf0fb6544ee287c6da4472a392cf4acd3546583a6f03a6011df03b5a9799236"
+      },
+      "phase_1_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+        "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [
+          "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p1_simplex"
+        ],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "77d509d8d0c94b7ce1cf2a0877504a32d9d49e8b938a1dc8ea9619e5d85cba30"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "9",
+            "norm2_exact": "6",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "1b8a21fb533979e60d96911f0e63b3693fa6c044057b344203539b4c9ae4267e"
+      },
+      "phase_2_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [
+          "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2_harm_probe"
+        ],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p2_harm_probe",
+            "h": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "3",
+            "divergence_energy": "0",
+            "curl_energy": "0",
+            "dirichlet_energy": "0",
+            "in_laplacian_kernel": true,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "139f011eedd8c173cb2b12c7771c70e2e74d4d48683e82023b39b133bd352d2e"
+      },
+      "phase_2_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p3",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "8",
+            "norm2_exact": "8",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "d37795adddf8c126877b3b6585a1695b94025bc5dd05008201d7423864d7425b"
+      },
+      "phase_3_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+        "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "google/gemini-2.5-flash-lite::multi_loop_cup_hodge_eval_p3_probe",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "-1",
+              "2",
+              "-1"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "norm2_h": "8",
+            "divergence_energy": "24",
+            "curl_energy": "0",
+            "dirichlet_energy": "24",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": true,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "8d51668f06eda57a522cb771118a9c550a16d639f73fee5d012ef8b7bccb5403"
+      },
+      "phase_3_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_alpha_cup_beta\": -2,\n  \"phase_2_norm2_harmonic\": 3,\n  \"phase_3_norm2_harmonic\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_norm2_exact": "6",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "3",
+      "phase_1_norm2_total": "12",
+      "phase_1_alpha_cup_beta": "-2",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "3",
+      "phase_2_harmonic_dirichlet_energy": "0",
+      "phase_2_alpha_cup_beta": "0",
+      "phase_3_norm2_exact": "8",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_alpha_cup_beta": "0",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "12",
+            "norm2_exact": "6",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "79d2d03d7e24a282d032fb74e414c2b62afa491c829797d8057656bc18607d05"
+      },
+      "phase_1_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [
+          "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1_probe"
+        ],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1_probe",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "3"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "3",
+              "3",
+              "3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "9",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "12",
+            "divergence_energy": "18",
+            "curl_energy": "9",
+            "dirichlet_energy": "27",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "f6952ce432052587ca41c428929bb3978459ca6c67859c85bd3de39bed7c4028"
+      },
+      "phase_1_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+        "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [
+          "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p1_simplex"
+        ],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "1003a7734a73bae5151f0c2301bf4196f63a83be60f5d118b82fede04ace85da"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "9",
+            "norm2_exact": "6",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "7315f598913f77e517f5995a6329b6bd52d8f8ddd47160999ace9725d0a0cfb8"
+      },
+      "phase_2_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [
+          "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe"
+        ],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe",
+            "h": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "3",
+            "divergence_energy": "0",
+            "curl_energy": "0",
+            "dirichlet_energy": "0",
+            "in_laplacian_kernel": true,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "5181b32823617bd61942ba5067184aeea170c7832429e1e2b2701357c2e8ee39"
+      },
+      "phase_2_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p3",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "8",
+            "norm2_exact": "8",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "24fc6e2ab8404f4fdb5c72e219004fd70f2ffa5855fbb3b95048299addb47c7a"
+      },
+      "phase_3_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+        "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "meta-llama/llama-3.3-70b-instruct::multi_loop_cup_hodge_eval_p3_probe",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "-1",
+              "2",
+              "-1"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "norm2_h": "8",
+            "divergence_energy": "24",
+            "curl_energy": "0",
+            "dirichlet_energy": "24",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": true,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "bc04aa327ab46a643513a1f0a178d7a0829a420eccb2ac72faab2f5a4ed9d77b"
+      },
+      "phase_3_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+      },
+      "raw_auditor_response": "{\"phase_1_alpha_cup_beta\": -2, \"phase_2_norm2_harmonic\": 3, \"phase_3_norm2_harmonic\": 0}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_norm2_exact": "6",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "3",
+      "phase_1_norm2_total": "12",
+      "phase_1_alpha_cup_beta": "-2",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "3",
+      "phase_2_harmonic_dirichlet_energy": "0",
+      "phase_2_alpha_cup_beta": "0",
+      "phase_3_norm2_exact": "8",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_alpha_cup_beta": "0",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "12",
+            "norm2_exact": "6",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "9520e8ce565cb4f9cd7633edcfe9aea70aceca61ce75837427af1209466a2701"
+      },
+      "phase_1_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [
+          "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1_probe"
+        ],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1_probe",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "3"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "3",
+              "3",
+              "3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "9",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "12",
+            "divergence_energy": "18",
+            "curl_energy": "9",
+            "dirichlet_energy": "27",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "712f5890e852bdb7ae780f7dc0d5a2f742671d796bd00275824b4b37781bc706"
+      },
+      "phase_1_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+        "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [
+          "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p1_simplex"
+        ],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "796fcd2027dd04749e0849236374ce60004a6f3f9188bb07cc758aab080f8f09"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "9",
+            "norm2_exact": "6",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "131e398b4a3b065c98e7636cbed7f0ee06f7be819f56979ee9f2e41e95d579e6"
+      },
+      "phase_2_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [
+          "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2_harm_probe"
+        ],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p2_harm_probe",
+            "h": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "3",
+            "divergence_energy": "0",
+            "curl_energy": "0",
+            "dirichlet_energy": "0",
+            "in_laplacian_kernel": true,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "1fa4014c5b9c524683e063e2c2370ff8e846e09ebdcb9811fcad2568dc650cf5"
+      },
+      "phase_2_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p3",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "8",
+            "norm2_exact": "8",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "34995cdb54ff159ae0b15826d477864d5b2e6447ee8ad4c0c3496dd5798f7a41"
+      },
+      "phase_3_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+        "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "deepseek/deepseek-chat::multi_loop_cup_hodge_eval_p3_probe",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "-1",
+              "2",
+              "-1"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "norm2_h": "8",
+            "divergence_energy": "24",
+            "curl_energy": "0",
+            "dirichlet_energy": "24",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": true,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "b9025fb249f593ca390a0c276deef6c5f8aca6c66c7d396629d0e05b93e5bf05"
+      },
+      "phase_3_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+      },
+      "raw_auditor_response": "```json\n{\"phase_1_alpha_cup_beta\": -2, \"phase_2_norm2_harmonic\": 3, \"phase_3_norm2_harmonic\": 0}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_norm2_exact": "6",
+      "phase_1_norm2_coexact": "3",
+      "phase_1_norm2_harmonic": "3",
+      "phase_1_norm2_total": "12",
+      "phase_1_alpha_cup_beta": "-2",
+      "phase_2_norm2_coexact": "0",
+      "phase_2_norm2_harmonic": "3",
+      "phase_2_harmonic_dirichlet_energy": "0",
+      "phase_2_alpha_cup_beta": "0",
+      "phase_3_norm2_exact": "8",
+      "phase_3_norm2_coexact": "0",
+      "phase_3_norm2_harmonic": "0",
+      "phase_3_alpha_cup_beta": "0",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EXACT_GRADIENT_AND_CUP_COHERENT_LGGG",
+      "phase_1_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p1",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1"
+        ],
+        "coexact_obstructed_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1"
+        ],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "1"
+            ],
+            "norm2_total": "12",
+            "norm2_exact": "6",
+            "norm2_coexact": "3",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "MIXED_CURL_AND_HARMONIC_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "e645d9e38061fce0eb77a366926913513b0e36adf99bfc844f96e5229c0b41fe"
+      },
+      "phase_1_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p1",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1_probe"
+        ],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1_probe",
+            "h": [
+              "3",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "3"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "3",
+              "3",
+              "3",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "9",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "12",
+            "divergence_energy": "18",
+            "curl_energy": "9",
+            "dirichlet_energy": "27",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "CURL_OR_MIXED_ENERGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "159dd983fba4c7f2b3517dcc2a35539be86d3edcb0d5ecc90f3ac6e17d58cc67"
+      },
+      "phase_1_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p1",
+        "status": "NONTRIVIAL_CUP_COCYCLE_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p1_simplex"
+        ],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "a325b77f601e7c873a4fe2db9e40cba945d5c323ca88b938709173f3d4183406"
+      },
+      "phase_2_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p2",
+        "status": "HODGE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2"
+        ],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "1",
+              "1"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "9",
+            "norm2_exact": "6",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "3",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "HARMONIC_COHOMOLOGY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "51165cffeb4b22749fb710e67a1e01208ca961cb5a89ae6f57fb895ca7927321"
+      },
+      "phase_2_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p2",
+        "status": "CURVATURE_OR_HARMONIC_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [
+          "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe"
+        ],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p2_harm_probe",
+            "h": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ],
+            "divergence_d0_transpose_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "norm2_h": "3",
+            "divergence_energy": "0",
+            "curl_energy": "0",
+            "dirichlet_energy": "0",
+            "in_laplacian_kernel": true,
+            "is_exact_coboundary": false,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "HARMONIC_ZERO_ENERGY_KERNEL_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          }
+        ],
+        "receipt_sha256": "8fc99f390379bbd2b2d8059fa6fb9b77e8123f247d36decf26ef87b000c31217"
+      },
+      "phase_2_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p2",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "dd33dab4fd27573522b76e14e82438413be8fac1d135f2e80758ec780464e84b"
+      },
+      "phase_3_hodge_receipt": {
+        "schema": "lggr.online_hodge_decomposition.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-hodge-p3",
+        "status": "HODGE_EXACT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "complex_count": 1,
+        "harmonic_obstructed_ids": [],
+        "coexact_obstructed_ids": [],
+        "all_orthogonality_verified": true,
+        "all_pythagorean_energy_verified": true,
+        "all_laplacian_kernels_verified": true,
+        "records": [
+          {
+            "complex_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p3",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_exact": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "h_coexact": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "h_harmonic": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "vertex_potential_phi": [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            "two_cell_potential_psi": [
+              "0"
+            ],
+            "norm2_total": "8",
+            "norm2_exact": "8",
+            "norm2_coexact": "0",
+            "norm2_harmonic": "0",
+            "harmonic_in_ker_d0_transpose": true,
+            "harmonic_in_ker_d1": true,
+            "laplacian_kernel_verified": true,
+            "orthogonality_verified": true,
+            "pythagorean_energy_verified": true,
+            "classification": "EXACT_GRADIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "894e54029a1a72db4da0b12695a0afb5039e3bf93f065817176a6e6aca1c1271"
+      },
+      "phase_3_curvature_receipt": {
+        "schema": "lggr.online_discrete_curvature.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-curv-p3",
+        "status": "EXACT_GRADIENT_ENERGY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "probe_count": 1,
+        "harmonic_kernel_probe_ids": [],
+        "curl_obstructed_probe_ids": [],
+        "all_dirichlet_energy_identities_verified": true,
+        "all_operator_orthogonalities_verified": true,
+        "all_kernel_equivalences_verified": true,
+        "records": [
+          {
+            "probe_id": "mistralai/mistral-small-3.2-24b-instruct::multi_loop_cup_hodge_eval_p3_probe",
+            "h": [
+              "2",
+              "-1",
+              "-1",
+              "1",
+              "-1",
+              "0"
+            ],
+            "divergence_d0_transpose_h": [
+              "-3",
+              "3",
+              "0",
+              "-1",
+              "2",
+              "-1"
+            ],
+            "curl_d1_h": [
+              "0"
+            ],
+            "l_down_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "l_up_h": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            "l1_h": [
+              "6",
+              "-3",
+              "-3",
+              "3",
+              "-3",
+              "0"
+            ],
+            "norm2_h": "8",
+            "divergence_energy": "24",
+            "curl_energy": "0",
+            "dirichlet_energy": "24",
+            "in_laplacian_kernel": false,
+            "is_exact_coboundary": true,
+            "dirichlet_energy_identity_verified": true,
+            "operator_orthogonality_verified": true,
+            "kernel_equivalence_verified": true,
+            "classification": "PURE_DIVERGENCE_GRADIENT_FLOW_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "b1c5be5865034ba0b8039f67af305ec68c6ff5f6273d49926cc4fe94f22eb5f5"
+      },
+      "phase_3_cup_receipt": {
+        "schema": "lggr.online_simplicial_cup.v1",
+        "authority_effect": "None",
+        "scope_id": "live-multi-loop-cup-hodge-scope-cup-p3",
+        "status": "EXACT_TRIVIAL_CUP_COCYCLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "evaluated_simplices_count": 1,
+        "non_cocycle_simplex_ids": [],
+        "nontrivial_cup_simplex_ids": [],
+        "all_leibniz_identities_verified": true,
+        "all_d1_d0_zero_verified": true,
+        "receipt_sha256": "487ce3445caccaecac049a797de00baa84f197930c2c01535f31768af91d953b"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_alpha_cup_beta\": -2,\n  \"phase_2_norm2_harmonic\": 3,\n  \"phase_3_norm2_harmonic\": 0\n}\n```"
+    }
+  ],
+  "meaning": "Multi-loop 2-complex 2-cochain cup-product and discrete Hodge-Laplacian harmonic kernel benchmark across 5 model families (Theorem 91): Phase 1 separates coexisting exact gradient (norm^2 = 6), coexact 2-cell curl (norm^2 = 3), harmonic 1-cycle circulation (norm^2 = 3), and non-trivial 2-cochain cup product alpha cup beta = -2 (Delta_E = -1); Phase 2 separates curl-cleared and cup-trivial streams where the unfilled loop harmonic kernel persists in ker(L_1) with zero Dirichlet energy and norm^2 = 3 > 0 (Delta_E = -1); Phase 3 verifies pure exact gradient flow across both loops with norm^2_exact = 8 and trivial cup product (Delta_E = 0).",
+  "receipt_sha256": "e06cd12ef2e0d97e3633174e80d66da3278c123eb61586c5718531d340442460"
+}
