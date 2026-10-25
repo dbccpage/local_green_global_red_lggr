@@ -2037,4 +2037,65 @@ theorem deadline_constrained_priority_queue_static_inversion_vs_edf :
   intro s0 d_urg d_lax ⟨h1, h2, h3⟩
   omega
 
+/-- 65. Overloaded SLA deadline bursts: serial EDF overload vs. halt-and-escalate vs. selective multi-incident bin-packing:
+    1. Universal overloaded deadline law: when two unit-duration non-preemptible incidents arrive
+       simultaneously at tick s0 with identical tight SLA completion deadlines D_1 = D_2 = s0 + 1
+       and positive weighted Pareto floors f_1, f_2 > 0:
+       - Any 1-per-slot serial ordering places one incident in slot [s0 + 1, s0 + 2) with completion
+         C = s0 + 2 > s0 + 1 = D_k (SLA deadline breach under serial EDF);
+       - Satisfying both C_1 ≤ s0 + 1 and C_2 ≤ s0 + 1 requires both incidents to execute in slot
+         [s0, s0 + 1), which is infeasible whenever f_1 + f_2 > τ_horizon (requiring emergency
+         horizon expansion Δτ_horizon ≥ (f_1 + f_2) - τ_horizon), and becomes feasible via selective
+         sub-horizon bin-packing once τ_horizon* ≥ f_1 + f_2;
+    2. Concrete 3-incident overloaded burst separation at s1 = s2 = s3 = 0 on P_0 = (2, 3, 0) with
+       risk weights w = (2, 3, 4), individual lease budget τ_lease = 4, Pareto floors Δ*_{w,1} = 4,
+       Δ*_{w,2} = 3, Δ*_{w,3} = 4, and overloaded SLA completion deadlines (D_1, D_2, D_3) = (1, 1, 2):
+       - Phase 1 (Serial 1-per-slot EDF under τ_horizon = 6): executing (1, 2, 3) across [0, 1),
+         [1, 2), [2, 3) satisfies L_serial = 1 (active drift max(4, 3, 4) = 4 ≤ 6), yet misses two
+         SLA deadlines (C_2 = 2 > D_2 = 1 and C_3 = 3 > D_3 = 2), giving Eg_serial = 0, Δ_{E,serial} = -1;
+       - Phase 2 (Overload Halt-and-Escalate under τ_horizon = 6): packing the deadline-1 pair {1, 2}
+         into slot [0, 1) requires slot-0 weighted load Δ*_{w,1} + Δ*_{w,2} = 4 + 3 = 7 > τ_horizon = 6,
+         triggering halt-and-escalate with exact minimum emergency horizon expansion τ_horizon* = 7
+         (Δτ_horizon* = 7 - 6 = 1);
+       - Phase 3 (Selective sub-horizon bin-packed EDF under expanded τ_horizon* = 7): while 3-way
+         simultaneous admission (4 + 3 + 4 = 11 > 7) and incompatible pair {1, 3} (4 + 4 = 8 > 7)
+         still breach τ_horizon* = 7, selective bin-packing packs compatible pair {1, 2} (4 + 3 = 7 ≤ 7)
+         into [0, 1) (C_1 = 1 ≤ 1, C_2 = 1 ≤ 1) and schedules Incident 3 (4 ≤ 7) in [1, 2) (C_3 = 2 ≤ 2),
+         achieving L_packed = 1, Eg_packed = 1, and Δ_{E,packed} = 0. -/
+theorem overloaded_deadline_burst_serial_edf_vs_bin_packing_and_escalation :
+    (∀ s0 f1 f2 tau_h : Int,
+      (f1 > 0 ∧ f2 > 0 ∧ f1 + f2 > tau_h) →
+      ((s0 + 2 > s0 + 1) ∧ ¬ (f1 + f2 ≤ tau_h) ∧ (f1 + f2 ≤ tau_h + ((f1 + f2) - tau_h)))) ∧
+    (let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_lease : Int := 4; let tau_h_init : Int := 6; let tau_h_exp : Int := 7;
+     let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let d1 : Int := 1; let d2 : Int := 1; let d3 : Int := 2;
+     let s1 := w1 * 2 + w2 * 0 + w3 * 0;
+     let s2 := w1 * 0 + w2 * 1 + w3 * 0;
+     let s3 := w1 * 0 + w2 * 0 + w3 * 1;
+     let c1_ser : Int := 1; let c2_ser : Int := 2; let c3_ser : Int := 3;
+     let l_serial := if (s1 ≥ f1) ∧ (s2 ≥ f2) ∧ (s3 ≥ f3) ∧ (s1 ≤ tau_lease) ∧ (s2 ≤ tau_lease) ∧ (s3 ≤ tau_lease) ∧ (s1 ≤ tau_h_init) ∧ (s2 ≤ tau_h_init) ∧ (s3 ≤ tau_h_init) then (1 : Int) else 0;
+     let eg_serial := if (l_serial = 1) ∧ (c1_ser ≤ d1) ∧ (c2_ser ≤ d2) ∧ (c3_ser ≤ d3) then (1 : Int) else 0;
+     let defect_serial := eg_serial - l_serial;
+     let slot0_mandatory_load := s1 + s2;
+     let min_emergency_expansion := slot0_mandatory_load - tau_h_init;
+     let l_escalate := if (s1 ≥ f1) ∧ (s2 ≥ f2) ∧ (s3 ≥ f3) ∧ (s1 ≤ tau_lease) ∧ (s2 ≤ tau_lease) ∧ (s3 ≤ tau_lease) then (1 : Int) else 0;
+     let eg_escalate := if (l_escalate = 1) ∧ (slot0_mandatory_load ≤ tau_h_init) then (1 : Int) else 0;
+     let defect_escalate := eg_escalate - l_escalate;
+     let c1_pack : Int := 1; let c2_pack : Int := 1; let c3_pack : Int := 2;
+     let slot0_pack_drift := s1 + s2;
+     let slot1_pack_drift := s3;
+     let incompatible_pair_13 := s1 + s3;
+     let full_three_way := s1 + s2 + s3;
+     let l_packed := if (s1 ≥ f1) ∧ (s2 ≥ f2) ∧ (s3 ≥ f3) ∧ (s1 ≤ tau_lease) ∧ (s2 ≤ tau_lease) ∧ (s3 ≤ tau_lease) ∧ (slot0_pack_drift ≤ tau_h_exp) ∧ (slot1_pack_drift ≤ tau_h_exp) then (1 : Int) else 0;
+     let eg_packed := if (l_packed = 1) ∧ (c1_pack ≤ d1) ∧ (c2_pack ≤ d2) ∧ (c3_pack ≤ d3) then (1 : Int) else 0;
+     let defect_packed := eg_packed - l_packed;
+     (slot0_mandatory_load = 7 ∧ min_emergency_expansion = 1 ∧ incompatible_pair_13 = 8 ∧ full_three_way = 11) ∧
+     (l_serial = 1 ∧ eg_serial = 0 ∧ defect_serial = -1) ∧
+     (l_escalate = 1 ∧ eg_escalate = 0 ∧ defect_escalate = -1) ∧
+     (l_packed = 1 ∧ eg_packed = 1 ∧ defect_packed = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro s0 f1 f2 tau_h ⟨h1, h2, h3⟩
+  omega
+
 end LggrVIII

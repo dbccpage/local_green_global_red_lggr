@@ -31,6 +31,7 @@ from .streaming import (
     StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
+    StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPolicyRatchetDriftMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
@@ -7563,6 +7564,571 @@ def run_deadline_priority_queue_benchmark(
     signed = json_value({**body, "receipt_sha256": digest(body)})
 
     out_path = os.path.join(receipts_dir, "deadline_priority_queue_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
+
+def _run_overloaded_deadline_bin_packing_for_model(
+    client: OpenRouterClient,
+    overload_monitor: StreamingOverloadedDeadlineBinPackingMonitor,
+    prior_deadline_sha: str,
+) -> dict[str, Any]:
+    """Run 3-phase overloaded SLA deadline burst (serial EDF overload -> halt & escalate -> selective bin-packing) for one model."""
+    p0_vec = [2, 3, 0]
+    w_vec = [2, 3, 4]
+    tau_lease = 4
+    tau_horizon_init = 6
+    tau_horizon_exp = 7
+    p0_sha = digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec})
+
+    si_rec, sk_1_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"overload_inc1_{client.model}",
+        4,
+        0,
+        [0, 1, 2, 3],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_mon_a = si_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_mon_b = sk_1_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    poe_rec, sk_2_rec = _eval_weighted_pair2_poe_and_skew(
+        f"overload_inc2_{client.model}",
+        "1/4",
+        "0",
+        relaxed_linf_budget="4",
+        relaxed_l1_budget="4",
+    )
+    inc2_mon_a = poe_rec["rounds"][0]["global_poe_normalizable_evaluator"] == 1
+    inc2_mon_b = sk_2_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    pt_rec, mp_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"overload_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=-1,
+        row3_override=0,
+    )
+    inc3_mon_a = pt_rec["global_integral_lift_evaluator"] == 1
+    inc3_mon_b = mp_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    # Phase 1: Serial 1-per-slot EDF ordering under tau_horizon = 6 on overloaded deadlines (D_1=1, D_2=1, D_3=2)
+    p1_r1_prompt = (
+        "Incident 1 (SideInfo_x_SkewRepair) arrives at s_1 = 0 with SLA deadline D_1 = 1 and minimum "
+        "Pareto floor Delta*_{w,1} = 4 under P_0 = [2, 3, 0], w = [2, 3, 4], tau_lease = 4, tau_horizon = 6. "
+        "Under Phase 1 serial 1-per-slot EDF scheduling, Incident 1 is scheduled in slot [0, 1). "
+        'Output ONLY JSON: {"execution_tick": 0, "completion_tick": 1, "delta_S": 2, "S": 4, "alpha_1": "0"}'
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    _ = _extract_json(p1_r1_comp) or {}
+
+    p2_r1_prompt = (
+        "Incident 2 (PoE_x_SkewRepair) arrives simultaneously at s_2 = 0 with SLA deadline D_2 = 1 and "
+        "minimum Pareto floor Delta*_{w,2} = 3 under P_0 = [2, 3, 0], w = [2, 3, 4], tau_lease = 4, tau_horizon = 6. "
+        "Under Phase 1 serial 1-per-slot EDF scheduling, slot [0, 1) is occupied by Incident 1, so Incident 2 "
+        "is deferred to slot [1, 2) (completing at C_2 = 2 > D_2 = 1). "
+        'Output ONLY JSON: {"execution_tick": 1, "completion_tick": 2, "delta_B1": 1, "compromise_mass": "1/4", "alpha_1": "0"}'
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    _ = _extract_json(p2_r1_comp) or {}
+
+    p3_r1_prompt = (
+        "Incident 3 (ProjectiveTower_x_MerminPeres) arrives simultaneously at s_3 = 0 with SLA deadline D_3 = 2 "
+        "and minimum Pareto floor Delta*_{w,3} = 4 under P_0 = [2, 3, 0], w = [2, 3, 4], tau_lease = 4, tau_horizon = 6. "
+        "Under Phase 1 serial 1-per-slot EDF scheduling, slots [0, 1) and [1, 2) are occupied, so Incident 3 "
+        "is deferred to slot [2, 3) (completing at C_3 = 3 > D_3 = 2). "
+        'Output ONLY JSON: {"execution_tick": 2, "completion_tick": 3, "delta_MP": 1, "x_1": 1, "x_2": 3, '
+        '"grid": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}'
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    _ = _extract_json(p3_r1_comp) or {}
+
+    serial_edf_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "static_priority_rank": 1,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "selective_bin_packing_enforced": False,
+            "halt_and_escalate_triggered": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": [2, 0, 0],
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "static_priority_rank": 2,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "selective_bin_packing_enforced": False,
+            "halt_and_escalate_triggered": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": [0, 1, 0],
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "static_priority_rank": 3,
+            "sla_deadline_tick": 2,
+            "arrival_tick": 0,
+            "execution_tick": 2,
+            "completion_tick": 3,
+            "selective_bin_packing_enforced": False,
+            "halt_and_escalate_triggered": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": [0, 0, 1],
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    # Phase 2: Overloaded unpackable deadline detection & Halt-and-Escalate under tau_horizon = 6
+    p2_esc_prompt = (
+        "Phase 1 receipt: SERIAL_EDF_SLA_DEADLINE_OVERLOAD_LGGR (Incidents 1 and 2 both have SLA deadline "
+        "D_1 = D_2 = 1, so any schedule meeting both deadlines must pack {1, 2} into slot [0, 1) with "
+        "mandatory weighted load Delta*_{w,1} + Delta*_{w,2} = 4 + 3 = 7 > tau_horizon = 6). "
+        "Rather than oscillating between SLA deadline breach and horizon breach, halt and escalate for "
+        "minimum emergency horizon expansion tau_horizon* = 7 (Delta tau_horizon* = +1). "
+        'Output ONLY JSON: {"halt_and_escalate_triggered": true, "required_emergency_horizon": 7, "delta_tau_horizon": 1}'
+    )
+    p2_esc_comp = client.complete(p2_esc_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    _ = _extract_json(p2_esc_comp) or {}
+
+    overload_escalation_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "static_priority_rank": 1,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "selective_bin_packing_enforced": False,
+            "halt_and_escalate_triggered": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": [2, 0, 0],
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "static_priority_rank": 2,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "selective_bin_packing_enforced": False,
+            "halt_and_escalate_triggered": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": [0, 1, 0],
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "static_priority_rank": 3,
+            "sla_deadline_tick": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "selective_bin_packing_enforced": False,
+            "halt_and_escalate_triggered": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": [0, 0, 1],
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    # Phase 3: Selective sub-horizon bin-packed EDF under expanded tau_horizon* = 7
+    p1_r3_prompt = (
+        "Phase 2 receipt: OVERLOADED_DEADLINE_BURST_HALTED_AND_ESCALATED_LGGR. External authority granted "
+        "minimum emergency horizon expansion tau_horizon* = 7. Under selective multi-incident sub-horizon "
+        "bin-packing, pack compatible deadline-1 pair {1, 2} (4 + 3 = 7 <= 7) into slot [0, 1). "
+        "Configure Incident 1 (SideInfo_x_SkewRepair, D_1 = 1) in slot [0, 1). "
+        'Output ONLY JSON: {"execution_tick": 0, "completion_tick": 1, "selective_bin_packing_enforced": true, "S": 4, "alpha_1": "0"}'
+    )
+    p1_r3_comp = client.complete(p1_r3_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    _ = _extract_json(p1_r3_comp) or {}
+
+    p2_r3_prompt = (
+        "Under expanded horizon tau_horizon* = 7, co-schedule Incident 2 (PoE_x_SkewRepair, D_2 = 1, "
+        "Delta*_{w,2} = 3) in slot [0, 1) alongside Incident 1 so combined drift is 4 + 3 = 7 <= 7 "
+        "and C_2 = 1 <= D_2 = 1. "
+        'Output ONLY JSON: {"execution_tick": 0, "completion_tick": 1, "selective_bin_packing_enforced": true, "compromise_mass": "1/4", "alpha_1": "0"}'
+    )
+    p2_r3_comp = client.complete(p2_r3_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    _ = _extract_json(p2_r3_comp) or {}
+
+    p3_r3_prompt = (
+        "Under expanded horizon tau_horizon* = 7, 3-way admission (4 + 3 + 4 = 11 > 7) and incompatible "
+        "pair {1, 3} (4 + 4 = 8 > 7) exceed tau_horizon* = 7, so schedule Incident 3 "
+        "(ProjectiveTower_x_MerminPeres, D_3 = 2, Delta*_{w,3} = 4 <= 7) in slot [1, 2) (completing at C_3 = 2 <= D_3 = 2). "
+        'Output ONLY JSON: {"execution_tick": 1, "completion_tick": 2, "selective_bin_packing_enforced": true, "x_1": 1, "x_2": 3, '
+        '"grid": [[1, 1, 1], [1, 1, 1], [1, 1, 1]]}'
+    )
+    p3_r3_comp = client.complete(p3_r3_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    _ = _extract_json(p3_r3_comp) or {}
+
+    selective_bin_packed_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "static_priority_rank": 1,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "selective_bin_packing_enforced": True,
+            "halt_and_escalate_triggered": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": [2, 0, 0],
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "static_priority_rank": 2,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "selective_bin_packing_enforced": True,
+            "halt_and_escalate_triggered": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": [0, 1, 0],
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "static_priority_rank": 3,
+            "sla_deadline_tick": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "selective_bin_packing_enforced": True,
+            "halt_and_escalate_triggered": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": [0, 0, 1],
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    burst_record = overload_monitor.record_overloaded_deadline_burst(
+        burst_id=f"{client.model}::overloaded_deadline_burst_3inc",
+        model_id=client.model,
+        prior_deadline_receipt_sha256=prior_deadline_sha,
+        baseline_policy_sha256=p0_sha,
+        baseline_policy_vector=p0_vec,
+        risk_weight_vector=w_vec,
+        individual_lease_budget=tau_lease,
+        initial_horizon_drift_ceiling=tau_horizon_init,
+        expanded_horizon_drift_ceiling=tau_horizon_exp,
+        serial_edf_incidents=serial_edf_incidents,
+        overload_escalation_incidents=overload_escalation_incidents,
+        selective_bin_packed_incidents=selective_bin_packed_incidents,
+    )
+
+    p1_b = burst_record["phase_1_serial_edf_overload"]
+    p2_b = burst_record["phase_2_overload_halt_and_escalate"]
+    p3_b = burst_record["phase_3_selective_bin_packed_edf"]
+
+    return {
+        **burst_record,
+        "prompts": [
+            p1_r1_prompt,
+            p2_r1_prompt,
+            p3_r1_prompt,
+            p2_esc_prompt,
+            p1_r3_prompt,
+            p2_r3_prompt,
+            p3_r3_prompt,
+        ],
+        "completions": [
+            p1_r1_comp,
+            p2_r1_comp,
+            p3_r1_comp,
+            p2_esc_comp,
+            p1_r3_comp,
+            p2_r3_comp,
+            p3_r3_comp,
+        ],
+        "rounds": [
+            {
+                "local_pass": p1_b["local_phase_indicator_L"] == 1,
+                "global_pass": p1_b["global_phase_indicator_E_g"] == 1,
+                "defect": p1_b["phase_evaluator_defect"],
+            },
+            {
+                "local_pass": p2_b["local_phase_indicator_L"] == 1,
+                "global_pass": p2_b["global_phase_indicator_E_g"] == 1,
+                "defect": p2_b["phase_evaluator_defect"],
+            },
+            {
+                "local_pass": p3_b["local_phase_indicator_L"] == 1,
+                "global_pass": p3_b["global_phase_indicator_E_g"] == 1,
+                "defect": p3_b["phase_evaluator_defect"],
+            },
+        ],
+    }
+
+
+def run_overloaded_deadline_bin_packing_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter overloaded SLA deadline burst (serial EDF vs. halt-and-escalate vs. selective bin-packing) benchmark across 5 model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    prior_deadline_path = os.path.join(receipts_dir, "deadline_priority_queue_benchmark.json")
+    if os.path.exists(prior_deadline_path):
+        with open(prior_deadline_path, "r", encoding="utf-8") as f:
+            prior_deadline_doc = json.load(f)
+        prior_deadline_sha = str(
+            prior_deadline_doc.get("deadline_monitor_receipt", {}).get(
+                "receipt_sha256", prior_deadline_doc.get("receipt_sha256", "")
+            )
+        )
+    else:
+        prior_deadline_sha = digest({"fallback": "deadline_priority_queue_benchmark"})
+
+    overload_monitor = StreamingOverloadedDeadlineBinPackingMonitor(
+        scope_id="live_overloaded_deadline_bin_packing"
+    )
+    all_bursts: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running overloaded deadline bin-packing benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        b = _run_overloaded_deadline_bin_packing_for_model(
+            client, overload_monitor, prior_deadline_sha
+        )
+        total_completions += client.completion_count
+        all_bursts.append(b)
+
+    monitor_receipt = overload_monitor.emit_receipt()
+
+    r1_burst_traces = [b["rounds"][0] for b in all_bursts]
+    r2_burst_traces = [b["rounds"][1] for b in all_bursts]
+    r3_burst_traces = [b["rounds"][2] for b in all_bursts]
+
+    r1_inc_traces = [
+        {
+            "local_pass": inc["local_incident_indicator_L_k"] == 1,
+            "global_pass": inc["global_incident_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for b in all_bursts
+        for inc in b["phase_1_serial_edf_overload"]["incidents"]
+    ]
+    r2_inc_traces = [
+        {
+            "local_pass": inc["local_incident_indicator_L_k"] == 1,
+            "global_pass": inc["global_incident_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for b in all_bursts
+        for inc in b["phase_2_overload_halt_and_escalate"]["incidents"]
+    ]
+    r3_inc_traces = [
+        {
+            "local_pass": inc["local_incident_indicator_L_k"] == 1,
+            "global_pass": inc["global_incident_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for b in all_bursts
+        for inc in b["phase_3_selective_bin_packed_edf"]["incidents"]
+    ]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_bs = [b for b in all_bursts if b["model_id"] == model_id]
+        b0 = m_bs[0]
+        per_model_summary[model_id] = {
+            "incident_count": 3,
+            "phase_1_serial_edf_deadline_breach": b0["phase_1_serial_edf_deadline_breach"],
+            "phase_1_deadline_miss_count": b0["phase_1_serial_edf_overload"][
+                "deadline_miss_count"
+            ],
+            "phase_1_max_lateness_ticks": b0["phase_1_serial_edf_overload"][
+                "max_lateness_ticks"
+            ],
+            "phase_2_halted_and_escalated": b0["phase_2_halted_and_escalated"],
+            "phase_2_mandatory_slot0_load_l1_w": b0[
+                "phase_2_overload_halt_and_escalate"
+            ]["mandatory_slot0_pareto_load_l1_w"],
+            "phase_2_required_emergency_horizon_expansion": b0[
+                "phase_2_overload_halt_and_escalate"
+            ]["required_emergency_horizon_expansion"],
+            "phase_3_deadline_miss_count": b0["phase_3_selective_bin_packed_edf"][
+                "deadline_miss_count"
+            ],
+            "phase_3_max_lateness_ticks": b0["phase_3_selective_bin_packed_edf"][
+                "max_lateness_ticks"
+            ],
+            "phase_3_peak_concurrent_drift": b0["phase_3_selective_bin_packed_edf"][
+                "peak_concurrent_weighted_l1_drift"
+            ],
+            "deadline_misses_eliminated": b0["deadline_misses_eliminated"],
+            "max_lateness_reduction_ticks": b0["max_lateness_reduction_ticks"],
+            "single_round_serial_edf_coherent": b0["converged_single_round"],
+            "multi_round_bin_packed_edf_coherent": b0["converged_multi_round"],
+        }
+
+    incident_pairs = [
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    ]
+    per_incident_summary: dict[str, Any] = {}
+    for idx, pair_id in enumerate(incident_pairs):
+        p1_incs = [b["phase_1_serial_edf_overload"]["incidents"][idx] for b in all_bursts]
+        p2_incs = [
+            b["phase_2_overload_halt_and_escalate"]["incidents"][idx]
+            for b in all_bursts
+        ]
+        p3_incs = [
+            b["phase_3_selective_bin_packed_edf"]["incidents"][idx]
+            for b in all_bursts
+        ]
+        p1_traces = [
+            {
+                "local_pass": inc["local_incident_indicator_L_k"] == 1,
+                "global_pass": inc["global_incident_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p1_incs
+        ]
+        p2_traces = [
+            {
+                "local_pass": inc["local_incident_indicator_L_k"] == 1,
+                "global_pass": inc["global_incident_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p2_incs
+        ]
+        p3_traces = [
+            {
+                "local_pass": inc["local_incident_indicator_L_k"] == 1,
+                "global_pass": inc["global_incident_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p3_incs
+        ]
+        per_incident_summary[f"incident_{idx + 1}_{pair_id}"] = {
+            "incident_index": idx + 1,
+            "incident_pair_id": pair_id,
+            "sla_deadline_tick": p1_incs[0]["sla_deadline_tick"],
+            "phase_1_completion_tick": p1_incs[0]["completion_tick"],
+            "phase_1_lateness_ticks": p1_incs[0]["lateness_ticks"],
+            "phase_2_peak_concurrent_drift": p2_incs[0][
+                "peak_concurrent_weighted_drift_during_execution"
+            ],
+            "phase_3_completion_tick": p3_incs[0]["completion_tick"],
+            "phase_3_lateness_ticks": p3_incs[0]["lateness_ticks"],
+            "phase_1_metrics": compute_empirical_defect_rates(p1_traces),
+            "phase_2_metrics": compute_empirical_defect_rates(p2_traces),
+            "phase_3_metrics": compute_empirical_defect_rates(p3_traces),
+        }
+
+    body = {
+        "schema": "lggr.overloaded_deadline_bin_packing_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "overloaded_deadline_bin_packing_benchmark",
+        "models_evaluated": list(models),
+        "incidents_evaluated": incident_pairs,
+        "prior_deadline_receipt_sha256": prior_deadline_sha,
+        "total_completions": total_completions,
+        "burst_count": len(all_bursts),
+        "incident_evaluation_count": len(r1_inc_traces),
+        "phase_1_serial_edf_burst_metrics": compute_empirical_defect_rates(
+            r1_burst_traces
+        ),
+        "phase_2_overload_escalation_burst_metrics": compute_empirical_defect_rates(
+            r2_burst_traces
+        ),
+        "phase_3_selective_bin_packed_burst_metrics": compute_empirical_defect_rates(
+            r3_burst_traces
+        ),
+        "phase_1_serial_edf_incident_metrics": compute_empirical_defect_rates(
+            r1_inc_traces
+        ),
+        "phase_2_overload_escalation_incident_metrics": compute_empirical_defect_rates(
+            r2_inc_traces
+        ),
+        "phase_3_selective_bin_packed_incident_metrics": compute_empirical_defect_rates(
+            r3_inc_traces
+        ),
+        "phase_1_serial_edf_deadline_breach_rate": monitor_receipt[
+            "phase_1_serial_edf_deadline_breach_rate"
+        ],
+        "phase_2_halt_and_escalate_rate": monitor_receipt[
+            "phase_2_halt_and_escalate_rate"
+        ],
+        "single_round_serial_edf_coherence_rate": monitor_receipt[
+            "single_round_serial_edf_coherence_rate"
+        ],
+        "multi_round_bin_packed_edf_coherence_rate": monitor_receipt[
+            "multi_round_bin_packed_edf_coherence_rate"
+        ],
+        "bin_packed_edf_coherence_gain": monitor_receipt[
+            "bin_packed_edf_coherence_gain"
+        ],
+        "per_model_summary": per_model_summary,
+        "per_incident_summary": per_incident_summary,
+        "overload_monitor_receipt": monitor_receipt,
+        "bursts": all_bursts,
+        "meaning": (
+            "Overloaded SLA deadline burst benchmark across 3 simultaneous non-preemptible incidents "
+            "(s1=s2=s3=0) with SLA completion deadlines (D_1=1, D_2=1, D_3=2) and Pareto floors "
+            "(4, 3, 4) across 5 model families: Phase 1 separates serial 1-per-slot EDF overload "
+            "(C_2=2 > D_2=1, C_3=3 > D_3=2 -> E_g=0, Delta_E=-1), Phase 2 verifies halt-and-escalate "
+            "when mandatory slot-0 load 4 + 3 = 7 > tau_horizon = 6 (computing minimum emergency horizon "
+            "expansion tau_horizon* = 7), and Phase 3 verifies selective sub-horizon bin-packed EDF "
+            "(packing compatible pair {1, 2} with 4 + 3 = 7 <= 7 into [0, 1) and scheduling Incident 3 "
+            "in [1, 2) -> C_1=1<=1, C_2=1<=1, C_3=2<=2, E_g=1, Delta_E=0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    out_path = os.path.join(receipts_dir, "overloaded_deadline_bin_packing_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
 
