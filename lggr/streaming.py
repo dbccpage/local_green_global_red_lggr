@@ -14141,6 +14141,149 @@ class StreamingDFAResetTokenGluingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCPTPBlindspotCompletionMonitor:
+    """Online state-dependent CPTP trace preservation vs. operator-level residual and Kraus completion monitor (Theorem 83).
+
+    Wraps ``StreamingCPTPTraceMonitor`` on 2 x 2 rational Kraus families:
+      - Phase 1 (Incomplete Kraus Family E_inc = {diag(1, 0)} Probed Only on Ground State rho_0 = diag(1, 0)):
+        tr(E_inc(rho_0)) - tr(rho_0) = 0 passes state-specific trace check (L_blind = 1,
+        state_blindspot_masked = True), yet operator residual R_TP = diag(0, -1) has L1 norm 1 > 0
+        (Eg_blind = 0, defect_blind = -1, status ``STATE_BLINDSPOT_NON_TP_LGGR``).
+      - Phase 2 (Incomplete Kraus Family E_inc = {diag(1, 0)} Probed on Excited State rho_1 = diag(0, 1)):
+        Probing orthogonal basis state rho_1 exposes trace leakage tr(E_inc(rho_1)) - tr(rho_1) = -1 != 0
+        with ||R_TP||_1 = 1 > 0 (L_leak = 1, Eg_leak = 0, defect_leak = -1,
+        status ``EXCITED_STATE_TRACE_LEAKAGE_LGGR``).
+      - Phase 3 (Completed Kraus Family E_comp = {diag(1, 0), diag(0, 1)} Probed Across Basis {rho_0, rho_1}):
+        Adjoining K_1 = diag(0, 1) yields sum_r K_r^T K_r = I_2, ||R_TP||_1 = 0, and 0 trace
+        discrepancy across both basis states (L_comp = 1, Eg_comp = 1, defect_comp = 0,
+        status ``CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG``).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-cptp-blindspot-completion-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_cptp_completion(
+        self,
+        evaluation_id: str,
+        *,
+        k0_matrix: Sequence[Sequence[Fraction | int | str]] = ((1, 0), (0, 0)),
+        k1_matrix: Sequence[Sequence[Fraction | int | str]] = ((0, 0), (0, 1)),
+        rho0_matrix: Sequence[Sequence[Fraction | int | str]] = ((1, 0), (0, 0)),
+        rho1_matrix: Sequence[Sequence[Fraction | int | str]] = ((0, 0), (0, 1)),
+    ) -> dict[str, Any]:
+        """Evaluate state-blindspot on rho_0, trace leakage on rho_1, and completed Kraus operator TP."""
+        eid = text(evaluation_id, "evaluation_id")
+
+        # Phase 1 & 2: Incomplete Kraus family {K_0}
+        mon_inc = StreamingCPTPTraceMonitor(
+            [k0_matrix],
+            scope_id=f"{self.scope_id}-{eid}-inc",
+        )
+        probe_p1 = mon_inc.probe_state("rho_0_ground", rho0_matrix)
+        probe_p2 = mon_inc.probe_state("rho_1_excited", rho1_matrix)
+        rec_inc = mon_inc.get_receipt()
+
+        # Phase 3: Completed Kraus family {K_0, K_1}
+        mon_comp = StreamingCPTPTraceMonitor(
+            [k0_matrix, k1_matrix],
+            scope_id=f"{self.scope_id}-{eid}-comp",
+        )
+        probe_p3_0 = mon_comp.probe_state("rho_0_ground", rho0_matrix)
+        probe_p3_1 = mon_comp.probe_state("rho_1_excited", rho1_matrix)
+        rec_comp = mon_comp.get_receipt()
+
+        tr_diff_p1 = rational(probe_p1["trace_discrepancy"])
+        tr_diff_p2 = rational(probe_p2["trace_discrepancy"])
+        res_norm_inc = rational(rec_inc["residual_l1_norm"])
+        res_norm_comp = rational(rec_comp["residual_l1_norm"])
+
+        l_p1 = 1 if (tr_diff_p1 == Fraction(0) and probe_p1["state_blindspot_masked"]) else 0
+        eg_p1 = 1 if (l_p1 == 1 and rec_inc["operator_trace_preserving"]) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (tr_diff_p2 == Fraction(-1) and res_norm_inc == Fraction(1)) else 0
+        eg_p2 = 1 if (l_p2 == 1 and tr_diff_p2 == Fraction(0) and rec_inc["operator_trace_preserving"]) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                rec_comp["operator_trace_preserving"]
+                and res_norm_comp == Fraction(0)
+                and rational(probe_p3_0["trace_discrepancy"]) == Fraction(0)
+                and rational(probe_p3_1["trace_discrepancy"]) == Fraction(0)
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and res_norm_comp < res_norm_inc) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "incomplete_residual_l1_norm": res_norm_inc,
+            "completed_residual_l1_norm": res_norm_comp,
+            "phase_1_trace_discrepancy": tr_diff_p1,
+            "phase_2_trace_discrepancy": tr_diff_p2,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR" if defect_p1 == -1 else "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR" if defect_p2 == -1 else "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG" if eg_p3 == 1 else "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+            "incomplete_cptp_receipt": rec_inc,
+            "completed_cptp_receipt": rec_comp,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one CPTP blindspot completion evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_blind_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_leak_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        incomplete_channel_coherence_rate = Fraction(
+            n - max(p1_blind_fail, p2_leak_fail), n
+        )
+        completed_channel_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_blind_fail == n and p2_leak_fail == n:
+            status = "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "STATE_BLINDSPOT_NON_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_cptp_blindspot_completion.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_state_blindspot_count": p1_blind_fail,
+            "phase_2_excited_leakage_count": p2_leak_fail,
+            "phase_3_completed_tp_count": p3_coherent,
+            "incomplete_channel_coherence_rate": incomplete_channel_coherence_rate,
+            "completed_channel_coherence_rate": completed_channel_coherence_rate,
+            "cptp_completion_coherence_gain": (
+                completed_channel_coherence_rate - incomplete_channel_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

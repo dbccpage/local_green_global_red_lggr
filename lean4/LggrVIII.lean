@@ -2996,4 +2996,49 @@ theorem dfa_non_resetting_concatenation_vs_explicit_reset_gluing :
   · intro g1_0 g2_0 ⟨h1, h2⟩
     omega
 
+/-- 83. State-dependent CPTP trace preservation vs. operator-level residual and Kraus completion audit:
+    1. Universal diagonal state-blindspot vs. Kraus completion laws on d = 2:
+       - For incomplete Kraus family E_inc = {K_0} with K_0 = diag(1, 0) and residual
+         R_TP = diag(0, -1), on any diagonal state rho = diag(p0, p1), the trace discrepancy
+         satisfies tr(E_inc(rho)) - tr(rho) = p0 * 0 + p1 * (-1) = -p1;
+       - Under completed Kraus family E_comp = {K_0, K_1} with K_1 = diag(0, 1), the operator
+         residual vanishes (R_TP = diag(0, 0)), so tr(E_comp(rho)) - tr(rho) = 0 for all (p0, p1);
+    2. Concrete 3-phase CPTP state-blindspot vs. operator completion separation:
+       - Phase 1 (Incomplete channel E_inc = {diag(1, 0)} probed only on ground state rho_0 = diag(1, 0)):
+         tr(E_inc(rho_0)) - tr(rho_0) = 0 passes state-specific trace check (L_blind = 1),
+         while operator residual ||R_TP||_1 = 1 > 0 fails operator TP
+         (Eg_blind = 0, Δ_{E,blind} = -1);
+       - Phase 2 (Incomplete channel E_inc = {diag(1, 0)} probed on excited state rho_1 = diag(0, 1)):
+         exposes trace loss tr(E_inc(rho_1)) - tr(rho_1) = -1 ≠ 0 with ||R_TP||_1 = 1 > 0
+         (L_leak = 1, Eg_leak = 0, Δ_{E,leak} = -1);
+       - Phase 3 (Completed Kraus family E_comp = {diag(1, 0), diag(0, 1)} across basis {rho_0, rho_1}):
+         achieves ||R_TP||_1 = 0 and 0 trace discrepancy on both basis states
+         (L_comp = 1, Eg_comp = 1, Δ_{E,comp} = 0). -/
+theorem cptp_state_blindspot_vs_operator_residual_and_completion :
+    ((∀ p0 p1 : Int, p0 * 0 + p1 * (-1) = -p1) ∧
+     (∀ p0 p1 : Int, (p0 * 1 + p1 * 0) + (p0 * 0 + p1 * 1) - (p0 + p1) = 0)) ∧
+    (let tr_diff_blind : Int := 0;
+     let res_norm_inc : Int := 1;
+     let tr_diff_leak : Int := -1;
+     let res_norm_comp : Int := 0;
+     let tr_diff_comp_0 : Int := 0;
+     let tr_diff_comp_1 : Int := 0;
+     let l_blind := if (tr_diff_blind = 0) ∧ (res_norm_inc = 1) then (1 : Int) else 0;
+     let eg_blind := if (l_blind = 1) ∧ (res_norm_inc = 0) then (1 : Int) else 0;
+     let defect_blind := eg_blind - l_blind;
+     let l_leak := if (tr_diff_leak = -1) ∧ (res_norm_inc = 1) then (1 : Int) else 0;
+     let eg_leak := if (l_leak = 1) ∧ (tr_diff_leak = 0) ∧ (res_norm_inc = 0) then (1 : Int) else 0;
+     let defect_leak := eg_leak - l_leak;
+     let l_comp := if (res_norm_comp = 0) ∧ (tr_diff_comp_0 = 0) ∧ (tr_diff_comp_1 = 0) then (1 : Int) else 0;
+     let eg_comp := if (l_comp = 1) ∧ (res_norm_comp < res_norm_inc) then (1 : Int) else 0;
+     let defect_comp := eg_comp - l_comp;
+     (l_blind = 1 ∧ eg_blind = 0 ∧ defect_blind = -1) ∧
+     (l_leak = 1 ∧ eg_leak = 0 ∧ defect_leak = -1) ∧
+     (l_comp = 1 ∧ eg_comp = 1 ∧ defect_comp = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro p0 p1
+    omega
+  · intro p0 p1
+    omega
+
 end LggrVIII

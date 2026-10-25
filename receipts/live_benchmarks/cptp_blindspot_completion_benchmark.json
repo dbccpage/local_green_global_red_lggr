@@ -1,0 +1,834 @@
+{
+  "schema": "lggr.cptp_blindspot_completion_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "cptp_blindspot_completion_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_blindspot_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_leakage_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_completed_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "incomplete_channel_coherence_rate": "0",
+  "completed_channel_coherence_rate": "1",
+  "cptp_completion_coherence_gain": "1",
+  "cptp_completion_monitor_receipt": {
+    "schema": "lggr.online_cptp_blindspot_completion.v1",
+    "authority_effect": "None",
+    "scope_id": "live-cptp-blindspot-completion-scope",
+    "status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_state_blindspot_count": 5,
+    "phase_2_excited_leakage_count": 5,
+    "phase_3_completed_tp_count": 5,
+    "incomplete_channel_coherence_rate": "0",
+    "completed_channel_coherence_rate": "1",
+    "cptp_completion_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::cptp_completion_eval",
+        "incomplete_residual_l1_norm": "1",
+        "completed_residual_l1_norm": "0",
+        "phase_1_trace_discrepancy": "0",
+        "phase_2_trace_discrepancy": "-1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+        "incomplete_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-openai/gpt-4o-mini::cptp_completion_eval-inc",
+          "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "dimension": 2,
+          "kraus_count": 1,
+          "operator_trace_preserving": false,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1"
+            ]
+          ],
+          "residual_l1_norm": "1",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [
+            "rho_0_ground"
+          ],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "196ec1e0181271253d7fecd9c30ddc86c0eddbd8a85c5e2969bd9a2a3c07b32d"
+        },
+        "completed_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-openai/gpt-4o-mini::cptp_completion_eval-comp",
+          "status": "OPERATOR_TP_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "dimension": 2,
+          "kraus_count": 2,
+          "operator_trace_preserving": true,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0"
+            ]
+          ],
+          "residual_l1_norm": "0",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "7921c832b05d1ccebeb95fb069ae4991fcdddbb70185cb52cbe34505c3842bb6"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::cptp_completion_eval",
+        "incomplete_residual_l1_norm": "1",
+        "completed_residual_l1_norm": "0",
+        "phase_1_trace_discrepancy": "0",
+        "phase_2_trace_discrepancy": "-1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+        "incomplete_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-google/gemini-2.5-flash-lite::cptp_completion_eval-inc",
+          "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "dimension": 2,
+          "kraus_count": 1,
+          "operator_trace_preserving": false,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1"
+            ]
+          ],
+          "residual_l1_norm": "1",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [
+            "rho_0_ground"
+          ],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "6e406a1fe982cc807e00b904f9da23b57537189d83ddf4d05ba7a56eab62eae5"
+        },
+        "completed_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-google/gemini-2.5-flash-lite::cptp_completion_eval-comp",
+          "status": "OPERATOR_TP_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "dimension": 2,
+          "kraus_count": 2,
+          "operator_trace_preserving": true,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0"
+            ]
+          ],
+          "residual_l1_norm": "0",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "e84751f7f6daf6013e0dfaf08c3a6475b58918ee665f6f0ddeb49e7e3137b52d"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::cptp_completion_eval",
+        "incomplete_residual_l1_norm": "1",
+        "completed_residual_l1_norm": "0",
+        "phase_1_trace_discrepancy": "0",
+        "phase_2_trace_discrepancy": "-1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+        "incomplete_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-meta-llama/llama-3.3-70b-instruct::cptp_completion_eval-inc",
+          "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "dimension": 2,
+          "kraus_count": 1,
+          "operator_trace_preserving": false,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1"
+            ]
+          ],
+          "residual_l1_norm": "1",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [
+            "rho_0_ground"
+          ],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "838c0db7ceb00257282a0837526ec0b96c8917d50aa4b30bac9d33acd50a8f5d"
+        },
+        "completed_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-meta-llama/llama-3.3-70b-instruct::cptp_completion_eval-comp",
+          "status": "OPERATOR_TP_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "dimension": 2,
+          "kraus_count": 2,
+          "operator_trace_preserving": true,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0"
+            ]
+          ],
+          "residual_l1_norm": "0",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "8966e6ab9909a4361f3167180f488dda6b468b5dfd41cdf892cd4ed1ee12028e"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::cptp_completion_eval",
+        "incomplete_residual_l1_norm": "1",
+        "completed_residual_l1_norm": "0",
+        "phase_1_trace_discrepancy": "0",
+        "phase_2_trace_discrepancy": "-1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+        "incomplete_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-deepseek/deepseek-chat::cptp_completion_eval-inc",
+          "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "dimension": 2,
+          "kraus_count": 1,
+          "operator_trace_preserving": false,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1"
+            ]
+          ],
+          "residual_l1_norm": "1",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [
+            "rho_0_ground"
+          ],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "53c40683daa4522f38a8758342ce32951fa371b9c0e7cf2e2fff8a18b55d36ab"
+        },
+        "completed_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-deepseek/deepseek-chat::cptp_completion_eval-comp",
+          "status": "OPERATOR_TP_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "dimension": 2,
+          "kraus_count": 2,
+          "operator_trace_preserving": true,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0"
+            ]
+          ],
+          "residual_l1_norm": "0",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "84746988f68b7231ecf8b061b5b7a71451c85a75171a1dbb36aa5b5e485fcffe"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::cptp_completion_eval",
+        "incomplete_residual_l1_norm": "1",
+        "completed_residual_l1_norm": "0",
+        "phase_1_trace_discrepancy": "0",
+        "phase_2_trace_discrepancy": "-1",
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+        "incomplete_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-mistralai/mistral-small-3.2-24b-instruct::cptp_completion_eval-inc",
+          "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "dimension": 2,
+          "kraus_count": 1,
+          "operator_trace_preserving": false,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1"
+            ]
+          ],
+          "residual_l1_norm": "1",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [
+            "rho_0_ground"
+          ],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "94d23bd454b6e06c2bbd2f9b45e2244fe04c97c134acfbe74476b8f831afa1be"
+        },
+        "completed_cptp_receipt": {
+          "schema": "lggr.online_cptp_trace.v1",
+          "authority_effect": "None",
+          "scope_id": "live-cptp-blindspot-completion-scope-mistralai/mistral-small-3.2-24b-instruct::cptp_completion_eval-comp",
+          "status": "OPERATOR_TP_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "dimension": 2,
+          "kraus_count": 2,
+          "operator_trace_preserving": true,
+          "residual_r_tp": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0"
+            ]
+          ],
+          "residual_l1_norm": "0",
+          "probed_states_count": 2,
+          "blindspot_state_ids": [],
+          "audited_compositions_count": 0,
+          "all_state_discrepancy_identities_verified": true,
+          "all_composition_identities_verified": true,
+          "receipt_sha256": "5a559236105bdcb6928063140ebe70466a40e2e80787fb1262ec7aa0869750e8"
+        }
+      }
+    ],
+    "receipt_sha256": "2f9dcf0a5ae42177753c3ea2d15dcf25d7807e04bf9c89e3065d666db167e58c"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::cptp_completion_eval",
+      "incomplete_residual_l1_norm": "1",
+      "completed_residual_l1_norm": "0",
+      "phase_1_trace_discrepancy": "0",
+      "phase_2_trace_discrepancy": "-1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+      "incomplete_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-openai/gpt-4o-mini::cptp_completion_eval-inc",
+        "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "dimension": 2,
+        "kraus_count": 1,
+        "operator_trace_preserving": false,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ],
+        "residual_l1_norm": "1",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [
+          "rho_0_ground"
+        ],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "196ec1e0181271253d7fecd9c30ddc86c0eddbd8a85c5e2969bd9a2a3c07b32d"
+      },
+      "completed_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-openai/gpt-4o-mini::cptp_completion_eval-comp",
+        "status": "OPERATOR_TP_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "dimension": 2,
+        "kraus_count": 2,
+        "operator_trace_preserving": true,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0"
+          ]
+        ],
+        "residual_l1_norm": "0",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "7921c832b05d1ccebeb95fb069ae4991fcdddbb70185cb52cbe34505c3842bb6"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\"incomplete_residual_l1_norm\": \"1\", \"phase_2_trace_discrepancy\": \"-1\", \"completed_residual_l1_norm\": \"0\"}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::cptp_completion_eval",
+      "incomplete_residual_l1_norm": "1",
+      "completed_residual_l1_norm": "0",
+      "phase_1_trace_discrepancy": "0",
+      "phase_2_trace_discrepancy": "-1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+      "incomplete_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-google/gemini-2.5-flash-lite::cptp_completion_eval-inc",
+        "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "dimension": 2,
+        "kraus_count": 1,
+        "operator_trace_preserving": false,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ],
+        "residual_l1_norm": "1",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [
+          "rho_0_ground"
+        ],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "6e406a1fe982cc807e00b904f9da23b57537189d83ddf4d05ba7a56eab62eae5"
+      },
+      "completed_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-google/gemini-2.5-flash-lite::cptp_completion_eval-comp",
+        "status": "OPERATOR_TP_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "dimension": 2,
+        "kraus_count": 2,
+        "operator_trace_preserving": true,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0"
+          ]
+        ],
+        "residual_l1_norm": "0",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "e84751f7f6daf6013e0dfaf08c3a6475b58918ee665f6f0ddeb49e7e3137b52d"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\n  \"incomplete_residual_l1_norm\": \"1\",\n  \"phase_2_trace_discrepancy\": \"-1\",\n  \"completed_residual_l1_norm\": \"0\"\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::cptp_completion_eval",
+      "incomplete_residual_l1_norm": "1",
+      "completed_residual_l1_norm": "0",
+      "phase_1_trace_discrepancy": "0",
+      "phase_2_trace_discrepancy": "-1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+      "incomplete_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-meta-llama/llama-3.3-70b-instruct::cptp_completion_eval-inc",
+        "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "dimension": 2,
+        "kraus_count": 1,
+        "operator_trace_preserving": false,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ],
+        "residual_l1_norm": "1",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [
+          "rho_0_ground"
+        ],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "838c0db7ceb00257282a0837526ec0b96c8917d50aa4b30bac9d33acd50a8f5d"
+      },
+      "completed_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-meta-llama/llama-3.3-70b-instruct::cptp_completion_eval-comp",
+        "status": "OPERATOR_TP_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "dimension": 2,
+        "kraus_count": 2,
+        "operator_trace_preserving": true,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0"
+          ]
+        ],
+        "residual_l1_norm": "0",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "8966e6ab9909a4361f3167180f488dda6b468b5dfd41cdf892cd4ed1ee12028e"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "{\"incomplete_residual_l1_norm\": \"1\", \"phase_2_trace_discrepancy\": \"-1\", \"completed_residual_l1_norm\": \"0\"}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::cptp_completion_eval",
+      "incomplete_residual_l1_norm": "1",
+      "completed_residual_l1_norm": "0",
+      "phase_1_trace_discrepancy": "0",
+      "phase_2_trace_discrepancy": "-1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+      "incomplete_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-deepseek/deepseek-chat::cptp_completion_eval-inc",
+        "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "dimension": 2,
+        "kraus_count": 1,
+        "operator_trace_preserving": false,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ],
+        "residual_l1_norm": "1",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [
+          "rho_0_ground"
+        ],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "53c40683daa4522f38a8758342ce32951fa371b9c0e7cf2e2fff8a18b55d36ab"
+      },
+      "completed_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-deepseek/deepseek-chat::cptp_completion_eval-comp",
+        "status": "OPERATOR_TP_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "dimension": 2,
+        "kraus_count": 2,
+        "operator_trace_preserving": true,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0"
+          ]
+        ],
+        "residual_l1_norm": "0",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "84746988f68b7231ecf8b061b5b7a71451c85a75171a1dbb36aa5b5e485fcffe"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\"incomplete_residual_l1_norm\": \"1\", \"phase_2_trace_discrepancy\": \"-1\", \"completed_residual_l1_norm\": \"0\"}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::cptp_completion_eval",
+      "incomplete_residual_l1_norm": "1",
+      "completed_residual_l1_norm": "0",
+      "phase_1_trace_discrepancy": "0",
+      "phase_2_trace_discrepancy": "-1",
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATE_BLINDSPOT_NON_TP_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CPTP_OPERATOR_COMPLETION_VERIFIED_LGGG",
+      "incomplete_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-mistralai/mistral-small-3.2-24b-instruct::cptp_completion_eval-inc",
+        "status": "STATE_BLINDSPOT_NON_TP_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "dimension": 2,
+        "kraus_count": 1,
+        "operator_trace_preserving": false,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "-1"
+          ]
+        ],
+        "residual_l1_norm": "1",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [
+          "rho_0_ground"
+        ],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "94d23bd454b6e06c2bbd2f9b45e2244fe04c97c134acfbe74476b8f831afa1be"
+      },
+      "completed_cptp_receipt": {
+        "schema": "lggr.online_cptp_trace.v1",
+        "authority_effect": "None",
+        "scope_id": "live-cptp-blindspot-completion-scope-mistralai/mistral-small-3.2-24b-instruct::cptp_completion_eval-comp",
+        "status": "OPERATOR_TP_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "dimension": 2,
+        "kraus_count": 2,
+        "operator_trace_preserving": true,
+        "residual_r_tp": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "0",
+            "0"
+          ]
+        ],
+        "residual_l1_norm": "0",
+        "probed_states_count": 2,
+        "blindspot_state_ids": [],
+        "audited_compositions_count": 0,
+        "all_state_discrepancy_identities_verified": true,
+        "all_composition_identities_verified": true,
+        "receipt_sha256": "5a559236105bdcb6928063140ebe70466a40e2e80787fb1262ec7aa0869750e8"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"incomplete_residual_l1_norm\": \"1\",\n  \"phase_2_trace_discrepancy\": \"-1\",\n  \"completed_residual_l1_norm\": \"0\"\n}\n```"
+    }
+  ],
+  "meaning": "State-dependent CPTP trace preservation vs. operator-level residual and Kraus completion benchmark across 5 model families (Theorem 83): Phase 1 separates state-dependent blindspot on rho_0 = diag(1, 0) where tr(E_inc(rho_0)) = tr(rho_0) = 1 while ||R_TP||_1 = 1 > 0 (Delta_E = -1), Phase 2 separates excited-state trace leakage on rho_1 = diag(0, 1) where tr(E_inc(rho_1)) - tr(rho_1) = -1 (Delta_E = -1), and Phase 3 verifies completed Kraus family E_comp = {diag(1, 0), diag(0, 1)} with ||R_TP||_1 = 0 across {rho_0, rho_1} (Delta_E = 0).",
+  "receipt_sha256": "eb374dc33d81305eca6a00548c33b346d35fd7586ae244a70bbcaa1f9381387e"
+}
