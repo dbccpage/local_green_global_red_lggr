@@ -100,3 +100,4 @@ import LggrVIII
 #print axioms LggrVIII.multi_cycle_catalyst_wear_vs_periodic_rejuvenation_schedule
 #print axioms LggrVIII.dfa_non_resetting_concatenation_vs_explicit_reset_gluing
 #print axioms LggrVIII.cptp_state_blindspot_vs_operator_residual_and_completion
+#print axioms LggrVIII.mayer_vietoris_disconnected_overlap_and_coboundary_reconciliation

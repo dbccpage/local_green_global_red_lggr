@@ -55,6 +55,7 @@ from lggr.streaming import (
     StreamingLinearizedPipelineJacobianMonitor,
     StreamingMartingaleOptionalStoppingMonitor,
     StreamingMayerVietorisMonitor,
+    StreamingMayerVietorisReconciliationMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingMultiTurnPairwiseTranscriptMonitor,
     StreamingOrganizationalGluingMonitor,
@@ -4410,6 +4411,44 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["incomplete_channel_coherence_rate"], "0")
         self.assertEqual(receipt["completed_channel_coherence_rate"], "1")
         self.assertEqual(receipt["cptp_completion_coherence_gain"], "1")
+
+    def test_mayer_vietoris_disconnected_overlap_and_coboundary_reconciliation(self) -> None:
+        """Verify Theorem 84: Mayer-Vietoris disconnected interface gluing and coboundary reconciliation."""
+        mon = StreamingMayerVietorisReconciliationMonitor(
+            scope_id="unit-mayer-vietoris-reconciliation-scope",
+        )
+        obs = mon.evaluate_mv_reconciliation(
+            evaluation_id="mv-reconcil-eval-01",
+        )
+        self.assertEqual(obs["phase_1_coboundary_spread"], "2")
+        self.assertEqual(obs["phase_2_coboundary_spread"], "1")
+        self.assertEqual(obs["phase_3_coboundary_spread"], "0")
+        self.assertEqual(
+            obs["glued_global_potential"],
+            {"u": "0", "v": "0", "w0": "-1", "w1": "2"},
+        )
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "MAYER_VIETORIS_CONNECTING_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "RESIDUAL_OVERLAP_SPREAD_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "MAYER_VIETORIS_COBOUNDARY_RECONCILED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["unreconciled_overlap_coherence_rate"], "0")
+        self.assertEqual(receipt["reconciled_coboundary_coherence_rate"], "1")
+        self.assertEqual(receipt["mv_reconciliation_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
