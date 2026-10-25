@@ -12039,6 +12039,204 @@ class StreamingMultiTurnPairwiseTranscriptMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDisagreementPreservingCouncilMonitor:
+    """Online RSI Paper 002 / Volume VIII disagreement-preserving side-channel council vs. collapsing consensus monitor.
+
+    Wraps StreamingSideInformationCapacityMonitor and StreamingProductOfExpertsMonitor to audit
+    multi-agent code-review councils on patch fibers with K > 2 distinct latent root causes:
+      - Phase 1 (Collapsing Consensus Prompt S = 1 with Disjoint PoE Supports):
+        Forces a single unanimous summary tag (S_cons = 1) while specialist action distributions
+        have disjoint supports (D_PoE = 0). Incurs root-cause collision floor K - 1 >= 2 > 0
+        and PoE collapse (L_cons = 1, Eg_cons = 0, Delta_{E,cons} = -1,
+        COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR).
+      - Phase 2 (Binary Pass/Block Escalation Tag S = 2 < K):
+        Expands the council tag to S_bin = 2 symbols, reducing the collision floor from
+        K - 1 to K - 2 > 0 (L_bin = 1), yet still conflating K - 2 >= 1 distinct root causes
+        (Eg_bin = 0, Delta_{E,bin} = -1, BINARY_TAG_CAPACITY_DEFICIT_LGGR).
+      - Phase 3 (Disagreement-Preserving Side-Channel Council S >= K with Shared Support):
+        Allocates S_council >= K distinct side-channel symbols (collision floor K - S_council = 0,
+        realized_subfiber_error_floor = 0) and shared remediation support (D_PoE > 0, D_MoE > 0),
+        achieving zero-loss root-cause routing (L_council = 1, Eg_council = 1,
+        Delta_{E,council} = 0, DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG).
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-disagreement-preserving-council-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.capacity_monitor = StreamingSideInformationCapacityMonitor(
+            scope_id=f"{self.scope_id}-capacity"
+        )
+        self.poe_monitor = StreamingProductOfExpertsMonitor(
+            scope_id=f"{self.scope_id}-poe"
+        )
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_council(
+        self,
+        evaluation_id: str,
+        root_causes: Sequence[str] = (
+            "auth_bypass",
+            "race_condition",
+            "memory_leak",
+            "sql_injection",
+        ),
+        *,
+        binary_symbols: Sequence[int] = (0, 0, 1, 1),
+        council_symbols: Sequence[int] = (0, 1, 2, 3),
+        council_capacity_s: int = 4,
+        disjoint_expert_scores: Sequence[Sequence[Fraction | int | str]] = (
+            ("1", "0"),
+            ("0", "1"),
+        ),
+        shared_expert_scores: Sequence[Sequence[Fraction | int | str]] = (
+            ("3/4", "1/4"),
+            ("1/4", "3/4"),
+        ),
+    ) -> dict[str, Any]:
+        eid = text(evaluation_id, "evaluation_id")
+        causes = [text(c, "root_cause") for c in sequence(root_causes, "root_causes")]
+        k_causes = len(set(causes))
+        if k_causes < 3 or len(causes) != k_causes:
+            raise ValidationError("root_causes must contain K >= 3 distinct root causes")
+        bin_syms = [exact_int(s, "binary_symbol") for s in sequence(binary_symbols, "binary_symbols")]
+        c_syms = [exact_int(s, "council_symbol") for s in sequence(council_symbols, "council_symbols")]
+        cap_s = exact_int(council_capacity_s, "council_capacity_s", minimum=k_causes)
+        if len(bin_syms) != k_causes or len(c_syms) != k_causes:
+            raise ValidationError("symbol sequences must match root_causes length")
+
+        states_cons = [
+            {"state_id": f"patch_{i}", "query_value": causes[i], "side_symbol": 0}
+            for i in range(k_causes)
+        ]
+        states_bin = [
+            {"state_id": f"patch_{i}", "query_value": causes[i], "side_symbol": bin_syms[i]}
+            for i in range(k_causes)
+        ]
+        states_council = [
+            {"state_id": f"patch_{i}", "query_value": causes[i], "side_symbol": c_syms[i]}
+            for i in range(k_causes)
+        ]
+
+        cap_cons = self.capacity_monitor.record_fiber_channel(
+            f"{eid}::phase_1_consensus",
+            states_cons,
+            channel_capacity_s=1,
+            error_budget=0,
+        )
+        poe_cons = self.poe_monitor.record_expert_scores(
+            f"{eid}::phase_1_disjoint_poe",
+            disjoint_expert_scores,
+        )
+
+        cap_bin = self.capacity_monitor.record_fiber_channel(
+            f"{eid}::phase_2_binary_tag",
+            states_bin,
+            channel_capacity_s=2,
+            error_budget=0,
+        )
+
+        cap_council = self.capacity_monitor.record_fiber_channel(
+            f"{eid}::phase_3_council",
+            states_council,
+            channel_capacity_s=cap_s,
+            error_budget=0,
+        )
+        poe_council = self.poe_monitor.record_expert_scores(
+            f"{eid}::phase_3_shared_poe",
+            shared_expert_scores,
+        )
+
+        floor_cons = int(cap_cons["realized_subfiber_error_floor"])
+        floor_bin = int(cap_bin["realized_subfiber_error_floor"])
+        floor_council = int(cap_council["realized_subfiber_error_floor"])
+        d_poe_cons = rational(poe_cons["poe_partition_sum"])
+        d_poe_council = rational(poe_council["poe_partition_sum"])
+
+        l_p1 = 1 if (int(cap_cons["local_product_aggregator"]) == 1 and int(poe_cons["local_product_aggregator"]) == 1) else 0
+        eg_p1 = 1 if (l_p1 == 1 and floor_cons == 0 and d_poe_cons > Fraction(0)) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (int(cap_bin["local_product_aggregator"]) == 1 and floor_bin < floor_cons) else 0
+        eg_p2 = 1 if (l_p2 == 1 and floor_bin == 0) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = 1 if (int(cap_council["local_product_aggregator"]) == 1 and floor_council == 0 and d_poe_council > Fraction(0)) else 0
+        eg_p3 = 1 if (l_p3 == 1 and floor_council < floor_bin and floor_bin < floor_cons) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "distinct_root_causes_k": k_causes,
+            "consensus_collision_floor": floor_cons,
+            "binary_tag_collision_floor": floor_bin,
+            "council_collision_floor": floor_council,
+            "consensus_poe_partition_sum": d_poe_cons,
+            "council_poe_partition_sum": d_poe_council,
+            "phase_1_consensus_local_green": l_p1,
+            "phase_1_consensus_global_green": eg_p1,
+            "phase_1_consensus_defect": defect_p1,
+            "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR" if defect_p1 == -1 else "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+            "phase_2_binary_local_green": l_p2,
+            "phase_2_binary_global_green": eg_p2,
+            "phase_2_binary_defect": defect_p2,
+            "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR" if defect_p2 == -1 else "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+            "phase_3_council_local_green": l_p3,
+            "phase_3_council_global_green": eg_p3,
+            "phase_3_council_defect": defect_p3,
+            "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG" if eg_p3 == 1 else "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+            "capacity_consensus": cap_cons,
+            "capacity_binary": cap_bin,
+            "capacity_council": cap_council,
+            "poe_consensus": poe_cons,
+            "poe_council": poe_council,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one council evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_collapse = sum(1 for e in self.evaluations if e["phase_1_consensus_defect"] == -1)
+        p2_binary_deficit = sum(1 for e in self.evaluations if e["phase_2_binary_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_council_global_green"] == 1)
+
+        collapsing_consensus_coherence_rate = Fraction(n - p1_collapse, n)
+        disagreement_council_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_collapse == n:
+            status = "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_disagreement_preserving_council.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_collapsing_consensus_loss_count": p1_collapse,
+            "phase_2_binary_tag_deficit_count": p2_binary_deficit,
+            "phase_3_disagreement_council_coherent_count": p3_coherent,
+            "collapsing_consensus_coherence_rate": collapsing_consensus_coherence_rate,
+            "disagreement_council_coherence_rate": disagreement_council_coherence_rate,
+            "disagreement_council_coherence_gain": (
+                disagreement_council_coherence_rate - collapsing_consensus_coherence_rate
+            ),
+            "capacity_monitor_receipt": self.capacity_monitor.get_receipt(),
+            "poe_monitor_receipt": self.poe_monitor.get_receipt(),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

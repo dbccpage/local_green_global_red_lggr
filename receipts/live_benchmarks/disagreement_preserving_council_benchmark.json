@@ -1,0 +1,3308 @@
+{
+  "schema": "lggr.disagreement_preserving_council_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "disagreement_preserving_council_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_consensus_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_binary_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_council_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "collapsing_consensus_coherence_rate": "0",
+  "disagreement_council_coherence_rate": "1",
+  "disagreement_council_coherence_gain": "1",
+  "council_monitor_receipt": {
+    "schema": "lggr.online_disagreement_preserving_council.v1",
+    "authority_effect": "None",
+    "scope_id": "disagreement-preserving-council-5model-scope",
+    "status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_collapsing_consensus_loss_count": 5,
+    "phase_2_binary_tag_deficit_count": 5,
+    "phase_3_disagreement_council_coherent_count": 5,
+    "collapsing_consensus_coherence_rate": "0",
+    "disagreement_council_coherence_rate": "1",
+    "disagreement_council_coherence_gain": "1",
+    "capacity_monitor_receipt": {
+      "schema": "lggr.online_side_information_capacity.v1",
+      "authority_effect": "None",
+      "scope_id": "disagreement-preserving-council-5model-scope-capacity",
+      "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "fiber_count": 15,
+      "all_pigeonhole_bounds_verified": true,
+      "capacity_deficit_fiber_ids": [
+        "openai/gpt-4o-mini::council_eval::phase_1_consensus",
+        "openai/gpt-4o-mini::council_eval::phase_2_binary_tag",
+        "google/gemini-2.5-flash-lite::council_eval::phase_1_consensus",
+        "google/gemini-2.5-flash-lite::council_eval::phase_2_binary_tag",
+        "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_consensus",
+        "meta-llama/llama-3.3-70b-instruct::council_eval::phase_2_binary_tag",
+        "deepseek/deepseek-chat::council_eval::phase_1_consensus",
+        "deepseek/deepseek-chat::council_eval::phase_2_binary_tag",
+        "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_consensus",
+        "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_2_binary_tag"
+      ],
+      "rejected_fiber_ids": [],
+      "fibers": [
+        {
+          "fiber_id": "openai/gpt-4o-mini::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "openai/gpt-4o-mini::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "openai/gpt-4o-mini::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "deepseek/deepseek-chat::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "deepseek/deepseek-chat::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "deepseek/deepseek-chat::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        }
+      ],
+      "receipt_sha256": "b6c4aea903012b6dc1641cf0d361d281676ecad9a1771f84d3f645c6613f5da3"
+    },
+    "poe_monitor_receipt": {
+      "schema": "lggr.online_product_of_experts.v1",
+      "authority_effect": "None",
+      "scope_id": "disagreement-preserving-council-5model-scope-poe",
+      "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "round_count": 10,
+      "poe_collapsed_round_ids": [
+        "openai/gpt-4o-mini::council_eval::phase_1_disjoint_poe",
+        "google/gemini-2.5-flash-lite::council_eval::phase_1_disjoint_poe",
+        "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_disjoint_poe",
+        "deepseek/deepseek-chat::council_eval::phase_1_disjoint_poe",
+        "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_disjoint_poe"
+      ],
+      "rejected_round_ids": [],
+      "rounds": [
+        {
+          "round_id": "openai/gpt-4o-mini::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "openai/gpt-4o-mini::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "google/gemini-2.5-flash-lite::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "google/gemini-2.5-flash-lite::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "deepseek/deepseek-chat::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "deepseek/deepseek-chat::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      ],
+      "receipt_sha256": "e34d76130c949e2715c119fa15dabb8d25f2bb423f6b05cff57aaef1770b681b"
+    },
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::council_eval",
+        "distinct_root_causes_k": 4,
+        "consensus_collision_floor": 3,
+        "binary_tag_collision_floor": 2,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "openai/gpt-4o-mini::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "openai/gpt-4o-mini::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "openai/gpt-4o-mini::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "openai/gpt-4o-mini::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "openai/gpt-4o-mini::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::council_eval",
+        "distinct_root_causes_k": 4,
+        "consensus_collision_floor": 3,
+        "binary_tag_collision_floor": 2,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "google/gemini-2.5-flash-lite::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "google/gemini-2.5-flash-lite::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::council_eval",
+        "distinct_root_causes_k": 4,
+        "consensus_collision_floor": 3,
+        "binary_tag_collision_floor": 2,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::council_eval",
+        "distinct_root_causes_k": 4,
+        "consensus_collision_floor": 3,
+        "binary_tag_collision_floor": 2,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "deepseek/deepseek-chat::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "deepseek/deepseek-chat::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "deepseek/deepseek-chat::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "deepseek/deepseek-chat::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "deepseek/deepseek-chat::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval",
+        "distinct_root_causes_k": 4,
+        "consensus_collision_floor": 3,
+        "binary_tag_collision_floor": 2,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_consensus",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 3,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_2_binary_tag",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_3_council",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "auth_bypass",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "race_condition",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "memory_leak",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_3",
+              "query_value": "sql_injection",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      }
+    ],
+    "receipt_sha256": "d4ba20f79b8581ce00f1e6c754bb96f1c57e122f45db8130a28816226d39f9ca"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::council_eval",
+      "distinct_root_causes_k": 4,
+      "consensus_collision_floor": 3,
+      "binary_tag_collision_floor": 2,
+      "council_collision_floor": 0,
+      "consensus_poe_partition_sum": "0",
+      "council_poe_partition_sum": "3/8",
+      "phase_1_consensus_local_green": 1,
+      "phase_1_consensus_global_green": 0,
+      "phase_1_consensus_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_binary_local_green": 1,
+      "phase_2_binary_global_green": 0,
+      "phase_2_binary_defect": -1,
+      "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+      "phase_3_council_local_green": 1,
+      "phase_3_council_global_green": 1,
+      "phase_3_council_defect": 0,
+      "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+      "capacity_consensus": {
+        "fiber_id": "openai/gpt-4o-mini::council_eval::phase_1_consensus",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 1,
+        "used_symbols_count": 1,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 3,
+        "realized_subfiber_error_floor": 3,
+        "realized_sample_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_binary": {
+        "fiber_id": "openai/gpt-4o-mini::council_eval::phase_2_binary_tag",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "realized_sample_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_council": {
+        "fiber_id": "openai/gpt-4o-mini::council_eval::phase_3_council",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "realized_sample_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 1,
+        "evaluator_defect": 0,
+        "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 2,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 3,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "poe_consensus": {
+        "round_id": "openai/gpt-4o-mini::council_eval::phase_1_disjoint_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [],
+        "poe_unnormalized_vector": [
+          "0",
+          "0"
+        ],
+        "poe_partition_sum": "0",
+        "poe_normalized_distribution": null,
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 0,
+        "evaluator_defect": -1,
+        "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+      },
+      "poe_council": {
+        "round_id": "openai/gpt-4o-mini::council_eval::phase_3_shared_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [
+          0,
+          1
+        ],
+        "poe_unnormalized_vector": [
+          "3/16",
+          "3/16"
+        ],
+        "poe_partition_sum": "3/8",
+        "poe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 1,
+        "evaluator_defect": 0,
+        "round_status": "POE_AND_MOE_COHERENT_LGGG"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "```json\n{\n  \"council_capacity_s\": 4,\n  \"council_symbols\": [0, 1, 2, 3],\n  \"consensus_floor\": 3,\n  \"binary_floor\": 2,\n  \"council_floor\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::council_eval",
+      "distinct_root_causes_k": 4,
+      "consensus_collision_floor": 3,
+      "binary_tag_collision_floor": 2,
+      "council_collision_floor": 0,
+      "consensus_poe_partition_sum": "0",
+      "council_poe_partition_sum": "3/8",
+      "phase_1_consensus_local_green": 1,
+      "phase_1_consensus_global_green": 0,
+      "phase_1_consensus_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_binary_local_green": 1,
+      "phase_2_binary_global_green": 0,
+      "phase_2_binary_defect": -1,
+      "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+      "phase_3_council_local_green": 1,
+      "phase_3_council_global_green": 1,
+      "phase_3_council_defect": 0,
+      "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+      "capacity_consensus": {
+        "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_1_consensus",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 1,
+        "used_symbols_count": 1,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 3,
+        "realized_subfiber_error_floor": 3,
+        "realized_sample_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_binary": {
+        "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_2_binary_tag",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "realized_sample_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_council": {
+        "fiber_id": "google/gemini-2.5-flash-lite::council_eval::phase_3_council",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "realized_sample_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 1,
+        "evaluator_defect": 0,
+        "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 2,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 3,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "poe_consensus": {
+        "round_id": "google/gemini-2.5-flash-lite::council_eval::phase_1_disjoint_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [],
+        "poe_unnormalized_vector": [
+          "0",
+          "0"
+        ],
+        "poe_partition_sum": "0",
+        "poe_normalized_distribution": null,
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 0,
+        "evaluator_defect": -1,
+        "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+      },
+      "poe_council": {
+        "round_id": "google/gemini-2.5-flash-lite::council_eval::phase_3_shared_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [
+          0,
+          1
+        ],
+        "poe_unnormalized_vector": [
+          "3/16",
+          "3/16"
+        ],
+        "poe_partition_sum": "3/8",
+        "poe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 1,
+        "evaluator_defect": 0,
+        "round_status": "POE_AND_MOE_COHERENT_LGGG"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\n  \"council_capacity_s\": 4,\n  \"council_symbols\": [0, 1, 2, 3],\n  \"consensus_floor\": 3,\n  \"binary_floor\": 2,\n  \"council_floor\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::council_eval",
+      "distinct_root_causes_k": 4,
+      "consensus_collision_floor": 3,
+      "binary_tag_collision_floor": 2,
+      "council_collision_floor": 0,
+      "consensus_poe_partition_sum": "0",
+      "council_poe_partition_sum": "3/8",
+      "phase_1_consensus_local_green": 1,
+      "phase_1_consensus_global_green": 0,
+      "phase_1_consensus_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_binary_local_green": 1,
+      "phase_2_binary_global_green": 0,
+      "phase_2_binary_defect": -1,
+      "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+      "phase_3_council_local_green": 1,
+      "phase_3_council_global_green": 1,
+      "phase_3_council_defect": 0,
+      "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+      "capacity_consensus": {
+        "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_consensus",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 1,
+        "used_symbols_count": 1,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 3,
+        "realized_subfiber_error_floor": 3,
+        "realized_sample_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_binary": {
+        "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_2_binary_tag",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "realized_sample_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_council": {
+        "fiber_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_3_council",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "realized_sample_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 1,
+        "evaluator_defect": 0,
+        "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 2,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 3,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "poe_consensus": {
+        "round_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_1_disjoint_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [],
+        "poe_unnormalized_vector": [
+          "0",
+          "0"
+        ],
+        "poe_partition_sum": "0",
+        "poe_normalized_distribution": null,
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 0,
+        "evaluator_defect": -1,
+        "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+      },
+      "poe_council": {
+        "round_id": "meta-llama/llama-3.3-70b-instruct::council_eval::phase_3_shared_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [
+          0,
+          1
+        ],
+        "poe_unnormalized_vector": [
+          "3/16",
+          "3/16"
+        ],
+        "poe_partition_sum": "3/8",
+        "poe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 1,
+        "evaluator_defect": 0,
+        "round_status": "POE_AND_MOE_COHERENT_LGGG"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"council_capacity_s\": 4,\n  \"council_symbols\": [0, 1, 2, 3],\n  \"consensus_floor\": 3,\n  \"binary_floor\": 2,\n  \"council_floor\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::council_eval",
+      "distinct_root_causes_k": 4,
+      "consensus_collision_floor": 3,
+      "binary_tag_collision_floor": 2,
+      "council_collision_floor": 0,
+      "consensus_poe_partition_sum": "0",
+      "council_poe_partition_sum": "3/8",
+      "phase_1_consensus_local_green": 1,
+      "phase_1_consensus_global_green": 0,
+      "phase_1_consensus_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_binary_local_green": 1,
+      "phase_2_binary_global_green": 0,
+      "phase_2_binary_defect": -1,
+      "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+      "phase_3_council_local_green": 1,
+      "phase_3_council_global_green": 1,
+      "phase_3_council_defect": 0,
+      "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+      "capacity_consensus": {
+        "fiber_id": "deepseek/deepseek-chat::council_eval::phase_1_consensus",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 1,
+        "used_symbols_count": 1,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 3,
+        "realized_subfiber_error_floor": 3,
+        "realized_sample_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_binary": {
+        "fiber_id": "deepseek/deepseek-chat::council_eval::phase_2_binary_tag",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "realized_sample_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_council": {
+        "fiber_id": "deepseek/deepseek-chat::council_eval::phase_3_council",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "realized_sample_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 1,
+        "evaluator_defect": 0,
+        "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 2,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 3,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "poe_consensus": {
+        "round_id": "deepseek/deepseek-chat::council_eval::phase_1_disjoint_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [],
+        "poe_unnormalized_vector": [
+          "0",
+          "0"
+        ],
+        "poe_partition_sum": "0",
+        "poe_normalized_distribution": null,
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 0,
+        "evaluator_defect": -1,
+        "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+      },
+      "poe_council": {
+        "round_id": "deepseek/deepseek-chat::council_eval::phase_3_shared_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [
+          0,
+          1
+        ],
+        "poe_unnormalized_vector": [
+          "3/16",
+          "3/16"
+        ],
+        "poe_partition_sum": "3/8",
+        "poe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 1,
+        "evaluator_defect": 0,
+        "round_status": "POE_AND_MOE_COHERENT_LGGG"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\n  \"council_capacity_s\": 4,\n  \"council_symbols\": [0, 1, 2, 3],\n  \"consensus_floor\": 3,\n  \"binary_floor\": 2,\n  \"council_floor\": 0\n}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval",
+      "distinct_root_causes_k": 4,
+      "consensus_collision_floor": 3,
+      "binary_tag_collision_floor": 2,
+      "council_collision_floor": 0,
+      "consensus_poe_partition_sum": "0",
+      "council_poe_partition_sum": "3/8",
+      "phase_1_consensus_local_green": 1,
+      "phase_1_consensus_global_green": 0,
+      "phase_1_consensus_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_binary_local_green": 1,
+      "phase_2_binary_global_green": 0,
+      "phase_2_binary_defect": -1,
+      "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+      "phase_3_council_local_green": 1,
+      "phase_3_council_global_green": 1,
+      "phase_3_council_defect": 0,
+      "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+      "capacity_consensus": {
+        "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_consensus",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 1,
+        "used_symbols_count": 1,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 3,
+        "realized_subfiber_error_floor": 3,
+        "realized_sample_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_binary": {
+        "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_2_binary_tag",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "realized_sample_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 0,
+        "evaluator_defect": -1,
+        "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "capacity_council": {
+        "fiber_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_3_council",
+        "state_count": 4,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "error_budget": 0,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "realized_sample_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "local_product_aggregator": 1,
+        "global_decodability_evaluator": 1,
+        "evaluator_defect": 0,
+        "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+        "states": [
+          {
+            "state_id": "patch_0",
+            "query_value": "auth_bypass",
+            "side_symbol": 0,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_1",
+            "query_value": "race_condition",
+            "side_symbol": 1,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_2",
+            "query_value": "memory_leak",
+            "side_symbol": 2,
+            "local_channel_evaluator": 1
+          },
+          {
+            "state_id": "patch_3",
+            "query_value": "sql_injection",
+            "side_symbol": 3,
+            "local_channel_evaluator": 1
+          }
+        ]
+      },
+      "poe_consensus": {
+        "round_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_1_disjoint_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [],
+        "poe_unnormalized_vector": [
+          "0",
+          "0"
+        ],
+        "poe_partition_sum": "0",
+        "poe_normalized_distribution": null,
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 0,
+        "evaluator_defect": -1,
+        "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+      },
+      "poe_council": {
+        "round_id": "mistralai/mistral-small-3.2-24b-instruct::council_eval::phase_3_shared_poe",
+        "expert_count": 2,
+        "candidate_count": 2,
+        "expert_masses": [
+          "1",
+          "1"
+        ],
+        "local_expert_evaluators": [
+          1,
+          1
+        ],
+        "joint_support_indices": [
+          0,
+          1
+        ],
+        "poe_unnormalized_vector": [
+          "3/16",
+          "3/16"
+        ],
+        "poe_partition_sum": "3/8",
+        "poe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_unnormalized_vector": [
+          "1/2",
+          "1/2"
+        ],
+        "moe_partition_sum": "1",
+        "moe_normalized_distribution": [
+          "1/2",
+          "1/2"
+        ],
+        "local_product_aggregator": 1,
+        "global_poe_normalizable_evaluator": 1,
+        "evaluator_defect": 0,
+        "round_status": "POE_AND_MOE_COHERENT_LGGG"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"council_capacity_s\": 4,\n  \"council_symbols\": [0, 1, 2, 3],\n  \"consensus_floor\": 3,\n  \"binary_floor\": 2,\n  \"council_floor\": 0\n}\n```"
+    }
+  ],
+  "meaning": "Multi-agent code-review council benchmark on K = 4 latent root causes across 5 model families: Phase 1 separates a collapsing consensus prompt (S = 1, collision floor K - 1 = 3 > 0 and disjoint PoE collapse D_PoE = 0 -> L = 1, E_g = 0, Delta_E = -1), Phase 2 separates a binary pass/block escalation tag (S = 2 < 4, collision floor K - 2 = 2 > 0 -> L = 1, E_g = 0, Delta_E = -1), and Phase 3 verifies a disagreement-preserving side-channel schema with S = 4 >= K and shared remediation support (collision floor 0, D_PoE = 3/8 > 0 -> L = 1, E_g = 1, Delta_E = 0).",
+  "receipt_sha256": "810a9ac10b369bdf1a1ce8a1c9521bdceb274268a9729a5b3f0b29bf8c19142a"
+}
