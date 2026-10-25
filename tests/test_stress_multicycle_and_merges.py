@@ -31,6 +31,7 @@ from lggr.streaming import (
     StreamingCatalystDegradationMonitor,
     StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
+    StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
     StreamingDFAGrammarGluingMonitor,
     StreamingDashboardAdequacyMonitor,
@@ -2956,6 +2957,125 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["single_round_horizon_coherence_rate"], "0")
         self.assertEqual(receipt["multi_round_lease_revoked_coherence_rate"], "1")
         self.assertEqual(receipt["lease_revocation_coherence_gain"], "1")
+
+    def test_concurrent_lease_overlap_vs_overlap_accounting(self) -> None:
+        """Theorem 62: Concurrent overlapping incident leases vs. lease-overlap accounting."""
+        mon = StreamingConcurrentLeaseOverlapMonitor(scope_id="unit_concurrent_lease_overlap")
+        rec = mon.record_overlap_schedule(
+            schedule_id="overlap_3inc_unit",
+            model_id="openai/gpt-4o-mini",
+            prior_ratchet_receipt_sha256="sha256_prior_ratchet_eval",
+            baseline_policy_sha256="sha256_p0_2_3_0",
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            individual_lease_budget=4,
+            horizon_drift_ceiling=6,
+            uncoordinated_overlapping_leases=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "arrival_tick": 0,
+                    "expiration_tick": 3,
+                    "overlap_accounting_enforced": False,
+                    "authority_signature_valid": True,
+                    "lease_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "arrival_tick": 1,
+                    "expiration_tick": 4,
+                    "overlap_accounting_enforced": False,
+                    "authority_signature_valid": True,
+                    "lease_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "arrival_tick": 2,
+                    "expiration_tick": 5,
+                    "overlap_accounting_enforced": False,
+                    "authority_signature_valid": True,
+                    "lease_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+            overlap_accounted_leases=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "arrival_tick": 0,
+                    "expiration_tick": 1,
+                    "overlap_accounting_enforced": True,
+                    "authority_signature_valid": True,
+                    "lease_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "arrival_tick": 1,
+                    "expiration_tick": 2,
+                    "overlap_accounting_enforced": True,
+                    "authority_signature_valid": True,
+                    "lease_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "arrival_tick": 2,
+                    "expiration_tick": 3,
+                    "overlap_accounting_enforced": True,
+                    "authority_signature_valid": True,
+                    "lease_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+        )
+        p1 = rec["phase_1_uncoordinated_overlap_schedule"]
+        self.assertEqual(p1["local_schedule_indicator_L"], 1)
+        self.assertEqual(p1["global_schedule_indicator_E_g"], 0)
+        self.assertEqual(p1["schedule_evaluator_defect"], -1)
+        self.assertEqual(p1["max_concurrent_active_leases"], 3)
+        self.assertEqual(p1["overlap_tick_count"], 3)
+        self.assertEqual(p1["breach_tick_count"], 3)
+        self.assertEqual(p1["peak_concurrent_weighted_l1_drift"], "11")
+        self.assertEqual(p1["peak_drift_tick"], 2)
+        self.assertEqual(p1["first_horizon_breach_tick"], 1)
+        self.assertEqual(p1["schedule_status"], "CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR")
+
+        p2 = rec["phase_2_overlap_accounted_schedule"]
+        self.assertEqual(p2["local_schedule_indicator_L"], 1)
+        self.assertEqual(p2["global_schedule_indicator_E_g"], 1)
+        self.assertEqual(p2["schedule_evaluator_defect"], 0)
+        self.assertEqual(p2["max_concurrent_active_leases"], 1)
+        self.assertEqual(p2["overlap_tick_count"], 0)
+        self.assertEqual(p2["breach_tick_count"], 0)
+        self.assertEqual(p2["peak_concurrent_weighted_l1_drift"], "4")
+        self.assertIsNone(p2["first_horizon_breach_tick"])
+        self.assertEqual(p2["schedule_status"], "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG")
+
+        self.assertEqual(rec["peak_concurrent_weighted_drift_reduction"], "7")
+        self.assertTrue(rec["phase_1_overlap_horizon_breach"])
+        self.assertFalse(rec["converged_single_round"])
+        self.assertTrue(rec["converged_multi_round"])
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(receipt["status"], "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["phase_1_overlap_horizon_breach_rate"], "1")
+        self.assertEqual(receipt["single_round_overlap_coherence_rate"], "0")
+        self.assertEqual(receipt["multi_round_overlap_accounted_coherence_rate"], "1")
+        self.assertEqual(receipt["overlap_accounting_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

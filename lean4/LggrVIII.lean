@@ -1880,4 +1880,57 @@ theorem cumulative_policy_ratchet_drift_vs_lease_revocation :
   intro ⟨hd1, hd2⟩
   omega
 
+/-- 62. Concurrent overlapping incident leases vs. lease-overlap accounting:
+    1. For any two lease intervals [s1, e1) and [s2, e2) with s1 ≤ s2 < e1 and s2 < e2,
+       the arrival tick t = s2 lies in both active intervals (s1 ≤ s2 ∧ s2 < e1 ∧ s2 ≤ s2 ∧ s2 < e2),
+       whereas enforcing early lease release e1_adj ≤ s2 prevents simultaneous activation
+       at any tick t (¬ (s1 ≤ t ∧ t < e1_adj ∧ s2 ≤ t ∧ t < e2));
+    2. Concrete 3-incident overlapping lease separation on P_0 = (2, 3, 0) with risk weights
+       w = (2, 3, 4), individual lease budget τ_lease = 4, and global horizon ceiling
+       τ_horizon = 6 across temporary leases δ_1 = (2, 0, 0) (weighted slack 4 ≤ 4),
+       δ_2 = (0, 1, 0) (weighted slack 3 ≤ 4), and δ_3 = (0, 0, 1) (weighted slack 4 ≤ 4):
+       - Under uncoordinated overlapping intervals [0, 3), [1, 4), [2, 5), every lease has a
+         finite expiration and satisfies ||δ_k||_{1,w} ≤ τ_lease = 4 (L_overlap = 1), yet
+         concurrent active drift reaches 4 + 3 = 7 > 6 at tick 1 and peaks at 4 + 3 + 4 = 11 > 6
+         at tick 2 (when all 3 leases overlap), yielding Eg_overlap = 0 and Δ_{E,overlap} = -1;
+       - Under lease-overlap accounting with early lease release upon incident resolution
+         ([0, 1), [1, 2), [2, 3)), at most one lease is active at each tick (active drifts 4, 3, 4 ≤ 6),
+         yielding L_accounted = 1, Eg_accounted = 1, and Δ_{E,accounted} = 0. -/
+theorem concurrent_lease_overlap_horizon_breach_vs_overlap_accounting :
+    (∀ s1 e1 e1_adj s2 e2 t : Int,
+      ((s1 ≤ s2 ∧ s2 < e1 ∧ s2 < e2) → (s1 ≤ s2 ∧ s2 < e1 ∧ s2 ≤ s2 ∧ s2 < e2)) ∧
+      ((e1_adj ≤ s2) → ¬ (s1 ≤ t ∧ t < e1_adj ∧ s2 ≤ t ∧ t < e2))) ∧
+    (let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_lease : Int := 4; let tau_horizon : Int := 6;
+     let d1_1 : Int := 2; let d1_2 : Int := 0; let d1_3 : Int := 0;
+     let d2_1 : Int := 0; let d2_2 : Int := 1; let d2_3 : Int := 0;
+     let d3_1 : Int := 0; let d3_2 : Int := 0; let d3_3 : Int := 1;
+     let slack_1 := w1 * d1_1 + w2 * d1_2 + w3 * d1_3;
+     let slack_2 := w1 * d2_1 + w2 * d2_2 + w3 * d2_3;
+     let slack_3 := w1 * d3_1 + w2 * d3_2 + w3 * d3_3;
+     let ov_tick0 := slack_1;
+     let ov_tick1 := slack_1 + slack_2;
+     let ov_tick2 := slack_1 + slack_2 + slack_3;
+     let ov_tick3 := slack_2 + slack_3;
+     let ov_tick4 := slack_3;
+     let l_overlap := if (slack_1 ≤ tau_lease) ∧ (slack_2 ≤ tau_lease) ∧ (slack_3 ≤ tau_lease) then (1 : Int) else 0;
+     let eg_overlap := if (l_overlap = 1) ∧ (ov_tick0 ≤ tau_horizon) ∧ (ov_tick1 ≤ tau_horizon) ∧ (ov_tick2 ≤ tau_horizon) ∧ (ov_tick3 ≤ tau_horizon) ∧ (ov_tick4 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_overlap := eg_overlap - l_overlap;
+     let acct_tick0 := slack_1;
+     let acct_tick1 := slack_2;
+     let acct_tick2 := slack_3;
+     let l_accounted := if (slack_1 ≤ tau_lease) ∧ (slack_2 ≤ tau_lease) ∧ (slack_3 ≤ tau_lease) then (1 : Int) else 0;
+     let eg_accounted := if (l_accounted = 1) ∧ (acct_tick0 ≤ tau_horizon) ∧ (acct_tick1 ≤ tau_horizon) ∧ (acct_tick2 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_accounted := eg_accounted - l_accounted;
+     (slack_1 = 4 ∧ slack_2 = 3 ∧ slack_3 = 4 ∧ ov_tick1 = 7 ∧ ov_tick2 = 11) ∧
+     (l_overlap = 1 ∧ eg_overlap = 0 ∧ defect_overlap = -1) ∧
+     (acct_tick0 = 4 ∧ acct_tick1 = 3 ∧ acct_tick2 = 4 ∧ l_accounted = 1 ∧ eg_accounted = 1 ∧ defect_accounted = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro s1 e1 e1_adj s2 e2 t
+  refine ⟨?_, ?_⟩
+  · intro ⟨h1, h2, h3⟩
+    omega
+  · intro h_disj ⟨_, ht1, ht2, _⟩
+    omega
+
 end LggrVIII

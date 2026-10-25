@@ -9242,6 +9242,366 @@ class StreamingPolicyRatchetDriftMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingConcurrentLeaseOverlapMonitor:
+    """Audit concurrent overlapping incident leases where incident t+1 arrives before incident t's lease expires.
+
+    Separates:
+      1. Uncoordinated concurrent lease overlap (every individual lease k = 1..M has finite expiration
+         e_k > s_k and satisfies ||delta_k||_{1,w} <= tau_lease <= tau_horizon with L_k = 1, yet
+         overlapping active intervals [s_t, e_t) cap [s_{t+1}, e_{t+1}) != empty cause peak active
+         weighted drift max_tau ||sum_{k in A(tau)} delta_k||_{1,w} > tau_horizon ->
+         E_{g,schedule} = 0, Delta_{E,schedule} = -1, CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR).
+      2. Lease-overlap accounting and admission control (tracking active leases A(tau) and enforcing
+         ||sum_{k in A(tau)} delta_k||_{1,w} <= tau_horizon at every timestamp tau via early lease
+         release upon repair completion or headroom-bounded scheduling -> L_schedule = 1,
+         E_{g,schedule} = 1, Delta_{E,schedule} = 0, LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG).
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not scope_id:
+            raise ValidationError("scope_id must be non-empty")
+        self.scope_id = scope_id
+        self.schedules: list[dict[str, Any]] = []
+
+    def _audit_lease_schedule(
+        self,
+        *,
+        leases: Sequence[Mapping[str, Any]],
+        p0_vec: list[Fraction],
+        w_vec: list[Fraction],
+        tau_lease: Fraction,
+        tau_horizon: Fraction,
+        dim: int,
+        require_overlap_accounting: bool,
+    ) -> dict[str, Any]:
+        if len(leases) < 2:
+            raise ValidationError("lease schedule must contain at least 2 incidents")
+
+        parsed_leases: list[dict[str, Any]] = []
+        l_schedule = 1
+        min_start: int | None = None
+        max_end: int | None = None
+
+        for idx, ls in enumerate(leases):
+            inc_num = int(ls.get("incident_index", idx + 1))
+            pair_id = str(ls.get("incident_pair_id", f"incident_{inc_num}"))
+            s_k = int(ls.get("arrival_tick", idx))
+            e_k = int(ls.get("expiration_tick", s_k + 1))
+            if e_k <= s_k:
+                raise ValidationError("expiration_tick must be strictly greater than arrival_tick")
+
+            sig_valid = bool(ls.get("authority_signature_valid", False))
+            overlap_accounted = bool(ls.get("overlap_accounting_enforced", False))
+            mon_a = bool(ls.get("post_relaxation_monitor_a_passed", False))
+            mon_b = bool(ls.get("post_relaxation_monitor_b_passed", False))
+
+            raw_delta = ls.get("lease_delta_vector")
+            if raw_delta is not None:
+                delta_vec = [rational(v) for v in raw_delta]
+                if len(delta_vec) != dim:
+                    raise ValidationError("lease_delta_vector dimension mismatch")
+            else:
+                raw_policy = ls.get("lease_policy_vector")
+                if raw_policy is None:
+                    raise ValidationError("lease must provide lease_delta_vector or lease_policy_vector")
+                pol_vec = [rational(v) for v in raw_policy]
+                if len(pol_vec) != dim:
+                    raise ValidationError("lease_policy_vector dimension mismatch")
+                delta_vec = [pol_vec[j] - p0_vec[j] for j in range(dim)]
+
+            lease_policy_vec = [p0_vec[j] + delta_vec[j] for j in range(dim)]
+            unweighted_slack = sum((abs(d) for d in delta_vec), Fraction(0))
+            weighted_slack = sum((w_vec[j] * abs(delta_vec[j]) for j in range(dim)), Fraction(0))
+            within_lease_budget = weighted_slack <= tau_lease
+            pareto_restored = mon_a and mon_b
+
+            l_k = 1 if (sig_valid and pareto_restored and within_lease_budget) else 0
+            if l_k == 0:
+                l_schedule = 0
+
+            if min_start is None or s_k < min_start:
+                min_start = s_k
+            if max_end is None or e_k > max_end:
+                max_end = e_k
+
+            parsed_leases.append(
+                {
+                    "incident_index": inc_num,
+                    "incident_pair_id": pair_id,
+                    "arrival_tick": s_k,
+                    "expiration_tick": e_k,
+                    "lease_duration_ticks": e_k - s_k,
+                    "authority_signature_valid": sig_valid,
+                    "overlap_accounting_enforced": overlap_accounted,
+                    "lease_delta_vector": delta_vec,
+                    "lease_policy_vector": lease_policy_vec,
+                    "lease_unweighted_l1_slack": unweighted_slack,
+                    "lease_weighted_l1_slack": weighted_slack,
+                    "within_individual_lease_budget": within_lease_budget,
+                    "post_relaxation_monitor_a_passed": mon_a,
+                    "post_relaxation_monitor_b_passed": mon_b,
+                    "pareto_intersection_restored": pareto_restored,
+                    "local_lease_indicator_L_k": l_k,
+                }
+            )
+
+        assert min_start is not None and max_end is not None
+        tick_records: list[dict[str, Any]] = []
+        peak_weighted_drift = Fraction(0)
+        peak_tick: int | None = None
+        first_breach_tick: int | None = None
+        max_concurrent_leases = 0
+        overlap_tick_count = 0
+        breach_tick_count = 0
+
+        for tick in range(min_start, max_end):
+            active = [
+                ls
+                for ls in parsed_leases
+                if ls["arrival_tick"] <= tick < ls["expiration_tick"]
+            ]
+            active_indices = [ls["incident_index"] for ls in active]
+            if len(active) > max_concurrent_leases:
+                max_concurrent_leases = len(active)
+            if len(active) >= 2:
+                overlap_tick_count += 1
+
+            agg_delta = [
+                sum((ls["lease_delta_vector"][j] for ls in active), Fraction(0))
+                for j in range(dim)
+            ]
+            agg_policy = [p0_vec[j] + agg_delta[j] for j in range(dim)]
+            tick_unweighted_drift = sum((abs(d) for d in agg_delta), Fraction(0))
+            tick_weighted_drift = sum(
+                (w_vec[j] * abs(agg_delta[j]) for j in range(dim)), Fraction(0)
+            )
+            if tick_weighted_drift > peak_weighted_drift:
+                peak_weighted_drift = tick_weighted_drift
+                peak_tick = tick
+
+            within_horizon = tick_weighted_drift <= tau_horizon
+            if not within_horizon:
+                breach_tick_count += 1
+                if first_breach_tick is None:
+                    first_breach_tick = tick
+
+            tick_records.append(
+                {
+                    "tick": tick,
+                    "active_incident_indices": active_indices,
+                    "active_lease_count": len(active),
+                    "aggregate_delta_vector": agg_delta,
+                    "aggregate_policy_vector": agg_policy,
+                    "concurrent_unweighted_l1_drift": tick_unweighted_drift,
+                    "concurrent_weighted_l1_drift": tick_weighted_drift,
+                    "horizon_within_ceiling": within_horizon,
+                }
+            )
+
+        for ls in parsed_leases:
+            s_k = ls["arrival_tick"]
+            e_k = ls["expiration_tick"]
+            lease_max_concurrent_drift = max(
+                (
+                    tr["concurrent_weighted_l1_drift"]
+                    for tr in tick_records
+                    if s_k <= tr["tick"] < e_k
+                ),
+                default=ls["lease_weighted_l1_slack"],
+            )
+            acct_ok = (not require_overlap_accounting) or ls["overlap_accounting_enforced"]
+            eg_k = (
+                1
+                if (
+                    ls["local_lease_indicator_L_k"] == 1
+                    and lease_max_concurrent_drift <= tau_horizon
+                    and acct_ok
+                )
+                else 0
+            )
+            ls["peak_concurrent_weighted_drift_during_lease"] = lease_max_concurrent_drift
+            ls["global_overlap_indicator_E_g_k"] = eg_k
+            ls["lease_evaluator_defect"] = eg_k - ls["local_lease_indicator_L_k"]
+            if eg_k == 1:
+                ls["lease_status"] = "LEASE_OVERLAP_ACCOUNTING_COHERENT_LGGG"
+            elif ls["local_lease_indicator_L_k"] == 1 and lease_max_concurrent_drift > tau_horizon:
+                ls["lease_status"] = "CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR"
+            else:
+                ls["lease_status"] = "LEASE_STEP_OBSTRUCTED_LGGR"
+
+        all_acct_ok = (not require_overlap_accounting) or all(
+            ls["overlap_accounting_enforced"] for ls in parsed_leases
+        )
+        eg_schedule = (
+            1
+            if (l_schedule == 1 and peak_weighted_drift <= tau_horizon and all_acct_ok)
+            else 0
+        )
+        delta_e_schedule = eg_schedule - l_schedule
+        overlap_breach_detected = (
+            l_schedule == 1 and eg_schedule == 0 and peak_weighted_drift > tau_horizon
+        )
+
+        if eg_schedule == 1:
+            schedule_status = "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG"
+        elif overlap_breach_detected:
+            schedule_status = "CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR"
+        else:
+            schedule_status = "SCHEDULE_LEASE_OBSTRUCTED_LGGR"
+
+        return {
+            "incident_count": len(parsed_leases),
+            "horizon_span_ticks": max_end - min_start,
+            "max_concurrent_active_leases": max_concurrent_leases,
+            "overlap_tick_count": overlap_tick_count,
+            "breach_tick_count": breach_tick_count,
+            "peak_concurrent_weighted_l1_drift": peak_weighted_drift,
+            "peak_drift_tick": peak_tick,
+            "first_horizon_breach_tick": first_breach_tick,
+            "local_schedule_indicator_L": l_schedule,
+            "global_schedule_indicator_E_g": eg_schedule,
+            "schedule_evaluator_defect": delta_e_schedule,
+            "overlap_horizon_breach_detected": overlap_breach_detected,
+            "schedule_status": schedule_status,
+            "leases": parsed_leases,
+            "ticks": tick_records,
+        }
+
+    def record_overlap_schedule(
+        self,
+        *,
+        schedule_id: str,
+        model_id: str,
+        prior_ratchet_receipt_sha256: str,
+        baseline_policy_sha256: str,
+        baseline_policy_vector: Sequence[int | float | str | Fraction],
+        risk_weight_vector: Sequence[int | float | str | Fraction],
+        individual_lease_budget: int | float | str | Fraction,
+        horizon_drift_ceiling: int | float | str | Fraction,
+        uncoordinated_overlapping_leases: Sequence[Mapping[str, Any]],
+        overlap_accounted_leases: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not schedule_id or not model_id:
+            raise ValidationError("schedule_id and model_id must be non-empty")
+        if not prior_ratchet_receipt_sha256 or not baseline_policy_sha256:
+            raise ValidationError("prior_ratchet_receipt_sha256 and baseline_policy_sha256 must be non-empty")
+        if not baseline_policy_vector:
+            raise ValidationError("baseline_policy_vector must be non-empty")
+
+        p0_vec = [rational(v) for v in baseline_policy_vector]
+        w_vec = [rational(w) for w in risk_weight_vector]
+        dim = len(p0_vec)
+        if len(w_vec) != dim:
+            raise ValidationError("risk_weight_vector must have the same dimension as baseline_policy_vector")
+        if any(w <= 0 for w in w_vec):
+            raise ValidationError("all coordinates of risk_weight_vector must be strictly positive")
+
+        tau_lease = rational(individual_lease_budget)
+        tau_horizon = rational(horizon_drift_ceiling)
+        if tau_lease <= 0 or tau_horizon <= 0:
+            raise ValidationError("individual_lease_budget and horizon_drift_ceiling must be strictly positive")
+        if tau_horizon < tau_lease:
+            raise ValidationError("horizon_drift_ceiling must be >= individual_lease_budget")
+
+        uncoordinated_audit = self._audit_lease_schedule(
+            leases=uncoordinated_overlapping_leases,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_overlap_accounting=False,
+        )
+        accounted_audit = self._audit_lease_schedule(
+            leases=overlap_accounted_leases,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_overlap_accounting=True,
+        )
+
+        converged_single_round = uncoordinated_audit["global_schedule_indicator_E_g"] == 1
+        converged_multi_round = converged_single_round or (
+            accounted_audit["global_schedule_indicator_E_g"] == 1
+        )
+        peak_drift_reduction = (
+            uncoordinated_audit["peak_concurrent_weighted_l1_drift"]
+            - accounted_audit["peak_concurrent_weighted_l1_drift"]
+        )
+
+        record: dict[str, Any] = {
+            "schedule_id": schedule_id,
+            "model_id": model_id,
+            "prior_ratchet_receipt_sha256": prior_ratchet_receipt_sha256,
+            "baseline_policy_sha256": baseline_policy_sha256,
+            "baseline_policy_vector": p0_vec,
+            "risk_weight_vector": w_vec,
+            "individual_lease_budget": tau_lease,
+            "horizon_drift_ceiling": tau_horizon,
+            "phase_1_uncoordinated_overlap_schedule": uncoordinated_audit,
+            "phase_2_overlap_accounted_schedule": accounted_audit,
+            "phase_1_overlap_horizon_breach": uncoordinated_audit["overlap_horizon_breach_detected"],
+            "converged_single_round": converged_single_round,
+            "converged_multi_round": converged_multi_round,
+            "peak_concurrent_weighted_drift_reduction": peak_drift_reduction,
+        }
+        self.schedules.append(record)
+        return json_value(record)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.schedules:
+            raise ValidationError("cannot emit receipt without recorded concurrent lease overlap schedules")
+        n = len(self.schedules)
+        single_cnt = sum(1 for s in self.schedules if s["converged_single_round"])
+        multi_cnt = sum(1 for s in self.schedules if s["converged_multi_round"])
+        overlap_breach_cnt = sum(1 for s in self.schedules if s["phase_1_overlap_horizon_breach"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        overlap_breach_rate = Fraction(overlap_breach_cnt, n)
+
+        overlap_breach_ids = [
+            s["schedule_id"] for s in self.schedules if s["phase_1_overlap_horizon_breach"]
+        ]
+        unconverged_ids = [
+            s["schedule_id"] for s in self.schedules if not s["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_concurrent_lease_overlap.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "schedule_count": n,
+            "single_round_overlap_coherent_count": single_cnt,
+            "multi_round_overlap_accounted_coherent_count": multi_cnt,
+            "phase_1_overlap_horizon_breach_count": overlap_breach_cnt,
+            "single_round_overlap_coherence_rate": single_rate,
+            "multi_round_overlap_accounted_coherence_rate": multi_rate,
+            "overlap_accounting_coherence_gain": gain_rate,
+            "phase_1_overlap_horizon_breach_rate": overlap_breach_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "phase_1_overlap_horizon_breach_schedule_ids": overlap_breach_ids,
+            "unconverged_schedule_ids": unconverged_ids,
+            "schedules": self.schedules,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
