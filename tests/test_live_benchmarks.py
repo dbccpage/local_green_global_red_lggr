@@ -1620,6 +1620,28 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["status"], "THREE_PARTY_C3_BRACKET_CERTIFIED_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
 
+    def test_dynamic_schema_synthesis_benchmark_replay(self) -> None:
+        """Verify dynamic_schema_synthesis_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "dynamic_schema_synthesis_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.dynamic_schema_synthesis_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["locked_schema_coherence_rate"], "0")
+        self.assertEqual(data["dynamic_synthesis_coherence_rate"], "1")
+        self.assertEqual(data["dynamic_schema_coherence_gain"], "1")
+
+        mon_rec = data["dynamic_schema_monitor_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
 
 if __name__ == "__main__":
     unittest.main()

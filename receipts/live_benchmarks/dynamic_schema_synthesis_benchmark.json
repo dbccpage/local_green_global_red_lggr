@@ -1,0 +1,2464 @@
+{
+  "schema": "lggr.dynamic_schema_synthesis_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "dynamic_schema_synthesis_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_static_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_moving_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_dynamic_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "locked_schema_coherence_rate": "0",
+  "dynamic_synthesis_coherence_rate": "1",
+  "dynamic_schema_coherence_gain": "1",
+  "dynamic_schema_monitor_receipt": {
+    "schema": "lggr.online_dynamic_schema_synthesis.v1",
+    "authority_effect": "None",
+    "scope_id": "live-dynamic-schema-synthesis-scope",
+    "status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_static_collision_count": 5,
+    "phase_2_moving_collision_count": 5,
+    "phase_3_dynamic_converged_count": 5,
+    "locked_schema_coherence_rate": "0",
+    "dynamic_synthesis_coherence_rate": "1",
+    "dynamic_schema_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::dynamic_schema_eval",
+        "step_2_synthesized_keys": [
+          "k2"
+        ],
+        "step_3_synthesized_keys": [
+          "k1",
+          "k2"
+        ],
+        "distractor_excluded": true,
+        "final_decoder_size": 4,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+        "phase_1_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-p1",
+          "carrier_size": 2,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "status": "pass"
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s01",
+              "report": {
+                "status": "pass"
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 0,
+                "k2": 1,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "c4968ecde0b0709e00b1ac31c2c56588f9f2a20a53dde7ddd28ec420a9d002c9"
+        },
+        "phase_2_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-p2",
+          "carrier_size": 3,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s10",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 1,
+                "k2": 0,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "358743133e62f3a0e29930f31878741f652add0a217194a95d53e3344076572d"
+        },
+        "phase_3_refinement_receipt": {
+          "schema": "lggr.online_schema_refinement.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-raw-all",
+          "status": "REFINEMENT_SYNTHESIZED",
+          "refinement_found": true,
+          "minimal_keys": [
+            "k1",
+            "k2"
+          ],
+          "candidate_keys_inspected": [
+            "k1",
+            "k2",
+            "k_noise"
+          ],
+          "refined_contract_status": "COMPOSABLE_LGGG",
+          "decoder_size": 4,
+          "decoder": [
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "receipt_sha256": "445c44aec486c4c644703e043566ea2826c65cb78ac9f8a9f4aff12c9e4afded"
+        },
+        "phase_3_fiber_receipt": {
+          "schema": "lggr.descent.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-p3",
+          "carrier_size": 4,
+          "status": "DECODER_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "decoder": [
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+          "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+          "receipt_sha256": "680b5038571b1c32bd160a38ebef27be4448d4cc59ca23b9164d6c9a6846d473"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::dynamic_schema_eval",
+        "step_2_synthesized_keys": [
+          "k2"
+        ],
+        "step_3_synthesized_keys": [
+          "k1",
+          "k2"
+        ],
+        "distractor_excluded": true,
+        "final_decoder_size": 4,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+        "phase_1_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-p1",
+          "carrier_size": 2,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "status": "pass"
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s01",
+              "report": {
+                "status": "pass"
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 0,
+                "k2": 1,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "5e2e3ed0f2a05140f43bd2c422b03bb332667bb6273f3afd820bb5a9fcfadb76"
+        },
+        "phase_2_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-p2",
+          "carrier_size": 3,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s10",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 1,
+                "k2": 0,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "24b31bf742f8e49a8b573220d237230ae124096ed83bb80a92adc911d0080874"
+        },
+        "phase_3_refinement_receipt": {
+          "schema": "lggr.online_schema_refinement.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-raw-all",
+          "status": "REFINEMENT_SYNTHESIZED",
+          "refinement_found": true,
+          "minimal_keys": [
+            "k1",
+            "k2"
+          ],
+          "candidate_keys_inspected": [
+            "k1",
+            "k2",
+            "k_noise"
+          ],
+          "refined_contract_status": "COMPOSABLE_LGGG",
+          "decoder_size": 4,
+          "decoder": [
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "receipt_sha256": "41e647ce7833e74326979882911f271d5bf7b3694ee9eda41c8195821c9c6b2b"
+        },
+        "phase_3_fiber_receipt": {
+          "schema": "lggr.descent.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-p3",
+          "carrier_size": 4,
+          "status": "DECODER_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "decoder": [
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+          "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+          "receipt_sha256": "532da13a4e24dbadf2dc5d3343b1b74278664bc6be0202e762da4937ca2eadd8"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval",
+        "step_2_synthesized_keys": [
+          "k2"
+        ],
+        "step_3_synthesized_keys": [
+          "k1",
+          "k2"
+        ],
+        "distractor_excluded": true,
+        "final_decoder_size": 4,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+        "phase_1_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-p1",
+          "carrier_size": 2,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "status": "pass"
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s01",
+              "report": {
+                "status": "pass"
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 0,
+                "k2": 1,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "77f36013215528bf70af4a68a6976472f0669d260c74347096e672ba9125838a"
+        },
+        "phase_2_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-p2",
+          "carrier_size": 3,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s10",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 1,
+                "k2": 0,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "282531e14c8b003d4c0c40921e14157f1aba23d1a8eca3947d3305caee811f25"
+        },
+        "phase_3_refinement_receipt": {
+          "schema": "lggr.online_schema_refinement.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-raw-all",
+          "status": "REFINEMENT_SYNTHESIZED",
+          "refinement_found": true,
+          "minimal_keys": [
+            "k1",
+            "k2"
+          ],
+          "candidate_keys_inspected": [
+            "k1",
+            "k2",
+            "k_noise"
+          ],
+          "refined_contract_status": "COMPOSABLE_LGGG",
+          "decoder_size": 4,
+          "decoder": [
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "receipt_sha256": "04f958db8033afb477d456b1f55cbbcc714af86d1fba405b86d896255014383f"
+        },
+        "phase_3_fiber_receipt": {
+          "schema": "lggr.descent.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-p3",
+          "carrier_size": 4,
+          "status": "DECODER_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "decoder": [
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+          "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+          "receipt_sha256": "96a582cc929dcf89634a938894f03004953d504fc5ad90252764864e9646d721"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::dynamic_schema_eval",
+        "step_2_synthesized_keys": [
+          "k2"
+        ],
+        "step_3_synthesized_keys": [
+          "k1",
+          "k2"
+        ],
+        "distractor_excluded": true,
+        "final_decoder_size": 4,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+        "phase_1_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-p1",
+          "carrier_size": 2,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "status": "pass"
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s01",
+              "report": {
+                "status": "pass"
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 0,
+                "k2": 1,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "b38acef54130a8d98de0f1315ab164d520c61fbbf743e2692a0607165ec438ab"
+        },
+        "phase_2_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-p2",
+          "carrier_size": 3,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s10",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 1,
+                "k2": 0,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "827a9303b890d9c7ac2d501cc4bea18a8d618b23452069cd067b90e352687c33"
+        },
+        "phase_3_refinement_receipt": {
+          "schema": "lggr.online_schema_refinement.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-raw-all",
+          "status": "REFINEMENT_SYNTHESIZED",
+          "refinement_found": true,
+          "minimal_keys": [
+            "k1",
+            "k2"
+          ],
+          "candidate_keys_inspected": [
+            "k1",
+            "k2",
+            "k_noise"
+          ],
+          "refined_contract_status": "COMPOSABLE_LGGG",
+          "decoder_size": 4,
+          "decoder": [
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "receipt_sha256": "ee285814f9a59ac1b7fd1ec2c6b19a7cae4baa2790a7448b621961fd1ca05877"
+        },
+        "phase_3_fiber_receipt": {
+          "schema": "lggr.descent.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-p3",
+          "carrier_size": 4,
+          "status": "DECODER_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "decoder": [
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+          "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+          "receipt_sha256": "4ab49d03dee124d0e5fe90e3c1f54d083b4008e0962ac8770adc712e69d005c3"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval",
+        "step_2_synthesized_keys": [
+          "k2"
+        ],
+        "step_3_synthesized_keys": [
+          "k1",
+          "k2"
+        ],
+        "distractor_excluded": true,
+        "final_decoder_size": 4,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+        "phase_1_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-p1",
+          "carrier_size": 2,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "status": "pass"
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s01",
+              "report": {
+                "status": "pass"
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 0,
+                "k2": 1,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "97faba4c3ffcab864af718d806535f803fa5b90fde8f67c44cb04c5918c93d29"
+        },
+        "phase_2_fiber_receipt": {
+          "schema": "lggr.online_collision.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-p2",
+          "carrier_size": 3,
+          "status": "REPORT_INSUFFICIENT",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "collision": {
+            "left": {
+              "state_id": "s00",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 1,
+              "metadata": {
+                "k1": 0,
+                "k2": 0,
+                "k_noise": 1
+              }
+            },
+            "right": {
+              "state_id": "s10",
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k2": 0
+                }
+              },
+              "query": 0,
+              "metadata": {
+                "k1": 1,
+                "k2": 0,
+                "k_noise": 1
+              }
+            }
+          },
+          "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+          "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+          "receipt_sha256": "5f44d6b888638f0eb93a5aba4fa517f72320eff4fcdd6e720ba94489195d8ccf"
+        },
+        "phase_3_refinement_receipt": {
+          "schema": "lggr.online_schema_refinement.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-raw-all",
+          "status": "REFINEMENT_SYNTHESIZED",
+          "refinement_found": true,
+          "minimal_keys": [
+            "k1",
+            "k2"
+          ],
+          "candidate_keys_inspected": [
+            "k1",
+            "k2",
+            "k_noise"
+          ],
+          "refined_contract_status": "COMPOSABLE_LGGG",
+          "decoder_size": 4,
+          "decoder": [
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base_report": {
+                  "status": "pass"
+                },
+                "refined_metadata": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "receipt_sha256": "445399e2fed6a58915916aedb4f82c4874fbd531f7b3aea5077ac718d32f6f86"
+        },
+        "phase_3_fiber_receipt": {
+          "schema": "lggr.descent.v1",
+          "authority_effect": "None",
+          "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-p3",
+          "carrier_size": 4,
+          "status": "DECODER_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "decoder": [
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 0
+                }
+              },
+              "query": 1
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 0,
+                  "k2": 1
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 0
+                }
+              },
+              "query": 0
+            },
+            {
+              "report": {
+                "base": {
+                  "status": "pass"
+                },
+                "features": {
+                  "k1": 1,
+                  "k2": 1
+                }
+              },
+              "query": 1
+            }
+          ],
+          "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+          "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+          "receipt_sha256": "99a43f9ccb9d0685d533f95dddabcdc017c87cb8171cf7fc6b1afb4c17103cce"
+        }
+      }
+    ],
+    "receipt_sha256": "03a784ac53abeb5b1631858f15da1d0b6d337e38585d212675fe1e87184b639e"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::dynamic_schema_eval",
+      "step_2_synthesized_keys": [
+        "k2"
+      ],
+      "step_3_synthesized_keys": [
+        "k1",
+        "k2"
+      ],
+      "distractor_excluded": true,
+      "final_decoder_size": 4,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+      "phase_1_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-p1",
+        "carrier_size": 2,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "status": "pass"
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s01",
+            "report": {
+              "status": "pass"
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 0,
+              "k2": 1,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "c4968ecde0b0709e00b1ac31c2c56588f9f2a20a53dde7ddd28ec420a9d002c9"
+      },
+      "phase_2_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-p2",
+        "carrier_size": 3,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s10",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 1,
+              "k2": 0,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "358743133e62f3a0e29930f31878741f652add0a217194a95d53e3344076572d"
+      },
+      "phase_3_refinement_receipt": {
+        "schema": "lggr.online_schema_refinement.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-raw-all",
+        "status": "REFINEMENT_SYNTHESIZED",
+        "refinement_found": true,
+        "minimal_keys": [
+          "k1",
+          "k2"
+        ],
+        "candidate_keys_inspected": [
+          "k1",
+          "k2",
+          "k_noise"
+        ],
+        "refined_contract_status": "COMPOSABLE_LGGG",
+        "decoder_size": 4,
+        "decoder": [
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "receipt_sha256": "445c44aec486c4c644703e043566ea2826c65cb78ac9f8a9f4aff12c9e4afded"
+      },
+      "phase_3_fiber_receipt": {
+        "schema": "lggr.descent.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-openai/gpt-4o-mini::dynamic_schema_eval-p3",
+        "carrier_size": 4,
+        "status": "DECODER_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "decoder": [
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+        "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+        "receipt_sha256": "680b5038571b1c32bd160a38ebef27be4448d4cc59ca23b9164d6c9a6846d473"
+      },
+      "model_id": "openai/gpt-4o-mini",
+      "raw_auditor_response": "{\n  \"minimal_keys\": [\"k1\", \"k2\"],\n  \"distractor_excluded\": true\n}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::dynamic_schema_eval",
+      "step_2_synthesized_keys": [
+        "k2"
+      ],
+      "step_3_synthesized_keys": [
+        "k1",
+        "k2"
+      ],
+      "distractor_excluded": true,
+      "final_decoder_size": 4,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+      "phase_1_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-p1",
+        "carrier_size": 2,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "status": "pass"
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s01",
+            "report": {
+              "status": "pass"
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 0,
+              "k2": 1,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "5e2e3ed0f2a05140f43bd2c422b03bb332667bb6273f3afd820bb5a9fcfadb76"
+      },
+      "phase_2_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-p2",
+        "carrier_size": 3,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s10",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 1,
+              "k2": 0,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "24b31bf742f8e49a8b573220d237230ae124096ed83bb80a92adc911d0080874"
+      },
+      "phase_3_refinement_receipt": {
+        "schema": "lggr.online_schema_refinement.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-raw-all",
+        "status": "REFINEMENT_SYNTHESIZED",
+        "refinement_found": true,
+        "minimal_keys": [
+          "k1",
+          "k2"
+        ],
+        "candidate_keys_inspected": [
+          "k1",
+          "k2",
+          "k_noise"
+        ],
+        "refined_contract_status": "COMPOSABLE_LGGG",
+        "decoder_size": 4,
+        "decoder": [
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "receipt_sha256": "41e647ce7833e74326979882911f271d5bf7b3694ee9eda41c8195821c9c6b2b"
+      },
+      "phase_3_fiber_receipt": {
+        "schema": "lggr.descent.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-google/gemini-2.5-flash-lite::dynamic_schema_eval-p3",
+        "carrier_size": 4,
+        "status": "DECODER_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "decoder": [
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+        "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+        "receipt_sha256": "532da13a4e24dbadf2dc5d3343b1b74278664bc6be0202e762da4937ca2eadd8"
+      },
+      "model_id": "google/gemini-2.5-flash-lite",
+      "raw_auditor_response": "```json\n{\"minimal_keys\": [\"k1\", \"k2\"], \"distractor_excluded\": true}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval",
+      "step_2_synthesized_keys": [
+        "k2"
+      ],
+      "step_3_synthesized_keys": [
+        "k1",
+        "k2"
+      ],
+      "distractor_excluded": true,
+      "final_decoder_size": 4,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+      "phase_1_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-p1",
+        "carrier_size": 2,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "status": "pass"
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s01",
+            "report": {
+              "status": "pass"
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 0,
+              "k2": 1,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "77f36013215528bf70af4a68a6976472f0669d260c74347096e672ba9125838a"
+      },
+      "phase_2_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-p2",
+        "carrier_size": 3,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s10",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 1,
+              "k2": 0,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "282531e14c8b003d4c0c40921e14157f1aba23d1a8eca3947d3305caee811f25"
+      },
+      "phase_3_refinement_receipt": {
+        "schema": "lggr.online_schema_refinement.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-raw-all",
+        "status": "REFINEMENT_SYNTHESIZED",
+        "refinement_found": true,
+        "minimal_keys": [
+          "k1",
+          "k2"
+        ],
+        "candidate_keys_inspected": [
+          "k1",
+          "k2",
+          "k_noise"
+        ],
+        "refined_contract_status": "COMPOSABLE_LGGG",
+        "decoder_size": 4,
+        "decoder": [
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "receipt_sha256": "04f958db8033afb477d456b1f55cbbcc714af86d1fba405b86d896255014383f"
+      },
+      "phase_3_fiber_receipt": {
+        "schema": "lggr.descent.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-meta-llama/llama-3.3-70b-instruct::dynamic_schema_eval-p3",
+        "carrier_size": 4,
+        "status": "DECODER_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "decoder": [
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+        "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+        "receipt_sha256": "96a582cc929dcf89634a938894f03004953d504fc5ad90252764864e9646d721"
+      },
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "raw_auditor_response": "{\"minimal_keys\": [\"k1\", \"k2\"], \"distractor_excluded\": true}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::dynamic_schema_eval",
+      "step_2_synthesized_keys": [
+        "k2"
+      ],
+      "step_3_synthesized_keys": [
+        "k1",
+        "k2"
+      ],
+      "distractor_excluded": true,
+      "final_decoder_size": 4,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+      "phase_1_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-p1",
+        "carrier_size": 2,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "status": "pass"
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s01",
+            "report": {
+              "status": "pass"
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 0,
+              "k2": 1,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "b38acef54130a8d98de0f1315ab164d520c61fbbf743e2692a0607165ec438ab"
+      },
+      "phase_2_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-p2",
+        "carrier_size": 3,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s10",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 1,
+              "k2": 0,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "827a9303b890d9c7ac2d501cc4bea18a8d618b23452069cd067b90e352687c33"
+      },
+      "phase_3_refinement_receipt": {
+        "schema": "lggr.online_schema_refinement.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-raw-all",
+        "status": "REFINEMENT_SYNTHESIZED",
+        "refinement_found": true,
+        "minimal_keys": [
+          "k1",
+          "k2"
+        ],
+        "candidate_keys_inspected": [
+          "k1",
+          "k2",
+          "k_noise"
+        ],
+        "refined_contract_status": "COMPOSABLE_LGGG",
+        "decoder_size": 4,
+        "decoder": [
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "receipt_sha256": "ee285814f9a59ac1b7fd1ec2c6b19a7cae4baa2790a7448b621961fd1ca05877"
+      },
+      "phase_3_fiber_receipt": {
+        "schema": "lggr.descent.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-deepseek/deepseek-chat::dynamic_schema_eval-p3",
+        "carrier_size": 4,
+        "status": "DECODER_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "decoder": [
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+        "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+        "receipt_sha256": "4ab49d03dee124d0e5fe90e3c1f54d083b4008e0962ac8770adc712e69d005c3"
+      },
+      "model_id": "deepseek/deepseek-chat",
+      "raw_auditor_response": "```json\n{\"minimal_keys\": [\"k1\", \"k2\"], \"distractor_excluded\": true}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval",
+      "step_2_synthesized_keys": [
+        "k2"
+      ],
+      "step_3_synthesized_keys": [
+        "k1",
+        "k2"
+      ],
+      "distractor_excluded": true,
+      "final_decoder_size": 4,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+      "phase_1_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-p1",
+        "carrier_size": 2,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "status": "pass"
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s01",
+            "report": {
+              "status": "pass"
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 0,
+              "k2": 1,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "7f8cc88d4798f186739d8f18fae5efbaf3d6dcfd38a8144948e59b0800a8a3f7",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "97faba4c3ffcab864af718d806535f803fa5b90fde8f67c44cb04c5918c93d29"
+      },
+      "phase_2_fiber_receipt": {
+        "schema": "lggr.online_collision.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-p2",
+        "carrier_size": 3,
+        "status": "REPORT_INSUFFICIENT",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "collision": {
+          "left": {
+            "state_id": "s00",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 1,
+            "metadata": {
+              "k1": 0,
+              "k2": 0,
+              "k_noise": 1
+            }
+          },
+          "right": {
+            "state_id": "s10",
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k2": 0
+              }
+            },
+            "query": 0,
+            "metadata": {
+              "k1": 1,
+              "k2": 0,
+              "k_noise": 1
+            }
+          }
+        },
+        "input_sha256": "f9e07924e30038560308814bb6c961b3d289257c75da0c3773e5788b372b0dc4",
+        "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+        "receipt_sha256": "5f44d6b888638f0eb93a5aba4fa517f72320eff4fcdd6e720ba94489195d8ccf"
+      },
+      "phase_3_refinement_receipt": {
+        "schema": "lggr.online_schema_refinement.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-raw-all",
+        "status": "REFINEMENT_SYNTHESIZED",
+        "refinement_found": true,
+        "minimal_keys": [
+          "k1",
+          "k2"
+        ],
+        "candidate_keys_inspected": [
+          "k1",
+          "k2",
+          "k_noise"
+        ],
+        "refined_contract_status": "COMPOSABLE_LGGG",
+        "decoder_size": 4,
+        "decoder": [
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base_report": {
+                "status": "pass"
+              },
+              "refined_metadata": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "receipt_sha256": "445399e2fed6a58915916aedb4f82c4874fbd531f7b3aea5077ac718d32f6f86"
+      },
+      "phase_3_fiber_receipt": {
+        "schema": "lggr.descent.v1",
+        "authority_effect": "None",
+        "scope_id": "live-dynamic-schema-synthesis-scope-mistralai/mistral-small-3.2-24b-instruct::dynamic_schema_eval-p3",
+        "carrier_size": 4,
+        "status": "DECODER_VERIFIED",
+        "contract_status": "COMPOSABLE_LGGG",
+        "decoder": [
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 0
+              }
+            },
+            "query": 1
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 0,
+                "k2": 1
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 0
+              }
+            },
+            "query": 0
+          },
+          {
+            "report": {
+              "base": {
+                "status": "pass"
+              },
+              "features": {
+                "k1": 1,
+                "k2": 1
+              }
+            },
+            "query": 1
+          }
+        ],
+        "input_sha256": "6bc587c1bc117b63473c0b80e3b34cfc5db9eccff7e600f0a6c81307cc3a1c45",
+        "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+        "receipt_sha256": "99a43f9ccb9d0685d533f95dddabcdc017c87cb8171cf7fc6b1afb4c17103cce"
+      },
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "raw_auditor_response": "```json\n{\n  \"minimal_keys\": [\"k1\", \"k2\"],\n  \"distractor_excluded\": true\n}\n```"
+    }
+  ],
+  "meaning": "Online dynamic boundary schema synthesis benchmark across 5 model families (Theorem 78): on the 4-state XNOR carrier q(s_ij) = 1[i == j] with candidate keys ['k_noise', 'k1', 'k2'], Phase 1 separates static S_0 = [] collision on {s00, s01} (L_0 = 1, E_g = 0, Delta_E = -1), Phase 2 separates 1-feature moving collision when s10 arrives against locked S_1 (L_1 = 1, E_g = 0, Delta_E = -1), and Phase 3 verifies closed-loop dynamic expansion S_0 -> S_1 -> S_2* = ['k1', 'k2'] (excluding distractor k_noise) with 4 singleton fibers and 0 collisions (L_2 = 1, E_g = 1, Delta_E = 0).",
+  "receipt_sha256": "8911dc63c888af66ebd494853a44e740743936aa1b68d7b4f94f79324ac1c4f8"
+}

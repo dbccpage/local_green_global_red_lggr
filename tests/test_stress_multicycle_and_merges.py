@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingDefectSoundnessMonitor,
     StreamingDisagreementPreservingCouncilMonitor,
     StreamingDiscreteCurvatureMonitor,
+    StreamingDynamicSchemaSynthesisMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingGramProbeMonitor,
@@ -4178,6 +4179,42 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["surrogate_ceiling_coherence_rate"], "0")
         self.assertEqual(receipt["certified_bracket_coherence_rate"], "1")
         self.assertEqual(receipt["c3_bracket_coherence_gain"], "1")
+
+    def test_dynamic_boundary_schema_synthesis_under_online_collisions(self) -> None:
+        """Verify Theorem 78: automated boundary schema synthesis dynamically expanding report features."""
+        mon = StreamingDynamicSchemaSynthesisMonitor(
+            scope_id="unit-dynamic-schema-synthesis-scope",
+        )
+        obs = mon.evaluate_dynamic_synthesis(
+            evaluation_id="dyn-schema-eval-01",
+            candidate_keys=("k_noise", "k1", "k2"),
+        )
+        self.assertEqual(len(obs["step_2_synthesized_keys"]), 1)
+        self.assertEqual(obs["step_3_synthesized_keys"], ["k1", "k2"])
+        self.assertTrue(obs["distractor_excluded"])
+        self.assertEqual(obs["final_decoder_size"], 4)
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "STATIC_SCHEMA_FIBER_COLLISION_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SINGLE_FEATURE_MOVING_COLLISION_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["locked_schema_coherence_rate"], "0")
+        self.assertEqual(receipt["dynamic_synthesis_coherence_rate"], "1")
+        self.assertEqual(receipt["dynamic_schema_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

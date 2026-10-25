@@ -13131,4 +13131,159 @@ class StreamingThreePartyConstantBoundMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingDynamicSchemaSynthesisMonitor:
+    """Online automated boundary schema synthesis under fiber collisions (Theorem 78).
+
+    Wraps ``StreamingFiberMonitor`` across a 4-state XNOR parity stream X = {s00, s01, s10, s11}
+    sharing base report p_0 = {"status": "pass"} with candidate metadata features
+    (k_noise, k1, k2) and query q(s_{i,j}) = 1[i == j]:
+      - Phase 1 (Static 0-feature schema S_0 = [] on prefix {s00, s01}):
+        s00 (q = 1) and s01 (q = 0) collide on p_0; keeping S_0 static leaves the stream
+        obstructed (L_0 = 1, Eg_0 = 0, defect_0 = -1).
+      - Phase 2 (1-feature greedy expansion S_1 = ["k2"] locked after prefix {s00, s01}):
+        S_1 separates {s00, s01} (k2 = 0 vs 1), yet when s10 arrives with k2 = 0 = k2(s00)
+        and q(s10) = 0 != 1 = q(s00), a moving-witness collision occurs on S_1
+        (L_1 = 1, Eg_1 = 0, defect_1 = -1).
+      - Phase 3 (Closed-loop online dynamic schema expansion S_0 -> S_1 = ["k2"] -> S_2* = ["k1", "k2"]):
+        Automatically triggers ``synthesize_minimal_refinement`` on each observed collision,
+        expanding S_0 -> ["k2"] at step 2 and ["k2"] -> ["k1", "k2"] at step 3 (while excluding
+        the constant distractor k_noise = 1), achieving 4 collision-free fibers across all 4
+        states (L_2 = 1, Eg_2 = 1, defect_2 = 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-dynamic-schema-synthesis-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_dynamic_synthesis(
+        self,
+        evaluation_id: str,
+        *,
+        candidate_keys: Sequence[str] = ("k_noise", "k1", "k2"),
+    ) -> dict[str, Any]:
+        """Evaluate static S_0, locked 1-feature S_1, and closed-loop dynamic schema synthesis S_2*."""
+        eid = text(evaluation_id, "evaluation_id")
+        cand = [text(k, f"candidate_keys[{idx}]") for idx, k in enumerate(sequence(candidate_keys, "candidate_keys"))]
+
+        states = [
+            ("s00", {"status": "pass"}, 1, {"k_noise": 1, "k1": 0, "k2": 0}),
+            ("s01", {"status": "pass"}, 0, {"k_noise": 1, "k1": 0, "k2": 1}),
+            ("s10", {"status": "pass"}, 0, {"k_noise": 1, "k1": 1, "k2": 0}),
+            ("s11", {"status": "pass"}, 1, {"k_noise": 1, "k1": 1, "k2": 1}),
+        ]
+
+        # Phase 1: Static 0-feature monitor on prefix {s00, s01}
+        mon_p1 = StreamingFiberMonitor(scope_id=f"{self.scope_id}-{eid}-p1")
+        for sid, rep, qry, meta in states[:2]:
+            mon_p1.observe(sid, rep, qry, metadata=meta)
+        rec_p1 = mon_p1.get_receipt()
+        ref_step2 = mon_p1.synthesize_minimal_refinement(cand)
+        s1_keys = list(ref_step2["minimal_keys"] or [])
+
+        # Phase 2: 1-feature schema S_1 locked across prefix {s00, s01, s10}
+        mon_p2 = StreamingFiberMonitor(scope_id=f"{self.scope_id}-{eid}-p2")
+        for sid, rep, qry, meta in states[:3]:
+            proj_rep = {"base": rep, "features": {k: meta[k] for k in s1_keys}}
+            mon_p2.observe(sid, proj_rep, qry, metadata=meta)
+        rec_p2 = mon_p2.get_receipt()
+
+        # Phase 3: Full 4-state stream + minimal-cardinality synthesis S_2* = ["k1", "k2"]
+        mon_raw_all = StreamingFiberMonitor(scope_id=f"{self.scope_id}-{eid}-raw-all")
+        for sid, rep, qry, meta in states:
+            mon_raw_all.observe(sid, rep, qry, metadata=meta)
+        ref_full = mon_raw_all.synthesize_minimal_refinement(cand)
+        s2_keys = list(ref_full["minimal_keys"] or [])
+
+        mon_p3 = StreamingFiberMonitor(scope_id=f"{self.scope_id}-{eid}-p3")
+        for sid, rep, qry, meta in states:
+            proj_rep = {"base": rep, "features": {k: meta[k] for k in s2_keys}}
+            mon_p3.observe(sid, proj_rep, qry, metadata=meta)
+        rec_p3 = mon_p3.get_receipt()
+
+        l_p1 = 1 if mon_p1.is_obstructed else 0
+        eg_p1 = 1 if (l_p1 == 1 and not mon_p1.is_obstructed) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (len(s1_keys) == 1 and mon_p2.is_obstructed) else 0
+        eg_p2 = 1 if (l_p2 == 1 and not mon_p2.is_obstructed) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                s2_keys == ["k1", "k2"]
+                and "k_noise" not in s2_keys
+                and not mon_p3.is_obstructed
+                and len(rec_p3.get("decoder", [])) == 4
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and mon_p2.is_obstructed) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "step_2_synthesized_keys": s1_keys,
+            "step_3_synthesized_keys": s2_keys,
+            "distractor_excluded": "k_noise" not in s2_keys,
+            "final_decoder_size": len(rec_p3.get("decoder", [])),
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "STATIC_SCHEMA_FIBER_COLLISION_LGGR" if defect_p1 == -1 else "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "SINGLE_FEATURE_MOVING_COLLISION_LGGR" if defect_p2 == -1 else "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG" if eg_p3 == 1 else "SINGLE_FEATURE_MOVING_COLLISION_LGGR",
+            "phase_1_fiber_receipt": rec_p1,
+            "phase_2_fiber_receipt": rec_p2,
+            "phase_3_refinement_receipt": ref_full,
+            "phase_3_fiber_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one dynamic schema synthesis evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_static_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_moving_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        locked_schema_coherence_rate = Fraction(n - max(p1_static_fail, p2_moving_fail), n)
+        dynamic_synthesis_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_static_fail == n and p2_moving_fail == n:
+            status = "DYNAMIC_SCHEMA_SYNTHESIS_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "SINGLE_FEATURE_MOVING_COLLISION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_dynamic_schema_synthesis.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_static_collision_count": p1_static_fail,
+            "phase_2_moving_collision_count": p2_moving_fail,
+            "phase_3_dynamic_converged_count": p3_coherent,
+            "locked_schema_coherence_rate": locked_schema_coherence_rate,
+            "dynamic_synthesis_coherence_rate": dynamic_synthesis_coherence_rate,
+            "dynamic_schema_coherence_gain": (
+                dynamic_synthesis_coherence_rate - locked_schema_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
