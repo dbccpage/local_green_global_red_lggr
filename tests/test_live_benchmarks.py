@@ -1488,6 +1488,28 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["status"], "PRE_GENERATION_SHEAF_RECONCILED_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
 
+    def test_disagreement_preserving_council_benchmark_replay(self) -> None:
+        """Verify disagreement_preserving_council_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "disagreement_preserving_council_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.disagreement_preserving_council_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["collapsing_consensus_coherence_rate"], "0")
+        self.assertEqual(data["disagreement_council_coherence_rate"], "1")
+        self.assertEqual(data["disagreement_council_coherence_gain"], "1")
+
+        mon_rec = data["council_monitor_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
 
 if __name__ == "__main__":
     unittest.main()

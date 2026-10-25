@@ -37,6 +37,7 @@ from lggr.streaming import (
     StreamingDashboardAdequacyMonitor,
     StreamingDeadlinePriorityQueueMonitor,
     StreamingDefectSoundnessMonitor,
+    StreamingDisagreementPreservingCouncilMonitor,
     StreamingDiscreteCurvatureMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
@@ -3915,6 +3916,43 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["ungated_contextual_coherence_rate"], "0")
         self.assertEqual(receipt["sheaf_reconciled_coherence_rate"], "1")
         self.assertEqual(receipt["sheaf_reconciliation_coherence_gain"], "1")
+
+    def test_disagreement_preserving_side_channel_council_vs_collapsing_consensus(self) -> None:
+        """Verify Theorem 72: disagreement-preserving side-channel council S >= K > 2 vs. collapsing consensus."""
+        mon = StreamingDisagreementPreservingCouncilMonitor(
+            scope_id="unit-disagreement-preserving-council-scope"
+        )
+        obs = mon.evaluate_council(
+            evaluation_id="council-eval-01",
+            root_causes=("auth_bypass", "race_condition", "memory_leak", "sql_injection"),
+            binary_symbols=(0, 0, 1, 1),
+            council_symbols=(0, 1, 2, 3),
+            council_capacity_s=4,
+            disjoint_expert_scores=(("1", "0"), ("0", "1")),
+            shared_expert_scores=(("3/4", "1/4"), ("1/4", "3/4")),
+        )
+        self.assertEqual(obs["distinct_root_causes_k"], 4)
+        self.assertEqual(obs["consensus_collision_floor"], 3)
+        self.assertEqual(obs["binary_tag_collision_floor"], 2)
+        self.assertEqual(obs["council_collision_floor"], 0)
+        self.assertEqual(obs["consensus_poe_partition_sum"], "0")
+        self.assertEqual(obs["council_poe_partition_sum"], "3/8")
+        self.assertEqual(obs["phase_1_consensus_local_green"], 1)
+        self.assertEqual(obs["phase_1_consensus_global_green"], 0)
+        self.assertEqual(obs["phase_1_consensus_defect"], -1)
+        self.assertEqual(obs["phase_2_binary_local_green"], 1)
+        self.assertEqual(obs["phase_2_binary_global_green"], 0)
+        self.assertEqual(obs["phase_2_binary_defect"], -1)
+        self.assertEqual(obs["phase_3_council_local_green"], 1)
+        self.assertEqual(obs["phase_3_council_global_green"], 1)
+        self.assertEqual(obs["phase_3_council_defect"], 0)
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["collapsing_consensus_coherence_rate"], "0")
+        self.assertEqual(receipt["disagreement_council_coherence_rate"], "1")
+        self.assertEqual(receipt["disagreement_council_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

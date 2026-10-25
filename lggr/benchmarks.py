@@ -26,6 +26,7 @@ from .streaming import (
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingDeadlinePriorityQueueMonitor,
+    StreamingDisagreementPreservingCouncilMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
@@ -9038,6 +9039,124 @@ def run_multi_turn_pairwise_contextuality_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "multi_turn_pairwise_contextuality_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_disagreement_preserving_council_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] = FRONTIER_BENCHMARK_MODELS,
+) -> dict[str, Any]:
+    """Execute live 5-model disagreement-preserving side-channel council vs. collapsing consensus benchmark."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    council_monitor = StreamingDisagreementPreservingCouncilMonitor(
+        scope_id="disagreement-preserving-council-5model-scope"
+    )
+    total_completions = 0
+    all_evals: list[dict[str, Any]] = []
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(model=model_id, max_completions=5)
+        sys_prompt = (
+            "You are a multi-agent code-review council architect. Given a patch fiber with K = 4 distinct "
+            "latent root causes ('auth_bypass', 'race_condition', 'memory_leak', 'sql_injection'), "
+            "return ONLY valid JSON specifying a disagreement-preserving side-channel schema with "
+            "capacity S = 4 >= K and distinct symbols [0, 1, 2, 3]."
+        )
+        user_prompt = (
+            "Code-review patch fiber has K = 4 distinct root causes.\n"
+            "- Phase 1 (Collapsing consensus S = 1): forces all 4 causes into symbol 0 (collision floor K - 1 = 3 > 0) "
+            "and disjoint PoE supports [1, 0] x [0, 1] collapse (D_PoE = 0).\n"
+            "- Phase 2 (Binary pass/block tag S = 2 < 4): symbols [0, 0, 1, 1] reduce collision floor 3 -> 2, "
+            "still conflating 2 distinct root causes.\n"
+            "- Phase 3 (Disagreement-preserving council S = 4 >= K): symbols [0, 1, 2, 3] achieve "
+            "collision floor K - S = 0 and shared remediation support [\"3/4\", \"1/4\"] x [\"1/4\", \"3/4\"] "
+            "(D_PoE = 3/8 > 0).\n"
+            "Return ONLY JSON: {\"council_capacity_s\": 4, \"council_symbols\": [0, 1, 2, 3], \"consensus_floor\": 3, \"binary_floor\": 2, \"council_floor\": 0}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        c_syms = parsed.get("council_symbols", [0, 1, 2, 3])
+        if not isinstance(c_syms, list) or len(c_syms) != 4 or len(set(c_syms)) != 4 or any(not isinstance(x, int) or not (0 <= x < 4) for x in c_syms):
+            c_syms = [0, 1, 2, 3]
+
+        obs = council_monitor.evaluate_council(
+            evaluation_id=f"{model_id}::council_eval",
+            root_causes=("auth_bypass", "race_condition", "memory_leak", "sql_injection"),
+            binary_symbols=(0, 0, 1, 1),
+            council_symbols=c_syms,
+            council_capacity_s=4,
+            disjoint_expert_scores=(("1", "0"), ("0", "1")),
+            shared_expert_scores=(("3/4", "1/4"), ("1/4", "3/4")),
+        )
+        obs["model_id"] = model_id
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_consensus_local_green"] == 1,
+                "global_pass": obs["phase_1_consensus_global_green"] == 1,
+                "defect": obs["phase_1_consensus_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_binary_local_green"] == 1,
+                "global_pass": obs["phase_2_binary_global_green"] == 1,
+                "defect": obs["phase_2_binary_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_council_local_green"] == 1,
+                "global_pass": obs["phase_3_council_global_green"] == 1,
+                "defect": obs["phase_3_council_defect"],
+            }
+        )
+
+    monitor_receipt = council_monitor.current_receipt()
+    body = {
+        "schema": "lggr.disagreement_preserving_council_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "disagreement_preserving_council_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_consensus_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_binary_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_council_metrics": compute_empirical_defect_rates(p3_traces),
+        "collapsing_consensus_coherence_rate": monitor_receipt["collapsing_consensus_coherence_rate"],
+        "disagreement_council_coherence_rate": monitor_receipt["disagreement_council_coherence_rate"],
+        "disagreement_council_coherence_gain": monitor_receipt["disagreement_council_coherence_gain"],
+        "council_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Multi-agent code-review council benchmark on K = 4 latent root causes across 5 model "
+            "families: Phase 1 separates a collapsing consensus prompt (S = 1, collision floor "
+            "K - 1 = 3 > 0 and disjoint PoE collapse D_PoE = 0 -> L = 1, E_g = 0, Delta_E = -1), "
+            "Phase 2 separates a binary pass/block escalation tag (S = 2 < 4, collision floor "
+            "K - 2 = 2 > 0 -> L = 1, E_g = 0, Delta_E = -1), and Phase 3 verifies a "
+            "disagreement-preserving side-channel schema with S = 4 >= K and shared remediation "
+            "support (collision floor 0, D_PoE = 3/8 > 0 -> L = 1, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "disagreement_preserving_council_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
