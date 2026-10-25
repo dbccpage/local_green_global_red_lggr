@@ -8929,6 +8929,1456 @@ class StreamingWeightedPolicyRelaxationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingPolicyRatchetDriftMonitor:
+    """Audit multi-step cumulative policy-relaxation drift (ratchet effect) across sequential incidents.
+
+    Separates:
+      1. Unrevoked monotone policy ratchet (L_t = 1 at every incident step t = 1..T via
+         ||P_t - P_{t-1}||_{1,w} <= tau_step, yet cumulative horizon drift
+         ||P_T - P_0||_{1,w} > tau_horizon -> E_{g,T} = 0, Delta_{E,chain} = -1,
+         CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR).
+      2. Scoped lease revocation / rollback after incident resolution (prior temporary
+         relaxations revoked back to P_0 before incident t -> ||P_t - P_0||_{1,w} <= tau_step
+         <= tau_horizon for all t = 1..T -> L_chain = 1, E_{g,chain} = 1, Delta_{E,chain} = 0,
+         SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG).
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not scope_id:
+            raise ValidationError("scope_id must be non-empty")
+        self.scope_id = scope_id
+        self.trajectories: list[dict[str, Any]] = []
+
+    def _audit_incident_chain(
+        self,
+        *,
+        incidents: Sequence[Mapping[str, Any]],
+        p0_vec: list[Fraction],
+        w_vec: list[Fraction],
+        tau_step: Fraction,
+        tau_horizon: Fraction,
+        dim: int,
+        require_revocation: bool,
+    ) -> dict[str, Any]:
+        if len(incidents) < 2:
+            raise ValidationError("incident trajectory must contain at least 2 sequential incidents")
+
+        step_records: list[dict[str, Any]] = []
+        prev_post_vec = list(p0_vec)
+        l_chain = 1
+        eg_chain = 1
+        sum_step_weighted_slacks = Fraction(0)
+        max_horizon_weighted_drift = Fraction(0)
+        first_breach_step: int | None = None
+
+        for idx, inc in enumerate(incidents):
+            step_num = int(inc.get("incident_index", idx + 1))
+            pair_id = str(inc.get("incident_pair_id", f"incident_{step_num}"))
+            prior_revoked = bool(inc.get("prior_lease_revoked", False))
+            sig_valid = bool(inc.get("authority_signature_valid", False))
+            mon_a = bool(inc.get("post_relaxation_monitor_a_passed", False))
+            mon_b = bool(inc.get("post_relaxation_monitor_b_passed", False))
+
+            if idx == 0:
+                expected_pre = list(p0_vec)
+            else:
+                expected_pre = list(p0_vec) if prior_revoked else list(prev_post_vec)
+
+            raw_pre = inc.get("pre_incident_policy_vector")
+            if raw_pre is not None:
+                pre_vec = [rational(v) for v in raw_pre]
+                if len(pre_vec) != dim:
+                    raise ValidationError("pre_incident_policy_vector dimension mismatch")
+            else:
+                pre_vec = expected_pre
+
+            raw_post = inc.get("post_incident_policy_vector")
+            if raw_post is None:
+                raise ValidationError("incident must provide post_incident_policy_vector")
+            post_vec = [rational(v) for v in raw_post]
+            if len(post_vec) != dim:
+                raise ValidationError("post_incident_policy_vector dimension mismatch")
+
+            delta_step_vec = [post_vec[j] - pre_vec[j] for j in range(dim)]
+            delta_horizon_vec = [post_vec[j] - p0_vec[j] for j in range(dim)]
+
+            step_unweighted_slack = sum((abs(d) for d in delta_step_vec), Fraction(0))
+            step_weighted_slack = sum(
+                (w_vec[j] * abs(delta_step_vec[j]) for j in range(dim)), Fraction(0)
+            )
+            horizon_unweighted_drift = sum((abs(d) for d in delta_horizon_vec), Fraction(0))
+            horizon_weighted_drift = sum(
+                (w_vec[j] * abs(delta_horizon_vec[j]) for j in range(dim)), Fraction(0)
+            )
+
+            sum_step_weighted_slacks += step_weighted_slack
+            if horizon_weighted_drift > max_horizon_weighted_drift:
+                max_horizon_weighted_drift = horizon_weighted_drift
+
+            pre_state_consistent = pre_vec == expected_pre
+            revocation_policy_satisfied = True
+            if idx > 0 and require_revocation and not prior_revoked:
+                revocation_policy_satisfied = False
+
+            step_within_budget = step_weighted_slack <= tau_step
+            horizon_within_ceiling = horizon_weighted_drift <= tau_horizon
+            pareto_restored = mon_a and mon_b
+
+            l_t = (
+                1
+                if (sig_valid and pareto_restored and step_within_budget and pre_state_consistent)
+                else 0
+            )
+            eg_t = (
+                1
+                if (
+                    l_t == 1
+                    and horizon_within_ceiling
+                    and revocation_policy_satisfied
+                )
+                else 0
+            )
+            delta_e_t = eg_t - l_t
+
+            if l_t == 0:
+                l_chain = 0
+            if eg_t == 0:
+                eg_chain = 0
+                if first_breach_step is None and l_t == 1 and not horizon_within_ceiling:
+                    first_breach_step = step_num
+
+            if eg_t == 1:
+                step_status = (
+                    "SCOPED_LEASE_REVOKED_STEP_COHERENT_LGGG"
+                    if (idx > 0 and prior_revoked)
+                    else "WITHIN_STEP_AND_HORIZON_BUDGET_LGGG"
+                )
+            elif l_t == 1 and not horizon_within_ceiling:
+                step_status = "CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR"
+            else:
+                step_status = "STEP_OBSTRUCTED_OR_INVALID_LEASE_LGGR"
+
+            step_records.append(
+                {
+                    "incident_index": step_num,
+                    "incident_pair_id": pair_id,
+                    "prior_lease_revoked": prior_revoked,
+                    "authority_signature_valid": sig_valid,
+                    "pre_incident_policy_vector": pre_vec,
+                    "post_incident_policy_vector": post_vec,
+                    "delta_step_vector": delta_step_vec,
+                    "delta_horizon_vector": delta_horizon_vec,
+                    "step_unweighted_l1_slack": step_unweighted_slack,
+                    "step_weighted_l1_slack": step_weighted_slack,
+                    "horizon_unweighted_l1_drift": horizon_unweighted_drift,
+                    "horizon_weighted_l1_drift": horizon_weighted_drift,
+                    "step_within_budget": step_within_budget,
+                    "horizon_within_ceiling": horizon_within_ceiling,
+                    "post_relaxation_monitor_a_passed": mon_a,
+                    "post_relaxation_monitor_b_passed": mon_b,
+                    "pareto_intersection_restored": pareto_restored,
+                    "local_step_indicator_L_t": l_t,
+                    "global_horizon_indicator_E_g_t": eg_t,
+                    "step_evaluator_defect": delta_e_t,
+                    "step_status": step_status,
+                }
+            )
+            prev_post_vec = post_vec
+
+        final_horizon_drift = step_records[-1]["horizon_weighted_l1_drift"]
+        delta_e_chain = eg_chain - l_chain
+        ratchet_horizon_breach = l_chain == 1 and eg_chain == 0 and max_horizon_weighted_drift > tau_horizon
+
+        if eg_chain == 1:
+            chain_status = "SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG"
+        elif ratchet_horizon_breach:
+            chain_status = "CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR"
+        else:
+            chain_status = "CHAIN_STEP_OBSTRUCTED_LGGR"
+
+        return {
+            "incident_count": len(step_records),
+            "sum_step_weighted_l1_slacks": sum_step_weighted_slacks,
+            "final_horizon_weighted_l1_drift": final_horizon_drift,
+            "max_horizon_weighted_l1_drift": max_horizon_weighted_drift,
+            "telescoping_ratchet_equality_holds": final_horizon_drift == sum_step_weighted_slacks,
+            "first_horizon_breach_incident_index": first_breach_step,
+            "local_chain_indicator_L": l_chain,
+            "global_chain_indicator_E_g": eg_chain,
+            "chain_evaluator_defect": delta_e_chain,
+            "ratchet_horizon_breach_detected": ratchet_horizon_breach,
+            "chain_status": chain_status,
+            "incidents": step_records,
+        }
+
+    def record_incident_trajectory(
+        self,
+        *,
+        trajectory_id: str,
+        model_id: str,
+        prior_escalation_receipt_sha256: str,
+        baseline_policy_sha256: str,
+        baseline_policy_vector: Sequence[int | float | str | Fraction],
+        risk_weight_vector: Sequence[int | float | str | Fraction],
+        step_slack_budget: int | float | str | Fraction,
+        horizon_drift_ceiling: int | float | str | Fraction,
+        unrevoked_ratchet_incidents: Sequence[Mapping[str, Any]],
+        lease_revoked_incidents: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not trajectory_id or not model_id:
+            raise ValidationError("trajectory_id and model_id must be non-empty")
+        if not prior_escalation_receipt_sha256 or not baseline_policy_sha256:
+            raise ValidationError("prior_escalation_receipt_sha256 and baseline_policy_sha256 must be non-empty")
+        if not baseline_policy_vector:
+            raise ValidationError("baseline_policy_vector must be non-empty")
+
+        p0_vec = [rational(v) for v in baseline_policy_vector]
+        w_vec = [rational(w) for w in risk_weight_vector]
+        dim = len(p0_vec)
+        if len(w_vec) != dim:
+            raise ValidationError("risk_weight_vector must have the same dimension as baseline_policy_vector")
+        if any(w <= 0 for w in w_vec):
+            raise ValidationError("all coordinates of risk_weight_vector must be strictly positive")
+
+        tau_step = rational(step_slack_budget)
+        tau_horizon = rational(horizon_drift_ceiling)
+        if tau_step <= 0 or tau_horizon <= 0:
+            raise ValidationError("step_slack_budget and horizon_drift_ceiling must be strictly positive")
+        if tau_horizon < tau_step:
+            raise ValidationError("horizon_drift_ceiling must be >= step_slack_budget")
+
+        ratchet_audit = self._audit_incident_chain(
+            incidents=unrevoked_ratchet_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_step=tau_step,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_revocation=False,
+        )
+        revoked_audit = self._audit_incident_chain(
+            incidents=lease_revoked_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_step=tau_step,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_revocation=True,
+        )
+
+        converged_single_round = ratchet_audit["global_chain_indicator_E_g"] == 1
+        converged_multi_round = converged_single_round or (revoked_audit["global_chain_indicator_E_g"] == 1)
+        horizon_drift_reduction = (
+            ratchet_audit["max_horizon_weighted_l1_drift"] - revoked_audit["max_horizon_weighted_l1_drift"]
+        )
+
+        record: dict[str, Any] = {
+            "trajectory_id": trajectory_id,
+            "model_id": model_id,
+            "prior_escalation_receipt_sha256": prior_escalation_receipt_sha256,
+            "baseline_policy_sha256": baseline_policy_sha256,
+            "baseline_policy_vector": p0_vec,
+            "risk_weight_vector": w_vec,
+            "step_slack_budget": tau_step,
+            "horizon_drift_ceiling": tau_horizon,
+            "phase_1_unrevoked_ratchet_chain": ratchet_audit,
+            "phase_2_lease_revoked_chain": revoked_audit,
+            "phase_1_ratchet_horizon_breach": ratchet_audit["ratchet_horizon_breach_detected"],
+            "converged_single_round": converged_single_round,
+            "converged_multi_round": converged_multi_round,
+            "horizon_weighted_drift_reduction": horizon_drift_reduction,
+        }
+        self.trajectories.append(record)
+        return json_value(record)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.trajectories:
+            raise ValidationError("cannot emit receipt without recorded policy ratchet trajectories")
+        n = len(self.trajectories)
+        single_cnt = sum(1 for t in self.trajectories if t["converged_single_round"])
+        multi_cnt = sum(1 for t in self.trajectories if t["converged_multi_round"])
+        ratchet_breach_cnt = sum(1 for t in self.trajectories if t["phase_1_ratchet_horizon_breach"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        ratchet_breach_rate = Fraction(ratchet_breach_cnt, n)
+
+        ratchet_breach_ids = [
+            t["trajectory_id"] for t in self.trajectories if t["phase_1_ratchet_horizon_breach"]
+        ]
+        unconverged_ids = [
+            t["trajectory_id"] for t in self.trajectories if not t["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_policy_ratchet_drift.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "trajectory_count": n,
+            "single_round_horizon_coherent_count": single_cnt,
+            "multi_round_lease_revoked_coherent_count": multi_cnt,
+            "phase_1_ratchet_horizon_breach_count": ratchet_breach_cnt,
+            "single_round_horizon_coherence_rate": single_rate,
+            "multi_round_lease_revoked_coherence_rate": multi_rate,
+            "lease_revocation_coherence_gain": gain_rate,
+            "phase_1_ratchet_horizon_breach_rate": ratchet_breach_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "phase_1_ratchet_horizon_breach_trajectory_ids": ratchet_breach_ids,
+            "unconverged_trajectory_ids": unconverged_ids,
+            "trajectories": self.trajectories,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingConcurrentLeaseOverlapMonitor:
+    """Audit concurrent overlapping incident leases where incident t+1 arrives before incident t's lease expires.
+
+    Separates:
+      1. Uncoordinated concurrent lease overlap (every individual lease k = 1..M has finite expiration
+         e_k > s_k and satisfies ||delta_k||_{1,w} <= tau_lease <= tau_horizon with L_k = 1, yet
+         overlapping active intervals [s_t, e_t) cap [s_{t+1}, e_{t+1}) != empty cause peak active
+         weighted drift max_tau ||sum_{k in A(tau)} delta_k||_{1,w} > tau_horizon ->
+         E_{g,schedule} = 0, Delta_{E,schedule} = -1, CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR).
+      2. Lease-overlap accounting and admission control (tracking active leases A(tau) and enforcing
+         ||sum_{k in A(tau)} delta_k||_{1,w} <= tau_horizon at every timestamp tau via early lease
+         release upon repair completion or headroom-bounded scheduling -> L_schedule = 1,
+         E_{g,schedule} = 1, Delta_{E,schedule} = 0, LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG).
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not scope_id:
+            raise ValidationError("scope_id must be non-empty")
+        self.scope_id = scope_id
+        self.schedules: list[dict[str, Any]] = []
+
+    def _audit_lease_schedule(
+        self,
+        *,
+        leases: Sequence[Mapping[str, Any]],
+        p0_vec: list[Fraction],
+        w_vec: list[Fraction],
+        tau_lease: Fraction,
+        tau_horizon: Fraction,
+        dim: int,
+        require_overlap_accounting: bool,
+    ) -> dict[str, Any]:
+        if len(leases) < 2:
+            raise ValidationError("lease schedule must contain at least 2 incidents")
+
+        parsed_leases: list[dict[str, Any]] = []
+        l_schedule = 1
+        min_start: int | None = None
+        max_end: int | None = None
+
+        for idx, ls in enumerate(leases):
+            inc_num = int(ls.get("incident_index", idx + 1))
+            pair_id = str(ls.get("incident_pair_id", f"incident_{inc_num}"))
+            s_k = int(ls.get("arrival_tick", idx))
+            e_k = int(ls.get("expiration_tick", s_k + 1))
+            if e_k <= s_k:
+                raise ValidationError("expiration_tick must be strictly greater than arrival_tick")
+
+            sig_valid = bool(ls.get("authority_signature_valid", False))
+            overlap_accounted = bool(ls.get("overlap_accounting_enforced", False))
+            mon_a = bool(ls.get("post_relaxation_monitor_a_passed", False))
+            mon_b = bool(ls.get("post_relaxation_monitor_b_passed", False))
+
+            raw_delta = ls.get("lease_delta_vector")
+            if raw_delta is not None:
+                delta_vec = [rational(v) for v in raw_delta]
+                if len(delta_vec) != dim:
+                    raise ValidationError("lease_delta_vector dimension mismatch")
+            else:
+                raw_policy = ls.get("lease_policy_vector")
+                if raw_policy is None:
+                    raise ValidationError("lease must provide lease_delta_vector or lease_policy_vector")
+                pol_vec = [rational(v) for v in raw_policy]
+                if len(pol_vec) != dim:
+                    raise ValidationError("lease_policy_vector dimension mismatch")
+                delta_vec = [pol_vec[j] - p0_vec[j] for j in range(dim)]
+
+            lease_policy_vec = [p0_vec[j] + delta_vec[j] for j in range(dim)]
+            unweighted_slack = sum((abs(d) for d in delta_vec), Fraction(0))
+            weighted_slack = sum((w_vec[j] * abs(delta_vec[j]) for j in range(dim)), Fraction(0))
+            within_lease_budget = weighted_slack <= tau_lease
+            pareto_restored = mon_a and mon_b
+
+            l_k = 1 if (sig_valid and pareto_restored and within_lease_budget) else 0
+            if l_k == 0:
+                l_schedule = 0
+
+            if min_start is None or s_k < min_start:
+                min_start = s_k
+            if max_end is None or e_k > max_end:
+                max_end = e_k
+
+            parsed_leases.append(
+                {
+                    "incident_index": inc_num,
+                    "incident_pair_id": pair_id,
+                    "arrival_tick": s_k,
+                    "expiration_tick": e_k,
+                    "lease_duration_ticks": e_k - s_k,
+                    "authority_signature_valid": sig_valid,
+                    "overlap_accounting_enforced": overlap_accounted,
+                    "lease_delta_vector": delta_vec,
+                    "lease_policy_vector": lease_policy_vec,
+                    "lease_unweighted_l1_slack": unweighted_slack,
+                    "lease_weighted_l1_slack": weighted_slack,
+                    "within_individual_lease_budget": within_lease_budget,
+                    "post_relaxation_monitor_a_passed": mon_a,
+                    "post_relaxation_monitor_b_passed": mon_b,
+                    "pareto_intersection_restored": pareto_restored,
+                    "local_lease_indicator_L_k": l_k,
+                }
+            )
+
+        assert min_start is not None and max_end is not None
+        tick_records: list[dict[str, Any]] = []
+        peak_weighted_drift = Fraction(0)
+        peak_tick: int | None = None
+        first_breach_tick: int | None = None
+        max_concurrent_leases = 0
+        overlap_tick_count = 0
+        breach_tick_count = 0
+
+        for tick in range(min_start, max_end):
+            active = [
+                ls
+                for ls in parsed_leases
+                if ls["arrival_tick"] <= tick < ls["expiration_tick"]
+            ]
+            active_indices = [ls["incident_index"] for ls in active]
+            if len(active) > max_concurrent_leases:
+                max_concurrent_leases = len(active)
+            if len(active) >= 2:
+                overlap_tick_count += 1
+
+            agg_delta = [
+                sum((ls["lease_delta_vector"][j] for ls in active), Fraction(0))
+                for j in range(dim)
+            ]
+            agg_policy = [p0_vec[j] + agg_delta[j] for j in range(dim)]
+            tick_unweighted_drift = sum((abs(d) for d in agg_delta), Fraction(0))
+            tick_weighted_drift = sum(
+                (w_vec[j] * abs(agg_delta[j]) for j in range(dim)), Fraction(0)
+            )
+            if tick_weighted_drift > peak_weighted_drift:
+                peak_weighted_drift = tick_weighted_drift
+                peak_tick = tick
+
+            within_horizon = tick_weighted_drift <= tau_horizon
+            if not within_horizon:
+                breach_tick_count += 1
+                if first_breach_tick is None:
+                    first_breach_tick = tick
+
+            tick_records.append(
+                {
+                    "tick": tick,
+                    "active_incident_indices": active_indices,
+                    "active_lease_count": len(active),
+                    "aggregate_delta_vector": agg_delta,
+                    "aggregate_policy_vector": agg_policy,
+                    "concurrent_unweighted_l1_drift": tick_unweighted_drift,
+                    "concurrent_weighted_l1_drift": tick_weighted_drift,
+                    "horizon_within_ceiling": within_horizon,
+                }
+            )
+
+        for ls in parsed_leases:
+            s_k = ls["arrival_tick"]
+            e_k = ls["expiration_tick"]
+            lease_max_concurrent_drift = max(
+                (
+                    tr["concurrent_weighted_l1_drift"]
+                    for tr in tick_records
+                    if s_k <= tr["tick"] < e_k
+                ),
+                default=ls["lease_weighted_l1_slack"],
+            )
+            acct_ok = (not require_overlap_accounting) or ls["overlap_accounting_enforced"]
+            eg_k = (
+                1
+                if (
+                    ls["local_lease_indicator_L_k"] == 1
+                    and lease_max_concurrent_drift <= tau_horizon
+                    and acct_ok
+                )
+                else 0
+            )
+            ls["peak_concurrent_weighted_drift_during_lease"] = lease_max_concurrent_drift
+            ls["global_overlap_indicator_E_g_k"] = eg_k
+            ls["lease_evaluator_defect"] = eg_k - ls["local_lease_indicator_L_k"]
+            if eg_k == 1:
+                ls["lease_status"] = "LEASE_OVERLAP_ACCOUNTING_COHERENT_LGGG"
+            elif ls["local_lease_indicator_L_k"] == 1 and lease_max_concurrent_drift > tau_horizon:
+                ls["lease_status"] = "CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR"
+            else:
+                ls["lease_status"] = "LEASE_STEP_OBSTRUCTED_LGGR"
+
+        all_acct_ok = (not require_overlap_accounting) or all(
+            ls["overlap_accounting_enforced"] for ls in parsed_leases
+        )
+        eg_schedule = (
+            1
+            if (l_schedule == 1 and peak_weighted_drift <= tau_horizon and all_acct_ok)
+            else 0
+        )
+        delta_e_schedule = eg_schedule - l_schedule
+        overlap_breach_detected = (
+            l_schedule == 1 and eg_schedule == 0 and peak_weighted_drift > tau_horizon
+        )
+
+        if eg_schedule == 1:
+            schedule_status = "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG"
+        elif overlap_breach_detected:
+            schedule_status = "CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR"
+        else:
+            schedule_status = "SCHEDULE_LEASE_OBSTRUCTED_LGGR"
+
+        return {
+            "incident_count": len(parsed_leases),
+            "horizon_span_ticks": max_end - min_start,
+            "max_concurrent_active_leases": max_concurrent_leases,
+            "overlap_tick_count": overlap_tick_count,
+            "breach_tick_count": breach_tick_count,
+            "peak_concurrent_weighted_l1_drift": peak_weighted_drift,
+            "peak_drift_tick": peak_tick,
+            "first_horizon_breach_tick": first_breach_tick,
+            "local_schedule_indicator_L": l_schedule,
+            "global_schedule_indicator_E_g": eg_schedule,
+            "schedule_evaluator_defect": delta_e_schedule,
+            "overlap_horizon_breach_detected": overlap_breach_detected,
+            "schedule_status": schedule_status,
+            "leases": parsed_leases,
+            "ticks": tick_records,
+        }
+
+    def record_overlap_schedule(
+        self,
+        *,
+        schedule_id: str,
+        model_id: str,
+        prior_ratchet_receipt_sha256: str,
+        baseline_policy_sha256: str,
+        baseline_policy_vector: Sequence[int | float | str | Fraction],
+        risk_weight_vector: Sequence[int | float | str | Fraction],
+        individual_lease_budget: int | float | str | Fraction,
+        horizon_drift_ceiling: int | float | str | Fraction,
+        uncoordinated_overlapping_leases: Sequence[Mapping[str, Any]],
+        overlap_accounted_leases: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not schedule_id or not model_id:
+            raise ValidationError("schedule_id and model_id must be non-empty")
+        if not prior_ratchet_receipt_sha256 or not baseline_policy_sha256:
+            raise ValidationError("prior_ratchet_receipt_sha256 and baseline_policy_sha256 must be non-empty")
+        if not baseline_policy_vector:
+            raise ValidationError("baseline_policy_vector must be non-empty")
+
+        p0_vec = [rational(v) for v in baseline_policy_vector]
+        w_vec = [rational(w) for w in risk_weight_vector]
+        dim = len(p0_vec)
+        if len(w_vec) != dim:
+            raise ValidationError("risk_weight_vector must have the same dimension as baseline_policy_vector")
+        if any(w <= 0 for w in w_vec):
+            raise ValidationError("all coordinates of risk_weight_vector must be strictly positive")
+
+        tau_lease = rational(individual_lease_budget)
+        tau_horizon = rational(horizon_drift_ceiling)
+        if tau_lease <= 0 or tau_horizon <= 0:
+            raise ValidationError("individual_lease_budget and horizon_drift_ceiling must be strictly positive")
+        if tau_horizon < tau_lease:
+            raise ValidationError("horizon_drift_ceiling must be >= individual_lease_budget")
+
+        uncoordinated_audit = self._audit_lease_schedule(
+            leases=uncoordinated_overlapping_leases,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_overlap_accounting=False,
+        )
+        accounted_audit = self._audit_lease_schedule(
+            leases=overlap_accounted_leases,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_overlap_accounting=True,
+        )
+
+        converged_single_round = uncoordinated_audit["global_schedule_indicator_E_g"] == 1
+        converged_multi_round = converged_single_round or (
+            accounted_audit["global_schedule_indicator_E_g"] == 1
+        )
+        peak_drift_reduction = (
+            uncoordinated_audit["peak_concurrent_weighted_l1_drift"]
+            - accounted_audit["peak_concurrent_weighted_l1_drift"]
+        )
+
+        record: dict[str, Any] = {
+            "schedule_id": schedule_id,
+            "model_id": model_id,
+            "prior_ratchet_receipt_sha256": prior_ratchet_receipt_sha256,
+            "baseline_policy_sha256": baseline_policy_sha256,
+            "baseline_policy_vector": p0_vec,
+            "risk_weight_vector": w_vec,
+            "individual_lease_budget": tau_lease,
+            "horizon_drift_ceiling": tau_horizon,
+            "phase_1_uncoordinated_overlap_schedule": uncoordinated_audit,
+            "phase_2_overlap_accounted_schedule": accounted_audit,
+            "phase_1_overlap_horizon_breach": uncoordinated_audit["overlap_horizon_breach_detected"],
+            "converged_single_round": converged_single_round,
+            "converged_multi_round": converged_multi_round,
+            "peak_concurrent_weighted_drift_reduction": peak_drift_reduction,
+        }
+        self.schedules.append(record)
+        return json_value(record)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.schedules:
+            raise ValidationError("cannot emit receipt without recorded concurrent lease overlap schedules")
+        n = len(self.schedules)
+        single_cnt = sum(1 for s in self.schedules if s["converged_single_round"])
+        multi_cnt = sum(1 for s in self.schedules if s["converged_multi_round"])
+        overlap_breach_cnt = sum(1 for s in self.schedules if s["phase_1_overlap_horizon_breach"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        overlap_breach_rate = Fraction(overlap_breach_cnt, n)
+
+        overlap_breach_ids = [
+            s["schedule_id"] for s in self.schedules if s["phase_1_overlap_horizon_breach"]
+        ]
+        unconverged_ids = [
+            s["schedule_id"] for s in self.schedules if not s["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_concurrent_lease_overlap.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "schedule_count": n,
+            "single_round_overlap_coherent_count": single_cnt,
+            "multi_round_overlap_accounted_coherent_count": multi_cnt,
+            "phase_1_overlap_horizon_breach_count": overlap_breach_cnt,
+            "single_round_overlap_coherence_rate": single_rate,
+            "multi_round_overlap_accounted_coherence_rate": multi_rate,
+            "overlap_accounting_coherence_gain": gain_rate,
+            "phase_1_overlap_horizon_breach_rate": overlap_breach_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "phase_1_overlap_horizon_breach_schedule_ids": overlap_breach_ids,
+            "unconverged_schedule_ids": unconverged_ids,
+            "schedules": self.schedules,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingSimultaneousBudgetSplitMonitor:
+    """Audit non-preemptible simultaneous incidents (s_1 = s_2 = ... = s_M) under fractional budget-splitting vs. priority queueing.
+
+    When multiple non-preemptible incidents arrive at the same tick s_0 and their joint minimum
+    weighted Pareto floor exceeds the global horizon ceiling:
+        sum_{k=1}^M Delta_{w,k}^* > tau_horizon  (while max_k Delta_{w,k}^* <= tau_lease <= tau_horizon),
+    separates:
+      1. Fractional concurrent budget-splitting at tick s_0 (all M incidents admitted simultaneously
+         at execution_tick = s_0 under reduced leases delta_k' satisfying
+         sum_{k=1}^M ||delta_k'||_{1,w} <= tau_horizon -> L_budget_split = 1, yet by additivity
+         at least one incident k receives ||delta_k'||_{1,w} < Delta_{w,k}^*, starving its coupled
+         monitors below their Pareto floor -> E_{g,split} = 0, Delta_{E,split} = -1,
+         FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR).
+      2. Priority-queued deferred admission (assigning priority queue slots execution_tick = s_0 + rank_k
+         so each non-preemptible incident k executes with its full Pareto-restoring lease
+         ||delta_k||_{1,w} >= Delta_{w,k}^* while active concurrent drift at every tick tau satisfies
+         D_w(tau) <= tau_horizon -> L_queued = 1, E_{g,queued} = 1, Delta_{E,queued} = 0,
+         PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG).
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not scope_id:
+            raise ValidationError("scope_id must be non-empty")
+        self.scope_id = scope_id
+        self.bursts: list[dict[str, Any]] = []
+
+    def _audit_burst_admission(
+        self,
+        *,
+        incidents: Sequence[Mapping[str, Any]],
+        p0_vec: list[Fraction],
+        w_vec: list[Fraction],
+        tau_lease: Fraction,
+        tau_horizon: Fraction,
+        dim: int,
+        require_priority_queueing: bool,
+    ) -> dict[str, Any]:
+        if len(incidents) < 2:
+            raise ValidationError("simultaneous burst must contain at least 2 incidents")
+
+        parsed_incidents: list[dict[str, Any]] = []
+        joint_pareto_floor = Fraction(0)
+        arrival_ticks: set[int] = set()
+        min_exec_tick: int | None = None
+        max_comp_tick: int | None = None
+
+        for idx, inc in enumerate(incidents):
+            inc_num = int(inc.get("incident_index", idx + 1))
+            pair_id = str(inc.get("incident_pair_id", f"incident_{inc_num}"))
+            prio_rank = int(inc.get("priority_rank", idx + 1))
+            s_k = int(inc.get("arrival_tick", 0))
+            exec_k = int(inc.get("execution_tick", s_k))
+            comp_k = int(inc.get("completion_tick", exec_k + 1))
+            if exec_k < s_k:
+                raise ValidationError("execution_tick must be >= arrival_tick")
+            if comp_k <= exec_k:
+                raise ValidationError("completion_tick must be strictly greater than execution_tick")
+
+            arrival_ticks.add(s_k)
+            non_preemptible = bool(inc.get("non_preemptible", True))
+            sig_valid = bool(inc.get("authority_signature_valid", False))
+            queue_enforced = bool(inc.get("priority_queue_enforced", False))
+            mon_a = bool(inc.get("post_relaxation_monitor_a_passed", False))
+            mon_b = bool(inc.get("post_relaxation_monitor_b_passed", False))
+
+            pareto_floor_k = rational(inc.get("minimum_weighted_pareto_floor", 0))
+            if pareto_floor_k <= 0:
+                raise ValidationError("minimum_weighted_pareto_floor must be strictly positive")
+            joint_pareto_floor += pareto_floor_k
+
+            raw_delta = inc.get("allocated_delta_vector")
+            if raw_delta is None:
+                raise ValidationError("incident must provide allocated_delta_vector")
+            delta_vec = [rational(v) for v in raw_delta]
+            if len(delta_vec) != dim:
+                raise ValidationError("allocated_delta_vector dimension mismatch")
+
+            allocated_policy_vec = [p0_vec[j] + delta_vec[j] for j in range(dim)]
+            unweighted_slack = sum((abs(d) for d in delta_vec), Fraction(0))
+            weighted_slack = sum((w_vec[j] * abs(delta_vec[j]) for j in range(dim)), Fraction(0))
+
+            within_individual_lease = weighted_slack <= tau_lease
+            meets_pareto_floor = weighted_slack >= pareto_floor_k
+            under_pareto_floor = weighted_slack < pareto_floor_k
+            pareto_deficit = max(Fraction(0), pareto_floor_k - weighted_slack)
+            pareto_restored = mon_a and mon_b and meets_pareto_floor
+
+            if min_exec_tick is None or exec_k < min_exec_tick:
+                min_exec_tick = exec_k
+            if max_comp_tick is None or comp_k > max_comp_tick:
+                max_comp_tick = comp_k
+
+            parsed_incidents.append(
+                {
+                    "incident_index": inc_num,
+                    "incident_pair_id": pair_id,
+                    "priority_rank": prio_rank,
+                    "arrival_tick": s_k,
+                    "execution_tick": exec_k,
+                    "completion_tick": comp_k,
+                    "queue_delay_ticks": exec_k - s_k,
+                    "non_preemptible": non_preemptible,
+                    "authority_signature_valid": sig_valid,
+                    "priority_queue_enforced": queue_enforced,
+                    "minimum_weighted_pareto_floor": pareto_floor_k,
+                    "allocated_delta_vector": delta_vec,
+                    "allocated_policy_vector": allocated_policy_vec,
+                    "allocated_unweighted_l1_slack": unweighted_slack,
+                    "allocated_weighted_l1_slack": weighted_slack,
+                    "within_individual_lease_budget": within_individual_lease,
+                    "meets_pareto_floor": meets_pareto_floor,
+                    "under_pareto_floor": under_pareto_floor,
+                    "pareto_floor_deficit_l1_w": pareto_deficit,
+                    "post_relaxation_monitor_a_passed": mon_a,
+                    "post_relaxation_monitor_b_passed": mon_b,
+                    "pareto_intersection_restored": pareto_restored,
+                }
+            )
+
+        simultaneous_arrival_verified = len(arrival_ticks) == 1
+        assert min_exec_tick is not None and max_comp_tick is not None
+
+        tick_records: list[dict[str, Any]] = []
+        peak_concurrent_drift = Fraction(0)
+        max_concurrent_executing = 0
+
+        for tick in range(min_exec_tick, max_comp_tick):
+            active = [
+                inc
+                for inc in parsed_incidents
+                if inc["execution_tick"] <= tick < inc["completion_tick"]
+            ]
+            if len(active) > max_concurrent_executing:
+                max_concurrent_executing = len(active)
+            agg_delta = [
+                sum((inc["allocated_delta_vector"][j] for inc in active), Fraction(0))
+                for j in range(dim)
+            ]
+            tick_weighted_drift = sum(
+                (w_vec[j] * abs(agg_delta[j]) for j in range(dim)), Fraction(0)
+            )
+            if tick_weighted_drift > peak_concurrent_drift:
+                peak_concurrent_drift = tick_weighted_drift
+            tick_records.append(
+                {
+                    "tick": tick,
+                    "executing_incident_indices": [inc["incident_index"] for inc in active],
+                    "executing_count": len(active),
+                    "aggregate_delta_vector": agg_delta,
+                    "concurrent_weighted_l1_drift": tick_weighted_drift,
+                    "horizon_within_ceiling": tick_weighted_drift <= tau_horizon,
+                }
+            )
+
+        horizon_budget_respected = peak_concurrent_drift <= tau_horizon
+        starved_count = 0
+
+        for inc in parsed_incidents:
+            exec_k = inc["execution_tick"]
+            comp_k = inc["completion_tick"]
+            inc_peak_drift = max(
+                (
+                    tr["concurrent_weighted_l1_drift"]
+                    for tr in tick_records
+                    if exec_k <= tr["tick"] < comp_k
+                ),
+                default=inc["allocated_weighted_l1_slack"],
+            )
+            inc_horizon_ok = inc_peak_drift <= tau_horizon
+            l_k = (
+                1
+                if (
+                    inc["authority_signature_valid"]
+                    and inc["within_individual_lease_budget"]
+                    and inc_horizon_ok
+                )
+                else 0
+            )
+            q_ok = (not require_priority_queueing) or inc["priority_queue_enforced"]
+            eg_k = (
+                1
+                if (
+                    l_k == 1
+                    and inc["pareto_intersection_restored"]
+                    and not inc["under_pareto_floor"]
+                    and q_ok
+                )
+                else 0
+            )
+            if inc["under_pareto_floor"] or not inc["pareto_intersection_restored"]:
+                starved_count += 1
+
+            inc["peak_concurrent_weighted_drift_during_execution"] = inc_peak_drift
+            inc["local_budget_indicator_L_k"] = l_k
+            inc["global_pareto_indicator_E_g_k"] = eg_k
+            inc["incident_evaluator_defect"] = eg_k - l_k
+            if eg_k == 1:
+                inc["incident_status"] = "PRIORITY_QUEUE_PARETO_RESTORED_LGGG"
+            elif l_k == 1 and (inc["under_pareto_floor"] or not inc["pareto_intersection_restored"]):
+                inc["incident_status"] = "FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR"
+            else:
+                inc["incident_status"] = "INCIDENT_BUDGET_OR_SIGNATURE_OBSTRUCTED_LGGR"
+
+        l_burst = (
+            1
+            if (
+                simultaneous_arrival_verified
+                and horizon_budget_respected
+                and all(inc["local_budget_indicator_L_k"] == 1 for inc in parsed_incidents)
+            )
+            else 0
+        )
+        eg_burst = (
+            1
+            if (
+                l_burst == 1
+                and all(inc["global_pareto_indicator_E_g_k"] == 1 for inc in parsed_incidents)
+            )
+            else 0
+        )
+        delta_e_burst = eg_burst - l_burst
+        fractional_starvation_detected = (
+            l_burst == 1 and eg_burst == 0 and starved_count > 0
+        )
+
+        if eg_burst == 1:
+            burst_status = "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG"
+        elif fractional_starvation_detected:
+            burst_status = "FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR"
+        else:
+            burst_status = "BURST_BUDGET_OR_ADMISSION_OBSTRUCTED_LGGR"
+
+        return {
+            "incident_count": len(parsed_incidents),
+            "simultaneous_arrival_verified": simultaneous_arrival_verified,
+            "joint_simultaneous_pareto_floor_l1_w": joint_pareto_floor,
+            "joint_pareto_floor_exceeds_horizon": joint_pareto_floor > tau_horizon,
+            "max_concurrent_executing_incidents": max_concurrent_executing,
+            "peak_concurrent_weighted_l1_drift": peak_concurrent_drift,
+            "starved_incident_count": starved_count,
+            "local_burst_indicator_L": l_burst,
+            "global_burst_indicator_E_g": eg_burst,
+            "burst_evaluator_defect": delta_e_burst,
+            "fractional_split_starvation_detected": fractional_starvation_detected,
+            "burst_status": burst_status,
+            "incidents": parsed_incidents,
+            "ticks": tick_records,
+        }
+
+    def record_simultaneous_burst(
+        self,
+        *,
+        burst_id: str,
+        model_id: str,
+        prior_overlap_receipt_sha256: str,
+        baseline_policy_sha256: str,
+        baseline_policy_vector: Sequence[int | float | str | Fraction],
+        risk_weight_vector: Sequence[int | float | str | Fraction],
+        individual_lease_budget: int | float | str | Fraction,
+        horizon_drift_ceiling: int | float | str | Fraction,
+        fractional_split_incidents: Sequence[Mapping[str, Any]],
+        priority_queued_incidents: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not burst_id or not model_id:
+            raise ValidationError("burst_id and model_id must be non-empty")
+        if not prior_overlap_receipt_sha256 or not baseline_policy_sha256:
+            raise ValidationError("prior_overlap_receipt_sha256 and baseline_policy_sha256 must be non-empty")
+        if not baseline_policy_vector:
+            raise ValidationError("baseline_policy_vector must be non-empty")
+
+        p0_vec = [rational(v) for v in baseline_policy_vector]
+        w_vec = [rational(w) for w in risk_weight_vector]
+        dim = len(p0_vec)
+        if len(w_vec) != dim:
+            raise ValidationError("risk_weight_vector must have the same dimension as baseline_policy_vector")
+        if any(w <= 0 for w in w_vec):
+            raise ValidationError("all coordinates of risk_weight_vector must be strictly positive")
+
+        tau_lease = rational(individual_lease_budget)
+        tau_horizon = rational(horizon_drift_ceiling)
+        if tau_lease <= 0 or tau_horizon <= 0:
+            raise ValidationError("individual_lease_budget and horizon_drift_ceiling must be strictly positive")
+        if tau_horizon < tau_lease:
+            raise ValidationError("horizon_drift_ceiling must be >= individual_lease_budget")
+
+        split_audit = self._audit_burst_admission(
+            incidents=fractional_split_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_priority_queueing=False,
+        )
+        queued_audit = self._audit_burst_admission(
+            incidents=priority_queued_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_priority_queueing=True,
+        )
+
+        converged_single_round = split_audit["global_burst_indicator_E_g"] == 1
+        converged_multi_round = converged_single_round or (
+            queued_audit["global_burst_indicator_E_g"] == 1
+        )
+        starved_eliminated = (
+            split_audit["starved_incident_count"] - queued_audit["starved_incident_count"]
+        )
+
+        record: dict[str, Any] = {
+            "burst_id": burst_id,
+            "model_id": model_id,
+            "prior_overlap_receipt_sha256": prior_overlap_receipt_sha256,
+            "baseline_policy_sha256": baseline_policy_sha256,
+            "baseline_policy_vector": p0_vec,
+            "risk_weight_vector": w_vec,
+            "individual_lease_budget": tau_lease,
+            "horizon_drift_ceiling": tau_horizon,
+            "phase_1_fractional_budget_split": split_audit,
+            "phase_2_priority_queued_admission": queued_audit,
+            "phase_1_fractional_split_starvation": split_audit[
+                "fractional_split_starvation_detected"
+            ],
+            "converged_single_round": converged_single_round,
+            "converged_multi_round": converged_multi_round,
+            "starved_incidents_eliminated": starved_eliminated,
+        }
+        self.bursts.append(record)
+        return json_value(record)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.bursts:
+            raise ValidationError("cannot emit receipt without recorded simultaneous bursts")
+        n = len(self.bursts)
+        single_cnt = sum(1 for b in self.bursts if b["converged_single_round"])
+        multi_cnt = sum(1 for b in self.bursts if b["converged_multi_round"])
+        starv_cnt = sum(1 for b in self.bursts if b["phase_1_fractional_split_starvation"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        starv_rate = Fraction(starv_cnt, n)
+
+        starv_ids = [
+            b["burst_id"] for b in self.bursts if b["phase_1_fractional_split_starvation"]
+        ]
+        unconverged_ids = [
+            b["burst_id"] for b in self.bursts if not b["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_simultaneous_budget_split.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "burst_count": n,
+            "single_round_split_coherent_count": single_cnt,
+            "multi_round_priority_queued_coherent_count": multi_cnt,
+            "phase_1_fractional_split_starvation_count": starv_cnt,
+            "single_round_split_coherence_rate": single_rate,
+            "multi_round_priority_queued_coherence_rate": multi_rate,
+            "priority_queue_coherence_gain": gain_rate,
+            "phase_1_fractional_split_starvation_rate": starv_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "phase_1_fractional_split_starvation_burst_ids": starv_ids,
+            "unconverged_burst_ids": unconverged_ids,
+            "bursts": self.bursts,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingDeadlinePriorityQueueMonitor:
+    """Audit deadline-constrained priority queueing under simultaneous bursts (EDF vs. static priority ordering).
+
+    When M non-preemptible incidents arrive simultaneously at tick s_0 with minimum weighted
+    Pareto floors Delta_{w,k}^* <= tau_lease <= tau_horizon (and sum_k Delta_{w,k}^* > tau_horizon),
+    static priority ranks pi_k, and strict SLA completion deadlines D_k, separates:
+      1. Static priority queue ordering (scheduling in order of static priority pi_1 < pi_2 < ... < pi_M
+         grants each incident its full Pareto-restoring lease ||delta_k||_{1,w} >= Delta_{w,k}^* and
+         respects active horizon ceiling D_w(tau) <= tau_horizon -> L_queue = 1, yet defers a
+         tight-deadline low-priority incident past its SLA deadline C_k > D_k -> E_{g,queue} = 0,
+         Delta_{E,queue} = -1, STATIC_PRIORITY_SLA_DEADLINE_BREACH_LGGR).
+      2. Earliest-Deadline-First (EDF) queue ordering (scheduling in non-decreasing order of SLA
+         deadlines D_{k_1} <= D_{k_2} <= ... <= D_{k_M} so every incident satisfies both
+         ||delta_k||_{1,w} >= Delta_{w,k}^*, D_w(tau) <= tau_horizon, and C_k <= D_k ->
+         L_queue = 1, E_{g,queue} = 1, Delta_{E,queue} = 0,
+         EDF_DEADLINE_COHERENT_QUEUE_VERIFIED_LGGG).
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not scope_id:
+            raise ValidationError("scope_id must be non-empty")
+        self.scope_id = scope_id
+        self.queues: list[dict[str, Any]] = []
+
+    def _audit_queue_schedule(
+        self,
+        *,
+        incidents: Sequence[Mapping[str, Any]],
+        p0_vec: list[Fraction],
+        w_vec: list[Fraction],
+        tau_lease: Fraction,
+        tau_horizon: Fraction,
+        dim: int,
+        require_edf_ordering: bool,
+    ) -> dict[str, Any]:
+        if len(incidents) < 2:
+            raise ValidationError("deadline queue schedule must contain at least 2 incidents")
+
+        parsed_incidents: list[dict[str, Any]] = []
+        joint_pareto_floor = Fraction(0)
+        arrival_ticks: set[int] = set()
+        min_exec_tick: int | None = None
+        max_comp_tick: int | None = None
+
+        for idx, inc in enumerate(incidents):
+            inc_num = int(inc.get("incident_index", idx + 1))
+            pair_id = str(inc.get("incident_pair_id", f"incident_{inc_num}"))
+            static_prio = int(inc.get("static_priority_rank", idx + 1))
+            sla_deadline = int(inc.get("sla_deadline_tick", idx + 1))
+            s_k = int(inc.get("arrival_tick", 0))
+            exec_k = int(inc.get("execution_tick", s_k))
+            comp_k = int(inc.get("completion_tick", exec_k + 1))
+            if exec_k < s_k:
+                raise ValidationError("execution_tick must be >= arrival_tick")
+            if comp_k <= exec_k:
+                raise ValidationError("completion_tick must be strictly greater than execution_tick")
+            if sla_deadline <= s_k:
+                raise ValidationError("sla_deadline_tick must be strictly greater than arrival_tick")
+
+            arrival_ticks.add(s_k)
+            sig_valid = bool(inc.get("authority_signature_valid", False))
+            edf_enforced = bool(inc.get("edf_policy_enforced", False))
+            mon_a = bool(inc.get("post_relaxation_monitor_a_passed", False))
+            mon_b = bool(inc.get("post_relaxation_monitor_b_passed", False))
+
+            pareto_floor_k = rational(inc.get("minimum_weighted_pareto_floor", 0))
+            if pareto_floor_k <= 0:
+                raise ValidationError("minimum_weighted_pareto_floor must be strictly positive")
+            joint_pareto_floor += pareto_floor_k
+
+            raw_delta = inc.get("allocated_delta_vector")
+            if raw_delta is None:
+                raise ValidationError("incident must provide allocated_delta_vector")
+            delta_vec = [rational(v) for v in raw_delta]
+            if len(delta_vec) != dim:
+                raise ValidationError("allocated_delta_vector dimension mismatch")
+
+            allocated_policy_vec = [p0_vec[j] + delta_vec[j] for j in range(dim)]
+            unweighted_slack = sum((abs(d) for d in delta_vec), Fraction(0))
+            weighted_slack = sum((w_vec[j] * abs(delta_vec[j]) for j in range(dim)), Fraction(0))
+
+            within_individual_lease = weighted_slack <= tau_lease
+            meets_pareto_floor = weighted_slack >= pareto_floor_k
+            pareto_restored = mon_a and mon_b and meets_pareto_floor
+
+            lateness_ticks = max(0, comp_k - sla_deadline)
+            sla_deadline_met = comp_k <= sla_deadline
+
+            if min_exec_tick is None or exec_k < min_exec_tick:
+                min_exec_tick = exec_k
+            if max_comp_tick is None or comp_k > max_comp_tick:
+                max_comp_tick = comp_k
+
+            parsed_incidents.append(
+                {
+                    "incident_index": inc_num,
+                    "incident_pair_id": pair_id,
+                    "static_priority_rank": static_prio,
+                    "sla_deadline_tick": sla_deadline,
+                    "arrival_tick": s_k,
+                    "execution_tick": exec_k,
+                    "completion_tick": comp_k,
+                    "queue_delay_ticks": exec_k - s_k,
+                    "lateness_ticks": lateness_ticks,
+                    "sla_deadline_met": sla_deadline_met,
+                    "authority_signature_valid": sig_valid,
+                    "edf_policy_enforced": edf_enforced,
+                    "minimum_weighted_pareto_floor": pareto_floor_k,
+                    "allocated_delta_vector": delta_vec,
+                    "allocated_policy_vector": allocated_policy_vec,
+                    "allocated_unweighted_l1_slack": unweighted_slack,
+                    "allocated_weighted_l1_slack": weighted_slack,
+                    "within_individual_lease_budget": within_individual_lease,
+                    "meets_pareto_floor": meets_pareto_floor,
+                    "post_relaxation_monitor_a_passed": mon_a,
+                    "post_relaxation_monitor_b_passed": mon_b,
+                    "pareto_intersection_restored": pareto_restored,
+                }
+            )
+
+        simultaneous_arrival_verified = len(arrival_ticks) == 1
+        assert min_exec_tick is not None and max_comp_tick is not None
+
+        # Check EDF non-decreasing deadline order along execution_tick
+        sorted_by_exec = sorted(
+            parsed_incidents,
+            key=lambda x: (x["execution_tick"], x["sla_deadline_tick"], x["incident_index"]),
+        )
+        edf_order_verified = all(
+            sorted_by_exec[i]["sla_deadline_tick"] <= sorted_by_exec[i + 1]["sla_deadline_tick"]
+            for i in range(len(sorted_by_exec) - 1)
+        )
+
+        tick_records: list[dict[str, Any]] = []
+        peak_concurrent_drift = Fraction(0)
+        max_concurrent_executing = 0
+
+        for tick in range(min_exec_tick, max_comp_tick):
+            active = [
+                inc
+                for inc in parsed_incidents
+                if inc["execution_tick"] <= tick < inc["completion_tick"]
+            ]
+            if len(active) > max_concurrent_executing:
+                max_concurrent_executing = len(active)
+            agg_delta = [
+                sum((inc["allocated_delta_vector"][j] for inc in active), Fraction(0))
+                for j in range(dim)
+            ]
+            tick_weighted_drift = sum(
+                (w_vec[j] * abs(agg_delta[j]) for j in range(dim)), Fraction(0)
+            )
+            if tick_weighted_drift > peak_concurrent_drift:
+                peak_concurrent_drift = tick_weighted_drift
+            tick_records.append(
+                {
+                    "tick": tick,
+                    "executing_incident_indices": [inc["incident_index"] for inc in active],
+                    "executing_count": len(active),
+                    "aggregate_delta_vector": agg_delta,
+                    "concurrent_weighted_l1_drift": tick_weighted_drift,
+                    "horizon_within_ceiling": tick_weighted_drift <= tau_horizon,
+                }
+            )
+
+        horizon_budget_respected = peak_concurrent_drift <= tau_horizon
+        deadline_miss_count = 0
+        max_lateness_ticks = 0
+
+        for inc in parsed_incidents:
+            exec_k = inc["execution_tick"]
+            comp_k = inc["completion_tick"]
+            inc_peak_drift = max(
+                (
+                    tr["concurrent_weighted_l1_drift"]
+                    for tr in tick_records
+                    if exec_k <= tr["tick"] < comp_k
+                ),
+                default=inc["allocated_weighted_l1_slack"],
+            )
+            inc_horizon_ok = inc_peak_drift <= tau_horizon
+            l_k = (
+                1
+                if (
+                    inc["authority_signature_valid"]
+                    and inc["within_individual_lease_budget"]
+                    and inc["pareto_intersection_restored"]
+                    and inc_horizon_ok
+                )
+                else 0
+            )
+            edf_ok = (not require_edf_ordering) or (inc["edf_policy_enforced"] and edf_order_verified)
+            eg_k = 1 if (l_k == 1 and inc["sla_deadline_met"] and edf_ok) else 0
+
+            if not inc["sla_deadline_met"]:
+                deadline_miss_count += 1
+            if inc["lateness_ticks"] > max_lateness_ticks:
+                max_lateness_ticks = inc["lateness_ticks"]
+
+            inc["peak_concurrent_weighted_drift_during_execution"] = inc_peak_drift
+            inc["local_budget_pareto_indicator_L_k"] = l_k
+            inc["global_deadline_pareto_indicator_E_g_k"] = eg_k
+            inc["incident_evaluator_defect"] = eg_k - l_k
+            if eg_k == 1:
+                inc["incident_status"] = "EDF_SLA_DEADLINE_AND_PARETO_MET_LGGG"
+            elif l_k == 1 and not inc["sla_deadline_met"]:
+                inc["incident_status"] = "STATIC_PRIORITY_SLA_DEADLINE_BREACH_LGGR"
+            else:
+                inc["incident_status"] = "INCIDENT_BUDGET_OR_PARETO_OBSTRUCTED_LGGR"
+
+        l_queue = (
+            1
+            if (
+                simultaneous_arrival_verified
+                and horizon_budget_respected
+                and all(inc["local_budget_pareto_indicator_L_k"] == 1 for inc in parsed_incidents)
+            )
+            else 0
+        )
+        eg_queue = (
+            1
+            if (
+                l_queue == 1
+                and all(inc["global_deadline_pareto_indicator_E_g_k"] == 1 for inc in parsed_incidents)
+            )
+            else 0
+        )
+        delta_e_queue = eg_queue - l_queue
+        static_deadline_breach_detected = (
+            l_queue == 1 and eg_queue == 0 and deadline_miss_count > 0
+        )
+
+        if eg_queue == 1:
+            queue_status = "EDF_DEADLINE_COHERENT_QUEUE_VERIFIED_LGGG"
+        elif static_deadline_breach_detected:
+            queue_status = "STATIC_PRIORITY_SLA_DEADLINE_BREACH_LGGR"
+        else:
+            queue_status = "QUEUE_BUDGET_OR_PARETO_OBSTRUCTED_LGGR"
+
+        return {
+            "incident_count": len(parsed_incidents),
+            "simultaneous_arrival_verified": simultaneous_arrival_verified,
+            "edf_order_verified": edf_order_verified,
+            "joint_simultaneous_pareto_floor_l1_w": joint_pareto_floor,
+            "max_concurrent_executing_incidents": max_concurrent_executing,
+            "peak_concurrent_weighted_l1_drift": peak_concurrent_drift,
+            "deadline_miss_count": deadline_miss_count,
+            "max_lateness_ticks": max_lateness_ticks,
+            "local_queue_indicator_L": l_queue,
+            "global_queue_indicator_E_g": eg_queue,
+            "queue_evaluator_defect": delta_e_queue,
+            "static_deadline_breach_detected": static_deadline_breach_detected,
+            "queue_status": queue_status,
+            "incidents": parsed_incidents,
+            "ticks": tick_records,
+        }
+
+    def record_deadline_queue_comparison(
+        self,
+        *,
+        queue_id: str,
+        model_id: str,
+        prior_split_receipt_sha256: str,
+        baseline_policy_sha256: str,
+        baseline_policy_vector: Sequence[int | float | str | Fraction],
+        risk_weight_vector: Sequence[int | float | str | Fraction],
+        individual_lease_budget: int | float | str | Fraction,
+        horizon_drift_ceiling: int | float | str | Fraction,
+        static_priority_incidents: Sequence[Mapping[str, Any]],
+        edf_queued_incidents: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not queue_id or not model_id:
+            raise ValidationError("queue_id and model_id must be non-empty")
+        if not prior_split_receipt_sha256 or not baseline_policy_sha256:
+            raise ValidationError("prior_split_receipt_sha256 and baseline_policy_sha256 must be non-empty")
+        if not baseline_policy_vector:
+            raise ValidationError("baseline_policy_vector must be non-empty")
+
+        p0_vec = [rational(v) for v in baseline_policy_vector]
+        w_vec = [rational(w) for w in risk_weight_vector]
+        dim = len(p0_vec)
+        if len(w_vec) != dim:
+            raise ValidationError("risk_weight_vector must have the same dimension as baseline_policy_vector")
+        if any(w <= 0 for w in w_vec):
+            raise ValidationError("all coordinates of risk_weight_vector must be strictly positive")
+
+        tau_lease = rational(individual_lease_budget)
+        tau_horizon = rational(horizon_drift_ceiling)
+        if tau_lease <= 0 or tau_horizon <= 0:
+            raise ValidationError("individual_lease_budget and horizon_drift_ceiling must be strictly positive")
+        if tau_horizon < tau_lease:
+            raise ValidationError("horizon_drift_ceiling must be >= individual_lease_budget")
+
+        static_audit = self._audit_queue_schedule(
+            incidents=static_priority_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_edf_ordering=False,
+        )
+        edf_audit = self._audit_queue_schedule(
+            incidents=edf_queued_incidents,
+            p0_vec=p0_vec,
+            w_vec=w_vec,
+            tau_lease=tau_lease,
+            tau_horizon=tau_horizon,
+            dim=dim,
+            require_edf_ordering=True,
+        )
+
+        converged_single_round = static_audit["global_queue_indicator_E_g"] == 1
+        converged_multi_round = converged_single_round or (
+            edf_audit["global_queue_indicator_E_g"] == 1
+        )
+        lateness_reduction = (
+            static_audit["max_lateness_ticks"] - edf_audit["max_lateness_ticks"]
+        )
+
+        record: dict[str, Any] = {
+            "queue_id": queue_id,
+            "model_id": model_id,
+            "prior_split_receipt_sha256": prior_split_receipt_sha256,
+            "baseline_policy_sha256": baseline_policy_sha256,
+            "baseline_policy_vector": p0_vec,
+            "risk_weight_vector": w_vec,
+            "individual_lease_budget": tau_lease,
+            "horizon_drift_ceiling": tau_horizon,
+            "phase_1_static_priority_queue": static_audit,
+            "phase_2_edf_deadline_queue": edf_audit,
+            "phase_1_static_deadline_breach": static_audit["static_deadline_breach_detected"],
+            "converged_single_round": converged_single_round,
+            "converged_multi_round": converged_multi_round,
+            "max_lateness_reduction_ticks": lateness_reduction,
+        }
+        self.queues.append(record)
+        return json_value(record)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.queues:
+            raise ValidationError("cannot emit receipt without recorded deadline queue comparisons")
+        n = len(self.queues)
+        single_cnt = sum(1 for q in self.queues if q["converged_single_round"])
+        multi_cnt = sum(1 for q in self.queues if q["converged_multi_round"])
+        breach_cnt = sum(1 for q in self.queues if q["phase_1_static_deadline_breach"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        breach_rate = Fraction(breach_cnt, n)
+
+        breach_ids = [
+            q["queue_id"] for q in self.queues if q["phase_1_static_deadline_breach"]
+        ]
+        unconverged_ids = [
+            q["queue_id"] for q in self.queues if not q["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "EDF_DEADLINE_COHERENT_QUEUE_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "STATIC_PRIORITY_SLA_DEADLINE_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_deadline_priority_queue.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "queue_count": n,
+            "single_round_static_deadline_coherent_count": single_cnt,
+            "multi_round_edf_deadline_coherent_count": multi_cnt,
+            "phase_1_static_deadline_breach_count": breach_cnt,
+            "single_round_static_deadline_coherence_rate": single_rate,
+            "multi_round_edf_deadline_coherence_rate": multi_rate,
+            "edf_deadline_coherence_gain": gain_rate,
+            "phase_1_static_deadline_breach_rate": breach_rate,
+            "monotonic_coherence_verified": multi_rate >= single_rate,
+            "phase_1_static_deadline_breach_queue_ids": breach_ids,
+            "unconverged_queue_ids": unconverged_ids,
+            "queues": self.queues,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
+
+
+
 
 
 

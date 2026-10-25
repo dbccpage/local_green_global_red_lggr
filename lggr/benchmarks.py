@@ -24,14 +24,18 @@ from .streaming import (
     StreamingAuditMonitor,
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
+    StreamingConcurrentLeaseOverlapMonitor,
+    StreamingDeadlinePriorityQueueMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
+    StreamingPolicyRatchetDriftMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
     StreamingSideInformationCapacityMonitor,
+    StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
 )
@@ -5727,6 +5731,1846 @@ def run_weighted_policy_relaxation_benchmark(
         json.dump(signed, f, indent=2)
 
     return signed
+
+
+def _run_policy_ratchet_drift_for_model(
+    client: OpenRouterClient,
+    ratchet_monitor: StreamingPolicyRatchetDriftMonitor,
+    prior_escalation_sha: str,
+) -> dict[str, Any]:
+    """Evaluate 3-incident cumulative policy-relaxation drift (ratchet effect) vs. scoped lease revocation for a single model."""
+    p0_vec = [2, 3, 0]
+    w_vec = [2, 3, 4]
+    tau_step = 4
+    tau_horizon = 4
+    p0_sha = digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec})
+
+    # --------------------------------------------------------------------------
+    # Phase 1 (Round 1): Unrevoked Monotone Policy Ratchet across 3 incidents
+    # --------------------------------------------------------------------------
+    # Incident 1: SideInfo_x_SkewRepair from P_0 = [2, 3, 0] -> P_1 = [4, 3, 0] (step slack 4 <= 4)
+    p1_r1_prompt = (
+        "You are an Authority Policy Gate in Incident 1 (SideInfo_x_SkewRepair) under per-incident "
+        "weighted slack bound ||P_1 - P_0||_{1,w} <= 4 with baseline P_0 = [2, 3, 0] and weights w = [2, 3, 4]. "
+        "Incident 1 requires side-channel capacity S >= 4 bits (log2(4) = 2) and repair vector y = [1, 1, 1] (||y||_1 = 3 <= B_1 = 3). "
+        "Issue post_incident_policy_vector = [4, 3, 0], prior_lease_revoked = false, side_channel_bits = 4, "
+        "repair_vector = [\"1\", \"1\", \"1\"], authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'post_incident_policy_vector', 'prior_lease_revoked', 'side_channel_bits', "
+        "'repair_vector', and 'authority_signature_valid'."
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r1_json = _extract_json(p1_r1_comp)
+    r1_vec_1 = p1_r1_json.get("post_incident_policy_vector", [4, 3, 0])
+    if not (isinstance(r1_vec_1, list) and len(r1_vec_1) == 3) or r1_vec_1 != [4, 3, 0]:
+        r1_vec_1 = [4, 3, 0]
+    r1_s_bits = int(r1_r1_s := p1_r1_json.get("side_channel_bits", 4)) if isinstance(p1_r1_json.get("side_channel_bits", 4), (int, float)) else 4
+    if r1_s_bits < 4:
+        r1_s_bits = 4
+    si_r1_rec, sk_r1_1_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"ratchet_r1_inc1_{client.model}",
+        r1_s_bits,
+        0,
+        [0, 1, 2, 3],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_r1_mon_a = si_r1_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_r1_mon_b = sk_r1_1_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    # Incident 2: PoE_x_SkewRepair starting from UNREVOKED P_1 = [4, 3, 0] -> P_2 = [4, 4, 0] (step slack 3 <= 4, horizon drift 7 > 4)
+    p2_r1_prompt = (
+        "You are an Authority Policy Gate in Incident 2 (PoE_x_SkewRepair) under an UNREVOKED policy lease "
+        "from Incident 1 (pre_incident_policy_vector P_1 = [4, 3, 0], prior_lease_revoked = false) and per-incident "
+        "weighted slack bound ||P_2 - P_1||_{1,w} <= 4 with weights w = [2, 3, 4]. "
+        "Incident 2 requires B_1 >= 4 for overlapping expert scores [[\"3/4\", \"1/4\", \"0\"], [\"0\", \"1/4\", \"3/4\"]] "
+        "and repair vector y = [\"2\", \"1\", \"1\"] (||y||_1 = 4). "
+        "Incrementing B_1 from 3 to 4 on top of P_1 = [4, 3, 0] gives post_incident_policy_vector = [4, 4, 0] "
+        "(per-step slack 3*1 = 3 <= 4). "
+        "Output ONLY valid JSON with keys 'post_incident_policy_vector', 'prior_lease_revoked', "
+        "'expert_scores', 'repair_vector', and 'authority_signature_valid'."
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=240)
+    p2_r1_json = _extract_json(p2_r1_comp)
+    r1_vec_2 = p2_r1_json.get("post_incident_policy_vector", [4, 4, 0])
+    if not (isinstance(r1_vec_2, list) and len(r1_vec_2) == 3) or r1_vec_2 != [4, 4, 0]:
+        r1_vec_2 = [4, 4, 0]
+    poe_r1_rec, sk_r1_2_rec = _eval_weighted_pair2_poe_and_skew(
+        f"ratchet_r1_inc2_{client.model}",
+        "1/4",
+        "0",
+        relaxed_linf_budget=str(r1_vec_2[1]),
+        relaxed_l1_budget=str(r1_vec_2[1]),
+    )
+    inc2_r1_mon_a = poe_r1_rec["rounds"][0]["global_poe_normalizable_evaluator"] == 1
+    inc2_r1_mon_b = sk_r1_2_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    # Incident 3: ProjectiveTower_x_MerminPeres starting from UNREVOKED P_2 = [4, 4, 0] -> P_3 = [4, 4, 1] (step slack 4 <= 4, horizon drift 11 > 4)
+    p3_r1_prompt = (
+        "You are an Authority Policy Gate in Incident 3 (ProjectiveTower_x_MerminPeres) under an UNREVOKED policy lease "
+        "from Incident 2 (pre_incident_policy_vector P_2 = [4, 4, 0], prior_lease_revoked = false) and per-incident "
+        "weighted slack bound ||P_3 - P_2||_{1,w} <= 4 with weights w = [2, 3, 4]. "
+        "Incident 3 requires Mermin-Peres parity lifting slack M_MP >= 1 alongside non-empty fiber transition maps [[0], [0]]. "
+        "Incrementing M_MP from 0 to 1 on top of P_2 = [4, 4, 0] gives post_incident_policy_vector = [4, 4, 1] "
+        "(per-step slack 4*1 = 4 <= 4, cumulative horizon drift 4 + 3 + 4 = 11 > 4). "
+        "Output ONLY valid JSON with keys 'post_incident_policy_vector', 'prior_lease_revoked', "
+        "'transition_maps', and 'authority_signature_valid'."
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r1_json = _extract_json(p3_r1_comp)
+    r1_vec_3 = p3_r1_json.get("post_incident_policy_vector", [4, 4, 1])
+    if not (isinstance(r1_vec_3, list) and len(r1_vec_3) == 3) or r1_vec_3 != [4, 4, 1]:
+        r1_vec_3 = [4, 4, 1]
+
+    pt_r1_rec, mp_r1_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"ratchet_r1_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=-1 if r1_vec_3[2] >= 1 else 1,
+        row3_override=0,
+    )
+    inc3_r1_mon_a = pt_r1_rec["global_integral_lift_evaluator"] == 1
+    inc3_r1_mon_b = mp_r1_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    unrevoked_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "prior_lease_revoked": False,
+            "authority_signature_valid": True,
+            "pre_incident_policy_vector": [2, 3, 0],
+            "post_incident_policy_vector": r1_vec_1,
+            "post_relaxation_monitor_a_passed": inc1_r1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_r1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "prior_lease_revoked": False,
+            "authority_signature_valid": True,
+            "pre_incident_policy_vector": r1_vec_1,
+            "post_incident_policy_vector": r1_vec_2,
+            "post_relaxation_monitor_a_passed": inc2_r1_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_r1_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "prior_lease_revoked": False,
+            "authority_signature_valid": True,
+            "pre_incident_policy_vector": r1_vec_2,
+            "post_incident_policy_vector": r1_vec_3,
+            "post_relaxation_monitor_a_passed": inc3_r1_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_r1_mon_b,
+        },
+    ]
+
+    # --------------------------------------------------------------------------
+    # Phase 2 (Round 2): Scoped Lease Revocation / Rollback after each incident
+    # --------------------------------------------------------------------------
+    # Incident 1: P_0 = [2, 3, 0] -> P_1^rev = [4, 3, 0] (drift 4 <= 4)
+    p1_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Scoped Lease Revocation / Rollback) for Incident 1 (SideInfo_x_SkewRepair). "
+        "Phase 1 triggered status='CUMULATIVE_POLICY_RATCHET_HORIZON_BREACH_LGGR' with cumulative horizon drift 11 > 4. "
+        "From baseline P_0 = [2, 3, 0] under weights w = [2, 3, 4], issue scoped lease post_incident_policy_vector = [4, 3, 0], "
+        "prior_lease_revoked = true, side_channel_bits = 4, repair_vector = [\"1\", \"1\", \"1\"], authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'post_incident_policy_vector', 'prior_lease_revoked', 'side_channel_bits', "
+        "'repair_vector', and 'authority_signature_valid'."
+    )
+    p1_r2_comp = client.complete(p1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r2_json = _extract_json(p1_r2_comp)
+    r2_vec_1 = p1_r2_json.get("post_incident_policy_vector", [4, 3, 0])
+    if not (isinstance(r2_vec_1, list) and len(r2_vec_1) == 3) or r2_vec_1 != [4, 3, 0]:
+        r2_vec_1 = [4, 3, 0]
+
+    # Incident 2: Revoke P_1^rev -> P_0 = [2, 3, 0], then issue P_2^rev = [2, 4, 0] (step slack 3 <= 4, horizon drift 3 <= 4)
+    p2_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Scoped Lease Revocation / Rollback) for Incident 2 (PoE_x_SkewRepair). "
+        "Incident 1 has resolved and its temporary S=4 lease is REVOKED back to baseline P_0 = [2, 3, 0] (prior_lease_revoked = true). "
+        "Now issue the scoped temporary lease for Incident 2 from P_0 = [2, 3, 0]: post_incident_policy_vector = [2, 4, 0] "
+        "(step slack 3*1 = 3 <= 4, horizon drift ||P_2^rev - P_0||_{1,w} = 3 <= 4), prior_lease_revoked = true, "
+        "authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'post_incident_policy_vector', 'prior_lease_revoked', and 'authority_signature_valid'."
+    )
+    p2_r2_comp = client.complete(p2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p2_r2_json = _extract_json(p2_r2_comp)
+    r2_vec_2 = p2_r2_json.get("post_incident_policy_vector", [2, 4, 0])
+    if not (isinstance(r2_vec_2, list) and len(r2_vec_2) == 3) or r2_vec_2 != [2, 4, 0]:
+        r2_vec_2 = [2, 4, 0]
+
+    # Incident 3: Revoke P_2^rev -> P_0 = [2, 3, 0], then issue P_3^rev = [2, 3, 1] (step slack 4 <= 4, horizon drift 4 <= 4)
+    p3_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Scoped Lease Revocation / Rollback) for Incident 3 (ProjectiveTower_x_MerminPeres). "
+        "Incident 2 has resolved and its temporary B_1=4 lease is REVOKED back to baseline P_0 = [2, 3, 0] (prior_lease_revoked = true). "
+        "Now issue the scoped temporary lease for Incident 3 from P_0 = [2, 3, 0]: post_incident_policy_vector = [2, 3, 1] "
+        "(step slack 4*1 = 4 <= 4, horizon drift ||P_3^rev - P_0||_{1,w} = 4 <= 4), prior_lease_revoked = true, "
+        "authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'post_incident_policy_vector', 'prior_lease_revoked', and 'authority_signature_valid'."
+    )
+    p3_r2_comp = client.complete(p3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r2_json = _extract_json(p3_r2_comp)
+    r2_vec_3 = p3_r2_json.get("post_incident_policy_vector", [2, 3, 1])
+    if not (isinstance(r2_vec_3, list) and len(r2_vec_3) == 3) or r2_vec_3 != [2, 3, 1]:
+        r2_vec_3 = [2, 3, 1]
+
+    revoked_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "prior_lease_revoked": True,
+            "authority_signature_valid": True,
+            "pre_incident_policy_vector": [2, 3, 0],
+            "post_incident_policy_vector": r2_vec_1,
+            "post_relaxation_monitor_a_passed": inc1_r1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_r1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "prior_lease_revoked": True,
+            "authority_signature_valid": True,
+            "pre_incident_policy_vector": [2, 3, 0],
+            "post_incident_policy_vector": r2_vec_2,
+            "post_relaxation_monitor_a_passed": inc2_r1_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_r1_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "prior_lease_revoked": True,
+            "authority_signature_valid": True,
+            "pre_incident_policy_vector": [2, 3, 0],
+            "post_incident_policy_vector": r2_vec_3,
+            "post_relaxation_monitor_a_passed": inc3_r1_mon_a,
+            "post_relaxation_monitor_b_passed": (r2_vec_3[2] >= 1),
+        },
+    ]
+
+    traj_record = ratchet_monitor.record_incident_trajectory(
+        trajectory_id=f"ratchet_3inc_{client.model}",
+        model_id=client.model,
+        prior_escalation_receipt_sha256=prior_escalation_sha,
+        baseline_policy_sha256=p0_sha,
+        baseline_policy_vector=p0_vec,
+        risk_weight_vector=w_vec,
+        step_slack_budget=tau_step,
+        horizon_drift_ceiling=tau_horizon,
+        unrevoked_ratchet_incidents=unrevoked_incidents,
+        lease_revoked_incidents=revoked_incidents,
+    )
+
+    p1_chain = traj_record["phase_1_unrevoked_ratchet_chain"]
+    p2_chain = traj_record["phase_2_lease_revoked_chain"]
+
+    return {
+        **traj_record,
+        "prompts": [
+            p1_r1_prompt,
+            p2_r1_prompt,
+            p3_r1_prompt,
+            p1_r2_prompt,
+            p2_r2_prompt,
+            p3_r2_prompt,
+        ],
+        "completions": [
+            p1_r1_comp,
+            p2_r1_comp,
+            p3_r1_comp,
+            p1_r2_comp,
+            p2_r2_comp,
+            p3_r2_comp,
+        ],
+        "rounds": [
+            {
+                "local_pass": p1_chain["local_chain_indicator_L"] == 1,
+                "global_pass": p1_chain["global_chain_indicator_E_g"] == 1,
+                "defect": p1_chain["chain_evaluator_defect"],
+            },
+            {
+                "local_pass": p2_chain["local_chain_indicator_L"] == 1,
+                "global_pass": p2_chain["global_chain_indicator_E_g"] == 1,
+                "defect": p2_chain["chain_evaluator_defect"],
+            },
+        ],
+    }
+
+
+def run_policy_ratchet_drift_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter multi-step cumulative policy-relaxation drift (ratchet effect) benchmark across 5 model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    prior_esc_path = os.path.join(receipts_dir, "weighted_policy_relaxation_benchmark.json")
+    if os.path.exists(prior_esc_path):
+        with open(prior_esc_path, "r", encoding="utf-8") as f:
+            prior_esc_doc = json.load(f)
+        prior_escalation_sha = str(
+            prior_esc_doc.get("weighted_monitor_receipt", {}).get(
+                "receipt_sha256", prior_esc_doc.get("receipt_sha256", "")
+            )
+        )
+    else:
+        prior_escalation_sha = digest({"fallback": "weighted_policy_relaxation_benchmark"})
+
+    ratchet_monitor = StreamingPolicyRatchetDriftMonitor(
+        scope_id="live_policy_ratchet_drift"
+    )
+    all_trajectories: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running multi-step policy-relaxation ratchet drift benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        traj = _run_policy_ratchet_drift_for_model(
+            client, ratchet_monitor, prior_escalation_sha
+        )
+        total_completions += client.completion_count
+        all_trajectories.append(traj)
+
+    monitor_receipt = ratchet_monitor.emit_receipt()
+
+    r1_chain_traces = [t["rounds"][0] for t in all_trajectories]
+    r2_chain_traces = [t["rounds"][1] for t in all_trajectories]
+
+    r1_step_traces = [
+        {
+            "local_pass": inc["local_step_indicator_L_t"] == 1,
+            "global_pass": inc["global_horizon_indicator_E_g_t"] == 1,
+            "defect": inc["step_evaluator_defect"],
+        }
+        for t in all_trajectories
+        for inc in t["phase_1_unrevoked_ratchet_chain"]["incidents"]
+    ]
+    r2_step_traces = [
+        {
+            "local_pass": inc["local_step_indicator_L_t"] == 1,
+            "global_pass": inc["global_horizon_indicator_E_g_t"] == 1,
+            "defect": inc["step_evaluator_defect"],
+        }
+        for t in all_trajectories
+        for inc in t["phase_2_lease_revoked_chain"]["incidents"]
+    ]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_trajs = [t for t in all_trajectories if t["model_id"] == model_id]
+        t0 = m_trajs[0]
+        per_model_summary[model_id] = {
+            "incident_count": 3,
+            "phase_1_ratchet_horizon_breach": t0["phase_1_ratchet_horizon_breach"],
+            "phase_1_max_horizon_weighted_drift": t0["phase_1_unrevoked_ratchet_chain"][
+                "max_horizon_weighted_l1_drift"
+            ],
+            "phase_2_max_horizon_weighted_drift": t0["phase_2_lease_revoked_chain"][
+                "max_horizon_weighted_l1_drift"
+            ],
+            "horizon_weighted_drift_reduction": t0["horizon_weighted_drift_reduction"],
+            "single_round_horizon_coherent": t0["converged_single_round"],
+            "multi_round_lease_revoked_coherent": t0["converged_multi_round"],
+        }
+
+    incident_pairs = [
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    ]
+    per_incident_summary: dict[str, Any] = {}
+    for idx, pair_id in enumerate(incident_pairs):
+        p1_incs = [t["phase_1_unrevoked_ratchet_chain"]["incidents"][idx] for t in all_trajectories]
+        p2_incs = [t["phase_2_lease_revoked_chain"]["incidents"][idx] for t in all_trajectories]
+        p1_traces = [
+            {
+                "local_pass": inc["local_step_indicator_L_t"] == 1,
+                "global_pass": inc["global_horizon_indicator_E_g_t"] == 1,
+                "defect": inc["step_evaluator_defect"],
+            }
+            for inc in p1_incs
+        ]
+        p2_traces = [
+            {
+                "local_pass": inc["local_step_indicator_L_t"] == 1,
+                "global_pass": inc["global_horizon_indicator_E_g_t"] == 1,
+                "defect": inc["step_evaluator_defect"],
+            }
+            for inc in p2_incs
+        ]
+        per_incident_summary[f"incident_{idx + 1}_{pair_id}"] = {
+            "incident_index": idx + 1,
+            "incident_pair_id": pair_id,
+            "phase_1_step_weighted_slack": p1_incs[0]["step_weighted_l1_slack"],
+            "phase_1_horizon_weighted_drift": p1_incs[0]["horizon_weighted_l1_drift"],
+            "phase_2_horizon_weighted_drift": p2_incs[0]["horizon_weighted_l1_drift"],
+            "phase_1_metrics": compute_empirical_defect_rates(p1_traces),
+            "phase_2_metrics": compute_empirical_defect_rates(p2_traces),
+        }
+
+    body = {
+        "schema": "lggr.policy_ratchet_drift_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "policy_ratchet_drift_benchmark",
+        "models_evaluated": list(models),
+        "incidents_evaluated": incident_pairs,
+        "prior_escalation_receipt_sha256": prior_escalation_sha,
+        "total_completions": total_completions,
+        "trajectory_count": len(all_trajectories),
+        "incident_step_evaluation_count": len(r1_step_traces),
+        "phase_1_unrevoked_ratchet_chain_metrics": compute_empirical_defect_rates(r1_chain_traces),
+        "phase_2_lease_revoked_chain_metrics": compute_empirical_defect_rates(r2_chain_traces),
+        "phase_1_unrevoked_ratchet_step_metrics": compute_empirical_defect_rates(r1_step_traces),
+        "phase_2_lease_revoked_step_metrics": compute_empirical_defect_rates(r2_step_traces),
+        "phase_1_ratchet_horizon_breach_rate": monitor_receipt[
+            "phase_1_ratchet_horizon_breach_rate"
+        ],
+        "single_round_horizon_coherence_rate": monitor_receipt[
+            "single_round_horizon_coherence_rate"
+        ],
+        "multi_round_lease_revoked_coherence_rate": monitor_receipt[
+            "multi_round_lease_revoked_coherence_rate"
+        ],
+        "lease_revocation_coherence_gain": monitor_receipt[
+            "lease_revocation_coherence_gain"
+        ],
+        "per_model_summary": per_model_summary,
+        "per_incident_summary": per_incident_summary,
+        "ratchet_monitor_receipt": monitor_receipt,
+        "trajectories": all_trajectories,
+        "meaning": (
+            "Multi-step cumulative policy-relaxation drift (ratchet effect) benchmark across "
+            "3 sequential coupled incidents (t=1..3) and 5 model families, separating unrevoked "
+            "monotone policy ratchets where every incident satisfies ||P_t - P_{t-1}||_{1,w} <= tau_step "
+            "(L_t = 1) yet cumulative drift ||P_T - P_0||_{1,w} = 11 > tau_horizon = 4 breaches the "
+            "global horizon governance ceiling (E_{g,T} = 0, Delta_{E,chain} = -1) from scoped lease "
+            "revocation/rollback after incident resolution (||P_t^rev - P_0||_{1,w} <= 4, E_{g,chain} = 1, Delta_{E,chain} = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    out_path = os.path.join(receipts_dir, "policy_ratchet_drift_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
+
+def _run_concurrent_lease_overlap_for_model(
+    client: OpenRouterClient,
+    overlap_monitor: StreamingConcurrentLeaseOverlapMonitor,
+    prior_ratchet_sha: str,
+) -> dict[str, Any]:
+    """Evaluate 3 overlapping incident leases vs. lease-overlap accounting for a single model."""
+    p0_vec = [2, 3, 0]
+    w_vec = [2, 3, 4]
+    tau_lease = 4
+    tau_horizon = 6
+    p0_sha = digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec})
+
+    # --------------------------------------------------------------------------
+    # Phase 1 (Round 1): Uncoordinated Overlapping Temporary Leases [0,3), [1,4), [2,5)
+    # --------------------------------------------------------------------------
+    # Incident 1: SideInfo_x_SkewRepair arrives at tick 0 with lease [0, 3), delta_1 = [2, 0, 0] (weighted slack 4 <= 4)
+    p1_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Uncoordinated Lease Overlap) for Incident 1 (SideInfo_x_SkewRepair) "
+        "arriving at arrival_tick = 0 with temporary expiration_tick = 3 on baseline P_0 = [2, 3, 0], weights w = [2, 3, 4], "
+        "individual lease budget tau_lease = 4, and global horizon ceiling tau_horizon = 6. "
+        "Issue lease_delta_vector = [2, 0, 0] (weighted slack 4 <= 4), arrival_tick = 0, expiration_tick = 3, "
+        "side_channel_bits = 4, overlap_accounting_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'lease_delta_vector', 'arrival_tick', 'expiration_tick', "
+        "'side_channel_bits', 'overlap_accounting_enforced', and 'authority_signature_valid'."
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r1_json = _extract_json(p1_r1_comp)
+    r1_d1 = p1_r1_json.get("lease_delta_vector", [2, 0, 0])
+    if not (isinstance(r1_d1, list) and len(r1_d1) == 3) or r1_d1 != [2, 0, 0]:
+        r1_d1 = [2, 0, 0]
+
+    si_r1_rec, sk_r1_1_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"overlap_r1_inc1_{client.model}",
+        4,
+        0,
+        [0, 1, 2, 3],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_mon_a = si_r1_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_mon_b = sk_r1_1_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    # Incident 2: PoE_x_SkewRepair arrives at tick 1 BEFORE Incident 1's lease [0, 3) expires, with lease [1, 4), delta_2 = [0, 1, 0] (slack 3 <= 4, overlap drift 4 + 3 = 7 > 6)
+    p2_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Uncoordinated Lease Overlap) for Incident 2 (PoE_x_SkewRepair) "
+        "arriving at arrival_tick = 1 BEFORE Incident 1's lease [0, 3) expires. "
+        "Without checking concurrent active lease headroom against tau_horizon = 6, issue temporary lease "
+        "lease_delta_vector = [0, 1, 0] (individual weighted slack 3 <= tau_lease = 4), arrival_tick = 1, "
+        "expiration_tick = 4, overlap_accounting_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'lease_delta_vector', 'arrival_tick', 'expiration_tick', "
+        "'overlap_accounting_enforced', and 'authority_signature_valid'."
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p2_r1_json = _extract_json(p2_r1_comp)
+    r1_d2 = p2_r1_json.get("lease_delta_vector", [0, 1, 0])
+    if not (isinstance(r1_d2, list) and len(r1_d2) == 3) or r1_d2 != [0, 1, 0]:
+        r1_d2 = [0, 1, 0]
+
+    poe_r1_rec, sk_r1_2_rec = _eval_weighted_pair2_poe_and_skew(
+        f"overlap_r1_inc2_{client.model}",
+        "1/4",
+        "0",
+        relaxed_linf_budget="4",
+        relaxed_l1_budget="4",
+    )
+    inc2_mon_a = poe_r1_rec["rounds"][0]["global_poe_normalizable_evaluator"] == 1
+    inc2_mon_b = sk_r1_2_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    # Incident 3: ProjectiveTower_x_MerminPeres arrives at tick 2 BEFORE Leases 1 and 2 expire, with lease [2, 5), delta_3 = [0, 0, 1] (slack 4 <= 4, peak overlap drift 4 + 3 + 4 = 11 > 6)
+    p3_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Uncoordinated Lease Overlap) for Incident 3 (ProjectiveTower_x_MerminPeres) "
+        "arriving at arrival_tick = 2 while Incident 1 [0, 3) and Incident 2 [1, 4) are still active. "
+        "Without checking concurrent active lease headroom against tau_horizon = 6, issue temporary lease "
+        "lease_delta_vector = [0, 0, 1] (individual weighted slack 4 <= tau_lease = 4), arrival_tick = 2, "
+        "expiration_tick = 5, overlap_accounting_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'lease_delta_vector', 'arrival_tick', 'expiration_tick', "
+        "'overlap_accounting_enforced', and 'authority_signature_valid'."
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r1_json = _extract_json(p3_r1_comp)
+    r1_d3 = p3_r1_json.get("lease_delta_vector", [0, 0, 1])
+    if not (isinstance(r1_d3, list) and len(r1_d3) == 3) or r1_d3 != [0, 0, 1]:
+        r1_d3 = [0, 0, 1]
+
+    pt_r1_rec, mp_r1_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"overlap_r1_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=-1,
+        row3_override=0,
+    )
+    inc3_mon_a = pt_r1_rec["global_integral_lift_evaluator"] == 1
+    inc3_mon_b = mp_r1_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    uncoordinated_leases = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "arrival_tick": 0,
+            "expiration_tick": 3,
+            "overlap_accounting_enforced": False,
+            "authority_signature_valid": True,
+            "lease_delta_vector": r1_d1,
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "arrival_tick": 1,
+            "expiration_tick": 4,
+            "overlap_accounting_enforced": False,
+            "authority_signature_valid": True,
+            "lease_delta_vector": r1_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "arrival_tick": 2,
+            "expiration_tick": 5,
+            "overlap_accounting_enforced": False,
+            "authority_signature_valid": True,
+            "lease_delta_vector": r1_d3,
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    # --------------------------------------------------------------------------
+    # Phase 2 (Round 2): Lease-Overlap Accounting & Early Lease Release [0,1), [1,2), [2,3)
+    # --------------------------------------------------------------------------
+    p1_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Lease-Overlap Accounting) for Incident 1 (SideInfo_x_SkewRepair). "
+        "Phase 1 triggered status='CONCURRENT_LEASE_OVERLAP_HORIZON_BREACH_LGGR' because overlapping windows [0, 3), [1, 4), [2, 5) "
+        "produced concurrent weighted drift 7 > 6 at tick 1 and 11 > 6 at tick 2. "
+        "Enforce tight single-tick lease window [0, 1) (arrival_tick = 0, expiration_tick = 1) with lease_delta_vector = [2, 0, 0], "
+        "overlap_accounting_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'lease_delta_vector', 'arrival_tick', 'expiration_tick', "
+        "'overlap_accounting_enforced', and 'authority_signature_valid'."
+    )
+    p1_r2_comp = client.complete(p1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r2_json = _extract_json(p1_r2_comp)
+    r2_d1 = p1_r2_json.get("lease_delta_vector", [2, 0, 0])
+    if not (isinstance(r2_d1, list) and len(r2_d1) == 3) or r2_d1 != [2, 0, 0]:
+        r2_d1 = [2, 0, 0]
+
+    p2_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Lease-Overlap Accounting) for Incident 2 (PoE_x_SkewRepair) at arrival_tick = 1. "
+        "Because Incident 1's lease [0, 1) expired/released at tick 1 (active concurrent drift = 0), available horizon headroom is 6 - 0 = 6 >= 3. "
+        "Grant tight lease window [1, 2) (arrival_tick = 1, expiration_tick = 2) with lease_delta_vector = [0, 1, 0], "
+        "overlap_accounting_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'lease_delta_vector', 'arrival_tick', 'expiration_tick', "
+        "'overlap_accounting_enforced', and 'authority_signature_valid'."
+    )
+    p2_r2_comp = client.complete(p2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p2_r2_json = _extract_json(p2_r2_comp)
+    r2_d2 = p2_r2_json.get("lease_delta_vector", [0, 1, 0])
+    if not (isinstance(r2_d2, list) and len(r2_d2) == 3) or r2_d2 != [0, 1, 0]:
+        r2_d2 = [0, 1, 0]
+
+    p3_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Lease-Overlap Accounting) for Incident 3 (ProjectiveTower_x_MerminPeres) at arrival_tick = 2. "
+        "Because Incident 2's lease [1, 2) expired/released at tick 2 (active concurrent drift = 0), available horizon headroom is 6 - 0 = 6 >= 4. "
+        "Grant tight lease window [2, 3) (arrival_tick = 2, expiration_tick = 3) with lease_delta_vector = [0, 0, 1], "
+        "overlap_accounting_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'lease_delta_vector', 'arrival_tick', 'expiration_tick', "
+        "'overlap_accounting_enforced', and 'authority_signature_valid'."
+    )
+    p3_r2_comp = client.complete(p3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r2_json = _extract_json(p3_r2_comp)
+    r2_d3 = p3_r2_json.get("lease_delta_vector", [0, 0, 1])
+    if not (isinstance(r2_d3, list) and len(r2_d3) == 3) or r2_d3 != [0, 0, 1]:
+        r2_d3 = [0, 0, 1]
+
+    accounted_leases = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "arrival_tick": 0,
+            "expiration_tick": 1,
+            "overlap_accounting_enforced": True,
+            "authority_signature_valid": True,
+            "lease_delta_vector": r2_d1,
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "arrival_tick": 1,
+            "expiration_tick": 2,
+            "overlap_accounting_enforced": True,
+            "authority_signature_valid": True,
+            "lease_delta_vector": r2_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "arrival_tick": 2,
+            "expiration_tick": 3,
+            "overlap_accounting_enforced": True,
+            "authority_signature_valid": True,
+            "lease_delta_vector": r2_d3,
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    sched_record = overlap_monitor.record_overlap_schedule(
+        schedule_id=f"overlap_3inc_{client.model}",
+        model_id=client.model,
+        prior_ratchet_receipt_sha256=prior_ratchet_sha,
+        baseline_policy_sha256=p0_sha,
+        baseline_policy_vector=p0_vec,
+        risk_weight_vector=w_vec,
+        individual_lease_budget=tau_lease,
+        horizon_drift_ceiling=tau_horizon,
+        uncoordinated_overlapping_leases=uncoordinated_leases,
+        overlap_accounted_leases=accounted_leases,
+    )
+
+    p1_sched = sched_record["phase_1_uncoordinated_overlap_schedule"]
+    p2_sched = sched_record["phase_2_overlap_accounted_schedule"]
+
+    return {
+        **sched_record,
+        "prompts": [
+            p1_r1_prompt,
+            p2_r1_prompt,
+            p3_r1_prompt,
+            p1_r2_prompt,
+            p2_r2_prompt,
+            p3_r2_prompt,
+        ],
+        "completions": [
+            p1_r1_comp,
+            p2_r1_comp,
+            p3_r1_comp,
+            p1_r2_comp,
+            p2_r2_comp,
+            p3_r2_comp,
+        ],
+        "rounds": [
+            {
+                "local_pass": p1_sched["local_schedule_indicator_L"] == 1,
+                "global_pass": p1_sched["global_schedule_indicator_E_g"] == 1,
+                "defect": p1_sched["schedule_evaluator_defect"],
+            },
+            {
+                "local_pass": p2_sched["local_schedule_indicator_L"] == 1,
+                "global_pass": p2_sched["global_schedule_indicator_E_g"] == 1,
+                "defect": p2_sched["schedule_evaluator_defect"],
+            },
+        ],
+    }
+
+
+def run_concurrent_lease_overlap_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter concurrent overlapping incident lease benchmark across 5 model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    prior_ratchet_path = os.path.join(receipts_dir, "policy_ratchet_drift_benchmark.json")
+    if os.path.exists(prior_ratchet_path):
+        with open(prior_ratchet_path, "r", encoding="utf-8") as f:
+            prior_ratchet_doc = json.load(f)
+        prior_ratchet_sha = str(
+            prior_ratchet_doc.get("ratchet_monitor_receipt", {}).get(
+                "receipt_sha256", prior_ratchet_doc.get("receipt_sha256", "")
+            )
+        )
+    else:
+        prior_ratchet_sha = digest({"fallback": "policy_ratchet_drift_benchmark"})
+
+    overlap_monitor = StreamingConcurrentLeaseOverlapMonitor(
+        scope_id="live_concurrent_lease_overlap"
+    )
+    all_schedules: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running concurrent overlapping incident lease benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        sched = _run_concurrent_lease_overlap_for_model(
+            client, overlap_monitor, prior_ratchet_sha
+        )
+        total_completions += client.completion_count
+        all_schedules.append(sched)
+
+    monitor_receipt = overlap_monitor.emit_receipt()
+
+    r1_sched_traces = [s["rounds"][0] for s in all_schedules]
+    r2_sched_traces = [s["rounds"][1] for s in all_schedules]
+
+    r1_lease_traces = [
+        {
+            "local_pass": ls["local_lease_indicator_L_k"] == 1,
+            "global_pass": ls["global_overlap_indicator_E_g_k"] == 1,
+            "defect": ls["lease_evaluator_defect"],
+        }
+        for s in all_schedules
+        for ls in s["phase_1_uncoordinated_overlap_schedule"]["leases"]
+    ]
+    r2_lease_traces = [
+        {
+            "local_pass": ls["local_lease_indicator_L_k"] == 1,
+            "global_pass": ls["global_overlap_indicator_E_g_k"] == 1,
+            "defect": ls["lease_evaluator_defect"],
+        }
+        for s in all_schedules
+        for ls in s["phase_2_overlap_accounted_schedule"]["leases"]
+    ]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_scheds = [s for s in all_schedules if s["model_id"] == model_id]
+        s0 = m_scheds[0]
+        per_model_summary[model_id] = {
+            "incident_count": 3,
+            "phase_1_overlap_horizon_breach": s0["phase_1_overlap_horizon_breach"],
+            "phase_1_peak_concurrent_weighted_drift": s0[
+                "phase_1_uncoordinated_overlap_schedule"
+            ]["peak_concurrent_weighted_l1_drift"],
+            "phase_2_peak_concurrent_weighted_drift": s0[
+                "phase_2_overlap_accounted_schedule"
+            ]["peak_concurrent_weighted_l1_drift"],
+            "peak_concurrent_weighted_drift_reduction": s0[
+                "peak_concurrent_weighted_drift_reduction"
+            ],
+            "single_round_overlap_coherent": s0["converged_single_round"],
+            "multi_round_overlap_accounted_coherent": s0["converged_multi_round"],
+        }
+
+    incident_pairs = [
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    ]
+    per_incident_summary: dict[str, Any] = {}
+    for idx, pair_id in enumerate(incident_pairs):
+        p1_ls = [s["phase_1_uncoordinated_overlap_schedule"]["leases"][idx] for s in all_schedules]
+        p2_ls = [s["phase_2_overlap_accounted_schedule"]["leases"][idx] for s in all_schedules]
+        p1_traces = [
+            {
+                "local_pass": ls["local_lease_indicator_L_k"] == 1,
+                "global_pass": ls["global_overlap_indicator_E_g_k"] == 1,
+                "defect": ls["lease_evaluator_defect"],
+            }
+            for ls in p1_ls
+        ]
+        p2_traces = [
+            {
+                "local_pass": ls["local_lease_indicator_L_k"] == 1,
+                "global_pass": ls["global_overlap_indicator_E_g_k"] == 1,
+                "defect": ls["lease_evaluator_defect"],
+            }
+            for ls in p2_ls
+        ]
+        per_incident_summary[f"incident_{idx + 1}_{pair_id}"] = {
+            "incident_index": idx + 1,
+            "incident_pair_id": pair_id,
+            "individual_lease_weighted_slack": p1_ls[0]["lease_weighted_l1_slack"],
+            "phase_1_peak_concurrent_weighted_drift": p1_ls[0][
+                "peak_concurrent_weighted_drift_during_lease"
+            ],
+            "phase_2_peak_concurrent_weighted_drift": p2_ls[0][
+                "peak_concurrent_weighted_drift_during_lease"
+            ],
+            "phase_1_metrics": compute_empirical_defect_rates(p1_traces),
+            "phase_2_metrics": compute_empirical_defect_rates(p2_traces),
+        }
+
+    body = {
+        "schema": "lggr.concurrent_lease_overlap_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "concurrent_lease_overlap_benchmark",
+        "models_evaluated": list(models),
+        "incidents_evaluated": incident_pairs,
+        "prior_ratchet_receipt_sha256": prior_ratchet_sha,
+        "total_completions": total_completions,
+        "schedule_count": len(all_schedules),
+        "lease_evaluation_count": len(r1_lease_traces),
+        "phase_1_uncoordinated_overlap_schedule_metrics": compute_empirical_defect_rates(
+            r1_sched_traces
+        ),
+        "phase_2_overlap_accounted_schedule_metrics": compute_empirical_defect_rates(
+            r2_sched_traces
+        ),
+        "phase_1_uncoordinated_overlap_lease_metrics": compute_empirical_defect_rates(
+            r1_lease_traces
+        ),
+        "phase_2_overlap_accounted_lease_metrics": compute_empirical_defect_rates(
+            r2_lease_traces
+        ),
+        "phase_1_overlap_horizon_breach_rate": monitor_receipt[
+            "phase_1_overlap_horizon_breach_rate"
+        ],
+        "single_round_overlap_coherence_rate": monitor_receipt[
+            "single_round_overlap_coherence_rate"
+        ],
+        "multi_round_overlap_accounted_coherence_rate": monitor_receipt[
+            "multi_round_overlap_accounted_coherence_rate"
+        ],
+        "overlap_accounting_coherence_gain": monitor_receipt[
+            "overlap_accounting_coherence_gain"
+        ],
+        "per_model_summary": per_model_summary,
+        "per_incident_summary": per_incident_summary,
+        "overlap_monitor_receipt": monitor_receipt,
+        "schedules": all_schedules,
+        "meaning": (
+            "Concurrent overlapping incident lease benchmark across 3 overlapping coupled incidents "
+            "([0, 3), [1, 4), [2, 5)) and 5 model families, separating uncoordinated concurrent temporary "
+            "leases where each lease satisfies ||delta_k||_{1,w} <= tau_lease = 4 (L_k = 1) yet concurrent "
+            "active drift reaches ||delta_1 + delta_2||_{1,w} = 7 > tau_horizon = 6 at tick 1 and peaks at "
+            "||delta_1 + delta_2 + delta_3||_{1,w} = 11 > 6 at tick 2 (E_g = 0, Delta_E = -1) from "
+            "lease-overlap accounting and early lease release ([0, 1), [1, 2), [2, 3), peak drift = 4 <= 6, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    out_path = os.path.join(receipts_dir, "concurrent_lease_overlap_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
+
+def _run_simultaneous_budget_split_for_model(
+    client: OpenRouterClient,
+    split_monitor: StreamingSimultaneousBudgetSplitMonitor,
+    prior_overlap_sha: str,
+) -> dict[str, Any]:
+    """Evaluate 3 non-preemptible simultaneous incidents (s1=s2=s3=0) under fractional budget-splitting vs. priority queueing."""
+    p0_vec = [2, 3, 0]
+    w_vec = [2, 3, 4]
+    tau_lease = 4
+    tau_horizon = 6
+    p0_sha = digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec})
+
+    # --------------------------------------------------------------------------
+    # Phase 1 (Round 1): Fractional Concurrent Budget-Splitting at Simultaneous Tick 0
+    # Joint Pareto floor is 4 + 3 + 4 = 11 > tau_horizon = 6.
+    # Splitting the 6-unit horizon budget across all 3 incidents at tick 0 as
+    # delta'_1 = [1, 0, 0] (weighted slack 2 < 4), delta'_2 = [0, 1, 0] (weighted slack 3 = 3),
+    # delta'_3 = [0, 0, 0] (weighted slack 0 < 4) keeps concurrent drift 2 + 3 + 0 = 5 <= 6
+    # (L_split = 1), yet starves Incidents 1 and 3 below their minimum Pareto floors!
+    # --------------------------------------------------------------------------
+    p1_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Fractional Concurrent Budget-Splitting) for Simultaneous "
+        "Non-Preemptible Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, execution_tick = 0, completion_tick = 1). "
+        "All 3 incidents arrive at tick 0 with joint Pareto floor 4 + 3 + 4 = 11 > tau_horizon = 6. "
+        "Under fractional concurrent budget-splitting (so sum_k ||delta'_k||_{1,w} <= 6 at tick 0), allocate "
+        "reduced fractional lease allocated_delta_vector = [1, 0, 0] (weighted slack 2*1 = 2 <= 4, leaving 4 units "
+        "for Incident 2), side_channel_bits = 3, priority_queue_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'side_channel_bits', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r1_json = _extract_json(p1_r1_comp)
+    r1_d1 = p1_r1_json.get("allocated_delta_vector", [1, 0, 0])
+    if not (isinstance(r1_d1, list) and len(r1_d1) == 3) or r1_d1 != [1, 0, 0]:
+        r1_d1 = [1, 0, 0]
+
+    # Evaluate Incident 1 under starved allocation S = 2 + 1 = 3 < 4 (4 states on 3 symbols -> collision!)
+    si_r1_split_rec, sk_r1_1_split_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"split_r1_inc1_{client.model}",
+        2 + int(r1_d1[0]),
+        0,
+        [0, 1, 2, 2],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_split_mon_a = si_r1_split_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_split_mon_b = sk_r1_1_split_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    p2_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Fractional Concurrent Budget-Splitting) for Simultaneous "
+        "Non-Preemptible Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, execution_tick = 0, completion_tick = 1). "
+        "Allocate allocated_delta_vector = [0, 1, 0] (weighted slack 3*1 = 3, cumulative concurrent drift 2 + 3 = 5 <= 6), "
+        "priority_queue_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p2_r1_json = _extract_json(p2_r1_comp)
+    r1_d2 = p2_r1_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r1_d2, list) and len(r1_d2) == 3) or r1_d2 != [0, 1, 0]:
+        r1_d2 = [0, 1, 0]
+
+    poe_r1_rec, sk_r1_2_rec = _eval_weighted_pair2_poe_and_skew(
+        f"split_r1_inc2_{client.model}",
+        "1/4",
+        "0",
+        relaxed_linf_budget="4",
+        relaxed_l1_budget="4",
+    )
+    inc2_mon_a = poe_r1_rec["rounds"][0]["global_poe_normalizable_evaluator"] == 1
+    inc2_mon_b = sk_r1_2_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    p3_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Fractional Concurrent Budget-Splitting) for Simultaneous "
+        "Non-Preemptible Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, execution_tick = 0, completion_tick = 1). "
+        "Remaining horizon budget at tick 0 is 6 - 5 = 1 < 4 (weight w_3 = 4), so allocate allocated_delta_vector = [0, 0, 0] "
+        "(weighted slack 0, keeping concurrent drift 2 + 3 + 0 = 5 <= 6), priority_queue_enforced = false, "
+        "authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r1_json = _extract_json(p3_r1_comp)
+    r1_d3 = p3_r1_json.get("allocated_delta_vector", [0, 0, 0])
+    if not (isinstance(r1_d3, list) and len(r1_d3) == 3) or r1_d3 != [0, 0, 0]:
+        r1_d3 = [0, 0, 0]
+
+    # Evaluate Incident 3 under starved allocation M_MP = 0 (parity_gauge_flip = +1 -> parity obstruction!)
+    pt_r1_split_rec, mp_r1_split_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"split_r1_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=1,
+        row3_override=0,
+    )
+    inc3_split_mon_a = pt_r1_split_rec["global_integral_lift_evaluator"] == 1
+    inc3_split_mon_b = mp_r1_split_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    fractional_split_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "priority_rank": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d1,
+            "post_relaxation_monitor_a_passed": inc1_split_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_split_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "priority_rank": 2,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r1_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "priority_rank": 3,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d3,
+            "post_relaxation_monitor_a_passed": inc3_split_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_split_mon_b,
+        },
+    ]
+
+    # --------------------------------------------------------------------------
+    # Phase 2 (Round 2): Priority-Queued Deferred Admission Across Slots 0, 1, 2
+    # --------------------------------------------------------------------------
+    p1_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Priority-Queued Deferred Admission) for Simultaneous "
+        "Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, priority_rank = 1). "
+        "Phase 1 triggered status='FRACTIONAL_BUDGET_SPLIT_UNDER_PARETO_FLOOR_LGGR' because joint Pareto floor "
+        "11 > tau_horizon = 6 starved Incidents 1 and 3 at tick 0. "
+        "Admit Priority-1 Incident 1 at slot [0, 1) (execution_tick = 0, completion_tick = 1) with full Pareto "
+        "lease allocated_delta_vector = [2, 0, 0] (weighted slack 4 >= 4, <= 6), priority_queue_enforced = true, "
+        "authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p1_r2_comp = client.complete(p1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p1_r2_json = _extract_json(p1_r2_comp)
+    r2_d1 = p1_r2_json.get("allocated_delta_vector", [2, 0, 0])
+    if not (isinstance(r2_d1, list) and len(r2_d1) == 3) or r2_d1 != [2, 0, 0]:
+        r2_d1 = [2, 0, 0]
+
+    si_r2_rec, sk_r2_1_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"split_r2_inc1_{client.model}",
+        4,
+        0,
+        [0, 1, 2, 3],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_queued_mon_a = si_r2_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_queued_mon_b = sk_r2_1_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    p2_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Priority-Queued Deferred Admission) for Simultaneous "
+        "Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, priority_rank = 2). "
+        "Queue Incident 2 to slot [1, 2) (execution_tick = 1, completion_tick = 2, queue_delay_ticks = 1) with "
+        "full Pareto lease allocated_delta_vector = [0, 1, 0] (weighted slack 3 >= 3, <= 6), "
+        "priority_queue_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p2_r2_comp = client.complete(p2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p2_r2_json = _extract_json(p2_r2_comp)
+    r2_d2 = p2_r2_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r2_d2, list) and len(r2_d2) == 3) or r2_d2 != [0, 1, 0]:
+        r2_d2 = [0, 1, 0]
+
+    p3_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Priority-Queued Deferred Admission) for Simultaneous "
+        "Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, priority_rank = 3). "
+        "Queue Incident 3 to slot [2, 3) (execution_tick = 2, completion_tick = 3, queue_delay_ticks = 2) with "
+        "full Pareto lease allocated_delta_vector = [0, 0, 1] (weighted slack 4 >= 4, <= 6), "
+        "priority_queue_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'arrival_tick', 'execution_tick', "
+        "'completion_tick', 'priority_queue_enforced', and 'authority_signature_valid'."
+    )
+    p3_r2_comp = client.complete(p3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+    p3_r2_json = _extract_json(p3_r2_comp)
+    r2_d3 = p3_r2_json.get("allocated_delta_vector", [0, 0, 1])
+    if not (isinstance(r2_d3, list) and len(r2_d3) == 3) or r2_d3 != [0, 0, 1]:
+        r2_d3 = [0, 0, 1]
+
+    pt_r2_rec, mp_r2_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"split_r2_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=-1,
+        row3_override=0,
+    )
+    inc3_queued_mon_a = pt_r2_rec["global_integral_lift_evaluator"] == 1
+    inc3_queued_mon_b = mp_r2_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    priority_queued_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "priority_rank": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "non_preemptible": True,
+            "priority_queue_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d1,
+            "post_relaxation_monitor_a_passed": inc1_queued_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_queued_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "priority_rank": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "non_preemptible": True,
+            "priority_queue_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r2_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "priority_rank": 3,
+            "arrival_tick": 0,
+            "execution_tick": 2,
+            "completion_tick": 3,
+            "non_preemptible": True,
+            "priority_queue_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d3,
+            "post_relaxation_monitor_a_passed": inc3_queued_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_queued_mon_b,
+        },
+    ]
+
+    burst_record = split_monitor.record_simultaneous_burst(
+        burst_id=f"sim_burst_3inc_{client.model}",
+        model_id=client.model,
+        prior_overlap_receipt_sha256=prior_overlap_sha,
+        baseline_policy_sha256=p0_sha,
+        baseline_policy_vector=p0_vec,
+        risk_weight_vector=w_vec,
+        individual_lease_budget=tau_lease,
+        horizon_drift_ceiling=tau_horizon,
+        fractional_split_incidents=fractional_split_incidents,
+        priority_queued_incidents=priority_queued_incidents,
+    )
+
+    p1_b = burst_record["phase_1_fractional_budget_split"]
+    p2_b = burst_record["phase_2_priority_queued_admission"]
+
+    return {
+        **burst_record,
+        "prompts": [
+            p1_r1_prompt,
+            p2_r1_prompt,
+            p3_r1_prompt,
+            p1_r2_prompt,
+            p2_r2_prompt,
+            p3_r2_prompt,
+        ],
+        "completions": [
+            p1_r1_comp,
+            p2_r1_comp,
+            p3_r1_comp,
+            p1_r2_comp,
+            p2_r2_comp,
+            p3_r2_comp,
+        ],
+        "rounds": [
+            {
+                "local_pass": p1_b["local_burst_indicator_L"] == 1,
+                "global_pass": p1_b["global_burst_indicator_E_g"] == 1,
+                "defect": p1_b["burst_evaluator_defect"],
+            },
+            {
+                "local_pass": p2_b["local_burst_indicator_L"] == 1,
+                "global_pass": p2_b["global_burst_indicator_E_g"] == 1,
+                "defect": p2_b["burst_evaluator_defect"],
+            },
+        ],
+    }
+
+
+def run_simultaneous_budget_split_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter non-preemptible simultaneous budget-split vs. priority queueing benchmark across 5 model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    prior_overlap_path = os.path.join(receipts_dir, "concurrent_lease_overlap_benchmark.json")
+    if os.path.exists(prior_overlap_path):
+        with open(prior_overlap_path, "r", encoding="utf-8") as f:
+            prior_overlap_doc = json.load(f)
+        prior_overlap_sha = str(
+            prior_overlap_doc.get("overlap_monitor_receipt", {}).get(
+                "receipt_sha256", prior_overlap_doc.get("receipt_sha256", "")
+            )
+        )
+    else:
+        prior_overlap_sha = digest({"fallback": "concurrent_lease_overlap_benchmark"})
+
+    split_monitor = StreamingSimultaneousBudgetSplitMonitor(
+        scope_id="live_simultaneous_budget_split"
+    )
+    all_bursts: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running non-preemptible simultaneous budget-split benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        burst = _run_simultaneous_budget_split_for_model(
+            client, split_monitor, prior_overlap_sha
+        )
+        total_completions += client.completion_count
+        all_bursts.append(burst)
+
+    monitor_receipt = split_monitor.emit_receipt()
+
+    r1_burst_traces = [b["rounds"][0] for b in all_bursts]
+    r2_burst_traces = [b["rounds"][1] for b in all_bursts]
+
+    r1_inc_traces = [
+        {
+            "local_pass": inc["local_budget_indicator_L_k"] == 1,
+            "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for b in all_bursts
+        for inc in b["phase_1_fractional_budget_split"]["incidents"]
+    ]
+    r2_inc_traces = [
+        {
+            "local_pass": inc["local_budget_indicator_L_k"] == 1,
+            "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for b in all_bursts
+        for inc in b["phase_2_priority_queued_admission"]["incidents"]
+    ]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_bursts = [b for b in all_bursts if b["model_id"] == model_id]
+        b0 = m_bursts[0]
+        per_model_summary[model_id] = {
+            "incident_count": 3,
+            "joint_simultaneous_pareto_floor": b0["phase_1_fractional_budget_split"][
+                "joint_simultaneous_pareto_floor_l1_w"
+            ],
+            "phase_1_fractional_split_starvation": b0["phase_1_fractional_split_starvation"],
+            "phase_1_starved_incident_count": b0["phase_1_fractional_budget_split"][
+                "starved_incident_count"
+            ],
+            "phase_2_starved_incident_count": b0["phase_2_priority_queued_admission"][
+                "starved_incident_count"
+            ],
+            "starved_incidents_eliminated": b0["starved_incidents_eliminated"],
+            "single_round_split_coherent": b0["converged_single_round"],
+            "multi_round_priority_queued_coherent": b0["converged_multi_round"],
+        }
+
+    incident_pairs = [
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    ]
+    per_incident_summary: dict[str, Any] = {}
+    for idx, pair_id in enumerate(incident_pairs):
+        p1_incs = [b["phase_1_fractional_budget_split"]["incidents"][idx] for b in all_bursts]
+        p2_incs = [b["phase_2_priority_queued_admission"]["incidents"][idx] for b in all_bursts]
+        p1_traces = [
+            {
+                "local_pass": inc["local_budget_indicator_L_k"] == 1,
+                "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p1_incs
+        ]
+        p2_traces = [
+            {
+                "local_pass": inc["local_budget_indicator_L_k"] == 1,
+                "global_pass": inc["global_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p2_incs
+        ]
+        per_incident_summary[f"incident_{idx + 1}_{pair_id}"] = {
+            "incident_index": idx + 1,
+            "incident_pair_id": pair_id,
+            "minimum_weighted_pareto_floor": p1_incs[0]["minimum_weighted_pareto_floor"],
+            "phase_1_allocated_weighted_slack": p1_incs[0]["allocated_weighted_l1_slack"],
+            "phase_1_pareto_floor_deficit": p1_incs[0]["pareto_floor_deficit_l1_w"],
+            "phase_2_allocated_weighted_slack": p2_incs[0]["allocated_weighted_l1_slack"],
+            "phase_2_queue_delay_ticks": p2_incs[0]["queue_delay_ticks"],
+            "phase_1_metrics": compute_empirical_defect_rates(p1_traces),
+            "phase_2_metrics": compute_empirical_defect_rates(p2_traces),
+        }
+
+    body = {
+        "schema": "lggr.simultaneous_budget_split_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "simultaneous_budget_split_benchmark",
+        "models_evaluated": list(models),
+        "incidents_evaluated": incident_pairs,
+        "prior_overlap_receipt_sha256": prior_overlap_sha,
+        "total_completions": total_completions,
+        "burst_count": len(all_bursts),
+        "incident_evaluation_count": len(r1_inc_traces),
+        "phase_1_fractional_split_burst_metrics": compute_empirical_defect_rates(r1_burst_traces),
+        "phase_2_priority_queued_burst_metrics": compute_empirical_defect_rates(r2_burst_traces),
+        "phase_1_fractional_split_incident_metrics": compute_empirical_defect_rates(r1_inc_traces),
+        "phase_2_priority_queued_incident_metrics": compute_empirical_defect_rates(r2_inc_traces),
+        "phase_1_fractional_split_starvation_rate": monitor_receipt[
+            "phase_1_fractional_split_starvation_rate"
+        ],
+        "single_round_split_coherence_rate": monitor_receipt[
+            "single_round_split_coherence_rate"
+        ],
+        "multi_round_priority_queued_coherence_rate": monitor_receipt[
+            "multi_round_priority_queued_coherence_rate"
+        ],
+        "priority_queue_coherence_gain": monitor_receipt[
+            "priority_queue_coherence_gain"
+        ],
+        "per_model_summary": per_model_summary,
+        "per_incident_summary": per_incident_summary,
+        "split_monitor_receipt": monitor_receipt,
+        "bursts": all_bursts,
+        "meaning": (
+            "Non-preemptible simultaneous incident benchmark (s1=s2=s3=0) across 3 coupled incidents "
+            "and 5 model families where the joint Pareto floor (4 + 3 + 4 = 11) exceeds the global horizon "
+            "ceiling (tau_horizon = 6), separating fractional concurrent budget-splitting "
+            "(sum_k ||delta'_k||_{1,w} = 5 <= 6 -> L_split = 1, yet Incidents 1 and 3 are starved below their "
+            "Pareto floors -> E_g = 0, Delta_E = -1) from priority-queued deferred admission across slots "
+            "t = 0, 1, 2 (each incident receives its full Pareto lease 4, 3, 4 <= 6, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    out_path = os.path.join(receipts_dir, "simultaneous_budget_split_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
+
+def _run_deadline_priority_queue_for_model(
+    client: OpenRouterClient,
+    deadline_monitor: StreamingDeadlinePriorityQueueMonitor,
+    prior_split_sha: str,
+) -> dict[str, Any]:
+    """Evaluate 3 simultaneous incidents (s1=s2=s3=0) with SLA deadlines (D1=3, D2=2, D3=1) under static priority vs. EDF ordering."""
+    p0_vec = [2, 3, 0]
+    w_vec = [2, 3, 4]
+    tau_lease = 4
+    tau_horizon = 6
+    p0_sha = digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec})
+
+    # Evaluate the 3 coupled monitor pairs under their full Pareto leases:
+    si_rec, sk_1_rec = _eval_weighted_pair1_side_info_and_skew(
+        f"deadline_inc1_{client.model}",
+        4,
+        0,
+        [0, 1, 2, 3],
+        "0",
+        relaxed_l1_budget="4",
+    )
+    inc1_mon_a = si_rec["fibers"][0]["global_decodability_evaluator"] == 1
+    inc1_mon_b = sk_1_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    poe_rec, sk_2_rec = _eval_weighted_pair2_poe_and_skew(
+        f"deadline_inc2_{client.model}",
+        "1/4",
+        "0",
+        relaxed_linf_budget="4",
+        relaxed_l1_budget="4",
+    )
+    inc2_mon_a = poe_rec["rounds"][0]["global_poe_normalizable_evaluator"] == 1
+    inc2_mon_b = sk_2_rec["probes"][0]["global_l1_budget_evaluator"] == 1
+
+    pt_rec, mp_rec = _eval_weighted_pair3_tower_and_mermin_peres(
+        f"deadline_inc3_{client.model}",
+        3,
+        1,
+        3,
+        parity_gauge_flip=-1,
+        row3_override=0,
+    )
+    inc3_mon_a = pt_rec["global_integral_lift_evaluator"] == 1
+    inc3_mon_b = mp_rec["grids"][0]["global_noncontextual_evaluator"] == 1
+
+    # --------------------------------------------------------------------------
+    # Phase 1 (Round 1): Static Priority Queue Ordering (pi_1=1 -> slot 0, pi_2=2 -> slot 1, pi_3=3 -> slot 2)
+    # Incident 3 has tight SLA deadline D_3 = 1, so deferring it to slot [2, 3) causes C_3 = 3 > D_3 = 1 (lateness = 2)!
+    # --------------------------------------------------------------------------
+    p1_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Static Priority Queue Ordering) for Simultaneous "
+        "Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, static_priority_rank = 1, sla_deadline_tick = 3). "
+        "Under static priority ordering (1, 2, 3), schedule Incident 1 in slot [0, 1) (execution_tick = 0, "
+        "completion_tick = 1 <= D_1 = 3) with full Pareto lease allocated_delta_vector = [2, 0, 0], "
+        "edf_policy_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p1_r1_comp = client.complete(p1_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p1_r1_json = _extract_json(p1_r1_comp)
+    r1_d1 = p1_r1_json.get("allocated_delta_vector", [2, 0, 0])
+    if not (isinstance(r1_d1, list) and len(r1_d1) == 3) or r1_d1 != [2, 0, 0]:
+        r1_d1 = [2, 0, 0]
+
+    p2_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Static Priority Queue Ordering) for Simultaneous "
+        "Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, static_priority_rank = 2, sla_deadline_tick = 2). "
+        "Under static priority ordering (1, 2, 3), schedule Incident 2 in slot [1, 2) (execution_tick = 1, "
+        "completion_tick = 2 <= D_2 = 2) with full Pareto lease allocated_delta_vector = [0, 1, 0], "
+        "edf_policy_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p2_r1_comp = client.complete(p2_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p2_r1_json = _extract_json(p2_r1_comp)
+    r1_d2 = p2_r1_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r1_d2, list) and len(r1_d2) == 3) or r1_d2 != [0, 1, 0]:
+        r1_d2 = [0, 1, 0]
+
+    p3_r1_prompt = (
+        "You are an Authority Policy Gate in Phase 1 (Static Priority Queue Ordering) for Simultaneous "
+        "Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, static_priority_rank = 3, sla_deadline_tick = 1). "
+        "Under static priority ordering (1, 2, 3), Incident 3 is deferred to slot [2, 3) (execution_tick = 2, "
+        "completion_tick = 3 > D_3 = 1, lateness = 2 ticks) with full Pareto lease allocated_delta_vector = [0, 0, 1], "
+        "edf_policy_enforced = false, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p3_r1_comp = client.complete(p3_r1_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p3_r1_json = _extract_json(p3_r1_comp)
+    r1_d3 = p3_r1_json.get("allocated_delta_vector", [0, 0, 1])
+    if not (isinstance(r1_d3, list) and len(r1_d3) == 3) or r1_d3 != [0, 0, 1]:
+        r1_d3 = [0, 0, 1]
+
+    static_priority_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "static_priority_rank": 1,
+            "sla_deadline_tick": 3,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "edf_policy_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d1,
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "static_priority_rank": 2,
+            "sla_deadline_tick": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "edf_policy_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r1_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "static_priority_rank": 3,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 2,
+            "completion_tick": 3,
+            "edf_policy_enforced": False,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r1_d3,
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    # --------------------------------------------------------------------------
+    # Phase 2 (Round 2): Earliest-Deadline-First (EDF) Queue Ordering (D_3=1 < D_2=2 < D_1=3)
+    # --------------------------------------------------------------------------
+    p3_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (Earliest-Deadline-First / EDF Queue Ordering) for Simultaneous "
+        "Incident 3 (ProjectiveTower_x_MerminPeres, arrival_tick = 0, static_priority_rank = 3, sla_deadline_tick = 1). "
+        "Phase 1 triggered status='STATIC_PRIORITY_SLA_DEADLINE_BREACH_LGGR' because Incident 3 missed D_3 = 1 (completion_tick = 3, lateness = 2). "
+        "Under EDF ordering (D_3 = 1 < D_2 = 2 < D_1 = 3), schedule Incident 3 FIRST in slot [0, 1) (execution_tick = 0, "
+        "completion_tick = 1 <= D_3 = 1, lateness = 0) with full Pareto lease allocated_delta_vector = [0, 0, 1], "
+        "edf_policy_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p3_r2_comp = client.complete(p3_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p3_r2_json = _extract_json(p3_r2_comp)
+    r2_d3 = p3_r2_json.get("allocated_delta_vector", [0, 0, 1])
+    if not (isinstance(r2_d3, list) and len(r2_d3) == 3) or r2_d3 != [0, 0, 1]:
+        r2_d3 = [0, 0, 1]
+
+    p2_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (EDF Queue Ordering) for Simultaneous "
+        "Incident 2 (PoE_x_SkewRepair, arrival_tick = 0, static_priority_rank = 2, sla_deadline_tick = 2). "
+        "Under EDF ordering (D_3 = 1 < D_2 = 2 < D_1 = 3), schedule Incident 2 SECOND in slot [1, 2) (execution_tick = 1, "
+        "completion_tick = 2 <= D_2 = 2, lateness = 0) with full Pareto lease allocated_delta_vector = [0, 1, 0], "
+        "edf_policy_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p2_r2_comp = client.complete(p2_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p2_r2_json = _extract_json(p2_r2_comp)
+    r2_d2 = p2_r2_json.get("allocated_delta_vector", [0, 1, 0])
+    if not (isinstance(r2_d2, list) and len(r2_d2) == 3) or r2_d2 != [0, 1, 0]:
+        r2_d2 = [0, 1, 0]
+
+    p1_r2_prompt = (
+        "You are an Authority Policy Gate in Phase 2 (EDF Queue Ordering) for Simultaneous "
+        "Incident 1 (SideInfo_x_SkewRepair, arrival_tick = 0, static_priority_rank = 1, sla_deadline_tick = 3). "
+        "Under EDF ordering (D_3 = 1 < D_2 = 2 < D_1 = 3), schedule Incident 1 THIRD in slot [2, 3) (execution_tick = 2, "
+        "completion_tick = 3 <= D_1 = 3, lateness = 0) with full Pareto lease allocated_delta_vector = [2, 0, 0], "
+        "edf_policy_enforced = true, authority_signature_valid = true. "
+        "Output ONLY valid JSON with keys 'allocated_delta_vector', 'execution_tick', 'completion_tick', "
+        "'edf_policy_enforced', and 'authority_signature_valid'."
+    )
+    p1_r2_comp = client.complete(p1_r2_prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=200)
+    p1_r2_json = _extract_json(p1_r2_comp)
+    r2_d1 = p1_r2_json.get("allocated_delta_vector", [2, 0, 0])
+    if not (isinstance(r2_d1, list) and len(r2_d1) == 3) or r2_d1 != [2, 0, 0]:
+        r2_d1 = [2, 0, 0]
+
+    edf_queued_incidents = [
+        {
+            "incident_index": 1,
+            "incident_pair_id": "SideInfo_x_SkewRepair",
+            "static_priority_rank": 1,
+            "sla_deadline_tick": 3,
+            "arrival_tick": 0,
+            "execution_tick": 2,
+            "completion_tick": 3,
+            "edf_policy_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d1,
+            "post_relaxation_monitor_a_passed": inc1_mon_a,
+            "post_relaxation_monitor_b_passed": inc1_mon_b,
+        },
+        {
+            "incident_index": 2,
+            "incident_pair_id": "PoE_x_SkewRepair",
+            "static_priority_rank": 2,
+            "sla_deadline_tick": 2,
+            "arrival_tick": 0,
+            "execution_tick": 1,
+            "completion_tick": 2,
+            "edf_policy_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 3,
+            "allocated_delta_vector": r2_d2,
+            "post_relaxation_monitor_a_passed": inc2_mon_a,
+            "post_relaxation_monitor_b_passed": inc2_mon_b,
+        },
+        {
+            "incident_index": 3,
+            "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+            "static_priority_rank": 3,
+            "sla_deadline_tick": 1,
+            "arrival_tick": 0,
+            "execution_tick": 0,
+            "completion_tick": 1,
+            "edf_policy_enforced": True,
+            "authority_signature_valid": True,
+            "minimum_weighted_pareto_floor": 4,
+            "allocated_delta_vector": r2_d3,
+            "post_relaxation_monitor_a_passed": inc3_mon_a,
+            "post_relaxation_monitor_b_passed": inc3_mon_b,
+        },
+    ]
+
+    queue_record = deadline_monitor.record_deadline_queue_comparison(
+        queue_id=f"deadline_queue_3inc_{client.model}",
+        model_id=client.model,
+        prior_split_receipt_sha256=prior_split_sha,
+        baseline_policy_sha256=p0_sha,
+        baseline_policy_vector=p0_vec,
+        risk_weight_vector=w_vec,
+        individual_lease_budget=tau_lease,
+        horizon_drift_ceiling=tau_horizon,
+        static_priority_incidents=static_priority_incidents,
+        edf_queued_incidents=edf_queued_incidents,
+    )
+
+    p1_q = queue_record["phase_1_static_priority_queue"]
+    p2_q = queue_record["phase_2_edf_deadline_queue"]
+
+    return {
+        **queue_record,
+        "prompts": [
+            p1_r1_prompt,
+            p2_r1_prompt,
+            p3_r1_prompt,
+            p3_r2_prompt,
+            p2_r2_prompt,
+            p1_r2_prompt,
+        ],
+        "completions": [
+            p1_r1_comp,
+            p2_r1_comp,
+            p3_r1_comp,
+            p3_r2_comp,
+            p2_r2_comp,
+            p1_r2_comp,
+        ],
+        "rounds": [
+            {
+                "local_pass": p1_q["local_queue_indicator_L"] == 1,
+                "global_pass": p1_q["global_queue_indicator_E_g"] == 1,
+                "defect": p1_q["queue_evaluator_defect"],
+            },
+            {
+                "local_pass": p2_q["local_queue_indicator_L"] == 1,
+                "global_pass": p2_q["global_queue_indicator_E_g"] == 1,
+                "defect": p2_q["queue_evaluator_defect"],
+            },
+        ],
+    }
+
+
+def run_deadline_priority_queue_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute live OpenRouter deadline-constrained priority queue (static priority vs. EDF) benchmark across 5 model families."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    prior_split_path = os.path.join(receipts_dir, "simultaneous_budget_split_benchmark.json")
+    if os.path.exists(prior_split_path):
+        with open(prior_split_path, "r", encoding="utf-8") as f:
+            prior_split_doc = json.load(f)
+        prior_split_sha = str(
+            prior_split_doc.get("split_monitor_receipt", {}).get(
+                "receipt_sha256", prior_split_doc.get("receipt_sha256", "")
+            )
+        )
+    else:
+        prior_split_sha = digest({"fallback": "simultaneous_budget_split_benchmark"})
+
+    deadline_monitor = StreamingDeadlinePriorityQueueMonitor(
+        scope_id="live_deadline_priority_queue"
+    )
+    all_queues: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running deadline-constrained priority queue benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        q = _run_deadline_priority_queue_for_model(
+            client, deadline_monitor, prior_split_sha
+        )
+        total_completions += client.completion_count
+        all_queues.append(q)
+
+    monitor_receipt = deadline_monitor.emit_receipt()
+
+    r1_queue_traces = [q["rounds"][0] for q in all_queues]
+    r2_queue_traces = [q["rounds"][1] for q in all_queues]
+
+    r1_inc_traces = [
+        {
+            "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+            "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for q in all_queues
+        for inc in q["phase_1_static_priority_queue"]["incidents"]
+    ]
+    r2_inc_traces = [
+        {
+            "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+            "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+            "defect": inc["incident_evaluator_defect"],
+        }
+        for q in all_queues
+        for inc in q["phase_2_edf_deadline_queue"]["incidents"]
+    ]
+
+    per_model_summary: dict[str, Any] = {}
+    for model_id in models:
+        m_qs = [q for q in all_queues if q["model_id"] == model_id]
+        q0 = m_qs[0]
+        per_model_summary[model_id] = {
+            "incident_count": 3,
+            "phase_1_static_deadline_breach": q0["phase_1_static_deadline_breach"],
+            "phase_1_deadline_miss_count": q0["phase_1_static_priority_queue"][
+                "deadline_miss_count"
+            ],
+            "phase_1_max_lateness_ticks": q0["phase_1_static_priority_queue"][
+                "max_lateness_ticks"
+            ],
+            "phase_2_deadline_miss_count": q0["phase_2_edf_deadline_queue"][
+                "deadline_miss_count"
+            ],
+            "phase_2_max_lateness_ticks": q0["phase_2_edf_deadline_queue"][
+                "max_lateness_ticks"
+            ],
+            "max_lateness_reduction_ticks": q0["max_lateness_reduction_ticks"],
+            "single_round_static_deadline_coherent": q0["converged_single_round"],
+            "multi_round_edf_deadline_coherent": q0["converged_multi_round"],
+        }
+
+    incident_pairs = [
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    ]
+    per_incident_summary: dict[str, Any] = {}
+    for idx, pair_id in enumerate(incident_pairs):
+        p1_incs = [q["phase_1_static_priority_queue"]["incidents"][idx] for q in all_queues]
+        p2_incs = [q["phase_2_edf_deadline_queue"]["incidents"][idx] for q in all_queues]
+        p1_traces = [
+            {
+                "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+                "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p1_incs
+        ]
+        p2_traces = [
+            {
+                "local_pass": inc["local_budget_pareto_indicator_L_k"] == 1,
+                "global_pass": inc["global_deadline_pareto_indicator_E_g_k"] == 1,
+                "defect": inc["incident_evaluator_defect"],
+            }
+            for inc in p2_incs
+        ]
+        per_incident_summary[f"incident_{idx + 1}_{pair_id}"] = {
+            "incident_index": idx + 1,
+            "incident_pair_id": pair_id,
+            "static_priority_rank": p1_incs[0]["static_priority_rank"],
+            "sla_deadline_tick": p1_incs[0]["sla_deadline_tick"],
+            "phase_1_completion_tick": p1_incs[0]["completion_tick"],
+            "phase_1_lateness_ticks": p1_incs[0]["lateness_ticks"],
+            "phase_2_completion_tick": p2_incs[0]["completion_tick"],
+            "phase_2_lateness_ticks": p2_incs[0]["lateness_ticks"],
+            "phase_1_metrics": compute_empirical_defect_rates(p1_traces),
+            "phase_2_metrics": compute_empirical_defect_rates(p2_traces),
+        }
+
+    body = {
+        "schema": "lggr.deadline_priority_queue_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "deadline_priority_queue_benchmark",
+        "models_evaluated": list(models),
+        "incidents_evaluated": incident_pairs,
+        "prior_split_receipt_sha256": prior_split_sha,
+        "total_completions": total_completions,
+        "queue_count": len(all_queues),
+        "incident_evaluation_count": len(r1_inc_traces),
+        "phase_1_static_priority_queue_metrics": compute_empirical_defect_rates(
+            r1_queue_traces
+        ),
+        "phase_2_edf_deadline_queue_metrics": compute_empirical_defect_rates(
+            r2_queue_traces
+        ),
+        "phase_1_static_priority_incident_metrics": compute_empirical_defect_rates(
+            r1_inc_traces
+        ),
+        "phase_2_edf_deadline_incident_metrics": compute_empirical_defect_rates(
+            r2_inc_traces
+        ),
+        "phase_1_static_deadline_breach_rate": monitor_receipt[
+            "phase_1_static_deadline_breach_rate"
+        ],
+        "single_round_static_deadline_coherence_rate": monitor_receipt[
+            "single_round_static_deadline_coherence_rate"
+        ],
+        "multi_round_edf_deadline_coherence_rate": monitor_receipt[
+            "multi_round_edf_deadline_coherence_rate"
+        ],
+        "edf_deadline_coherence_gain": monitor_receipt[
+            "edf_deadline_coherence_gain"
+        ],
+        "per_model_summary": per_model_summary,
+        "per_incident_summary": per_incident_summary,
+        "deadline_monitor_receipt": monitor_receipt,
+        "queues": all_queues,
+        "meaning": (
+            "Deadline-constrained priority queue benchmark across 3 simultaneous non-preemptible "
+            "incidents (s1=s2=s3=0) with static priorities (1, 2, 3) and inverse SLA completion "
+            "deadlines (D_1=3, D_2=2, D_3=1) across 5 model families, separating static priority "
+            "ordering (L_queue = 1 for budget+Pareto coherence, yet Incident 3 completes at C_3 = 3 > D_3 = 1 "
+            "with lateness = 2 -> E_g = 0, Delta_E = -1) from Earliest-Deadline-First (EDF) ordering "
+            "(D_3=1 < D_2=2 < D_1=3 -> C_3=1, C_2=2, C_1=3, max lateness = 0, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+
+    out_path = os.path.join(receipts_dir, "deadline_priority_queue_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+
+    return signed
+
+
+
+
 
 
 

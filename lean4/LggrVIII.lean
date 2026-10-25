@@ -1823,4 +1823,218 @@ theorem asymmetric_weighted_policy_relaxation_tie_breaking_vs_unweighted_slack :
   refine ⟨by omega, ?_⟩
   exact Int.mul_lt_mul_of_pos_right hw hd
 
+/-- 61. Multi-step cumulative policy-relaxation drift (ratchet effect) vs. scoped lease revocation:
+    1. For any baseline coordinate p0 : Int and three sequential unrevoked relaxations
+       d1, d2, d3 : Int, the 3-step cumulative policy state ((p0 + d1) + d2 + d3) telescopes
+       to total drift d1 + d2 + d3 above p0, whereas revoking each prior temporary lease
+       back to p0 before the next incident bounds the final drift at d3 (and strictly below
+       d1 + d2 + d3 whenever d1 > 0 and d2 > 0);
+    2. Concrete 3-incident weighted separation on P_0 = (2, 3, 0) with risk weights
+       w = (2, 3, 4), per-incident step budget τ_step = 4, and global horizon ceiling
+       τ_horizon = 4 across sequential relaxations δ_1 = (2, 0, 0), δ_2 = (0, 1, 0),
+       δ_3 = (0, 0, 1):
+       - Under an unrevoked monotone policy ratchet (P_1 = (4, 3, 0), P_2 = (4, 4, 0),
+         P_3 = (4, 4, 1)), every single incident step satisfies ||P_t - P_{t-1}||_{1,w} ≤ 4
+         (step slacks 4, 3, 4 ≤ τ_step → L_ratchet = 1), yet cumulative horizon drift
+         reaches ||P_3 - P_0||_{1,w} = 4 + 3 + 4 = 11 > τ_horizon = 4 (breaching already at
+         incident 2 with drift 7 > 4), yielding Eg_ratchet = 0 and Δ_{E,ratchet} = -1;
+       - Under scoped lease revocation / rollback to P_0 after each incident resolution
+         (P_1^rev = (4, 3, 0), P_2^rev = (2, 4, 0), P_3^rev = (2, 3, 1)), every incident step
+         satisfies both ||P_t^rev - P_0||_{1,w} ≤ τ_step = 4 and ||P_t^rev - P_0||_{1,w} ≤
+         τ_horizon = 4 (horizon drifts 4, 3, 4 ≤ 4), yielding L_revoked = 1, Eg_revoked = 1,
+         and Δ_{E,revoked} = 0. -/
+theorem cumulative_policy_ratchet_drift_vs_lease_revocation :
+    (∀ p0 d1 d2 d3 : Int,
+      (((p0 + d1) + d2 + d3) - p0 = d1 + d2 + d3) ∧
+      ((d1 > 0 ∧ d2 > 0) → ((p0 + d3) - p0 < ((p0 + d1) + d2 + d3) - p0))) ∧
+    (let p0_1 : Int := 2; let p0_2 : Int := 3; let p0_3 : Int := 0;
+     let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_step : Int := 4; let tau_horizon : Int := 4;
+     let r1_1 : Int := 4; let r1_2 : Int := 3; let r1_3 : Int := 0;
+     let r2_1 : Int := 4; let r2_2 : Int := 4; let r2_3 : Int := 0;
+     let r3_1 : Int := 4; let r3_2 : Int := 4; let r3_3 : Int := 1;
+     let step_r1 := w1 * absInt (r1_1 - p0_1) + w2 * absInt (r1_2 - p0_2) + w3 * absInt (r1_3 - p0_3);
+     let step_r2 := w1 * absInt (r2_1 - r1_1) + w2 * absInt (r2_2 - r1_2) + w3 * absInt (r2_3 - r1_3);
+     let step_r3 := w1 * absInt (r3_1 - r2_1) + w2 * absInt (r3_2 - r2_2) + w3 * absInt (r3_3 - r2_3);
+     let hor_r1 := step_r1;
+     let hor_r2 := w1 * absInt (r2_1 - p0_1) + w2 * absInt (r2_2 - p0_2) + w3 * absInt (r2_3 - p0_3);
+     let hor_r3 := w1 * absInt (r3_1 - p0_1) + w2 * absInt (r3_2 - p0_2) + w3 * absInt (r3_3 - p0_3);
+     let l_ratchet := if (step_r1 ≤ tau_step) ∧ (step_r2 ≤ tau_step) ∧ (step_r3 ≤ tau_step) then (1 : Int) else 0;
+     let eg_ratchet := if (l_ratchet = 1) ∧ (hor_r1 ≤ tau_horizon) ∧ (hor_r2 ≤ tau_horizon) ∧ (hor_r3 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_ratchet := eg_ratchet - l_ratchet;
+     let v1_1 : Int := 4; let v1_2 : Int := 3; let v1_3 : Int := 0;
+     let v2_1 : Int := 2; let v2_2 : Int := 4; let v2_3 : Int := 0;
+     let v3_1 : Int := 2; let v3_2 : Int := 3; let v3_3 : Int := 1;
+     let hor_v1 := w1 * absInt (v1_1 - p0_1) + w2 * absInt (v1_2 - p0_2) + w3 * absInt (v1_3 - p0_3);
+     let hor_v2 := w1 * absInt (v2_1 - p0_1) + w2 * absInt (v2_2 - p0_2) + w3 * absInt (v2_3 - p0_3);
+     let hor_v3 := w1 * absInt (v3_1 - p0_1) + w2 * absInt (v3_2 - p0_2) + w3 * absInt (v3_3 - p0_3);
+     let l_revoked := if (hor_v1 ≤ tau_step) ∧ (hor_v2 ≤ tau_step) ∧ (hor_v3 ≤ tau_step) then (1 : Int) else 0;
+     let eg_revoked := if (l_revoked = 1) ∧ (hor_v1 ≤ tau_horizon) ∧ (hor_v2 ≤ tau_horizon) ∧ (hor_v3 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_revoked := eg_revoked - l_revoked;
+     (step_r1 = 4 ∧ step_r2 = 3 ∧ step_r3 = 4 ∧ hor_r2 = 7 ∧ hor_r3 = 11) ∧
+     (l_ratchet = 1 ∧ eg_ratchet = 0 ∧ defect_ratchet = -1) ∧
+     (hor_v1 = 4 ∧ hor_v2 = 3 ∧ hor_v3 = 4 ∧ l_revoked = 1 ∧ eg_revoked = 1 ∧ defect_revoked = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro p0 d1 d2 d3
+  refine ⟨by omega, ?_⟩
+  intro ⟨hd1, hd2⟩
+  omega
+
+/-- 62. Concurrent overlapping incident leases vs. lease-overlap accounting:
+    1. For any two lease intervals [s1, e1) and [s2, e2) with s1 ≤ s2 < e1 and s2 < e2,
+       the arrival tick t = s2 lies in both active intervals (s1 ≤ s2 ∧ s2 < e1 ∧ s2 ≤ s2 ∧ s2 < e2),
+       whereas enforcing early lease release e1_adj ≤ s2 prevents simultaneous activation
+       at any tick t (¬ (s1 ≤ t ∧ t < e1_adj ∧ s2 ≤ t ∧ t < e2));
+    2. Concrete 3-incident overlapping lease separation on P_0 = (2, 3, 0) with risk weights
+       w = (2, 3, 4), individual lease budget τ_lease = 4, and global horizon ceiling
+       τ_horizon = 6 across temporary leases δ_1 = (2, 0, 0) (weighted slack 4 ≤ 4),
+       δ_2 = (0, 1, 0) (weighted slack 3 ≤ 4), and δ_3 = (0, 0, 1) (weighted slack 4 ≤ 4):
+       - Under uncoordinated overlapping intervals [0, 3), [1, 4), [2, 5), every lease has a
+         finite expiration and satisfies ||δ_k||_{1,w} ≤ τ_lease = 4 (L_overlap = 1), yet
+         concurrent active drift reaches 4 + 3 = 7 > 6 at tick 1 and peaks at 4 + 3 + 4 = 11 > 6
+         at tick 2 (when all 3 leases overlap), yielding Eg_overlap = 0 and Δ_{E,overlap} = -1;
+       - Under lease-overlap accounting with early lease release upon incident resolution
+         ([0, 1), [1, 2), [2, 3)), at most one lease is active at each tick (active drifts 4, 3, 4 ≤ 6),
+         yielding L_accounted = 1, Eg_accounted = 1, and Δ_{E,accounted} = 0. -/
+theorem concurrent_lease_overlap_horizon_breach_vs_overlap_accounting :
+    (∀ s1 e1 e1_adj s2 e2 t : Int,
+      ((s1 ≤ s2 ∧ s2 < e1 ∧ s2 < e2) → (s1 ≤ s2 ∧ s2 < e1 ∧ s2 ≤ s2 ∧ s2 < e2)) ∧
+      ((e1_adj ≤ s2) → ¬ (s1 ≤ t ∧ t < e1_adj ∧ s2 ≤ t ∧ t < e2))) ∧
+    (let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_lease : Int := 4; let tau_horizon : Int := 6;
+     let d1_1 : Int := 2; let d1_2 : Int := 0; let d1_3 : Int := 0;
+     let d2_1 : Int := 0; let d2_2 : Int := 1; let d2_3 : Int := 0;
+     let d3_1 : Int := 0; let d3_2 : Int := 0; let d3_3 : Int := 1;
+     let slack_1 := w1 * d1_1 + w2 * d1_2 + w3 * d1_3;
+     let slack_2 := w1 * d2_1 + w2 * d2_2 + w3 * d2_3;
+     let slack_3 := w1 * d3_1 + w2 * d3_2 + w3 * d3_3;
+     let ov_tick0 := slack_1;
+     let ov_tick1 := slack_1 + slack_2;
+     let ov_tick2 := slack_1 + slack_2 + slack_3;
+     let ov_tick3 := slack_2 + slack_3;
+     let ov_tick4 := slack_3;
+     let l_overlap := if (slack_1 ≤ tau_lease) ∧ (slack_2 ≤ tau_lease) ∧ (slack_3 ≤ tau_lease) then (1 : Int) else 0;
+     let eg_overlap := if (l_overlap = 1) ∧ (ov_tick0 ≤ tau_horizon) ∧ (ov_tick1 ≤ tau_horizon) ∧ (ov_tick2 ≤ tau_horizon) ∧ (ov_tick3 ≤ tau_horizon) ∧ (ov_tick4 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_overlap := eg_overlap - l_overlap;
+     let acct_tick0 := slack_1;
+     let acct_tick1 := slack_2;
+     let acct_tick2 := slack_3;
+     let l_accounted := if (slack_1 ≤ tau_lease) ∧ (slack_2 ≤ tau_lease) ∧ (slack_3 ≤ tau_lease) then (1 : Int) else 0;
+     let eg_accounted := if (l_accounted = 1) ∧ (acct_tick0 ≤ tau_horizon) ∧ (acct_tick1 ≤ tau_horizon) ∧ (acct_tick2 ≤ tau_horizon) then (1 : Int) else 0;
+     let defect_accounted := eg_accounted - l_accounted;
+     (slack_1 = 4 ∧ slack_2 = 3 ∧ slack_3 = 4 ∧ ov_tick1 = 7 ∧ ov_tick2 = 11) ∧
+     (l_overlap = 1 ∧ eg_overlap = 0 ∧ defect_overlap = -1) ∧
+     (acct_tick0 = 4 ∧ acct_tick1 = 3 ∧ acct_tick2 = 4 ∧ l_accounted = 1 ∧ eg_accounted = 1 ∧ defect_accounted = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro s1 e1 e1_adj s2 e2 t
+  refine ⟨?_, ?_⟩
+  · intro ⟨h1, h2, h3⟩
+    omega
+  · intro h_disj ⟨_, ht1, ht2, _⟩
+    omega
+
+/-- 63. Non-preemptible simultaneous incidents under fractional budget-splitting vs. priority queueing:
+    1. For any simultaneous weighted allocations c1, c2, c3 : Int and minimum Pareto floors
+       f1, f2, f3 : Int under horizon ceiling tau_hor : Int, if the joint Pareto floor exceeds
+       the horizon ceiling (f1 + f2 > tau_hor, and for 3 incidents f1 + f2 + f3 > tau_hor) while
+       the fractional budget split respects the horizon ceiling (c1 + c2 ≤ tau_hor, and
+       c1 + c2 + c3 ≤ tau_hor), then at least one incident is starved strictly below its
+       minimum Pareto floor (c1 < f1 ∨ c2 < f2, and c1 < f1 ∨ c2 < f2 ∨ c3 < f3);
+    2. Concrete 3-incident simultaneous burst separation at s1 = s2 = s3 = 0 on P_0 = (2, 3, 0)
+       with risk weights w = (2, 3, 4), individual lease budget τ_lease = 4, and global horizon
+       ceiling τ_horizon = 6 across Pareto floors Δ*_{w,1} = 4, Δ*_{w,2} = 3, Δ*_{w,3} = 4
+       (joint Pareto floor 4 + 3 + 4 = 11 > τ_horizon = 6):
+       - Under fractional concurrent budget-splitting at tick 0 with δ'_1 = (1, 0, 0) (weighted
+         slack 2 < 4), δ'_2 = (0, 1, 0) (weighted slack 3 = 3), and δ'_3 = (0, 0, 0) (weighted
+         slack 0 < 4), the concurrent sum is 2 + 3 + 0 = 5 ≤ τ_horizon = 6 (L_split = 1), yet
+         Incidents 1 and 3 are starved below their Pareto floors (starved_count = 2 > 0),
+         yielding Eg_split = 0 and Δ_{E,split} = -1;
+       - Under priority-queued deferred admission across slots t = 0, 1, 2 with full Pareto
+         leases δ_1 = (2, 0, 0) (slack 4 ≥ 4 at slot 0), δ_2 = (0, 1, 0) (slack 3 ≥ 3 at slot 1),
+         and δ_3 = (0, 0, 1) (slack 4 ≥ 4 at slot 2), every incident meets its Pareto floor
+         (starved_count = 0) and every slot respects τ_horizon = 6 (max slot drift = 4 ≤ 6),
+         yielding L_queued = 1, Eg_queued = 1, and Δ_{E,queued} = 0. -/
+theorem non_preemptible_simultaneous_budget_split_vs_priority_queueing :
+    (∀ c1 c2 c3 f1 f2 f3 tau_hor : Int,
+      ((c1 + c2 ≤ tau_hor ∧ f1 + f2 > tau_hor) → (c1 < f1 ∨ c2 < f2)) ∧
+      ((c1 + c2 + c3 ≤ tau_hor ∧ f1 + f2 + f3 > tau_hor) → (c1 < f1 ∨ c2 < f2 ∨ c3 < f3))) ∧
+    (let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_lease : Int := 4; let tau_horizon : Int := 6;
+     let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let joint_floor := f1 + f2 + f3;
+     let sp1 := w1 * 1 + w2 * 0 + w3 * 0;
+     let sp2 := w1 * 0 + w2 * 1 + w3 * 0;
+     let sp3 := w1 * 0 + w2 * 0 + w3 * 0;
+     let sp_sum := sp1 + sp2 + sp3;
+     let starved_split := (if sp1 < f1 then (1 : Int) else 0) + (if sp2 < f2 then 1 else 0) + (if sp3 < f3 then 1 else 0);
+     let l_split := if (sp1 ≤ tau_lease) ∧ (sp2 ≤ tau_lease) ∧ (sp3 ≤ tau_lease) ∧ (sp_sum ≤ tau_horizon) then (1 : Int) else 0;
+     let eg_split := if (l_split = 1) ∧ (sp1 ≥ f1) ∧ (sp2 ≥ f2) ∧ (sp3 ≥ f3) then (1 : Int) else 0;
+     let defect_split := eg_split - l_split;
+     let q1 := w1 * 2 + w2 * 0 + w3 * 0;
+     let q2 := w1 * 0 + w2 * 1 + w3 * 0;
+     let q3 := w1 * 0 + w2 * 0 + w3 * 1;
+     let starved_queued := (if q1 < f1 then (1 : Int) else 0) + (if q2 < f2 then 1 else 0) + (if q3 < f3 then 1 else 0);
+     let l_queued := if (q1 ≤ tau_lease) ∧ (q2 ≤ tau_lease) ∧ (q3 ≤ tau_lease) ∧ (q1 ≤ tau_horizon) ∧ (q2 ≤ tau_horizon) ∧ (q3 ≤ tau_horizon) then (1 : Int) else 0;
+     let eg_queued := if (l_queued = 1) ∧ (q1 ≥ f1) ∧ (q2 ≥ f2) ∧ (q3 ≥ f3) then (1 : Int) else 0;
+     let defect_queued := eg_queued - l_queued;
+     (joint_floor = 11 ∧ sp1 = 2 ∧ sp2 = 3 ∧ sp3 = 0 ∧ sp_sum = 5 ∧ starved_split = 2) ∧
+     (l_split = 1 ∧ eg_split = 0 ∧ defect_split = -1) ∧
+     (q1 = 4 ∧ q2 = 3 ∧ q3 = 4 ∧ starved_queued = 0 ∧ l_queued = 1 ∧ eg_queued = 1 ∧ defect_queued = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro c1 c2 c3 f1 f2 f3 tau_hor
+  refine ⟨?_, ?_⟩
+  · intro ⟨hc, hf⟩
+    omega
+  · intro ⟨hc, hf⟩
+    omega
+
+/-- 64. Deadline-constrained priority queueing under simultaneous bursts (static priority vs. EDF):
+    1. Jackson EDF exchange / inversion law: for any simultaneous arrival tick s0 : Int and two
+       unit-duration tasks with urgent deadline d_urg and lax deadline d_lax satisfying
+       s0 + 1 ≤ d_urg < s0 + 2 ≤ d_lax, scheduling the lax task first in slot [s0, s0 + 1) and
+       deferring the urgent task to slot [s0 + 1, s0 + 2) causes the urgent task to miss its
+       SLA deadline (s0 + 2 > d_urg), whereas Earliest-Deadline-First (EDF) scheduling places
+       the urgent task in [s0, s0 + 1) and the lax task in [s0 + 1, s0 + 2), satisfying both
+       SLA deadlines (s0 + 1 ≤ d_urg ∧ s0 + 2 ≤ d_lax);
+    2. Concrete 3-incident simultaneous burst separation at s1 = s2 = s3 = 0 on P_0 = (2, 3, 0)
+       with risk weights w = (2, 3, 4), individual lease budget τ_lease = 4, and global horizon
+       ceiling τ_horizon = 6 across Pareto floors Δ*_{w,1} = 4, Δ*_{w,2} = 3, Δ*_{w,3} = 4,
+       static priority ranks (π_1, π_2, π_3) = (1, 2, 3), and strict SLA completion deadlines
+       (D_1, D_2, D_3) = (3, 2, 1):
+       - Under static priority ordering (1, 2, 3) across slots [0, 1), [1, 2), [2, 3), every
+         incident meets its Pareto floor and respects τ_horizon = 6 (L_static = 1), yet
+         Incident 3 completes at C_3 = 3 > D_3 = 1 (lateness = 2 > 0), yielding Eg_static = 0
+         and Δ_{E,static} = -1;
+       - Under Earliest-Deadline-First (EDF) ordering (3, 2, 1) across slots [0, 1), [1, 2),
+         [2, 3) (since D_3 = 1 < D_2 = 2 < D_1 = 3), completion ticks are C_3 = 1 ≤ D_3 = 1,
+         C_2 = 2 ≤ D_2 = 2, and C_1 = 3 ≤ D_1 = 3 (lateness = 0 on all 3 incidents), yielding
+         L_edf = 1, Eg_edf = 1, and Δ_{E,edf} = 0. -/
+theorem deadline_constrained_priority_queue_static_inversion_vs_edf :
+    (∀ s0 d_urg d_lax : Int,
+      (s0 + 1 ≤ d_urg ∧ d_urg < s0 + 2 ∧ s0 + 2 ≤ d_lax) →
+      ((s0 + 2 > d_urg) ∧ (s0 + 1 ≤ d_urg ∧ s0 + 2 ≤ d_lax))) ∧
+    (let w1 : Int := 2; let w2 : Int := 3; let w3 : Int := 4;
+     let tau_lease : Int := 4; let tau_horizon : Int := 6;
+     let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let d1 : Int := 3; let d2 : Int := 2; let d3 : Int := 1;
+     let s1 := w1 * 2 + w2 * 0 + w3 * 0;
+     let s2 := w1 * 0 + w2 * 1 + w3 * 0;
+     let s3 := w1 * 0 + w2 * 0 + w3 * 1;
+     let c1_stat : Int := 1; let c2_stat : Int := 2; let c3_stat : Int := 3;
+     let late3_stat := c3_stat - d3;
+     let l_static := if (s1 ≥ f1) ∧ (s2 ≥ f2) ∧ (s3 ≥ f3) ∧ (s1 ≤ tau_lease) ∧ (s2 ≤ tau_lease) ∧ (s3 ≤ tau_lease) ∧ (s1 ≤ tau_horizon) ∧ (s2 ≤ tau_horizon) ∧ (s3 ≤ tau_horizon) then (1 : Int) else 0;
+     let eg_static := if (l_static = 1) ∧ (c1_stat ≤ d1) ∧ (c2_stat ≤ d2) ∧ (c3_stat ≤ d3) then (1 : Int) else 0;
+     let defect_static := eg_static - l_static;
+     let c3_edf : Int := 1; let c2_edf : Int := 2; let c1_edf : Int := 3;
+     let late_max_edf := (if c1_edf > d1 then c1_edf - d1 else (0 : Int)) + (if c2_edf > d2 then c2_edf - d2 else 0) + (if c3_edf > d3 then c3_edf - d3 else 0);
+     let l_edf := l_static;
+     let eg_edf := if (l_edf = 1) ∧ (c1_edf ≤ d1) ∧ (c2_edf ≤ d2) ∧ (c3_edf ≤ d3) ∧ (d3 ≤ d2) ∧ (d2 ≤ d1) then (1 : Int) else 0;
+     let defect_edf := eg_edf - l_edf;
+     (s1 = 4 ∧ s2 = 3 ∧ s3 = 4 ∧ late3_stat = 2) ∧
+     (l_static = 1 ∧ eg_static = 0 ∧ defect_static = -1) ∧
+     (late_max_edf = 0 ∧ l_edf = 1 ∧ eg_edf = 1 ∧ defect_edf = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide, by decide⟩⟩⟩⟩
+  intro s0 d_urg d_lax ⟨h1, h2, h3⟩
+  omega
+
 end LggrVIII

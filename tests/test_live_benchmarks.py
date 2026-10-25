@@ -40,14 +40,18 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
+    StreamingConcurrentLeaseOverlapMonitor,
+    StreamingDeadlinePriorityQueueMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
+    StreamingPolicyRatchetDriftMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
     StreamingSideInformationCapacityMonitor,
+    StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
 )
@@ -1017,6 +1021,256 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["single_round_weighted_convergence_rate"], "0")
         self.assertEqual(mon_rec["multi_round_weighted_convergence_rate"], "1")
         self.assertEqual(mon_rec["multi_round_weighted_convergence_gain"], "1")
+
+    def test_policy_ratchet_drift_benchmark_replay(self):
+        """F22: Replay all 5 multi-step policy-ratchet drift trajectories (15 incident steps per phase) across 5 model families."""
+        artifact = RECEIPTS_DIR / "policy_ratchet_drift_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("policy_ratchet_drift_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.policy_ratchet_drift_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("trajectory_count"), 5)
+        self.assertEqual(data.get("incident_step_evaluation_count"), 15)
+
+        self.assertTrue(data["phase_1_unrevoked_ratchet_chain_metrics"]["identity_verified"])
+        self.assertTrue(data["phase_2_lease_revoked_chain_metrics"]["identity_verified"])
+        self.assertTrue(data["phase_1_unrevoked_ratchet_step_metrics"]["identity_verified"])
+        self.assertTrue(data["phase_2_lease_revoked_step_metrics"]["identity_verified"])
+
+        replay_mon = StreamingPolicyRatchetDriftMonitor(
+            scope_id=data["ratchet_monitor_receipt"]["scope_id"]
+        )
+        for t in data.get("trajectories", []):
+            p1_incs = t["phase_1_unrevoked_ratchet_chain"]["incidents"]
+            p2_incs = t["phase_2_lease_revoked_chain"]["incidents"]
+            replay_mon.record_incident_trajectory(
+                trajectory_id=t["trajectory_id"],
+                model_id=t["model_id"],
+                prior_escalation_receipt_sha256=t["prior_escalation_receipt_sha256"],
+                baseline_policy_sha256=t["baseline_policy_sha256"],
+                baseline_policy_vector=t["baseline_policy_vector"],
+                risk_weight_vector=t["risk_weight_vector"],
+                step_slack_budget=t["step_slack_budget"],
+                horizon_drift_ceiling=t["horizon_drift_ceiling"],
+                unrevoked_ratchet_incidents=p1_incs,
+                lease_revoked_incidents=p2_incs,
+            )
+            self.assertTrue(t["phase_1_ratchet_horizon_breach"])
+            self.assertFalse(t["converged_single_round"])
+            self.assertTrue(t["converged_multi_round"])
+            self.assertEqual(t["horizon_weighted_drift_reduction"], "7")
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["ratchet_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "SCOPED_LEASE_REVOCATION_HORIZON_COHERENT_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["phase_1_ratchet_horizon_breach_rate"], "1")
+        self.assertEqual(mon_rec["single_round_horizon_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_lease_revoked_coherence_rate"], "1")
+        self.assertEqual(mon_rec["lease_revocation_coherence_gain"], "1")
+
+    def test_concurrent_lease_overlap_benchmark_replay(self):
+        """F23: Replay all 5 concurrent overlapping incident lease schedules (15 lease steps per phase) across 5 model families."""
+        artifact = RECEIPTS_DIR / "concurrent_lease_overlap_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("concurrent_lease_overlap_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.concurrent_lease_overlap_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("schedule_count"), 5)
+        self.assertEqual(data.get("lease_evaluation_count"), 15)
+
+        self.assertTrue(
+            data["phase_1_uncoordinated_overlap_schedule_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_overlap_accounted_schedule_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_1_uncoordinated_overlap_lease_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_overlap_accounted_lease_metrics"]["identity_verified"]
+        )
+
+        replay_mon = StreamingConcurrentLeaseOverlapMonitor(
+            scope_id=data["overlap_monitor_receipt"]["scope_id"]
+        )
+        for s in data.get("schedules", []):
+            p1_leases = s["phase_1_uncoordinated_overlap_schedule"]["leases"]
+            p2_leases = s["phase_2_overlap_accounted_schedule"]["leases"]
+            replay_mon.record_overlap_schedule(
+                schedule_id=s["schedule_id"],
+                model_id=s["model_id"],
+                prior_ratchet_receipt_sha256=s["prior_ratchet_receipt_sha256"],
+                baseline_policy_sha256=s["baseline_policy_sha256"],
+                baseline_policy_vector=s["baseline_policy_vector"],
+                risk_weight_vector=s["risk_weight_vector"],
+                individual_lease_budget=s["individual_lease_budget"],
+                horizon_drift_ceiling=s["horizon_drift_ceiling"],
+                uncoordinated_overlapping_leases=p1_leases,
+                overlap_accounted_leases=p2_leases,
+            )
+            self.assertTrue(s["phase_1_overlap_horizon_breach"])
+            self.assertFalse(s["converged_single_round"])
+            self.assertTrue(s["converged_multi_round"])
+            self.assertEqual(s["peak_concurrent_weighted_drift_reduction"], "7")
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["overlap_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["phase_1_overlap_horizon_breach_rate"], "1")
+        self.assertEqual(mon_rec["single_round_overlap_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_overlap_accounted_coherence_rate"], "1")
+        self.assertEqual(mon_rec["overlap_accounting_coherence_gain"], "1")
+
+    def test_simultaneous_budget_split_benchmark_replay(self):
+        """F24: Replay all 5 simultaneous non-preemptible incident bursts (15 incident evaluations per phase) across 5 model families."""
+        artifact = RECEIPTS_DIR / "simultaneous_budget_split_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("simultaneous_budget_split_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.simultaneous_budget_split_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("burst_count"), 5)
+        self.assertEqual(data.get("incident_evaluation_count"), 15)
+
+        self.assertTrue(
+            data["phase_1_fractional_split_burst_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_priority_queued_burst_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_1_fractional_split_incident_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_priority_queued_incident_metrics"]["identity_verified"]
+        )
+
+        replay_mon = StreamingSimultaneousBudgetSplitMonitor(
+            scope_id=data["split_monitor_receipt"]["scope_id"]
+        )
+        for b in data.get("bursts", []):
+            p1_incs = b["phase_1_fractional_budget_split"]["incidents"]
+            p2_incs = b["phase_2_priority_queued_admission"]["incidents"]
+            replay_mon.record_simultaneous_burst(
+                burst_id=b["burst_id"],
+                model_id=b["model_id"],
+                prior_overlap_receipt_sha256=b["prior_overlap_receipt_sha256"],
+                baseline_policy_sha256=b["baseline_policy_sha256"],
+                baseline_policy_vector=b["baseline_policy_vector"],
+                risk_weight_vector=b["risk_weight_vector"],
+                individual_lease_budget=b["individual_lease_budget"],
+                horizon_drift_ceiling=b["horizon_drift_ceiling"],
+                fractional_split_incidents=p1_incs,
+                priority_queued_incidents=p2_incs,
+            )
+            self.assertTrue(b["phase_1_fractional_split_starvation"])
+            self.assertFalse(b["converged_single_round"])
+            self.assertTrue(b["converged_multi_round"])
+            self.assertEqual(b["starved_incidents_eliminated"], 2)
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["split_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "PRIORITY_QUEUE_DEFERRED_ADMISSION_COHERENT_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["phase_1_fractional_split_starvation_rate"], "1")
+        self.assertEqual(mon_rec["single_round_split_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_priority_queued_coherence_rate"], "1")
+        self.assertEqual(mon_rec["priority_queue_coherence_gain"], "1")
+
+    def test_deadline_priority_queue_benchmark_replay(self):
+        """F25: Replay all 5 simultaneous deadline-constrained incident bursts (15 incident evaluations per phase) across 5 model families."""
+        artifact = RECEIPTS_DIR / "deadline_priority_queue_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("deadline_priority_queue_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.deadline_priority_queue_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("queue_count"), 5)
+        self.assertEqual(data.get("incident_evaluation_count"), 15)
+
+        self.assertTrue(
+            data["phase_1_static_priority_queue_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_edf_deadline_queue_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_1_static_priority_incident_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_edf_deadline_incident_metrics"]["identity_verified"]
+        )
+
+        replay_mon = StreamingDeadlinePriorityQueueMonitor(
+            scope_id=data["deadline_monitor_receipt"]["scope_id"]
+        )
+        for q in data.get("queues", []):
+            p1_incs = q["phase_1_static_priority_queue"]["incidents"]
+            p2_incs = q["phase_2_edf_deadline_queue"]["incidents"]
+            replay_mon.record_deadline_queue_comparison(
+                queue_id=q["queue_id"],
+                model_id=q["model_id"],
+                prior_split_receipt_sha256=q["prior_split_receipt_sha256"],
+                baseline_policy_sha256=q["baseline_policy_sha256"],
+                baseline_policy_vector=q["baseline_policy_vector"],
+                risk_weight_vector=q["risk_weight_vector"],
+                individual_lease_budget=q["individual_lease_budget"],
+                horizon_drift_ceiling=q["horizon_drift_ceiling"],
+                static_priority_incidents=p1_incs,
+                edf_queued_incidents=p2_incs,
+            )
+            self.assertTrue(q["phase_1_static_deadline_breach"])
+            self.assertFalse(q["converged_single_round"])
+            self.assertTrue(q["converged_multi_round"])
+            self.assertEqual(q["max_lateness_reduction_ticks"], 2)
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["deadline_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "EDF_DEADLINE_COHERENT_QUEUE_VERIFIED_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(
+            mon_rec["phase_1_static_deadline_breach_rate"], "1"
+        )
+        self.assertEqual(mon_rec["single_round_static_deadline_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_edf_deadline_coherence_rate"], "1")
+        self.assertEqual(mon_rec["edf_deadline_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
