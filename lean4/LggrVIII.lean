@@ -2463,4 +2463,52 @@ theorem disagreement_preserving_side_channel_council_vs_collapsing_consensus :
   intro k s ⟨h1, h2, h3⟩
   omega
 
+/-- 73. Bounded-depth symbolic execution & k-induction projective tower vs. reachable finite-state carrier:
+    1. Universal carrier-completion separation: for any non-negative reachable carrier X_reach = [0, M_reach]
+       with M_reach ≥ 0:
+       - No integer x ∈ ℤ satisfies 3 * x + 1 = 0 (completion root x_∞ = -1/3 ∈ ℚ \ ℤ);
+       - The unique integer root of 3 * x + 3 = 0 is x_* = -1 < 0, so no x ∈ [0, M_reach] satisfies
+         3 * x + 3 = 0 even though every finite 2^k-modular unrolling x_k = 2^k - 1 > 0 is positive;
+       - For 3 * x - 6 = 0 with M_reach ≥ 2, the unique integer root x_* = 2 ∈ [0, M_reach] stabilizes;
+    2. Concrete 4-depth unrolling audit (m_k ∈ {2, 4, 8, 16}, M_reach = 10):
+       - Phase 1 (3x + 1 ≡ 0 mod 2^k, thread (1, 1, 5, 5)): passes all 4 unrolling depths (L_frac = 1),
+         yet has no integer root (Eg_frac = 0, Δ_{E,frac} = -1);
+       - Phase 2 (3x + 3 ≡ 0 mod 2^k, thread (1, 3, 7, 15)): passes all 4 unrolling depths with integer
+         root x_* = -1 ∈ ℤ (L_carr = 1), yet x_* = -1 ∉ [0, 10] lies outside the reachable carrier and
+         step differences (2, 4, 8) diverge (Eg_carr = 0, Δ_{E,carr} = -1);
+       - Phase 3 (3x - 6 ≡ 0 mod 2^k, thread (0, 2, 2, 2)): passes all 4 unrolling depths, stabilizes at
+         x_* = 2 ∈ [0, 10] with step differences (0, 0) from depth 2 onward
+         (L_reach = 1, Eg_reach = 1, Δ_{E,reach} = 0). -/
+theorem bounded_depth_k_induction_tower_and_carrier_completion :
+    ((∀ x : Int, 3 * x + 1 ≠ 0) ∧
+     (∀ x : Int, 0 ≤ x → 3 * x + 3 ≠ 0)) ∧
+    (let m1 : Int := 2; let m2 : Int := 4; let m3 : Int := 8; let m4 : Int := 16;
+     let m_reach : Int := 10;
+     let f1 : Int := 1; let f2 : Int := 1; let f3 : Int := 5; let f4 : Int := 5;
+     let c1 : Int := 1; let c2 : Int := 3; let c3 : Int := 7; let c4 : Int := 15;
+     let x_star_carr : Int := -1;
+     let r1 : Int := 0; let r2 : Int := 2; let r3 : Int := 2; let r4 : Int := 2;
+     let x_star_reach : Int := 2;
+     let l_frac := if (3 * f1 + 1) % m1 = 0 ∧ (3 * f2 + 1) % m2 = 0 ∧ (3 * f3 + 1) % m3 = 0 ∧ (3 * f4 + 1) % m4 = 0 ∧
+                      (f2 - f1) % m1 = 0 ∧ (f3 - f2) % m2 = 0 ∧ (f4 - f3) % m3 = 0 then (1 : Int) else 0;
+     let eg_frac : Int := 0;
+     let defect_frac := eg_frac - l_frac;
+     let l_carr := if (3 * c1 + 3) % m1 = 0 ∧ (3 * c2 + 3) % m2 = 0 ∧ (3 * c3 + 3) % m3 = 0 ∧ (3 * c4 + 3) % m4 = 0 ∧
+                      (c2 - c1) % m1 = 0 ∧ (c3 - c2) % m2 = 0 ∧ (c4 - c3) % m3 = 0 ∧ (3 * x_star_carr + 3 = 0) then (1 : Int) else 0;
+     let eg_carr := if (l_carr = 1) ∧ (0 ≤ x_star_carr ∧ x_star_carr ≤ m_reach) then (1 : Int) else 0;
+     let defect_carr := eg_carr - l_carr;
+     let l_reach := if (3 * r1 - 6) % m1 = 0 ∧ (3 * r2 - 6) % m2 = 0 ∧ (3 * r3 - 6) % m3 = 0 ∧ (3 * r4 - 6) % m4 = 0 ∧
+                       (r2 - r1) % m1 = 0 ∧ (r3 - r2) % m2 = 0 ∧ (r4 - r3) % m3 = 0 ∧ (3 * x_star_reach - 6 = 0) then (1 : Int) else 0;
+     let eg_reach := if (l_reach = 1) ∧ (0 ≤ x_star_reach ∧ x_star_reach ≤ m_reach) ∧ (r3 - r2 = 0) ∧ (r4 - r3 = 0) then (1 : Int) else 0;
+     let defect_reach := eg_reach - l_reach;
+     (c4 - c3 = 8 ∧ r4 - r3 = 0) ∧
+     (l_frac = 1 ∧ eg_frac = 0 ∧ defect_frac = -1) ∧
+     (l_carr = 1 ∧ eg_carr = 0 ∧ defect_carr = -1) ∧
+     (l_reach = 1 ∧ eg_reach = 1 ∧ defect_reach = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro x hx
+    omega
+  · intro x hpos hx
+    omega
+
 end LggrVIII

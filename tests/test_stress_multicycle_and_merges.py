@@ -27,6 +27,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingBellPolytopeMonitor,
+    StreamingBoundedDepthKInductionMonitor,
     StreamingCPTPTraceMonitor,
     StreamingCatalystDegradationMonitor,
     StreamingCoalitionalAttributionMonitor,
@@ -3953,6 +3954,49 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["collapsing_consensus_coherence_rate"], "0")
         self.assertEqual(receipt["disagreement_council_coherence_rate"], "1")
         self.assertEqual(receipt["disagreement_council_coherence_gain"], "1")
+
+    def test_bounded_depth_k_induction_tower_and_carrier_completion(self) -> None:
+        """Verify Theorem 73: bounded-depth symbolic execution & k-induction projective tower vs. reachable carrier."""
+        mon = StreamingBoundedDepthKInductionMonitor(
+            reachable_carrier_max=10,
+            scope_id="unit-bounded-depth-k-induction-scope",
+        )
+        obs = mon.evaluate_k_induction_harness(
+            evaluation_id="k-ind-eval-01",
+            moduli=(2, 4, 8, 16),
+            fractional_thread=(1, 1, 5, 5),
+            out_of_carrier_thread=(1, 3, 7, 15),
+            reachable_thread=(0, 2, 2, 2),
+        )
+        self.assertEqual(obs["phase_1_rational_root"], "-1/3")
+        self.assertIsNone(obs["phase_1_integral_root"])
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "R1_FRACTIONAL_COMPLETION_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_2_integral_root"], -1)
+        self.assertFalse(obs["phase_2_in_reachable_carrier"])
+        self.assertEqual(obs["phase_2_tail_step_difference"], 8)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "OUT_OF_CARRIER_COMPLETION_WITNESS_LGGR")
+
+        self.assertEqual(obs["phase_3_integral_root"], 2)
+        self.assertTrue(obs["phase_3_in_reachable_carrier"])
+        self.assertEqual(obs["phase_3_tail_step_difference"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "REACHABLE_CARRIER_LIFT_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "REACHABLE_CARRIER_LIFT_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["out_of_carrier_coherence_rate"], "0")
+        self.assertEqual(receipt["reachable_carrier_coherence_rate"], "1")
+        self.assertEqual(receipt["reachable_carrier_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
