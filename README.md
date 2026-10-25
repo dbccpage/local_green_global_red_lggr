@@ -1,6 +1,6 @@
 # LGGR Witness Audit
 
-**AuthorityEffect: None.** Working Python reference implementation of the finite mechanisms in the supplied report, *Local Green, Global Red: cumulative drift under protected local evaluation*, connecting the **Local Green, Global Red (LGGR) Foundational Series (Volumes Iâ€“VI)** with **Bell's Theorem as a Positive-Extension Obstruction: Projection residuals, uncertainty, and embedded knowledge**.
+**AuthorityEffect: None.** Working Python reference implementation of the finite mechanisms in the supplied report, *Local Green, Global Red: cumulative drift under protected local evaluation*, connecting the **Local Green, Global Red (LGGR) Foundational Series (Volumes I–VI)** with **Bell's Theorem as a Positive-Extension Obstruction: Projection residuals, uncertainty, and embedded knowledge**.
 
 **Description:** Finite witness-composition, report-fiber decoder/collision certification, exact rational $\ell^1$ repair and cochain classification, chain-retraction transport verification, and observer-sufficiency models for evaluating when locally passing reports fail to determine or satisfy a declared global requirement.
 
@@ -22,7 +22,7 @@ python learn/check.py
 
 This repository synthesizes executable finite verification rules from two related lines of work:
 
-### 1. The Local Green, Global Red Foundational Series (Volumes Iâ€“VI) & Witnessed Difference Programme
+### 1. The Local Green, Global Red Foundational Series (Volumes I–VI) & Witnessed Difference Programme
 
 The six-volume LGGR series (`001_local_green_global_red_foundational_series`) and the Witnessed Difference Programme (WDP) examine when local observations, step verdicts, or restricted reports fail to determine a declared global proposition:
 
@@ -73,14 +73,14 @@ The companion study *Bell's Theorem as a Positive-Extension Obstruction* (`003_b
 ## Papers and Lean 4 Formalizations
 
 - **[`papers/`](papers/README.md):** Contains the eight-volume *Local Green, Global Red* series (`lggr_i_evaluated_path_kernels` through `lggr_viii_online_streaming_discovery_and_runtime_gluing`) and the [monograph and implementation index](papers/local_green_global_red_monograph_index.md):
-  - [`papers/lggr_i_evaluated_path_kernels/`](papers/lggr_i_evaluated_path_kernels/lggr_i_evaluated_path_kernels.md) â€” Volume I: *Evaluated Path Kernels for Composed Agent Reliability*
-  - [`papers/lggr_ii_organizational_gluing/`](papers/lggr_ii_organizational_gluing/lggr_ii_organizational_gluing.md) â€” Volume II: *Organizational Evaluator Gluing*
-  - [`papers/lggr_iii_epk_gtla_overlay/`](papers/lggr_iii_epk_gtla_overlay/lggr_iii_epk_gtla_overlay.md) â€” Volume III: *A Finite Evaluator Overlay Across Six System Roles*
-  - [`papers/lggr_iv_finite_presentations_completion_relative/`](papers/lggr_iv_finite_presentations_completion_relative/lggr_iv_finite_presentations_completion_relative.md) â€” Volume IV: *Finite Presentations and Completion-Relative Obstruction*
-  - [`papers/lggr_v_local_green_global_red/`](papers/lggr_v_local_green_global_red/lggr_v_local_green_global_red.md) â€” Volume V: *Local Green, Global Red: When Local Evaluators Cannot Certify Global Exactness*
-  - [`papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/`](papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/lggr_vi_nonlinear_aggregation_and_adjoint_probing.md) â€” Volume VI: *Nonlinear Aggregation, Gram Kernels, and Centered Adjoint Probing*
-  - [`papers/lggr_vii_projection_residuals_and_witness_composition/`](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition.md) â€” Volume VII: *Positive-Extension Projection Residuals, Observer-Fiber Minimax Floors, and Witnessed Composition* (with typed [claim ledger](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition_claim_ledger.md) and exact rational Python derivations/tests under `code/`).
-  - [`papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/`](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md) â€” Volume VIII: *Online Streaming LGGG vs. LGGR Discovery for Agentic Swarms* (with typed [claim ledger](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_claim_ledger.md), companion Python derivations/tests under `code/`, and recorded OpenRouter benchmark receipts).
+  - [`papers/lggr_i_evaluated_path_kernels/`](papers/lggr_i_evaluated_path_kernels/lggr_i_evaluated_path_kernels.md) — Volume I: *Evaluated Path Kernels for Composed Agent Reliability*
+  - [`papers/lggr_ii_organizational_gluing/`](papers/lggr_ii_organizational_gluing/lggr_ii_organizational_gluing.md) — Volume II: *Organizational Evaluator Gluing*
+  - [`papers/lggr_iii_epk_gtla_overlay/`](papers/lggr_iii_epk_gtla_overlay/lggr_iii_epk_gtla_overlay.md) — Volume III: *A Finite Evaluator Overlay Across Six System Roles*
+  - [`papers/lggr_iv_finite_presentations_completion_relative/`](papers/lggr_iv_finite_presentations_completion_relative/lggr_iv_finite_presentations_completion_relative.md) — Volume IV: *Finite Presentations and Completion-Relative Obstruction*
+  - [`papers/lggr_v_local_green_global_red/`](papers/lggr_v_local_green_global_red/lggr_v_local_green_global_red.md) — Volume V: *Local Green, Global Red: When Local Evaluators Cannot Certify Global Exactness*
+  - [`papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/`](papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/lggr_vi_nonlinear_aggregation_and_adjoint_probing.md) — Volume VI: *Nonlinear Aggregation, Gram Kernels, and Centered Adjoint Probing*
+  - [`papers/lggr_vii_projection_residuals_and_witness_composition/`](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition.md) — Volume VII: *Positive-Extension Projection Residuals, Observer-Fiber Minimax Floors, and Witnessed Composition* (with typed [claim ledger](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition_claim_ledger.md) and exact rational Python derivations/tests under `code/`).
+  - [`papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/`](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md) — Volume VIII: *Online Streaming LGGG vs. LGGR Discovery for Agentic Swarms* (with typed [claim ledger](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_claim_ledger.md), companion Python derivations/tests under `code/`, and recorded OpenRouter benchmark receipts).
 - **[`lean4/`](lean4/LggrVIII.lean):** Standalone Lean 4 (`v4.35.0`) formalization package (`LGGR` / `LggrVII.lean`, `LggrVIII.lean`, `CheckAxioms.lean`) proving the realized-image decoder/collision theorems, Boolean evaluator defect partition, multi-step history telescoping and prefix vs. endpoint separation, integer $\ell^1$ triangle primal/dual optimality, observer-fiber two-point minimax lower bound, online collision monotonicity under trace extensions, prefix budget violation monotonicity, and boundary-sufficient composable LGGG certificates with zero `sorry` and standard Lean core axioms only. Build with `cd lean4 && lake build`.
 
 ## Run without installing anything
@@ -120,7 +120,7 @@ Installation requires a compatible local setuptools installation. It is unnecess
 | Decoder-or-collision | Groups finite observations by report, constructs a decoder on the realized image or exhibits a colliding pair, and replays either certificate. | A decoder is certified only on the supplied table. A collision certifies report insufficiency in this model, not which history occurred. |
 | Streaming fiber monitor | Ingests state observations incrementally, tracks realized report fibers, and immediately detects collisions $p(x_1) = p(x_2)$ with $q(x_1) \ne q(x_2)$. | Transitions contract status from `COMPOSABLE_LGGG` to `OBSTRUCTED_LGGR` upon the first observed collision; emits `lggr.online_collision.v1`. |
 | Witness composition | Checks endpoint identity, signed differences, local verdicts, smoke observations, baseline, policy manifest, evaluator/spec/representation/authority identity, and open obligations. | Its global query is the declared integer budget requirement, not arbitrary software semantics. |
-| Streaming audit monitor | Evaluates $G_1$â€“$G_4$ conditional gluing prefix-by-prefix, tracks signed delta drift, computes evaluator defect $\Delta_E \in \{-1,0,1\}$, and enforces early stopping under `every_prefix`. | Emits `lggr.online_alert.v1` and halts execution upon prefix budget breach or local/global defect. |
+| Streaming audit monitor | Evaluates $G_1$–$G_4$ conditional gluing prefix-by-prefix, tracks signed delta drift, computes evaluator defect $\Delta_E \in \{-1,0,1\}$, and enforces early stopping under `every_prefix`. | Emits `lggr.online_alert.v1` and halts execution upon prefix budget breach or local/global defect. |
 | Evaluator defect | Computes `Eg - E1*E2` and labels NGD/ZDR/PGD. | Requires an independently supplied global verdict. It does not manufacture one from local passes. |
 | Exact L1 certificate | Checks `D.T z = 0`, `abs(z) <= w`, the primal residual and equality of bounds. | Verifies supplied rational certificates; does not optimize an arbitrary repair problem for you. |
 | Cochain classification | Exact rational elimination separates repairability, closure failure and closed/nonexact classes. | A degree-two differential must be supplied before any H1 classification. |

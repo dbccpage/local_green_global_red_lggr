@@ -56,11 +56,13 @@ def reservation(payload):
 
 
 def response_message(raw, model):
+    if not isinstance(raw, dict):
+        raise ValueError("provider response must be an object")
     actual = raw.get("model", "")
-    if actual != model and not re.fullmatch(re.escape(model) + r"-\d{4}-\d{2}-\d{2}", actual):
+    if not isinstance(actual, str) or (actual != model and not re.fullmatch(re.escape(model) + r"-\d{4}-\d{2}-\d{2}", actual)):
         raise ValueError("provider response model differs from requested identity")
     choices = raw.get("choices")
-    if not isinstance(choices, list) or len(choices) != 1 or not isinstance(choices[0].get("message"), dict):
+    if not isinstance(choices, list) or len(choices) != 1 or not isinstance(choices[0], dict) or not isinstance(choices[0].get("message"), dict):
         raise ValueError("provider response has no single assistant message")
     if choices[0].get("finish_reason") in ("length", "error", "content_filter"):
         raise ValueError("provider output incomplete or filtered")
@@ -69,7 +71,8 @@ def response_message(raw, model):
 
 
 def charge(raw, reserved):
-    cost = raw.get("usage", {}).get("cost")
+    usage = raw.get("usage") if isinstance(raw, dict) else None
+    cost = usage.get("cost") if isinstance(usage, dict) else None
     if type(cost) in (int, float, str):
         try:
             value = Decimal(str(cost))
@@ -78,6 +81,15 @@ def charge(raw, reserved):
         except InvalidOperation:
             pass
     return reserved, False
+
+
+class RejectRedirects(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, "redirect refused", headers, fp)
+
+
+def open_private(req, timeout=60):
+    return urllib.request.build_opener(RejectRedirects()).open(req, timeout=timeout)
 
 
 class LiveClient:
@@ -101,9 +113,9 @@ class LiveClient:
               data=json.dumps(payload).encode(), headers={"Authorization": "Bearer " + self.key,
               "Content-Type": "application/json"}, method="POST")
         try:
-            with urllib.request.urlopen(req, timeout=60) as response:
+            with open_private(req, timeout=60) as response:
                 raw = json.load(response)
-        except (urllib.error.URLError, TimeoutError, OSError) as error:
+        except (urllib.error.URLError, TimeoutError, OSError, ValueError) as error:
             code = getattr(error, "code", None)
             self.events.emit("api_error", {"http_status": code, "kind": type(error).__name__,
                              "charged_upper_bound_usd": str(reserved)})
