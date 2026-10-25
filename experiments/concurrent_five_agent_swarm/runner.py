@@ -18,7 +18,7 @@ from .client import BatchClient
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-SEEDS = {"development": [5100], "evaluation": list(range(5200, 5218))}
+SEEDS = {"development": [5100], "evaluation": list(range(5200, 5218)), "continuation": list(range(5214, 5218))}
 PRIOR_SPEND = Decimal("0.57951748")
 
 
@@ -131,7 +131,7 @@ def campaign(client, events, config, output=None):
 def _campaign(client, events, config, output, resources):
     results = []
     for seed in config["seeds"]:
-        kind = ("withdrawal", "infeasible", "control")[config["seeds"].index(seed) % 3]
+        kind = ("withdrawal", "infeasible", "control")[(seed-5200) % 3 if seed >= 5200 else 0]
         state = fixture(seed)
         events.emit("case_start", {"seed": seed, "kind": kind, "fixture": state})
         board = Board(state, output / f"{seed}-baseline.sqlite" if output else ":memory:")

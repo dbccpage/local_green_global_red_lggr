@@ -8322,6 +8322,286 @@ class StreamingGovernedPolicyRelaxationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingMinimumSlackPolicyRelaxationMonitor:
+    r"""Audit minimum-cost ($\ell^1$ minimum-slack) Pareto policy relaxation vs. over-permissive budget grants (LGGR VIII §5.24).
+
+    Given an initial policy parameter vector $P_0 \in \mathbb{Q}^d$ whose coupled feasible
+    intersection is empty ($\mathcal{F}_A(P_0) \cap \mathcal{F}_B(P_0) = \emptyset$) and a
+    candidate menu $\{P_1, \dots, P_m\} \subset \mathbb{Q}^d$, computes for each candidate:
+      - Exact $\ell^1$ policy slack $\Delta_{\mathrm{policy}}(P_k) = \lVert P_k - P_0 \rVert_1$,
+      - Minimum Pareto-restoring slack floor
+        $\Delta_{\mathrm{policy}}^* = \min \{ \lVert P_k - P_0 \rVert_1 : \mathcal{F}_A(P_k) \cap \mathcal{F}_B(P_k) \ne \emptyset \}$.
+
+    Separates:
+      1. **Under-relaxed candidate ($P_{\mathrm{under}}$):** $\mathcal{F}_A(P_k) \cap \mathcal{F}_B(P_k) = \emptyset$
+         (``UNDER_RELAXED_POLICY_STILL_INFEASIBLE_LGGR``).
+      2. **Over-permissive budget grant ($P_{\mathrm{over}}$):** $\mathcal{F}_A(P_k) \cap \mathcal{F}_B(P_k) \ne \emptyset$
+         and both coupled monitors pass ($L_{\mathrm{relax}} = 1$), but
+         $\lVert P_{\mathrm{over}} - P_0 \rVert_1 > \Delta_{\mathrm{policy}}^*$, yielding
+         $E_{g,\mathrm{min\_slack}} = 0$ and $\Delta_{E,\mathrm{min\_slack}} = -1$
+         (``OVER_PERMISSIVE_POLICY_RELAXATION_SLACK_BREACH_LGGR``).
+      3. **Minimum-slack Pareto policy relaxation ($P_*$):** $\mathcal{F}_A(P_*) \cap \mathcal{F}_B(P_*) \ne \emptyset$,
+         both coupled monitors pass ($L_{\mathrm{relax}} = 1$), and
+         $\lVert P_* - P_0 \rVert_1 = \Delta_{\mathrm{policy}}^*$ (zero excess slack), yielding
+         $E_{g,\mathrm{min\_slack}} = 1$ and $\Delta_{E,\mathrm{min\_slack}} = 0$
+         (``MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG``).
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not isinstance(scope_id, str) or not scope_id.strip():
+            raise ValidationError("scope_id must be a non-empty string")
+        self.scope_id = scope_id.strip()
+        self.evaluations: list[dict[str, Any]] = []
+
+    def record_minimum_slack_evaluation(
+        self,
+        *,
+        evaluation_id: str,
+        pair_name: str,
+        model_id: str,
+        prior_escalation_receipt_sha256: str,
+        prior_policy_sha256: str,
+        prior_policy_vector: Sequence[int | float | str | Fraction],
+        candidate_policies: Sequence[Mapping[str, Any]],
+        rounds: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        if not isinstance(evaluation_id, str) or not evaluation_id.strip():
+            raise ValidationError("evaluation_id must be a non-empty string")
+        if not isinstance(pair_name, str) or not pair_name.strip():
+            raise ValidationError("pair_name must be a non-empty string")
+        if not isinstance(model_id, str) or not model_id.strip():
+            raise ValidationError("model_id must be a non-empty string")
+
+        esc_sha = _validate_sha256_hex(prior_escalation_receipt_sha256, "prior_escalation_receipt_sha256")
+        p0_sha = _validate_sha256_hex(prior_policy_sha256, "prior_policy_sha256")
+
+        if not isinstance(prior_policy_vector, Sequence) or len(prior_policy_vector) == 0:
+            raise ValidationError("prior_policy_vector must be a non-empty sequence")
+        p0_vec = [rational(v) for v in prior_policy_vector]
+        dim = len(p0_vec)
+
+        if not isinstance(candidate_policies, Sequence) or len(candidate_policies) < 2:
+            raise ValidationError("candidate_policies must contain at least 2 candidate policy relaxations")
+
+        normalized_candidates: list[dict[str, Any]] = []
+        candidate_by_id: dict[str, dict[str, Any]] = {}
+        seen_shas: set[str] = set()
+
+        for idx, cand in enumerate(candidate_policies):
+            if not isinstance(cand, Mapping):
+                raise ValidationError(f"candidate_policies[{idx}] must be a mapping")
+            pid = cand.get("policy_id")
+            if not isinstance(pid, str) or not pid.strip():
+                raise ValidationError(f"candidate_policies[{idx}].policy_id must be a non-empty string")
+            pid = pid.strip()
+            if pid in candidate_by_id:
+                raise ValidationError(f"duplicate candidate policy_id: {pid}")
+            psha = _validate_sha256_hex(cand.get("policy_sha256"), f"candidate_policies[{idx}].policy_sha256")
+            if psha == p0_sha:
+                raise ValidationError(f"candidate_policies[{idx}].policy_sha256 must differ from prior_policy_sha256")
+            if psha in seen_shas:
+                raise ValidationError(f"duplicate candidate policy_sha256: {psha}")
+            seen_shas.add(psha)
+
+            raw_vec = cand.get("policy_vector")
+            if not isinstance(raw_vec, Sequence) or len(raw_vec) != dim:
+                raise ValidationError(
+                    f"candidate_policies[{idx}].policy_vector must have length {dim}"
+                )
+            p_vec = [rational(v) for v in raw_vec]
+            restores = cand.get("restores_pareto_intersection")
+            if not isinstance(restores, bool):
+                raise ValidationError(
+                    f"candidate_policies[{idx}].restores_pareto_intersection must be a boolean"
+                )
+            l1_slack = sum((abs(p_vec[j] - p0_vec[j]) for j in range(dim)), Fraction(0))
+            c_entry: dict[str, Any] = {
+                "policy_id": pid,
+                "policy_sha256": psha,
+                "policy_vector": p_vec,
+                "restores_pareto_intersection": restores,
+                "l1_policy_slack": l1_slack,
+            }
+            normalized_candidates.append(c_entry)
+            candidate_by_id[pid] = c_entry
+
+        feasible_candidates = [c for c in normalized_candidates if c["restores_pareto_intersection"]]
+        if not feasible_candidates:
+            raise ValidationError(
+                "candidate_policies must include at least one candidate with restores_pareto_intersection=True"
+            )
+
+        min_pareto_slack = min(c["l1_policy_slack"] for c in feasible_candidates)
+        optimal_policy_ids = [
+            c["policy_id"]
+            for c in feasible_candidates
+            if c["l1_policy_slack"] == min_pareto_slack
+        ]
+        for c in normalized_candidates:
+            if c["restores_pareto_intersection"]:
+                c["excess_policy_slack_l1"] = c["l1_policy_slack"] - min_pareto_slack
+                c["is_minimum_slack_pareto"] = bool(c["l1_policy_slack"] == min_pareto_slack)
+            else:
+                c["excess_policy_slack_l1"] = None
+                c["is_minimum_slack_pareto"] = False
+
+        if not isinstance(rounds, Sequence) or len(rounds) == 0:
+            raise ValidationError("rounds must be a non-empty sequence")
+
+        normalized_rounds: list[dict[str, Any]] = []
+        for r_idx, rnd in enumerate(rounds):
+            if not isinstance(rnd, Mapping):
+                raise ValidationError(f"rounds[{r_idx}] must be a mapping")
+            sel_id = rnd.get("selected_policy_id")
+            if not isinstance(sel_id, str) or sel_id.strip() not in candidate_by_id:
+                raise ValidationError(
+                    f"rounds[{r_idx}].selected_policy_id must reference a declared candidate policy"
+                )
+            sel_cand = candidate_by_id[sel_id.strip()]
+            auth_ok = rnd.get("authority_grant_verified")
+            la = rnd.get("local_a_pass")
+            ga = rnd.get("global_a_pass")
+            lb = rnd.get("local_b_pass")
+            gb = rnd.get("global_b_pass")
+            if (
+                not isinstance(auth_ok, bool)
+                or not isinstance(la, bool)
+                or not isinstance(ga, bool)
+                or not isinstance(lb, bool)
+                or not isinstance(gb, bool)
+            ):
+                raise ValidationError(
+                    f"rounds[{r_idx}] must specify boolean authority_grant_verified, local_a_pass, global_a_pass, local_b_pass, global_b_pass"
+                )
+
+            restores_pareto = bool(sel_cand["restores_pareto_intersection"])
+            sel_slack: Fraction = sel_cand["l1_policy_slack"]
+            excess_slack: Fraction = sel_slack - min_pareto_slack
+            is_min_slack = bool(restores_pareto and excess_slack == 0)
+
+            pair_joint_pass = bool(auth_ok and restores_pareto and la and ga and lb and gb)
+            local_pass = pair_joint_pass
+            global_pass = bool(pair_joint_pass and is_min_slack)
+            defect = int(global_pass) - int(local_pass)
+
+            if not auth_ok:
+                r_status = "UNAUTHORIZED_POLICY_RELAXATION_REJECTED_LGGR"
+            elif not restores_pareto:
+                r_status = "UNDER_RELAXED_POLICY_STILL_INFEASIBLE_LGGR"
+            elif not pair_joint_pass:
+                r_status = "POST_RELAXATION_PAIR_OBSTRUCTED_LGGR"
+            elif not is_min_slack:
+                r_status = "OVER_PERMISSIVE_POLICY_RELAXATION_SLACK_BREACH_LGGR"
+            else:
+                r_status = "MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG"
+
+            r_entry: dict[str, Any] = {
+                "round_index": int(rnd.get("round_index", r_idx)),
+                "feedback_mode": str(rnd.get("feedback_mode", f"round_{r_idx}")),
+                "selected_policy_id": sel_cand["policy_id"],
+                "selected_policy_sha256": sel_cand["policy_sha256"],
+                "authority_grant_verified": auth_ok,
+                "restores_pareto_intersection": restores_pareto,
+                "selected_l1_policy_slack": sel_slack,
+                "minimum_pareto_l1_slack": min_pareto_slack,
+                "excess_policy_slack_l1": excess_slack,
+                "is_minimum_slack_pareto": is_min_slack,
+                "local_a_pass": la,
+                "global_a_pass": ga,
+                "local_b_pass": lb,
+                "global_b_pass": gb,
+                "local_pass": local_pass,
+                "global_pass": global_pass,
+                "defect": defect,
+                "status_a": str(rnd.get("status_a", "")),
+                "status_b": str(rnd.get("status_b", "")),
+                "round_status": r_status,
+            }
+            if "action" in rnd:
+                r_entry["action"] = rnd["action"]
+            normalized_rounds.append(r_entry)
+
+        r0 = normalized_rounds[0]
+        r_final = normalized_rounds[-1]
+        r0_over_permissive = bool(
+            r0["round_status"] == "OVER_PERMISSIVE_POLICY_RELAXATION_SLACK_BREACH_LGGR"
+        )
+        single_round_ok = bool(r0["global_pass"])
+        multi_round_ok = bool(r_final["global_pass"])
+
+        entry: dict[str, Any] = {
+            "evaluation_id": evaluation_id.strip(),
+            "pair_name": pair_name.strip(),
+            "model_id": model_id.strip(),
+            "prior_escalation_receipt_sha256": esc_sha,
+            "prior_policy_sha256": p0_sha,
+            "prior_policy_vector": p0_vec,
+            "minimum_pareto_l1_slack": min_pareto_slack,
+            "optimal_minimum_slack_policy_ids": optimal_policy_ids,
+            "candidate_policies": normalized_candidates,
+            "rounds": normalized_rounds,
+            "round_1_over_permissive_breach": r0_over_permissive,
+            "converged_single_round": single_round_ok,
+            "converged_multi_round": multi_round_ok,
+            "evaluation_status": (
+                "MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG"
+                if multi_round_ok
+                else r_final["round_status"]
+            ),
+        }
+        self.evaluations.append(entry)
+        return json_value(entry)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("cannot emit receipt without recorded minimum-slack evaluations")
+        n = len(self.evaluations)
+        single_cnt = sum(1 for e in self.evaluations if e["converged_single_round"])
+        multi_cnt = sum(1 for e in self.evaluations if e["converged_multi_round"])
+        over_cnt = sum(1 for e in self.evaluations if e["round_1_over_permissive_breach"])
+
+        single_rate = Fraction(single_cnt, n)
+        multi_rate = Fraction(multi_cnt, n)
+        gain_rate = multi_rate - single_rate
+        over_rate = Fraction(over_cnt, n)
+
+        over_ids = [
+            e["evaluation_id"] for e in self.evaluations if e["round_1_over_permissive_breach"]
+        ]
+        unconverged_ids = [
+            e["evaluation_id"] for e in self.evaluations if not e["converged_multi_round"]
+        ]
+
+        if multi_cnt == n:
+            status = "MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "OVER_PERMISSIVE_OR_UNCONVERGED_POLICY_RELAXATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_minimum_slack_policy_relaxation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "single_round_minimum_slack_converged_count": single_cnt,
+            "multi_round_minimum_slack_converged_count": multi_cnt,
+            "round_1_over_permissive_breach_count": over_cnt,
+            "single_round_minimum_slack_rate": single_rate,
+            "multi_round_minimum_slack_rate": multi_rate,
+            "multi_round_minimum_slack_gain": gain_rate,
+            "round_1_over_permissive_breach_rate": over_rate,
+            "monotonic_convergence_verified": multi_rate >= single_rate,
+            "round_1_over_permissive_evaluation_ids": over_ids,
+            "unconverged_evaluation_ids": unconverged_ids,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

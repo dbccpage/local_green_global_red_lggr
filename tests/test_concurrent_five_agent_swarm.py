@@ -81,6 +81,15 @@ class ConcurrentSwarmTests(unittest.TestCase):
             state['active_slots'] = list(active)
             self.assertEqual(capacity_diagnostics(state)['feasible'], feasible(state))
 
+    def test_continuation_preserves_original_conditions_without_replacing_interrupted_seed(self):
+        from experiments.concurrent_five_agent_swarm.runner import SEEDS
+        self.assertEqual(SEEDS['continuation'], [5214, 5215, 5216, 5217])
+        events = Events()
+        client = BatchClient(events, '1', transport=fake_transport)
+        result = campaign(client, events, {'seeds': SEEDS['continuation']})
+        self.assertEqual([c['kind'] for c in result['cases']], ['control', 'withdrawal', 'infeasible', 'control'])
+        self.assertEqual(result['invalid_execution_count'], 0)
+
     def test_complete_campaign_replay_rejects_rehashed_prompt_receipt_and_summary_edits(self):
         with tempfile.TemporaryDirectory() as td:
             path = Path(td)/'events.jsonl'
@@ -104,6 +113,9 @@ class ConcurrentSwarmTests(unittest.TestCase):
             tamper('api_request', lambda d: d['request']['messages'][0].update(content='nonsense'))
             tamper('gate', lambda d: d.update(global_pass=not d['global_pass']))
             tamper('summary', lambda d: d.update(api_attempts=0))
+            tamper('arm_result', lambda d: d.update(outcome='forged'))
+            tamper('tool', lambda d: d.update(result={'accepted': True}))
+            tamper('gate', lambda d: d.update(certificate={'forged': True}))
             tamper('api_response', lambda d: d.update(charged_usd='0'))
             path.write_text('\n'.join(json.dumps(r) for r in events.records), encoding='utf-8')
             (Path(td)/'summary.json').write_text(json.dumps({**result, 'invalid_execution_count': 1}), encoding='utf-8')

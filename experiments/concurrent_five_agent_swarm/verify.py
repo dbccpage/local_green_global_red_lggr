@@ -40,19 +40,34 @@ def verify(directory):
         if result.returncode:
             raise ValueError(result.stderr)
         replay = json.loads(result.stdout)
-    summary = json.loads((directory / "summary.json").read_text(encoding="utf-8"))
+    # The frozen replay has validated every event, including interrupted runs.
+    # Derive physical outputs from execution events, not only a final summary.
+    expected = {}
+    for event in rows:
+        kind, data = event["kind"], event["data"]
+        if kind == "case_start":
+            seed = data["seed"]
+            expected[f"{seed}-baseline.sqlite"] = []
+        elif kind == "initial_execution" and data["executed"]:
+            expected[f"{seed}-baseline.sqlite"] = data["rows"]
+        elif kind == "arm_start":
+            expected[f"{seed}-{data['arm']}.sqlite"] = [
+                {"worker": w, **p} for w,p in sorted(data["state"]["completed"].items())]
+        elif kind == "execution" and data["executed"]:
+            expected[f"{seed}-{data['arm']}.sqlite"] = data["rows"]
+    if {p.name for p in directory.glob("*.sqlite")} != set(expected):
+        raise ValueError("SQLite file set differs")
     database_count = 0
-    for case in summary.get("cases", []):
-        expected = {f"{case['seed']}-{a['arm']}.sqlite": a["rows"] for a in case["arms"]}
-        baseline = [] if case["baseline_failed"] else [r for r in case["arms"][0]["rows"] if r["worker"] in ("worker-0", "worker-1")]
-        expected[f"{case['seed']}-baseline.sqlite"] = baseline
-        for filename, wanted in expected.items():
-            db = sqlite3.connect((directory / filename).as_uri()+"?mode=ro", uri=True)
-            actual = [dict(zip(("worker", "slot", "total_cents", "epoch"), r)) for r in db.execute("SELECT worker,slot,total_cents,epoch FROM dispatch ORDER BY worker")]
-            db.close()
-            if actual != wanted:
-                raise ValueError("SQLite output differs: " + filename)
-            database_count += 1
+    for filename, wanted in expected.items():
+        db = sqlite3.connect((directory / filename).as_uri()+"?mode=ro", uri=True)
+        actual = [dict(zip(("worker", "slot", "total_cents", "epoch"), r)) for r in db.execute("SELECT worker,slot,total_cents,epoch FROM dispatch ORDER BY worker")]
+        db.close()
+        if actual != wanted:
+            raise ValueError("SQLite output differs: " + filename)
+        database_count += 1
+    replay["completed_cases"] = sum(e["kind"] == "case_result" for e in rows)
+    replay["attempted_cases"] = sum(e["kind"] == "case_start" for e in rows)
+    replay["stopped"] = rows[-1]["kind"] == "stopped"
     return {"run": directory.name, "source_commit_verified": True, "source_files": len(metadata["source_hashes"]),
             "sqlite_files_verified": database_count, **replay}
 

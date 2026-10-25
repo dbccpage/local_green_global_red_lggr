@@ -2,7 +2,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from decimal import Decimal
 import json
-import math
 import threading
 import time
 import urllib.request
@@ -65,6 +64,8 @@ class BatchClient:
                 result = {"error": "invalid_json", "response_text": body}
         except Exception as error:
             result = {"error": type(error).__name__, "http_status": getattr(error, "code", None)}
+            if isinstance(error, urllib.error.HTTPError):
+                error.close()
         return {**result, "started_ns": started, "finished_ns": time.monotonic_ns()}
 
     def batch(self, calls):

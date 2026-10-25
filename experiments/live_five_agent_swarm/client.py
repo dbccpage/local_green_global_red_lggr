@@ -117,6 +117,8 @@ class LiveClient:
                 raw = json.load(response)
         except (urllib.error.URLError, TimeoutError, OSError, ValueError) as error:
             code = getattr(error, "code", None)
+            if isinstance(error, urllib.error.HTTPError):
+                error.close()
             self.events.emit("api_error", {"http_status": code, "kind": type(error).__name__,
                              "charged_upper_bound_usd": str(reserved)})
             raise RunStopped("provider request failed; reserved cost retained") from None

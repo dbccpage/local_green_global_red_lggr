@@ -1,0 +1,5 @@
+{
+  "reason": "provider failure or over-reservation charge; all in-flight requests settled",
+  "api_attempts": 947,
+  "charged_or_reserved_usd": "2.57415122"
+}

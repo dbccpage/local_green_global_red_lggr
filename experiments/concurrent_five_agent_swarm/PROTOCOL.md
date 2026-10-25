@@ -54,3 +54,21 @@ rates. Pairwise B/C counts are descriptive, not a powered superiority test.
 Safety is enforced by the common complete execution gate. Synthetic injected
 faults and a small fixed model/fixture family do not establish population failure
 rates, general convergence, or a unique LGGR advantage.
+
+## Operational continuation amendment
+
+The frozen v1 evaluation stopped on an HTTP 429 for Gemini during seed 5213,
+arm A, after C had completed its safe escalation. Seeds 5200-5212 finished;
+5214-5217 never started. Source v2 adds a continuation phase containing ONLY
+5214-5217 with their original conditions (control, withdrawal, infeasible,
+control). Seed 5213 is not retried or replaced. Its completed C result remains,
+A is interrupted and B was not run. The failed call's USD 0.031331 reservation
+remains in cumulative spending. The continuation allocation is USD 2.
+
+No agent prompt, feedback, tool, retry limit, or admission criterion changes.
+Condition selection now uses the absolute seed offset so a subset retains its
+original condition. Current main is integrated (its new unrelated monitor does
+not change the monitors used here); HTTP error handles are closed. Verification
+now checks completed and partial SQLite outputs after an interrupted run.
+All v1 evidence and its committed source archive remain unchanged. The complete
+18-seed matrix includes interrupted and unstarted arms in its denominators.
