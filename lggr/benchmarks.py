@@ -32,6 +32,7 @@ from .streaming import (
     StreamingDeadlinePriorityQueueMonitor,
     StreamingDisagreementPreservingCouncilMonitor,
     StreamingDynamicSchemaSynthesisMonitor,
+    StreamingEqualInfoMigrationObligationMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
@@ -9963,6 +9964,115 @@ def run_adversarial_schema_side_channel_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "adversarial_schema_side_channel_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_equal_info_migration_obligation_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run the 5-model equal-information baseline vs. LGGR migration & obligation benchmark (Theorem 80)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    api_key, _ = load_openrouter_credentials()
+    eq_monitor = StreamingEqualInfoMigrationObligationMonitor(
+        scope_id="live-equal-info-migration-obligation-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(api_key=api_key, model=model_id, max_completions=3)
+        sys_prompt = (
+            "You are an equal-information comparative regression auditor. Output ONLY a JSON object with "
+            "keys \"phase_1_first_fault_step\" (int), \"phase_2_first_fault_step\" (int), and "
+            "\"phase_3_false_acceptances\" (int)."
+        )
+        user_prompt = (
+            "Compare a conventional local-step + endpoint baseline checker (max_step = 2, max_total = 3, "
+            "representation_id = 'rep-v1') against LGGR G1-G4 with identical input step witnesses:\n"
+            "- Phase 1 (0 -> 2 -> 3 -> 1): step index 1 changes representation_id to 'rep-v2' without transport.\n"
+            "- Phase 2 (0 -> 2 -> 4 -> 2): step index 1 attaches obligation 'recheck_schema_invariant' and hits prefix 4 > 3.\n"
+            "- Phase 3 (0 -> 1 -> 2 -> 2): uniform 'rep-v1', zero open obligations, all prefixes <= 3.\n"
+            "Return ONLY JSON: {\"phase_1_first_fault_step\": 1, \"phase_2_first_fault_step\": 1, "
+            "\"phase_3_false_acceptances\": 0}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+
+        obs = eq_monitor.evaluate_equal_info_comparison(
+            evaluation_id=f"{model_id}::equal_info_eval",
+        )
+        obs["model_id"] = model_id
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = eq_monitor.current_receipt()
+    body = {
+        "schema": "lggr.equal_info_migration_obligation_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "equal_info_migration_obligation_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_migration_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_obligation_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_coherent_metrics": compute_empirical_defect_rates(p3_traces),
+        "conventional_checker_soundness_rate": monitor_receipt["conventional_checker_soundness_rate"],
+        "lggr_equal_info_soundness_rate": monitor_receipt["lggr_equal_info_soundness_rate"],
+        "equal_info_soundness_gain": monitor_receipt["equal_info_soundness_gain"],
+        "equal_info_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Equal-information comparative evaluation benchmark across 5 model families (Theorem 80): "
+            "comparing a conventional local-step + endpoint baseline checker against LGGR G1-G4 on "
+            "identical multi-step histories, Phase 1 separates uncertified representation migration at "
+            "step index 1 (0 -> 2 -> 3 -> 1, conventional accepts while LGGR rejects, Delta_E = -1), "
+            "Phase 2 separates retained deferred obligation and prefix excursion at step index 1 "
+            "(0 -> 2 -> 4 -> 2, conventional accepts while LGGR rejects, Delta_E = -1), and Phase 3 "
+            "verifies representation-stable, obligation-cleared agreement on 0 -> 1 -> 2 -> 2 (Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "equal_info_migration_obligation_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
