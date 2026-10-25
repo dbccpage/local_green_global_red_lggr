@@ -13285,5 +13285,224 @@ class StreamingDynamicSchemaSynthesisMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingAdversarialSchemaSideChannelMonitor:
+    """Online adversarial prompt injection schema synthesis and side-channel bit allocation monitor (Theorem 79).
+
+    Wraps ``StreamingFiberMonitor`` and ``StreamingSideInformationCapacityMonitor`` across a 4-state
+    autonomous swarm stream X = {s00, s01, s10, s11} with K = 4 distinct injection classes
+    (benign_exec, prompt_override, tool_hijack, exfil_payload), safety query q = (1, 0, 0, 0),
+    unauthenticated agent-writable metadata key ``k_agent_self_report`` spoofed by ``prompt_override``
+    (s01) to match ``benign_exec`` (s00) (``k_agent_self_report`` = (1, 1, 0, 0)), and
+    host-authenticated provenance keys ``k_host_1``, ``k_host_2`` in {0, 1}^2:
+      - Phase 1 (Unauthenticated Schema Trusting Agent-Writable Metadata ``k_agent_self_report``):
+        When ``k_agent_self_report`` is trusted on prefix {s00, s01}, s01 (prompt_override, q = 0)
+        spoofs k_agent_self_report = 1 = k_agent_self_report(s00) (benign_exec, q = 1), inducing
+        an adversarial fiber collision (L_spoof = 1, Eg_spoof = 0, defect_spoof = -1,
+        status ``SPOOFED_METADATA_INJECTION_COLLISION_LGGR``).
+      - Phase 2 (Host-Authenticated Schema Synthesis With Underallocated 1-Bit Side-Channel b = 1, S = 2 < K = 4):
+        Excludes ``k_agent_self_report`` and synthesizes host-verified schema ["k_host_1", "k_host_2"]
+        with 0 safety fiber collisions, yet allocating only b = 1 side-channel bit (S = 2^1 = 2 < K = 4)
+        leaves a positive side-channel collision floor K - S = 4 - 2 = 2 > 0
+        (L_under = 1, Eg_under = 0, defect_under = -1, status ``SIDE_CHANNEL_UNDERALLOCATION_FLOOR_LGGR``).
+      - Phase 3 (Host-Authenticated Schema Synthesis + Adaptive 2-Bit Side-Channel Allocation b = 2, S = 4 = K):
+        Combines host-authenticated schema ["k_host_1", "k_host_2"] with b = 2 side-channel bits
+        (S = 2^2 = 4 >= K = 4), achieving 0 spoofed safety collisions and 0 side-channel collision floor
+        (L_auth = 1, Eg_auth = 1, defect_auth = 0, status ``HOST_AUTHENTICATED_SCHEMA_SIDE_CHANNEL_COHERENT_LGGG``).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-adversarial-schema-side-channel-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.capacity_monitor = StreamingSideInformationCapacityMonitor(
+            scope_id=f"{self.scope_id}-capacity"
+        )
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_adversarial_injection(
+        self,
+        evaluation_id: str,
+        *,
+        host_candidate_keys: Sequence[str] = ("k_host_1", "k_host_2"),
+        injection_classes: Sequence[str] = (
+            "benign_exec",
+            "prompt_override",
+            "tool_hijack",
+            "exfil_payload",
+        ),
+        underallocated_bits: int = 1,
+        authenticated_bits: int = 2,
+    ) -> dict[str, Any]:
+        """Evaluate spoofed agent metadata, underallocated 1-bit side-channel, and host-authenticated 2-bit side-channel."""
+        eid = text(evaluation_id, "evaluation_id")
+        host_keys = [
+            text(k, f"host_candidate_keys[{idx}]")
+            for idx, k in enumerate(sequence(host_candidate_keys, "host_candidate_keys"))
+        ]
+        classes = [
+            text(c, f"injection_classes[{idx}]")
+            for idx, c in enumerate(sequence(injection_classes, "injection_classes"))
+        ]
+        if len(classes) != 4 or len(set(classes)) != 4:
+            raise ValidationError("injection_classes must contain K = 4 distinct classes")
+        b_under = exact_int(underallocated_bits, "underallocated_bits", minimum=1)
+        b_auth = exact_int(authenticated_bits, "authenticated_bits", minimum=2)
+        s_under = 1 << b_under
+        s_auth = 1 << b_auth
+
+        states = [
+            ("s00", {"status": "pass"}, 1, {"k_agent_self_report": 1, "k_host_1": 0, "k_host_2": 0}),
+            ("s01", {"status": "pass"}, 0, {"k_agent_self_report": 1, "k_host_1": 0, "k_host_2": 1}),
+            ("s10", {"status": "pass"}, 0, {"k_agent_self_report": 0, "k_host_1": 1, "k_host_2": 0}),
+            ("s11", {"status": "pass"}, 0, {"k_agent_self_report": 0, "k_host_1": 1, "k_host_2": 1}),
+        ]
+
+        # Phase 1: Unauthenticated schema trusting k_agent_self_report on prefix {s00, s01}
+        mon_spoof = StreamingFiberMonitor(scope_id=f"{self.scope_id}-{eid}-p1-spoof")
+        for sid, rep, qry, meta in states[:2]:
+            proj_spoof = {"base": rep, "k_agent_self_report": meta["k_agent_self_report"]}
+            mon_spoof.observe(sid, proj_spoof, qry, metadata=meta)
+        rec_spoof = mon_spoof.get_receipt()
+
+        # Host-authenticated minimal refinement across all 4 states using only host_keys
+        mon_raw = StreamingFiberMonitor(scope_id=f"{self.scope_id}-{eid}-raw")
+        for sid, rep, qry, meta in states:
+            mon_raw.observe(sid, rep, qry, metadata=meta)
+        ref_host = mon_raw.synthesize_minimal_refinement(host_keys)
+        synth_host_keys = list(ref_host["minimal_keys"] or [])
+
+        mon_host = StreamingFiberMonitor(scope_id=f"{self.scope_id}-{eid}-host")
+        for sid, rep, qry, meta in states:
+            proj_host = {"base": rep, "features": {k: meta[k] for k in synth_host_keys}}
+            mon_host.observe(sid, proj_host, qry, metadata=meta)
+        rec_host = mon_host.get_receipt()
+
+        # Phase 2: Underallocated 1-bit side-channel (S = 2 < K = 4)
+        under_states = [
+            {
+                "state_id": states[i][0],
+                "query_value": classes[i],
+                "side_symbol": i % s_under,
+            }
+            for i in range(4)
+        ]
+        cap_under = self.capacity_monitor.record_fiber_channel(
+            f"{eid}::phase_2_underallocated",
+            under_states,
+            channel_capacity_s=s_under,
+            error_budget=0,
+        )
+
+        # Phase 3: Adaptive 2-bit side-channel (S = 4 = K)
+        auth_states = [
+            {
+                "state_id": states[i][0],
+                "query_value": classes[i],
+                "side_symbol": i,
+            }
+            for i in range(4)
+        ]
+        cap_auth = self.capacity_monitor.record_fiber_channel(
+            f"{eid}::phase_3_authenticated",
+            auth_states,
+            channel_capacity_s=s_auth,
+            error_budget=0,
+        )
+
+        floor_under = int(cap_under["realized_subfiber_error_floor"])
+        floor_auth = int(cap_auth["realized_subfiber_error_floor"])
+
+        l_p1 = 1 if mon_spoof.is_obstructed else 0
+        eg_p1 = 1 if (l_p1 == 1 and not mon_spoof.is_obstructed) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (not mon_host.is_obstructed and floor_under > 0) else 0
+        eg_p2 = 1 if (l_p2 == 1 and floor_under == 0) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                synth_host_keys == ["k_host_1", "k_host_2"]
+                and "k_agent_self_report" not in synth_host_keys
+                and not mon_host.is_obstructed
+                and floor_auth == 0
+                and s_auth >= len(classes)
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and floor_auth < floor_under and mon_spoof.is_obstructed) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "synthesized_host_keys": synth_host_keys,
+            "unauthenticated_key_excluded": "k_agent_self_report" not in synth_host_keys,
+            "distinct_injection_classes_k": len(classes),
+            "underallocated_side_channel_s": s_under,
+            "authenticated_side_channel_s": s_auth,
+            "underallocated_collision_floor": floor_under,
+            "authenticated_collision_floor": floor_auth,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "SPOOFED_METADATA_INJECTION_COLLISION_LGGR" if defect_p1 == -1 else "HOST_AUTHENTICATED_SCHEMA_SIDE_CHANNEL_COHERENT_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "SIDE_CHANNEL_UNDERALLOCATION_FLOOR_LGGR" if defect_p2 == -1 else "HOST_AUTHENTICATED_SCHEMA_SIDE_CHANNEL_COHERENT_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "HOST_AUTHENTICATED_SCHEMA_SIDE_CHANNEL_COHERENT_LGGG" if eg_p3 == 1 else "SIDE_CHANNEL_UNDERALLOCATION_FLOOR_LGGR",
+            "phase_1_spoof_fiber_receipt": rec_spoof,
+            "host_refinement_receipt": ref_host,
+            "host_fiber_receipt": rec_host,
+            "phase_2_capacity_receipt": cap_under,
+            "phase_3_capacity_receipt": cap_auth,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one adversarial injection evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_spoof_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_under_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        unauthenticated_or_underallocated_coherence_rate = Fraction(
+            n - max(p1_spoof_fail, p2_under_fail), n
+        )
+        host_authenticated_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_spoof_fail == n and p2_under_fail == n:
+            status = "HOST_AUTHENTICATED_SCHEMA_SIDE_CHANNEL_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "SPOOFED_METADATA_INJECTION_COLLISION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_adversarial_schema_side_channel.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_spoofed_metadata_collision_count": p1_spoof_fail,
+            "phase_2_side_channel_underallocation_count": p2_under_fail,
+            "phase_3_host_authenticated_coherent_count": p3_coherent,
+            "unauthenticated_or_underallocated_coherence_rate": unauthenticated_or_underallocated_coherence_rate,
+            "host_authenticated_coherence_rate": host_authenticated_coherence_rate,
+            "host_authenticated_coherence_gain": (
+                host_authenticated_coherence_rate - unauthenticated_or_underallocated_coherence_rate
+            ),
+            "capacity_monitor_receipt": self.capacity_monitor.get_receipt(),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 

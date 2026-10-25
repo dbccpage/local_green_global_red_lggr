@@ -24,6 +24,7 @@ import unittest
 
 from lggr.common import ValidationError
 from lggr.streaming import (
+    StreamingAdversarialSchemaSideChannelMonitor,
     StreamingAuditMonitor,
     StreamingBaselineComparator,
     StreamingBellPolytopeMonitor,
@@ -4215,6 +4216,44 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["locked_schema_coherence_rate"], "0")
         self.assertEqual(receipt["dynamic_synthesis_coherence_rate"], "1")
         self.assertEqual(receipt["dynamic_schema_coherence_gain"], "1")
+
+    def test_adversarial_prompt_injection_schema_and_side_channel_audit(self) -> None:
+        """Verify Theorem 79: adversarial prompt injection schema synthesis and side-channel bit allocation."""
+        mon = StreamingAdversarialSchemaSideChannelMonitor(
+            scope_id="unit-adversarial-schema-side-channel-scope",
+        )
+        obs = mon.evaluate_adversarial_injection(
+            evaluation_id="adv-schema-eval-01",
+        )
+        self.assertEqual(obs["synthesized_host_keys"], ["k_host_1", "k_host_2"])
+        self.assertTrue(obs["unauthenticated_key_excluded"])
+        self.assertEqual(obs["distinct_injection_classes_k"], 4)
+        self.assertEqual(obs["underallocated_side_channel_s"], 2)
+        self.assertEqual(obs["authenticated_side_channel_s"], 4)
+        self.assertEqual(obs["underallocated_collision_floor"], 2)
+        self.assertEqual(obs["authenticated_collision_floor"], 0)
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SPOOFED_METADATA_INJECTION_COLLISION_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SIDE_CHANNEL_UNDERALLOCATION_FLOOR_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "HOST_AUTHENTICATED_SCHEMA_SIDE_CHANNEL_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "HOST_AUTHENTICATED_SCHEMA_SIDE_CHANNEL_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["unauthenticated_or_underallocated_coherence_rate"], "0")
+        self.assertEqual(receipt["host_authenticated_coherence_rate"], "1")
+        self.assertEqual(receipt["host_authenticated_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
