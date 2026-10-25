@@ -2785,4 +2785,58 @@ theorem dynamic_boundary_schema_synthesis_under_online_collisions :
   · intro df0 df1 ⟨h0, h1⟩
     rcases h0 with rfl | rfl <;> rcases h1 with rfl | rfl <;> decide
 
+/-- 79. Autonomous swarm dynamic boundary schema synthesis and side-channel bit allocation
+    under adversarial prompt injection:
+    1. Universal spoofed-metadata collision & side-channel bit-underallocation lower bounds:
+       - If an adversarial prompt injection overwrites an unauthenticated agent-writable metadata
+         key k_agent so that k_agent(s_inj) = k_agent(s_safe) = 1 while q(s_safe) = 1 ≠ 0 = q(s_inj),
+         any binary decoder d_ag ∈ {0, 1} depending only on k_agent = 1 incurs error
+         |1 - d_ag| + |0 - d_ag| = 1 across {s_safe, s_inj};
+       - For any K distinct injection classes and side-channel capacity S < K, the realized
+         side-channel collision floor satisfies K - S ≥ 1;
+    2. Concrete 3-phase adversarial prompt injection schema & side-channel separation on X = {s00, s01, s10, s11}
+       with K = 4 injection classes (benign_exec, prompt_override, tool_hijack, exfil_payload),
+       safety query q = (1, 0, 0, 0), spoofed k_agent_self_report = (1, 1, 0, 0), and
+       host-authenticated provenance keys (k_host_1, k_host_2) ∈ {0, 1}^2:
+       - Phase 1 (Unauthenticated schema trusting agent-writable k_agent_self_report):
+         s01 (prompt_override, q = 0) spoofs k_agent_self_report = 1 = k_agent_self_report(s00)
+         (benign_exec, q = 1), inducing an adversarial fiber collision
+         (L_spoof = 1, Eg_spoof = 0, Δ_{E,spoof} = -1);
+       - Phase 2 (Host-authenticated schema ["k_host_1", "k_host_2"] with 1-bit side-channel b = 1, S = 2 < K = 4):
+         excludes k_agent_self_report and separates safety query q, yet S = 2^1 = 2 < K = 4 leaves
+         side-channel root-cause collision floor K - S = 4 - 2 = 2 > 0
+         (L_under = 1, Eg_under = 0, Δ_{E,under} = -1);
+       - Phase 3 (Host-authenticated schema ["k_host_1", "k_host_2"] + adaptive 2-bit side-channel b = 2, S = 4 = K):
+         achieves 0 spoofed safety collisions and 0 side-channel collision floor K - S = 4 - 4 = 0
+         (L_auth = 1, Eg_auth = 1, Δ_{E,auth} = 0). -/
+theorem adversarial_prompt_injection_schema_and_side_channel_audit :
+    ((∀ d_ag : Int, d_ag = 0 ∨ d_ag = 1 →
+        (1 - d_ag).natAbs + (0 - d_ag).natAbs = 1) ∧
+     (∀ k_classes cap_s : Int, cap_s < k_classes → k_classes - cap_s ≥ 1)) ∧
+    (let q_safe : Int := 1; let q_inj : Int := 0;
+     let k_ag_safe : Int := 1; let k_ag_inj : Int := 1;
+     let k_classes : Int := 4;
+     let s_under : Int := 2;
+     let s_auth : Int := 4;
+     let floor_under : Int := k_classes - s_under;
+     let floor_auth : Int := k_classes - s_auth;
+     let l_spoof := if (k_ag_safe = k_ag_inj) ∧ (q_safe ≠ q_inj) then (1 : Int) else 0;
+     let eg_spoof := if (l_spoof = 1) ∧ (q_safe = q_inj) then (1 : Int) else 0;
+     let defect_spoof := eg_spoof - l_spoof;
+     let l_under := if (floor_under = 2) ∧ (floor_under > 0) then (1 : Int) else 0;
+     let eg_under := if (l_under = 1) ∧ (floor_under = 0) then (1 : Int) else 0;
+     let defect_under := eg_under - l_under;
+     let l_auth := if (floor_auth = 0) ∧ (s_auth = k_classes) then (1 : Int) else 0;
+     let eg_auth := if (l_auth = 1) ∧ (floor_auth < floor_under) then (1 : Int) else 0;
+     let defect_auth := eg_auth - l_auth;
+     (floor_under = 2 ∧ floor_auth = 0) ∧
+     (l_spoof = 1 ∧ eg_spoof = 0 ∧ defect_spoof = -1) ∧
+     (l_under = 1 ∧ eg_under = 0 ∧ defect_under = -1) ∧
+     (l_auth = 1 ∧ eg_auth = 1 ∧ defect_auth = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro d_ag hd
+    rcases hd with rfl | rfl <;> decide
+  · intro k_classes cap_s hlt
+    omega
+
 end LggrVIII
