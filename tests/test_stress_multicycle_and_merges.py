@@ -46,6 +46,7 @@ from lggr.streaming import (
     StreamingMayerVietorisMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingOrganizationalGluingMonitor,
+    StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPathKernelMonitor,
     StreamingPolicyRatchetDriftMonitor,
     StreamingPositiveExtensionMonitor,
@@ -3358,6 +3359,218 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["single_round_static_deadline_coherence_rate"], "0")
         self.assertEqual(receipt["multi_round_edf_deadline_coherence_rate"], "1")
         self.assertEqual(receipt["edf_deadline_coherence_gain"], "1")
+
+    def test_overloaded_deadline_bin_packing_and_escalation(self) -> None:
+        """Theorem 65: Overloaded SLA deadline bursts (serial EDF overload vs. halt-and-escalate vs. selective bin-packing)."""
+        mon = StreamingOverloadedDeadlineBinPackingMonitor(
+            scope_id="unit_overloaded_deadline_bin_packing"
+        )
+        rec = mon.record_overloaded_deadline_burst(
+            burst_id="overloaded_burst_3inc_unit",
+            model_id="openai/gpt-4o-mini",
+            prior_deadline_receipt_sha256="sha256_prior_deadline_eval",
+            baseline_policy_sha256="sha256_p0_2_3_0",
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            individual_lease_budget=4,
+            initial_horizon_drift_ceiling=6,
+            expanded_horizon_drift_ceiling=7,
+            serial_edf_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "static_priority_rank": 1,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "static_priority_rank": 2,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "static_priority_rank": 3,
+                    "sla_deadline_tick": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 2,
+                    "completion_tick": 3,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+            overload_escalation_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "static_priority_rank": 1,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "static_priority_rank": 2,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "static_priority_rank": 3,
+                    "sla_deadline_tick": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+            selective_bin_packed_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": "SideInfo_x_SkewRepair",
+                    "static_priority_rank": 1,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "selective_bin_packing_enforced": True,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": "PoE_x_SkewRepair",
+                    "static_priority_rank": 2,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "selective_bin_packing_enforced": True,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": "ProjectiveTower_x_MerminPeres",
+                    "static_priority_rank": 3,
+                    "sla_deadline_tick": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "selective_bin_packing_enforced": True,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+        )
+        p1 = rec["phase_1_serial_edf_overload"]
+        self.assertEqual(p1["local_phase_indicator_L"], 1)
+        self.assertEqual(p1["global_phase_indicator_E_g"], 0)
+        self.assertEqual(p1["phase_evaluator_defect"], -1)
+        self.assertEqual(p1["deadline_miss_count"], 2)
+        self.assertEqual(p1["max_lateness_ticks"], 1)
+        self.assertEqual(p1["phase_status"], "SERIAL_EDF_SLA_DEADLINE_OVERLOAD_LGGR")
+
+        p2 = rec["phase_2_overload_halt_and_escalate"]
+        self.assertEqual(p2["mandatory_slot0_pareto_load_l1_w"], "7")
+        self.assertTrue(p2["slot0_overload_infeasible_under_horizon"])
+        self.assertEqual(p2["required_emergency_horizon_ceiling"], "7")
+        self.assertEqual(p2["required_emergency_horizon_expansion"], "1")
+        self.assertTrue(p2["halt_and_escalate_verified"])
+        self.assertEqual(p2["local_phase_indicator_L"], 1)
+        self.assertEqual(p2["global_phase_indicator_E_g"], 0)
+        self.assertEqual(p2["phase_evaluator_defect"], -1)
+        self.assertEqual(
+            p2["phase_status"], "OVERLOADED_DEADLINE_BURST_HALTED_AND_ESCALATED_LGGR"
+        )
+
+        p3 = rec["phase_3_selective_bin_packed_edf"]
+        self.assertEqual(p3["local_phase_indicator_L"], 1)
+        self.assertEqual(p3["global_phase_indicator_E_g"], 1)
+        self.assertEqual(p3["phase_evaluator_defect"], 0)
+        self.assertEqual(p3["peak_concurrent_weighted_l1_drift"], "7")
+        self.assertEqual(p3["deadline_miss_count"], 0)
+        self.assertEqual(p3["max_lateness_ticks"], 0)
+        self.assertEqual(p3["phase_status"], "EDF_BIN_PACKED_DEADLINE_COHERENT_LGGG")
+
+        self.assertEqual(rec["deadline_misses_eliminated"], 2)
+        self.assertEqual(rec["max_lateness_reduction_ticks"], 1)
+        self.assertTrue(rec["phase_1_serial_edf_deadline_breach"])
+        self.assertTrue(rec["phase_2_halted_and_escalated"])
+        self.assertFalse(rec["converged_single_round"])
+        self.assertTrue(rec["converged_multi_round"])
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(receipt["status"], "EDF_BIN_PACKED_DEADLINE_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["phase_1_serial_edf_deadline_breach_rate"], "1")
+        self.assertEqual(receipt["phase_2_halt_and_escalate_rate"], "1")
+        self.assertEqual(receipt["single_round_serial_edf_coherence_rate"], "0")
+        self.assertEqual(receipt["multi_round_bin_packed_edf_coherence_rate"], "1")
+        self.assertEqual(receipt["bin_packed_edf_coherence_gain"], "1")
 
 
 if __name__ == "__main__":

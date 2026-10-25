@@ -47,6 +47,7 @@ from lggr.streaming import (
     StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
+    StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPolicyRatchetDriftMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
@@ -1271,6 +1272,86 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["single_round_static_deadline_coherence_rate"], "0")
         self.assertEqual(mon_rec["multi_round_edf_deadline_coherence_rate"], "1")
         self.assertEqual(mon_rec["edf_deadline_coherence_gain"], "1")
+
+    def test_overloaded_deadline_bin_packing_benchmark_replay(self):
+        """F26: Replay all 5 overloaded SLA deadline bursts (15 incident evaluations per phase across 3 phases) across 5 model families."""
+        artifact = RECEIPTS_DIR / "overloaded_deadline_bin_packing_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("overloaded_deadline_bin_packing_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            data.get("schema"), "lggr.overloaded_deadline_bin_packing_replay.v1"
+        )
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 35)
+        self.assertEqual(data.get("burst_count"), 5)
+        self.assertEqual(data.get("incident_evaluation_count"), 15)
+
+        self.assertTrue(
+            data["phase_1_serial_edf_burst_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_overload_escalation_burst_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_3_selective_bin_packed_burst_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_1_serial_edf_incident_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_overload_escalation_incident_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_3_selective_bin_packed_incident_metrics"]["identity_verified"]
+        )
+
+        replay_mon = StreamingOverloadedDeadlineBinPackingMonitor(
+            scope_id=data["overload_monitor_receipt"]["scope_id"]
+        )
+        for b in data.get("bursts", []):
+            p1_incs = b["phase_1_serial_edf_overload"]["incidents"]
+            p2_incs = b["phase_2_overload_halt_and_escalate"]["incidents"]
+            p3_incs = b["phase_3_selective_bin_packed_edf"]["incidents"]
+            replay_mon.record_overloaded_deadline_burst(
+                burst_id=b["burst_id"],
+                model_id=b["model_id"],
+                prior_deadline_receipt_sha256=b["prior_deadline_receipt_sha256"],
+                baseline_policy_sha256=b["baseline_policy_sha256"],
+                baseline_policy_vector=b["baseline_policy_vector"],
+                risk_weight_vector=b["risk_weight_vector"],
+                individual_lease_budget=b["individual_lease_budget"],
+                initial_horizon_drift_ceiling=b["initial_horizon_drift_ceiling"],
+                expanded_horizon_drift_ceiling=b["expanded_horizon_drift_ceiling"],
+                serial_edf_incidents=p1_incs,
+                overload_escalation_incidents=p2_incs,
+                selective_bin_packed_incidents=p3_incs,
+            )
+            self.assertTrue(b["phase_1_serial_edf_deadline_breach"])
+            self.assertTrue(b["phase_2_halted_and_escalated"])
+            self.assertFalse(b["converged_single_round"])
+            self.assertTrue(b["converged_multi_round"])
+            self.assertEqual(b["deadline_misses_eliminated"], 2)
+            self.assertEqual(b["max_lateness_reduction_ticks"], 1)
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["overload_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "EDF_BIN_PACKED_DEADLINE_COHERENT_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(
+            mon_rec["phase_1_serial_edf_deadline_breach_rate"], "1"
+        )
+        self.assertEqual(mon_rec["phase_2_halt_and_escalate_rate"], "1")
+        self.assertEqual(mon_rec["single_round_serial_edf_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_bin_packed_edf_coherence_rate"], "1")
+        self.assertEqual(mon_rec["bin_packed_edf_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
