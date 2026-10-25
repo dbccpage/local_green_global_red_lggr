@@ -41,6 +41,7 @@ from lggr.streaming import (
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
+    StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
     StreamingSideInformationCapacityMonitor,
@@ -805,6 +806,110 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["relaxed_pareto_nonempty_rate"], "1")
         self.assertEqual(mon_rec["post_handoff_pareto_restoration_rate"], "1")
         self.assertEqual(mon_rec["pareto_restored_count"], 15)
+
+    def test_minimum_slack_policy_relaxation_benchmark_replay(self):
+        """F20: Replay all 15 minimum-slack Pareto policy relaxation evaluations across 5 model families."""
+        artifact = RECEIPTS_DIR / "minimum_slack_policy_relaxation_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("minimum_slack_policy_relaxation_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.minimum_slack_policy_relaxation_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("pairs_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("evaluation_count"), 15)
+
+        evals = data.get("evaluations", [])
+        self.assertEqual(len(evals), 15)
+
+        self.assertTrue(data["round_1_heuristic_headroom_metrics"]["identity_verified"])
+        self.assertTrue(data["round_2_minimum_slack_audited_metrics"]["identity_verified"])
+
+        replay_mon = StreamingMinimumSlackPolicyRelaxationMonitor(
+            scope_id=data["minimum_slack_monitor_receipt"]["scope_id"]
+        )
+        for ev in evals:
+            replay_mon.record_minimum_slack_evaluation(
+                evaluation_id=ev["evaluation_id"],
+                pair_name=ev["pair_name"],
+                model_id=ev["model_id"],
+                prior_escalation_receipt_sha256=ev["prior_escalation_receipt_sha256"],
+                prior_policy_sha256=ev["prior_policy_sha256"],
+                prior_policy_vector=ev["prior_policy_vector"],
+                candidate_policies=ev["candidate_policies"],
+                rounds=ev["rounds"],
+            )
+            self.assertTrue(ev["round_1_over_permissive_breach"])
+            self.assertFalse(ev["converged_single_round"])
+            self.assertTrue(ev["converged_multi_round"])
+            self.assertEqual(
+                ev["evaluation_status"],
+                "MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG",
+            )
+
+            # Replay both rounds' frontier monitor receipts
+            pname = ev["pair_name"]
+            mdl = ev["model_id"]
+            for r_idx in range(2):
+                act = ev["rounds"][r_idx]["action"]
+                r_saved = ev["round_receipts"][r_idx]
+                sel_pid = act["selected_policy_id"]
+                if pname == "MinSlack_SideInfo_x_SkewRepair":
+                    b1_val = {
+                        "P1_under_relaxed": "3",
+                        "P2_minimum_slack_pareto": "4",
+                        "P3_over_permissive_grant": "8",
+                    }[sel_pid]
+                    rec_a, rec_b = _eval_relaxed_pair1_side_info_and_skew(
+                        f"ms1_r{r_idx + 1}_{mdl}",
+                        act["channel_capacity_s"],
+                        act["symbols"],
+                        act["candidate_alpha"],
+                        relaxed_l1_budget=b1_val,
+                    )
+                elif pname == "MinSlack_PoE_x_SkewRepair":
+                    b1_val = {
+                        "P1_under_relaxed": "2",
+                        "P2_minimum_slack_pareto": "3",
+                        "P3_over_permissive_grant": "6",
+                    }[sel_pid]
+                    rec_a, rec_b = _eval_relaxed_pair2_poe_and_skew(
+                        f"ms2_r{r_idx + 1}_{mdl}",
+                        act["compromise_eps"],
+                        act["candidate_alpha"],
+                        relaxed_l1_budget=b1_val,
+                    )
+                elif pname == "MinSlack_ProjectiveTower_x_MerminPeres":
+                    rec_a, rec_b = _eval_relaxed_pair3_tower_and_mermin_peres(
+                        f"ms3_r{r_idx + 1}_{mdl}",
+                        act["const_b"],
+                        act["x_mod2"],
+                        act["x_mod4"],
+                        parity_gauge_flip=act["parity_gauge_flip"],
+                    )
+                else:
+                    self.fail(f"Unknown minimum-slack coupled pair: {pname}")
+                self.assertEqual(
+                    rec_a["receipt_sha256"], r_saved["receipt_a"]["receipt_sha256"]
+                )
+                self.assertEqual(
+                    rec_b["receipt_sha256"], r_saved["receipt_b"]["receipt_sha256"]
+                )
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["minimum_slack_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["round_1_over_permissive_breach_rate"], "1")
+        self.assertEqual(mon_rec["single_round_minimum_slack_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_minimum_slack_rate"], "1")
+        self.assertEqual(mon_rec["multi_round_minimum_slack_gain"], "1")
 
 
 if __name__ == "__main__":

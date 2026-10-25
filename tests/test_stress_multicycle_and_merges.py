@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingHodgeDecompositionMonitor,
     StreamingMartingaleOptionalStoppingMonitor,
     StreamingMayerVietorisMonitor,
+    StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingPathKernelMonitor,
     StreamingPositiveExtensionMonitor,
@@ -2643,6 +2644,105 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["unauthorized_self_relaxation_rejection_rate"], "1")
         self.assertEqual(receipt["post_handoff_pareto_restoration_rate"], "1")
+
+    def test_minimum_slack_policy_relaxation_vs_over_permissive_grant(self) -> None:
+        """Verify StreamingMinimumSlackPolicyRelaxationMonitor separates over-permissive grants from minimum-slack Pareto relaxations."""
+        mon = StreamingMinimumSlackPolicyRelaxationMonitor(
+            scope_id="unit_minimum_slack_policy_relaxation"
+        )
+        esc_sha = "a" * 64
+        p0_sha = "b" * 64
+        p1_sha = "c" * 64
+        p2_sha = "d" * 64
+        p3_sha = "e" * 64
+
+        rec = mon.record_minimum_slack_evaluation(
+            evaluation_id="eval_min_slack_1",
+            pair_name="MinSlack_SideInfo_x_SkewRepair",
+            model_id="synthetic",
+            prior_escalation_receipt_sha256=esc_sha,
+            prior_policy_sha256=p0_sha,
+            prior_policy_vector=[2, 2, 2],
+            candidate_policies=[
+                {
+                    "policy_id": "P1_under_relaxed",
+                    "policy_sha256": p1_sha,
+                    "policy_vector": [3, 3, 3],
+                    "restores_pareto_intersection": False,
+                },
+                {
+                    "policy_id": "P2_minimum_slack_pareto",
+                    "policy_sha256": p2_sha,
+                    "policy_vector": [4, 4, 4],
+                    "restores_pareto_intersection": True,
+                },
+                {
+                    "policy_id": "P3_over_permissive_grant",
+                    "policy_sha256": p3_sha,
+                    "policy_vector": [8, 8, 8],
+                    "restores_pareto_intersection": True,
+                },
+            ],
+            rounds=[
+                {
+                    "round_index": 0,
+                    "feedback_mode": "round_1_heuristic_headroom_selection",
+                    "selected_policy_id": "P3_over_permissive_grant",
+                    "authority_grant_verified": True,
+                    "local_a_pass": True,
+                    "global_a_pass": True,
+                    "local_b_pass": True,
+                    "global_b_pass": True,
+                },
+                {
+                    "round_index": 1,
+                    "feedback_mode": "round_2_minimum_slack_receipt_audited",
+                    "selected_policy_id": "P2_minimum_slack_pareto",
+                    "authority_grant_verified": True,
+                    "local_a_pass": True,
+                    "global_a_pass": True,
+                    "local_b_pass": True,
+                    "global_b_pass": True,
+                },
+            ],
+        )
+        self.assertEqual(rec["minimum_pareto_l1_slack"], "6")
+        self.assertEqual(rec["optimal_minimum_slack_policy_ids"], ["P2_minimum_slack_pareto"])
+        self.assertTrue(rec["round_1_over_permissive_breach"])
+        self.assertFalse(rec["converged_single_round"])
+        self.assertTrue(rec["converged_multi_round"])
+
+        # Round 1 (P3): local_pass=True, global_pass=False, defect=-1, excess_slack=12
+        r0 = rec["rounds"][0]
+        self.assertTrue(r0["local_pass"])
+        self.assertFalse(r0["global_pass"])
+        self.assertEqual(r0["defect"], -1)
+        self.assertEqual(r0["selected_l1_policy_slack"], "18")
+        self.assertEqual(r0["excess_policy_slack_l1"], "12")
+        self.assertEqual(
+            r0["round_status"], "OVER_PERMISSIVE_POLICY_RELAXATION_SLACK_BREACH_LGGR"
+        )
+
+        # Round 2 (P2): local_pass=True, global_pass=True, defect=0, excess_slack=0
+        r1 = rec["rounds"][1]
+        self.assertTrue(r1["local_pass"])
+        self.assertTrue(r1["global_pass"])
+        self.assertEqual(r1["defect"], 0)
+        self.assertEqual(r1["selected_l1_policy_slack"], "6")
+        self.assertEqual(r1["excess_policy_slack_l1"], "0")
+        self.assertEqual(
+            r1["round_status"], "MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG"
+        )
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(
+            receipt["status"], "MINIMUM_SLACK_PARETO_POLICY_RELAXATION_VERIFIED_LGGG"
+        )
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["round_1_over_permissive_breach_rate"], "1")
+        self.assertEqual(receipt["single_round_minimum_slack_rate"], "0")
+        self.assertEqual(receipt["multi_round_minimum_slack_rate"], "1")
+        self.assertEqual(receipt["multi_round_minimum_slack_gain"], "1")
 
 
 if __name__ == "__main__":
