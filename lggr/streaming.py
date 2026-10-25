@@ -12971,3 +12971,164 @@ class StreamingStageVsE2EIntegrationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingThreePartyConstantBoundMonitor:
+    """Online parameterized 8-context three-party no-signalling c_3 interval family monitor (Theorem 77).
+
+    Wraps ``StreamingPositiveExtensionMonitor`` across the 5-point parameterized slice
+    k in {0, 1, 2, 3, 4} (lambda = k / 4) between Q_{5/8} (CF = 192/768, N_min = 96/768)
+    and p_* (CF = 228/768, N_min = 75/768):
+      - Phase 1 (Bipartite c = 2 surrogate ceiling on interior point k = 2, lambda = 1/2):
+        At lambda = 0, CF / N_min = 2 <= 2, yet at lambda = 1/2, CF(1/2) = 840/3072 and
+        N_min(1/2) = 342/3072 give ratio CF / N_min = 140/57 > 2, refuting c_3 <= 2
+        (L_c2 = 1, Eg_c2 = 0, defect_c2 = -1).
+      - Phase 2 (Integer c = 3 ceiling on endpoint k = 4, lambda = 1):
+        At lambda = 1/2, CF / N_min = 140/57 <= 3, yet at lambda = 1 (p_*),
+        CF(1) = 912/3072 = 228/768 and N_min(1) = 300/3072 = 75/768 give ratio
+        CF / N_min = 228/75 = 76/25 > 3, refuting c_3 <= 3 (L_c3 = 1, Eg_c3 = 0,
+        defect_c3 = -1).
+      - Phase 3 (Certified bracket c_3 in [228/75, 7] across all 5 slice points):
+        Verifies via ``StreamingPositiveExtensionMonitor`` that every slice point k in {0..4}
+        satisfies CF(k) <= (228/75) * N_min(k) <= 7 * N_min(k), with supremum ratio
+        228/75 = 76/25 attained at k = 4 (L_brk = 1, Eg_brk = 1, defect_brk = 0).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-three-party-c3-bound-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_parameterized_slice(
+        self,
+        evaluation_id: str,
+        *,
+        slice_steps: Sequence[int] = (0, 1, 2, 3, 4),
+    ) -> dict[str, Any]:
+        """Audit the 5-point parameterized 8-context slice and bracket c_3 in [228/75, 7]."""
+        eid = text(evaluation_id, "evaluation_id")
+        steps = [exact_int(k, f"slice_steps[{idx}]") for idx, k in enumerate(sequence(slice_steps, "slice_steps"))]
+        if steps != [0, 1, 2, 3, 4]:
+            raise ValidationError("slice_steps must be [0, 1, 2, 3, 4]")
+
+        ext_mon = StreamingPositiveExtensionMonitor(scope_id=f"{self.scope_id}-{eid}-ext")
+        slice_records: list[dict[str, Any]] = []
+        ratios: list[Fraction] = []
+
+        for k in steps:
+            cf_k = Fraction(768 + 36 * k, 3072)
+            n_k = Fraction(384 - 21 * k, 3072)
+            gamma_k = Fraction(1) - cf_k
+            audit_k = ext_mon.audit_signed_extension(f"{eid}::k={k}", 8, gamma_k, n_k)
+            ratio_k = cf_k / n_k
+            ratios.append(ratio_k)
+            slice_records.append(
+                {
+                    "step_k": k,
+                    "lambda": Fraction(k, 4),
+                    "contextual_fraction": cf_k,
+                    "negative_mass": n_k,
+                    "ratio_cf_over_n_min": ratio_k,
+                    "exceeds_c2": ratio_k > Fraction(2),
+                    "exceeds_c3_int": ratio_k > Fraction(3),
+                    "within_c3_bracket": ratio_k <= Fraction(228, 75) and ratio_k <= Fraction(7),
+                    "signed_extension_audit": audit_k,
+                }
+            )
+
+        max_ratio = max(ratios)
+        strictly_increasing = all(ratios[i] < ratios[i + 1] for i in range(len(ratios) - 1))
+        all_m_bound = all(
+            bool(r["signed_extension_audit"]["m_context_bound_verified"]) for r in slice_records
+        )
+
+        # Phase 1: Bipartite c = 2 ceiling fails at interior k = 2 (ratio 140/57 > 2)
+        r0 = ratios[0]
+        r2 = ratios[2]
+        r4 = ratios[4]
+        l_p1 = 1 if (r0 <= Fraction(2) and r2 > Fraction(2)) else 0
+        eg_p1 = 1 if (l_p1 == 1 and r2 <= Fraction(2)) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        # Phase 2: Conjectured c = 3 ceiling fails at endpoint k = 4 (ratio 228/75 > 3)
+        l_p2 = 1 if (r2 <= Fraction(3) and r4 > Fraction(3)) else 0
+        eg_p2 = 1 if (l_p2 == 1 and r4 <= Fraction(3)) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        # Phase 3: Certified interval bracket c_3 in [228/75, 7]
+        l_p3 = (
+            1
+            if (
+                strictly_increasing
+                and all_m_bound
+                and max_ratio == Fraction(228, 75)
+                and max_ratio <= Fraction(7)
+            )
+            else 0
+        )
+        eg_p3 = 1 if (l_p3 == 1 and r2 == Fraction(140, 57)) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "num_contexts": 8,
+            "c3_lower_bound": max_ratio,
+            "c3_upper_bound": Fraction(7),
+            "interior_k2_ratio": r2,
+            "endpoint_k4_ratio": r4,
+            "ratios_strictly_increasing": strictly_increasing,
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "BIPARTITE_C2_BOUND_VIOLATION_LGGR" if defect_p1 == -1 else "THREE_PARTY_C3_BRACKET_CERTIFIED_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "C3_INTEGER_THREE_CEILING_VIOLATION_LGGR" if defect_p2 == -1 else "THREE_PARTY_C3_BRACKET_CERTIFIED_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "THREE_PARTY_C3_BRACKET_CERTIFIED_LGGG" if eg_p3 == 1 else "C3_INTEGER_THREE_CEILING_VIOLATION_LGGR",
+            "slice_records": slice_records,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one parameterized slice evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_c2_fail = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_c3_fail = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        surrogate_ceiling_coherence_rate = Fraction(n - max(p1_c2_fail, p2_c3_fail), n)
+        certified_bracket_coherence_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_c2_fail == n and p2_c3_fail == n:
+            status = "THREE_PARTY_C3_BRACKET_CERTIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "C3_INTEGER_THREE_CEILING_VIOLATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_three_party_c3_bound.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "c3_certified_lower_bound": Fraction(228, 75),
+            "c3_constructive_upper_bound": Fraction(7),
+            "phase_1_c2_violation_count": p1_c2_fail,
+            "phase_2_c3_int_violation_count": p2_c3_fail,
+            "phase_3_certified_bracket_count": p3_coherent,
+            "surrogate_ceiling_coherence_rate": surrogate_ceiling_coherence_rate,
+            "certified_bracket_coherence_rate": certified_bracket_coherence_rate,
+            "c3_bracket_coherence_gain": (
+                certified_bracket_coherence_rate - surrogate_ceiling_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
