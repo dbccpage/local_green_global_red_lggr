@@ -13503,6 +13503,310 @@ class StreamingAdversarialSchemaSideChannelMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingEqualInfoMigrationObligationMonitor:
+    """Controlled equal-information comparative evaluation monitor across representation migrations and deferred obligations (Theorem 80).
+
+    Wraps ``StreamingBaselineComparator`` and ``StreamingAuditMonitor`` on ``BudgetPolicy``
+    (allowed_states=(0, 1, 2, 3, 4), max_step=2, max_total=3, representation_id="rep-v1",
+    query_scope="every_prefix") across 3 multi-step histories supplied with identical input evidence:
+      - Phase 1 (Uncertified Representation Migration Mid-Stream on 0 -> 2 -> 3 -> 1):
+        Step index 1 changes ``representation_id`` from "rep-v1" to "rep-v2" without a transport
+        certificate. All local step magnitudes <= 2 and endpoint |1 - 0| = 1 <= 3 pass the
+        conventional baseline checker (conventional_accepts = True), while ``StreamingAuditMonitor``
+        localizes ``REPRESENTATION_ID_CHANGED`` at step index 1 (lggr_accepts = False,
+        conventional_false_acceptance = True, L_mig = 1, Eg_mig = 0, defect_mig = -1,
+        status ``UNCERTIFIED_REPRESENTATION_MIGRATION_FALSE_ACCEPT_LGGR``).
+      - Phase 2 (Retained Deferred Obligation & Prefix Excursion on 0 -> 2 -> 4 -> 2):
+        Step index 1 attaches ``obligations=("recheck_schema_invariant",)`` and reaches prefix 4 > 3
+        before reverting to endpoint 2 <= 3. The conventional checker accepts (conventional_accepts = True),
+        while LGGR localizes both ``OPEN_OBLIGATIONS`` and prefix excursion at step index 1
+        (lggr_accepts = False, conventional_false_acceptance = True, L_obl = 1, Eg_obl = 0,
+        defect_obl = -1, status ``DEFERRED_OBLIGATION_PREFIX_EXCURSION_FALSE_ACCEPT_LGGR``).
+      - Phase 3 (Representation-Stable, Obligation-Cleared, Prefix-Bounded Trajectory 0 -> 1 -> 2 -> 2):
+        Uniform representation "rep-v1", zero open obligations, and all prefixes <= 3. Both
+        checkers accept with 0 false acceptances (L_coh = 1, Eg_coh = 1, defect_coh = 0,
+        status ``EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG``).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-equal-info-migration-obligation-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.policy = BudgetPolicy(
+            policy_id="equal-info-policy/v1",
+            spec_id="equal-info-spec/v1",
+            evaluator_id="equal-info-eval/v1",
+            representation_id="rep-v1",
+            authority_id="equal-info-auth/v1",
+            allowed_states=(0, 1, 2, 3, 4),
+            max_step=2,
+            max_total=3,
+            query_scope="every_prefix",
+        )
+        self.comparator = StreamingBaselineComparator(self.policy)
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_equal_info_comparison(
+        self,
+        evaluation_id: str,
+        *,
+        migrated_representation_id: str = "rep-v2",
+        deferred_obligation_tag: str = "recheck_schema_invariant",
+    ) -> dict[str, Any]:
+        """Compare conventional local+endpoint baseline checker against LGGR across Phases 1-3."""
+        eid = text(evaluation_id, "evaluation_id")
+        mig_rep = text(migrated_representation_id, "migrated_representation_id")
+        obl_tag = text(deferred_obligation_tag, "deferred_obligation_tag")
+        if mig_rep == self.policy.representation_id:
+            raise ValidationError("migrated_representation_id must differ from policy representation_id")
+
+        baseline = StateRef("s0", 0)
+        pol = self.policy
+
+        # Phase 1: 0 -> 2 -> 3 -> 1 with uncertified representation migration at step index 1
+        steps_p1 = [
+            StepWitness(
+                f"{eid}-p1-w0",
+                StateRef("s0", 0),
+                StateRef("s1", 2),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                2,
+                True,
+                True,
+                (),
+            ),
+            StepWitness(
+                f"{eid}-p1-w1",
+                StateRef("s1", 2),
+                StateRef("s2", 3),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                mig_rep,
+                pol.authority_id,
+                1,
+                True,
+                True,
+                (),
+            ),
+            StepWitness(
+                f"{eid}-p1-w2",
+                StateRef("s2", 3),
+                StateRef("s3", 1),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                2,
+                True,
+                True,
+                (),
+            ),
+        ]
+        comp_p1 = self.comparator.compare_trace(f"{eid}::phase_1_migration", baseline, steps_p1)
+
+        # Phase 2: 0 -> 2 -> 4 -> 2 with retained deferred obligation & prefix excursion at step index 1
+        steps_p2 = [
+            StepWitness(
+                f"{eid}-p2-w0",
+                StateRef("s0", 0),
+                StateRef("s1", 2),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                2,
+                True,
+                True,
+                (),
+            ),
+            StepWitness(
+                f"{eid}-p2-w1",
+                StateRef("s1", 2),
+                StateRef("s2", 4),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                2,
+                True,
+                True,
+                (obl_tag,),
+            ),
+            StepWitness(
+                f"{eid}-p2-w2",
+                StateRef("s2", 4),
+                StateRef("s3", 2),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                2,
+                True,
+                True,
+                (),
+            ),
+        ]
+        comp_p2 = self.comparator.compare_trace(f"{eid}::phase_2_obligation", baseline, steps_p2)
+
+        # Phase 3: 0 -> 1 -> 2 -> 2 representation-stable, obligation-cleared, prefix-bounded
+        steps_p3 = [
+            StepWitness(
+                f"{eid}-p3-w0",
+                StateRef("s0", 0),
+                StateRef("s1", 1),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                1,
+                True,
+                True,
+                (),
+            ),
+            StepWitness(
+                f"{eid}-p3-w1",
+                StateRef("s1", 1),
+                StateRef("s2", 2),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                1,
+                True,
+                True,
+                (),
+            ),
+            StepWitness(
+                f"{eid}-p3-w2",
+                StateRef("s2", 2),
+                StateRef("s3", 2),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                pol.representation_id,
+                pol.authority_id,
+                0,
+                True,
+                True,
+                (),
+            ),
+        ]
+        comp_p3 = self.comparator.compare_trace(f"{eid}::phase_3_coherent", baseline, steps_p3)
+
+        l_p1 = 1 if (comp_p1["conventional_accepts"] and comp_p1["first_fault_step_index"] == 1) else 0
+        eg_p1 = 1 if (l_p1 == 1 and comp_p1["lggr_accepts"]) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = (
+            1
+            if (
+                comp_p2["conventional_accepts"]
+                and comp_p2["first_fault_step_index"] == 1
+                and obl_tag in comp_p2["retained_obligations"]
+            )
+            else 0
+        )
+        eg_p2 = 1 if (l_p2 == 1 and comp_p2["lggr_accepts"]) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = (
+            1
+            if (
+                comp_p3["conventional_accepts"]
+                and comp_p3["lggr_accepts"]
+                and not comp_p3["conventional_false_acceptance"]
+                and comp_p3["first_fault_step_index"] is None
+                and len(comp_p3["retained_obligations"]) == 0
+            )
+            else 0
+        )
+        eg_p3 = (
+            1
+            if (
+                l_p3 == 1
+                and comp_p1["conventional_false_acceptance"]
+                and comp_p2["conventional_false_acceptance"]
+            )
+            else 0
+        )
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "phase_1_first_fault_step": comp_p1["first_fault_step_index"],
+            "phase_2_first_fault_step": comp_p2["first_fault_step_index"],
+            "phase_2_retained_obligations": comp_p2["retained_obligations"],
+            "phase_3_first_fault_step": comp_p3["first_fault_step_index"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "UNCERTIFIED_REPRESENTATION_MIGRATION_FALSE_ACCEPT_LGGR" if defect_p1 == -1 else "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "DEFERRED_OBLIGATION_PREFIX_EXCURSION_FALSE_ACCEPT_LGGR" if defect_p2 == -1 else "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG" if eg_p3 == 1 else "DEFERRED_OBLIGATION_PREFIX_EXCURSION_FALSE_ACCEPT_LGGR",
+            "phase_1_comparison": comp_p1,
+            "phase_2_comparison": comp_p2,
+            "phase_3_comparison": comp_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one equal-information comparison evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mig_false_acc = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_obl_false_acc = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_coherent = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        conventional_checker_soundness_rate = Fraction(
+            n - max(p1_mig_false_acc, p2_obl_false_acc), n
+        )
+        lggr_equal_info_soundness_rate = Fraction(p3_coherent, n)
+
+        if p3_coherent == n and p1_mig_false_acc == n and p2_obl_false_acc == n:
+            status = "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "UNCERTIFIED_REPRESENTATION_MIGRATION_FALSE_ACCEPT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_equal_info_migration_obligation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_migration_false_acceptance_count": p1_mig_false_acc,
+            "phase_2_obligation_false_acceptance_count": p2_obl_false_acc,
+            "phase_3_equal_info_coherent_count": p3_coherent,
+            "conventional_checker_soundness_rate": conventional_checker_soundness_rate,
+            "lggr_equal_info_soundness_rate": lggr_equal_info_soundness_rate,
+            "equal_info_soundness_gain": (
+                lggr_equal_info_soundness_rate - conventional_checker_soundness_rate
+            ),
+            "baseline_comparator_receipt": self.comparator.get_receipt(),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

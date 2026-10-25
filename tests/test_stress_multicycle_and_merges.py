@@ -44,6 +44,7 @@ from lggr.streaming import (
     StreamingDisagreementPreservingCouncilMonitor,
     StreamingDiscreteCurvatureMonitor,
     StreamingDynamicSchemaSynthesisMonitor,
+    StreamingEqualInfoMigrationObligationMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingGramProbeMonitor,
@@ -4254,6 +4255,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["unauthenticated_or_underallocated_coherence_rate"], "0")
         self.assertEqual(receipt["host_authenticated_coherence_rate"], "1")
         self.assertEqual(receipt["host_authenticated_coherence_gain"], "1")
+
+    def test_equal_info_baseline_vs_lggr_migration_and_obligation_audit(self) -> None:
+        """Verify Theorem 80: equal-information comparative evaluation across representation migrations and obligations."""
+        mon = StreamingEqualInfoMigrationObligationMonitor(
+            scope_id="unit-equal-info-migration-obligation-scope",
+        )
+        obs = mon.evaluate_equal_info_comparison(
+            evaluation_id="eq-info-eval-01",
+        )
+        self.assertEqual(obs["phase_1_first_fault_step"], 1)
+        self.assertEqual(obs["phase_2_first_fault_step"], 1)
+        self.assertEqual(obs["phase_2_retained_obligations"], ["recheck_schema_invariant"])
+        self.assertIsNone(obs["phase_3_first_fault_step"])
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(
+            obs["phase_1_status"],
+            "UNCERTIFIED_REPRESENTATION_MIGRATION_FALSE_ACCEPT_LGGR",
+        )
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(
+            obs["phase_2_status"],
+            "DEFERRED_OBLIGATION_PREFIX_EXCURSION_FALSE_ACCEPT_LGGR",
+        )
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(
+            obs["phase_3_status"],
+            "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG",
+        )
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["conventional_checker_soundness_rate"], "0")
+        self.assertEqual(receipt["lggr_equal_info_soundness_rate"], "1")
+        self.assertEqual(receipt["equal_info_soundness_gain"], "1")
 
 
 if __name__ == "__main__":
