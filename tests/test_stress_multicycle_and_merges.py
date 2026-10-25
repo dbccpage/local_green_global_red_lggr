@@ -32,6 +32,7 @@ from lggr.streaming import (
     StreamingBoundedDepthKInductionMonitor,
     StreamingCPTPTraceMonitor,
     StreamingCatalystDegradationMonitor,
+    StreamingCatalystRejuvenationScheduleMonitor,
     StreamingCoalitionalAttributionMonitor,
     StreamingCochainMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
@@ -4299,6 +4300,42 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["conventional_checker_soundness_rate"], "0")
         self.assertEqual(receipt["lggr_equal_info_soundness_rate"], "1")
         self.assertEqual(receipt["equal_info_soundness_gain"], "1")
+
+    def test_multi_cycle_catalyst_wear_vs_periodic_rejuvenation_schedule(self) -> None:
+        """Verify Theorem 81: multi-cycle constructor catalyst wear vs. periodic rejuvenation schedule."""
+        mon = StreamingCatalystRejuvenationScheduleMonitor(
+            scope_id="unit-catalyst-rejuvenation-schedule-scope",
+        )
+        obs = mon.evaluate_rejuvenation_schedules(
+            evaluation_id="cat-rejuv-eval-01",
+        )
+        self.assertEqual(obs["uniform_wear_cycle_ceiling"], 3)
+        self.assertEqual(obs["phase_1_max_deviation"], "4/3")
+        self.assertEqual(obs["phase_2_max_deviation"], "4/3")
+        self.assertEqual(obs["phase_2_terminal_deviation"], "1")
+        self.assertEqual(obs["phase_3_max_deviation"], "2/3")
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "UNSCHEDULED_CATALYST_WEAR_EXHAUSTION_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "LATE_REJUVENATION_PREFIX_EXHAUSTION_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "PERIODIC_CATALYST_REJUVENATION_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "PERIODIC_CATALYST_REJUVENATION_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["unscheduled_or_late_coherence_rate"], "0")
+        self.assertEqual(receipt["periodic_rejuvenation_coherence_rate"], "1")
+        self.assertEqual(receipt["periodic_rejuvenation_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
