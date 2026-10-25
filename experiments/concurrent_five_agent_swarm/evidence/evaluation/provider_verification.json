@@ -2350,7 +2350,8 @@
     },
     {
       "response_id": "gen-1792893117-9eErmxpT9s3zeoC3ZQ5Q",
-      "verification_error": "HTTPError"
+      "verification_error": "HTTPError",
+      "retry_http_status": 404
     },
     {
       "response_id": "gen-1792893117-R5oPXGwbepKOynVK3l77",
@@ -2487,7 +2488,8 @@
     },
     {
       "response_id": "gen-1792893123-rf4JbEPGOgIRlf09HQI1",
-      "verification_error": "HTTPError"
+      "verification_error": "HTTPError",
+      "retry_http_status": 404
     },
     {
       "response_id": "gen-1792893123-HQVdMShzLVrAa9EKRW2S",
@@ -5398,7 +5400,8 @@
     },
     {
       "response_id": "gen-1792893222-e0kcpx0hgowrJJCDXush",
-      "verification_error": "HTTPError"
+      "verification_error": "HTTPError",
+      "retry_http_status": 404
     },
     {
       "response_id": "gen-1792893222-a4Uw1V5q8W2ipa0HDCqN",
@@ -17940,5 +17943,6 @@
       "model_matches": true,
       "cost_matches": true
     }
-  ]
+  ],
+  "retry_queried_at_utc": "2026-10-25T02:08:46.970836+00:00"
 }

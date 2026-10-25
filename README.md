@@ -492,3 +492,17 @@ agent sessions experience resource withdrawal after partial execution. The six
 evaluation cases show real recovery and unresolved failures, with no demonstrated
 LGGR advantage over the complete conventional checker. All development failures
 remain available; total measured spending was $0.57951748.
+
+
+## Concurrent five-agent expansion
+
+The [concurrent pilot report](experiments/concurrent_five_agent_swarm/REPORT.md)
+retains 1,053 additional live API attempts with five overlapping model sessions,
+a complete conventional baseline plus exact capacity diagnostics, and frozen
+replay of all 45 SQLite outputs. Of 18 scheduled evaluation seeds, 13 finished,
+two were interrupted by provider HTTP 429, and three never started. Five finished
+cases failed initialization. In the three completed paired feasible-recovery
+trials, conventional feedback recovered 3/3 and LGGR feedback 2/3; this does not
+establish an LGGR advantage. Total pilot cost plus retained reserves is
+$3.41306357 of the $10 ceiling; three unavailable provider lookup records remain
+explicitly unverified.

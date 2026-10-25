@@ -1,0 +1,314 @@
+{
+  "schema": "lggr.concurrent_swarm_results.v2",
+  "runs": [
+    {
+      "run": "development",
+      "phase": "development",
+      "api_attempts": 67,
+      "received_responses": 67,
+      "cost_or_reserve_usd": "0.17694535",
+      "max_inflight_requests": 5,
+      "concurrent_waves": 18,
+      "verification": {
+        "run": "development",
+        "source_commit_verified": true,
+        "source_files": 20,
+        "sqlite_files_verified": 4,
+        "replayed": true,
+        "api_attempts": 67,
+        "cases": 1,
+        "completed_cases": 1,
+        "attempted_cases": 1,
+        "stopped": false
+      }
+    },
+    {
+      "run": "evaluation",
+      "phase": "evaluation",
+      "api_attempts": 947,
+      "received_responses": 946,
+      "cost_or_reserve_usd": "2.57415122",
+      "max_inflight_requests": 5,
+      "concurrent_waves": 224,
+      "verification": {
+        "run": "evaluation",
+        "source_commit_verified": true,
+        "source_files": 20,
+        "sqlite_files_verified": 40,
+        "replayed": true,
+        "api_attempts": 947,
+        "cases": 0,
+        "completed_cases": 13,
+        "attempted_cases": 14,
+        "stopped": true
+      }
+    },
+    {
+      "run": "continuation",
+      "phase": "continuation",
+      "api_attempts": 39,
+      "received_responses": 38,
+      "cost_or_reserve_usd": "0.08244952",
+      "max_inflight_requests": 5,
+      "concurrent_waves": 7,
+      "verification": {
+        "run": "continuation",
+        "source_commit_verified": true,
+        "source_files": 20,
+        "sqlite_files_verified": 1,
+        "replayed": true,
+        "api_attempts": 39,
+        "cases": 0,
+        "completed_cases": 0,
+        "attempted_cases": 1,
+        "stopped": true
+      }
+    }
+  ],
+  "conditions": {
+    "withdrawal": {
+      "seeds": 6,
+      "baseline_failed": 2,
+      "arms": {
+        "A": {
+          "baseline_failed": 2,
+          "blocked_unresolved": 2,
+          "completed": 1,
+          "not_started": 1
+        },
+        "B": {
+          "baseline_failed": 2,
+          "completed": 3,
+          "not_started": 1
+        },
+        "C": {
+          "baseline_failed": 2,
+          "completed": 2,
+          "blocked_unresolved": 1,
+          "not_started": 1
+        }
+      }
+    },
+    "infeasible": {
+      "seeds": 6,
+      "baseline_failed": 2,
+      "arms": {
+        "A": {
+          "safe_escalated": 2,
+          "baseline_failed": 2,
+          "provider_interrupted": 1,
+          "not_started": 1
+        },
+        "B": {
+          "safe_escalated": 2,
+          "baseline_failed": 2,
+          "not_run_after_provider_interrupt": 1,
+          "not_started": 1
+        },
+        "C": {
+          "safe_escalated": 3,
+          "baseline_failed": 2,
+          "not_started": 1
+        }
+      }
+    },
+    "control": {
+      "seeds": 6,
+      "baseline_failed": 1,
+      "arms": {
+        "A": {
+          "completed": 3,
+          "baseline_failed": 1,
+          "not_run_after_provider_interrupt": 1,
+          "not_started": 1
+        },
+        "B": {
+          "completed": 3,
+          "baseline_failed": 1,
+          "not_run_after_provider_interrupt": 1,
+          "not_started": 1
+        },
+        "C": {
+          "completed": 3,
+          "baseline_failed": 1,
+          "not_run_after_provider_interrupt": 1,
+          "not_started": 1
+        }
+      }
+    }
+  },
+  "evaluation_usage": {
+    "baseline": {
+      "finished_arms": 0,
+      "calls": 678,
+      "cost_or_reserve_usd": "1.41292186",
+      "invalid_executions": 0,
+      "terminal_execution_rejections": 0
+    },
+    "A": {
+      "finished_arms": 8,
+      "calls": 104,
+      "cost_or_reserve_usd": "0.33768200",
+      "invalid_executions": 0,
+      "terminal_execution_rejections": 4
+    },
+    "B": {
+      "finished_arms": 8,
+      "calls": 87,
+      "cost_or_reserve_usd": "0.32822190",
+      "invalid_executions": 0,
+      "terminal_execution_rejections": 2
+    },
+    "C": {
+      "finished_arms": 9,
+      "calls": 117,
+      "cost_or_reserve_usd": "0.57777498",
+      "invalid_executions": 0,
+      "terminal_execution_rejections": 4
+    }
+  },
+  "paired_evaluation_usage": {
+    "A": {
+      "trials": 8,
+      "calls": 88,
+      "cost_or_reserve_usd": "0.26293624"
+    },
+    "B": {
+      "trials": 8,
+      "calls": 87,
+      "cost_or_reserve_usd": "0.32822190"
+    },
+    "C": {
+      "trials": 8,
+      "calls": 95,
+      "cost_or_reserve_usd": "0.48175612"
+    }
+  },
+  "seed_outcomes": {
+    "5200": {
+      "A": "baseline_failed",
+      "B": "baseline_failed",
+      "C": "baseline_failed"
+    },
+    "5201": {
+      "A": "safe_escalated",
+      "B": "safe_escalated",
+      "C": "safe_escalated"
+    },
+    "5202": {
+      "A": "completed",
+      "B": "completed",
+      "C": "completed"
+    },
+    "5203": {
+      "A": "baseline_failed",
+      "B": "baseline_failed",
+      "C": "baseline_failed"
+    },
+    "5204": {
+      "A": "baseline_failed",
+      "B": "baseline_failed",
+      "C": "baseline_failed"
+    },
+    "5205": {
+      "A": "completed",
+      "B": "completed",
+      "C": "completed"
+    },
+    "5206": {
+      "A": "blocked_unresolved",
+      "B": "completed",
+      "C": "completed"
+    },
+    "5207": {
+      "A": "safe_escalated",
+      "B": "safe_escalated",
+      "C": "safe_escalated"
+    },
+    "5208": {
+      "A": "baseline_failed",
+      "B": "baseline_failed",
+      "C": "baseline_failed"
+    },
+    "5209": {
+      "A": "blocked_unresolved",
+      "B": "completed",
+      "C": "blocked_unresolved"
+    },
+    "5210": {
+      "A": "baseline_failed",
+      "B": "baseline_failed",
+      "C": "baseline_failed"
+    },
+    "5211": {
+      "A": "completed",
+      "B": "completed",
+      "C": "completed"
+    },
+    "5212": {
+      "A": "completed",
+      "B": "completed",
+      "C": "completed"
+    },
+    "5213": {
+      "A": "provider_interrupted",
+      "B": "not_run_after_provider_interrupt",
+      "C": "safe_escalated"
+    },
+    "5214": {
+      "A": "not_run_after_provider_interrupt",
+      "B": "not_run_after_provider_interrupt",
+      "C": "not_run_after_provider_interrupt"
+    },
+    "5215": {
+      "A": "not_started",
+      "B": "not_started",
+      "C": "not_started"
+    },
+    "5216": {
+      "A": "not_started",
+      "B": "not_started",
+      "C": "not_started"
+    },
+    "5217": {
+      "A": "not_started",
+      "B": "not_started",
+      "C": "not_started"
+    }
+  },
+  "paired_B_C_withdrawal_success": {
+    "(True, True)": 2,
+    "(True, False)": 1
+  },
+  "evaluation_cases_started": 15,
+  "evaluation_cases_finished": 13,
+  "new_api_attempts": 1053,
+  "new_received_responses": 1051,
+  "provider_verified_generations": 1048,
+  "unverified_generations": [
+    {
+      "run": "evaluation",
+      "response_id": "gen-1792893117-9eErmxpT9s3zeoC3ZQ5Q",
+      "verification_error": "HTTPError",
+      "retry_http_status": 404
+    },
+    {
+      "run": "evaluation",
+      "response_id": "gen-1792893123-rf4JbEPGOgIRlf09HQI1",
+      "verification_error": "HTTPError",
+      "retry_http_status": 404
+    },
+    {
+      "run": "evaluation",
+      "response_id": "gen-1792893222-e0kcpx0hgowrJJCDXush",
+      "verification_error": "HTTPError",
+      "retry_http_status": 404
+    }
+  ],
+  "prior_pilot_usd": "0.57951748",
+  "new_charged_or_reserved_usd": "2.83354609",
+  "unconfirmed_reserved_usd": "0.153731",
+  "pilot_total_charged_or_reserved_usd": "3.41306357",
+  "remaining_usd": "6.58693643",
+  "scope": "Descriptive concurrent synthetic pilot; initial failures and interrupted arms retained; no general superiority claim."
+}

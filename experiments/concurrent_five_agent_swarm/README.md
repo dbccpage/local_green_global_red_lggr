@@ -20,7 +20,7 @@ Offline verification (no API calls):
 
 ```powershell
 python -m unittest tests.test_concurrent_five_agent_swarm -v
-python -m experiments.concurrent_five_agent_swarm.verify experiments/concurrent_five_agent_swarm/evidence/development experiments/concurrent_five_agent_swarm/evidence/evaluation
+python -m experiments.concurrent_five_agent_swarm.verify experiments/concurrent_five_agent_swarm/evidence/development experiments/concurrent_five_agent_swarm/evidence/evaluation experiments/concurrent_five_agent_swarm/evidence/continuation
 python -m experiments.concurrent_five_agent_swarm.tools.summarize
 ```
 
@@ -33,7 +33,7 @@ provider signatures. Timing overlap is a recorded client observation.
 Provider-side verification is read-only and requires the same OpenRouter account:
 
 ```powershell
-python experiments/live_five_agent_swarm/tools/verify_provider.py experiments/concurrent_five_agent_swarm/evidence/development experiments/concurrent_five_agent_swarm/evidence/evaluation
+python experiments/live_five_agent_swarm/tools/verify_provider.py experiments/concurrent_five_agent_swarm/evidence/development experiments/concurrent_five_agent_swarm/evidence/evaluation experiments/concurrent_five_agent_swarm/evidence/continuation
 ```
 
 A new paid run requires committed source, an unused direct child of `evidence/`,

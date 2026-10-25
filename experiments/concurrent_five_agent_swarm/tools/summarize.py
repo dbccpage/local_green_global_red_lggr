@@ -15,8 +15,10 @@ def summarize():
     evidence = HERE / "evidence"
     ledger = json.loads((evidence/"budget.json").read_text(encoding="utf-8"))
     runs, cases, arms_started, arm_results = [], {}, set(), {}
+    paired_trials = []
     usage = {a: {"calls": 0, "cost": Decimal(0)} for a in ("baseline", "A", "B", "C")}
     unknown_reserved, received = Decimal(0), 0
+    unverified_generations = []
     for entry in ledger["runs"]:
         path = evidence/entry["path"]
         checked = verify(path)
@@ -35,6 +37,9 @@ def summarize():
         records = {r["response_id"]: r for r in provider["generations"]}
         assert len(raw) == len(responses) and len(records) == len(provider["generations"]) and set(raw) == set(records)
         for ident, response in raw.items():
+            if records[ident].get("verification_error"):
+                unverified_generations.append({"run": path.name, **records[ident]})
+                continue
             generation = records[ident]["generation"]
             assert generation["id"] == ident
             assert Decimal(str(generation["total_cost"])) == Decimal(str(response["usage"]["cost"]))
@@ -57,7 +62,9 @@ def summarize():
                 active_arm = data["arm"]
                 arms_started.add((seed, active_arm))
             elif kind == "arm_result": arm_results[(seed, data["arm"])] = data
-            elif kind == "case_result": cases[seed].update(baseline_failed=data["baseline_failed"], finished=True)
+            elif kind == "case_result":
+                cases[seed].update(baseline_failed=data["baseline_failed"], finished=True)
+                paired_trials.extend(data["arms"])
             elif kind in ("api_response", "api_error"):
                 usage[active_arm]["calls"] += 1
                 usage[active_arm]["cost"] += Decimal(data["charged_usd"] if kind == "api_response" else data["charged_upper_bound_usd"])
@@ -81,6 +88,9 @@ def summarize():
         by_arm[arm] = {"finished_arms": len(trials), "calls": usage[arm]["calls"], "cost_or_reserve_usd": str(usage[arm]["cost"]),
             "invalid_executions": sum(not a["judge"]["valid_execution"] for a in trials),
             "terminal_execution_rejections": sum(not a["judge"]["complete"] for a in trials)}
+    paired_usage = {arm: {"trials": sum(a["arm"] == arm for a in paired_trials),
+        "calls": sum(a["api_attempts"] for a in paired_trials if a["arm"] == arm),
+        "cost_or_reserve_usd": str(sum((Decimal(a["cost_usd"]) for a in paired_trials if a["arm"] == arm), Decimal(0)))} for arm in "ABC"}
     pairs = Counter()
     for s in range(5200, 5218, 3):
         if (s,"B") in arm_results and (s,"C") in arm_results:
@@ -89,9 +99,10 @@ def summarize():
     total = Decimal(ledger["prior_pilot_usd"]) + new_spend
     assert total <= Decimal(ledger["ceiling_usd"]) == 10
     result = {"schema": "lggr.concurrent_swarm_results.v2", "runs": runs, "conditions": conditions,
-        "evaluation_usage": by_arm, "seed_outcomes": outcomes, "paired_B_C_withdrawal_success": dict(pairs),
+        "evaluation_usage": by_arm, "paired_evaluation_usage": paired_usage, "seed_outcomes": outcomes, "paired_B_C_withdrawal_success": dict(pairs),
         "evaluation_cases_started": len(cases), "evaluation_cases_finished": sum(c['finished'] for c in cases.values()),
         "new_api_attempts": sum(r['api_attempts'] for r in runs), "new_received_responses": received,
+        "provider_verified_generations": received-len(unverified_generations), "unverified_generations": unverified_generations,
         "prior_pilot_usd": ledger["prior_pilot_usd"], "new_charged_or_reserved_usd": str(new_spend),
         "unconfirmed_reserved_usd": str(unknown_reserved), "pilot_total_charged_or_reserved_usd": str(total),
         "remaining_usd": str(10-total),
