@@ -8073,6 +8073,249 @@ class StreamingJointMultiMonitorRepairGuard:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+def _validate_sha256_hex(value: Any, label: str) -> str:
+    if not isinstance(value, str) or len(value) != 64 or any(ch not in "0123456789abcdef" for ch in value):
+        raise ValidationError(f"{label} must be a 64-character lowercase hex SHA-256 string")
+    return value
+
+
+class StreamingGovernedPolicyRelaxationMonitor:
+    r"""Audit governed external policy-relaxation handoffs vs. unauthorized worker self-relaxation (LGGR VIII §5.23).
+
+    Starting from a halted and escalated coupled regime
+    (``INFEASIBLE_COUPLED_REGIME_HALTED_AND_ESCALATED_LGGR``), verifies:
+    1. Any worker attempt to self-relax its own ``BudgetPolicy`` or side-channel
+       capacity without an external authority grant (``authority_grant_verified = False``)
+       is rejected with ``UNAUTHORIZED_SELF_RELAXATION_REJECTED_LGGR``
+       (``local_pass = True``, ``global_pass = False``, ``defect = -1``).
+    2. An external authority gate that binds ``prior_escalation_receipt_sha256`` and
+       transitions ``prior_policy_sha256 -> relaxed_policy_sha256`` with a non-empty
+       relaxed Pareto intersection $\mathcal{F}_A(P_1) \cap \mathcal{F}_B(P_1) \ne \emptyset$
+       enables post-handoff Round 3 convergence to ``(E_{g,A}, E_{g,B}) = (1, 1)``
+       (``GOVERNED_POLICY_RELAXATION_PARETO_RESTORED_LGGG``).
+    """
+
+    def __init__(self, scope_id: str) -> None:
+        if not isinstance(scope_id, str) or not scope_id.strip():
+            raise ValidationError("scope_id must be a non-empty string")
+        self.scope_id = scope_id.strip()
+        self.handoffs: list[dict[str, Any]] = []
+
+    def record_relaxation_handoff(
+        self,
+        *,
+        handoff_id: str,
+        pair_name: str,
+        model_id: str,
+        prior_escalation_receipt_sha256: str,
+        prior_policy_sha256: str,
+        relaxed_policy_sha256: str,
+        authority_id: str,
+        authority_grant_verified: bool,
+        pre_handoff_halted_and_escalated: bool,
+        relaxed_candidate_actions: Sequence[Mapping[str, Any]],
+        unauthorized_self_relaxation_attempt: Mapping[str, Any],
+        post_handoff_round: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        if not isinstance(handoff_id, str) or not handoff_id.strip():
+            raise ValidationError("handoff_id must be a non-empty string")
+        if not isinstance(pair_name, str) or not pair_name.strip():
+            raise ValidationError("pair_name must be a non-empty string")
+        if not isinstance(model_id, str) or not model_id.strip():
+            raise ValidationError("model_id must be a non-empty string")
+        if not isinstance(authority_id, str) or not authority_id.strip():
+            raise ValidationError("authority_id must be a non-empty string")
+        if not isinstance(authority_grant_verified, bool):
+            raise ValidationError("authority_grant_verified must be a boolean")
+        if not isinstance(pre_handoff_halted_and_escalated, bool):
+            raise ValidationError("pre_handoff_halted_and_escalated must be a boolean")
+
+        esc_sha = _validate_sha256_hex(prior_escalation_receipt_sha256, "prior_escalation_receipt_sha256")
+        p0_sha = _validate_sha256_hex(prior_policy_sha256, "prior_policy_sha256")
+        p1_sha = _validate_sha256_hex(relaxed_policy_sha256, "relaxed_policy_sha256")
+        if p0_sha == p1_sha:
+            raise ValidationError("relaxed_policy_sha256 must differ from prior_policy_sha256")
+
+        if not isinstance(relaxed_candidate_actions, Sequence) or len(relaxed_candidate_actions) == 0:
+            raise ValidationError("relaxed_candidate_actions must be a non-empty sequence")
+
+        normalized_candidates: list[dict[str, Any]] = []
+        for c_idx, cand in enumerate(relaxed_candidate_actions):
+            if not isinstance(cand, Mapping):
+                raise ValidationError(f"relaxed_candidate_actions[{c_idx}] must be a mapping")
+            c_ga = cand.get("global_a_pass")
+            c_gb = cand.get("global_b_pass")
+            if not isinstance(c_ga, bool) or not isinstance(c_gb, bool):
+                raise ValidationError(
+                    f"relaxed_candidate_actions[{c_idx}] must specify boolean global_a_pass and global_b_pass"
+                )
+            normalized_candidates.append(
+                {
+                    "action_id": str(cand.get("action_id", f"relaxed_action_{c_idx}")),
+                    "global_a_pass": c_ga,
+                    "global_b_pass": c_gb,
+                    "joint_global_pass": bool(c_ga and c_gb),
+                }
+            )
+        relaxed_pareto_nonempty = any(c["joint_global_pass"] for c in normalized_candidates)
+
+        if not isinstance(unauthorized_self_relaxation_attempt, Mapping):
+            raise ValidationError("unauthorized_self_relaxation_attempt must be a mapping")
+        unauth_grant = unauthorized_self_relaxation_attempt.get("authority_grant_verified", False)
+        if not isinstance(unauth_grant, bool) or unauth_grant:
+            raise ValidationError(
+                "unauthorized_self_relaxation_attempt must have authority_grant_verified=False"
+            )
+        unauth_la = unauthorized_self_relaxation_attempt.get("local_a_pass")
+        unauth_ga = unauthorized_self_relaxation_attempt.get("global_a_pass")
+        unauth_lb = unauthorized_self_relaxation_attempt.get("local_b_pass")
+        unauth_gb = unauthorized_self_relaxation_attempt.get("global_b_pass")
+        if (
+            not isinstance(unauth_la, bool)
+            or not isinstance(unauth_ga, bool)
+            or not isinstance(unauth_lb, bool)
+            or not isinstance(unauth_gb, bool)
+        ):
+            raise ValidationError(
+                "unauthorized_self_relaxation_attempt must contain boolean local_a_pass, global_a_pass, local_b_pass, global_b_pass"
+            )
+        unauth_local_pass = bool(unauth_la and unauth_lb)
+        unauth_global_pass = bool(unauth_grant and unauth_ga and unauth_gb)
+        unauth_defect = int(unauth_global_pass) - int(unauth_local_pass)
+        unauth_rejected = bool(unauth_local_pass and not unauth_global_pass and unauth_defect == -1)
+        unauth_record = {
+            "authority_grant_verified": unauth_grant,
+            "local_a_pass": unauth_la,
+            "global_a_pass": unauth_ga,
+            "local_b_pass": unauth_lb,
+            "global_b_pass": unauth_gb,
+            "local_pass": unauth_local_pass,
+            "global_pass": unauth_global_pass,
+            "defect": unauth_defect,
+            "rejected": unauth_rejected,
+            "status": (
+                "UNAUTHORIZED_SELF_RELAXATION_REJECTED_LGGR"
+                if unauth_rejected
+                else "UNAUTHORIZED_ATTEMPT_NOT_REJECTED_ERROR"
+            ),
+        }
+
+        if not isinstance(post_handoff_round, Mapping):
+            raise ValidationError("post_handoff_round must be a mapping")
+        post_la = post_handoff_round.get("local_a_pass")
+        post_ga = post_handoff_round.get("global_a_pass")
+        post_lb = post_handoff_round.get("local_b_pass")
+        post_gb = post_handoff_round.get("global_b_pass")
+        if (
+            not isinstance(post_la, bool)
+            or not isinstance(post_ga, bool)
+            or not isinstance(post_lb, bool)
+            or not isinstance(post_gb, bool)
+        ):
+            raise ValidationError(
+                "post_handoff_round must contain boolean local_a_pass, global_a_pass, local_b_pass, global_b_pass"
+            )
+        post_local_pass = bool(post_la and post_lb)
+        digest_chain_valid = bool(pre_handoff_halted_and_escalated and (p0_sha != p1_sha))
+        post_global_pass = bool(
+            authority_grant_verified
+            and digest_chain_valid
+            and relaxed_pareto_nonempty
+            and post_ga
+            and post_gb
+        )
+        post_defect = int(post_global_pass) - int(post_local_pass)
+
+        if not authority_grant_verified or not digest_chain_valid:
+            handoff_status = "UNAUTHORIZED_SELF_RELAXATION_REJECTED_LGGR"
+        elif not relaxed_pareto_nonempty:
+            handoff_status = "RELAXED_POLICY_STILL_INFEASIBLE_LGGR"
+        elif post_global_pass:
+            handoff_status = "GOVERNED_POLICY_RELAXATION_PARETO_RESTORED_LGGG"
+        else:
+            handoff_status = "POST_HANDOFF_RESIDUAL_OBSTRUCTION_LGGR"
+
+        post_record: dict[str, Any] = {
+            "round_index": int(post_handoff_round.get("round_index", 2)),
+            "local_a_pass": post_la,
+            "global_a_pass": post_ga,
+            "local_b_pass": post_lb,
+            "global_b_pass": post_gb,
+            "local_pass": post_local_pass,
+            "global_pass": post_global_pass,
+            "defect": post_defect,
+            "status_a": str(post_handoff_round.get("status_a", "")),
+            "status_b": str(post_handoff_round.get("status_b", "")),
+        }
+        if "action" in post_handoff_round:
+            post_record["action"] = post_handoff_round["action"]
+
+        entry: dict[str, Any] = {
+            "handoff_id": handoff_id.strip(),
+            "pair_name": pair_name.strip(),
+            "model_id": model_id.strip(),
+            "authority_id": authority_id.strip(),
+            "authority_grant_verified": authority_grant_verified,
+            "pre_handoff_halted_and_escalated": pre_handoff_halted_and_escalated,
+            "prior_escalation_receipt_sha256": esc_sha,
+            "prior_policy_sha256": p0_sha,
+            "relaxed_policy_sha256": p1_sha,
+            "digest_chain_valid": digest_chain_valid,
+            "relaxed_candidate_actions": normalized_candidates,
+            "relaxed_pareto_nonempty": relaxed_pareto_nonempty,
+            "unauthorized_self_relaxation_attempt": unauth_record,
+            "post_handoff_round": post_record,
+            "pareto_restored": post_global_pass,
+            "handoff_status": handoff_status,
+        }
+        self.handoffs.append(entry)
+        return json_value(entry)
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.handoffs:
+            raise ValidationError("cannot emit receipt without recorded relaxation handoffs")
+        n = len(self.handoffs)
+        unauth_rej_cnt = sum(
+            1 for h in self.handoffs if h["unauthorized_self_relaxation_attempt"]["rejected"]
+        )
+        pareto_nonempty_cnt = sum(1 for h in self.handoffs if h["relaxed_pareto_nonempty"])
+        restored_cnt = sum(1 for h in self.handoffs if h["pareto_restored"])
+        digest_all = all(h["digest_chain_valid"] for h in self.handoffs)
+
+        unauth_rej_rate = Fraction(unauth_rej_cnt, n)
+        pareto_nonempty_rate = Fraction(pareto_nonempty_cnt, n)
+        restored_rate = Fraction(restored_cnt, n)
+
+        unrestored_ids = [h["handoff_id"] for h in self.handoffs if not h["pareto_restored"]]
+
+        if restored_cnt == n and unauth_rej_cnt == n and digest_all:
+            status = "GOVERNED_POLICY_RELAXATION_PARETO_RESTORED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "GOVERNED_POLICY_RELAXATION_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_governed_policy_relaxation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "handoff_count": n,
+            "unauthorized_self_relaxation_rejected_count": unauth_rej_cnt,
+            "relaxed_pareto_nonempty_count": pareto_nonempty_cnt,
+            "pareto_restored_count": restored_cnt,
+            "unauthorized_self_relaxation_rejection_rate": unauth_rej_rate,
+            "relaxed_pareto_nonempty_rate": pareto_nonempty_rate,
+            "post_handoff_pareto_restoration_rate": restored_rate,
+            "digest_chain_verified_all": digest_all,
+            "unrestored_handoff_ids": unrestored_ids,
+            "handoffs": self.handoffs,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

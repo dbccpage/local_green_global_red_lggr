@@ -1703,4 +1703,43 @@ theorem infeasible_coupled_multi_monitor_empty_intersection_oscillation_vs_escal
   intro s ⟨h1, h2⟩
   omega
 
+/-- Theorem 58 (governed_policy_relaxation_handoff_restores_pareto_vs_self_relaxation):
+    Formalizes Governed Policy-Relaxation Handoffs vs. Unauthorized Worker Self-Relaxation:
+    1. (Empty Intersection Under Initial Policy P_0 vs. Unique Pareto Restoration Under Relaxed Policy P_1):
+       Under initial policy P_0 with ℓ¹ repair budget B_1^(0) = 2 and query demand K = 4,
+       the coupled feasible intersection is empty over ℤ: ∀ s : Int, ¬ (s ≥ 4 ∧ s ≤ 2).
+       When an external authority issues a relaxed policy P_1 with B_1^(1) = 4,
+       the relaxed Pareto intersection becomes non-empty with unique integer solution S_* = 4:
+       ∀ s : Int, (s ≥ 4 ∧ s ≤ 4) ↔ s = 4.
+    2. (Unauthorized Worker Self-Relaxation Rejection vs. Authorized External Policy-Relaxation Handoff):
+       - If the worker attempts to self-relax B_1 → 4 at S_* = 4 without an external authority grant
+         (auth_grant = 0), the governed gate rejects the transition:
+         Eg_gov_unauth = auth_grant * Eg_A * Eg_B = 0 and Δ_{E,gov_unauth} = -1;
+       - When the external authority gate signs the policy-relaxation handoff (auth_grant = 1)
+         and the orchestrator executes S_* = 4 under B_1^(1) = 4, both monitors pass and
+         governed global evaluation converges:
+         Eg_A = 1, Eg_B = 1, Eg_gov_auth = 1, and Δ_{E,gov_auth} = 0. -/
+theorem governed_policy_relaxation_handoff_restores_pareto_vs_self_relaxation :
+    (∀ s : Int, ¬ (s ≥ 4 ∧ s ≤ 2)) ∧
+    (∀ s : Int, (s ≥ 4 ∧ s ≤ 4) ↔ s = 4) ∧
+    (let k_queries : Int := 4;
+     let b1_relaxed : Int := 4;
+     let s_star : Int := 4;
+     let ega := if s_star ≥ k_queries then (1 : Int) else 0;
+     let egb := if absInt s_star ≤ b1_relaxed then (1 : Int) else 0;
+     let auth_grant_unauth : Int := 0;
+     let eg_gov_unauth := auth_grant_unauth * ega * egb;
+     let defect_gov_unauth := eg_gov_unauth - 1;
+     let auth_grant_auth : Int := 1;
+     let eg_gov_auth := auth_grant_auth * ega * egb;
+     let defect_gov_auth := eg_gov_auth - 1;
+     (ega = 1 ∧ egb = 1) ∧
+     (eg_gov_unauth = 0 ∧ defect_gov_unauth = -1) ∧
+     (eg_gov_auth = 1 ∧ defect_gov_auth = 0)) := by
+  refine ⟨?_, ⟨?_, ⟨⟨by decide, by decide⟩, ⟨⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩⟩⟩⟩
+  · intro s ⟨h1, h2⟩
+    omega
+  · intro s
+    exact ⟨fun ⟨h1, h2⟩ => by omega, fun h => by omega⟩
+
 end LggrVIII

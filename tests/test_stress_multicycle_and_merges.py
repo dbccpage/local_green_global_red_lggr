@@ -37,6 +37,7 @@ from lggr.streaming import (
     StreamingDefectSoundnessMonitor,
     StreamingDiscreteCurvatureMonitor,
     StreamingFiberMonitor,
+    StreamingGovernedPolicyRelaxationMonitor,
     StreamingGramProbeMonitor,
     StreamingHodgeDecompositionMonitor,
     StreamingMartingaleOptionalStoppingMonitor,
@@ -2535,6 +2536,113 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["status"], "INFEASIBLE_COUPLED_REGIME_HALTED_AND_ESCALATED_LGGR")
         self.assertEqual(receipt["whack_a_mole_oscillation_rate"], "1")
         self.assertEqual(receipt["halt_and_escalate_rate"], "1")
+
+    def test_governed_policy_relaxation_handoff_vs_self_relaxation(self) -> None:
+        """Verify StreamingGovernedPolicyRelaxationMonitor separates unauthorized self-relaxation from external authority handoff."""
+        mon = StreamingGovernedPolicyRelaxationMonitor(
+            scope_id="unit_governed_policy_relaxation"
+        )
+        p0 = BudgetPolicy(
+            policy_id="coupled-sideinfo-skew/v1",
+            spec_id="side-channel-capacity-and-l1-skew-budget/v1",
+            evaluator_id="joint-sideinfo-skew/v1",
+            representation_id="channel-capacity-s/v1",
+            authority_id="external-owner/v1",
+            allowed_states=(1, 2),
+            max_step=2,
+            max_total=2,
+            query_scope="every_prefix",
+        )
+        p1 = BudgetPolicy(
+            policy_id="coupled-sideinfo-skew/v2-relaxed",
+            spec_id="side-channel-capacity-and-l1-skew-budget/v2",
+            evaluator_id="joint-sideinfo-skew/v1",
+            representation_id="channel-capacity-s/v1",
+            authority_id="external-human-authority-gate/v2",
+            allowed_states=(1, 2, 3, 4),
+            max_step=3,
+            max_total=4,
+            query_scope="every_prefix",
+        )
+        esc_sha = "a" * 64
+
+        # Identical prior and relaxed policy SHA-256 must raise ValidationError
+        with self.assertRaises(ValidationError):
+            mon.record_relaxation_handoff(
+                handoff_id="bad_same_policy",
+                pair_name="Relaxed_SideInfo_x_SkewRepair",
+                model_id="synthetic",
+                prior_escalation_receipt_sha256=esc_sha,
+                prior_policy_sha256=p0.sha256,
+                relaxed_policy_sha256=p0.sha256,
+                authority_id=p1.authority_id,
+                authority_grant_verified=True,
+                pre_handoff_halted_and_escalated=True,
+                relaxed_candidate_actions=[
+                    {"action_id": "S=4_alpha=0", "global_a_pass": True, "global_b_pass": True}
+                ],
+                unauthorized_self_relaxation_attempt={
+                    "authority_grant_verified": False,
+                    "local_a_pass": True,
+                    "global_a_pass": True,
+                    "local_b_pass": True,
+                    "global_b_pass": True,
+                },
+                post_handoff_round={
+                    "local_a_pass": True,
+                    "global_a_pass": True,
+                    "local_b_pass": True,
+                    "global_b_pass": True,
+                },
+            )
+
+        rec = mon.record_relaxation_handoff(
+            handoff_id="handoff_valid_1",
+            pair_name="Relaxed_SideInfo_x_SkewRepair",
+            model_id="synthetic",
+            prior_escalation_receipt_sha256=esc_sha,
+            prior_policy_sha256=p0.sha256,
+            relaxed_policy_sha256=p1.sha256,
+            authority_id=p1.authority_id,
+            authority_grant_verified=True,
+            pre_handoff_halted_and_escalated=True,
+            relaxed_candidate_actions=[
+                {"action_id": "S=2_alpha=0", "global_a_pass": False, "global_b_pass": True},
+                {"action_id": "S=4_alpha=0_relaxed_B1=4", "global_a_pass": True, "global_b_pass": True},
+            ],
+            unauthorized_self_relaxation_attempt={
+                "authority_grant_verified": False,
+                "local_a_pass": True,
+                "global_a_pass": True,
+                "local_b_pass": True,
+                "global_b_pass": True,
+            },
+            post_handoff_round={
+                "round_index": 2,
+                "local_a_pass": True,
+                "global_a_pass": True,
+                "local_b_pass": True,
+                "global_b_pass": True,
+                "status_a": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+                "status_b": "SKEW_REPAIR_BUDGET_COHERENT_LGGG",
+            },
+        )
+        self.assertTrue(rec["digest_chain_valid"])
+        self.assertTrue(rec["relaxed_pareto_nonempty"])
+        self.assertTrue(rec["unauthorized_self_relaxation_attempt"]["rejected"])
+        self.assertEqual(
+            rec["unauthorized_self_relaxation_attempt"]["status"],
+            "UNAUTHORIZED_SELF_RELAXATION_REJECTED_LGGR",
+        )
+        self.assertEqual(rec["unauthorized_self_relaxation_attempt"]["defect"], -1)
+        self.assertTrue(rec["pareto_restored"])
+        self.assertEqual(rec["handoff_status"], "GOVERNED_POLICY_RELAXATION_PARETO_RESTORED_LGGG")
+
+        receipt = mon.emit_receipt()
+        self.assertEqual(receipt["status"], "GOVERNED_POLICY_RELAXATION_PARETO_RESTORED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["unauthorized_self_relaxation_rejection_rate"], "1")
+        self.assertEqual(receipt["post_handoff_pareto_restoration_rate"], "1")
 
 
 if __name__ == "__main__":

@@ -24,6 +24,9 @@ from lggr.benchmarks import (
     _eval_pair1_side_info_and_skew,
     _eval_pair2_poe_and_skew,
     _eval_pair3_tower_and_mermin_peres,
+    _eval_relaxed_pair1_side_info_and_skew,
+    _eval_relaxed_pair2_poe_and_skew,
+    _eval_relaxed_pair3_tower_and_mermin_peres,
     compute_empirical_defect_rates,
     load_openrouter_credentials,
     verify_frontier_benchmark,
@@ -34,6 +37,7 @@ from lggr.streaming import (
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
     StreamingFiberMonitor,
+    StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
     StreamingMerminPeresParityMonitor,
     StreamingProductOfExpertsMonitor,
@@ -699,6 +703,103 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(jg_rec["empty_feasible_intersection_count"], 15)
         self.assertEqual(jg_rec["whack_a_mole_oscillation_count"], 15)
         self.assertEqual(jg_rec["halted_and_escalated_count"], 15)
+
+    def test_governed_policy_relaxation_benchmark_replay(self):
+        """F19: Replay all 15 governed policy-relaxation handoffs across 5 model families."""
+        artifact = RECEIPTS_DIR / "governed_policy_relaxation_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("governed_policy_relaxation_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.governed_policy_relaxation_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("relaxed_pairs_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 15)
+        self.assertEqual(data.get("handoff_count"), 15)
+
+        handoffs = data.get("handoffs", [])
+        self.assertEqual(len(handoffs), 15)
+
+        self.assertTrue(data["unauthorized_self_relaxation_metrics"]["identity_verified"])
+        self.assertTrue(data["post_handoff_round_3_metrics"]["identity_verified"])
+
+        replay_mon = StreamingGovernedPolicyRelaxationMonitor(
+            scope_id=data["relaxation_monitor_receipt"]["scope_id"]
+        )
+        for h in handoffs:
+            replay_mon.record_relaxation_handoff(
+                handoff_id=h["handoff_id"],
+                pair_name=h["pair_name"],
+                model_id=h["model_id"],
+                prior_escalation_receipt_sha256=h["prior_escalation_receipt_sha256"],
+                prior_policy_sha256=h["prior_policy_sha256"],
+                relaxed_policy_sha256=h["relaxed_policy_sha256"],
+                authority_id=h["authority_id"],
+                authority_grant_verified=h["authority_grant_verified"],
+                pre_handoff_halted_and_escalated=h["pre_handoff_halted_and_escalated"],
+                relaxed_candidate_actions=h["relaxed_candidate_actions"],
+                unauthorized_self_relaxation_attempt=h["unauthorized_self_relaxation_attempt"],
+                post_handoff_round=h["post_handoff_round"],
+            )
+            self.assertTrue(h["digest_chain_valid"])
+            self.assertTrue(h["relaxed_pareto_nonempty"])
+            self.assertTrue(h["unauthorized_self_relaxation_attempt"]["rejected"])
+            self.assertEqual(h["unauthorized_self_relaxation_attempt"]["defect"], -1)
+            self.assertTrue(h["pareto_restored"])
+            self.assertEqual(
+                h["handoff_status"], "GOVERNED_POLICY_RELAXATION_PARETO_RESTORED_LGGG"
+            )
+
+            # Verify BudgetPolicy SHA-256 digests match stored policy objects
+            p0_obj = BudgetPolicy.from_dict(h["prior_policy"])
+            p1_obj = BudgetPolicy.from_dict(h["relaxed_policy"])
+            self.assertEqual(p0_obj.sha256, h["prior_policy_sha256"])
+            self.assertEqual(p1_obj.sha256, h["relaxed_policy_sha256"])
+
+            # Replay Round 3 frontier monitor receipts
+            pname = h["pair_name"]
+            mdl = h["model_id"]
+            act = h["post_handoff_round"]["action"]
+            r3_saved = h["round_3_receipts"]
+            if pname == "Relaxed_SideInfo_x_SkewRepair":
+                rec_a, rec_b = _eval_relaxed_pair1_side_info_and_skew(
+                    f"h1_r3_{mdl}",
+                    act["channel_capacity_s"],
+                    act["symbols"],
+                    act["candidate_alpha"],
+                    relaxed_l1_budget="4",
+                )
+            elif pname == "Relaxed_PoE_x_SkewRepair":
+                rec_a, rec_b = _eval_relaxed_pair2_poe_and_skew(
+                    f"h2_r3_{mdl}",
+                    act["compromise_eps"],
+                    act["candidate_alpha"],
+                    relaxed_l1_budget="3",
+                )
+            elif pname == "Relaxed_ProjectiveTower_x_MerminPeres":
+                rec_a, rec_b = _eval_relaxed_pair3_tower_and_mermin_peres(
+                    f"h3_r3_{mdl}",
+                    act["const_b"],
+                    act["x_mod2"],
+                    act["x_mod4"],
+                    parity_gauge_flip=act["parity_gauge_flip"],
+                )
+            else:
+                self.fail(f"Unknown relaxed coupled pair: {pname}")
+            self.assertEqual(rec_a["receipt_sha256"], r3_saved["receipt_a"]["receipt_sha256"])
+            self.assertEqual(rec_b["receipt_sha256"], r3_saved["receipt_b"]["receipt_sha256"])
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["relaxation_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(mon_rec["status"], "GOVERNED_POLICY_RELAXATION_PARETO_RESTORED_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["unauthorized_self_relaxation_rejection_rate"], "1")
+        self.assertEqual(mon_rec["relaxed_pareto_nonempty_rate"], "1")
+        self.assertEqual(mon_rec["post_handoff_pareto_restoration_rate"], "1")
+        self.assertEqual(mon_rec["pareto_restored_count"], 15)
 
 
 if __name__ == "__main__":
