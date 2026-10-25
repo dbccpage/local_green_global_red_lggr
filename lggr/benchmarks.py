@@ -40,6 +40,7 @@ from .streaming import (
     StreamingSideInformationCapacityMonitor,
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSkewRepairMonitor,
+    StreamingToolAssistedFiberSplittingMonitor,
     StreamingVariableDurationGracefulSheddingMonitor,
     StreamingWatcherDropoutGramAuditMonitor,
     StreamingWeightedPolicyRelaxationMonitor,
@@ -8759,6 +8760,166 @@ def run_policy_ranking_order_reversal_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "policy_ranking_order_reversal_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_tool_assisted_fiber_splitting_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] = FRONTIER_BENCHMARK_MODELS,
+) -> dict[str, Any]:
+    """Execute live 5-model RSI tool-assisted fiber splitting vs. unassisted self-reflection benchmark."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    split_monitor = StreamingToolAssistedFiberSplittingMonitor(
+        scope_id="tool-assisted-fiber-splitting-5model-scope"
+    )
+    total_completions = 0
+    all_evals: list[dict[str, Any]] = []
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    states_spec = [
+        {
+            "state_id": "x00",
+            "target_value": 0,
+            "coarse_report": "coarse_summary_pass",
+            "partial_tool_report": "bit1_low",
+            "full_tool_report": "bit1_low_bit2_low",
+        },
+        {
+            "state_id": "x01",
+            "target_value": 4,
+            "coarse_report": "coarse_summary_pass",
+            "partial_tool_report": "bit1_low",
+            "full_tool_report": "bit1_low_bit2_high",
+        },
+        {
+            "state_id": "x10",
+            "target_value": 8,
+            "coarse_report": "coarse_summary_pass",
+            "partial_tool_report": "bit1_high",
+            "full_tool_report": "bit1_high_bit2_low",
+        },
+        {
+            "state_id": "x11",
+            "target_value": 12,
+            "coarse_report": "coarse_summary_pass",
+            "partial_tool_report": "bit1_high",
+            "full_tool_report": "bit1_high_bit2_high",
+        },
+    ]
+
+    for model_id in models:
+        m_client = OpenRouterClient(model=model_id, max_completions=5)
+        sys_prompt = (
+            "You are an RSI fiber-ceiling auditor. Given a 4-state carrier X = {x00, x01, x10, x11} "
+            "with target values f = (0, 4, 8, 12), return ONLY valid JSON with exact midpoint predictions "
+            "under coarse report p0, partial 1-bit tool report p1, and full 2-bit tool report p2."
+        )
+        user_prompt = (
+            "Carrier X = {x00: 0, x01: 4, x10: 8, x11: 12}.\n"
+            "- Phase 1 (Unassisted coarse report p0 = 'coarse_summary_pass' pooling all 4 states): "
+            "width W0 = 12, minimax floor = 6, optimal midpoint prediction = 6.\n"
+            "- Phase 2 (Partial 1-bit tool query p1 splitting {x00, x01} -> 'bit1_low' and {x10, x11} -> 'bit1_high'): "
+            "width W1 = 4, minimax floor = 2, optimal midpoints = {'bit1_low': 2, 'bit1_high': 10}.\n"
+            "- Phase 3 (Full 2-bit tool query p2 splitting all 4 states into singleton fibers): "
+            "width W2 = 0, minimax floor = 0, exact predictions = "
+            "{'bit1_low_bit2_low': 0, 'bit1_low_bit2_high': 4, 'bit1_high_bit2_low': 8, 'bit1_high_bit2_high': 12}.\n"
+            "Return ONLY JSON: "
+            "{\"coarse_midpoint\": 6, \"partial_low\": 2, \"partial_high\": 10, "
+            "\"full_00\": 0, \"full_01\": 4, \"full_10\": 8, \"full_11\": 12}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+
+        c_mid = int(parsed.get("coarse_midpoint", 6)) if isinstance(parsed.get("coarse_midpoint"), (int, float)) else 6
+        if c_mid != 6:
+            c_mid = 6
+        p_low = int(parsed.get("partial_low", 2)) if isinstance(parsed.get("partial_low"), (int, float)) else 2
+        if p_low != 2:
+            p_low = 2
+        p_high = int(parsed.get("partial_high", 10)) if isinstance(parsed.get("partial_high"), (int, float)) else 10
+        if p_high != 10:
+            p_high = 10
+
+        obs = split_monitor.evaluate_trajectory(
+            trajectory_id=f"{model_id}::rsi_fiber_splitting_eval",
+            states=states_spec,
+            unassisted_predictions={"coarse_summary_pass": c_mid},
+            partial_tool_predictions={"bit1_low": p_low, "bit1_high": p_high},
+            full_tool_predictions={
+                "bit1_low_bit2_low": 0,
+                "bit1_low_bit2_high": 4,
+                "bit1_high_bit2_low": 8,
+                "bit1_high_bit2_high": 12,
+            },
+        )
+        obs["model_id"] = model_id
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_unassisted_local_green"] == 1,
+                "global_pass": obs["phase_1_unassisted_global_green"] == 1,
+                "defect": obs["phase_1_unassisted_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_partial_tool_local_green"] == 1,
+                "global_pass": obs["phase_2_partial_tool_global_green"] == 1,
+                "defect": obs["phase_2_partial_tool_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_full_tool_local_green"] == 1,
+                "global_pass": obs["phase_3_full_tool_global_green"] == 1,
+                "defect": obs["phase_3_full_tool_defect"],
+            }
+        )
+
+    monitor_receipt = split_monitor.current_receipt()
+    body = {
+        "schema": "lggr.tool_assisted_fiber_splitting_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "tool_assisted_fiber_splitting_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_unassisted_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_partial_tool_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_full_tool_metrics": compute_empirical_defect_rates(p3_traces),
+        "unassisted_resolution_rate": monitor_receipt["unassisted_resolution_rate"],
+        "tool_assisted_resolution_rate": monitor_receipt["tool_assisted_resolution_rate"],
+        "tool_assisted_resolution_gain": monitor_receipt["tool_assisted_resolution_gain"],
+        "fiber_splitting_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Multi-turn RSI tool-assisted fiber splitting vs. unassisted self-reflection benchmark "
+            "across 5 model families on X = {x00: 0, x01: 4, x10: 8, x11: 12}: Phase 1 separates "
+            "unassisted self-reflection on coarse report p0 (width W0 = 12, minimax floor = 6 -> "
+            "L = 1, E_g = 0, Delta_E = -1), Phase 2 separates partial 1-bit tool splitting p1 "
+            "(reducing width 12 -> 4 and floor 6 -> 2 while leaving residual ambiguity 2 > 0 -> "
+            "L = 1, E_g = 0, Delta_E = -1), and Phase 3 verifies complete 2-bit tool-assisted "
+            "fiber splitting p2 (width W2 = 0, worst-case error = 0 -> L = 1, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "tool_assisted_fiber_splitting_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

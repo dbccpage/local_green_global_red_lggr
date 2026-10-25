@@ -1444,6 +1444,28 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["status"], "DUAL_METRIC_ORDER_REVERSAL_COHERENT_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
 
+    def test_tool_assisted_fiber_splitting_benchmark_replay(self) -> None:
+        """Verify tool_assisted_fiber_splitting_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "tool_assisted_fiber_splitting_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.tool_assisted_fiber_splitting_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["unassisted_resolution_rate"], "0")
+        self.assertEqual(data["tool_assisted_resolution_rate"], "1")
+        self.assertEqual(data["tool_assisted_resolution_gain"], "1")
+
+        mon_rec = data["fiber_splitting_monitor_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -62,6 +62,7 @@ from lggr.streaming import (
     StreamingSimultaneousBudgetSplitMonitor,
     StreamingSixRoleOverlayMonitor,
     StreamingThresholdGovernanceMonitor,
+    StreamingToolAssistedFiberSplittingMonitor,
     StreamingTransportMonitor,
     StreamingVariableDurationGracefulSheddingMonitor,
     StreamingWatcherDropoutGramAuditMonitor,
@@ -3794,6 +3795,79 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["cf_only_coherence_rate"], "0")
         self.assertEqual(receipt["dual_metric_coherence_rate"], "1")
         self.assertEqual(receipt["dual_metric_coherence_gain"], "1")
+
+    def test_rsi_tool_assisted_fiber_splitting_vs_unassisted_reflection(self) -> None:
+        """Verify Theorem 70: RSI unassisted self-reflection invariance vs. multi-turn tool-assisted fiber splitting."""
+        mon = StreamingToolAssistedFiberSplittingMonitor(
+            scope_id="unit-tool-assisted-fiber-splitting-scope"
+        )
+        states_spec = [
+            {
+                "state_id": "x00",
+                "target_value": 0,
+                "coarse_report": "coarse_summary_pass",
+                "partial_tool_report": "bit1_low",
+                "full_tool_report": "bit1_low_bit2_low",
+            },
+            {
+                "state_id": "x01",
+                "target_value": 4,
+                "coarse_report": "coarse_summary_pass",
+                "partial_tool_report": "bit1_low",
+                "full_tool_report": "bit1_low_bit2_high",
+            },
+            {
+                "state_id": "x10",
+                "target_value": 8,
+                "coarse_report": "coarse_summary_pass",
+                "partial_tool_report": "bit1_high",
+                "full_tool_report": "bit1_high_bit2_low",
+            },
+            {
+                "state_id": "x11",
+                "target_value": 12,
+                "coarse_report": "coarse_summary_pass",
+                "partial_tool_report": "bit1_high",
+                "full_tool_report": "bit1_high_bit2_high",
+            },
+        ]
+        obs = mon.evaluate_trajectory(
+            trajectory_id="traj-rsi-split-01",
+            states=states_spec,
+            unassisted_predictions={"coarse_summary_pass": 6},
+            partial_tool_predictions={"bit1_low": 2, "bit1_high": 10},
+            full_tool_predictions={
+                "bit1_low_bit2_low": 0,
+                "bit1_low_bit2_high": 4,
+                "bit1_high_bit2_low": 8,
+                "bit1_high_bit2_high": 12,
+            },
+        )
+        self.assertEqual(obs["coarse_fiber_width_w0"], "12")
+        self.assertEqual(obs["coarse_minimax_floor_0"], "6")
+        self.assertEqual(obs["partial_tool_width_w1"], "4")
+        self.assertEqual(obs["partial_tool_floor_1"], "2")
+        self.assertEqual(obs["full_tool_width_w2"], "0")
+        self.assertEqual(obs["full_tool_floor_2"], "0")
+        self.assertEqual(obs["unassisted_worst_case_error"], "6")
+        self.assertEqual(obs["partial_tool_worst_case_error"], "2")
+        self.assertEqual(obs["full_tool_worst_case_error"], "0")
+        self.assertEqual(obs["phase_1_unassisted_local_green"], 1)
+        self.assertEqual(obs["phase_1_unassisted_global_green"], 0)
+        self.assertEqual(obs["phase_1_unassisted_defect"], -1)
+        self.assertEqual(obs["phase_2_partial_tool_local_green"], 1)
+        self.assertEqual(obs["phase_2_partial_tool_global_green"], 0)
+        self.assertEqual(obs["phase_2_partial_tool_defect"], -1)
+        self.assertEqual(obs["phase_3_full_tool_local_green"], 1)
+        self.assertEqual(obs["phase_3_full_tool_global_green"], 1)
+        self.assertEqual(obs["phase_3_full_tool_defect"], 0)
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["unassisted_resolution_rate"], "0")
+        self.assertEqual(receipt["tool_assisted_resolution_rate"], "1")
+        self.assertEqual(receipt["tool_assisted_resolution_gain"], "1")
 
 
 if __name__ == "__main__":

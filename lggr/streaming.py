@@ -11734,6 +11734,162 @@ class StreamingPolicyRankingOrderReversalMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingToolAssistedFiberSplittingMonitor:
+    """Online RSI Paper 000 / Volume VIII tool-assisted fiber splitting vs. unassisted self-reflection monitor.
+
+    Wraps StreamingRSIFiberCeilingMonitor across 3-phase multi-turn reasoning trajectories:
+      - Phase 1 (Unassisted Self-Reflection on Coarse Report p0):
+        Evaluates unassisted self-reflection predictions on coarse report p0(x).
+        When max_{x} |f(x) - g_unass(x)| == W0 / 2 > 0, the predictor attains the minimax midpoint
+        floor on p0 (L_unass = 1), yet worst-case error remains locked at W0 / 2 > 0
+        (Eg_unass = 0, Delta_{E,unass} = -1, UNASSISTED_FIBER_CEILING_LOCKED_LGGR).
+      - Phase 2 (Partial 1-Bit Tool Query Splitting p1):
+        Evaluates intermediate predictions on partial tool-query report p1(x) that refines p0
+        into sub-fibers of width W1 < W0. The minimax floor drops strictly from W0 / 2 to W1 / 2
+        (L_part = 1 when E_part == W1 / 2 < W0 / 2), yet residual within-sub-fiber ambiguity
+        W1 / 2 > 0 persists (Eg_part = 0, Delta_{E,part} = -1, PARTIAL_TOOL_RESIDUAL_AMBIGUITY_LGGR).
+      - Phase 3 (Complete Multi-Turn Tool-Assisted Fiber Splitting p2):
+        Evaluates multi-turn tool-assisted predictions on refined report p2(x) that splits all
+        colliding target states into zero-spread fibers (W2 = 0, E_split = 0), achieving
+        L_split = 1, Eg_split = 1, Delta_{E,split} = 0 (TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG).
+    """
+
+    def __init__(self, *, scope_id: str = "streaming-tool-assisted-fiber-splitting-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def evaluate_trajectory(
+        self,
+        trajectory_id: str,
+        states: Iterable[Mapping[str, Any]],
+        *,
+        unassisted_predictions: Mapping[str, Fraction | int | str],
+        partial_tool_predictions: Mapping[str, Fraction | int | str],
+        full_tool_predictions: Mapping[str, Fraction | int | str],
+    ) -> dict[str, Any]:
+        tid = text(trajectory_id, "trajectory_id")
+        state_list = list(sequence(states, "states"))
+        if not state_list:
+            raise ValidationError("states must be non-empty")
+
+        partial_mon = StreamingRSIFiberCeilingMonitor(scope_id=f"{self.scope_id}-{tid}-partial")
+        full_mon = StreamingRSIFiberCeilingMonitor(scope_id=f"{self.scope_id}-{tid}-full")
+
+        for st in state_list:
+            sid = text(st["state_id"], "state_id")
+            f_val = rational(st["target_value"])
+            c_rep = st["coarse_report"]
+            p_rep = st["partial_tool_report"]
+            r_rep = st["full_tool_report"]
+            partial_mon.observe_state(sid, c_rep, f_val, refined_report=p_rep)
+            full_mon.observe_state(sid, c_rep, f_val, refined_report=r_rep)
+
+        gen_unass = partial_mon.evaluate_generation(
+            "phase_1_unassisted",
+            dict(unassisted_predictions),
+            use_refined_report=False,
+        )
+        gen_part = partial_mon.evaluate_generation(
+            "phase_2_partial_tool",
+            dict(partial_tool_predictions),
+            use_refined_report=True,
+        )
+        gen_full = full_mon.evaluate_generation(
+            "phase_3_full_tool",
+            dict(full_tool_predictions),
+            use_refined_report=True,
+        )
+
+        floor0 = rational(gen_unass["coarse_half_spread_ceiling"])
+        w0 = Fraction(2) * floor0
+        floor1 = rational(gen_part["refined_half_spread_ceiling"])
+        w1 = Fraction(2) * floor1
+        floor2 = rational(gen_full["refined_half_spread_ceiling"])
+        w2 = Fraction(2) * floor2
+
+        err_unass = rational(gen_unass["worst_case_error"])
+        err_part = rational(gen_part["worst_case_error"])
+        err_full = rational(gen_full["worst_case_error"])
+
+        l_p1 = 1 if (err_unass == floor0) else 0
+        eg_p1 = 1 if (l_p1 == 1 and err_unass == Fraction(0)) else 0
+        defect_p1 = eg_p1 - l_p1
+
+        l_p2 = 1 if (err_part == floor1 and floor1 < floor0) else 0
+        eg_p2 = 1 if (l_p2 == 1 and err_part == Fraction(0)) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        l_p3 = 1 if (w2 == Fraction(0) and err_full == Fraction(0)) else 0
+        eg_p3 = 1 if (l_p3 == 1 and w2 < w1 and w1 < w0) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "trajectory_id": tid,
+            "state_count": len(state_list),
+            "coarse_fiber_width_w0": w0,
+            "coarse_minimax_floor_0": floor0,
+            "partial_tool_width_w1": w1,
+            "partial_tool_floor_1": floor1,
+            "full_tool_width_w2": w2,
+            "full_tool_floor_2": floor2,
+            "unassisted_worst_case_error": err_unass,
+            "partial_tool_worst_case_error": err_part,
+            "full_tool_worst_case_error": err_full,
+            "phase_1_unassisted_local_green": l_p1,
+            "phase_1_unassisted_global_green": eg_p1,
+            "phase_1_unassisted_defect": defect_p1,
+            "phase_1_status": "UNASSISTED_FIBER_CEILING_LOCKED_LGGR" if defect_p1 == -1 else "TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG",
+            "phase_2_partial_tool_local_green": l_p2,
+            "phase_2_partial_tool_global_green": eg_p2,
+            "phase_2_partial_tool_defect": defect_p2,
+            "phase_2_status": "PARTIAL_TOOL_RESIDUAL_AMBIGUITY_LGGR" if defect_p2 == -1 else "TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG",
+            "phase_3_full_tool_local_green": l_p3,
+            "phase_3_full_tool_global_green": eg_p3,
+            "phase_3_full_tool_defect": defect_p3,
+            "phase_3_status": "TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG" if eg_p3 == 1 else "UNASSISTED_FIBER_CEILING_LOCKED_LGGR",
+            "partial_monitor_receipt": partial_mon.get_receipt(),
+            "full_monitor_receipt": full_mon.get_receipt(),
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one trajectory must be evaluated")
+        n = len(self.evaluations)
+        p1_locked = sum(1 for e in self.evaluations if e["phase_1_unassisted_defect"] == -1)
+        p2_partial = sum(1 for e in self.evaluations if e["phase_2_partial_tool_defect"] == -1)
+        p3_resolved = sum(1 for e in self.evaluations if e["phase_3_full_tool_global_green"] == 1)
+
+        unassisted_resolution_rate = Fraction(n - p1_locked, n)
+        tool_assisted_resolution_rate = Fraction(p3_resolved, n)
+
+        if p3_resolved == n and p1_locked == n:
+            status = "TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "UNASSISTED_FIBER_CEILING_LOCKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_tool_assisted_fiber_splitting.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_unassisted_ceiling_locked_count": p1_locked,
+            "phase_2_partial_tool_residual_count": p2_partial,
+            "phase_3_full_tool_resolved_count": p3_resolved,
+            "unassisted_resolution_rate": unassisted_resolution_rate,
+            "tool_assisted_resolution_rate": tool_assisted_resolution_rate,
+            "tool_assisted_resolution_gain": tool_assisted_resolution_rate - unassisted_resolution_rate,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
