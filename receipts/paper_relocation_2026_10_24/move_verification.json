@@ -1,8 +1,0 @@
-{
-  "result": "passed",
-  "source_paths_absent": true,
-  "all_inventoried_file_bytes_unchanged": true,
-  "inventoried_files": 1103,
-  "before_move_sha256": "0a6d5217f1c3f020ac95b1a63ca0e6f7393b09861540ab180c197390af17922c",
-  "moves": 25
-}

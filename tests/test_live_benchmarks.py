@@ -40,6 +40,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
+    StreamingConcurrentLeaseOverlapMonitor,
     StreamingFiberMonitor,
     StreamingGovernedPolicyRelaxationMonitor,
     StreamingJointMultiMonitorRepairGuard,
@@ -1074,6 +1075,70 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(mon_rec["single_round_horizon_coherence_rate"], "0")
         self.assertEqual(mon_rec["multi_round_lease_revoked_coherence_rate"], "1")
         self.assertEqual(mon_rec["lease_revocation_coherence_gain"], "1")
+
+    def test_concurrent_lease_overlap_benchmark_replay(self):
+        """F23: Replay all 5 concurrent overlapping incident lease schedules (15 lease steps per phase) across 5 model families."""
+        artifact = RECEIPTS_DIR / "concurrent_lease_overlap_benchmark.json"
+        if not artifact.is_file():
+            self.skipTest("concurrent_lease_overlap_benchmark.json not generated yet")
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+
+        self.assertEqual(data.get("schema"), "lggr.concurrent_lease_overlap_replay.v1")
+        self.assertEqual(len(data.get("models_evaluated", [])), 5)
+        self.assertEqual(len(data.get("incidents_evaluated", [])), 3)
+        self.assertEqual(data.get("total_completions"), 30)
+        self.assertEqual(data.get("schedule_count"), 5)
+        self.assertEqual(data.get("lease_evaluation_count"), 15)
+
+        self.assertTrue(
+            data["phase_1_uncoordinated_overlap_schedule_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_overlap_accounted_schedule_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_1_uncoordinated_overlap_lease_metrics"]["identity_verified"]
+        )
+        self.assertTrue(
+            data["phase_2_overlap_accounted_lease_metrics"]["identity_verified"]
+        )
+
+        replay_mon = StreamingConcurrentLeaseOverlapMonitor(
+            scope_id=data["overlap_monitor_receipt"]["scope_id"]
+        )
+        for s in data.get("schedules", []):
+            p1_leases = s["phase_1_uncoordinated_overlap_schedule"]["leases"]
+            p2_leases = s["phase_2_overlap_accounted_schedule"]["leases"]
+            replay_mon.record_overlap_schedule(
+                schedule_id=s["schedule_id"],
+                model_id=s["model_id"],
+                prior_ratchet_receipt_sha256=s["prior_ratchet_receipt_sha256"],
+                baseline_policy_sha256=s["baseline_policy_sha256"],
+                baseline_policy_vector=s["baseline_policy_vector"],
+                risk_weight_vector=s["risk_weight_vector"],
+                individual_lease_budget=s["individual_lease_budget"],
+                horizon_drift_ceiling=s["horizon_drift_ceiling"],
+                uncoordinated_overlapping_leases=p1_leases,
+                overlap_accounted_leases=p2_leases,
+            )
+            self.assertTrue(s["phase_1_overlap_horizon_breach"])
+            self.assertFalse(s["converged_single_round"])
+            self.assertTrue(s["converged_multi_round"])
+            self.assertEqual(s["peak_concurrent_weighted_drift_reduction"], "7")
+
+        mon_rec = replay_mon.emit_receipt()
+        self.assertEqual(
+            mon_rec["receipt_sha256"],
+            data["overlap_monitor_receipt"]["receipt_sha256"],
+        )
+        self.assertEqual(
+            mon_rec["status"], "LEASE_OVERLAP_ACCOUNTING_HORIZON_COHERENT_LGGG"
+        )
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(mon_rec["phase_1_overlap_horizon_breach_rate"], "1")
+        self.assertEqual(mon_rec["single_round_overlap_coherence_rate"], "0")
+        self.assertEqual(mon_rec["multi_round_overlap_accounted_coherence_rate"], "1")
+        self.assertEqual(mon_rec["overlap_accounting_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
