@@ -44,6 +44,7 @@ from .streaming import (
     StreamingSkewRepairMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingTransportMonitor,
+    StreamingWeightedPolicyRelaxationMonitor,
     StreamingWindowedDriftMonitor,
 )
 from .transport import verify_transport
@@ -74,4 +75,5 @@ __all__ = ["ValidationError", "analyze_descent", "decode", "evaluator_defect", "
            "StreamingSimplicialCupMonitor",
            "StreamingSixRoleOverlayMonitor", "StreamingSkewRepairMonitor", "StreamingThresholdGovernanceMonitor",
            "StreamingTransportMonitor",
+           "StreamingWeightedPolicyRelaxationMonitor",
            "StreamingWindowedDriftMonitor"]
