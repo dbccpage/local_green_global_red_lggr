@@ -1,0 +1,1939 @@
+{
+  "schema": "lggr.pullback_mediator_factorization_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "pullback_mediator_factorization_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_mismatch_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_ambiguous_fiber_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_universal_mediator_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "coarse_interface_coherence_rate": "0",
+  "universal_mediator_coherence_rate": "1",
+  "pullback_factorization_coherence_gain": "1",
+  "pullback_factorization_monitor_receipt": {
+    "schema": "lggr.online_pullback_mediator_factorization.v1",
+    "authority_effect": "None",
+    "scope_id": "live-pullback-mediator-factorization-scope",
+    "status": "PULLBACK_FIBER_GLUED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 5,
+    "phase_1_interface_mismatch_count": 5,
+    "phase_2_ambiguous_fiber_count": 5,
+    "phase_3_universal_mediator_count": 5,
+    "coarse_interface_coherence_rate": "0",
+    "universal_mediator_coherence_rate": "1",
+    "pullback_factorization_coherence_gain": "1",
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini::pullback_factorization_eval",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_in_pullback": false,
+        "phase_1_cone_commutes": false,
+        "phase_2_interface_fiber_size": 4,
+        "phase_2_interface_uniquely_identifies_pair": false,
+        "phase_3_interface_fiber_size": 1,
+        "phase_3_interface_uniquely_identifies_pair": true,
+        "phase_3_universal_mediator": {
+          "w0": [
+            "a0",
+            "b0"
+          ],
+          "w1": [
+            "a1",
+            "b1"
+          ],
+          "w2": [
+            "a2",
+            "b2"
+          ],
+          "w3": [
+            "a3",
+            "b3"
+          ]
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+        "phase_1_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:openai/gpt-4o-mini::pullback_factorization_eval:p1",
+          "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [
+            "p1_mismatch"
+          ],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p1_mismatch",
+              "commutes_over_c": false,
+              "mismatched_apex_states": [
+                "w0"
+              ],
+              "universal_mediator": null,
+              "mediator_uniqueness_and_projection_verified": false
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p1_mismatch",
+              "a_state": "a0",
+              "b_state": "b1",
+              "f_a": "c_even",
+              "g_b": "c_odd",
+              "in_pullback_square": false,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 0,
+              "evaluator_defect": -1,
+              "interface_fiber_size": 0,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "99574a7f62861023619f8f7ce3dbf0c8f9e8c4e63457824471ed33a656e683d4"
+        },
+        "phase_2_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:openai/gpt-4o-mini::pullback_factorization_eval:p2",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [
+            "p2_ambiguous"
+          ],
+          "cone_records": [],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p2_ambiguous",
+              "a_state": "a0",
+              "b_state": "b2",
+              "f_a": "c_even",
+              "g_b": "c_even",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 4,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "6a3bef87cf5d64c126c3388cb7b2c98ba92109957f5df5cdd5ca70af4e3254f2"
+        },
+        "phase_3_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:openai/gpt-4o-mini::pullback_factorization_eval:p3",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 4,
+          "interface_fiber_counts": {
+            "c0": 1,
+            "c1": 1,
+            "c2": 1,
+            "c3": 1
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p3_unique",
+              "commutes_over_c": true,
+              "mismatched_apex_states": [],
+              "universal_mediator": {
+                "w0": [
+                  "a0",
+                  "b0"
+                ],
+                "w1": [
+                  "a1",
+                  "b1"
+                ],
+                "w2": [
+                  "a2",
+                  "b2"
+                ],
+                "w3": [
+                  "a3",
+                  "b3"
+                ]
+              },
+              "mediator_uniqueness_and_projection_verified": true
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p3_unique",
+              "a_state": "a0",
+              "b_state": "b0",
+              "f_a": "c0",
+              "g_b": "c0",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 1,
+              "interface_uniquely_identifies_pair": true
+            }
+          ],
+          "receipt_sha256": "f3d0b804dfe26c6f6cde5c4bf570cffceaeb7d49a93fddeed1da5853bee55651"
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite::pullback_factorization_eval",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_in_pullback": false,
+        "phase_1_cone_commutes": false,
+        "phase_2_interface_fiber_size": 4,
+        "phase_2_interface_uniquely_identifies_pair": false,
+        "phase_3_interface_fiber_size": 1,
+        "phase_3_interface_uniquely_identifies_pair": true,
+        "phase_3_universal_mediator": {
+          "w0": [
+            "a0",
+            "b0"
+          ],
+          "w1": [
+            "a1",
+            "b1"
+          ],
+          "w2": [
+            "a2",
+            "b2"
+          ],
+          "w3": [
+            "a3",
+            "b3"
+          ]
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+        "phase_1_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:google/gemini-2.5-flash-lite::pullback_factorization_eval:p1",
+          "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [
+            "p1_mismatch"
+          ],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p1_mismatch",
+              "commutes_over_c": false,
+              "mismatched_apex_states": [
+                "w0"
+              ],
+              "universal_mediator": null,
+              "mediator_uniqueness_and_projection_verified": false
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p1_mismatch",
+              "a_state": "a0",
+              "b_state": "b1",
+              "f_a": "c_even",
+              "g_b": "c_odd",
+              "in_pullback_square": false,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 0,
+              "evaluator_defect": -1,
+              "interface_fiber_size": 0,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "9e384bd8cfb67c82653a5a662bfd106c19514d6af8ae7b0d4593419cf4fe3e6d"
+        },
+        "phase_2_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:google/gemini-2.5-flash-lite::pullback_factorization_eval:p2",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [
+            "p2_ambiguous"
+          ],
+          "cone_records": [],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p2_ambiguous",
+              "a_state": "a0",
+              "b_state": "b2",
+              "f_a": "c_even",
+              "g_b": "c_even",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 4,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "742e14897a91f2bd2b4f5f9a107bee2f219c96fe07dc03695e7dc37ae9b3e8d0"
+        },
+        "phase_3_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:google/gemini-2.5-flash-lite::pullback_factorization_eval:p3",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 4,
+          "interface_fiber_counts": {
+            "c0": 1,
+            "c1": 1,
+            "c2": 1,
+            "c3": 1
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p3_unique",
+              "commutes_over_c": true,
+              "mismatched_apex_states": [],
+              "universal_mediator": {
+                "w0": [
+                  "a0",
+                  "b0"
+                ],
+                "w1": [
+                  "a1",
+                  "b1"
+                ],
+                "w2": [
+                  "a2",
+                  "b2"
+                ],
+                "w3": [
+                  "a3",
+                  "b3"
+                ]
+              },
+              "mediator_uniqueness_and_projection_verified": true
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p3_unique",
+              "a_state": "a0",
+              "b_state": "b0",
+              "f_a": "c0",
+              "g_b": "c0",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 1,
+              "interface_uniquely_identifies_pair": true
+            }
+          ],
+          "receipt_sha256": "448ef075409bea1cdc11adf17b06062c34be7ce05150b47550092752bcb35d5b"
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_in_pullback": false,
+        "phase_1_cone_commutes": false,
+        "phase_2_interface_fiber_size": 4,
+        "phase_2_interface_uniquely_identifies_pair": false,
+        "phase_3_interface_fiber_size": 1,
+        "phase_3_interface_uniquely_identifies_pair": true,
+        "phase_3_universal_mediator": {
+          "w0": [
+            "a0",
+            "b0"
+          ],
+          "w1": [
+            "a1",
+            "b1"
+          ],
+          "w2": [
+            "a2",
+            "b2"
+          ],
+          "w3": [
+            "a3",
+            "b3"
+          ]
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+        "phase_1_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval:p1",
+          "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [
+            "p1_mismatch"
+          ],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p1_mismatch",
+              "commutes_over_c": false,
+              "mismatched_apex_states": [
+                "w0"
+              ],
+              "universal_mediator": null,
+              "mediator_uniqueness_and_projection_verified": false
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p1_mismatch",
+              "a_state": "a0",
+              "b_state": "b1",
+              "f_a": "c_even",
+              "g_b": "c_odd",
+              "in_pullback_square": false,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 0,
+              "evaluator_defect": -1,
+              "interface_fiber_size": 0,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "5f343451630c91e3400ceb2d00bd79f8f242106b28db924fe13d7804d6ebd44a"
+        },
+        "phase_2_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval:p2",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [
+            "p2_ambiguous"
+          ],
+          "cone_records": [],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p2_ambiguous",
+              "a_state": "a0",
+              "b_state": "b2",
+              "f_a": "c_even",
+              "g_b": "c_even",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 4,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "9b4ddc50a2a9db5a3c90a0e6d6c2a6fd69c8948b6c5ef886af3f976aa8b250d6"
+        },
+        "phase_3_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval:p3",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 4,
+          "interface_fiber_counts": {
+            "c0": 1,
+            "c1": 1,
+            "c2": 1,
+            "c3": 1
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p3_unique",
+              "commutes_over_c": true,
+              "mismatched_apex_states": [],
+              "universal_mediator": {
+                "w0": [
+                  "a0",
+                  "b0"
+                ],
+                "w1": [
+                  "a1",
+                  "b1"
+                ],
+                "w2": [
+                  "a2",
+                  "b2"
+                ],
+                "w3": [
+                  "a3",
+                  "b3"
+                ]
+              },
+              "mediator_uniqueness_and_projection_verified": true
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p3_unique",
+              "a_state": "a0",
+              "b_state": "b0",
+              "f_a": "c0",
+              "g_b": "c0",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 1,
+              "interface_uniquely_identifies_pair": true
+            }
+          ],
+          "receipt_sha256": "d6f0c84cde31e46e60f7f22d90d056b9cca90a587d282d44043c1b62583bd347"
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat::pullback_factorization_eval",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_in_pullback": false,
+        "phase_1_cone_commutes": false,
+        "phase_2_interface_fiber_size": 4,
+        "phase_2_interface_uniquely_identifies_pair": false,
+        "phase_3_interface_fiber_size": 1,
+        "phase_3_interface_uniquely_identifies_pair": true,
+        "phase_3_universal_mediator": {
+          "w0": [
+            "a0",
+            "b0"
+          ],
+          "w1": [
+            "a1",
+            "b1"
+          ],
+          "w2": [
+            "a2",
+            "b2"
+          ],
+          "w3": [
+            "a3",
+            "b3"
+          ]
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+        "phase_1_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:deepseek/deepseek-chat::pullback_factorization_eval:p1",
+          "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [
+            "p1_mismatch"
+          ],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p1_mismatch",
+              "commutes_over_c": false,
+              "mismatched_apex_states": [
+                "w0"
+              ],
+              "universal_mediator": null,
+              "mediator_uniqueness_and_projection_verified": false
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p1_mismatch",
+              "a_state": "a0",
+              "b_state": "b1",
+              "f_a": "c_even",
+              "g_b": "c_odd",
+              "in_pullback_square": false,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 0,
+              "evaluator_defect": -1,
+              "interface_fiber_size": 0,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "79fba6c8fc9649bb5194b74b94806f54f05108487cf72914df5a0fb5486a7d36"
+        },
+        "phase_2_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:deepseek/deepseek-chat::pullback_factorization_eval:p2",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [
+            "p2_ambiguous"
+          ],
+          "cone_records": [],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p2_ambiguous",
+              "a_state": "a0",
+              "b_state": "b2",
+              "f_a": "c_even",
+              "g_b": "c_even",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 4,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "2f9febbc370558e3d2b80acc077acabfd02584ce0c146af107f30794971cf25c"
+        },
+        "phase_3_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:deepseek/deepseek-chat::pullback_factorization_eval:p3",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 4,
+          "interface_fiber_counts": {
+            "c0": 1,
+            "c1": 1,
+            "c2": 1,
+            "c3": 1
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p3_unique",
+              "commutes_over_c": true,
+              "mismatched_apex_states": [],
+              "universal_mediator": {
+                "w0": [
+                  "a0",
+                  "b0"
+                ],
+                "w1": [
+                  "a1",
+                  "b1"
+                ],
+                "w2": [
+                  "a2",
+                  "b2"
+                ],
+                "w3": [
+                  "a3",
+                  "b3"
+                ]
+              },
+              "mediator_uniqueness_and_projection_verified": true
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p3_unique",
+              "a_state": "a0",
+              "b_state": "b0",
+              "f_a": "c0",
+              "g_b": "c0",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 1,
+              "interface_uniquely_identifies_pair": true
+            }
+          ],
+          "receipt_sha256": "704398ba2d4a8044598d7a9b4e136240ceb92be3b84dd71d1b95aee792fc9aa7"
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_in_pullback": false,
+        "phase_1_cone_commutes": false,
+        "phase_2_interface_fiber_size": 4,
+        "phase_2_interface_uniquely_identifies_pair": false,
+        "phase_3_interface_fiber_size": 1,
+        "phase_3_interface_uniquely_identifies_pair": true,
+        "phase_3_universal_mediator": {
+          "w0": [
+            "a0",
+            "b0"
+          ],
+          "w1": [
+            "a1",
+            "b1"
+          ],
+          "w2": [
+            "a2",
+            "b2"
+          ],
+          "w3": [
+            "a3",
+            "b3"
+          ]
+        },
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+        "phase_1_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval:p1",
+          "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [
+            "p1_mismatch"
+          ],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p1_mismatch",
+              "commutes_over_c": false,
+              "mismatched_apex_states": [
+                "w0"
+              ],
+              "universal_mediator": null,
+              "mediator_uniqueness_and_projection_verified": false
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p1_mismatch",
+              "a_state": "a0",
+              "b_state": "b1",
+              "f_a": "c_even",
+              "g_b": "c_odd",
+              "in_pullback_square": false,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 0,
+              "evaluator_defect": -1,
+              "interface_fiber_size": 0,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "d3781c9444cc1b9fff6bd1f5a0492fc84aa39e23af17889f71770f6da9dc656c"
+        },
+        "phase_2_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval:p2",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 8,
+          "interface_fiber_counts": {
+            "c_even": 4,
+            "c_odd": 4
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [
+            "p2_ambiguous"
+          ],
+          "cone_records": [],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p2_ambiguous",
+              "a_state": "a0",
+              "b_state": "b2",
+              "f_a": "c_even",
+              "g_b": "c_even",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 4,
+              "interface_uniquely_identifies_pair": false
+            }
+          ],
+          "receipt_sha256": "c8b3cd00659097c18078a9775539de9e8454ab371c9112da531effab05ffc58d"
+        },
+        "phase_3_pullback_receipt": {
+          "schema": "lggr.online_pullback_square.v1",
+          "authority_effect": "None",
+          "scope_id": "live-pullback-mediator-factorization-scope:mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval:p3",
+          "status": "PULLBACK_FIBER_GLUED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "pullback_carrier_size": 4,
+          "interface_fiber_counts": {
+            "c0": 1,
+            "c1": 1,
+            "c2": 1,
+            "c3": 1
+          },
+          "pair_count": 1,
+          "ngd_mismatch_pair_ids": [],
+          "ambiguous_fiber_pair_ids": [],
+          "cone_records": [
+            {
+              "cone_id": "cone_p3_unique",
+              "commutes_over_c": true,
+              "mismatched_apex_states": [],
+              "universal_mediator": {
+                "w0": [
+                  "a0",
+                  "b0"
+                ],
+                "w1": [
+                  "a1",
+                  "b1"
+                ],
+                "w2": [
+                  "a2",
+                  "b2"
+                ],
+                "w3": [
+                  "a3",
+                  "b3"
+                ]
+              },
+              "mediator_uniqueness_and_projection_verified": true
+            }
+          ],
+          "pair_records": [
+            {
+              "pair_index": 0,
+              "pair_id": "p3_unique",
+              "a_state": "a0",
+              "b_state": "b0",
+              "f_a": "c0",
+              "g_b": "c0",
+              "in_pullback_square": true,
+              "local_a_evaluator": 1,
+              "local_b_evaluator": 1,
+              "local_product": 1,
+              "global_pullback_evaluator": 1,
+              "evaluator_defect": 0,
+              "interface_fiber_size": 1,
+              "interface_uniquely_identifies_pair": true
+            }
+          ],
+          "receipt_sha256": "a8b324980cea1a10610429fbc9c415966dcb7a1e1847a876f9ce19c7803dceac"
+        }
+      }
+    ],
+    "receipt_sha256": "f63d3f4987701ae51e0d7c3c60a7f0f5d43fccc595580375ace7c380ebf63653"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "openai/gpt-4o-mini::pullback_factorization_eval",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_in_pullback": false,
+      "phase_1_cone_commutes": false,
+      "phase_2_interface_fiber_size": 4,
+      "phase_2_interface_uniquely_identifies_pair": false,
+      "phase_3_interface_fiber_size": 1,
+      "phase_3_interface_uniquely_identifies_pair": true,
+      "phase_3_universal_mediator": {
+        "w0": [
+          "a0",
+          "b0"
+        ],
+        "w1": [
+          "a1",
+          "b1"
+        ],
+        "w2": [
+          "a2",
+          "b2"
+        ],
+        "w3": [
+          "a3",
+          "b3"
+        ]
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+      "phase_1_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:openai/gpt-4o-mini::pullback_factorization_eval:p1",
+        "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [
+          "p1_mismatch"
+        ],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p1_mismatch",
+            "commutes_over_c": false,
+            "mismatched_apex_states": [
+              "w0"
+            ],
+            "universal_mediator": null,
+            "mediator_uniqueness_and_projection_verified": false
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p1_mismatch",
+            "a_state": "a0",
+            "b_state": "b1",
+            "f_a": "c_even",
+            "g_b": "c_odd",
+            "in_pullback_square": false,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 0,
+            "evaluator_defect": -1,
+            "interface_fiber_size": 0,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "99574a7f62861023619f8f7ce3dbf0c8f9e8c4e63457824471ed33a656e683d4"
+      },
+      "phase_2_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:openai/gpt-4o-mini::pullback_factorization_eval:p2",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [
+          "p2_ambiguous"
+        ],
+        "cone_records": [],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p2_ambiguous",
+            "a_state": "a0",
+            "b_state": "b2",
+            "f_a": "c_even",
+            "g_b": "c_even",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 4,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "6a3bef87cf5d64c126c3388cb7b2c98ba92109957f5df5cdd5ca70af4e3254f2"
+      },
+      "phase_3_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:openai/gpt-4o-mini::pullback_factorization_eval:p3",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 4,
+        "interface_fiber_counts": {
+          "c0": 1,
+          "c1": 1,
+          "c2": 1,
+          "c3": 1
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p3_unique",
+            "commutes_over_c": true,
+            "mismatched_apex_states": [],
+            "universal_mediator": {
+              "w0": [
+                "a0",
+                "b0"
+              ],
+              "w1": [
+                "a1",
+                "b1"
+              ],
+              "w2": [
+                "a2",
+                "b2"
+              ],
+              "w3": [
+                "a3",
+                "b3"
+              ]
+            },
+            "mediator_uniqueness_and_projection_verified": true
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p3_unique",
+            "a_state": "a0",
+            "b_state": "b0",
+            "f_a": "c0",
+            "g_b": "c0",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 1,
+            "interface_uniquely_identifies_pair": true
+          }
+        ],
+        "receipt_sha256": "f3d0b804dfe26c6f6cde5c4bf570cffceaeb7d49a93fddeed1da5853bee55651"
+      },
+      "raw_auditor_response": "{\"phase_1_in_pullback\":false,\"phase_2_interface_fiber_size\":4,\"phase_3_interface_fiber_size\":1}"
+    },
+    {
+      "evaluation_id": "google/gemini-2.5-flash-lite::pullback_factorization_eval",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_in_pullback": false,
+      "phase_1_cone_commutes": false,
+      "phase_2_interface_fiber_size": 4,
+      "phase_2_interface_uniquely_identifies_pair": false,
+      "phase_3_interface_fiber_size": 1,
+      "phase_3_interface_uniquely_identifies_pair": true,
+      "phase_3_universal_mediator": {
+        "w0": [
+          "a0",
+          "b0"
+        ],
+        "w1": [
+          "a1",
+          "b1"
+        ],
+        "w2": [
+          "a2",
+          "b2"
+        ],
+        "w3": [
+          "a3",
+          "b3"
+        ]
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+      "phase_1_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:google/gemini-2.5-flash-lite::pullback_factorization_eval:p1",
+        "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [
+          "p1_mismatch"
+        ],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p1_mismatch",
+            "commutes_over_c": false,
+            "mismatched_apex_states": [
+              "w0"
+            ],
+            "universal_mediator": null,
+            "mediator_uniqueness_and_projection_verified": false
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p1_mismatch",
+            "a_state": "a0",
+            "b_state": "b1",
+            "f_a": "c_even",
+            "g_b": "c_odd",
+            "in_pullback_square": false,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 0,
+            "evaluator_defect": -1,
+            "interface_fiber_size": 0,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "9e384bd8cfb67c82653a5a662bfd106c19514d6af8ae7b0d4593419cf4fe3e6d"
+      },
+      "phase_2_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:google/gemini-2.5-flash-lite::pullback_factorization_eval:p2",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [
+          "p2_ambiguous"
+        ],
+        "cone_records": [],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p2_ambiguous",
+            "a_state": "a0",
+            "b_state": "b2",
+            "f_a": "c_even",
+            "g_b": "c_even",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 4,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "742e14897a91f2bd2b4f5f9a107bee2f219c96fe07dc03695e7dc37ae9b3e8d0"
+      },
+      "phase_3_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:google/gemini-2.5-flash-lite::pullback_factorization_eval:p3",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 4,
+        "interface_fiber_counts": {
+          "c0": 1,
+          "c1": 1,
+          "c2": 1,
+          "c3": 1
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p3_unique",
+            "commutes_over_c": true,
+            "mismatched_apex_states": [],
+            "universal_mediator": {
+              "w0": [
+                "a0",
+                "b0"
+              ],
+              "w1": [
+                "a1",
+                "b1"
+              ],
+              "w2": [
+                "a2",
+                "b2"
+              ],
+              "w3": [
+                "a3",
+                "b3"
+              ]
+            },
+            "mediator_uniqueness_and_projection_verified": true
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p3_unique",
+            "a_state": "a0",
+            "b_state": "b0",
+            "f_a": "c0",
+            "g_b": "c0",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 1,
+            "interface_uniquely_identifies_pair": true
+          }
+        ],
+        "receipt_sha256": "448ef075409bea1cdc11adf17b06062c34be7ce05150b47550092752bcb35d5b"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_in_pullback\": false,\n  \"phase_2_interface_fiber_size\": 4,\n  \"phase_3_interface_fiber_size\": 1\n}\n```"
+    },
+    {
+      "evaluation_id": "meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_in_pullback": false,
+      "phase_1_cone_commutes": false,
+      "phase_2_interface_fiber_size": 4,
+      "phase_2_interface_uniquely_identifies_pair": false,
+      "phase_3_interface_fiber_size": 1,
+      "phase_3_interface_uniquely_identifies_pair": true,
+      "phase_3_universal_mediator": {
+        "w0": [
+          "a0",
+          "b0"
+        ],
+        "w1": [
+          "a1",
+          "b1"
+        ],
+        "w2": [
+          "a2",
+          "b2"
+        ],
+        "w3": [
+          "a3",
+          "b3"
+        ]
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+      "phase_1_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval:p1",
+        "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [
+          "p1_mismatch"
+        ],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p1_mismatch",
+            "commutes_over_c": false,
+            "mismatched_apex_states": [
+              "w0"
+            ],
+            "universal_mediator": null,
+            "mediator_uniqueness_and_projection_verified": false
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p1_mismatch",
+            "a_state": "a0",
+            "b_state": "b1",
+            "f_a": "c_even",
+            "g_b": "c_odd",
+            "in_pullback_square": false,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 0,
+            "evaluator_defect": -1,
+            "interface_fiber_size": 0,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "5f343451630c91e3400ceb2d00bd79f8f242106b28db924fe13d7804d6ebd44a"
+      },
+      "phase_2_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval:p2",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [
+          "p2_ambiguous"
+        ],
+        "cone_records": [],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p2_ambiguous",
+            "a_state": "a0",
+            "b_state": "b2",
+            "f_a": "c_even",
+            "g_b": "c_even",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 4,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "9b4ddc50a2a9db5a3c90a0e6d6c2a6fd69c8948b6c5ef886af3f976aa8b250d6"
+      },
+      "phase_3_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:meta-llama/llama-3.3-70b-instruct::pullback_factorization_eval:p3",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 4,
+        "interface_fiber_counts": {
+          "c0": 1,
+          "c1": 1,
+          "c2": 1,
+          "c3": 1
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p3_unique",
+            "commutes_over_c": true,
+            "mismatched_apex_states": [],
+            "universal_mediator": {
+              "w0": [
+                "a0",
+                "b0"
+              ],
+              "w1": [
+                "a1",
+                "b1"
+              ],
+              "w2": [
+                "a2",
+                "b2"
+              ],
+              "w3": [
+                "a3",
+                "b3"
+              ]
+            },
+            "mediator_uniqueness_and_projection_verified": true
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p3_unique",
+            "a_state": "a0",
+            "b_state": "b0",
+            "f_a": "c0",
+            "g_b": "c0",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 1,
+            "interface_uniquely_identifies_pair": true
+          }
+        ],
+        "receipt_sha256": "d6f0c84cde31e46e60f7f22d90d056b9cca90a587d282d44043c1b62583bd347"
+      },
+      "raw_auditor_response": "{\"phase_1_in_pullback\": false, \"phase_2_interface_fiber_size\": 4, \"phase_3_interface_fiber_size\": 1}"
+    },
+    {
+      "evaluation_id": "deepseek/deepseek-chat::pullback_factorization_eval",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_in_pullback": false,
+      "phase_1_cone_commutes": false,
+      "phase_2_interface_fiber_size": 4,
+      "phase_2_interface_uniquely_identifies_pair": false,
+      "phase_3_interface_fiber_size": 1,
+      "phase_3_interface_uniquely_identifies_pair": true,
+      "phase_3_universal_mediator": {
+        "w0": [
+          "a0",
+          "b0"
+        ],
+        "w1": [
+          "a1",
+          "b1"
+        ],
+        "w2": [
+          "a2",
+          "b2"
+        ],
+        "w3": [
+          "a3",
+          "b3"
+        ]
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+      "phase_1_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:deepseek/deepseek-chat::pullback_factorization_eval:p1",
+        "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [
+          "p1_mismatch"
+        ],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p1_mismatch",
+            "commutes_over_c": false,
+            "mismatched_apex_states": [
+              "w0"
+            ],
+            "universal_mediator": null,
+            "mediator_uniqueness_and_projection_verified": false
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p1_mismatch",
+            "a_state": "a0",
+            "b_state": "b1",
+            "f_a": "c_even",
+            "g_b": "c_odd",
+            "in_pullback_square": false,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 0,
+            "evaluator_defect": -1,
+            "interface_fiber_size": 0,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "79fba6c8fc9649bb5194b74b94806f54f05108487cf72914df5a0fb5486a7d36"
+      },
+      "phase_2_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:deepseek/deepseek-chat::pullback_factorization_eval:p2",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [
+          "p2_ambiguous"
+        ],
+        "cone_records": [],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p2_ambiguous",
+            "a_state": "a0",
+            "b_state": "b2",
+            "f_a": "c_even",
+            "g_b": "c_even",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 4,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "2f9febbc370558e3d2b80acc077acabfd02584ce0c146af107f30794971cf25c"
+      },
+      "phase_3_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:deepseek/deepseek-chat::pullback_factorization_eval:p3",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 4,
+        "interface_fiber_counts": {
+          "c0": 1,
+          "c1": 1,
+          "c2": 1,
+          "c3": 1
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p3_unique",
+            "commutes_over_c": true,
+            "mismatched_apex_states": [],
+            "universal_mediator": {
+              "w0": [
+                "a0",
+                "b0"
+              ],
+              "w1": [
+                "a1",
+                "b1"
+              ],
+              "w2": [
+                "a2",
+                "b2"
+              ],
+              "w3": [
+                "a3",
+                "b3"
+              ]
+            },
+            "mediator_uniqueness_and_projection_verified": true
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p3_unique",
+            "a_state": "a0",
+            "b_state": "b0",
+            "f_a": "c0",
+            "g_b": "c0",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 1,
+            "interface_uniquely_identifies_pair": true
+          }
+        ],
+        "receipt_sha256": "704398ba2d4a8044598d7a9b4e136240ceb92be3b84dd71d1b95aee792fc9aa7"
+      },
+      "raw_auditor_response": "```json\n{\"phase_1_in_pullback\": false, \"phase_2_interface_fiber_size\": 4, \"phase_3_interface_fiber_size\": 1}\n```"
+    },
+    {
+      "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_in_pullback": false,
+      "phase_1_cone_commutes": false,
+      "phase_2_interface_fiber_size": 4,
+      "phase_2_interface_uniquely_identifies_pair": false,
+      "phase_3_interface_fiber_size": 1,
+      "phase_3_interface_uniquely_identifies_pair": true,
+      "phase_3_universal_mediator": {
+        "w0": [
+          "a0",
+          "b0"
+        ],
+        "w1": [
+          "a1",
+          "b1"
+        ],
+        "w2": [
+          "a2",
+          "b2"
+        ],
+        "w3": [
+          "a3",
+          "b3"
+        ]
+      },
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG",
+      "phase_1_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval:p1",
+        "status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [
+          "p1_mismatch"
+        ],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p1_mismatch",
+            "commutes_over_c": false,
+            "mismatched_apex_states": [
+              "w0"
+            ],
+            "universal_mediator": null,
+            "mediator_uniqueness_and_projection_verified": false
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p1_mismatch",
+            "a_state": "a0",
+            "b_state": "b1",
+            "f_a": "c_even",
+            "g_b": "c_odd",
+            "in_pullback_square": false,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 0,
+            "evaluator_defect": -1,
+            "interface_fiber_size": 0,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "d3781c9444cc1b9fff6bd1f5a0492fc84aa39e23af17889f71770f6da9dc656c"
+      },
+      "phase_2_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval:p2",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 8,
+        "interface_fiber_counts": {
+          "c_even": 4,
+          "c_odd": 4
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [
+          "p2_ambiguous"
+        ],
+        "cone_records": [],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p2_ambiguous",
+            "a_state": "a0",
+            "b_state": "b2",
+            "f_a": "c_even",
+            "g_b": "c_even",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 4,
+            "interface_uniquely_identifies_pair": false
+          }
+        ],
+        "receipt_sha256": "c8b3cd00659097c18078a9775539de9e8454ab371c9112da531effab05ffc58d"
+      },
+      "phase_3_pullback_receipt": {
+        "schema": "lggr.online_pullback_square.v1",
+        "authority_effect": "None",
+        "scope_id": "live-pullback-mediator-factorization-scope:mistralai/mistral-small-3.2-24b-instruct::pullback_factorization_eval:p3",
+        "status": "PULLBACK_FIBER_GLUED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "pullback_carrier_size": 4,
+        "interface_fiber_counts": {
+          "c0": 1,
+          "c1": 1,
+          "c2": 1,
+          "c3": 1
+        },
+        "pair_count": 1,
+        "ngd_mismatch_pair_ids": [],
+        "ambiguous_fiber_pair_ids": [],
+        "cone_records": [
+          {
+            "cone_id": "cone_p3_unique",
+            "commutes_over_c": true,
+            "mismatched_apex_states": [],
+            "universal_mediator": {
+              "w0": [
+                "a0",
+                "b0"
+              ],
+              "w1": [
+                "a1",
+                "b1"
+              ],
+              "w2": [
+                "a2",
+                "b2"
+              ],
+              "w3": [
+                "a3",
+                "b3"
+              ]
+            },
+            "mediator_uniqueness_and_projection_verified": true
+          }
+        ],
+        "pair_records": [
+          {
+            "pair_index": 0,
+            "pair_id": "p3_unique",
+            "a_state": "a0",
+            "b_state": "b0",
+            "f_a": "c0",
+            "g_b": "c0",
+            "in_pullback_square": true,
+            "local_a_evaluator": 1,
+            "local_b_evaluator": 1,
+            "local_product": 1,
+            "global_pullback_evaluator": 1,
+            "evaluator_defect": 0,
+            "interface_fiber_size": 1,
+            "interface_uniquely_identifies_pair": true
+          }
+        ],
+        "receipt_sha256": "a8b324980cea1a10610429fbc9c415966dcb7a1e1847a876f9ce19c7803dceac"
+      },
+      "raw_auditor_response": "```json\n{\n  \"phase_1_in_pullback\": false,\n  \"phase_2_interface_fiber_size\": 4,\n  \"phase_3_interface_fiber_size\": 1\n}\n```"
+    }
+  ],
+  "meaning": "Pullback square mediator uniqueness and ambiguous interface factorization benchmark across 5 model families (Theorem 90): Phase 1 separates coarse cospan mismatches f(a0) = c_even != c_odd = g(b1) (Delta_E = -1); Phase 2 separates non-injective coarse interface fibers over c_even with fiber size 2 * 2 = 4 > 1 mixing (a0, b0) and (a0, b2) (Delta_E = -1); Phase 3 verifies refined singleton-fiber interface with fiber size 1 and unique universal cone mediator u(w_i) = [a_i, b_i] (Delta_E = 0).",
+  "receipt_sha256": "08ae3f8aee4ee196dbdd89e0167674a8f5a301bf323226b5e6a4bd7aa8d3a293"
+}

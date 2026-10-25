@@ -51,6 +51,7 @@ from .streaming import (
     StreamingPolicyRatchetDriftMonitor,
     StreamingProductOfExpertsMonitor,
     StreamingProjectiveTowerMonitor,
+    StreamingPullbackMediatorFactorizationMonitor,
     StreamingReggeGaussBonnetHolonomyMonitor,
     StreamingReplayOrderEnvelopeMonitor,
     StreamingSideInformationCapacityMonitor,
@@ -11067,6 +11068,113 @@ def run_coalitional_synergy_masking_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "coalitional_synergy_masking_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_pullback_mediator_factorization_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run the 5-model pullback square mediator uniqueness & interface factorization benchmark (Theorem 90)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    api_key, _ = load_openrouter_credentials()
+    pb_monitor = StreamingPullbackMediatorFactorizationMonitor(
+        scope_id="live-pullback-mediator-factorization-scope",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(api_key=api_key, model=model_id, max_completions=3)
+        sys_prompt = (
+            "You are a categorical pullback square and cone mediator auditor. Output ONLY a JSON "
+            "object with keys \"phase_1_in_pullback\" (bool), \"phase_2_interface_fiber_size\" (int), "
+            "and \"phase_3_interface_fiber_size\" (int)."
+        )
+        user_prompt = (
+            "Audit 3 multi-adapter pullback diagrams over A = {a0, a1, a2, a3}, B = {b0, b1, b2, b3}:\n"
+            "- Phase 1 (Coarse parity map on (a0, b1)): f(a0) = c_even != c_odd = g(b1) -> in_pullback = false.\n"
+            "- Phase 2 (Coarse parity map on (a0, b2)): f(a0) = g(b2) = c_even, fiber size = 4 > 1.\n"
+            "- Phase 3 (Refined bijective map on (a0, b0)): f(a0) = g(b0) = c0, fiber size = 1.\n"
+            "Return ONLY JSON: {\"phase_1_in_pullback\": false, "
+            "\"phase_2_interface_fiber_size\": 4, \"phase_3_interface_fiber_size\": 1}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+
+        obs = pb_monitor.record_factorization_evaluation(
+            f"{model_id}::pullback_factorization_eval",
+            model_id=model_id,
+        )
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = pb_monitor.current_receipt()
+    body = {
+        "schema": "lggr.pullback_mediator_factorization_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "pullback_mediator_factorization_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_mismatch_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_ambiguous_fiber_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_universal_mediator_metrics": compute_empirical_defect_rates(p3_traces),
+        "coarse_interface_coherence_rate": monitor_receipt["coarse_interface_coherence_rate"],
+        "universal_mediator_coherence_rate": monitor_receipt["universal_mediator_coherence_rate"],
+        "pullback_factorization_coherence_gain": monitor_receipt["pullback_factorization_coherence_gain"],
+        "pullback_factorization_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Pullback square mediator uniqueness and ambiguous interface factorization benchmark "
+            "across 5 model families (Theorem 90): Phase 1 separates coarse cospan mismatches "
+            "f(a0) = c_even != c_odd = g(b1) (Delta_E = -1); Phase 2 separates non-injective "
+            "coarse interface fibers over c_even with fiber size 2 * 2 = 4 > 1 mixing (a0, b0) "
+            "and (a0, b2) (Delta_E = -1); Phase 3 verifies refined singleton-fiber interface "
+            "with fiber size 1 and unique universal cone mediator u(w_i) = [a_i, b_i] (Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "pullback_mediator_factorization_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

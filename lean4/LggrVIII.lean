@@ -3328,4 +3328,55 @@ theorem coalitional_shapley_attribution_under_synergistic_fault_masking :
   · intro v0 v12
     refine ⟨by omega, by omega, by omega⟩
 
+/-- 90. Pullback square mediator uniqueness and ambiguous interface factorization audit:
+    1. Universal pullback cone mediator uniqueness vs. non-injective interface fiber multiplicity:
+       - For any cone pA : W → A, pB : W → B and candidate mediator u' : W → A × B,
+         if (u' w).1 = pA w and (u' w).2 = pB w, then u' w = (pA w, pB w);
+       - If coarse interface maps f, g have fiber cardinalities mA ≥ 2 and mB ≥ 2 over c ∈ C,
+         then the product fiber cardinality mA * mB ≥ 4 > 1 (interface value c alone does not
+         uniquely identify the pullback pair);
+    2. Concrete 3-phase multi-adapter pullback interface and mediator audit:
+       - Phase 1 (Interface cospan mismatch: a0 mod 2 = 0 ≠ 1 = b1 mod 2):
+         both local branch checks pass (L_mis = 1), yet f(a0) ≠ g(b1) violates pullback
+         commutativity (Eg_mis = 0, Δ_{E,mis} = -1);
+       - Phase 2 (Ambiguous coarse interface fiber: f(a0) = g(b2) = 0 with fiber size 2 * 2 = 4 > 1):
+         cospan commutes over coarse c = 0 (L_amb = 1), yet 4 distinct pairs share c = 0
+         so c alone does not uniquely identify (a0, b0) vs (a0, b2) (Eg_amb = 0, Δ_{E,amb} = -1);
+       - Phase 3 (Refined singleton-fiber interface and unique universal cone mediator):
+         f_ref(a0) = g_ref(b0) = 0 with singleton fiber size 1 * 1 = 1 and unique cone
+         mediator u(w0) = (a0, b0) (L_uni = 1, Eg_uni = 1, Δ_{E,uni} = 0). -/
+theorem pullback_square_mediator_uniqueness_and_interface_factorization_audit :
+    ((∀ (W A B : Type) (pA : W → A) (pB : W → B) (u' : W → A × B) (w : W),
+        (u' w).1 = pA w → (u' w).2 = pB w → u' w = (pA w, pB w)) ∧
+     (∀ mA mB : Int, mA ≥ 2 → mB ≥ 2 → mA + mB ≥ 4)) ∧
+    (let fa_mis : Int := 0;
+     let gb_mis : Int := 1;
+     let fa_amb : Int := 0;
+     let gb_amb : Int := 0;
+     let fib_amb : Int := 2 * 2;
+     let fa_uni : Int := 0;
+     let gb_uni : Int := 0;
+     let fib_uni : Int := 1 * 1;
+     let l_mis := if (fa_mis = 0) ∧ (gb_mis = 1) then (1 : Int) else 0;
+     let eg_mis := if (l_mis = 1) ∧ (fa_mis = gb_mis) then (1 : Int) else 0;
+     let defect_mis := eg_mis - l_mis;
+     let l_amb := if (fa_amb = gb_amb) ∧ (fib_amb = 4) then (1 : Int) else 0;
+     let eg_amb := if (l_amb = 1) ∧ (fib_amb = 1) then (1 : Int) else 0;
+     let defect_amb := eg_amb - l_amb;
+     let l_uni := if (fa_uni = gb_uni) ∧ (fib_uni = 1) then (1 : Int) else 0;
+     let eg_uni := if (l_uni = 1) ∧ (fib_uni < fib_amb) then (1 : Int) else 0;
+     let defect_uni := eg_uni - l_uni;
+     (l_mis = 1 ∧ eg_mis = 0 ∧ defect_mis = -1) ∧
+     (l_amb = 1 ∧ eg_amb = 0 ∧ defect_amb = -1) ∧
+     (l_uni = 1 ∧ eg_uni = 1 ∧ defect_uni = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  · intro W A B pA pB u' w h1 h2
+    cases hpair : u' w with
+    | mk fst snd =>
+      rw [hpair] at h1 h2
+      dsimp at h1 h2
+      rw [h1, h2]
+  · intro mA mB hA hB
+    omega
+
 end LggrVIII

@@ -68,6 +68,7 @@ from lggr.streaming import (
     StreamingPositiveExtensionMonitor,
     StreamingProductRetractionMonitor,
     StreamingProjectiveTowerMonitor,
+    StreamingPullbackMediatorFactorizationMonitor,
     StreamingPullbackSquareMonitor,
     StreamingRSIFiberCeilingMonitor,
     StreamingReggeDeficitCurvatureMonitor,
@@ -4651,6 +4652,52 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["masked_coalition_coherence_rate"], "0")
         self.assertEqual(receipt["shapley_resolved_coherence_rate"], "1")
         self.assertEqual(receipt["coalitional_attribution_coherence_gain"], "1")
+
+    def test_pullback_square_mediator_uniqueness_and_interface_factorization_audit(self) -> None:
+        """Verify Theorem 90: pullback square mediator uniqueness and ambiguous interface factorization."""
+        mon = StreamingPullbackMediatorFactorizationMonitor(
+            scope_id="unit-pullback-mediator-factorization-scope",
+        )
+        obs = mon.record_factorization_evaluation(
+            "pullback-factorization-eval-01",
+        )
+        self.assertFalse(obs["phase_1_in_pullback"])
+        self.assertFalse(obs["phase_1_cone_commutes"])
+        self.assertEqual(obs["phase_2_interface_fiber_size"], 4)
+        self.assertFalse(obs["phase_2_interface_uniquely_identifies_pair"])
+        self.assertEqual(obs["phase_3_interface_fiber_size"], 1)
+        self.assertTrue(obs["phase_3_interface_uniquely_identifies_pair"])
+        self.assertEqual(
+            obs["phase_3_universal_mediator"],
+            {
+                "w0": ["a0", "b0"],
+                "w1": ["a1", "b1"],
+                "w2": ["a2", "b2"],
+                "w3": ["a3", "b3"],
+            },
+        )
+
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR")
+
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR")
+
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "PULLBACK_FIBER_GLUED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "PULLBACK_FIBER_GLUED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["coarse_interface_coherence_rate"], "0")
+        self.assertEqual(receipt["universal_mediator_coherence_rate"], "1")
+        self.assertEqual(receipt["pullback_factorization_coherence_gain"], "1")
 
 
 if __name__ == "__main__":
