@@ -15221,6 +15221,165 @@ class StreamingCoalitionalSynergyMaskingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingPullbackMediatorFactorizationMonitor:
+    """Online pullback square mediator uniqueness & ambiguous interface factorization monitor (Theorem 90).
+
+    Audits multi-adapter pullback diagrams A -f-> C <-g- B under `StreamingPullbackSquareMonitor`:
+      1. Phase 1 (Interface cospan mismatch under coarse parity map: a0 -> c0, b1 -> c1):
+         Both local branch checks pass (L = 1), yet f(a0) = c0 != c1 = g(b1) violates
+         pullback commutativity (`PULLBACK_INTERFACE_MISMATCH_NGD_LGGR`, Eg = 0, Delta_E = -1).
+      2. Phase 2 (Ambiguous non-injective interface fiber: f(a0)=f(a2)=c0, g(b0)=g(b2)=c0):
+         The pair (a0, b2) satisfies f(a0) = g(b2) = c0 (L = 1), yet the interface fiber
+         over c0 has size |{a0, a2} x {b0, b2}| = 4 > 1 (`interface_uniquely_identifies_pair = False`),
+         so coarse interface c0 alone cannot separate matched (a0, b0) from cross-paired (a0, b2)
+         (`AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR`, Eg = 0, Delta_E = -1).
+      3. Phase 3 (Refined bijective interface & unique universal cone mediator):
+         Refining f_ref(a_i) = c_i, g_ref(b_i) = c_i yields singleton fibers (size = 1)
+         and unique cone mediator u(w_i) = [a_i, b_i]
+         (`PULLBACK_FIBER_GLUED_LGGG`, L = 1, Eg = 1, Delta_E = 0).
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-pullback-mediator-factorization-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    def record_factorization_evaluation(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        coarse_f = {"a0": "c_even", "a1": "c_odd", "a2": "c_even", "a3": "c_odd"}
+        coarse_g = {"b0": "c_even", "b1": "c_odd", "b2": "c_even", "b3": "c_odd"}
+
+        mon_p1 = StreamingPullbackSquareMonitor(
+            coarse_f,
+            coarse_g,
+            scope_id=f"{self.scope_id}:{eval_id}:p1",
+        )
+        pair_p1 = mon_p1.record_branch_pair("p1_mismatch", "a0", "b1")
+        cone_p1 = mon_p1.verify_cone_mediator(
+            "cone_p1_mismatch",
+            {"w0": "a0"},
+            {"w0": "b1"},
+        )
+        rec_p1 = mon_p1.get_receipt()
+
+        mon_p2 = StreamingPullbackSquareMonitor(
+            coarse_f,
+            coarse_g,
+            scope_id=f"{self.scope_id}:{eval_id}:p2",
+        )
+        pair_p2 = mon_p2.record_branch_pair("p2_ambiguous", "a0", "b2")
+        rec_p2 = mon_p2.get_receipt()
+
+        refined_f = {"a0": "c0", "a1": "c1", "a2": "c2", "a3": "c3"}
+        refined_g = {"b0": "c0", "b1": "c1", "b2": "c2", "b3": "c3"}
+        mon_p3 = StreamingPullbackSquareMonitor(
+            refined_f,
+            refined_g,
+            scope_id=f"{self.scope_id}:{eval_id}:p3",
+        )
+        pair_p3 = mon_p3.record_branch_pair("p3_unique", "a0", "b0")
+        cone_p3 = mon_p3.verify_cone_mediator(
+            "cone_p3_unique",
+            {"w0": "a0", "w1": "a1", "w2": "a2", "w3": "a3"},
+            {"w0": "b0", "w1": "b1", "w2": "b2", "w3": "b3"},
+        )
+        rec_p3 = mon_p3.get_receipt()
+
+        l_p1 = int(pair_p1["local_product"])
+        eg_p1 = int(pair_p1["global_pullback_evaluator"])
+        defect_p1 = int(pair_p1["evaluator_defect"])
+
+        fib_p2 = int(pair_p2["interface_fiber_size"])
+        uniq_p2 = bool(pair_p2["interface_uniquely_identifies_pair"])
+        l_p2 = 1 if (bool(pair_p2["in_pullback_square"]) and fib_p2 > 1) else 0
+        eg_p2 = 1 if (l_p2 == 1 and uniq_p2) else 0
+        defect_p2 = eg_p2 - l_p2
+
+        fib_p3 = int(pair_p3["interface_fiber_size"])
+        uniq_p3 = bool(pair_p3["interface_uniquely_identifies_pair"])
+        med_ok_p3 = bool(cone_p3["mediator_uniqueness_and_projection_verified"])
+        l_p3 = 1 if (bool(pair_p3["in_pullback_square"]) and uniq_p3 and med_ok_p3) else 0
+        eg_p3 = 1 if (l_p3 == 1 and fib_p3 == 1) else 0
+        defect_p3 = eg_p3 - l_p3
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "phase_1_in_pullback": bool(pair_p1["in_pullback_square"]),
+            "phase_1_cone_commutes": bool(cone_p1["commutes_over_c"]),
+            "phase_2_interface_fiber_size": fib_p2,
+            "phase_2_interface_uniquely_identifies_pair": uniq_p2,
+            "phase_3_interface_fiber_size": fib_p3,
+            "phase_3_interface_uniquely_identifies_pair": uniq_p3,
+            "phase_3_universal_mediator": cone_p3["universal_mediator"],
+            "phase_1_local_green": l_p1,
+            "phase_1_global_green": eg_p1,
+            "phase_1_defect": defect_p1,
+            "phase_1_status": "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR" if defect_p1 == -1 else "PULLBACK_FIBER_GLUED_LGGG",
+            "phase_2_local_green": l_p2,
+            "phase_2_global_green": eg_p2,
+            "phase_2_defect": defect_p2,
+            "phase_2_status": "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR" if defect_p2 == -1 else "PULLBACK_FIBER_GLUED_LGGG",
+            "phase_3_local_green": l_p3,
+            "phase_3_global_green": eg_p3,
+            "phase_3_defect": defect_p3,
+            "phase_3_status": "PULLBACK_FIBER_GLUED_LGGG" if eg_p3 == 1 else "AMBIGUOUS_PULLBACK_INTERFACE_FIBER_LGGR",
+            "phase_1_pullback_receipt": rec_p1,
+            "phase_2_pullback_receipt": rec_p2,
+            "phase_3_pullback_receipt": rec_p3,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one pullback factorization evaluation must be recorded")
+        n = len(self.evaluations)
+        p1_mis = sum(1 for e in self.evaluations if e["phase_1_defect"] == -1)
+        p2_amb = sum(1 for e in self.evaluations if e["phase_2_defect"] == -1)
+        p3_uni = sum(1 for e in self.evaluations if e["phase_3_global_green"] == 1)
+
+        coarse_interface_coherence_rate = Fraction(n - max(p1_mis, p2_amb), n)
+        universal_mediator_coherence_rate = Fraction(p3_uni, n)
+
+        if p3_uni == n and p1_mis == n and p2_amb == n:
+            status = "PULLBACK_FIBER_GLUED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        else:
+            status = "PULLBACK_INTERFACE_MISMATCH_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_pullback_mediator_factorization.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": status,
+            "contract_status": contract_status,
+            "evaluation_count": n,
+            "phase_1_interface_mismatch_count": p1_mis,
+            "phase_2_ambiguous_fiber_count": p2_amb,
+            "phase_3_universal_mediator_count": p3_uni,
+            "coarse_interface_coherence_rate": coarse_interface_coherence_rate,
+            "universal_mediator_coherence_rate": universal_mediator_coherence_rate,
+            "pullback_factorization_coherence_gain": (
+                universal_mediator_coherence_rate - coarse_interface_coherence_rate
+            ),
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
