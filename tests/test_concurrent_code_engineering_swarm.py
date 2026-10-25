@@ -10,12 +10,15 @@ import unittest
 from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_DIAMOND_AGGREGATOR_SOURCE,
     CANONICAL_FEE_BRANCH_SOURCE,
+    CANONICAL_PRICING_EVENTS_SOURCE,
     CANONICAL_PRICING_SOURCE,
     CANONICAL_PRICING_TX_SOURCE,
     CANONICAL_QUOTE_ANCHOR_SOURCE,
+    CANONICAL_SETTLEMENT_EVENTS_SOURCE,
     CANONICAL_SETTLEMENT_SOURCE,
     CANONICAL_SETTLEMENT_TX_SOURCE,
     CANONICAL_TAX_BRANCH_SOURCE,
+    CANONICAL_TAX_EVENTS_SOURCE,
     CANONICAL_TAX_SOURCE,
     CANONICAL_TAX_TX_SOURCE,
     CODE_SWARM_MODELS,
@@ -24,14 +27,17 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CatalystCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     catalyst_fixture,
     dfa_fixture,
     diamond_fixture,
     fixture,
+    replay_fixture,
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
     run_local_unit_tests,
+    run_replay_local_unit_tests,
 )
 from experiments.concurrent_code_engineering_swarm.runner import (
     CodeBatchClient,
@@ -40,11 +46,13 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     dfa_campaign,
     diamond_campaign,
     replay,
+    replay_campaign,
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
 from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseReplayOrderMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
 )
@@ -580,6 +588,148 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if dfa_events.exists() and dfa_summary.exists():
             replayed = replay(dfa_events)
             self.assertEqual(replayed["schema"], "lggr.stateful_dfa_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+
+    def test_replay_workspace_and_monitor_detects_arrival_masked_causal_breach(self) -> None:
+        state = replay_fixture(9501)  # arrival_masked_replay_breach (9501 % 3 == 0)
+        ws = ReplayOrderCodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_events": True, "tax_events": True, "settlement_events": True},
+        )
+
+        mon = StreamingCodebaseReplayOrderMonitor(prefix_budget=900, scope_id="unit-replay-gate")
+        rec = mon.evaluate_codebase_replay_order(
+            "eval-9501-wave0",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec["local_green"], 1)
+        self.assertEqual(rec["global_green"], 0)
+        self.assertEqual(rec["defect"], -1)
+        self.assertEqual(rec["arrival_max_prefix_cents"], 180)
+        self.assertEqual(rec["causal_max_prefix_cents"], 1080)
+        self.assertEqual(rec["worst_permutation_max_prefix_cents"], 1080)
+        self.assertEqual(rec["common_endpoint_sum_cents"], 180)
+        self.assertEqual(rec["missing_barrier_count"], 3)
+        self.assertEqual(rec["status"], "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR")
+
+        audit = mon.record_three_phase_codebase_replay_order_audit("replay-3phase-unit")
+        self.assertEqual(audit["phase_1_defect"], -1)
+        self.assertEqual(audit["phase_1_arrival_max_prefix_cents"], 180)
+        self.assertEqual(audit["phase_1_causal_max_prefix_cents"], 1080)
+        self.assertEqual(audit["phase_2_defect"], -1)
+        self.assertEqual(audit["phase_2_causal_max_prefix_cents"], 900)
+        self.assertEqual(audit["phase_2_worst_max_prefix_cents"], 1080)
+        self.assertEqual(audit["phase_3_defect"], 0)
+        self.assertEqual(audit["phase_3_worst_max_prefix_cents"], 900)
+        self.assertEqual(audit["phase_3_missing_barriers"], 0)
+
+    def test_replay_campaign_and_tamper_evident_replay(self) -> None:
+        def stub_replay_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_msg = messages[0]["content"]
+            worker = sys_msg.split("agent ")[1].split(",")[0]
+            if messages[-1]["role"] == "user":
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(messages[-1]["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Locked escrow reservation 1000 cents exceeds prefix budget 900 cents."}
+                            ),
+                        },
+                    }
+                else:
+                    canonical_map = {
+                        "worker-0": CANONICAL_PRICING_EVENTS_SOURCE,
+                        "worker-1": CANONICAL_TAX_EVENTS_SOURCE,
+                        "worker-2": CANONICAL_SETTLEMENT_EVENTS_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {"cost": "0.0001"},
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "replay",
+                "seeds": [9500, 9501, 9502],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_replay_transport)
+            summary = replay_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.replay_order_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on replay gate worst_permutation_max_prefix_cents field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["worst_permutation_max_prefix_cents"] = int(gate_rec["worst_permutation_max_prefix_cents"]) + 10
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_replay_pilot_evidence_replay_if_present(self) -> None:
+        rep_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "replay_pilot_run"
+            / "events.jsonl"
+        )
+        rep_summary = rep_events.with_name("summary.json")
+        if rep_events.exists() and rep_summary.exists():
+            replayed = replay(rep_events)
+            self.assertEqual(replayed["schema"], "lggr.replay_order_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 3)
 
 

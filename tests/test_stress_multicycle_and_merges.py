@@ -39,6 +39,7 @@ from lggr.streaming import (
     StreamingCochainMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseReplayOrderMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
     StreamingCrossRoleDeduplicationMonitor,
@@ -5048,6 +5049,64 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_DFA_RESET_GLUING_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_async_codebase_replay_order_prefix_envelope_and_barrier_gluing_audit(self) -> None:
+        """Verify Theorem 98: async codebase replay-order prefix drawdown vs causal-barrier gluing."""
+        mon = StreamingCodebaseReplayOrderMonitor(
+            prefix_budget=900,
+            scope_id="unit-codebase-replay-order-scope",
+        )
+        obs = mon.record_three_phase_codebase_replay_order_audit(
+            "codebase-replay-order-eval-01",
+        )
+        self.assertEqual(obs["prefix_budget_cents"], 900)
+        self.assertEqual(obs["phase_1_arrival_max_prefix_cents"], 180)
+        self.assertEqual(obs["phase_1_causal_max_prefix_cents"], 1080)
+        self.assertEqual(obs["phase_1_worst_max_prefix_cents"], 1080)
+        self.assertEqual(obs["phase_1_endpoint_sum_cents"], 180)
+        self.assertEqual(obs["phase_1_missing_barriers"], 3)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "ENFORCE_CAUSAL_BARRIER_AND_PRENETTED_DELTA",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "ENFORCE_CAUSAL_BARRIER_AND_PRENETTED_DELTA",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "ENFORCE_CAUSAL_BARRIER_AND_PRENETTED_DELTA",
+        )
+
+        self.assertEqual(obs["phase_2_arrival_max_prefix_cents"], 900)
+        self.assertEqual(obs["phase_2_causal_max_prefix_cents"], 900)
+        self.assertEqual(obs["phase_2_worst_max_prefix_cents"], 1080)
+        self.assertEqual(obs["phase_2_endpoint_sum_cents"], 180)
+        self.assertEqual(obs["phase_2_missing_barriers"], 3)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR")
+
+        self.assertEqual(obs["phase_3_arrival_max_prefix_cents"], 900)
+        self.assertEqual(obs["phase_3_causal_max_prefix_cents"], 900)
+        self.assertEqual(obs["phase_3_worst_max_prefix_cents"], 900)
+        self.assertEqual(obs["phase_3_endpoint_sum_cents"], 180)
+        self.assertEqual(obs["phase_3_missing_barriers"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

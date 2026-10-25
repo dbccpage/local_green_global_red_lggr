@@ -101,15 +101,32 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `52
 | `9402` | `unreleased_session_lock_trap` | **B** | `exception_site_traceback_routing` | `blocked_unresolved` | `1` | `'q3_err'` | 2 | 14 | `$0.019483` |
 | `9402` | `unreleased_session_lock_trap` | **C** | `explicit_lggr_dfa_reset_gluing_directive` | **`completed`** | **`0`** | **`'q0_idle'`** | **1** | **6** | **`$0.006128`** |
 
+## Asynchronous Event-Driven Codebase & Replay-Order Barrier Gluing (`--topology replay`, `evidence/replay_pilot_run/summary.json`)
+
+The package also models asynchronous event-driven escrow modules (`--topology replay`) sharing an `AsyncEscrowBus(prefix_budget=900)` across `pricing_events.py`, `tax_events.py`, and `settlement_events.py`, audited by `StreamingCodebaseReplayOrderMonitor` (`StreamingReplayOrderMonitor` + `StreamingReplayOrderEnvelopeMonitor` + `StreamingCodebaseInterfaceMergeMonitor` + `StreamingFiberMonitor`):
+- In isolated local unit tests (`run_replay_local_unit_tests`), each module is invoked on a fresh `AsyncEscrowBus(prefix_budget=900)`. Whether `pricing_events` reserves unnetted `+900` or pre-netted `+720`, `tax_events` reserves `+180`, and `settlement_events` releases `-900` or `-720`, each module's isolated prefix peak is $\le 900$ (`local_green = 1`) and the commutative terminal escrow sum across all 3 modules is identically `180` cents (`tax_reserve_cents = 180`).
+- On `seed 9501` (`arrival_masked_replay_breach`), `settlement_events` publishes `-900` with `priority_arrival=True` and no causal barrier (`[-900, +900, +180]`), keeping `arrival_max_prefix_cents = 180 <= 900`, yet causal order `[+900, +180, -900]` reaches `causal_max_prefix_cents = 1080 > 900` (`global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50` live API attempts, `$0.055804` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | Arrival Max | Causal Max | Worst Perm Max | Missing Barriers | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `9500` | `clean_replay_barrier_control` | **A / B / C** | All policies | `completed` | `900` | `900` | `900` | `0` | 0 | 0 | `$0.000000` |
+| `9501` | `arrival_masked_replay_breach` | **A** | `endpoint_and_arrival_prefix_gate` | `blocked_unresolved` | `180` | `1080` | `1080` | `3` | 2 | 13 | `$0.015276` |
+| `9501` | `arrival_masked_replay_breach` | **B** | `causal_interleaving_without_positive_mass_netting` | `blocked_unresolved` | `900` | `900` | `1080` | `3` | 2 | 13 | `$0.015375` |
+| `9501` | `arrival_masked_replay_breach` | **C** | `explicit_lggr_replay_order_barrier_directive` | **`completed`** | **`900`** | **`900`** | **`900`** | **`0`** | **1** | **6** | **`$0.006533`** |
+| `9502` | `infeasible_escrow_prefix_budget_contradiction` | **A / B / C** | All policies | `safe_escalated` | `180` | `1080` | `1080` | `3` | 1 | 6 | `$0.0059–$0.0066` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, and 3-agent stateful DFA evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, and 3-agent replay-order evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/dfa_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/replay_pilot_run/events.jsonl
 ```

@@ -1,0 +1,183 @@
+{
+  "schema": "lggr.replay_order_code_engineering_swarm.v1",
+  "topology": "replay",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 9500,
+      "kind": "clean_replay_barrier_control",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_arrival_max_prefix_cents": 900,
+          "final_causal_max_prefix_cents": 900,
+          "final_worst_permutation_max_prefix_cents": 900,
+          "final_missing_barrier_count": 0,
+          "final_status": "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        },
+        {
+          "arm": "B",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_arrival_max_prefix_cents": 900,
+          "final_causal_max_prefix_cents": 900,
+          "final_worst_permutation_max_prefix_cents": 900,
+          "final_missing_barrier_count": 0,
+          "final_status": "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_arrival_max_prefix_cents": 900,
+          "final_causal_max_prefix_cents": 900,
+          "final_worst_permutation_max_prefix_cents": 900,
+          "final_missing_barrier_count": 0,
+          "final_status": "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        }
+      ]
+    },
+    {
+      "seed": 9501,
+      "kind": "arrival_masked_replay_breach",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_arrival_max_prefix_cents": 180,
+          "final_causal_max_prefix_cents": 1080,
+          "final_worst_permutation_max_prefix_cents": 1080,
+          "final_missing_barrier_count": 3,
+          "final_status": "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.01527636"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_arrival_max_prefix_cents": 900,
+          "final_causal_max_prefix_cents": 900,
+          "final_worst_permutation_max_prefix_cents": 1080,
+          "final_missing_barrier_count": 3,
+          "final_status": "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.01537473"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_arrival_max_prefix_cents": 900,
+          "final_causal_max_prefix_cents": 900,
+          "final_worst_permutation_max_prefix_cents": 900,
+          "final_missing_barrier_count": 0,
+          "final_status": "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.00653280"
+        }
+      ]
+    },
+    {
+      "seed": 9502,
+      "kind": "infeasible_escrow_prefix_budget_contradiction",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_arrival_max_prefix_cents": 180,
+          "final_causal_max_prefix_cents": 1080,
+          "final_worst_permutation_max_prefix_cents": 1080,
+          "final_missing_barrier_count": 3,
+          "final_status": "INFEASIBLE_ESCROW_PREFIX_BUDGET_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.00658366"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_arrival_max_prefix_cents": 180,
+          "final_causal_max_prefix_cents": 1080,
+          "final_worst_permutation_max_prefix_cents": 1080,
+          "final_missing_barrier_count": 3,
+          "final_status": "INFEASIBLE_ESCROW_PREFIX_BUDGET_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.00606143"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_arrival_max_prefix_cents": 180,
+          "final_causal_max_prefix_cents": 1080,
+          "final_worst_permutation_max_prefix_cents": 1080,
+          "final_missing_barrier_count": 3,
+          "final_status": "INFEASIBLE_ESCROW_PREFIX_BUDGET_CONTRADICTION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.00597499"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 50,
+  "charged_or_reserved_usd": "0.05580397",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 16,
+  "scope": "Concurrent 3-agent asynchronous event-driven Python code-engineering swarm (`pricing_events` -> `tax_events` -> `settlement_events`) comparing arrival-order/endpoint gating (A), causal index interleaving without positive-mass netting (B), and explicit LGGR causal-barrier & pre-netted escrow directives (C) with full cryptographic receipts retained in the host audit log."
+}

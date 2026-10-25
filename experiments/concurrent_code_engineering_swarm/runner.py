@@ -27,6 +27,7 @@ from experiments.live_five_agent_swarm.client import (
 from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseReplayOrderMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
 )
@@ -36,15 +37,18 @@ from .domain import (
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
+    REPLAY_WORKER_MODULES,
     WORKER_MODULES,
     CatalystCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     catalyst_fixture,
     dfa_fixture,
     diamond_fixture,
     fixture,
+    replay_fixture,
 )
 
 CODE_SWARM_TOOLS: list[dict[str, Any]] = [
@@ -1042,6 +1046,201 @@ def dfa_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]
     return summary
 
 
+def replay_system_prompt(worker: str) -> str:
+    module_name = REPLAY_WORKER_MODULES[worker]
+    return (
+        f"You are software engineering agent {worker}, owner of asynchronous event-driven Python module `{module_name}.py` "
+        "in a 3-stage escrow settlement pipeline (`pricing_events` -> `tax_events` -> `settlement_events`) sharing an "
+        "`AsyncEscrowBus(prefix_budget=900)`. "
+        "Always call `inspect_workspace` first. "
+        "ONLY call `escalate` if `infeasible_constraint` in `inspect_workspace` is non-null. "
+        "Otherwise, NEVER call `escalate`: always call `submit_module_patch` with the complete Python "
+        "source code for your module (if your feedback or directive says no change or hold, submit your "
+        "existing `source_code` unchanged via `submit_module_patch`)."
+    )
+
+
+def replay_merge_gate(
+    events: Events,
+    workspace: ReplayOrderCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    monitor = StreamingCodebaseReplayOrderMonitor(
+        prefix_budget=900,
+        scope_id=f"replay-code-swarm-gate-{arm}-{step_tag}",
+    )
+    eval_rec = monitor.evaluate_codebase_replay_order(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=workspace.local_verdicts(),
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    full_receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "step_tag": step_tag,
+            "stage_events": eval_rec["stage_events"],
+            "stage_barriers": eval_rec["stage_barriers"],
+            "missing_barrier_modules": eval_rec["missing_barrier_modules"],
+            "missing_barrier_count": eval_rec["missing_barrier_count"],
+            "arrival_max_prefix_cents": eval_rec["arrival_max_prefix_cents"],
+            "causal_max_prefix_cents": eval_rec["causal_max_prefix_cents"],
+            "worst_permutation_max_prefix_cents": eval_rec["worst_permutation_max_prefix_cents"],
+            "common_endpoint_sum_cents": eval_rec["common_endpoint_sum_cents"],
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "status": eval_rec["status"],
+            "host_lggr_receipt_sha256": full_receipt["receipt_sha256"],
+            "host_lggr_receipt": full_receipt,
+        },
+    )
+    return eval_rec, full_receipt
+
+
+def replay_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = ["worker-0", "worker-1", "worker-2"]
+    for seed in config["seeds"]:
+        base_state = replay_fixture(seed)
+        events.emit("case_start", {"seed": seed, "kind": base_state["kind"], "fixture": base_state})
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = ReplayOrderCodeWorkspace(base_state)
+            histories = {w: [{"role": "system", "content": replay_system_prompt(w)}] for w in workers}
+            events.emit("arm_start", {"seed": seed, "arm": arm, "kind": base_state["kind"]})
+            start_calls = client.calls
+            start_cost = client.spent
+            escalations = 0
+            waves_run = 0
+            eval_rec, _ = replay_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+            feasible_case = base_state["infeasible_constraint"] is None
+
+            for wave_idx in range(1, 3):
+                if eval_rec["global_green"] == 1 or (not feasible_case and escalations > 0):
+                    break
+                waves_run += 1
+                per_worker_fb: dict[str, dict[str, Any]] = {}
+                for w in workers:
+                    if arm == "A":
+                        # Arm A: Endpoint sum + arrival-order prefix gate (blind to arrival-masked causal breach)
+                        per_worker_fb[w] = {
+                            "arm": "A_endpoint_and_arrival_prefix_gate",
+                            "local_unit_test_passed": True,
+                            "arrival_max_prefix_cents": eval_rec["arrival_max_prefix_cents"],
+                            "common_endpoint_sum_cents": eval_rec["common_endpoint_sum_cents"],
+                            "infeasible_constraint": base_state["infeasible_constraint"],
+                            "message": (
+                                "Your module's isolated unit test passed, terminal escrow sum is 180 cents, and "
+                                f"arrival-order max prefix is {eval_rec['arrival_max_prefix_cents']} <= 900 cents. "
+                                "If `infeasible_constraint` is non-null, call `escalate`; otherwise preserve your "
+                                "current working implementation by submitting your existing `source_code` unchanged "
+                                "via `submit_module_patch`."
+                            ),
+                        }
+                    elif arm == "B":
+                        # Arm B: Causal index interleaving without positive-mass netting or stage barriers
+                        if w == "worker-0":
+                            per_worker_fb[w] = {
+                                "arm": "B_causal_interleaving_without_positive_mass_netting",
+                                "causal_max_prefix_cents": eval_rec["causal_max_prefix_cents"],
+                                "infeasible_constraint": base_state["infeasible_constraint"],
+                                "message": (
+                                    "Stage 1 (`pricing_events`) reserves 900 cents within the 900-cent budget. "
+                                    "If `infeasible_constraint` is non-null, call `escalate`; otherwise keep "
+                                    "`pricing_events.py` unchanged and submit your existing `source_code` via "
+                                    "`submit_module_patch`."
+                                ),
+                            }
+                        elif w == "worker-1":
+                            per_worker_fb[w] = {
+                                "arm": "B_causal_interleaving_without_positive_mass_netting",
+                                "causal_max_prefix_cents": eval_rec["causal_max_prefix_cents"],
+                                "infeasible_constraint": base_state["infeasible_constraint"],
+                                "message": (
+                                    "Causal prefix reached 1080 > 900 when `tax_escrow` ran at `causal_index=2` "
+                                    "before `settlement_release`. If `infeasible_constraint` is non-null, call "
+                                    "`escalate`; otherwise change `causal_index=2` to `causal_index=3` in "
+                                    "`bus.publish('tax_escrow', tax, causal_index=3)` (do NOT add `commit_barrier`) "
+                                    "and submit via `submit_module_patch`."
+                                ),
+                            }
+                        else:
+                            per_worker_fb[w] = {
+                                "arm": "B_causal_interleaving_without_positive_mass_netting",
+                                "causal_max_prefix_cents": eval_rec["causal_max_prefix_cents"],
+                                "infeasible_constraint": base_state["infeasible_constraint"],
+                                "message": (
+                                    "Causal prefix reached 1080 > 900 when `settlement_release` ran at `causal_index=3`. "
+                                    "If `infeasible_constraint` is non-null, call `escalate`; otherwise update "
+                                    "`settlement_events.py` to call `bus.publish('settlement_release', -(payout + fee), "
+                                    "causal_index=2, priority_arrival=False)` (do NOT add `commit_barrier`) so release "
+                                    "is interleaved at `causal_index=2`, and submit via `submit_module_patch`."
+                                ),
+                            }
+                    else:
+                        # Arm C: Explicit LGGR Replay-Order Barrier & Pre-Netted Escrow Directive
+                        per_worker_fb[w] = {
+                            "arm": "C_explicit_lggr_replay_order_barrier_directive",
+                            "role_directive": eval_rec["compact_role_directives"][w],
+                        }
+                escalations += round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, _ = replay_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+            if eval_rec["global_green"] == 1 and feasible_case:
+                outcome = "completed"
+            elif not feasible_case and escalations > 0 and eval_rec["global_green"] == 0:
+                outcome = "safe_escalated"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_arrival_max_prefix_cents": eval_rec["arrival_max_prefix_cents"],
+                "final_causal_max_prefix_cents": eval_rec["causal_max_prefix_cents"],
+                "final_worst_permutation_max_prefix_cents": eval_rec["worst_permutation_max_prefix_cents"],
+                "final_missing_barrier_count": eval_rec["missing_barrier_count"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.replay_order_code_engineering_swarm.v1",
+        "topology": "replay",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent asynchronous event-driven Python code-engineering swarm (`pricing_events` -> "
+            "`tax_events` -> `settlement_events`) comparing arrival-order/endpoint gating (A), causal index "
+            "interleaving without positive-mass netting (B), and explicit LGGR causal-barrier & pre-netted "
+            "escrow directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -1058,6 +1257,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = catalyst_campaign(client, events, config)
         elif config.get("topology") == "dfa":
             summary = dfa_campaign(client, events, config)
+        elif config.get("topology") == "replay":
+            summary = replay_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -1079,7 +1280,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=["live", "replay"])
     parser.add_argument("path")
-    parser.add_argument("--topology", choices=["linear", "diamond", "catalyst", "dfa"], default="linear")
+    parser.add_argument(
+        "--topology",
+        choices=["linear", "diamond", "catalyst", "dfa", "replay"],
+        default="linear",
+    )
     parser.add_argument("--seeds", nargs="+", type=int, default=None)
     parser.add_argument("--budget", default="0.50")
     args = parser.parse_args()
@@ -1108,6 +1313,8 @@ def main() -> None:
         seeds = [8300, 8301, 8302]
     elif args.topology == "dfa":
         seeds = [9400, 9401, 9402]
+    elif args.topology == "replay":
+        seeds = [9500, 9501, 9502]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -1144,6 +1351,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = dfa_campaign(client, events, config)
+    elif args.topology == "replay":
+        config = {
+            "topology": "replay",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = replay_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
