@@ -3764,4 +3764,76 @@ theorem stateful_codebase_transaction_dfa_reset_gluing_audit :
   intro q0 q1 q2 q3 hq
   omega
 
+/-- 98. Asynchronous event-driven codebase replay-order prefix-envelope drawdown vs.
+    deterministic causal-ordering barrier and pre-netted escrow gluing audit:
+    1. Symbolic commutative endpoint invariance vs. positive-first prefix excursion and
+       pre-netted barrier robustness identity:
+       - For any positive escrow reservations `d_p > 0` and `d_t > 0`, the credit-first arrival
+         order `(-d_p) + d_p + d_t`, the interleaved order `d_p + (-d_p) + d_t`, and the
+         positive-first order `d_p + d_t + (-d_p)` all share the exact endpoint sum `d_t`,
+         yet the positive-first prefix reaches `d_p + d_t > d_p`;
+       - Pre-netting the stage-1 escrow hold to `d_p' = d_p - d_t` with stage-3 release `-d_p'`
+         preserves the endpoint sum `(d_p - d_t) + d_t + (-(d_p - d_t)) = d_t` while bounding
+         the positive-first prefix peak to `(d_p - d_t) + d_t = d_p`;
+    2. Concrete 3-phase asynchronous 3-module codebase (`pricing_events`, `tax_events`,
+       `settlement_events`) replay-order and causal-barrier audit (`B_prefix = 900`):
+       - Phase 1 (Arrival-masked causal breach across `[-900, +900, +180]`, `missing_barriers = 3`):
+         isolated local tests and arrival-order prefix `arr_p1 = 180 ≤ 900` with terminal sum
+         `end_p1 = 180` pass (`L_mask = 1`), yet causal order `[+900, +180, -900]` reaches
+         `caus_p1 = 1080 > 900` (`Eg_mask = 0`, `Δ_{E,mask} = -1`);
+       - Phase 2 (Interleaved causal order `[+900, -900, +180]` without positive-mass netting or
+         stage barriers, `missing_barriers = 3`):
+         both arrival and causal max prefixes are `900 ≤ 900` (`L_reord = 1`), yet the
+         positive-first worktree permutation reaches `worst_p2 = 1080 > 900` (`Eg_reord = 0`,
+         `Δ_{E,reord} = -1`);
+       - Phase 3 (Pre-netted escrow deltas `[+720, +180, -720]` with deterministic causal barriers
+         `[1, 2, 3]`, `missing_barriers = 0`):
+         `arr_p3 = 900 ≤ 900`, `caus_p3 = 900 ≤ 900`, `worst_p3 = 900 ≤ 900`, `end_p3 = 180`,
+         and settlement conservation `873 + 27 + 180 = 1080` (`L_rob = 1`, `Eg_rob = 1`,
+         `Δ_{E,rob} = 0`). -/
+theorem async_codebase_replay_order_prefix_envelope_and_barrier_gluing_audit :
+    (∀ d_p d_t : Int,
+      (d_p > 0 ∧ d_t > 0) →
+      (((-d_p) + d_p + d_t = d_t) ∧
+       (d_p + (-d_p) + d_t = d_t) ∧
+       (d_p + d_t + (-d_p) = d_t) ∧
+       (d_p + d_t > d_p) ∧
+       ((d_p - d_t) + d_t + (-(d_p - d_t)) = d_t) ∧
+       ((d_p - d_t) + d_t = d_p))) ∧
+    (let b_prefix : Int := 900;
+     let arr_p1 : Int := 180;
+     let caus_p1 : Int := 1080;
+     let worst_p1 : Int := 1080;
+     let end_p1 : Int := 180;
+     let miss_p1 : Int := 3;
+     let arr_p2 : Int := 900;
+     let caus_p2 : Int := 900;
+     let worst_p2 : Int := 1080;
+     let end_p2 : Int := 180;
+     let miss_p2 : Int := 3;
+     let arr_p3 : Int := 900;
+     let caus_p3 : Int := 900;
+     let worst_p3 : Int := 900;
+     let end_p3 : Int := 180;
+     let miss_p3 : Int := 0;
+     let payout_p3 : Int := 873;
+     let fee_p3 : Int := 27;
+     let tax_p3 : Int := 180;
+     let gross_p3 : Int := 1080;
+     let l_mask := if (arr_p1 ≤ b_prefix) ∧ (end_p1 = 180) ∧ (caus_p1 > b_prefix) then (1 : Int) else 0;
+     let eg_mask := if (l_mask = 1) ∧ (caus_p1 ≤ b_prefix) ∧ (worst_p1 ≤ b_prefix) ∧ (miss_p1 = 0) then (1 : Int) else 0;
+     let defect_mask := eg_mask - l_mask;
+     let l_reord := if (arr_p2 ≤ b_prefix) ∧ (caus_p2 ≤ b_prefix) ∧ (end_p2 = 180) ∧ (worst_p2 > b_prefix) then (1 : Int) else 0;
+     let eg_reord := if (l_reord = 1) ∧ (worst_p2 ≤ b_prefix) ∧ (miss_p2 = 0) then (1 : Int) else 0;
+     let defect_reord := eg_reord - l_reord;
+     let l_rob := if (arr_p3 ≤ b_prefix) ∧ (caus_p3 ≤ b_prefix) ∧ (worst_p3 ≤ b_prefix) ∧ (end_p3 = 180) ∧ (miss_p3 = 0) ∧ (payout_p3 + fee_p3 + tax_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_rob := if (l_rob = 1) ∧ (worst_p3 < worst_p2) ∧ (miss_p3 < miss_p2) then (1 : Int) else 0;
+     let defect_rob := eg_rob - l_rob;
+     (l_mask = 1 ∧ eg_mask = 0 ∧ defect_mask = -1) ∧
+     (l_reord = 1 ∧ eg_reord = 0 ∧ defect_reord = -1) ∧
+     (l_rob = 1 ∧ eg_rob = 1 ∧ defect_rob = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro d_p d_t hpos
+  omega
+
 end LggrVIII

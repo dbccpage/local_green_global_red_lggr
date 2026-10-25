@@ -19131,6 +19131,823 @@ class StreamingStatefulCodebaseDFAMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class _AsyncEscrowBusProbe:
+    """Deterministic probe for an asynchronous event-driven escrow ledger bus (Theorem 98).
+
+    Modules publish escrow reservation/release events via ``bus.publish(event_id, delta_cents,
+    causal_index=..., priority_arrival=...)`` and commit stage barriers via
+    ``bus.commit_barrier(stage_index)``.
+    """
+
+    def __init__(self, *, prefix_budget: int = 900) -> None:
+        self.prefix_budget = int(prefix_budget)
+        self.events: list[dict[str, Any]] = []
+        self.barriers: list[int] = []
+
+    def publish(
+        self,
+        event_id: str,
+        delta_cents: int,
+        *,
+        causal_index: int = 1,
+        priority_arrival: bool = False,
+    ) -> dict[str, Any]:
+        ev = {
+            "event_id": str(event_id),
+            "delta_cents": int(delta_cents),
+            "causal_index": int(causal_index),
+            "priority_arrival": bool(priority_arrival),
+        }
+        self.events.append(ev)
+        return dict(ev)
+
+    def commit_barrier(self, stage_index: int) -> int:
+        idx = int(stage_index)
+        self.barriers.append(idx)
+        return idx
+
+    def local_max_prefix(self) -> int:
+        running = 0
+        peak = 0
+        for ev in self.events:
+            running += int(ev["delta_cents"])
+            if running > peak:
+                peak = running
+        return peak
+
+
+class StreamingCodebaseReplayOrderMonitor:
+    """Asynchronous event-driven codebase replay-order prefix-envelope drawdown vs.
+    deterministic causal-ordering barrier monitor (Theorem 98).
+
+    Combines ``StreamingReplayOrderMonitor``, ``StreamingReplayOrderEnvelopeMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across a 3-module
+    asynchronous escrow settlement codebase sharing an ``AsyncEscrowBus(prefix_budget=900)``:
+      - ``worker-0`` (``pricing_events.py``): ``emit_pricing_events(bus, items, discount_bps)`` ->
+        canonical return keys ``['subtotal_cents', 'discount_cents', 'net_cents']``
+      - ``worker-1`` (``tax_events.py``): ``emit_tax_events(bus, quote, tax_bps)`` ->
+        canonical return keys ``['net_cents', 'tax_cents', 'gross_cents']``
+      - ``worker-2`` (``settlement_events.py``): ``emit_settlement_events(bus, taxed_quote, fee_bps)`` ->
+        canonical return keys ``['gross_cents', 'platform_fee_cents', 'tax_reserve_cents', 'merchant_payout_cents']``
+
+    In isolated local unit tests, each module is tested on a fresh ``AsyncEscrowBus(prefix_budget=900)``.
+    Whether ``pricing_events`` reserves unnetted ``+900`` or pre-netted ``+720``, ``tax_events``
+    reserves ``+180``, and ``settlement_events`` releases ``-900`` or ``-720``, each module's
+    isolated prefix peak is ``<= 900`` and the commutative terminal escrow sum across all 3 modules
+    is identically ``180`` cents (``tax_reserve_cents = 180``). However, on the shared bus:
+      - Phase 1 (Arrival-masked causal breach across ``[-900, +900, +180]``):
+        Unbarriered early arrival of ``settlement_release (-900)`` keeps ``arrival_max_prefix = 180 <= 900``,
+        masking the causal prefix breach ``causal_max_prefix = 900 + 180 = 1080 > 900``
+        (``ARRIVAL_MASKED_CAUSAL_BREACH_LGGR``, ``defect = -1``).
+      - Phase 2 (Interleaved causal order ``[+900, -900, +180]`` without positive-mass netting or
+        causal barriers):
+        Both arrival and causal max prefixes are ``900 <= 900``, yet the positive-first worktree
+        replay permutation ``[+900, +180, -900]`` reaches ``worst_permutation_max_prefix = 1080 > 900``
+        (``REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR``, ``defect = -1``).
+      - Phase 3 (Pre-netted escrow deltas ``[+720, +180, -720]`` with deterministic stage barriers
+        ``bus.commit_barrier(1..3)``):
+        ``arrival_max_prefix = 900 <= 900``, ``causal_max_prefix = 900 <= 900``,
+        ``worst_permutation_max_prefix = 900 <= 900``, ``common_endpoint_sum = 180``, and
+        exact settlement conservation ``873 + 27 + 180 = 1080``
+        (``CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG``, ``defect = 0``).
+    """
+
+    CANONICAL_REPLAY_MODULE_SPEC: dict[str, dict[str, Any]] = {
+        "worker-0": {
+            "module": "pricing_events",
+            "function": "emit_pricing_events",
+            "params": ["bus", "items", "discount_bps"],
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents"],
+            "required_event_id": "pricing_escrow",
+            "required_delta_cents": 720,
+            "required_causal_index": 1,
+            "required_barrier": 1,
+        },
+        "worker-1": {
+            "module": "tax_events",
+            "function": "emit_tax_events",
+            "params": ["bus", "quote", "tax_bps"],
+            "return_keys": ["net_cents", "tax_cents", "gross_cents"],
+            "required_event_id": "tax_escrow",
+            "required_delta_cents": 180,
+            "required_causal_index": 2,
+            "required_barrier": 2,
+        },
+        "worker-2": {
+            "module": "settlement_events",
+            "function": "emit_settlement_events",
+            "params": ["bus", "taxed_quote", "fee_bps"],
+            "return_keys": [
+                "gross_cents",
+                "platform_fee_cents",
+                "tax_reserve_cents",
+                "merchant_payout_cents",
+            ],
+            "required_event_id": "settlement_release",
+            "required_delta_cents": -720,
+            "required_causal_index": 3,
+            "required_barrier": 3,
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        prefix_budget: Fraction | int | str = 900,
+        scope_id: str = "streaming-codebase-replay-order-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.prefix_budget = rational(prefix_budget)
+        if self.prefix_budget <= 0:
+            raise ValidationError("prefix_budget must be > 0")
+        self.envelope_monitor = StreamingReplayOrderEnvelopeMonitor(
+            scope_id=f"{self.scope_id}-envelope"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def new_bus(*, prefix_budget: int = 900) -> _AsyncEscrowBusProbe:
+        return _AsyncEscrowBusProbe(prefix_budget=prefix_budget)
+
+    def evaluate_codebase_replay_order(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: dict[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit 3 asynchronous event-driven modules for replay-order prefix excursions and barrier gluing."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        ast_reports: dict[str, dict[str, Any]] = {}
+        namespaces: dict[str, dict[str, Any]] = {}
+        contract_mismatches: list[dict[str, Any]] = []
+        conservation_defects: list[dict[str, Any]] = []
+
+        for wid, spec in self.CANONICAL_REPLAY_MODULE_SPEC.items():
+            mname = spec["module"]
+            src = sources.get(mname, "")
+            info = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(mname, src)
+            ast_reports[mname] = info
+            if info["syntax_ok"] and info["sandbox_ok"]:
+                try:
+                    namespaces[mname] = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+                        mname, src
+                    )
+                except Exception as exc:
+                    contract_mismatches.append(
+                        {
+                            "worker": wid,
+                            "module": mname,
+                            "kind": "MODULE_LOAD_ERROR",
+                            "detail": str(exc),
+                        }
+                    )
+            else:
+                contract_mismatches.append(
+                    {
+                        "worker": wid,
+                        "module": mname,
+                        "kind": "AST_OR_SANDBOX_FAILURE",
+                        "detail": info.get("error") or str(info.get("sandbox_violations")),
+                    }
+                )
+
+        if infeasible_constraint is not None:
+            contract_mismatches.append(
+                {
+                    "worker": "all",
+                    "module": "escrow_replay_contract",
+                    "kind": "INFEASIBLE_SPECIFICATION_CONTRADICTION",
+                    "detail": infeasible_constraint,
+                }
+            )
+
+        sample_items = [
+            {"unit_cents": 400, "quantity": 2},
+            {"unit_cents": 200, "quantity": 1},
+        ]
+        canonical_quote = {"subtotal_cents": 1000, "discount_cents": 100, "net_cents": 900}
+        canonical_taxed = {"net_cents": 900, "tax_cents": 180, "gross_cents": 1080}
+
+        p_out: dict[str, Any] | None = None
+        t_out: dict[str, Any] | None = None
+        s_out: dict[str, Any] | None = None
+        stage_events: dict[str, list[dict[str, Any]]] = {
+            "pricing_events": [],
+            "tax_events": [],
+            "settlement_events": [],
+        }
+        stage_barriers: dict[str, list[int]] = {
+            "pricing_events": [],
+            "tax_events": [],
+            "settlement_events": [],
+        }
+
+        if len(namespaces) == 3 and infeasible_constraint is None:
+            fn_p = namespaces["pricing_events"].get("emit_pricing_events")
+            fn_t = namespaces["tax_events"].get("emit_tax_events")
+            fn_s = namespaces["settlement_events"].get("emit_settlement_events")
+
+            # Stage 1: pricing_events
+            bus_p = self.new_bus(prefix_budget=int(self.prefix_budget))
+            try:
+                p_out = fn_p(bus_p, sample_items, 1000)
+                for req_k in ("subtotal_cents", "discount_cents", "net_cents"):
+                    if not isinstance(p_out, dict) or req_k not in p_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-0",
+                                "module": "pricing_events",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                            }
+                        )
+            except Exception as exc:
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-0",
+                        "module": "pricing_events",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+            stage_events["pricing_events"] = list(bus_p.events) or [
+                {"event_id": "pricing_escrow", "delta_cents": 900, "causal_index": 1, "priority_arrival": False}
+            ]
+            stage_barriers["pricing_events"] = list(bus_p.barriers)
+
+            # Stage 2: tax_events
+            q_input = (
+                p_out
+                if (isinstance(p_out, dict) and all(k in p_out for k in ("subtotal_cents", "discount_cents", "net_cents")))
+                else canonical_quote
+            )
+            bus_t = self.new_bus(prefix_budget=int(self.prefix_budget))
+            try:
+                t_out = fn_t(bus_t, dict(q_input), 2000)
+                for req_k in ("net_cents", "tax_cents", "gross_cents"):
+                    if not isinstance(t_out, dict) or req_k not in t_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-1",
+                                "module": "tax_events",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                            }
+                        )
+            except Exception as exc:
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-1",
+                        "module": "tax_events",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+            stage_events["tax_events"] = list(bus_t.events) or [
+                {"event_id": "tax_escrow", "delta_cents": 180, "causal_index": 2, "priority_arrival": False}
+            ]
+            stage_barriers["tax_events"] = list(bus_t.barriers)
+
+            # Stage 3: settlement_events
+            t_input = (
+                t_out
+                if (isinstance(t_out, dict) and all(k in t_out for k in ("net_cents", "tax_cents", "gross_cents")))
+                else canonical_taxed
+            )
+            bus_s = self.new_bus(prefix_budget=int(self.prefix_budget))
+            try:
+                s_out = fn_s(bus_s, dict(t_input), 300)
+                req_s_keys = (
+                    "gross_cents",
+                    "platform_fee_cents",
+                    "tax_reserve_cents",
+                    "merchant_payout_cents",
+                )
+                for req_k in req_s_keys:
+                    if not isinstance(s_out, dict) or req_k not in s_out:
+                        contract_mismatches.append(
+                            {
+                                "worker": "worker-2",
+                                "module": "settlement_events",
+                                "kind": "RETURN_SCHEMA_MISMATCH",
+                                "missing_key": req_k,
+                            }
+                        )
+                if isinstance(s_out, dict) and all(k in s_out for k in req_s_keys):
+                    expected_fee = (int(t_input["net_cents"]) * 300) // 10000
+                    residual = (
+                        int(s_out["merchant_payout_cents"])
+                        + int(s_out["platform_fee_cents"])
+                        + int(s_out["tax_reserve_cents"])
+                    ) - int(s_out["gross_cents"])
+                    fee_drift = int(s_out["platform_fee_cents"]) - expected_fee
+                    if residual != 0 or fee_drift != 0:
+                        conservation_defects.append(
+                            {
+                                "worker": "worker-2",
+                                "module": "settlement_events",
+                                "kind": "CONSERVATION_OR_FEE_DRIFT",
+                                "conservation_residual_cents": residual,
+                                "fee_drift_cents": fee_drift,
+                            }
+                        )
+            except Exception as exc:
+                contract_mismatches.append(
+                    {
+                        "worker": "worker-2",
+                        "module": "settlement_events",
+                        "kind": "RUNTIME_STAGE_EXCEPTION",
+                        "detail": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+            stage_events["settlement_events"] = list(bus_s.events) or [
+                {"event_id": "settlement_release", "delta_cents": -900, "causal_index": 3, "priority_arrival": True}
+            ]
+            stage_barriers["settlement_events"] = list(bus_s.barriers)
+        else:
+            stage_events["pricing_events"] = [
+                {"event_id": "pricing_escrow", "delta_cents": 900, "causal_index": 1, "priority_arrival": False}
+            ]
+            stage_events["tax_events"] = [
+                {"event_id": "tax_escrow", "delta_cents": 180, "causal_index": 2, "priority_arrival": False}
+            ]
+            stage_events["settlement_events"] = [
+                {"event_id": "settlement_release", "delta_cents": -900, "causal_index": 3, "priority_arrival": True}
+            ]
+
+        missing_barrier_modules: list[str] = []
+        committed_barriers: list[int] = []
+        for wid, spec in self.CANONICAL_REPLAY_MODULE_SPEC.items():
+            mname = spec["module"]
+            req_b = int(spec["required_barrier"])
+            b_list = stage_barriers.get(mname, [])
+            if b_list == [req_b]:
+                committed_barriers.append(req_b)
+            else:
+                missing_barrier_modules.append(mname)
+        missing_barrier_count = len(missing_barrier_modules)
+
+        # Assemble arrival sequence on the shared bus:
+        # If barriers [1, 2, 3] are all committed, arrival order is locked to causal stage order.
+        # Otherwise, priority_arrival events (e.g., unbarriered early settlement release) arrive first,
+        # followed by remaining events sorted by their declared causal_index.
+        raw_events: list[tuple[int, dict[str, Any]]] = []
+        for stage_idx, mname in enumerate(("pricing_events", "tax_events", "settlement_events"), start=1):
+            for ev in stage_events[mname]:
+                raw_events.append((stage_idx, ev))
+
+        if missing_barrier_count == 0 and committed_barriers == [1, 2, 3]:
+            ordered_arrival = [ev for _, ev in sorted(raw_events, key=lambda x: (x[1]["causal_index"], x[0]))]
+        else:
+            priority_evs = [ev for _, ev in raw_events if ev.get("priority_arrival", False)]
+            normal_evs = [
+                ev
+                for _, ev in sorted(
+                    (x for x in raw_events if not x[1].get("priority_arrival", False)),
+                    key=lambda x: (x[1]["causal_index"], x[0]),
+                )
+            ]
+            ordered_arrival = priority_evs + normal_evs
+
+        replay_mon = StreamingReplayOrderMonitor(
+            self.prefix_budget,
+            scope_id=f"{self.scope_id}:{eval_id}:replay",
+        )
+        for idx, ev in enumerate(ordered_arrival):
+            eid = f"{ev['event_id']}_{idx}" if any(e["event_id"] == ev["event_id"] for e in replay_mon.events) else ev["event_id"]
+            replay_mon.register_event(
+                eid,
+                int(ev["delta_cents"]),
+                causal_index=int(ev["causal_index"]),
+            )
+        replay_receipt = replay_mon.get_receipt()
+        envelope_eval = self.envelope_monitor.evaluate_replay_envelope(f"{eval_id}_envelope")
+
+        arr_max = int(Fraction(replay_receipt["arrival_max_prefix"]))
+        caus_max = int(Fraction(replay_receipt["causal_max_prefix"]))
+        worst_max = int(Fraction(replay_receipt["worst_permutation_max_prefix"]))
+        end_sum = int(Fraction(replay_receipt["common_endpoint_sum"]))
+        b_int = int(self.prefix_budget)
+
+        local_vec = [
+            bool(local_test_results.get("pricing_events", False)),
+            bool(local_test_results.get("tax_events", False)),
+            bool(local_test_results.get("settlement_events", False)),
+        ]
+        l_green = (
+            1
+            if (
+                all(local_vec)
+                and arr_max <= b_int
+                and end_sum == 180
+                and not contract_mismatches
+                and not conservation_defects
+            )
+            else 0
+        )
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and replay_receipt["status"] == "PERMUTATION_ROBUST_PREFIX_LGGG"
+                and caus_max <= b_int
+                and worst_max <= b_int
+                and missing_barrier_count == 0
+                and committed_barriers == [1, 2, 3]
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_unit_tests": local_vec,
+                "arrival_within_budget": arr_max <= b_int,
+                "endpoint_sum_cents": end_sum,
+            },
+            {
+                "replay_barrier_coherent": eg_green == 1,
+                "worst_permutation_max_prefix": worst_max,
+                "missing_barrier_count": missing_barrier_count,
+            },
+        )
+
+        role_directives = self._build_replay_order_directives(
+            stage_events=stage_events,
+            stage_barriers=stage_barriers,
+            missing_barrier_modules=missing_barrier_modules,
+            replay_receipt=replay_receipt,
+            contract_mismatches=contract_mismatches,
+            conservation_defects=conservation_defects,
+            infeasible_constraint=infeasible_constraint,
+            integration_passed=(eg_green == 1),
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_ESCROW_PREFIX_BUDGET_CONTRADICTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif replay_receipt["status"] == "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR":
+            status = "ARRIVAL_MASKED_CAUSAL_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif replay_receipt["status"] == "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR":
+            status = "REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CAUSAL_AND_ARRIVAL_PREFIX_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "prefix_budget_cents": b_int,
+            "local_unit_test_verdicts": {
+                "pricing_events": local_vec[0],
+                "tax_events": local_vec[1],
+                "settlement_events": local_vec[2],
+            },
+            "stage_events": stage_events,
+            "stage_barriers": stage_barriers,
+            "missing_barrier_modules": missing_barrier_modules,
+            "missing_barrier_count": missing_barrier_count,
+            "committed_barriers": committed_barriers,
+            "arrival_max_prefix_cents": arr_max,
+            "causal_max_prefix_cents": caus_max,
+            "worst_permutation_max_prefix_cents": worst_max,
+            "common_endpoint_sum_cents": end_sum,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "contract_mismatches": contract_mismatches,
+            "conservation_defects": conservation_defects,
+            "compact_role_directives": role_directives,
+            "integration_trace": {
+                "pricing_events_output": p_out,
+                "tax_events_output": t_out,
+                "settlement_events_output": s_out,
+                "ordered_arrival_events": ordered_arrival,
+            },
+            "replay_order_receipt": replay_receipt,
+            "replay_envelope_evaluation": envelope_eval,
+            "ast_reports": ast_reports,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_replay_order_directives(
+        cls,
+        *,
+        stage_events: Mapping[str, Sequence[Mapping[str, Any]]],
+        stage_barriers: Mapping[str, Sequence[int]],
+        missing_barrier_modules: Sequence[str],
+        replay_receipt: Mapping[str, Any],
+        contract_mismatches: Sequence[Mapping[str, Any]],
+        conservation_defects: Sequence[Mapping[str, Any]],
+        infeasible_constraint: Mapping[str, Any] | None,
+        integration_passed: bool,
+    ) -> dict[str, dict[str, Any]]:
+        if integration_passed:
+            return {
+                wid: {
+                    "role": "VERIFIED_REPLAY_BARRIER_MODULE_OWNER",
+                    "action": "NO_CHANGE_REQUIRED",
+                    "module": spec["module"],
+                    "function": spec["function"],
+                }
+                for wid, spec in cls.CANONICAL_REPLAY_MODULE_SPEC.items()
+            }
+
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "REPLAY_PREFIX_BUDGET_CONFLICT_AUDITOR",
+                    "action": "ESCALATE_INFEASIBLE_ESCROW_BUDGET",
+                    "module": spec["module"],
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_REPLAY_MODULE_SPEC.items()
+            }
+
+        directives: dict[str, dict[str, Any]] = {}
+        for wid, spec in cls.CANONICAL_REPLAY_MODULE_SPEC.items():
+            mname = spec["module"]
+            evs = list(stage_events.get(mname, []))
+            bars = list(stage_barriers.get(mname, []))
+            req_eid = spec["required_event_id"]
+            req_delta = int(spec["required_delta_cents"])
+            req_cidx = int(spec["required_causal_index"])
+            req_bar = int(spec["required_barrier"])
+
+            ev_ok = (
+                len(evs) == 1
+                and evs[0].get("event_id") == req_eid
+                and int(evs[0].get("delta_cents", 0)) == req_delta
+                and int(evs[0].get("causal_index", 0)) == req_cidx
+                and not bool(evs[0].get("priority_arrival", False))
+            )
+            bar_ok = bars == [req_bar]
+            needs_repair = not (ev_ok and bar_ok)
+
+            directives[wid] = {
+                "role": "ASYNC_ESCROW_REPLAY_MODULE_OWNER",
+                "action": "ENFORCE_CAUSAL_BARRIER_AND_PRENETTED_DELTA" if needs_repair else "HOLD_BARRIERED_MODULE",
+                "module": mname,
+                "function": spec["function"],
+                "observed_events": evs,
+                "observed_barriers": bars,
+                "required_event": {
+                    "event_id": req_eid,
+                    "delta_cents": req_delta,
+                    "causal_index": req_cidx,
+                    "priority_arrival": False,
+                },
+                "required_barrier": req_bar,
+                "required_return_keys": list(spec["return_keys"]),
+                "instruction": (
+                    f"Update `{spec['function']}` in `{mname}.py` so it calls "
+                    f"`bus.publish('{req_eid}', {req_delta}, causal_index={req_cidx}, priority_arrival=False)` "
+                    f"followed by `bus.commit_barrier({req_bar})`, while preserving the existing return dict "
+                    f"mapping keys `{spec['return_keys']}` to their integer values."
+                    if needs_repair
+                    else f"Keep `{spec['function']}` in `{mname}.py` unchanged with barrier `{req_bar}`."
+                ),
+            }
+        return directives
+
+    def record_three_phase_codebase_replay_order_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase asynchronous codebase replay-order and causal-barrier audit (Theorem 98):
+        - Phase 1 (Arrival-masked causal breach across `[-900, +900, +180]`, `missing_barrier_count = 3`):
+          `settlement_events` publishes `-900` with `priority_arrival=True` and no causal barrier,
+          yielding `arrival_max_prefix_cents = 180 <= 900` and `common_endpoint_sum_cents = 180`
+          (`L = 1`), while causal order `[+900, +180, -900]` reaches `causal_max_prefix_cents = 1080 > 900`
+          (`ARRIVAL_MASKED_CAUSAL_BREACH_LGGR`, `defect = -1`).
+        - Phase 2 (Interleaved causal order `[+900, -900, +180]` without positive-mass netting or
+          stage barriers, `missing_barrier_count = 3`):
+          Both arrival and causal max prefixes are `900 <= 900` (`L = 1`), yet the positive-first
+          worktree permutation `[+900, +180, -900]` reaches `worst_permutation_max_prefix_cents = 1080 > 900`
+          (`REORDER_SENSITIVE_PREFIX_EXCURSION_LGGR`, `defect = -1`).
+        - Phase 3 (Pre-netted escrow deltas `[+720, +180, -720]` with deterministic causal barriers
+          `[1, 2, 3]`, `missing_barrier_count = 0`):
+          `arrival_max_prefix_cents = 900 <= 900`, `causal_max_prefix_cents = 900 <= 900`,
+          `worst_permutation_max_prefix_cents = 900 <= 900`, `common_endpoint_sum_cents = 180`,
+          and settlement conservation `873 + 27 + 180 = 1080`
+          (`CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG`, `defect = 0`).
+        """
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p_unnetted = (
+            "def emit_pricing_events(bus, items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    bus.publish('pricing_escrow', net, causal_index=1)\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_cents': net}\n"
+        )
+        src_p_barrier = (
+            "def emit_pricing_events(bus, items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    tax_withholding_buffer = (net * 2000) // 10000\n"
+            "    bus.publish('pricing_escrow', net - tax_withholding_buffer, causal_index=1)\n"
+            "    bus.commit_barrier(1)\n"
+            "    return {'subtotal_cents': subtotal, 'discount_cents': discount, 'net_cents': net}\n"
+        )
+        src_t_p1 = (
+            "def emit_tax_events(bus, quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    bus.publish('tax_escrow', tax, causal_index=2)\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': gross}\n"
+        )
+        src_t_p2_interleaved = (
+            "def emit_tax_events(bus, quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    bus.publish('tax_escrow', tax, causal_index=3)\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': gross}\n"
+        )
+        src_t_barrier = (
+            "def emit_tax_events(bus, quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    bus.publish('tax_escrow', tax, causal_index=2)\n"
+            "    bus.commit_barrier(2)\n"
+            "    return {'net_cents': net, 'tax_cents': tax, 'gross_cents': gross}\n"
+        )
+        src_s_p1_priority = (
+            "def emit_settlement_events(bus, taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    bus.publish('settlement_release', -(payout + fee), causal_index=3, priority_arrival=True)\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+        src_s_p2_interleaved = (
+            "def emit_settlement_events(bus, taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    bus.publish('settlement_release', -(payout + fee), causal_index=2, priority_arrival=False)\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+        src_s_barrier = (
+            "def emit_settlement_events(bus, taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    bus.publish('settlement_release', -(net - tax), causal_index=3, priority_arrival=False)\n"
+            "    bus.commit_barrier(3)\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_events": True,
+            "tax_events": True,
+            "settlement_events": True,
+        }
+
+        p1 = self.evaluate_codebase_replay_order(
+            f"{eval_id}_phase1_arrival_masked_causal_breach",
+            sources={
+                "pricing_events": src_p_unnetted,
+                "tax_events": src_t_p1,
+                "settlement_events": src_s_p1_priority,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_replay_order(
+            f"{eval_id}_phase2_reorder_sensitive_interleaved",
+            sources={
+                "pricing_events": src_p_unnetted,
+                "tax_events": src_t_p2_interleaved,
+                "settlement_events": src_s_p2_interleaved,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_replay_order(
+            f"{eval_id}_phase3_prenetted_causal_barrier_glued",
+            sources={
+                "pricing_events": src_p_barrier,
+                "tax_events": src_t_barrier,
+                "settlement_events": src_s_barrier,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "prefix_budget_cents": int(self.prefix_budget),
+                "phase_1_arrival_max_prefix_cents": p1["arrival_max_prefix_cents"],
+                "phase_1_causal_max_prefix_cents": p1["causal_max_prefix_cents"],
+                "phase_1_worst_max_prefix_cents": p1["worst_permutation_max_prefix_cents"],
+                "phase_1_endpoint_sum_cents": p1["common_endpoint_sum_cents"],
+                "phase_1_missing_barriers": p1["missing_barrier_count"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_arrival_max_prefix_cents": p2["arrival_max_prefix_cents"],
+                "phase_2_causal_max_prefix_cents": p2["causal_max_prefix_cents"],
+                "phase_2_worst_max_prefix_cents": p2["worst_permutation_max_prefix_cents"],
+                "phase_2_endpoint_sum_cents": p2["common_endpoint_sum_cents"],
+                "phase_2_missing_barriers": p2["missing_barrier_count"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_arrival_max_prefix_cents": p3["arrival_max_prefix_cents"],
+                "phase_3_causal_max_prefix_cents": p3["causal_max_prefix_cents"],
+                "phase_3_worst_max_prefix_cents": p3["worst_permutation_max_prefix_cents"],
+                "phase_3_endpoint_sum_cents": p3["common_endpoint_sum_cents"],
+                "phase_3_missing_barriers": p3["missing_barrier_count"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "phase_3_integration_trace": p3["integration_trace"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase replay-order evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_replay_order.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "prefix_budget_cents": int(self.prefix_budget),
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "replay_envelope_receipt": self.envelope_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
