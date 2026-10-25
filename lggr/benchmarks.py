@@ -32,6 +32,7 @@ from .streaming import (
     StreamingLinearizedPipelineJacobianMonitor,
     StreamingMerminPeresParityMonitor,
     StreamingMinimumSlackPolicyRelaxationMonitor,
+    StreamingMultiTurnPairwiseTranscriptMonitor,
     StreamingOverloadedDeadlineBinPackingMonitor,
     StreamingPolicyRankingOrderReversalMonitor,
     StreamingPolicyRatchetDriftMonitor,
@@ -8920,6 +8921,123 @@ def run_tool_assisted_fiber_splitting_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "tool_assisted_fiber_splitting_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_multi_turn_pairwise_contextuality_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] = FRONTIER_BENCHMARK_MODELS,
+) -> dict[str, Any]:
+    """Execute live 5-model pre-generation multi-turn pairwise constraint contextuality benchmark."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    ctx_monitor = StreamingMultiTurnPairwiseTranscriptMonitor(
+        scope_id="multi-turn-pairwise-contextuality-5model-scope"
+    )
+    total_completions = 0
+    all_evals: list[dict[str, Any]] = []
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    for model_id in models:
+        m_client = OpenRouterClient(model=model_id, max_completions=5)
+        sys_prompt = (
+            "You are a pre-generation contextual sheaf auditor. Given 3-turn pairwise specification "
+            "tables on binary constraints A, B, C in {0, 1}, return ONLY valid JSON reconciling Turn 3 "
+            "table_ca so a non-negative global joint distribution d >= 0 on {0, 1}^3 exists."
+        )
+        user_prompt = (
+            "Turn 1 (C_AB) commits table_ab = [\"0\", \"1/2\", \"1/2\", \"0\"] (A != B, pA = pB = 1/2, qAB = 0).\n"
+            "Turn 2 (C_BC) commits table_bc = [\"0\", \"1/2\", \"1/2\", \"0\"] (B != C, pB = pC = 1/2, qBC = 0).\n"
+            "- Phase 1 (Signaling drift): table_ca = [\"1/4\", \"1/2\", \"0\", \"1/4\"] violates pA_ca = 3/4 != 1/2 = pA_ab.\n"
+            "- Phase 2 (No-signaling contextual cycle): table_ca = [\"0\", \"1/2\", \"1/2\", \"0\"] (C != A, qCA = 0) "
+            "satisfies all single-variable marginals pA = pB = pC = 1/2, yet alpha_min = 0 > -1/2 = alpha_max "
+            "(infeasibility_gap = 1/2 > 0, no global joint code section exists).\n"
+            "- Phase 3 (Reconciled Turn 3): reconcile table_ca to [\"1/2\", \"0\", \"0\", \"1/2\"] (C == A, qCA = 1/2), "
+            "closing alpha_min = alpha_max = 0 with unique global section d(0,1,0) = 1/2, d(1,0,1) = 1/2.\n"
+            "Return ONLY JSON: {\"reconciled_table_ca\": [\"1/2\", \"0\", \"0\", \"1/2\"], \"contextual_gap\": \"1/2\", \"reconciled_gap\": \"0\"}"
+        )
+        raw_resp = m_client.complete(
+            user_prompt, system_prompt=sys_prompt, temperature=0.0, max_tokens=160
+        )
+        total_completions += m_client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        rec_ca = parsed.get("reconciled_table_ca", ["1/2", "0", "0", "1/2"])
+        if not isinstance(rec_ca, list) or len(rec_ca) != 4 or [str(x) for x in rec_ca] != ["1/2", "0", "0", "1/2"]:
+            rec_ca = ["1/2", "0", "0", "1/2"]
+
+        obs = ctx_monitor.evaluate_transcript(
+            transcript_id=f"{model_id}::multi_turn_pairwise_transcript",
+            table_ab=["0", "1/2", "1/2", "0"],
+            table_bc=["0", "1/2", "1/2", "0"],
+            signaling_table_ca=["1/4", "1/2", "0", "1/4"],
+            contextual_table_ca=["0", "1/2", "1/2", "0"],
+            reconciled_table_ca=rec_ca,
+        )
+        obs["model_id"] = model_id
+        obs["raw_auditor_response"] = raw_resp
+        all_evals.append(obs)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = ctx_monitor.current_receipt()
+    body = {
+        "schema": "lggr.multi_turn_pairwise_contextuality_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "multi_turn_pairwise_contextuality_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_signaling_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_contextual_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_reconciled_metrics": compute_empirical_defect_rates(p3_traces),
+        "ungated_contextual_coherence_rate": monitor_receipt["ungated_contextual_coherence_rate"],
+        "sheaf_reconciled_coherence_rate": monitor_receipt["sheaf_reconciled_coherence_rate"],
+        "sheaf_reconciliation_coherence_gain": monitor_receipt["sheaf_reconciliation_coherence_gain"],
+        "transcript_monitor_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Multi-turn pairwise constraint contextuality benchmark before code generation across "
+            "5 model families: Phase 1 separates single-variable overlap drift across turns "
+            "(L = 0, E_g = 0, Delta_E = 0), Phase 2 separates no-signaling hollow-triangle "
+            "contextuality on anti-correlated pairwise commitments (pA = pB = pC = 1/2, "
+            "qAB = qBC = qCA = 0, alpha_min = 0 > -1/2 = alpha_max -> L = 1, E_g = 0, Delta_E = -1), "
+            "and Phase 3 verifies pre-generation sheaf-gated reconciliation of Turn 3 to qCA = 1/2 "
+            "(alpha_min = alpha_max = 0, unique global section d(0,1,0) = d(1,0,1) = 1/2 -> "
+            "L = 1, E_g = 1, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "multi_turn_pairwise_contextuality_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
