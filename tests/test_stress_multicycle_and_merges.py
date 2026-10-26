@@ -76,6 +76,7 @@ from lggr.streaming import (
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
+    StreamingCodebaseWeightedRelaxationMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
@@ -7070,6 +7071,65 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_bell_source="def quote_bell_pricing(g):\n    return 123\n",
                 tax_bell_source=mon.PHASE_1_TAX_BELL_SOURCE,
                 settlement_bell_source=mon.PHASE_1_SETTLEMENT_BELL_SOURCE,
+            )
+
+    def test_weighted_relaxation_codebase_pareto_tie_and_minimum_weighted_slack_audit(self) -> None:
+        """Verify Theorem 136: risk-weighted policy relaxation Pareto tie vs. minimum weighted slack codebase audit."""
+        mon = StreamingCodebaseWeightedRelaxationMonitor(
+            scope_id="unit-codebase-weighted-relaxation-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-weighted-relaxation-eval-01",
+        )
+        self.assertEqual(obs["phase_1_policy_vector"], [2, 2])
+        self.assertEqual(obs["phase_1_unweighted_l1_slack"], 4)
+        self.assertEqual(obs["phase_1_unweighted_excess_slack"], 2)
+        self.assertEqual(obs["phase_1_weighted_l1_slack"], 8)
+        self.assertEqual(obs["phase_1_weighted_excess_slack"], 6)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR")
+
+        self.assertEqual(obs["phase_2_policy_vector"], [2, 0])
+        self.assertEqual(obs["phase_2_unweighted_l1_slack"], 2)
+        self.assertEqual(obs["phase_2_unweighted_excess_slack"], 0)
+        self.assertEqual(obs["phase_2_weighted_l1_slack"], 6)
+        self.assertEqual(obs["phase_2_weighted_excess_slack"], 4)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 4)
+        self.assertEqual(obs["phase_2_payout_cents"], 869)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR")
+
+        self.assertEqual(obs["phase_3_policy_vector"], [0, 2])
+        self.assertEqual(obs["phase_3_unweighted_l1_slack"], 2)
+        self.assertEqual(obs["phase_3_unweighted_excess_slack"], 0)
+        self.assertEqual(obs["phase_3_weighted_l1_slack"], 2)
+        self.assertEqual(obs["phase_3_weighted_excess_slack"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["weighted_policy_relaxation_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_weighted_relaxation_modules(
+                "bad-return",
+                pricing_wrel_source="def quote_wrel_pricing(g):\n    return 123\n",
+                tax_wrel_source=mon.PHASE_1_TAX_WREL_SOURCE,
+                settlement_wrel_source=mon.PHASE_1_SETTLEMENT_WREL_SOURCE,
             )
 
 

@@ -669,6 +669,37 @@ The `--topology deadline_bin_packing` campaign (`evidence/deadline_bin_packing_p
 | `13202` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **B** | `isotropic_visibility_v_three_fourths_gate` | `blocked_unresolved` | `[3, 3, 3, -3]` | `12` | `4` | `"1/4"` | `"1/2"` | `"3/4"` | `8` | `865` | 2 | 14 | `$0.011403` |
 | `13202` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **C** | `explicit_lggr_lhv_critical_visibility_directive` | **`completed`** | **`[2, 2, 2, -2]`** | **`8`** | **`0`** | **`"0"`** | **`"0"`** | **`"1/2"`** | **`0`** | **`873`** | **1** | **6** | **`$0.005649`** |
 
+## 43. 3-Agent Risk-Weighted Policy Relaxation Pareto Tie & Minimum Weighted Slack Topology (`--topology weighted_relaxation`, Theorem 136)
+
+```text
+  [worker-0: openai/gpt-4o-mini]        --->  pricing_wrel.py     (quote_wrel_pricing: high_risk_slack_p1 in {0, 2} on w_1 = 3)
+  [worker-1: anthropic/claude-haiku-4.5] ---> tax_wrel.py         (compute_wrel_tax: low_risk_slack_p2 in {0, 2} on w_2 = 1)
+  [worker-2: deepseek/deepseek-chat]    --->  settlement_wrel.py  (settle_wrel_payout: unweighted_l1_slack, weighted_l1_slack, wrel_surcharge_cents)
+```
+
+In the `weighted_relaxation` topology (`StreamingCodebaseWeightedRelaxationMonitor` composing `StreamingWeightedPolicyRelaxationMonitor`, `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor`), 3 concurrent LLM agents maintain a risk-weighted policy relaxation settlement pipeline (`pricing_wrel.py` -> `tax_wrel.py` -> `settlement_wrel.py`) over 2D policy slack vectors `(p_1, p_2) in {(2, 2), (2, 0), (0, 2)}` relative to baseline `P_0 = (0, 0)` under asymmetric risk weights `w = (3, 1)` and Pareto feasibility floor `p_1 + p_2 >= 2` (`Delta_unweighted^* = 2`, `Delta_w^* = 2`), where `unweighted_excess = (p_1 + p_2) - 2`, `weighted_excess = (3 * p_1 + p_2) - 2`, and `wrel_surcharge_cents = 2 * unweighted_excess + weighted_excess`:
+- **Phase 1 (Over-Permissive Unweighted and Weighted Slack, `policy_vector = [2, 2]`):** Each module passes its isolated unit test and `p_1 + p_2 = 4 >= 2` satisfies the Pareto feasibility floor locally (`L_p1 = 1`), yet `unweighted_l1_slack = 4 > 2` (`unweighted_excess = 2`) and `weighted_l1_slack = 8 > 2` (`weighted_excess = 6`), incurring `wrel_surcharge_cents = 2 * 2 + 6 = 10` (`payout = 863 != 873`, `E_g,p1 = 0`, `defect = -1`, `status = "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR"`).
+- **Phase 2 (Unweighted-Tie High-Risk Relaxation, `policy_vector = [2, 0]`):** `tax_wrel.py` tightens `low_risk_slack_p2 = 0` so `(2, 0)` attains the unweighted minimum $\ell^1$ slack `unweighted_l1_slack = 2 == 2` (`unweighted_excess = 0`), tying `(0, 2)` under the unweighted $\ell^1$ metric, yet relaxing the high-risk coordinate $w_1 = 3$ incurs `weighted_l1_slack = 6 > 2` (`weighted_excess = 4`), leaving `wrel_surcharge_cents = 2 * 0 + 4 = 4` (`payout = 869 != 873`, `L_p2 = 1`, `E_g,p2 = 0`, `defect = -1`, `status = "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"`).
+- **Phase 3 (Risk-Weighted Minimum-Slack Pareto Relaxation, `policy_vector = [0, 2]`):** `StreamingCodebaseWeightedRelaxationMonitor` issues role-scoped `SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO`, `HOLD_LOW_RISK_SLACK_P2_TWO`, and `ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD` directives, shifting relaxation to the low-risk coordinate $w_2 = 1$ so `unweighted_l1_slack = 2 == 2` (`unweighted_excess = 0`), `weighted_l1_slack = 2 == 2` (`weighted_excess = 0`), `wrel_surcharge_cents = 0`, and `873 + 27 + 90 = 990` (`L_p3 = 1`, `E_g,p3 = 1`, `defect = 0`, `status = "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"`).
+
+### Live 3-Agent Risk-Weighted Policy Relaxation Campaign Results (`evidence/weighted_relaxation_pilot_run/summary.json`)
+
+- **Total live OpenRouter API calls:** `96` (`max_inflight_requests = 3`, `concurrent_waves = 30`)
+- **Total live campaign cost:** `$0.083428` (under the `$0.50` cap)
+- **5-Model Live Benchmark Receipt:** `receipts/live_benchmarks/codebase_weighted_relaxation_benchmark.json` (`SHA-256: e8bc152da1f7c3db413ec8256626d165feb532a5fe174579bc92f7b25b164294`, `obstructed_weighted_relaxation_codebase_coherence_rate = 0`, `reconciled_weighted_relaxation_codebase_coherence_rate = 1`, `codebase_weighted_relaxation_coherence_gain = +1`, `model_answer_accuracy_rate = 1`)
+
+| Seed | Kind | Arm | Gate Mode | Status | `policy_vector` | `unw_slack` | `w_slack` | `unw_exc` | `w_exc` | `surcharge` | `payout` | Waves | Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `13300` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **A** | `pareto_feasibility_floor_only_gate` | `blocked_unresolved` | `[2, 2]` | `4` | `8` | `2` | `6` | `10` | `863` | 2 | 17 | `$0.013637` |
+| `13300` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **B** | `unweighted_minimum_slack_tie_gate` | `blocked_unresolved` | `[2, 0]` | `2` | `6` | `0` | `4` | `4` | `869` | 2 | 14 | `$0.011904` |
+| `13300` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **C** | `explicit_lggr_weighted_minimum_slack_directive` | **`completed`** | **`[0, 2]`** | **`2`** | **`2`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.005704`** |
+| `13301` | `infeasible_hardware_locked_high_risk_slack_p1_two` | **A** | `pareto_feasibility_floor_only_gate` | `safe_escalated` | `[2, 2]` | `4` | `8` | `2` | `6` | `10` | `863` | 1 | 7 | `$0.007036` |
+| `13301` | `infeasible_hardware_locked_high_risk_slack_p1_two` | **B** | `unweighted_minimum_slack_tie_gate` | `safe_escalated` | `[2, 2]` | `4` | `8` | `2` | `6` | `10` | `863` | 1 | 7 | `$0.006545` |
+| `13301` | `infeasible_hardware_locked_high_risk_slack_p1_two` | **C** | `explicit_lggr_weighted_minimum_slack_directive` | `safe_escalated` | `[2, 2]` | `4` | `8` | `2` | `6` | `10` | `863` | 1 | 6 | `$0.006224` |
+| `13302` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **A** | `pareto_feasibility_floor_only_gate` | `blocked_unresolved` | `[2, 2]` | `4` | `8` | `2` | `6` | `10` | `863` | 2 | 18 | `$0.013941` |
+| `13302` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **B** | `unweighted_minimum_slack_tie_gate` | `blocked_unresolved` | `[2, 0]` | `2` | `6` | `0` | `4` | `4` | `869` | 2 | 14 | `$0.011971` |
+| `13302` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **C** | `explicit_lggr_weighted_minimum_slack_directive` | **`completed`** | **`[0, 2]`** | **`2`** | **`2`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **7** | **`$0.006466`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
@@ -718,4 +749,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/deadline_bin_packing_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/projective_tower_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/bell_polytope_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/weighted_relaxation_pilot_run/events.jsonl
 ```

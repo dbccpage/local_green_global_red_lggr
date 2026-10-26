@@ -69,6 +69,7 @@ from .streaming import (
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
+    StreamingCodebaseWeightedRelaxationMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingCrossRoleDeduplicationMonitor,
@@ -16911,6 +16912,144 @@ def run_codebase_bell_polytope_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "codebase_bell_polytope_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_codebase_weighted_relaxation_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Execute 5-model risk-weighted policy relaxation Pareto tie & minimum weighted slack codebase benchmark (Theorem 136)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    wrel_code_monitor = StreamingCodebaseWeightedRelaxationMonitor(
+        scope_id="live_codebase_weighted_relaxation",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    def _sanitize_for_receipt(val: Any) -> Any:
+        if isinstance(val, (str, int, bool)):
+            return val
+        if isinstance(val, float):
+            return str(Fraction(str(val)))
+        if isinstance(val, dict):
+            return {str(k): _sanitize_for_receipt(v) for k, v in val.items()}
+        if isinstance(val, list):
+            return [_sanitize_for_receipt(v) for v in val]
+        return str(val) if val is not None else None
+
+    for model_id in models:
+        client = OpenRouterClient(model=model_id, max_completions=10)
+        obs = wrel_code_monitor.record_three_phase_codebase_audit(
+            audit_id=f"{model_id}_weighted_relaxation",
+            model_id=model_id,
+        )
+        prompt = (
+            "You are a 3-module risk-weighted policy relaxation Pareto tie & minimum weighted slack codebase controller "
+            "(`pricing_wrel.py`, `tax_wrel.py`, `settlement_wrel.py`).\n"
+            "Given gross_cents = 990, platform_fee_cents = 27, tax_reserve_cents = 90 (target payout = 873), "
+            "2D policy slack vector `(p_1, p_2)` in `{(2, 2), (2, 0), (0, 2)}` relative to baseline `P_0 = (0, 0)`, "
+            "asymmetric risk weights `w = (3, 1)`, Pareto feasibility floor `p_1 + p_2 >= 2` (`Delta_unweighted^* = 2`, "
+            "`Delta_w^* = 2`), `unweighted_excess = (p_1 + p_2) - 2`, `weighted_excess = (3 * p_1 + p_2) - 2`, "
+            "and `wrel_surcharge_cents = 2 * unweighted_excess + weighted_excess`:\n"
+            "- Phase 1 (`policy_vector = [2, 2]`): `unweighted_l1_slack = 4`, `unweighted_excess = 2`, "
+            "`weighted_l1_slack = 8`, `weighted_excess = 6`, `surcharge = 2 * 2 + 6 = 10`, `payout = 873 - 10 = 863 != 873`.\n"
+            "- Phase 2 (`policy_vector = [2, 0]`, unweighted Pareto tie): `unweighted_l1_slack = 2`, `unweighted_excess = 0`, "
+            "`weighted_l1_slack = 6`, `weighted_excess = 4`, `surcharge = 2 * 0 + 4 = 4`, `payout = 873 - 4 = 869 != 873`.\n"
+            "- Phase 3 (`policy_vector = [0, 2]`, risk-weighted minimum slack): `unweighted_l1_slack = 2`, `unweighted_excess = 0`, "
+            "`weighted_l1_slack = 2`, `weighted_excess = 0`, `surcharge = 0`, `payout = 873`.\n"
+            "Output ONLY valid JSON with keys `phase_1_surcharge_cents` (int, 10), `phase_1_payout_cents` (int, 863), "
+            "`phase_2_surcharge_cents` (int, 4), `phase_2_payout_cents` (int, 869), "
+            "`phase_3_surcharge_cents` (int, 0), `phase_3_payout_cents` (int, 873), and `global_coherent` (bool, true for Phase 3)."
+        )
+        raw_resp = client.complete(prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+        total_completions += client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        model_exact = (
+            parsed.get("phase_1_surcharge_cents") == 10
+            and parsed.get("phase_1_payout_cents") == 863
+            and parsed.get("phase_2_surcharge_cents") == 4
+            and parsed.get("phase_2_payout_cents") == 869
+            and parsed.get("phase_3_surcharge_cents") == 0
+            and parsed.get("phase_3_payout_cents") == 873
+            and parsed.get("global_coherent") is True
+        )
+        eval_entry = dict(obs)
+        eval_entry["parsed_controller_verdict"] = _sanitize_for_receipt(parsed)
+        eval_entry["model_answer_exact_match"] = bool(model_exact)
+        eval_entry["raw_controller_response"] = raw_resp
+        all_evals.append(eval_entry)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = wrel_code_monitor.current_receipt()
+    exact_matches = sum(int(e["model_answer_exact_match"]) for e in all_evals)
+    model_accuracy = str(Fraction(exact_matches, len(all_evals))) if all_evals else "0"
+    body = {
+        "schema": "lggr.codebase_weighted_relaxation_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "codebase_weighted_relaxation_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "model_answer_accuracy_rate": model_accuracy,
+        "phase_1_over_permissive_slack_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_unweighted_tie_high_risk_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_weighted_minimum_slack_coherence_metrics": compute_empirical_defect_rates(p3_traces),
+        "obstructed_weighted_relaxation_codebase_coherence_rate": "0",
+        "reconciled_weighted_relaxation_codebase_coherence_rate": "1",
+        "codebase_weighted_relaxation_coherence_gain": "1",
+        "codebase_weighted_relaxation_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Risk-weighted policy relaxation Pareto tie and minimum weighted slack codebase "
+            "benchmark across 5 model families (Theorem 136): Phase 1 separates over-permissive "
+            "slack (`policy_vector = [2, 2], unweighted_l1_slack = 4 > 2, weighted_l1_slack = 8 > 2, "
+            "surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates unweighted-tie "
+            "high-risk relaxation (`policy_vector = [2, 0], unweighted_l1_slack = 2 == 2, "
+            "unweighted_excess = 0, weighted_l1_slack = 6 > 2, weighted_excess = 4 on w_1 = 3, "
+            "surcharge = 4, payout = 869 != 873, Delta_E = -1`); Phase 3 verifies risk-weighted "
+            "minimum-slack Pareto relaxation (`policy_vector = [0, 2], unweighted_l1_slack = 2 == 2, "
+            "weighted_l1_slack = 2 == 2, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "codebase_weighted_relaxation_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

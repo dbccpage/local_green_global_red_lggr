@@ -6204,4 +6204,68 @@ theorem bell_polytope_codebase_chsh_violation_and_lhv_audit :
   intro chsh_s_fourths violation_fourths h1 h2
   omega
 
+/-- **Theorem 136 (Weighted Policy Relaxation Unweighted-Tie High-Risk Breach vs. Minimum Weighted Slack Codebase Audit).**
+    In a 3-module risk-weighted policy relaxation settlement codebase (`pricing_wrel.py`,
+    `tax_wrel.py`, `settlement_wrel.py`) auditing 2D policy slack vectors `(p_1, p_2) ∈ Z_{\ge 0}^2`
+    relative to `P_0 = (0, 0)` under asymmetric risk weights `w = (3, 1)` and Pareto feasibility
+    floor `p_1 + p_2 ≥ 2` (`Δ_unweighted^* = 2`, `Δ_w^* = 2`), where
+    `unweighted_excess = (p_1 + p_2) - 2`, `weighted_excess = (3 * p_1 + p_2) - 2`, and
+    `surcharge = 2 * unweighted_excess + weighted_excess`:
+    1. Whenever `2 * unweighted_excess + weighted_excess ≥ 4`, the net settlement payout
+       `873 - (2 * unweighted_excess + weighted_excess)` is at most `869 < 873`.
+    2. For the 3-phase weighted policy relaxation codebase audit:
+       - Phase 1 (Over-permissive relaxation `(p_1, p_2) = (2, 2)`): restores Pareto feasibility
+         (`2 + 2 = 4 ≥ 2`), yet incurs `unweighted_excess_p1 = 2` and `weighted_excess_p1 = 6`,
+         yielding `surcharge_p1 = 2 * 2 + 6 = 10` and `payout_p1 = 873 - 10 = 863 ≠ 873`
+         (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Unweighted-tie high-risk relaxation `(p_1, p_2) = (2, 0)`): attains minimum
+         unweighted `ℓ^1` slack `2 + 0 = 2 = Δ_unweighted^*` (`unweighted_excess_p2 = 0`), yet
+         places all slack on the high-risk coordinate `w_1 = 3` (`weighted_slack = 6 > Δ_w^* = 2`,
+         `weighted_excess_p2 = 4`), incurring `surcharge_p2 = 2 * 0 + 4 = 4` and
+         `payout_p2 = 873 - 4 = 869 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Risk-weighted minimum-slack Pareto relaxation `(p_1, p_2) = (0, 2)`): attains both
+         minimum unweighted slack `0 + 2 = 2` (`unweighted_excess_p3 = 0`) and minimum weighted
+         `ℓ^1_w` slack `3 * 0 + 1 * 2 = 2 = Δ_w^*` (`weighted_excess_p3 = 0`), yielding
+         `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem weighted_relaxation_codebase_pareto_tie_and_minimum_weighted_slack_audit :
+    (∀ unweighted_excess weighted_excess : Int,
+      (2 * unweighted_excess + weighted_excess ≥ 4) →
+      (873 - (2 * unweighted_excess + weighted_excess) ≤ 869)) ∧
+    (let p1_a : Int := 2; let p2_a : Int := 2;
+     let p1_b : Int := 2; let p2_b : Int := 0;
+     let p1_c : Int := 0; let p2_c : Int := 2;
+     let unw_ex_p1 : Int := (p1_a + p2_a) - 2;
+     let unw_ex_p2 : Int := (p1_b + p2_b) - 2;
+     let unw_ex_p3 : Int := (p1_c + p2_c) - 2;
+     let w_ex_p1 : Int := (3 * p1_a + p2_a) - 2;
+     let w_ex_p2 : Int := (3 * p1_b + p2_b) - 2;
+     let w_ex_p3 : Int := (3 * p1_c + p2_c) - 2;
+     let surcharge_p1 : Int := 2 * unw_ex_p1 + w_ex_p1;
+     let surcharge_p2 : Int := 2 * unw_ex_p2 + w_ex_p2;
+     let surcharge_p3 : Int := 2 * unw_ex_p3 + w_ex_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (unw_ex_p1 = 2) ∧ (w_ex_p1 = 6) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (unw_ex_p1 = 0) ∧ (w_ex_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (unw_ex_p2 = 0) ∧ (w_ex_p2 = 4) ∧ (surcharge_p2 = 4) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (unw_ex_p2 = 0) ∧ (w_ex_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (unw_ex_p3 = 0) ∧ (w_ex_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (unw_ex_p1 = 2 ∧ unw_ex_p2 = 0 ∧ unw_ex_p3 = 0 ∧
+      w_ex_p1 = 6 ∧ w_ex_p2 = 4 ∧ w_ex_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 4 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 869 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro unweighted_excess weighted_excess h1
+  omega
+
 end LggrVIII

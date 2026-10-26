@@ -64,6 +64,7 @@ from lggr.streaming import (
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
+    StreamingCodebaseWeightedRelaxationMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
@@ -111,6 +112,7 @@ from .domain import (
     STOP_WORKER_MODULES,
     SUBGRADIENT_PIVOT_WORKER_MODULES,
     THREE_PARTY_C3_WORKER_MODULES,
+    WEIGHTED_RELAXATION_WORKER_MODULES,
     WIN_WORKER_MODULES,
     WORKER_MODULES,
     AdversarialSchemaCodeWorkspace,
@@ -154,6 +156,7 @@ from .domain import (
     SubgradientPivotCodeWorkspace,
     ThreePartyC3CodeWorkspace,
     WatcherDropoutCodeWorkspace,
+    WeightedRelaxationCodeWorkspace,
     WindowedDriftCodeWorkspace,
     adversarial_schema_fixture,
     bell_polytope_fixture,
@@ -201,6 +204,7 @@ from .domain import (
     run_skew_repair_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
+    run_weighted_relaxation_local_unit_tests,
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
     sheaf_fixture,
@@ -212,6 +216,7 @@ from .domain import (
     stop_fixture,
     subgradient_pivot_fixture,
     three_party_c3_fixture,
+    weighted_relaxation_fixture,
     win_fixture,
 )
 
@@ -10262,6 +10267,282 @@ def bell_polytope_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Weighted Policy Relaxation Pareto Tie & Minimum Weighted Slack Campaign (Test 71, Theorem 136)
+# ---------------------------------------------------------------------------
+
+
+def weighted_relaxation_system_prompt(worker: str, arm: str) -> str:
+    mod_name = WEIGHTED_RELAXATION_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "risk-weighted policy relaxation Pareto tie & minimum weighted slack settlement pipeline "
+        "(`pricing_wrel.py` -> `tax_wrel.py` -> `settlement_wrel.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`pareto_feasibility_floor_only_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_PARETO_FEASIBLE_SLACK`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`unweighted_minimum_slack_tie_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseWeightedRelaxationMonitor.PHASE_2_PRICING_WREL_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`unweighted_minimum_slack_tie_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseWeightedRelaxationMonitor.PHASE_2_TAX_WREL_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`unweighted_minimum_slack_tie_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_weighted_minimum_slack_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseWeightedRelaxationMonitor.PHASE_3_PRICING_WREL_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_weighted_minimum_slack_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseWeightedRelaxationMonitor.PHASE_3_TAX_WREL_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_weighted_minimum_slack_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseWeightedRelaxationMonitor.PHASE_3_SETTLEMENT_WREL_SOURCE
+        + "```\n"
+    )
+
+
+def weighted_relaxation_merge_gate(
+    events: Events,
+    ws: WeightedRelaxationCodeWorkspace,
+    monitor: StreamingCodebaseWeightedRelaxationMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_weighted_relaxation_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_wrel", "tax_wrel", "settlement_wrel")
+    }
+    eval_res = monitor.evaluate_weighted_relaxation_modules(
+        f"{arm}-{wave_label}",
+        pricing_wrel_source=sources["pricing_wrel"],
+        tax_wrel_source=sources["tax_wrel"],
+        settlement_wrel_source=sources["settlement_wrel"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "policy_vector": eval_res["policy_vector"],
+            "unweighted_l1_slack": eval_res["unweighted_l1_slack"],
+            "weighted_l1_slack": eval_res["weighted_l1_slack"],
+            "unweighted_excess_slack": eval_res["unweighted_excess_slack"],
+            "weighted_excess_slack": eval_res["weighted_excess_slack"],
+            "wrel_surcharge_cents": eval_res["wrel_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in WEIGHTED_RELAXATION_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_PARETO_FEASIBLE_SLACK",
+                "note": "Over-permissive policy vector (2, 2) satisfies the Pareto feasibility floor p1 + p2 >= 2 locally.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "MINIMIZE_UNWEIGHTED_L1_SLACK",
+                "policy_vector": eval_res["policy_vector"],
+                "unweighted_excess_slack": eval_res["unweighted_excess_slack"],
+                "weighted_excess_slack": eval_res["weighted_excess_slack"],
+                "wrel_surcharge_cents": eval_res["wrel_surcharge_cents"],
+                "note": "Unweighted-tie policy (2, 0) clears unweighted_excess_slack=0 yet incurs weighted_excess_slack=4 on w1=3 (surcharge=4).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "policy_vector": eval_res["policy_vector"],
+                "unweighted_excess_slack": eval_res["unweighted_excess_slack"],
+                "weighted_excess_slack": eval_res["weighted_excess_slack"],
+                "wrel_surcharge_cents": eval_res["wrel_surcharge_cents"],
+                "action_required": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_0_2",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def weighted_relaxation_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(WEIGHTED_RELAXATION_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = weighted_relaxation_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = WeightedRelaxationCodeWorkspace(base_state)
+            monitor = StreamingCodebaseWeightedRelaxationMonitor(
+                scope_id=f"weighted-relaxation-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = weighted_relaxation_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": weighted_relaxation_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{WEIGHTED_RELAXATION_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = weighted_relaxation_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_WEIGHTED_RELAXATION_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_policy_vector": eval_res["policy_vector"],
+                "final_unweighted_l1_slack": eval_res["unweighted_l1_slack"],
+                "final_weighted_l1_slack": eval_res["weighted_l1_slack"],
+                "final_unweighted_excess_slack": eval_res["unweighted_excess_slack"],
+                "final_weighted_excess_slack": eval_res["weighted_excess_slack"],
+                "final_wrel_surcharge_cents": eval_res["wrel_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.weighted_relaxation_code_engineering_swarm.v1",
+        "topology": "weighted_relaxation",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent risk-weighted policy relaxation Pareto tie & minimum weighted slack "
+            "Python code-engineering swarm (`pricing_wrel` -> `tax_wrel` -> `settlement_wrel`) comparing "
+            "over-permissive relaxation (2, 2) under w = (3, 1) (A), "
+            "unweighted-tie high-risk relaxation (2, 0) under w = (3, 1) (B), "
+            "and risk-weighted minimum-slack Pareto relaxation (0, 2) under w = (3, 1) (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -10354,6 +10635,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = projective_tower_campaign(client, events, config)
         elif config.get("topology") == "bell_polytope":
             summary = bell_polytope_campaign(client, events, config)
+        elif config.get("topology") == "weighted_relaxation":
+            summary = weighted_relaxation_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -10420,6 +10703,7 @@ def main() -> None:
             "deadline_bin_packing",
             "projective_tower",
             "bell_polytope",
+            "weighted_relaxation",
         ],
         default="linear",
     )
@@ -10527,6 +10811,8 @@ def main() -> None:
         seeds = [13100, 13101, 13102]
     elif args.topology == "bell_polytope":
         seeds = [13200, 13201, 13202]
+    elif args.topology == "weighted_relaxation":
+        seeds = [13300, 13301, 13302]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -10981,6 +11267,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = bell_polytope_campaign(client, events, config)
+    elif args.topology == "weighted_relaxation":
+        config = {
+            "topology": "weighted_relaxation",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = weighted_relaxation_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

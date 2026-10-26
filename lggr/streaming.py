@@ -39216,6 +39216,560 @@ class StreamingCodebaseBellPolytopeMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseWeightedRelaxationMonitor:
+    """Online 3-module codebase risk-weighted policy relaxation Pareto tie vs. minimum weighted slack monitor (Theorem 136).
+
+    AuthorityEffect: None. Composes StreamingWeightedPolicyRelaxationMonitor,
+    StreamingCodebaseInterfaceMergeMonitor, and StreamingFiberMonitor to audit a
+    3-module risk-weighted policy relaxation settlement codebase (`pricing_wrel.py`,
+    `tax_wrel.py`, `settlement_wrel.py`) over 2D policy slack vectors
+    `(p_1, p_2) in Z_{>=0}^2` relative to `P_0 = (0, 0)` under asymmetric risk
+    weights `w = (3, 1)` and Pareto feasibility floor `p_1 + p_2 >= 2`
+    (`Delta_unweighted^* = 2`, `Delta_w^* = 2`):
+      - Phase 1 (Over-permissive relaxation `(p_1, p_2) = (2, 2)`):
+        `unweighted_slack = 4 > 2` (`unweighted_excess = 2`),
+        `weighted_slack = 3 * 2 + 1 * 2 = 8 > 2` (`weighted_excess = 6`),
+        `wrel_surcharge_cents = 2 * 2 + 6 = 10`, `payout = 863 != 873`
+        (`L_p1 = 1, Eg_p1 = 0, defect_p1 = -1`);
+      - Phase 2 (Unweighted-tie high-risk relaxation `(p_1, p_2) = (2, 0)`):
+        attains minimum unweighted `l1` slack `2 + 0 = 2 = Delta_unweighted^*`
+        (`unweighted_excess = 0`), yet places all slack on high-risk coordinate
+        `w_1 = 3` (`weighted_slack = 6 > 2`, `weighted_excess = 4`),
+        `wrel_surcharge_cents = 2 * 0 + 4 = 4`, `payout = 869 != 873`
+        (`L_p2 = 1, Eg_p2 = 0, defect_p2 = -1`);
+      - Phase 3 (Risk-weighted minimum-slack Pareto relaxation `(p_1, p_2) = (0, 2)`):
+        attains both minimum unweighted slack `0 + 2 = 2` (`unweighted_excess = 0`)
+        and minimum weighted `l1_w` slack `3 * 0 + 1 * 2 = 2 = Delta_w^*`
+        (`weighted_excess = 0`), `wrel_surcharge_cents = 0`, `payout = 873`,
+        `873 + 27 + 90 = 990` (`L_p3 = 1, Eg_p3 = 1, defect_p3 = 0`).
+    """
+
+    RISK_WEIGHTS = (3, 1)
+    PARETO_FLOOR = 2
+
+    PHASE_1_PRICING_WREL_SOURCE = (
+        "def quote_wrel_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'high_risk_slack_p1': 2,\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_WREL_SOURCE = (
+        "def compute_wrel_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    p1 = int(pricing_out.get('high_risk_slack_p1', 2))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'high_risk_slack_p1': p1,\n"
+        "        'low_risk_slack_p2': 2,\n"
+        "        'risk_weights': [3, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_WREL_SOURCE = (
+        "def settle_wrel_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    p1 = int(tax_out.get('high_risk_slack_p1', 2))\n"
+        "    p2 = int(tax_out.get('low_risk_slack_p2', 2))\n"
+        "    unw_slack = p1 + p2\n"
+        "    w_slack = 3 * p1 + p2\n"
+        "    unw_excess = max(0, unw_slack - 2)\n"
+        "    w_excess = max(0, w_slack - 2)\n"
+        "    surcharge = 2 * unw_excess + w_excess\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'wrel_surcharge_cents': surcharge,\n"
+        "        'unweighted_l1_slack': unw_slack,\n"
+        "        'weighted_l1_slack': w_slack,\n"
+        "        'unweighted_excess_slack': unw_excess,\n"
+        "        'weighted_excess_slack': w_excess,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_WREL_SOURCE = PHASE_1_PRICING_WREL_SOURCE
+
+    PHASE_2_TAX_WREL_SOURCE = (
+        "def compute_wrel_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    p1 = int(pricing_out.get('high_risk_slack_p1', 2))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'high_risk_slack_p1': p1,\n"
+        "        'low_risk_slack_p2': 0,\n"
+        "        'risk_weights': [3, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_WREL_SOURCE = PHASE_1_SETTLEMENT_WREL_SOURCE
+
+    PHASE_3_PRICING_WREL_SOURCE = (
+        "def quote_wrel_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'high_risk_slack_p1': 0,\n"
+        "    }\n"
+    )
+
+    PHASE_3_TAX_WREL_SOURCE = (
+        "def compute_wrel_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    p1 = int(pricing_out.get('high_risk_slack_p1', 0))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'high_risk_slack_p1': p1,\n"
+        "        'low_risk_slack_p2': 2,\n"
+        "        'risk_weights': [3, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_WREL_SOURCE = (
+        "def settle_wrel_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    p1 = int(tax_out.get('high_risk_slack_p1', 0))\n"
+        "    p2 = int(tax_out.get('low_risk_slack_p2', 2))\n"
+        "    if (p1, p2) != (0, 2):\n"
+        "        raise ValueError('Weighted policy relaxation excess slack or high-risk tie detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'wrel_surcharge_cents': 0,\n"
+        "        'unweighted_l1_slack': 2,\n"
+        "        'weighted_l1_slack': 2,\n"
+        "        'unweighted_excess_slack': 0,\n"
+        "        'weighted_excess_slack': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-weighted-relaxation-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.wrel_monitor = StreamingWeightedPolicyRelaxationMonitor(
+            scope_id=f"{self.scope_id}:wrel"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+        self.last_wrel_receipt: dict[str, Any] | None = None
+
+    @staticmethod
+    def _validate_policy_slack(p1_raw: Any, p2_raw: Any) -> tuple[int, int]:
+        p1 = exact_int(p1_raw, "high_risk_slack_p1", minimum=0)
+        p2 = exact_int(p2_raw, "low_risk_slack_p2", minimum=0)
+        if (p1, p2) not in ((2, 2), (2, 0), (0, 2)):
+            raise ValidationError(
+                f"(high_risk_slack_p1, low_risk_slack_p2) must be in {{(2, 2), (2, 0), (0, 2)}}, got {(p1, p2)}"
+            )
+        return p1, p2
+
+    def evaluate_weighted_relaxation_modules(
+        self,
+        evaluation_id: str,
+        pricing_wrel_source: str = PHASE_1_PRICING_WREL_SOURCE,
+        tax_wrel_source: str = PHASE_1_TAX_WREL_SOURCE,
+        settlement_wrel_source: str = PHASE_1_SETTLEMENT_WREL_SOURCE,
+        *,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_wrel", pricing_wrel_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_wrel", tax_wrel_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_wrel", settlement_wrel_source
+        )
+
+        if "quote_wrel_pricing" not in p_ns or not callable(p_ns["quote_wrel_pricing"]):
+            raise ValidationError("pricing_wrel must define callable quote_wrel_pricing")
+        if "compute_wrel_tax" not in t_ns or not callable(t_ns["compute_wrel_tax"]):
+            raise ValidationError("tax_wrel must define callable compute_wrel_tax")
+        if "settle_wrel_payout" not in s_ns or not callable(s_ns["settle_wrel_payout"]):
+            raise ValidationError("settlement_wrel must define callable settle_wrel_payout")
+
+        pricing_out = p_ns["quote_wrel_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_wrel_pricing must return a dict")
+        tax_out = t_ns["compute_wrel_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_wrel_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_wrel_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_wrel_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        p1, p2 = self._validate_policy_slack(
+            pricing_out.get("high_risk_slack_p1", 2),
+            tax_out.get("low_risk_slack_p2", 2),
+        )
+        policy_vector = [p1, p2]
+        policy_id_map = {
+            (2, 2): "P_over_2_2",
+            (2, 0): "P_high_risk_tie_2_0",
+            (0, 2): "P_low_risk_opt_0_2",
+        }
+        selected_policy_id = policy_id_map[(p1, p2)]
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        local_p_ok = (
+            pricing_out.get("gross_cents") == gross
+            and fee == (gross * 27) // 990
+            and net == gross - fee
+            and p1 in (0, 2)
+        )
+        local_t_ok = (
+            tax == (gross * 90) // 990
+            and p2 in (0, 2)
+            and tax_out.get("high_risk_slack_p1") == p1
+            and tax_out.get("risk_weights") == [3, 1]
+        )
+
+        candidate_policies = [
+            {
+                "policy_id": "P_over_2_2",
+                "policy_sha256": digest({"policy_id": "P_over_2_2", "policy_vector": [2, 2]}),
+                "policy_vector": [2, 2],
+                "restores_pareto_intersection": True,
+            },
+            {
+                "policy_id": "P_high_risk_tie_2_0",
+                "policy_sha256": digest({"policy_id": "P_high_risk_tie_2_0", "policy_vector": [2, 0]}),
+                "policy_vector": [2, 0],
+                "restores_pareto_intersection": True,
+            },
+            {
+                "policy_id": "P_low_risk_opt_0_2",
+                "policy_sha256": digest({"policy_id": "P_low_risk_opt_0_2", "policy_vector": [0, 2]}),
+                "policy_vector": [0, 2],
+                "restores_pareto_intersection": True,
+            },
+        ]
+
+        wrel_eval = self.wrel_monitor.record_weighted_relaxation_evaluation(
+            evaluation_id=f"{eval_id}:{mod_id}",
+            pair_name="pricing_wrel_and_tax_wrel",
+            model_id=mod_id,
+            prior_escalation_receipt_sha256=digest(
+                {"scope_id": self.scope_id, "prior_escalation": "pareto_floor_2"}
+            ),
+            prior_policy_sha256=digest({"policy_id": "P_0", "policy_vector": [0, 0]}),
+            prior_policy_vector=[0, 0],
+            risk_weight_vector=[3, 1],
+            candidate_policies=candidate_policies,
+            rounds=[
+                {
+                    "round_index": 0,
+                    "feedback_mode": "codebase_eval",
+                    "selected_policy_id": selected_policy_id,
+                    "authority_grant_verified": True,
+                    "local_a_pass": local_p_ok,
+                    "global_a_pass": local_p_ok,
+                    "local_b_pass": local_t_ok,
+                    "global_b_pass": local_t_ok,
+                }
+            ],
+        )
+        wrel_rec = self.wrel_monitor.emit_receipt()
+        self.last_wrel_receipt = wrel_rec
+
+        unweighted_slack = p1 + p2
+        weighted_slack = 3 * p1 + p2
+        unweighted_excess = max(0, unweighted_slack - 2)
+        weighted_excess = max(0, weighted_slack - 2)
+        expected_surcharge = 2 * unweighted_excess + weighted_excess
+
+        if settlement_raised:
+            surcharge = expected_surcharge
+            payout = net - tax - surcharge
+        else:
+            surcharge = exact_int(
+                settlement_out.get("wrel_surcharge_cents", expected_surcharge),
+                "wrel_surcharge_cents",
+            )
+            payout = exact_int(
+                settlement_out.get("merchant_payout_cents", 0),
+                "merchant_payout_cents",
+            )
+
+        local_s_ok = settlement_raised or (
+            surcharge == expected_surcharge
+            and payout == net - tax - surcharge
+        )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint)
+        local_green = (
+            1
+            if (
+                local_p_ok
+                and local_t_ok
+                and local_s_ok
+                and (p1 + p2 >= 2)
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and (p1, p2) == (0, 2)
+            and unweighted_excess == 0
+            and weighted_excess == 0
+            and wrel_eval["converged_multi_round"] is True
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "pareto_feasible": (p1 + p2 >= 2),
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "policy_vector": policy_vector,
+                "unweighted_excess_slack": unweighted_excess,
+                "weighted_excess_slack": weighted_excess,
+                "wrel_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_WEIGHTED_RELAXATION_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_WEIGHTED_RELAXATION_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif unweighted_excess > 0:
+            status = "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif weighted_excess > 0:
+            status = "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "WEIGHTED_RELAXATION_SURCHARGE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_wrel",
+                    "action": "HOLD_ZERO_HIGH_RISK_SLACK_P1",
+                    "target_high_risk_slack_p1": 0,
+                },
+                "worker-1": {
+                    "module": "tax_wrel",
+                    "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+                    "target_low_risk_slack_p2": 2,
+                },
+                "worker-2": {
+                    "module": "settlement_wrel",
+                    "action": "HOLD_WEIGHTED_RELAXATION_GUARD",
+                    "target_wrel_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_wrel",
+                    "action": (
+                        "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO"
+                        if (p1 != 0 or not local_p_ok)
+                        else "HOLD_ZERO_HIGH_RISK_SLACK_P1"
+                    ),
+                    "target_high_risk_slack_p1": 0,
+                },
+                "worker-1": {
+                    "module": "tax_wrel",
+                    "action": (
+                        "ALLOCATE_LOW_RISK_SLACK_P2_TO_TWO"
+                        if (p2 != 2 or not local_t_ok)
+                        else "HOLD_LOW_RISK_SLACK_P2_TWO"
+                    ),
+                    "target_low_risk_slack_p2": 2,
+                },
+                "worker-2": {
+                    "module": "settlement_wrel",
+                    "action": (
+                        "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD"
+                        if not conservation_ok
+                        else "HOLD_WEIGHTED_RELAXATION_GUARD"
+                    ),
+                    "target_wrel_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "selected_policy_id": selected_policy_id,
+                "policy_vector": policy_vector,
+                "high_risk_slack_p1": p1,
+                "low_risk_slack_p2": p2,
+                "risk_weights": list(self.RISK_WEIGHTS),
+                "unweighted_l1_slack": unweighted_slack,
+                "weighted_l1_slack": weighted_slack,
+                "minimum_unweighted_l1_slack": 2,
+                "minimum_weighted_l1_slack": 2,
+                "unweighted_excess_slack": unweighted_excess,
+                "weighted_excess_slack": weighted_excess,
+                "wrel_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        audit_id: str = "codebase_weighted_relaxation_three_phase",
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_weighted_relaxation_modules(
+            f"{audit_id}_p1",
+            pricing_wrel_source=self.PHASE_1_PRICING_WREL_SOURCE,
+            tax_wrel_source=self.PHASE_1_TAX_WREL_SOURCE,
+            settlement_wrel_source=self.PHASE_1_SETTLEMENT_WREL_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_weighted_relaxation_modules(
+            f"{audit_id}_p2",
+            pricing_wrel_source=self.PHASE_2_PRICING_WREL_SOURCE,
+            tax_wrel_source=self.PHASE_2_TAX_WREL_SOURCE,
+            settlement_wrel_source=self.PHASE_2_SETTLEMENT_WREL_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_weighted_relaxation_modules(
+            f"{audit_id}_p3",
+            pricing_wrel_source=self.PHASE_3_PRICING_WREL_SOURCE,
+            tax_wrel_source=self.PHASE_3_TAX_WREL_SOURCE,
+            settlement_wrel_source=self.PHASE_3_SETTLEMENT_WREL_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_policy_vector": p1["policy_vector"],
+                "phase_1_unweighted_l1_slack": p1["unweighted_l1_slack"],
+                "phase_1_weighted_l1_slack": p1["weighted_l1_slack"],
+                "phase_1_unweighted_excess_slack": p1["unweighted_excess_slack"],
+                "phase_1_weighted_excess_slack": p1["weighted_excess_slack"],
+                "phase_1_surcharge_cents": p1["wrel_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_policy_vector": p2["policy_vector"],
+                "phase_2_unweighted_l1_slack": p2["unweighted_l1_slack"],
+                "phase_2_weighted_l1_slack": p2["weighted_l1_slack"],
+                "phase_2_unweighted_excess_slack": p2["unweighted_excess_slack"],
+                "phase_2_weighted_excess_slack": p2["weighted_excess_slack"],
+                "phase_2_surcharge_cents": p2["wrel_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_policy_vector": p3["policy_vector"],
+                "phase_3_unweighted_l1_slack": p3["unweighted_l1_slack"],
+                "phase_3_weighted_l1_slack": p3["weighted_l1_slack"],
+                "phase_3_unweighted_excess_slack": p3["unweighted_excess_slack"],
+                "phase_3_weighted_excess_slack": p3["weighted_excess_slack"],
+                "phase_3_surcharge_cents": p3["wrel_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    evaluate_three_phase_weighted_relaxation_audit = record_three_phase_codebase_audit
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module weighted relaxation audit."""
+        if not self.evaluations:
+            raise ValidationError(
+                "at least one codebase weighted relaxation evaluation must be recorded"
+            )
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_weighted_relaxation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "weighted_policy_relaxation_receipt": self.last_wrel_receipt,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
+
 
 
 
