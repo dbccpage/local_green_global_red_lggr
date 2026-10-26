@@ -1,0 +1,28 @@
+{
+  "title": "The Anomalon Boundary: Primitive Difference, Structure, and the Authority Boundary of Meaning",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-23",
+  "version": "2.1.1",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "This paper establishes the root authority boundary of finite verification in its most cautious form: every authoritative claim must descend to Primitive Difference, Structure, or a typed refusal. We formalize the Anomalon not as a metaphysical beginning or cosmology, but strictly as a recursion and restart boundary: the boundary object produced when a finite authority system exhausts all admitted repairs and retains a typed obstruction. An Anomalon permits only three lawful continuations: typed refusal, lift request with a preservation witness, or next-iteration restart seed. We establish the Surviving Primitive Difference trichotomy: exact discrepancies vanish as gauge (quotient residual [h] = 0 in H^1), unclosed discrepancies represent active closure failure (Gamma_2 > 0), and closed non-exact discrepancies survive as stable structure ([h] != 0 in H^1, Gamma_2 = 0). Furthermore, we formalize the Minimal Knowable System (MKS) as a ten-role proposed interface specification for systems to be terminalizable under this calculus. This monograph assigns no authorization and changes no jurisdiction. It carries no operational authority or institutional standing.",
+  "keywords": [
+    "anomalon boundary",
+    "primitive difference",
+    "surviving primitive difference",
+    "minimal knowable system",
+    "finite obstruction calculus",
+    "cohomology quotient",
+    "exact rational arithmetic",
+    "typed refusal",
+    "restart boundary"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: Apache-2.0 / MIT. To verify the deposit locally, run 'py -3.12 -m pytest code/tests/test_anomalon_boundary.py' followed by 'py -3.12 verify_deposit.py --lean --test code/tests/test_anomalon_boundary.py'. Prepared republication edition dated 2026-10-23; not a new public deposit or DOI."
+}

@@ -1,0 +1,28 @@
+'FiniteAuthority.allB_false' depends on axioms: [propext]
+'FiniteAuthority.allB_mem' depends on axioms: [propext]
+'FiniteAuthority.mem_rangePairs' depends on axioms: [propext, Quot.sound]
+'FiniteAuthority.beq_false_ne' depends on axioms: [propext]
+'FiniteAuthority.beq_true_eq' does not depend on any axioms
+'FiniteAuthority.lggr_has_global_split' depends on axioms: [propext, Quot.sound]
+'FiniteAuthority.two_point_lggr' does not depend on any axioms
+'FiniteAuthority.two_point_has_split' does not depend on any axioms
+'FiniteAuthority.three_point_not_lggr' does not depend on any axioms
+'FiniteAuthority.distinct_pos' depends on axioms: [propext, Quot.sound]
+'FiniteAuthority.sum_sub_one' depends on axioms: [propext, Quot.sound]
+'FiniteAuthority.increase_formula' depends on axioms: [propext, Quot.sound]
+'FiniteAuthority.demo_fibers_nonempty' does not depend on any axioms
+'FiniteAuthority.demo_increase' does not depend on any axioms
+'FiniteAuthority.demo_refined' does not depend on any axioms
+'FiniteAuthority.demo_formula' depends on axioms: [propext, Quot.sound]
+'FiniteAuthority.demo_split_verdicts' depends on axioms: [propext]
+'FiniteAuthority.halt_alone_not_authority' does not depend on any axioms
+'FiniteAuthority.gates_without_witness_not_authority' does not depend on any axioms
+'FiniteAuthority.gates_and_witness_authority' does not depend on any axioms
+'FiniteAuthority.witness_mismatch_refuses' does not depend on any axioms
+'FiniteAuthority.unhalted_is_proposal' does not depend on any axioms
+'FiniteAuthority.residual_surface_counterfeit' does not depend on any axioms
+'FiniteAuthority.residual_plain_refuses' does not depend on any axioms
+'FiniteAuthority.zero_residual_no_gates' does not depend on any axioms
+'FiniteAuthority.zero_residual_gates_checklist' does not depend on any axioms
+'FiniteAuthority.zero_residual_witness_authority' does not depend on any axioms
+'FiniteAuthority.unhalted_counterfeit_is_proposal' does not depend on any axioms

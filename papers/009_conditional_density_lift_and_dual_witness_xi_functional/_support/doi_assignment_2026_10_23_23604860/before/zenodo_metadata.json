@@ -1,0 +1,49 @@
+{
+  "title": "Conditional density lifts and a primal–dual alignment statistic",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "publication_date": "2026-10-23",
+  "version": "2.0.5",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "description": "A nonzero real vector can be mapped to a unit vector by taking signed square\nroots of its normalized absolute coordinates. The associated rank-one projector\nretains relative magnitudes and signs while forgetting total mass and common\nsign. We apply this construction to an optimal residual and an optimal dual\nwitness for a finite-dimensional minimum-distance problem in the sum norm.\nTheir trace distance defines an alignment statistic. Complementary slackness\ngives a strict upper bound below one for every optimal pair, and characterizes\nthe zero-distance case. Successive coordinate minimization selects a unique\npair once a coordinate order is fixed. The construction is undefined at a zero\nresidual; a separate convention assigns the statistic the value zero there.\nWe give proofs, an explicit example, and a selection policy that uses the\nstatistic only after primary residual comparisons. The accompanying numerical\nimplementation and discrete Lean results have distinct, stated scopes.\n\nThe real projector construction and strict primal-dual distance bound have prose proofs. Lean checks discrete integer and rational statements. Numerical vector evaluation does not establish optimality or compute the canonical selector.",
+  "keywords": [
+    "primal-dual optimization",
+    "trace distance",
+    "signed square-root map",
+    "finite-dimensional quotient norm"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Reference software and tests: MIT. Renderer, Lua filter and path helper: Apache-2.0. Prepared revision; not an assertion of a new deposit or DOI.",
+  "related_identifiers": [
+    {
+      "identifier": "https://web.stanford.edu/~boyd/cvxbook/",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://cs.uwaterloo.ca/~watrous/TQI/",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.20192296",
+      "relation": "isVersionOf",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.20192297",
+      "relation": "isNewVersionOf",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    }
+  ]
+}

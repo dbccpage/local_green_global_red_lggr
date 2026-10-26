@@ -1,0 +1,6 @@
+{"version": "1.2.0",
+ "packagesDir": ".lake/packages",
+ "packages": [],
+ "name": "role_non_impersonation",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

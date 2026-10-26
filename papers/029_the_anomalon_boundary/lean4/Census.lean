@@ -1,0 +1,31 @@
+import OntologyBasic
+import FiniteBoundary
+
+#print axioms OmegaCosmology.Ontology.no_authority_without_descent
+#print axioms OmegaCosmology.Ontology.authoritative_status_is_not_enough
+#print axioms OmegaCosmology.Ontology.terminalized_without_descent_is_refusal
+#print axioms OmegaCosmology.Ontology.truth_packet_has_authority
+#print axioms OmegaCosmology.Ontology.truth_packet_descends_to_structure
+#print axioms OmegaCosmology.Ontology.truth_packet_descends_to_real0
+#print axioms OmegaCosmology.Ontology.typed_refusal_is_terminalized
+#print axioms OmegaCosmology.Ontology.primitive_difference_descent_terminalized
+#print axioms OmegaCosmology.Ontology.structure_descent_terminalized
+#print axioms OmegaCosmology.Ontology.defaultAnomalonAxioms
+#print axioms AnomalonBoundary.exact_closed_vanishes
+#print axioms AnomalonBoundary.unclosed_is_active
+#print axioms AnomalonBoundary.closed_nonexact_survives
+#print axioms AnomalonBoundary.c3_zero_coboundary
+#print axioms AnomalonBoundary.c3_exact_witness
+#print axioms AnomalonBoundary.c3_cycle_closed
+#print axioms AnomalonBoundary.c3_cycle_not_exact
+#print axioms AnomalonBoundary.filled_triangle_comp
+#print axioms AnomalonBoundary.filled_triangle_curvature
+#print axioms AnomalonBoundary.bad_square_not_complex
+#print axioms AnomalonBoundary.request_refusal
+#print axioms AnomalonBoundary.request_lift
+#print axioms AnomalonBoundary.request_restart
+#print axioms AnomalonBoundary.authorize_positive
+#print axioms AnomalonBoundary.authorize_zero
+#print axioms AnomalonBoundary.anomalon_does_not_promote
+#print axioms AnomalonBoundary.full_roles_complete
+#print axioms AnomalonBoundary.broken_roles_incomplete

@@ -1,0 +1,43 @@
+{
+  "declarations": [
+    "ObserverRobustControl.JointlyAdequate",
+    "ObserverRobustControl.bundle_relative_non_tearing",
+    "ObserverRobustControl.bundle_non_tearing_unit_bound",
+    "ObserverRobustControl.transfer_detected_and_rejected",
+    "ObserverRobustControl.O1",
+    "ObserverRobustControl.O2",
+    "ObserverRobustControl.O3",
+    "ObserverRobustControl.blindBundle",
+    "ObserverRobustControl.adequateBundle",
+    "ObserverRobustControl.blindBundle_unmonitored_coord2",
+    "ObserverRobustControl.blind_transfer_admitted",
+    "ObserverRobustControl.adequate_bundle_rejects_transfer",
+    "ObserverRobustControl.adequateBundle_is_jointly_adequate",
+    "ObserverRobustControl.worstPhi",
+    "ObserverRobustControl.CeilingAdmitted",
+    "ObserverRobustControl.worstPhi_ge_mem",
+    "ObserverRobustControl.ceiling_bounds_each",
+    "ObserverRobustControl.excess_not_ceiling",
+    "ObserverRobustControl.empty_not_jointly_adequate",
+    "ObserverRobustControl.getCoord",
+    "ObserverRobustControl.weightedNorm",
+    "ObserverRobustControl.totalNorm",
+    "ObserverRobustControl.Observer",
+    "ObserverRobustControl.ObserverBundle",
+    "ObserverRobustControl.AdmissibleObserver",
+    "ObserverRobustControl.BundleAdmissible",
+    "ObserverRobustControl.coord_le_weightedNorm",
+    "ObserverRobustControl.observer_bounds_coordinate"
+  ],
+  "source_sha256": {
+    "lean4/Census.lean": "3ac3c5eaafeb7df371b9a12145f3786a1f6b3ab638e3c138ac7d853ede366d25",
+    "lean4/JointDetectorAdequacy.lean": "a5b53fbb99a2a1d8f9d143c5c911961660d8e90b7577cde56a6191c697f48dab",
+    "lean4/lakefile.lean": "8de736e18723e6473e332d1249889ed458fc3ad65588a8f2a53e3d7f2ca88ad9",
+    "lean4/ObserverRobustControlCore.lean": "fa5e5a6ada5304d4fe1576e57f6712624b2465b06d0e99cdc534f98cf387cbc0",
+    "lean4/lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+    "lean4/lake-manifest.json": "9bb2dc663406c9706067297da0455ea30d63065bf9b2c8f2514e3670b850ad86",
+    "tools/replay_lean_axiom_census.py": "d28818649897af1e24e5e12325941e40a7373b772224b2eb492e3ab91e5bba7f"
+  },
+  "axiom_report_sha256": "9e82f2d3151f87fe9cb2131116c481459b67a9fe31cde1a859b7f390b845bf73",
+  "toolchain": "leanprover/lean4:v4.35.0"
+}

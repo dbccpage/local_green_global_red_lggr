@@ -1,0 +1,29 @@
+{
+  "title": "Observer-relative control of cochain residuals",
+  "version": "2.1.3",
+  "publication_date": "2026-10-23",
+  "manuscript": "observer_control.md",
+  "archive": "observer_control.zip",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "component_licenses": {
+    "text": "CC-BY-4.0",
+    "software": "Apache-2.0"
+  },
+  "doi": null,
+  "concept_doi": "10.5281/zenodo.20214467",
+  "status": "prepared_revision",
+  "external_deposit_performed": false,
+  "prior_record_verification": {
+    "record_doi": "10.5281/zenodo.20214468",
+    "concept_doi": "10.5281/zenodo.20214467",
+    "source": "https://api.datacite.org/dois/10.5281/zenodo.20214468",
+    "verified_on": "2026-10-16"
+  },
+  "source_baseline_commit": "a93efbd5f432bc91f88e27d85c1ad99436147b52"
+}

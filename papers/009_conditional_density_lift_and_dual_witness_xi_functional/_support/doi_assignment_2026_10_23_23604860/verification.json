@@ -1,0 +1,64 @@
+{
+  "doi": "10.5281/zenodo.23604860",
+  "concept_doi": "10.5281/zenodo.20192296",
+  "version": "2.0.5",
+  "date": "2026-10-23",
+  "archive": "density_lift.zip",
+  "archive_sha256": "aa2537fb710074813f13a8df134a3811da2fe626cbe6478aafe2a0efaef5f955",
+  "archive_bytes": 183032,
+  "pdf_sha256": "02ecd39b21a417ec1c6c07d65638fb27276b64b354c33206bddf669617ea0787",
+  "published_bytes_preserved": true,
+  "local_refresh_uploaded": false,
+  "staging_lean_cache_absent_initially": true,
+  "lean_source_hashes_unchanged": true,
+  "staged_rebuild_repeat_identical": true,
+  "checks": {
+    "staged_rebuild": {
+      "return_code": 0,
+      "command": [
+        "tools/rebuild_release.py"
+      ],
+      "log_sha256": "bdefd75d6aa6fe42429e5c28f03d202244d1bf00c310020a5d8a23933422cbd0"
+    },
+    "staged_verification": {
+      "return_code": 0,
+      "command": [
+        "verify_deposit.py",
+        "--lean",
+        "--require-archive"
+      ],
+      "log_sha256": "642d6cfa6b68c908fafe627f845524a0bab3452b28c2fa20cc2d5b652b4a4d4c"
+    },
+    "staged_tests": {
+      "return_code": 0,
+      "command": [
+        "-m",
+        "pytest",
+        "code/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--runxfail",
+        "--basetemp",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\density_doi_23604860\\pytest_tmp"
+      ],
+      "log_sha256": "eaf238949826be9446583cb6f48c3c0c225a52a83289449c1a6f3f7b3e09e208"
+    },
+    "final_verification": {
+      "return_code": 0,
+      "command": [
+        "verify_deposit.py",
+        "--require-archive"
+      ],
+      "log_sha256": "5764693b4b45df41f157c0391b8b6e105a899758ae1513aab6b9ebef6a51be73"
+    },
+    "staged_repeat_build": {
+      "return_code": 0,
+      "command": [
+        "tools/rebuild_release.py"
+      ],
+      "log_sha256": "bdefd75d6aa6fe42429e5c28f03d202244d1bf00c310020a5d8a23933422cbd0"
+    }
+  },
+  "pytest_summary": "37 passed in 4.25s"
+}

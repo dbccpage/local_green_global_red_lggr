@@ -1,0 +1,29 @@
+{
+  "title": "The Authority Firewall and Verification Limits: Structural Verification, Detector Adequacy, and Capability Non-Constructibility",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-08",
+  "version": "2.2.0",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "doi": "10.5281/zenodo.pending",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "This monograph establishes the operational boundaries of structural verification and formalizes key interface constraints for autonomous verification systems. We address the hazard of false-green verification caused by detector inadequacy: a collapsing detector can map every input to an apparent exact repair. We analyze the four-case calibration suite (positive, negative, collision, metamorphic), showing that while it forms a necessary minimum calibration record to falsify collapsing detectors, four examples cannot establish detector adequacy over an unbounded claim class. We prove the Finite Calibration Completeness Theorem and establish a sharp partition coverage bound for class-constant detectors. Under an object-capability model, we specify capability non-constructibility within an unprivileged execution context, showing that untrusted runtime execution results cannot construct or forge sealed authority capabilities. We define a fail-closed sovereign descent gate that validates cryptographic witness signatures and binds tokens directly to result payloads, rejecting fabricated, empty, or unbound evidence. We contrast structural verification with classical halting: fluent completion is a syntactic terminal that does not confer operational authority without an authentic, bound sovereign descent witness. This monograph assigns no authorization and changes no jurisdiction. It carries no operational authority or institutional standing.",
+  "keywords": [
+    "authority firewall",
+    "verification limits",
+    "detector adequacy",
+    "capability non-constructibility",
+    "evidence lattice",
+    "halting vs authority",
+    "fail-closed verification",
+    "finite obstruction calculus",
+    "exact rational arithmetic"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: MIT. Local verification commands: 'py -3.12 -m pytest code/tests/test_verification_limits.py' followed by 'py -3.12 verify_deposit.py --test'. Note on DOI: Concept DOI '10.5281/zenodo.pending' is a provisional pre-deposit placeholder prior to Zenodo archive minting."
+}

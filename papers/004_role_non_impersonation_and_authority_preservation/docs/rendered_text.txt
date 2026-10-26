@@ -1,0 +1,618 @@
+      The Omega Tower: Role Non-Impersonation and
+           Authority Preservation in Agentic AI
+                                              Jeremy H. Carroll
+                                                 2026-10-16
+                                                Version 1.3.0
+
+Abstract
+This monograph presents a contract model for separation of proposal, evaluation, and authorization in
+agentic systems. It verifies several algebraic components and records explicit failure modes when a declared
+contract is not honored.
+We formalize the foundational boundary: proposal is not authority (𝑝 ∈ 𝒫 ⇏ Auth(𝑝)). Generating
+a fluent candidate action, regardless of heuristic confidence or internal self-critique, does not constitute
+execution authority. Authority is an inhabited dependent type requiring an explicit terminal certificate
+produced by an independent, replayable verification pipeline.
+The six roles are a proposed contract: detect defects, gate authorization, track representation changes, com-
+pare candidates, check finite evidence, and retain unresolved outcomes. The mathematical results concern
+constructor distinctions, exception propagation, and predicate transport through a quotient. They do not
+prove that this six-role decomposition is necessary for every secure architecture.
+
+
+
+1. Introduction: The Authority Problem in Agentic AI
+Complex autonomous systems increasingly deploy large language models (LLMs) and heuristic planners
+within multi-agent loops to generate code, execute database mutations, call external APIs, and direct physical
+actuators. While individual model capabilities have expanded, the authority structures governing their
+deployment frequently remain informal.
+A widespread failure pattern in agentic systems is architectural collapse:
+• A component generating a proposal acts as its own evaluator or execution gate (self-authorization);
+• An intermediate representation transformation (e.g., embedding, summarization, serialization) mutates
+  semantic payload while discarding loss information (representation laundering);
+• Multiple stochastic agents aggregate disparate outputs via majority vote or consensus, treating statistical
+  plurality as formal correctness (consensus laundering);
+• Unbounded continuous or long-horizon models claim general validity without testable, finite witnesses;
+• Persistent defects or contradictions are silently erased or renamed as successful termination to avoid
+  workflow halt (counterfeit closure).
+In conventional software engineering, these collapses are often treated as ad-hoc bugs. However, in security-
+critical agentic execution, they represent systemic violations of separation of privilege (Saltzer & Schroeder,
+1975) and commercial integrity (Clark & Wilson, 1987).
+This paper introduces the Omega Tower architecture: a formal six-role framework designed to enforce
+role non-impersonation, fail-closed refusal propagation, and rigorous authority preservation.
+
+
+
+2. Formal Framework: The Proposal/Authority Boundary
+The architecture begins from a strict negative boundary:
+
+
+
+
+                                                      1
+                                               𝑝 ∈ 𝒫 ⇏ Auth(𝑝)
+
+Let 𝒫 denote the set of candidate proposals (e.g., text, action plans, AST fragments, SQL queries). A
+proposal is an unverified input. Heuristic fluency is not verification; internal self-scoring is not independent
+evaluation; confidence is not certification.
+
+2.1 The Dependent Authority Type
+Authority is modeled as an inhabited dependent type:
+
+
+                       Auth(𝑝) ∶= Σ(𝑡 ∶ 𝕋auth ) (Π♯ (𝑝) = Success(𝑡) ∧ IsValidToken(𝑝, 𝑡))
+
+where:
+• 𝕋auth is the type of terminal authority tokens;
+• Π♯ ∶ 𝒫 → ℳ(𝕋) is the declared authority execution pipeline;
+• ℳ is the refusal monad ℳ(𝑋) = 𝑋 + 𝔽, where 𝔽 is the set of explicit refusal diagnostics;
+• IsValidToken(𝑝, 𝑡) is the token validity predicate.
+Model Scope and Validity Predicate Differentiation:
+1. Lean Syntactic Validity Specification:                  In the mechanized Lean 4 formalization
+   (AuthorityResidual.lean), isValidAuthorityToken is defined strictly as a syntactic record check:
+
+   isValidAuthorityToken(𝑝, 𝑡) ∶= (𝑡.proposalId = 𝑝.id)∧(𝑡.replayable = true)∧(𝑡.verifier ≠ "")∧(𝑡.receiptDigest ≠ "")
+
+     Lean establishes structural theorems about this constructor specification: terminal disjointness
+   (Authority∩Residual = ∅, Authority∩Refusal = ∅), left-zero absorption, and failure-mode non-factorization
+   across untyped quotients. It checks syntactic well-formedness and field non-emptiness; it does not model
+   dynamic stateful registry mutation or cryptographic signature issuance.
+2. Operational        Registry        Issuance:         In    the   executable    Python      implementation
+   (code/models.py), authorization requires active validation by a verifier-owned receipt registry
+   (AuthorityReceiptRegistry.validates(p, t)). This ensures the receipt ID was explicitly issued by
+   the designated verifier for proposal 𝑝’s canonical serialization digest. The proposal body (payload
+   and action-relevant metadata) is hashed separately from the receipt/evidence envelope, ensuring
+   attaching an issued token does not invalidate its own binding. Caller-asserted metadata flags (such as
+   verified_token=True) are strictly rejected.
+3. Mathematical Classification vs. Authorization: Evaluating whether a cochain defect vanishes (𝑟 =
+   0) or is exact (𝑟 ∈ im 𝑑0 ) is an algebraic cochain evaluation. Mathematical exactness is not institutional
+   authorization. We enforce a strict separation of four distinct operations:
+
+         cochain evaluation ⟶ checked mathematical result ⟶ authorization decision ⟶ issued receipt
+
+    A mathematical classifier returns only defect classifications and supporting evidence; it does not manufac-
+   ture authority tokens from unchecked raw numbers. An authority gate issues authority only after checking
+   the applicable verification contract against that evidence and the proposal. Inconsistent numerical inputs
+   (such as 𝑟 = 0 with non-zero boundary) fail closed.
+If the pipeline outputs a refusal 𝑓 ∈ 𝔽 or an unabsorbable residual 𝑟, the type Auth(𝑝) is uninhabited. No
+action may execute without an explicit inhabitant of Auth(𝑝).
+
+2.2 Typing Boundaries and Scope Fences
+We establish the following scope boundaries:
+
+
+
+
+                                                       2
+1. Contract Authority vs. Semantic Truth: Authority in this framework is strictly Contract Authority
+   (relative to declared verification contracts) or Verifier-Scoped Authority (scoped to a named verifier’s
+   operational domain). We do not claim that verified authority ensures metaphysical truth; rather, it
+   ensures under the declared assumptions that declared verification contracts were executed without refusal.
+2. Governance Positions, Not Ontological Levels: The roles defined herein represent distinct func-
+   tional obligations in a governance pipeline, not a hierarchy of being or intrinsic agent capabilities.
+
+
+
+3. The Six Conserved Architectural Obligations
+The architecture decomposes authority governance into six distinct functional roles:
+
+
+                                    Ω𝜕 → Ω𝔸 → Ω𝜒 → Ω𝔒 → Ω𝜅 → ΩΛΩ
+
+Table 1: The Six Conserved Governance Roles
+
+             Role               Name                        Core Question                Governing Prohibition
+                                Obstruction Verifier        Is the defect zero, closed Cannot authorize without
+              Ω𝜕                                            survivor, or open?         an explicit cochain
+                                                                                       evaluation receipt.
+                                Finite Authority Gate       Does the candidate         Cannot authorize without
+              Ω𝔸                                            terminalize as authority   independent verifier
+                                                            or refusal?                execution (𝐷, 𝑉 , 𝜏 ).
+                                Certified Transport         Does representation        Cannot create authority
+              Ω𝜒                                            change preserve            across representation
+                                                            authority?                 shifts without loss
+                                                                                       accounting.
+                                Comparison Envelope         Can candidates be          Cannot mint execution
+              Ω𝔒                                            compared without           authority via statistical
+                                                            laundering?                voting or consensus
+                                                                                       aggregation.
+                                Finite-Shadow Projection    Do finite shadows cohere, Cannot create authority
+              Ω𝜅                                            and is the query verified? from unbounded
+                                                                                       continuum coherence
+                                                                                       alone.
+                                Typed Residual Closure      What remains when          Cannot create authority
+             ΩΛΩ                                            closure cannot absorb the by erasing or renaming
+                                                            residual?                  unabsorbable conflict.
+
+
+
+Each role names an obligation of this contract. Compression of components in an implementation is admis-
+sible only if the resulting system continues to discharge all six obligations and preserves the corresponding
+failure terminals.
+
+
+
+4. The Collapse Space: Modes, Counterexamples, and Invertibility
+The contract associates omitted obligations with explicit failure labels when authorization is attempted.
+The implementation assigns one distinct failure constructor to each of the six role constructors. This corre-
+spondence is a classification convention; real failures may have several causes. A constructor bijection is not
+a diagnosis of an arbitrary deployed system.
+
+
+
+
+                                                        3
+Table 2: Declared constructor correspondence
+
+                           Role constructor Failure constructor
+                           obstruction            undetectedObstruction
+                           authority              proposalBecomesAction
+                           transport              silentRepresentationMutation
+                           comparison             comparisonBecomesLaundering
+                           shadow                 continuumShadowBecomesFakeAuthority
+                           residual               residualGetsHiddenOrRenamed
+
+
+
+Theorem 1 (Constructor Invertibility and Role Distinction)
+Let ℛ = {Ω𝜕 , Ω𝔸 , Ω𝜒 , Ω𝔒 , Ω𝜅 , ΩΛΩ } and let ℱ be the set of six characteristic failure modes in Table 2.
+The mapping 𝜙 ∶ ℛ → ℱ is bijective. Consequently:
+1. Injectivity: ∀𝑟1 , 𝑟2 ∈ ℛ, 𝑟1 ≠ 𝑟2 ⟹ 𝜙(𝑟1 ) ≠ 𝜙(𝑟2 ).
+2. Invertibility: There exists a unique left- and right-inverse 𝜙−1 ∶ ℱ → ℛ such that 𝜙−1 (𝜙(𝑟)) = 𝑟 and
+   𝜙(𝜙−1 (𝑓)) = 𝑓.
+Proof. Verified by direct construction and exhaustion in Lean 4 (RoleNonImpersonation.RoleFailure). The
+inverse table maps each failure label back to its assigned role. □
+
+
+
+5. Worked Case Study: Configuration Conflict over 𝔽32
+To demonstrate how role collapse induces detectable failure, we examine a concrete configuration reconcilia-
+tion task over the vector space 𝔽32 .
+
+5.1 Scenario Setup
+Consider three configuration keys:
+1. key_1: Network Timeout Policy,
+2. key_2: Security Handshake Protocol,
+3. key_3: Logging Telemetry Level.
+Let two independent sources 𝐴 and 𝐵 propose configuration states 𝑐𝐴 , 𝑐𝐵 ∈ 𝔽32 :
+• 𝑐𝐴 = (1, 0, 0)
+• 𝑐𝐵 = (1, 1, 0)
+The difference cochain 𝑟 ∈ 𝔽32 evaluates coordinate-wise XOR over 𝔽2 :
+
+
+                                 𝑟 = 𝑐𝐴 ⊕ 𝑐𝐵 = (1 ⊕ 1, 0 ⊕ 1, 0 ⊕ 0) = (0, 1, 0)
+
+Sources 𝐴 and 𝐵 strictly disagree on key_2.
+                                         𝑑0                   𝑑1
+Use the declared complex 𝐶 0 = 𝔽2 −→ 𝐶 1 = 𝔽32 −→ 𝐶 2 = 𝔽2 , where 𝑑0 (𝑎) = (𝑎, 0, 0) and 𝑑1 (𝑥, 𝑦, 𝑧) = 𝑧.
+Thus 𝑑1 (𝑟) = 0, while 𝑟 ∉ im(𝑑0 ), so this example is closed and non-exact in the stated complex.
+Thus, 𝑟 represents a closed, non-exact residual:
+
+                                              𝑟 ≠ (0, 0, 0)        and   𝑑1̄ (𝑟) = 0
+
+
+
+
+                                                                   4
+5.2 Compliant Full-Stack Execution
+Under a compliant architecture with active Residual Closure (ΩΛΩ ):
+1. Ω𝜕 computes 𝑟 = (0, 1, 0) ≠ 0 and 𝑑1̄ (𝑟) = 0;
+2. ΩΛΩ recognizes that no certified coboundary repair 𝛼 exists such that 𝑑0 𝛼 = 𝑟;
+3. The system halts execution and emits the typed terminal TerminalStatus.RESIDUAL_CLOSED (“Unre-
+   solved conflict on key 2; human governance decision required”).
+4. The system houses the conflict honestly rather than fabricating consensus.
+
+5.3 Collapsed Execution (Removal of ΩΛΩ )
+Suppose an engineer removes the residual closure role ΩΛΩ to prevent workflow interruptions.
+1. The pipeline lacks a typed residual terminal;
+2. The comparison role Ω𝔒 attempts to reconcile the outputs without a residual home;
+3. To avoid failing, the system forcibly outputs TerminalStatus.AUTHORITY marked as ResolvedExact;
+4. An external auditor replaying the cochain computation finds 𝑟 = (0, 1, 0) ≠ 0 with no certified repair
+   witness.
+5. The auditor immediately flags ResidualGetsHiddenOrRenamed. The collapse is detected directly from the
+   audit ledger row alone.
+
+5.4 Maximal Sound Authority Descent Through a Quotient
+For an authority predicate 𝐴 ∶ 𝑋 → Prop and a representation transport map 𝑞 ∶ 𝑋 → 𝑌 , information loss
+across fibers 𝑞 −1 (𝑦) creates a fundamental authority preservation problem. Following Lawvere (1969, 1970),
+universal quantification along a map is the right adjoint to inverse image (pullback):
+
+                                  ∀𝑞 𝐴(𝑦) ∶= ∀𝑥 ∈ 𝑋, 𝑞(𝑥) = 𝑦 ⟹ 𝐴(𝑥)
+
+We write ∀𝑞 𝐴 for this maximal sound descent predicate 𝐴safe . Identifying predicates with their satisfying
+subsets, the central adjunction theorem is:
+
+
+                                        𝑞 −1 (𝐵) ⊆ 𝐴 ⟺ 𝐵 ⊆ ∀𝑞 𝐴
+
+Proof. Suppose 𝑞 −1 (𝐵) ⊆ 𝐴. If 𝑦 ∈ 𝐵 and 𝑞(𝑥) = 𝑦, then 𝑥 ∈ 𝑞 −1 (𝐵), which implies 𝑥 ∈ 𝐴. Hence 𝑦 ∈ ∀𝑞 𝐴,
+establishing 𝐵 ⊆ ∀𝑞 𝐴.
+Conversely, suppose 𝐵 ⊆ ∀𝑞 𝐴. If 𝑥 ∈ 𝑞 −1 (𝐵), then 𝑞(𝑥) ∈ 𝐵 ⊆ ∀𝑞 𝐴. Applying (∀𝑞 𝐴)(𝑞(𝑥)) to 𝑥 with
+𝑞(𝑥) = 𝑞(𝑥) yields 𝑥 ∈ 𝐴. Hence 𝑞 −1 (𝐵) ⊆ 𝐴. □
+The adjunction has the following consequences:
+1. Soundness: Pulling back the descended predicate ∀𝑞 𝐴 along 𝑞 satisfies 𝑞 −1 (∀𝑞 𝐴) ⊆ 𝐴, i.e.,
+   (∀𝑞 𝐴)(𝑞(𝑥)) ⟹ 𝐴(𝑥) for all 𝑥 ∈ 𝑋.
+2. Maximality: If 𝐵 ∶ 𝑌 → Prop is any sound authorization predicate on 𝑌 (meaning 𝑞 −1 (𝐵) ⊆ 𝐴), then
+   𝐵 ⊆ ∀𝑞 𝐴. Thus ∀𝑞 𝐴 is the maximal sound descent predicate.
+3. Exact Preservation on Fiber-Constant Predicates: Lossless authority descent (∀𝑞 𝐴)(𝑞(𝑥)) ⟺
+   𝐴(𝑥) holds for all 𝑥 ∈ 𝑋 if and only if 𝐴 is constant on the fibers of 𝑞:
+
+                               ∀𝑥, 𝑥′ ∈ 𝑋, 𝑞(𝑥) = 𝑞(𝑥′ ) ⟹ (𝐴(𝑥) ⟺ 𝐴(𝑥′ ))
+
+4. Mixed Fiber Obstruction: If a fiber contains both an authorized state 𝑥+ and an unauthorized state
+   𝑥− :
+                              𝑞(𝑥+ ) = 𝑞(𝑥− ),     𝐴(𝑥+ ),    ¬𝐴(𝑥− )
+    then no predicate 𝐵 on 𝑌 can simultaneously reproduce both authority judgments: (𝐵(𝑞(𝑥+ )) ⟺
+   𝐴(𝑥+ )) ∧ (𝐵(𝑞(𝑥− )) ⟺ 𝐴(𝑥− )) is a provable contradiction.
+
+
+                                                     5
+5. Compositionality: For successive transports 𝑞1 ∶ 𝑋 → 𝑌 and 𝑞2 ∶ 𝑌 → 𝑍, universal quantification
+   composes identically to map composition:
+                                               ∀𝑞2 (∀𝑞1 𝐴) = ∀𝑞2 ∘𝑞1 𝐴
+6. Distribution over Conjunction of Obligations: For a family of obligation predicates 𝐴𝑖 ∶ 𝑋 → Prop,
+   universal quantification distributes across finite conjunctions:
+
+
+                                            ∀𝑞 (⋀ 𝐴𝑖 ) = ⋀ ∀𝑞 𝐴𝑖
+                                                    𝑖          𝑖
+
+
+   Proof. Follows immediately by interchanging universal quantifiers: ∀𝑥, (𝑞(𝑥) = 𝑦 ⟹ ⋀𝑖 𝐴𝑖 (𝑥)) ⟺
+   ⋀𝑖 (∀𝑥, 𝑞(𝑥) = 𝑦 ⟹ 𝐴𝑖 (𝑥)). □
+Empty fibers. If 𝑦 ∉ 𝑞(𝑋), the predicate (∀𝑞 𝐴)(𝑦) is vacuously true. An operational gate must restrict
+its domain to 𝑞(𝑋) or require a source witness in addition to this predicate. Universal quantification alone
+does not authorize a fabricated representation with no preimage.
+This provides a domain-agnostic mathematical account of transporting a conjunction of obligations. The
+                              6
+six named governance roles ⋀𝑖=1 Ω𝑖 constitute a concrete application instance of this theorem, while the
+role-erasure quotient boundary (QuotientBoundary.lean) is a specialization of the mixed fiber obstruction. All
+seven descent theorems are machine-checked in Lean 4 (RoleNonImpersonation.AuthorityDescent) with zero
+custom axioms.
+
+
+
+6. Formal Non-Impersonation and the Kleisli Pipeline Theorem
+We formalize the execution pipeline using monads and Kleisli categories.
+
+6.1 The Refusal Monad
+Let ℳ(𝑋) = 𝑋 + 𝔽 denote the refusal monad (an instance of the exception monad), where 𝑋 represents
+valid output and 𝔽 represents explicit, typed refusal diagnostics.
+The monad operations are:
+                                            pure(𝑥) = Success(𝑥)
+
+
+                                               𝑓(𝑥)           if 𝑚 = Success(𝑥)
+                              bind(𝑚, 𝑓) = {
+                                               Refusal(𝑒𝑟𝑟)   if 𝑚 = Refusal(𝑒𝑟𝑟)
+
+Proposition 1 (Left-Zero Absorption)
+For any refusal diagnostic 𝑒𝑟𝑟 ∈ 𝔽 and any continuation morphism 𝑓 ∶ 𝑋 → ℳ(𝑌 ):
+                                     bind(Refusal(𝑒𝑟𝑟), 𝑓) = Refusal(𝑒𝑟𝑟)
+    Proof.         Immediate     from    the   definition   of    bind.             Verified   in   Lean    4
+(RoleNonImpersonation.ExceptionPipeline.bindR_refusal_left_zero). □
+
+6.2 The Five-Stage Kleisli Factorization
+The declared five-stage pipeline is defined as a composite morphism in the Kleisli category of ℳ:
+
+
+                                      Π♯ = 𝜏 ♯ ∘𝐾 𝑉 ♯ ∘𝐾 𝐷♯ ∘𝐾 𝜌♯ ∘𝐾 ℛ♯
+
+where:
+
+
+                                                        6
+• ℛ♯ ∶ 𝒫 → ℳ(𝒫1 ) evaluates defect cochains (Role Ω𝜕 );
+• 𝜌♯ ∶ 𝒫1 → ℳ(𝒫2 ) validates representation transport and loss ledgers (Role Ω𝜒 );
+• 𝐷♯ ∶ 𝒫2 → ℳ(𝒫3 ) computes descent candidates (Role Ω𝔸 preparation);
+• 𝑉 ♯ ∶ 𝒫3 → ℳ(𝒫4 ) executes independent verification (Role Ω𝔸 check);
+• 𝜏 ♯ ∶ 𝒫4 → ℳ(𝕋) terminalizes the execution into an authority token or typed residual (Roles Ω𝔸 and ΩΛΩ ).
+The comparison obligation (Ω𝔒 ) and finite-shadow obligation (Ω𝜅 ) act as necessary side-condition guards
+entering 𝑉 ♯ and 𝜏 ♯ .
+
+Theorem 2 (Refusal Propagation and Anti-Cheat)
+If any stage 𝑆𝑖 in the Kleisli factorization returns a refusal Refusal(𝑒𝑟𝑟), the complete pipeline evaluates to
+that exact refusal:
+                                              Π♯ (𝑝) = Refusal(𝑒𝑟𝑟)
+ No subsequent stage 𝑆𝑗>𝑖 is executed, and no authority token is produced.
+Proof. Follows by induction on the pipeline length using Proposition 1 (associativity and left-zero absorption).
+Machine-checked in Lean 4 (RoleNonImpersonation.ExceptionPipeline.pipeline5_*_refusal_propagates). □
+Operational Premise on Side-Effect Absorption: Under pure refusal monad absorption, subsequent callbacks
+are left uncalled and the composite pipeline evaluates to Refusal(𝑒𝑟𝑟). However, short-circuiting does not
+automatically rollback side effects executed prior to refusal. The operational invariant that “no authority
+token is produced” requires that preterminal stages (𝑆𝑖<5 ) are strictly unprivileged evaluators lacking registry
+issuance capabilities, with token creation isolated exclusively to the designated terminal authority gate 𝜏 ♯ .
+In operational architectures, one must distinguish:
+
+                      refusal propagation ≠ rollback ≠ control of issuance capabilities.
+
+Contract Rule 3 (The Role Non-Impersonation Principle)
+Within the declared contract, an undischarged required obligation prevents successful authorization unless
+an accepted equivalent discharges that obligation. Under this closed routing policy, removing a role without
+an approved replacement routes to its mapped failure label upon attempted authorization. This is a contrac-
+tual routing policy, not an architectural-necessity theorem: an architecture that unconditionally refuses all
+proposals omits the roles without executing unauthorized actions.
+Contract Interpretation and Illustrative Omission Scenarios. Under this declared contract:
+• If Obstruction Detection (Ω𝜕 ) is omitted, candidate defects are uncomputed; any attempt to grant au-
+  thority routes to UndetectedObstruction.
+• If Authority Gating (Ω𝔸 ) is omitted, unverified proposals pass directly to execution, routing to
+  ProposalBecomesAction.
+• If Certified Transport (Ω𝜒 ) is omitted, representation transformations lack loss ledgers, routing to
+  SilentRepresentationMutation.
+• If Comparison Envelope (Ω𝔒 ) is omitted, conflicting outputs are averaged or voted without typed com-
+  parison, routing to ComparisonBecomesLaundering.
+• If Finite-Shadow Projection (Ω𝜅 ) is omitted, continuum models claim unbounded authority without
+  query-relative finite projections, routing to ContinuumShadowBecomesFakeAuthority.
+• If Typed Residual Closure (ΩΛΩ ) is omitted, unabsorbable conflicts lack a lawful non-execution terminal,
+  routing to ResidualGetsHiddenOrRenamed.
+The mechanized Lean formalization verifies constructor bijections, injectivity, refusal absorption, and quo-
+tient boundaries; it formalizes the declared contractual routing, not an architectural-necessity claim.
+
+
+
+
+                                                       7
+7. Query-Relative Finite Shadows for Continuous Models
+In machine learning and agentic workflows, many models operate over continuous spaces (e.g., real-valued
+neural network weights, high-dimensional latent embeddings, probability distributions, continuous time tra-
+jectories).
+We assert the finite-shadow principle:
+
+
+Continuum coherence is not authority. Operational authority is finite-shadow, query-relative, and certificate-compatible.
+
+This does not imply that continuous mathematics is invalid. Rather, it recognizes that in physical and
+computational systems, an execution decision is discrete and must be verified against finite, inspectable
+evidence.
+
+7.1 Finite coverage and query factorization
+A finite set of checked projections establishes only the declared finite coverage contract. For an exact query
+𝑄 ∶ 𝑋 → 𝑇 , a projection 𝑞𝐽 ∶ 𝑋 → 𝑌𝐽 suﬀices precisely when there is a function 𝑄   ̂ ∶ 𝑞 (𝑋) → 𝑇 with
+                                                                                         𝐽
+
+
+                                                     ̂∘ 𝑞 .
+                                                   𝑄=𝑄   𝐽
+
+
+Equivalently, 𝑄 must be constant on the fibers of 𝑞𝐽 . This is a specification to justify for each query. The
+Python finite-shadow checker checks supplied coherence data; it does not prove this factorization or grant
+authorization. A finite collection of projections is not automatically cofinal in an infinite index category; for
+example, no finite subset is cofinal in (ℕ, ≤).
+
+
+
+8. Typed Residual Closure and Honest Refusal (“I Do Not Know”)
+A primary driver of catastrophic agentic failure is the refusal to fail honestly. When an agent cannot solve
+a task or reconcile conflicting requirements, conventional systems often hallucinate an answer, average the
+contradiction, or loop indefinitely.
+The Residual Closure role (ΩΛΩ ) provides a typed, lawful terminal for unabsorbable conflict.
+
+Table 3: Mathematical classes and operational outcomes
+Mathematically, let Exact(𝑟) ⟺ ∃𝛼, 𝑑0 𝛼 = 𝑟 and Closed(𝑟) ⟺ 𝑑1 𝑟 = 0 in the declared complex. We
+distinguish:
+1. 𝑟 = 0: Zero defect;
+2. 𝑟 ≠ 0 and Exact(𝑟): Nonzero but repairable defect;
+3. Closed(𝑟) and ¬ Exact(𝑟): Closed, non-exact residual;
+4. ¬ Closed(𝑟): Open residual.
+
+Mathematical Condition      Terminal Constructor           Operational Interpretation   Action Implication
+Zero defect 𝑟 = 0                                          Exact closure evaluated;     Requires distinct
+                            ResolvedExact                  invariant holds.             verification gate to issue
+                                                                                        authority.
+Nonzero exact defect 𝑟 ≠ 0,                                Nonzero repairable defect    Requires verified repair
+Exact(𝑟)                    ResolvedExact                  in im(𝑑0 ).                  witness 𝛼; authority
+                                                                                        withheld otherwise.
+
+
+
+
+                                                       8
+Mathematical Condition         Terminal Constructor            Operational Interpretation     Action Implication
+Closed non-exact residual                                      Stable survivor defect; real   Block execution; route to
+𝑑1̄ (𝑟) = 0, ¬ Exact(𝑟)        ClosedResidual                  unabsorbable conflict.         human governance.
+Open boundary defect                                           Open boundary condition;       Block execution; request
+𝑑1̄ (𝑟) ≠ 0                    OpenResidual                    incomplete evaluation.         additional evidence.
+Verified through dimension                                     Finite-horizon honesty;        Coherence within horizon;
+𝑁                              CoherentUpTo(𝑁 )                bounded coherence.             does not grant execution
+                                                                                              authority.
+Computational budget                                           Resource ceiling reached;      Halt immediately; refuse
+exhausted                      BudgetUnknown                   honest “I do not know”.        speculative completion.
+
+
+The BudgetUnknown constructor records an incomplete computation. The label alone does not certify that
+the budget was enforced; that requires an execution record.
+
+
+
+9. Replay Custody, Verification Receipts, and Operator Memory
+The Python reference model uses a verifier-owned in-memory receipt registry. It prevents a caller-supplied
+token from passing the local contract check, but it is not cryptographic custody, persistence, or independent
+third-party verification.
+
+9.1 Verification Receipt Structure
+The following is an illustrative schema, not a cryptographic protocol or a claim of independent verification:
+{
+    "proposal_id": 10482,
+    "proposal_hash": "sha256:7f83b165...",
+    "verifier_identity": "cochain_exactness_oracle_v2",
+    "replayable": true,
+    "execution_receipt": {
+      "timestamp_epoch": 1788825600,
+      "stages_passed": ["obstruction", "transport", "descent", "verify", "terminalize"],
+      "defect_norm": "0.0",
+      "receipt_digest": "sha256:e3b0c442..."
+    }
+}
+
+In the reference model, replay means that the issuing in-memory registry recognizes the exact proposal
+binding. It provides neither cross-process custody nor cryptographic authenticity.
+
+9.2 Reuse after a new check
+A stored successful run may inform a later proposal. Reusing it requires checking the current proposal,
+context, contract, and evidence again. Persistent, authenticated receipts and independent custody are future
+implementation work; the shipped in-memory registry does not supply them.
+
+
+
+10. Deterministic Adversarial Fixture Suite
+This deterministic fixture suite evaluates 20 hand-authored strings and metadata mappings against fixed rules
+(code/adversarial_benchmark.py). It performs no LLM invocation, sampling, or empirical model comparison.
+The suite includes 16 adversarially labelled fixtures and four benign fixtures covering input injection strings,
+role flags, payload mutation, capability checks, confidence claims, and receipt replay. These are hand-
+authored regression cases, not a sampled threat population.
+
+
+                                                           9
+10.2 Fixture Classification Results
+The baseline is a deliberately hard-coded always-allow classifier. Its results are a reference row, not a
+measured baseline agent.
+
+Table 4: Deterministic Fixture Classification
+
+Metric                      Always-allow classifier        Five-Stage Authority Pipeline   Architectural Meaning
+Total Test Cases                      20                                20                 Complete benchmark
+                                                                                           suite evaluated
+Adversarial Attack                    16                                16                 Prompt injection, tool
+Cases                                                                                      hijacking, role
+                                                                                           tampering, and spoofing
+Attacks Intercepted             0 / 16 (0.0%)                    16 / 16 (100.0%)          Fail-closed refusal on all
+                                                                                           adversarial attempts
+Benign Workflows               4 / 4 (100.0%)                     4 / 4 (100.0%)           Legitimate proposals
+Preserved                                                                                  reach valid terminal
+                                                                                           authority
+False Refusals (False            0 / 4 (0.0%)                      0 / 4 (0.0%)            No benign fixture
+Positives)                                                                                 rejected
+Overall Accuracy               4 / 20 (20.0%)                    20 / 20 (100.0%)          Correct classification
+                                                                                           and routing across all
+                                                                                           inputs
+Attack Detection                     0.0%                             100.0%               All listed adversarial
+Recall                                                                                     fixtures rejected
+Benign Specificity                 100.0%                             100.0%               Clean preservation of
+                                                                                           valid capability grants
+
+
+
+10.3 Fixture-Suite Claim Boundaries
+Under the declared Claim Hygiene protocol:
+• What this supports: The fixed rules classify the 20 checked fixtures as expected.
+• What this does not support: It is not an LLM evaluation, a security benchmark, or evidence of
+  cryptographic or independent verification.
+• Narrowest defensible claim: The reference contract refuses the listed malformed fixture inputs and
+  registry validation rejects a hand-written receipt.
+
+
+
+11. Scope, Limitations, and Falsifiability
+In accordance with strict claim hygiene, we make the following explicit non-claims:
+1. No Claim of Unconstrained AI Safety: This monograph does not claim that the Omega Tower
+   makes AI “unconditionally safe” or solves alignment in an absolute sense. It provides an architectural
+   mechanism for fail-closed separation of privilege and role accountability.
+2. Compression Admissibility: We do not claim that six separate software microservices must exist in
+   every implementation. Components may be fused provided all six functional obligations and typed failure
+   terminals are preserved.
+3. Implementation Falsifiability Challenge: The architecture is falsifiable. If an investigator demon-
+   strates an accepted terminal authority outcome for which any required obligation lacks valid supporting
+   evidence under the declared contract, the authority gate implementation is refuted.
+
+
+
+
+                                                      10
+12. References
+• Clark, D. D., & Wilson, D. R. (1987). A comparison of commercial and military computer security
+  policies. In IEEE Symposium on Security and Privacy (pp. 184-195).
+• Dennis, J. B., & Van Horn, E. C. (1966). Programming semantics for multiprogrammed computations.
+  Communications of the ACM, 9(3), 143-155.
+• Klein, G., Elphinstone, K., Heiser, G., Andronick, J., Cock, D., Derrin, P., Elkaduwe, D., Engelhardt,
+  K., Kolanski, R., Norrish, M., Sewell, T., Tuch, H., & Winwood, S. (2009). seL4: Formal verification of
+  an OS kernel. In ACM SIGOPS Operating Systems Review (Vol. 43, No. 4, pp. 207-220).
+• Lawvere, F. W. (1969). Adjointness in foundations. Dialectica, 23(3/4), 281-296.
+• Lawvere, F. W. (1970). Equality in hyperdoctrines and comprehension schema as an adjoint functor. In
+  Applications of Categorical Algebra (Proc. Sympos. Pure Math., Vol. XVII, pp. 1-14). AMS.
+• Miller, M. S., Tulloh, B., & Shapiro, J. S. (2005). The Structure of Authority: Why Security Is Not a
+  Separable Concern. In Multiparadigm Programming in Mozart/Oz (Lecture Notes in Computer Science,
+  Vol. 3389, pp. 2-20). Springer.
+• Moggi, E. (1991). Notions of computation and monads. Information and Computation, 93(1), 55-92.
+• Saltzer, J. H., & Schroeder, M. D. (1975). The protection of information in computer systems. Proceedings
+  of the IEEE, 63(9), 1278-1308.
+• Wadler, P. (1992). The essence of functional programming. In Proceedings of the 19th ACM SIGPLAN-
+  SIGACT Symposium on Principles of Programming Languages (pp. 1-14).
+• Zheng, L., Chiang, W. L., Sheng, Y., Tian, S., Wu, C., Zhuang, H., Hao, Z., Zhu, B., Kwon, W., Liu, D.,
+  & Xing, E. P. (2023). Judging LLM-as-a-judge with MT-Bench and Chatbot Arena. Advances in Neural
+  Information Processing Systems, 36.
+
+
+
+Appendix A: Summary of Machine-Checked Lean 4 Kernels
+The formal results in this monograph are verified in a self-contained Lean 4 package (lean4/), compiling under
+toolchain v4.34.0 with zero sorry placeholders and strictly audited standard axioms (Quot.sound, propext):
+1. RoleFailure.lean:
+   • Enumeration of Role (6 constructors) and FailureMode (6 constructors).
+   • Bijective mappings roleToFailure and failureToRole.
+   • Proofs: failureToRole_roleToFailure, roleToFailure_failureToRole, roleToFailure_injective, roleTo-
+      Failure_ne_of_ne, failureToRole_injective.
+   • Formalization of collapseOutcome and collapse_failure_identifies_removed_role.
+   • Obligation vector readiness: missing_obligation_not_ready.
+2. ExceptionPipeline.lean:
+   • Refusal monad RefusalM T = success T | refusal String.
+   • Kleisli bind and Monad laws (bind_pure, bind_right_id, bindR_assoc).
+   • Left-zero absorption: bindR_refusal_left_zero.
+   • Five-stage pipeline pipeline5 and refusal propagation theorems for all five stages.
+3. AuthorityResidual.lean:
+   • Proposal structure and AuthorityToken with replay custody.
+   • Terminal constructors: authority, residualClosed, residualOpen, refusal, budgetUnknown.
+   • Terminal constructor disjointness: authority_not_residual, authority_not_refusal, residual_not_re-
+      fusal.
+   • Formal dependent type Auth(p) requiring valid, replayable tokens.
+   • Non-authority theorems for residual, refusal, and unreplayable tokens.
+   • Cohomological defect classification and the non_exact_residual_not_resolved and renamed_non_exact_-
+      as_resolved_contradiction theorems.
+4. QuotientBoundary.lean:
+   • Formalization of typed packets carrying (payload, role).
+   • Definition of payload-erasure quotient using Setoid and Quotient.
+   • Two-way bridge theorem payload_classifier_factors_iff.
+
+
+                                                     11
+   • Direct non-existence theorem role_failure_no_quotient_factor: No quotient factor exists on the
+      payload-only quotient for the role failure classifier.
+   • Theorem role_failure_not_factor_through_payload_quotient: Fiber invariance fails across distinct
+      roles.
+   • Theorem payload_green_role_failure_red: Equal payloads may carry different role-failure labels; the
+      role-sensitive classifier therefore cannot be recovered from the payload-only quotient.
+5. AuthorityDescent.lean:
+   • Formalization of Lawvere universal quantification ∀𝑞 𝐴(𝑦) ∶= ∀𝑥, 𝑞(𝑥) = 𝑦 → 𝐴(𝑥).
+   • Adjunction theorem lawvere_adjunction: 𝑞 −1 (𝐵) ⊆ 𝐴 ⟺ 𝐵 ⊆ ∀𝑞 𝐴.
+   • Theorem descent_soundness: Sound authority descent along any projection.
+   • Theorem descent_maximality: Any sound transported authority predicate factors through ∀𝑞 𝐴.
+   • Theorem exact_preservation_iff_fiber_constant: Exact descent holds if and only if authority is con-
+      stant on fibers.
+   • Theorem mixed_fiber_obstruction: A mixed fiber prevents lossless authority transport.
+   • Theorem descent_composition: Adjoint functoriality under projection composition ∀𝑞2 (∀𝑞1 𝐴) =
+      ∀𝑞2 ∘𝑞1 𝐴.
+   • Theorem descent_conjunction: Distribution of universal quantification across obligation conjunctions.
+
+
+
+
+                                                   12
+

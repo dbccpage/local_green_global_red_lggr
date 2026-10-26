@@ -1,0 +1,2 @@
+OK 026_operator_proposal_layer_for_finite_l1_obstruction_systems: manifests and deterministic ZIP agree
+

@@ -1,0 +1,45 @@
+% Academic LaTeX preamble for representation abundance is not physical authority.
+%
+% Typesetting is not evidence for any claim.
+% Uses XeLaTeX for comprehensive Unicode and math font support.
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Latin Modern Roman}
+\setmonofont{Latin Modern Mono}[Scale=0.85]
+\setmathfont{Latin Modern Math}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.4em}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,
+            citecolor=RoyalBlue,breaklinks=true]{hyperref}
+\usepackage{fvextra}
+\usepackage{framed}
+\fvset{breaklines=true,breakanywhere=true,fontsize=\small}
+
+\AtBeginEnvironment{longtable}{\small}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\definecolor{quoterule}{gray}{0.75}
+\renewenvironment{quote}
+  {\begin{leftbar}\small}
+  {\end{leftbar}}
+
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\emergencystretch=3em
+\sloppy
+\hfuzz=0pt
+\vfuzz=0pt
+\hbadness=10000
+\vbadness=10000

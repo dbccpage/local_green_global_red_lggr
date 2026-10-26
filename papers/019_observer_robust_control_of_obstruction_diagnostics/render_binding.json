@@ -1,0 +1,19 @@
+{
+  "source": "observer_control.md",
+  "tex": "observer_control.tex",
+  "pdf": "observer_control.pdf",
+  "sha256": {
+    "observer_control.md": "8240b49b7e9dbb5f6287244437d91de9c1ee5731189b922f3fbf47d29889891a",
+    "observer_control.tex": "bf79accde83bfbcaedf1889aaea3673e9b41247ead7e61bbeaf4544a09c1e962",
+    "observer_control.pdf": "4abd0d9fbe31cb73eb446e457d3a63cc3352fbed9f475c4975b9edeac883c4c0",
+    "scripts/build_pdf.py": "c39dd7c84fa3bd3a108bff9fb7f50bdc22327943407bb33109dae6f61611f2b4",
+    "scripts/paper_code_wrap.lua": "49aa40211133c471072887d6b4d86b20456af19c69af1e9c41e336041fd8d051"
+  },
+  "pages": 3,
+  "missing_glyphs": 0,
+  "overfull_hbox_gt_10pt": 0,
+  "pandoc": "pandoc 3.7.0.2",
+  "xelatex": "MiKTeX-XeTeX 4.16 (MiKTeX 25.12)",
+  "passes": 3,
+  "formal_replay": "NOT_PERFORMED"
+}

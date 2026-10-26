@@ -1,0 +1,64 @@
+{
+  "doi": "10.5281/zenodo.23604900",
+  "concept_doi": "10.5281/zenodo.20213063",
+  "version": "2.0.5",
+  "date": "2026-10-23",
+  "archive": "operator_proposals.zip",
+  "archive_sha256": "59eb7c79a137fd2295be204bb9c9ba5049f96f5177620f34ee0f8e3df61844d7",
+  "archive_bytes": 189333,
+  "pdf_sha256": "f52766c27ec4f39a60a09e2224943b2b301119e2a5166f0dd402a73666e58ad9",
+  "published_bytes_preserved": true,
+  "local_refresh_uploaded": false,
+  "staging_lean_cache_absent_initially": true,
+  "lean_source_hashes_unchanged": true,
+  "staged_rebuild_repeat_identical": true,
+  "checks": {
+    "staged_rebuild": {
+      "return_code": 0,
+      "command": [
+        "tools/rebuild_release.py"
+      ],
+      "log_sha256": "c54389880c1d4836ffcf714a96eef2fbc2f18c8e83674f9d38fcde2289713cb5"
+    },
+    "staged_verification": {
+      "return_code": 0,
+      "command": [
+        "verify_deposit.py",
+        "--lean",
+        "--require-archive"
+      ],
+      "log_sha256": "642d6cfa6b68c908fafe627f845524a0bab3452b28c2fa20cc2d5b652b4a4d4c"
+    },
+    "staged_tests": {
+      "return_code": 0,
+      "command": [
+        "-m",
+        "pytest",
+        "code/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--runxfail",
+        "--basetemp",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\operator_doi_23604900\\pytest_tmp"
+      ],
+      "log_sha256": "bfa31f30374b5ab989446c111134aa5a301dc5fdbf5cb1c20bbdbefe8e6d0334"
+    },
+    "final_verification": {
+      "return_code": 0,
+      "command": [
+        "verify_deposit.py",
+        "--require-archive"
+      ],
+      "log_sha256": "5764693b4b45df41f157c0391b8b6e105a899758ae1513aab6b9ebef6a51be73"
+    },
+    "staged_repeat_build": {
+      "return_code": 0,
+      "command": [
+        "tools/rebuild_release.py"
+      ],
+      "log_sha256": "c54389880c1d4836ffcf714a96eef2fbc2f18c8e83674f9d38fcde2289713cb5"
+    }
+  },
+  "pytest_summary": "40 passed in 3.21s"
+}

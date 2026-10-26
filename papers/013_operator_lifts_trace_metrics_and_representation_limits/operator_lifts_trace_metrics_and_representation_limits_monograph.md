@@ -1,0 +1,240 @@
+<div align="center"># Operator Lifts Trace Metrics and Representation Limits</div>
+<div align="center">Jeremy H. Carroll</div>
+<div align="center">2026-10-23</div>
+<div align="center">Version 2.1.1</div>
+
+## Abstract
+
+We compare two representations of a finite real cochain: its diagonal operator and the rank-one projector obtained from its normalized signed square-root coordinates. The diagonal map is injective and preserves the sum-of-absolute-values norm as trace norm. The projector identifies precisely the nonzero scalar multiples of a cochain, losing mass and global orientation while retaining every diagnostic constant on those fibers. Trace distance defines a pseudometric on nonzero cochains and a metric on their real projective quotient. We prove a chain-complex residual bound, describe local reconstruction using an orientation anchor, and show that a continuous global sign choice is impossible in dimension at least two. A guarded evaluator uses these representations under an explicit selection policy. The real-vector arguments are written proofs; the Lean package verifies narrower integer and rational identities. No physical quantum interpretation is asserted.
+
+**Why a researcher should care.** A representation can preserve some questions and erase others. The complete fiber description states which quantities can be recovered, which additional data reconstruction needs, and why a shape distance cannot replace a scale-sensitive residual.
+
+## 1. Introduction: Representation vs. Topology
+
+Modern computational verification and automated reasoning often translate discrete, combinatorial problem states into continuous or spectral vector spaces (embeddings, matrices, operator algebras). While continuous representations enable gradient-based search, spectral analysis, and metric comparisons, they introduce the epistemic risk of representation confusion: confusing a chosen continuous embedding with ground-truth correctness.
+
+This paper establishes the formal interface between discrete combinatorial cochains and continuous spectral operators. We define two canonical mappings:
+
+1. **The Linear Trace Embedding** $F_{\mathrm{lin}}: C^1(P; \mathbb{R}) \to \mathcal{B}_1(\mathcal{H}_E)$, which preserves exact $\ell^1$ norm as operator trace norm and remains injective in the canonical basis.
+
+2. **The Nonlinear Density Lift** $F_{\mathrm{den}}: C^1(P; \mathbb{R}) \setminus \{0\} \to \mathcal{S}(\mathcal{H}_E)$, which normalizes mass and identifies antipodal orientations to construct unit-trace rank-1 density matrices via the classical Mazur map $M_{1,2}$.
+
+We establish the **Lossy Collision Principle**: the nonlinear density representation discards scalar magnitude and orientation sign, preventing reverse reconstruction of combinatorial configurations from spectral projections alone without extrinsic mass and orientation data.
+
+
+
+---
+
+## 2. The Declared Selection Priority
+
+### Specification 2.1 (The Declared Selection Priority — Architectural Specification)
+$$\boxed{\text{Discrete combinatorial structure takes priority over continuous spectral representations.}}$$
+
+- Topological metrics $\Phi_1([\omega_1])$ and $\Gamma_2(\omega_1)$ define combinatorial feasibility boundaries.
+
+- Continuous spectral metrics derived via $F_{\mathrm{lin}}$ or $F_{\mathrm{den}}$ provide descriptive refinements.
+
+- In the guarded descent evaluator ordering, continuous representation metrics may not override or bypass a discrete topological obstruction.
+
+- *Status:* This selection priority is verified by the reference `GuardedDescentEvaluator` and the integration test suite on discrete graph instances (`test_guarded_descent_integration.py`), demonstrating that $\Phi_1$ and $\Gamma_2$ strictly dominate $\Xi$ across competing candidate cochains on finite cell complexes (Theta graphs and 2-complexes).
+
+**Verification scope.** The exact rational checker confirms that the ratio ceiling is tested before a primary decrease, that a primary increase and a secondary increase are rejected once that guardrail passes, that a feasible candidate is preferred to an infeasible one, and that a lower primary value is preferred. The integration suite checks finite rankings of the floating-point evaluator. Proposition 2.2 stays a classical bound.
+
+### Proposition 2.2 (Chain Complex Compatibility Bound)
+Let $(C_\bullet, d)$ be a finite 2-dimensional cochain complex satisfying the chain complex identity $d_1 d_0 = 0$. For any 1-cochain $v \in C^1(P; \mathbb{R})$, the secondary boundary defect $\Gamma_2(v) = \|d_1 v\|_1$ is bounded by the primary quotient residual $\Phi_1(v) = \inf_{\alpha \in C^0} \|v - d_0 \alpha\|_1$:
+$$\boxed{\Gamma_2(v) \le \|d_1\|_{1\to 1} \Phi_1(v)},$$
+where $\|d_1\|_{1\to 1} = \max_j \sum_i |(d_1)_{ij}|$ is the induced operator $\ell^1 \to \ell^1$ norm.
+
+Consequently:
+$$\boxed{\Phi_1(v) = 0 \implies \Gamma_2(v) = 0.}$$
+
+#### Proof
+Since $d_1 d_0 = 0$, for every 0-cochain $\alpha \in C^0$, we have $d_1(d_0 \alpha) = 0$. Thus:
+$$d_1 v = d_1(v - d_0 \alpha).$$
+Taking the $\ell^1$ norm and applying submultiplicativity:
+$$\Gamma_2(v) = \|d_1(v - d_0 \alpha)\|_1 \le \|d_1\|_{1\to 1} \|v - d_0 \alpha\|_1.$$
+Taking the infimum over all $\alpha \in C^0$ yields $\Gamma_2(v) \le \|d_1\|_{1\to 1} \Phi_1(v)$. $\blacksquare$
+
+*Remark on Numerical Thresholding Fixtures:*
+Because exact $\Phi_1(v) = 0 \implies \Gamma_2(v) = 0$, an exact cochain on a valid complex cannot exhibit $\Phi_1 = 0$ with $\Gamma_2 > 0$. However, in finite-precision floating-point arithmetic with numerical detection threshold $\epsilon$, a candidate may satisfy $\Phi_1 \le \epsilon$ (classified numerically as resolved) while $\Gamma_2 > \epsilon$ persists. The guarded descent evaluator treats such states as possessing boundary ratio $R_{\mathrm{cl}} = +\infty$ and fail-closed rejects them before evaluating descent.
+
+
+---
+
+## 3. Linear Trace-Class Embedding $F_{\mathrm{lin}}$
+
+Let $P = (V, E)$ be a finite graph with edge set $E = \{e_1, \dots, e_m\}$, let $C^1(P; \mathbb{R})$ denote the space of real 1-cochains represented in the canonical edge-coordinate basis, and let $\mathcal{H}_E \cong \mathbb{R}^m$ be the real Hilbert space (Euclidean space) with orthonormal basis $\{|e_i\rangle\}_{i=1}^m$.
+
+### Definition 3.1 (Linear Embedding)
+For any real cochain $v = (v_1, \dots, v_m) \in C^1(P; \mathbb{R})$, the linear embedding $F_{\mathrm{lin}}(v) = T(v) \in \mathcal{B}(\mathcal{H}_E)$ is the diagonal operator:
+$$T(v) = \sum_{i=1}^m v_i |e_i\rangle \langle e_i|.$$
+
+### Proposition 3.1 (Isometry and Injectivity of Linear Embedding)
+Because coefficients $v_i \in \mathbb{R}$ are real, the operator $T(v)$ is self-adjoint (real symmetric). Its eigenvalues are the coordinate values $v_i$, and its trace norm $\|T(v)\|_{\mathrm{tr}} = \operatorname{Tr}\sqrt{T(v)^* T(v)}$ satisfies:
+$$\|T(v)\|_{\mathrm{tr}} = \sum_{i=1}^m |v_i| = \|v\|_1.$$
+Thus $F_{\mathrm{lin}}$ is an isometric and injective embedding of $(C^1(P; \mathbb{R}), \|\cdot\|_1)$ into the Banach space of trace-class operators $(\mathcal{B}_1(\mathcal{H}_E), \|\cdot\|_{\mathrm{tr}})$. In the canonical edge basis, $v$ is uniquely recovered from the diagonal of $T(v)$ without information loss.
+
+**Verification scope.** The mechanized statement is the integer identity $\sum_i |v_i| = \|v\|_1$. The Banach-space embedding is the classical reading of that identity.
+
+---
+
+## 4. Nonlinear Density Lift $F_{\mathrm{den}}$ and the Lossy Collision Principle
+
+While $F_{\mathrm{lin}}$ preserves mass and coordinates, comparing the geometric shapes of residuals requires scale- and sign-invariant normalization.
+
+### Definition 4.1 (Density Lift and the Mazur Map)
+For $v \in C^1(P; \mathbb{R})$ with $M(v) = \|v\|_1 > 0$, the state vector $\psi(v) \in \mathcal{H}_E$ is defined by:
+$$\psi(v)_i = \operatorname{sgn}(v_i) \sqrt{\frac{|v_i|}{M(v)}}.$$
+This signed square-root coordinate transformation on the normalized $\ell^1$ sphere is the classical Mazur map $M_{1,2}$ between the unit sphere of $\ell^1$ and the unit sphere of $\ell^2$ (Mazur 1929). The contribution emphasized here is the resulting representation boundary and its application to obstruction diagnostics, rather than introducing the coordinate transformation as a new construction.
+
+The density lift $F_{\mathrm{den}}(v)$ is the rank-1 density operator:
+$$\rho(v) = |\psi(v)\rangle \langle \psi(v)|.$$
+
+### Theorem 4.1 (The Lossy Collision Principle and Fiber Geometry)
+The map $F_{\mathrm{den}}$ is many-to-one on $C^1(P; \mathbb{R}) \setminus \{0\}$. Specifically, for any $v \in C^1(P; \mathbb{R}) \setminus \{0\}$ and any nonzero real scalar $c \in \mathbb{R} \setminus \{0\}$:
+$$F_{\mathrm{den}}(c \cdot v) = F_{\mathrm{den}}(v).$$
+The complete preimage fiber under $F_{\mathrm{den}}$ is the punctured unoriented line:
+$$F_{\mathrm{den}}^{-1}(\rho(v)) = \{c \cdot v : c \in \mathbb{R} \setminus \{0\}\}.$$
+Furthermore:
+
+1. **Reconstruction Obstruction without Mass:** Given solely the density operator $\rho = F_{\mathrm{den}}(v)$, the source cochain $v$ cannot be reconstructed without external admission of the scalar mass $M(v)$.
+
+2. **Antipodal Ambiguity with Admitted Mass:** Admitting extrinsic mass $M(v)$ restricts the fiber to the intersection with the $\ell^1$-sphere of radius $M(v)$, yielding exactly the candidate pair $\{v, -v\}$.
+
+3. **Sign Resolution:** Resolving $\{v, -v\}$ to a single cochain requires an explicitly admitted orientation anchor (or sign anchor). The density operator $\rho$ is invariant under global sign flip $\psi \mapsto -\psi$, identifying antipodal cochains intentionally to provide orientation-invariant shape comparison. Any internal state vector representation reflects an arbitrary gauge choice.
+
+### Proof
+For any $c \ne 0$, write $(c \cdot v)_i = c \cdot v_i$. The mass scales as $M(c \cdot v) = \sum_i |c \cdot v_i| = |c| M(v)$.
+Evaluating the state vector:
+$$\psi(c \cdot v)_i = \operatorname{sgn}(c \cdot v_i) \sqrt{\frac{|c \cdot v_i|}{M(c \cdot v)}} = \operatorname{sgn}(c) \operatorname{sgn}(v_i) \sqrt{\frac{|c| |v_i|}{|c| M(v)}} = \operatorname{sgn}(c) \psi(v)_i.$$
+For $c > 0$, $\operatorname{sgn}(c) = +1$, so $\psi(c \cdot v) = \psi(v)$.
+For $c < 0$, $\operatorname{sgn}(c) = -1$, so $\psi(c \cdot v) = -\psi(v)$.
+In both cases, the outer product yields:
+$$\rho(c \cdot v) = |\operatorname{sgn}(c) \psi(v)\rangle \langle \operatorname{sgn}(c) \psi(v)| = (\operatorname{sgn}(c))^2 |\psi(v)\rangle \langle \psi(v)| = |\psi(v)\rangle \langle \psi(v)| = \rho(v).$$
+Thus $F_{\mathrm{den}}(c \cdot v) = F_{\mathrm{den}}(v)$ for all $c \in \mathbb{R} \setminus \{0\}$.
+
+Conversely, suppose $\rho(u) = \rho(v)$ for nonzero cochains $u, v \in C^1(P; \mathbb{R})$. Since both are rank-1 projectors onto 1-dimensional subspaces in real Hilbert space $\mathcal{H}_E$, their unit state vectors must satisfy $\psi(u) = \pm \psi(v)$.
+Equality up to a common sign gives $|u_i| / M(u) = |v_i| / M(v)$ and $\operatorname{sgn}(u_i) = \pm \operatorname{sgn}(v_i)$, meaning $u_i = \pm \frac{M(u)}{M(v)} v_i$.
+Setting $c = \pm \frac{M(u)}{M(v)} \ne 0$, we obtain $u = c \cdot v$.
+Thus $F_{\mathrm{den}}^{-1}(\rho(v)) = \{c \cdot v : c \in \mathbb{R} \setminus \{0\}\}$.
+
+If only $\rho$ is provided, the scale factor $|c| = M(u) / M(v)$ is unrestricted across $(0, \infty)$, preventing reconstruction.
+When $M(v)$ is admitted, $|c| = 1$, restricting $c \in \{+1, -1\}$ and leaving exactly two candidate cochains $\{v, -v\}$. $\blacksquare$
+
+**Verification scope.** Lean and the exact integer checker prove that a nonzero integer scale preserves normalized absolute weights, that $|c| > 1$ strictly increases a positive mass, and that negation preserves mass. The real punctured line and the Mazur square-root map remain the classical reading. The shipped reconstruction returns failure when no mass is admitted.
+
+### Proposition 4.2 (Preservation of Homogeneous Obstruction Diagnostics)
+A function $f: C^1(P; \mathbb{R}) \setminus \{0\} \to \mathbb{R}$ factors through the density lift $F_{\mathrm{den}}$ if and only if:
+$$f(c \cdot v) = f(v) \quad \text{for every } c \in \mathbb{R} \setminus \{0\}.$$
+Necessity follows from scale- and sign-invariance of $F_{\mathrm{den}}$; sufficiency follows because punctured lines are the complete fibers (Theorem 4.1).
+
+In particular, let $N$ be any absolutely homogeneous functional on $C^1(P; \mathbb{R})$ satisfying $N(c \cdot v) = |c| N(v)$. Then the normalized ratio:
+$$\boxed{\frac{N(v)}{\|v\|_1}}$$
+is uniquely determined by the density operator $\rho(v)$.
+To compute it from $\rho$, choose either unit factor $a$ satisfying $\rho = a a^\top$, and set $s_i = a_i |a_i|$. Then $s = \pm v / \|v\|_1$, so $N(s) = N(v) / \|v\|_1$ independently of the chosen sign.
+
+Consequently, the full coordinate-bearing density matrix retains:
+$$\frac{\Phi_1(v)}{\|v\|_1}, \qquad \frac{\Gamma_2(v)}{\|v\|_1}, \qquad \frac{\Gamma_2(v)}{\Phi_1(v)} \quad (\Phi_1(v) > 0),$$
+as well as exactness and closedness.
+The density quotient loses precisely the information that varies along nonzero scalar fibers, and preserves every diagnostic constant on those fibers. The declared priority of combinatorial checks over $\Xi$ remains an architectural policy choice, rather than an assertion of complete topological blindness in the density representation.
+
+**Verification scope.** The proved identity is $(|c| n)\, d = n\, (|c| d)$ for an integer scale $c$. The factorisation through the operator $\rho$ is not constructed in this deposit.
+
+### Theorem 4.3 (Local Reconstruction Charts and Topological Obstruction to Global Sign Choice)
+For dimension $m \ge 2$ and fixed positive mass $M > 0$, there is no globally continuous map:
+$$s: F_{\mathrm{den}}(C^1(P; \mathbb{R}) \setminus \{0\}) \to C^1(P; \mathbb{R})$$
+that selects one member of every antipodal reconstruction pair $\{v, -v\}$.
+
+#### Proof
+Consider the continuous closed family of 2-dimensional unit vectors:
+$$a(t) = (\cos t, \sin t), \quad \rho(t) = a(t) a(t)^\top, \quad 0 \le t \le \pi.$$
+The endpoints satisfy $\rho(0) = \begin{pmatrix}1&0\\0&0\end{pmatrix} = \rho(\pi)$, but their vector factors are opposite: $a(\pi) = -a(0)$.
+The corresponding mass-one cochains under the inverse Mazur map are:
+$$v(t) = \bigl(\cos t \, |\cos t|, \, \sin t \, |\sin t|\bigr),$$
+which satisfy $v(\pi) = -v(0)$.
+For fixed mass $M$, any continuous reconstruction selection must satisfy $s(\rho(t)) = M\varepsilon(t) v(t)$ where $\varepsilon(t) \in \{+1, -1\}$. The coefficient $\varepsilon(t)=\langle s(\rho(t)),v(t)\rangle/(M\|v(t)\|_2^2)$ is continuous and takes values in $\{-1,1\}$, so it is constant on $[0,\pi]$. For $m>2$, use the same loop in a two-coordinate subspace. Therefore:
+$$s(\rho(\pi)) = M\varepsilon(0) v(\pi) = -M\varepsilon(0) v(0) = -s(\rho(0)),$$
+which contradicts the fact that the density matrix endpoints are identical: $\rho(\pi) = \rho(0)$. Thus no globally continuous selection map exists. $\blacksquare$
+
+*Local Reconstruction Charts:*
+An admitted linear orientation functional $\ell \in (C^1(P; \mathbb{R}))^*$ defines a local reconstruction chart on the open subset:
+$$U_\ell = \{\rho(v) : \ell(v) \ne 0\}.$$
+Within $U_\ell$, the condition $\ell(v) > 0$ selects a unique antipode continuously. At the boundary hyperplane $\ell(v) = 0$, the chart fails, and another anchor—or an unresolved candidate pair—is strictly required.
+
+**Verification scope.** The continuous selection argument on the circle is not a Lean theorem in this deposit. The integer antipodal pair shares mass and absolute weights, and that pair is what the checker verifies.
+
+---
+
+## 5. Representative Distortion Metric $\Xi$
+
+Given two cochains $u, v \in C^1(P; \mathbb{R}) \setminus \{0\}$, their representative distortion is the normalized trace distance between their density lifts:
+$$\Xi(u, v) = \frac{1}{2} \|\rho(u) - \rho(v)\|_{\mathrm{tr}} = \sqrt{1 - |\langle \psi(u) | \psi(v) \rangle|^2}.$$
+
+### Numerically Stable Evaluation
+For normalized real unit state vectors $a = \psi(u)$ and $b = \psi(v)$, $\Xi$ admits the equivalent formulation:
+$$\boxed{\Xi(a, b) = \frac{1}{2} \|a - b\|_2 \, \|a + b\|_2.}$$
+
+#### Proof of Equivalence
+Expanding the $\ell^2$ norms on unit vectors:
+$$\|a - b\|_2^2 = \|a\|_2^2 + \|b\|_2^2 - 2\langle a, b \rangle = 2 - 2\langle a, b \rangle,$$
+$$\|a + b\|_2^2 = \|a\|_2^2 + \|b\|_2^2 + 2\langle a, b \rangle = 2 + 2\langle a, b \rangle.$$
+Multiplying gives:
+$$\frac{1}{4} \|a - b\|_2^2 \|a + b\|_2^2 = \frac{1}{4}(2 - 2\langle a, b \rangle)(2 + 2\langle a, b \rangle) = 1 - \langle a, b \rangle^2.$$
+Taking square roots yields $\frac{1}{2} \|a - b\|_2 \|a + b\|_2 = \sqrt{1 - |\langle a, b \rangle|^2}$. $\blacksquare$
+
+**Verification scope.** When two integer vectors have equal sums of squares, the identity $\|a-b\|_2^2 \|a+b\|_2^2 = 4(\|a\|_2^2 \|b\|_2^2 - \langle a,b\rangle^2)$ is proved. The square-root metric and its triangle inequality remain the classical reading, and the existing floating-point test exercises that reading.
+
+This form avoids subtracting a nearly unit squared inner product from one and can improve numerical accuracy near coincident or antipodal states. Floating-point normalization, underflow, and roundoff still apply; the implementation does not certify the triangle inequality at every numerical scale.
+
+### Properties
+
+1. **Unoriented Line Invariance:** $\Xi(c_1 u, c_2 v) = \Xi(u, v)$ for all nonzero scalars $c_1, c_2 \in \mathbb{R} \setminus \{0\}$.
+
+2. **Support Sensitivity:** If $u$ and $v$ have disjoint support, $|\langle \psi(u) | \psi(v) \rangle| = 0$, yielding $\Xi(u, v) = 1$.
+
+3. **Unoriented Line Identity (Zero-Distance Criterion):**
+   For any $u, v \in C^1(P; \mathbb{R}) \setminus \{0\}$:
+   $$\rho(u) = \rho(v) \iff \Xi(u, v) = 0 \iff u = c \cdot v \text{ for some } c \in \mathbb{R} \setminus \{0\}.$$
+   In particular, opposite open rays satisfy $\Xi(v, -v) = 0$.
+
+4. **Metric Space Classification:**
+   $\Xi$ is a **pseudometric** on the space of nonzero real cochains $C^1(P; \mathbb{R}) \setminus \{0\}$. Non-negativity and symmetry are immediate. The triangle inequality follows directly from the trace-norm triangle inequality on density matrices:
+   $$\Xi(u, w) = \frac{1}{2} \|\rho(u) - \rho(w)\|_{\mathrm{tr}} \le \frac{1}{2} \|\rho(u) - \rho(v)\|_{\mathrm{tr}} + \frac{1}{2} \|\rho(v) - \rho(w)\|_{\mathrm{tr}} = \Xi(u, v) + \Xi(v, w).$$
+   Passing to the quotient by the equivalence relation $u \sim v \iff u = c \cdot v$ ($c \in \mathbb{R}^\times$), $\Xi$ induces a genuine **metric** on the real projective quotient space:
+   $$\mathbb{P}(C^1(P; \mathbb{R})) = (C^1(P; \mathbb{R}) \setminus \{0\}) / \mathbb{R}^\times.$$
+   On $\mathbb{P}(C^1(P; \mathbb{R}))$, equivalence classes are unoriented lines $[v]$, and $\Xi([u], [v]) = 0 \iff [u] = [v]$.
+
+---
+
+## 6. Scope of the Operator Construction (Physical Nonclaims)
+
+**Verification scope.** This section is a negative boundary. It is not a proved theorem.
+
+We establish the scope and interpretive boundaries governing all spectral and operator constructions:
+
+1. **Scope of Mathematical Representation:** $\mathcal{H}_E$ is a finite-dimensional real Hilbert space auxiliary to combinatorial analysis, used strictly to compute trace distances. No system governed by this framework is claimed to represent a quantum mechanical physical system, wavefunction, or microscopic state.
+
+2. **Non-Physical Interpretation:** The use of trace distance and density matrix algebra does not imply that discrete topological constraints emerge from quantum mechanics. The discrete graph topology $P$ is foundational; the operator construction is a subordinate computational tool.
+
+3. **Scope Statement Status:** This section constitutes an explicit declaration of methodology and scope, not a physical theorem or empirical finding.
+
+---
+
+## 7. Conclusion
+
+By formalizing $F_{\mathrm{lin}}$, $F_{\mathrm{den}}$, the complete unoriented line fiber $F_{\mathrm{den}}^{-1}$, and the Lossy Collision Principle, this paper delineates the mathematical boundary between combinatorial topology and continuous operator representations. The linear embedding $F_{\mathrm{lin}}$ is injective and isometric, while the nonlinear density lift $F_{\mathrm{den}}$ purposefully abstracts away scalar magnitude and orientation sign to support projective shape comparisons. Continuous trace metrics provide descriptive tie-breaking under the declared selection priority without compromising the foundational integrity of discrete obstruction calculus.
+
+## References
+
+
+1. Carroll, J. H. (2026). *An L1 Obstruction Framework for Coboundary Defects*. Zenodo. DOI: 10.5281/zenodo.20186809.
+
+2. Carroll, J. H. (2026). *Conditional Density Lift and Dual-Witness Xi Functional*. Zenodo. DOI: 10.5281/zenodo.20192297.
+
+3. Carroll, J. H. (2026). *Operator Lifts Trace Metrics and Representation Limits*. Zenodo. DOI: 10.5281/zenodo.20213629.
+
+4. Mazur, S. (1929). *Une remarque sur l'homéomorphie des champs fonctionnels*. Comptes Rendus de l'Académie des Sciences Paris, 188, 224–225.
+
+5. Reed, M., & Simon, B. (1980). *Methods of Modern Mathematical Physics I: Functional Analysis*. Academic Press.
+
+6. Rockafellar, R. T. (1970). *Convex Analysis*. Princeton University Press.

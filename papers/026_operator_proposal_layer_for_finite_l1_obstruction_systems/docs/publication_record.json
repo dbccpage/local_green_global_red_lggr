@@ -1,0 +1,44 @@
+{
+  "schema": "operator-proposals.publication-record.v1",
+  "verified_on": "2026-10-23",
+  "record_id": "23604900",
+  "record_doi": "10.5281/zenodo.23604900",
+  "concept_doi": "10.5281/zenodo.20213063",
+  "status": "published",
+  "datacite_state": "findable",
+  "record_url": "https://zenodo.org/records/23604900",
+  "doi_url": "https://doi.org/10.5281/zenodo.23604900",
+  "registry_title": "Proposal Selection and Continuation-Stable Diagnostics on Finite Graphs",
+  "registry_version": "v2.0.5 Pre-Print",
+  "publication_date": "2026-10-23",
+  "sources": [
+    {
+      "url": "https://zenodo.org/api/records/23604900",
+      "sha256": "ed2ca8b27eaf76355d0a97f11822584693c3563e5ce848166aaacc5de363b829"
+    },
+    {
+      "url": "https://api.datacite.org/dois/10.5281/zenodo.23604900",
+      "sha256": "5ad9c51b06b2ad430e9da8070945fe2b376c8ae3b1680ac4a47b9ff460ed2d5b"
+    }
+  ],
+  "published_files": [
+    {
+      "name": "operator_proposals.pdf",
+      "bytes": 108477,
+      "md5": "md5:eb5c4fed973b7c59a83881df32e03fa5",
+      "sha256": "bcf7d3f098c1a2796a056039de059f98398f40e0c26db6916e83ad69b928651d",
+      "download_url": "https://zenodo.org/api/records/23604900/files/operator_proposals.pdf/content",
+      "matched_local_before_refresh": true
+    },
+    {
+      "name": "operator_proposals.zip",
+      "bytes": 184599,
+      "md5": "md5:70f2e8872001b1a10f444300e984cf21",
+      "sha256": "d621423af5560be99320c0a02d311882c8209141b624f2dc976688dd135ea04b",
+      "download_url": "https://zenodo.org/api/records/23604900/files/operator_proposals.zip/content",
+      "matched_local_before_refresh": true
+    }
+  ],
+  "local_refresh_uploaded": false,
+  "scope": "Public record and downloaded file bytes verified. Refreshed local DOI metadata and renders have not been uploaded. Historical raw responses and published bytes are retained under _support, outside the deposit."
+}

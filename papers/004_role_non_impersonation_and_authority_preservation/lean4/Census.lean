@@ -1,0 +1,24 @@
+import RoleFailure
+import ExceptionPipeline
+import AuthorityResidual
+import QuotientBoundary
+import AuthorityDescent
+
+#print axioms RoleNonImpersonation.roleToFailure_injective
+#print axioms RoleNonImpersonation.failureToRole_roleToFailure
+#print axioms RoleNonImpersonation.RefusalM.bindR_refusal_left_zero
+#print axioms RoleNonImpersonation.RefusalM.pipeline5_obstruction_refusal_propagates
+#print axioms RoleNonImpersonation.authority_not_residual
+#print axioms RoleNonImpersonation.residual_output_not_auth
+#print axioms RoleNonImpersonation.non_exact_residual_not_resolved
+#print axioms RoleNonImpersonation.role_failure_not_factor_through_payload_quotient
+#print axioms RoleNonImpersonation.payload_classifier_factors_iff
+#print axioms RoleNonImpersonation.role_failure_no_quotient_factor
+#print axioms RoleNonImpersonation.payload_green_role_failure_red
+#print axioms RoleNonImpersonation.lawvere_adjunction
+#print axioms RoleNonImpersonation.descent_soundness
+#print axioms RoleNonImpersonation.descent_maximality
+#print axioms RoleNonImpersonation.exact_preservation_iff_fiber_constant
+#print axioms RoleNonImpersonation.mixed_fiber_obstruction
+#print axioms RoleNonImpersonation.descent_composition
+#print axioms RoleNonImpersonation.descent_conjunction

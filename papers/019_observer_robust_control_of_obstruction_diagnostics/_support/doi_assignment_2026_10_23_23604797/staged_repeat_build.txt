@@ -1,0 +1,2 @@
+OK 019_observer_robust_control_of_obstruction_diagnostics: manifests and deterministic ZIP agree
+

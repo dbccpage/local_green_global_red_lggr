@@ -1,0 +1,26 @@
+{
+  "id": "20214310",
+  "doi": "10.5281/zenodo.20214310",
+  "titles": [
+    {
+      "title": "Constraint-Level Regulation via Multi-Channel Obstruction Diagnostics"
+    }
+  ],
+  "creators": [
+    {
+      "name": "CARROLL, JEREMY H.",
+      "nameType": "Personal",
+      "givenName": "JEREMY H.",
+      "familyName": "CARROLL",
+      "nameIdentifiers": [],
+      "affiliation": []
+    }
+  ],
+  "relatedIdentifiers": [
+    {
+      "relationType": "IsVersionOf",
+      "relatedIdentifier": "10.5281/zenodo.19322638",
+      "relatedIdentifierType": "DOI"
+    }
+  ]
+}

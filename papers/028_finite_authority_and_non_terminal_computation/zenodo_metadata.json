@@ -1,0 +1,28 @@
+{
+  "title": "Finite Authority and Non-Terminal Computation",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-23",
+  "version": "2.0.3",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "Large Language Models, agentic AI systems, formal programs, and general symbolic machines generate traces: strings, code, plans, proofs, critiques, tool calls, simulations, and candidate answers. None of those traces acquire authority by generation alone. Authority requires finite descent through declared representation, evaluation, verification, replay, obstruction accounting, leakage control, and terminalization. A model output, benchmark score, tool trace, self-critique, program halt, or multi-agent local validation is a proposal unless it descends through a declared finite packet and reaches an authority-bearing terminal. Scaling, prompting, self-critique, benchmarks, tool use, retry, and agent orchestration can improve proposal quality or coverage; none replaces the terminalizer. We establish five structural consequences: self-critique is not verification; scaling moves proposal mass but does not transfer authority; benchmark scores are packet-local; local agent validation does not compose without boundary sufficiency (Local Green != Global Red); and retry saturates unless it changes the evaluated packet. Halting of a Turing computation supplies a syntactic terminal, not automatically an evidence terminal. We further formalize counterfeit descent detection and evaluator sovereignty. This monograph assigns no authorization and changes no jurisdiction. It carries no operational authority or institutional standing.",
+  "keywords": [
+    "finite authority",
+    "non-terminal computation",
+    "proposal systems",
+    "evaluated path kernel",
+    "verifier sovereignty",
+    "boundary sufficiency",
+    "counterfeit descent",
+    "local green global red",
+    "exact rational arithmetic"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: Apache-2.0 / MIT. To verify the deposit locally, run 'py -3.12 -m pytest code/tests/test_finite_authority.py' followed by 'py -3.12 verify_deposit.py --test code/tests/test_finite_authority.py --lean'. Prepared republication edition dated 2026-10-23; not a new public deposit or DOI."
+}

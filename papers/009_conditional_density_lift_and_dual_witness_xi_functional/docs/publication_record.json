@@ -1,0 +1,44 @@
+{
+  "schema": "density-lift.publication-record.v1",
+  "verified_on": "2026-10-23",
+  "record_id": "23604860",
+  "record_doi": "10.5281/zenodo.23604860",
+  "concept_doi": "10.5281/zenodo.20192296",
+  "status": "published",
+  "datacite_state": "findable",
+  "record_url": "https://zenodo.org/records/23604860",
+  "doi_url": "https://doi.org/10.5281/zenodo.23604860",
+  "registry_title": "Conditional Density Lift and Dual-Witness Xi Functional",
+  "registry_version": "v2.0.5 Pre-Print",
+  "publication_date": "2026-10-23",
+  "sources": [
+    {
+      "url": "https://zenodo.org/api/records/23604860",
+      "sha256": "d35463ace787395c1a41894d3837cfe0829459eeacf22eb6704d1688829dbefa"
+    },
+    {
+      "url": "https://api.datacite.org/dois/10.5281/zenodo.23604860",
+      "sha256": "1d1c8d20094f8bdabcbc1c901c3e692db9ba5fbf9eb4ecfa46c21ae868828b5c"
+    }
+  ],
+  "published_files": [
+    {
+      "name": "density_lift.pdf",
+      "bytes": 102651,
+      "md5": "md5:5d080ca0ae7deaf69547547693701b0d",
+      "sha256": "a644bbdf4cd642ae47e628145d9ca8d1a9433cea0ac2014ffa44c51d66b7fcb0",
+      "download_url": "https://zenodo.org/api/records/23604860/files/density_lift.pdf/content",
+      "matched_local_before_refresh": true
+    },
+    {
+      "name": "density_lift.zip",
+      "bytes": 178510,
+      "md5": "md5:5220229cf1759506236038b42a28205a",
+      "sha256": "8b9776a56b333adab93be4d125b81f73d2617d550999d81216a5c4cc13947d3a",
+      "download_url": "https://zenodo.org/api/records/23604860/files/density_lift.zip/content",
+      "matched_local_before_refresh": true
+    }
+  ],
+  "local_refresh_uploaded": false,
+  "scope": "Public record and downloaded file bytes verified. Refreshed local DOI metadata and renders have not been uploaded. Historical raw responses and published bytes are retained under _support, outside the deposit."
+}

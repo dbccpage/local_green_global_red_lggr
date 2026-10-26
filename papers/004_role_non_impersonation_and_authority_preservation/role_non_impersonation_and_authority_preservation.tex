@@ -1,0 +1,819 @@
+% manuscript-sha256: 4958c0cf55c9408e182ff2530d221b641a86bb06eae59b00b9735f2623dc1275
+% spine-sha256: 5c5a143f669ab1b7337ef04d72d4d7b30f8b9a558a0c0c0ad413cdaf39cff857
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  10pt,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Academic LaTeX preamble for role non-impersonation and authority preservation.
+%
+% Typesetting is not evidence for any claim.
+% Uses XeLaTeX for comprehensive Unicode and math font support.
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Latin Modern Roman}
+\setmonofont{Latin Modern Mono}[Scale=0.85]
+\setmathfont{Latin Modern Math}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.4em}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,
+            citecolor=RoyalBlue,breaklinks=true]{hyperref}
+\usepackage{fvextra}
+\usepackage{framed}
+\fvset{breaklines=true,breakanywhere=true,fontsize=\small}
+
+\AtBeginEnvironment{longtable}{\small}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\definecolor{quoterule}{gray}{0.75}
+\renewenvironment{quote}
+  {\begin{leftbar}\small}
+  {\end{leftbar}}
+
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\emergencystretch=3em
+\sloppy
+\hfuzz=100pt
+\vfuzz=100pt
+\hbadness=10000
+\vbadness=10000
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries The Omega Tower: Role Non-Impersonation and Authority Preservation in
+Agentic AI\par}
+Jeremy H. Carroll\par
+2026-10-16\par
+Version 1.3.0\par
+\end{center}
+
+\subsection{Abstract}\label{abstract}
+
+This monograph presents a contract model for separation of proposal, evaluation, and authorization in agentic systems. It verifies several algebraic components and records explicit failure modes when a declared contract is not honored.
+
+We formalize the foundational boundary: \textbf{proposal is not authority} (\hypertarget{math-E0001-0001}{}{\(p \in \mathcal{P} \not\Rightarrow \mathsf{Auth}(p)\)}). Generating a fluent candidate action, regardless of heuristic confidence or internal self-critique, does not constitute execution authority. Authority is an inhabited dependent type requiring an explicit terminal certificate produced by an independent, replayable verification pipeline.
+
+The six roles are a proposed contract: detect defects, gate authorization, track representation changes, compare candidates, check finite evidence, and retain unresolved outcomes. The mathematical results concern constructor distinctions, exception propagation, and predicate transport through a quotient. They do not prove that this six-role decomposition is necessary for every secure architecture.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{1. Introduction: The Authority Problem in Agentic AI}\label{introduction-the-authority-problem-in-agentic-ai}
+
+Complex autonomous systems increasingly deploy large language models (LLMs) and heuristic planners within multi-agent loops to generate code, execute database mutations, call external APIs, and direct physical actuators. While individual model capabilities have expanded, the authority structures governing their deployment frequently remain informal.
+
+A widespread failure pattern in agentic systems is architectural collapse:
+
+\begin{itemize}
+\item
+  A component generating a proposal acts as its own evaluator or execution gate (self-authorization);
+\item
+  An intermediate representation transformation (e.g., embedding, summarization, serialization) mutates semantic payload while discarding loss information (representation laundering);
+\item
+  Multiple stochastic agents aggregate disparate outputs via majority vote or consensus, treating statistical plurality as formal correctness (consensus laundering);
+\item
+  Unbounded continuous or long-horizon models claim general validity without testable, finite witnesses;
+\item
+  Persistent defects or contradictions are silently erased or renamed as successful termination to avoid workflow halt (counterfeit closure).
+\end{itemize}
+
+In conventional software engineering, these collapses are often treated as ad-hoc bugs. However, in security-critical agentic execution, they represent systemic violations of separation of privilege (Saltzer \& Schroeder, 1975) and commercial integrity (Clark \& Wilson, 1987).
+
+This paper introduces the \textbf{Omega Tower architecture}: a formal six-role framework designed to enforce role non-impersonation, fail-closed refusal propagation, and rigorous authority preservation.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{2. Formal Framework: The Proposal/Authority Boundary}\label{formal-framework-the-proposalauthority-boundary}
+
+The architecture begins from a strict negative boundary:
+
+\hypertarget{math-E0002-0002}{}{\[\boxed{ p \in \mathcal{P} \not\Rightarrow \mathsf{Auth}(p) }\]}
+
+Let \hypertarget{math-E0003-0003}{}{\(\mathcal{P}\)} denote the set of candidate proposals (e.g., text, action plans, AST fragments, SQL queries). A proposal is an unverified input. Heuristic fluency is not verification; internal self-scoring is not independent evaluation; confidence is not certification.
+
+\subsubsection{2.1 The Dependent Authority Type}\label{the-dependent-authority-type}
+
+Authority is modeled as an inhabited dependent type:
+
+\hypertarget{math-E0004-0004}{}{\[\mathsf{Auth}(p) := \Sigma(t : \mathbb{T}_{\mathsf{auth}})\,\big(\Pi^\sharp(p) = \mathsf{Success}(t) \wedge \mathsf{IsValidToken}(p, t)\big)\]}
+
+where:
+
+\begin{itemize}
+\item
+  \hypertarget{math-E0005-0005}{}{\(\mathbb{T}_{\mathsf{auth}}\)} is the type of terminal authority tokens;
+\item
+  \hypertarget{math-E0006-0006}{}{\(\Pi^\sharp : \mathcal{P} \to \mathcal{M}(\mathbb{T})\)} is the declared authority execution pipeline;
+\item
+  \hypertarget{math-E0007-0007}{}{\(\mathcal{M}\)} is the refusal monad \hypertarget{math-E0008-0008}{}{\(\mathcal{M}(X) = X + \mathbb{F}\)}, where \hypertarget{math-E0009-0009}{}{\(\mathbb{F}\)} is the set of explicit refusal diagnostics;
+\item
+  \hypertarget{math-E0010-0010}{}{\(\mathsf{IsValidToken}(p, t)\)} is the token validity predicate.
+\end{itemize}
+
+\textbf{Model Scope and Validity Predicate Differentiation:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Lean Syntactic Validity Specification:} In the mechanized Lean 4 formalization (\texttt{AuthorityResidual.lean}), \texttt{isValidAuthorityToken} is defined strictly as a syntactic record check: \hypertarget{math-E0011-0011}{}{\[\mathsf{isValidAuthorityToken}(p, t) := (t.\mathrm{proposalId} = p.\mathrm{id}) \wedge (t.\mathrm{replayable} = \mathrm{true}) \wedge (t.\mathrm{verifier} \ne "") \wedge (t.\mathrm{receiptDigest} \ne "")\]} Lean establishes structural theorems about this constructor specification: terminal disjointness (\hypertarget{math-E0012-0012}{}{\(\mathsf{Authority} \cap \mathsf{Residual} = \emptyset\)}, \hypertarget{math-E0013-0013}{}{\(\mathsf{Authority} \cap \mathsf{Refusal} = \emptyset\)}), left-zero absorption, and failure-mode non-factorization across untyped quotients. It checks syntactic well-formedness and field non-emptiness; it does not model dynamic stateful registry mutation or cryptographic signature issuance.
+\item
+  \textbf{Operational Registry Issuance:} In the executable Python implementation (\texttt{code/models.py}), authorization requires active validation by a verifier-owned receipt registry (\texttt{AuthorityReceiptRegistry.validates(p,\ t)}). This ensures the receipt ID was explicitly issued by the designated verifier for proposal \hypertarget{math-E0014-0014}{}{\(p\)}'s canonical serialization digest. The proposal body (payload and action-relevant metadata) is hashed separately from the receipt/evidence envelope, ensuring attaching an issued token does not invalidate its own binding. Caller-asserted metadata flags (such as \texttt{verified\_token=True}) are strictly rejected.
+\item
+  \textbf{Mathematical Classification vs.~Authorization:} Evaluating whether a cochain defect vanishes (\hypertarget{math-E0015-0015}{}{\(r = 0\)}) or is exact (\hypertarget{math-E0016-0016}{}{\(r \in \operatorname{im} d_0\)}) is an algebraic cochain evaluation. Mathematical exactness is not institutional authorization. We enforce a strict separation of four distinct operations: \hypertarget{math-E0017-0017}{}{\[\text{cochain evaluation} \longrightarrow \text{checked mathematical result} \longrightarrow \text{authorization decision} \longrightarrow \text{issued receipt}\]} A mathematical classifier returns only defect classifications and supporting evidence; it does not manufacture authority tokens from unchecked raw numbers. An authority gate issues authority only after checking the applicable verification contract against that evidence and the proposal. Inconsistent numerical inputs (such as \hypertarget{math-E0015-0018}{}{\(r = 0\)} with non-zero boundary) fail closed.
+\end{enumerate}
+
+If the pipeline outputs a refusal \hypertarget{math-E0018-0019}{}{\(f \in \mathbb{F}\)} or an unabsorbable residual \hypertarget{math-E0019-0020}{}{\(r\)}, the type \hypertarget{math-E0020-0021}{}{\(\mathsf{Auth}(p)\)} is uninhabited. No action may execute without an explicit inhabitant of \hypertarget{math-E0020-0022}{}{\(\mathsf{Auth}(p)\)}.
+
+\subsubsection{2.2 Typing Boundaries and Scope Fences}\label{typing-boundaries-and-scope-fences}
+
+We establish the following scope boundaries:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Contract Authority vs.~Semantic Truth:} Authority in this framework is strictly \emph{Contract Authority} (relative to declared verification contracts) or \emph{Verifier-Scoped Authority} (scoped to a named verifier's operational domain). We do not claim that verified authority ensures metaphysical truth; rather, it ensures under the declared assumptions that declared verification contracts were executed without refusal.
+\item
+  \textbf{Governance Positions, Not Ontological Levels:} The roles defined herein represent distinct functional obligations in a governance pipeline, not a hierarchy of being or intrinsic agent capabilities.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{3. The Six Conserved Architectural Obligations}\label{the-six-conserved-architectural-obligations}
+
+The architecture decomposes authority governance into six distinct functional roles:
+
+\hypertarget{math-E0021-0023}{}{\[\Omega_{\partial} \to \Omega_{\mathbb{A}} \to \Omega_{\chi} \to \Omega_{\mathfrak{O}} \to \Omega_{\kappa} \to \Omega_{\Lambda\Omega}\]}
+
+\subsubsection{Table 1: The Six Conserved Governance Roles}\label{table-1-the-six-conserved-governance-roles}
+
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2941}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2353}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2353}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2353}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Role
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Core Question
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Governing Prohibition
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\hypertarget{math-E0022-0024}{}{\(\Omega_{\partial}\)} & Obstruction Verifier & Is the defect zero, closed survivor, or open? & Cannot authorize without an explicit cochain evaluation receipt. \\
+\hypertarget{math-E0023-0025}{}{\(\Omega_{\mathbb{A}}\)} & Finite Authority Gate & Does the candidate terminalize as authority or refusal? & Cannot authorize without independent verifier execution \hypertarget{math-E0024-0026}{}{\((D, V, \tau)\)}. \\
+\hypertarget{math-E0025-0027}{}{\(\Omega_{\chi}\)} & Certified Transport & Does representation change preserve authority? & Cannot create authority across representation shifts without loss accounting. \\
+\hypertarget{math-E0026-0028}{}{\(\Omega_{\mathfrak{O}}\)} & Comparison Envelope & Can candidates be compared without laundering? & Cannot mint execution authority via statistical voting or consensus aggregation. \\
+\hypertarget{math-E0027-0029}{}{\(\Omega_{\kappa}\)} & Finite-Shadow Projection & Do finite shadows cohere, and is the query verified? & Cannot create authority from unbounded continuum coherence alone. \\
+\hypertarget{math-E0028-0030}{}{\(\Omega_{\Lambda\Omega}\)} & Typed Residual Closure & What remains when closure cannot absorb the residual? & Cannot create authority by erasing or renaming unabsorbable conflict. \\
+\end{longtable}
+
+Each role names an obligation of this contract. Compression of components in an implementation is admissible only if the resulting system continues to discharge all six obligations and preserves the corresponding failure terminals.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4. The Collapse Space: Modes, Counterexamples, and Invertibility}\label{the-collapse-space-modes-counterexamples-and-invertibility}
+
+The contract associates omitted obligations with explicit failure labels when authorization is attempted.
+
+The implementation assigns one distinct failure constructor to each of the six role constructors. This correspondence is a classification convention; real failures may have several causes. A constructor bijection is not a diagnosis of an arbitrary deployed system.
+
+\subsubsection{Table 2: Declared constructor correspondence}\label{table-2-declared-constructor-correspondence}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Role constructor & Failure constructor \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+obstruction & undetectedObstruction \\
+authority & proposalBecomesAction \\
+transport & silentRepresentationMutation \\
+comparison & comparisonBecomesLaundering \\
+shadow & continuumShadowBecomesFakeAuthority \\
+residual & residualGetsHiddenOrRenamed \\
+\end{longtable}
+
+\subsubsection{Theorem 1 (Constructor Invertibility and Role Distinction)}\label{theorem-1-constructor-invertibility-and-role-distinction}
+
+\emph{Let \hypertarget{math-E0029-0031}{}{\(\mathcal{R} = \{\Omega_{\partial}, \Omega_{\mathbb{A}}, \Omega_{\chi}, \Omega_{\mathfrak{O}}, \Omega_{\kappa}, \Omega_{\Lambda\Omega}\}\)} and let \hypertarget{math-E0030-0032}{}{\(\mathcal{F}\)} be the set of six characteristic failure modes in Table 2.}\\
+\emph{The mapping \hypertarget{math-E0031-0033}{}{\(\phi : \mathcal{R} \to \mathcal{F}\)} is bijective. Consequently:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \emph{Injectivity:} \hypertarget{math-E0032-0034}{}{\(\forall r_1, r_2 \in \mathcal{R},\; r_1 \neq r_2 \implies \phi(r_1) \neq \phi(r_2)\)}.
+\item
+  \emph{Invertibility:} There exists a unique left- and right-inverse \hypertarget{math-E0033-0035}{}{\(\phi^{-1} : \mathcal{F} \to \mathcal{R}\)} such that \hypertarget{math-E0034-0036}{}{\(\phi^{-1}(\phi(r)) = r\)} and \hypertarget{math-E0035-0037}{}{\(\phi(\phi^{-1}(f)) = f\)}.
+\end{enumerate}
+
+\emph{Proof.} Verified by direct construction and exhaustion in Lean 4 (\texttt{RoleNonImpersonation.RoleFailure}). The inverse table maps each failure label back to its assigned role. \hypertarget{math-E0036-0038}{}{\(\square\)}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection[5. Worked Case Study: Configuration Conflict over ]{\texorpdfstring{5. Worked Case Study: Configuration Conflict over \protect\hypertarget{math-E0037-0039}{}{\(\mathbb{F}_2^3\)}}{5. Worked Case Study: Configuration Conflict over \textbackslash mathbb\{F\}\_2\^{}3}}\label{worked-case-study-configuration-conflict-over-mathbbf_23}
+
+To demonstrate how role collapse induces detectable failure, we examine a concrete configuration reconciliation task over the vector space \hypertarget{math-E0037-0040}{}{\(\mathbb{F}_2^3\)}.
+
+\subsubsection{5.1 Scenario Setup}\label{scenario-setup}
+
+Consider three configuration keys:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \texttt{key\_1}: Network Timeout Policy,
+\item
+  \texttt{key\_2}: Security Handshake Protocol,
+\item
+  \texttt{key\_3}: Logging Telemetry Level.
+\end{enumerate}
+
+Let two independent sources \hypertarget{math-E0038-0041}{}{\(A\)} and \hypertarget{math-E0039-0042}{}{\(B\)} propose configuration states \hypertarget{math-E0040-0043}{}{\(c_A, c_B \in \mathbb{F}_2^3\)}:
+
+\begin{itemize}
+\item
+  \hypertarget{math-E0041-0044}{}{\(c_A = (1, 0, 0)\)}
+\item
+  \hypertarget{math-E0042-0045}{}{\(c_B = (1, 1, 0)\)}
+\end{itemize}
+
+The difference cochain \hypertarget{math-E0043-0046}{}{\(r \in \mathbb{F}_2^3\)} evaluates coordinate-wise XOR over \hypertarget{math-E0044-0047}{}{\(\mathbb{F}_2\)}:
+
+\hypertarget{math-E0045-0048}{}{\[r = c_A \oplus c_B = (1 \oplus 1,\, 0 \oplus 1,\, 0 \oplus 0) = (0, 1, 0)\]}
+
+Sources \hypertarget{math-E0038-0049}{}{\(A\)} and \hypertarget{math-E0039-0050}{}{\(B\)} strictly disagree on \texttt{key\_2}.
+
+Use the declared complex \hypertarget{math-E0046-0051}{}{\(C^0=\mathbb F_2 \xrightarrow{d_0} C^1=\mathbb F_2^3 \xrightarrow{d_1} C^2=\mathbb F_2\)}, where \hypertarget{math-E0047-0052}{}{\(d_0(a)=(a,0,0)\)} and \hypertarget{math-E0048-0053}{}{\(d_1(x,y,z)=z\)}. Thus \hypertarget{math-E0049-0054}{}{\(d_1(r)=0\)}, while \hypertarget{math-E0050-0055}{}{\(r\notin\operatorname{im}(d_0)\)}, so this example is closed and non-exact in the stated complex.
+
+Thus, \hypertarget{math-E0019-0056}{}{\(r\)} represents a \textbf{closed, non-exact residual}: \hypertarget{math-E0051-0057}{}{\[r \neq (0, 0, 0) \quad \text{and} \quad \bar{d}_1(r) = 0\]}
+
+\subsubsection{5.2 Compliant Full-Stack Execution}\label{compliant-full-stack-execution}
+
+Under a compliant architecture with active Residual Closure (\hypertarget{math-E0028-0058}{}{\(\Omega_{\Lambda\Omega}\)}):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \hypertarget{math-E0022-0059}{}{\(\Omega_{\partial}\)} computes \hypertarget{math-E0052-0060}{}{\(r = (0, 1, 0) \neq 0\)} and \hypertarget{math-E0053-0061}{}{\(\bar{d}_1(r) = 0\)};
+\item
+  \hypertarget{math-E0028-0062}{}{\(\Omega_{\Lambda\Omega}\)} recognizes that no certified coboundary repair \hypertarget{math-E0054-0063}{}{\(\alpha\)} exists such that \hypertarget{math-E0055-0064}{}{\(d_0\alpha = r\)};
+\item
+  The system halts execution and emits the typed terminal \hypertarget{math-E0056-0065}{}{\(\mathsf{TerminalStatus.RESIDUAL\_CLOSED}\)} (``Unresolved conflict on key 2; human governance decision required'').
+\item
+  The system \textbf{houses the conflict honestly} rather than fabricating consensus.
+\end{enumerate}
+
+\subsubsection[5.3 Collapsed Execution (Removal of )]{\texorpdfstring{5.3 Collapsed Execution (Removal of \protect\hypertarget{math-E0028-0066}{}{\(\Omega_{\Lambda\Omega}\)})}{5.3 Collapsed Execution (Removal of \textbackslash Omega\_\{\textbackslash Lambda\textbackslash Omega\})}}\label{collapsed-execution-removal-of-omega_lambdaomega}
+
+Suppose an engineer removes the residual closure role \hypertarget{math-E0028-0067}{}{\(\Omega_{\Lambda\Omega}\)} to prevent workflow interruptions.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The pipeline lacks a typed residual terminal;
+\item
+  The comparison role \hypertarget{math-E0026-0068}{}{\(\Omega_{\mathfrak{O}}\)} attempts to reconcile the outputs without a residual home;
+\item
+  To avoid failing, the system forcibly outputs \hypertarget{math-E0057-0069}{}{\(\mathsf{TerminalStatus.AUTHORITY}\)} marked as \hypertarget{math-E0058-0070}{}{\(\mathsf{ResolvedExact}\)};
+\item
+  An external auditor replaying the cochain computation finds \hypertarget{math-E0052-0071}{}{\(r = (0, 1, 0) \neq 0\)} with no certified repair witness.
+\item
+  The auditor immediately flags \hypertarget{math-E0059-0072}{}{\(\mathsf{ResidualGetsHiddenOrRenamed}\)}. The collapse is detected directly from the audit ledger row alone.
+\end{enumerate}
+
+\subsubsection{5.4 Maximal Sound Authority Descent Through a Quotient}\label{maximal-sound-authority-descent-through-a-quotient}
+
+For an authority predicate \hypertarget{math-E0060-0073}{}{\(A : X \to \mathrm{Prop}\)} and a representation transport map \hypertarget{math-E0061-0074}{}{\(q : X \to Y\)}, information loss across fibers \hypertarget{math-E0062-0075}{}{\(q^{-1}(y)\)} creates a fundamental authority preservation problem. Following Lawvere (1969, 1970), universal quantification along a map is the right adjoint to inverse image (pullback):
+
+\hypertarget{math-E0063-0076}{}{\[\forall_q A(y) := \forall x \in X,\, q(x) = y \implies A(x)\]}
+
+We write \hypertarget{math-E0064-0077}{}{\(\forall_q A\)} for this maximal sound descent predicate \hypertarget{math-E0065-0078}{}{\(A_{\mathrm{safe}}\)}. Identifying predicates with their satisfying subsets, the central adjunction theorem is:
+
+\hypertarget{math-E0066-0079}{}{\[\boxed{ q^{-1}(B) \subseteq A \iff B \subseteq \forall_q A }\]}
+
+\textbf{Proof.} Suppose \hypertarget{math-E0067-0080}{}{\(q^{-1}(B) \subseteq A\)}. If \hypertarget{math-E0068-0081}{}{\(y \in B\)} and \hypertarget{math-E0069-0082}{}{\(q(x) = y\)}, then \hypertarget{math-E0070-0083}{}{\(x \in q^{-1}(B)\)}, which implies \hypertarget{math-E0071-0084}{}{\(x \in A\)}. Hence \hypertarget{math-E0072-0085}{}{\(y \in \forall_q A\)}, establishing \hypertarget{math-E0073-0086}{}{\(B \subseteq \forall_q A\)}.\\
+Conversely, suppose \hypertarget{math-E0073-0087}{}{\(B \subseteq \forall_q A\)}. If \hypertarget{math-E0070-0088}{}{\(x \in q^{-1}(B)\)}, then \hypertarget{math-E0074-0089}{}{\(q(x) \in B \subseteq \forall_q A\)}. Applying \hypertarget{math-E0075-0090}{}{\((\forall_q A)(q(x))\)} to \hypertarget{math-E0076-0091}{}{\(x\)} with \hypertarget{math-E0077-0092}{}{\(q(x) = q(x)\)} yields \hypertarget{math-E0071-0093}{}{\(x \in A\)}. Hence \hypertarget{math-E0067-0094}{}{\(q^{-1}(B) \subseteq A\)}. \hypertarget{math-E0036-0095}{}{\(\square\)}
+
+The adjunction has the following consequences:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Soundness:} Pulling back the descended predicate \hypertarget{math-E0064-0096}{}{\(\forall_q A\)} along \hypertarget{math-E0078-0097}{}{\(q\)} satisfies \hypertarget{math-E0079-0098}{}{\(q^{-1}(\forall_q A) \subseteq A\)}, i.e., \hypertarget{math-E0080-0099}{}{\((\forall_q A)(q(x)) \implies A(x)\)} for all \hypertarget{math-E0081-0100}{}{\(x \in X\)}.
+\item
+  \textbf{Maximality:} If \hypertarget{math-E0082-0101}{}{\(B : Y \to \mathrm{Prop}\)} is any sound authorization predicate on \hypertarget{math-E0083-0102}{}{\(Y\)} (meaning \hypertarget{math-E0067-0103}{}{\(q^{-1}(B) \subseteq A\)}), then \hypertarget{math-E0073-0104}{}{\(B \subseteq \forall_q A\)}. Thus \hypertarget{math-E0064-0105}{}{\(\forall_q A\)} is the maximal sound descent predicate.
+\item
+  \textbf{Exact Preservation on Fiber-Constant Predicates:} Lossless authority descent \hypertarget{math-E0084-0106}{}{\((\forall_q A)(q(x)) \iff A(x)\)} holds for all \hypertarget{math-E0081-0107}{}{\(x \in X\)} if and only if \hypertarget{math-E0038-0108}{}{\(A\)} is constant on the fibers of \hypertarget{math-E0078-0109}{}{\(q\)}: \hypertarget{math-E0085-0110}{}{\[\forall x, x' \in X,\; q(x) = q(x') \implies (A(x) \iff A(x'))\]}
+\item
+  \textbf{Mixed Fiber Obstruction:} If a fiber contains both an authorized state \hypertarget{math-E0086-0111}{}{\(x_+\)} and an unauthorized state \hypertarget{math-E0087-0112}{}{\(x_-\)}: \hypertarget{math-E0088-0113}{}{\[q(x_+) = q(x_-), \qquad A(x_+), \qquad \neg A(x_-)\]} then no predicate \hypertarget{math-E0039-0114}{}{\(B\)} on \hypertarget{math-E0083-0115}{}{\(Y\)} can simultaneously reproduce both authority judgments: \hypertarget{math-E0089-0116}{}{\((B(q(x_+)) \iff A(x_+)) \wedge (B(q(x_-)) \iff A(x_-))\)} is a provable contradiction.
+\item
+  \textbf{Compositionality:} For successive transports \hypertarget{math-E0090-0117}{}{\(q_1 : X \to Y\)} and \hypertarget{math-E0091-0118}{}{\(q_2 : Y \to Z\)}, universal quantification composes identically to map composition: \hypertarget{math-E0092-0119}{}{\[\forall_{q_2}(\forall_{q_1} A) = \forall_{q_2 \circ q_1} A\]}
+\item
+  \textbf{Distribution over Conjunction of Obligations:} For a family of obligation predicates \hypertarget{math-E0093-0120}{}{\(A_i : X \to \mathrm{Prop}\)}, universal quantification distributes across finite conjunctions: \hypertarget{math-E0094-0121}{}{\[\boxed{ \forall_q \left(\bigwedge_i A_i\right) = \bigwedge_i \forall_q A_i }\]} \emph{Proof.} Follows immediately by interchanging universal quantifiers: \hypertarget{math-E0095-0122}{}{\(\forall x, (q(x) = y \implies \bigwedge_i A_i(x)) \iff \bigwedge_i (\forall x, q(x) = y \implies A_i(x))\)}. \hypertarget{math-E0036-0123}{}{\(\square\)}
+\end{enumerate}
+
+\textbf{Empty fibers.} If \hypertarget{math-E0096-0124}{}{\(y\notin q(X)\)}, the predicate \hypertarget{math-E0097-0125}{}{\((\forall_q A)(y)\)} is vacuously true. An operational gate must restrict its domain to \hypertarget{math-E0098-0126}{}{\(q(X)\)} or require a source witness in addition to this predicate. Universal quantification alone does not authorize a fabricated representation with no preimage.
+
+This provides a domain-agnostic mathematical account of transporting a conjunction of obligations. The six named governance roles \hypertarget{math-E0099-0127}{}{\(\bigwedge_{i=1}^6 \Omega_i\)} constitute a concrete application instance of this theorem, while the role-erasure quotient boundary (\texttt{QuotientBoundary.lean}) is a specialization of the mixed fiber obstruction. All seven descent theorems are machine-checked in Lean 4 (\texttt{RoleNonImpersonation.AuthorityDescent}) with zero custom axioms.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{6. Formal Non-Impersonation and the Kleisli Pipeline Theorem}\label{formal-non-impersonation-and-the-kleisli-pipeline-theorem}
+
+We formalize the execution pipeline using monads and Kleisli categories.
+
+\subsubsection{6.1 The Refusal Monad}\label{the-refusal-monad}
+
+Let \hypertarget{math-E0008-0128}{}{\(\mathcal{M}(X) = X + \mathbb{F}\)} denote the refusal monad (an instance of the exception monad), where \hypertarget{math-E0100-0129}{}{\(X\)} represents valid output and \hypertarget{math-E0009-0130}{}{\(\mathbb{F}\)} represents explicit, typed refusal diagnostics.
+
+The monad operations are: \hypertarget{math-E0101-0131}{}{\[\mathsf{pure}(x) = \mathsf{Success}(x)\]}
+
+\hypertarget{math-E0102-0132}{}{\[\mathsf{bind}(m, f) = \begin{cases}
+f(x) & \text{if } m = \mathsf{Success}(x) \\
+\mathsf{Refusal}(err) & \text{if } m = \mathsf{Refusal}(err)
+\end{cases}\]}
+
+\subsubsection{Proposition 1 (Left-Zero Absorption)}\label{proposition-1-left-zero-absorption}
+
+\emph{For any refusal diagnostic \hypertarget{math-E0103-0133}{}{\(err \in \mathbb{F}\)} and any continuation morphism \hypertarget{math-E0104-0134}{}{\(f : X \to \mathcal{M}(Y)\)}:} \hypertarget{math-E0105-0135}{}{\[\mathsf{bind}(\mathsf{Refusal}(err), f) = \mathsf{Refusal}(err)\]} \emph{Proof.} Immediate from the definition of \hypertarget{math-E0106-0136}{}{\(\mathsf{bind}\)}. Verified in Lean 4 (\texttt{RoleNonImpersonation.ExceptionPipeline.bindR\_refusal\_left\_zero}). \hypertarget{math-E0036-0137}{}{\(\square\)}
+
+\subsubsection{6.2 The Five-Stage Kleisli Factorization}\label{the-five-stage-kleisli-factorization}
+
+The declared five-stage pipeline is defined as a composite morphism in the Kleisli category of \hypertarget{math-E0007-0138}{}{\(\mathcal{M}\)}:
+
+\hypertarget{math-E0107-0139}{}{\[\Pi^\sharp = \tau^\sharp \circ_K V^\sharp \circ_K D^\sharp \circ_K \rho^\sharp \circ_K \mathcal{R}^\sharp\]}
+
+where:
+
+\begin{itemize}
+\item
+  \hypertarget{math-E0108-0140}{}{\(\mathcal{R}^\sharp : \mathcal{P} \to \mathcal{M}(\mathcal{P}_1)\)} evaluates defect cochains (Role \hypertarget{math-E0022-0141}{}{\(\Omega_{\partial}\)});
+\item
+  \hypertarget{math-E0109-0142}{}{\(\rho^\sharp : \mathcal{P}_1 \to \mathcal{M}(\mathcal{P}_2)\)} validates representation transport and loss ledgers (Role \hypertarget{math-E0025-0143}{}{\(\Omega_{\chi}\)});
+\item
+  \hypertarget{math-E0110-0144}{}{\(D^\sharp : \mathcal{P}_2 \to \mathcal{M}(\mathcal{P}_3)\)} computes descent candidates (Role \hypertarget{math-E0023-0145}{}{\(\Omega_{\mathbb{A}}\)} preparation);
+\item
+  \hypertarget{math-E0111-0146}{}{\(V^\sharp : \mathcal{P}_3 \to \mathcal{M}(\mathcal{P}_4)\)} executes independent verification (Role \hypertarget{math-E0023-0147}{}{\(\Omega_{\mathbb{A}}\)} check);
+\item
+  \hypertarget{math-E0112-0148}{}{\(\tau^\sharp : \mathcal{P}_4 \to \mathcal{M}(\mathbb{T})\)} terminalizes the execution into an authority token or typed residual (Roles \hypertarget{math-E0023-0149}{}{\(\Omega_{\mathbb{A}}\)} and \hypertarget{math-E0028-0150}{}{\(\Omega_{\Lambda\Omega}\)}).
+\end{itemize}
+
+The comparison obligation (\hypertarget{math-E0026-0151}{}{\(\Omega_{\mathfrak{O}}\)}) and finite-shadow obligation (\hypertarget{math-E0027-0152}{}{\(\Omega_{\kappa}\)}) act as necessary side-condition guards entering \hypertarget{math-E0113-0153}{}{\(V^\sharp\)} and \hypertarget{math-E0114-0154}{}{\(\tau^\sharp\)}.
+
+\subsubsection{Theorem 2 (Refusal Propagation and Anti-Cheat)}\label{theorem-2-refusal-propagation-and-anti-cheat}
+
+\emph{If any stage \hypertarget{math-E0115-0155}{}{\(S_i\)} in the Kleisli factorization returns a refusal \hypertarget{math-E0116-0156}{}{\(\mathsf{Refusal}(err)\)}, the complete pipeline evaluates to that exact refusal:} \hypertarget{math-E0117-0157}{}{\[\Pi^\sharp(p) = \mathsf{Refusal}(err)\]} \emph{No subsequent stage \hypertarget{math-E0118-0158}{}{\(S_{j > i}\)} is executed, and no authority token is produced.}
+
+\emph{Proof.} Follows by induction on the pipeline length using Proposition 1 (associativity and left-zero absorption). Machine-checked in Lean 4 (\texttt{RoleNonImpersonation.ExceptionPipeline.pipeline5\_*\_refusal\_propagates}). \hypertarget{math-E0036-0159}{}{\(\square\)}
+
+\emph{Operational Premise on Side-Effect Absorption:} Under pure refusal monad absorption, subsequent callbacks are left uncalled and the composite pipeline evaluates to \hypertarget{math-E0116-0160}{}{\(\mathsf{Refusal}(err)\)}. However, short-circuiting does not automatically rollback side effects executed prior to refusal. The operational invariant that ``no authority token is produced'' requires that preterminal stages (\hypertarget{math-E0119-0161}{}{\(S_{i < 5}\)}) are strictly unprivileged evaluators lacking registry issuance capabilities, with token creation isolated exclusively to the designated terminal authority gate \hypertarget{math-E0114-0162}{}{\(\tau^\sharp\)}. In operational architectures, one must distinguish: \hypertarget{math-E0120-0163}{}{\[\text{refusal propagation} \ne \text{rollback} \ne \text{control of issuance capabilities}.\]}
+
+\subsubsection{Contract Rule 3 (The Role Non-Impersonation Principle)}\label{contract-rule-3-the-role-non-impersonation-principle}
+
+\emph{Within the declared contract, an undischarged required obligation prevents successful authorization unless an accepted equivalent discharges that obligation. Under this closed routing policy, removing a role without an approved replacement routes to its mapped failure label upon attempted authorization. This is a contractual routing policy, not an architectural-necessity theorem: an architecture that unconditionally refuses all proposals omits the roles without executing unauthorized actions.}
+
+\textbf{Contract Interpretation and Illustrative Omission Scenarios.} Under this declared contract:
+
+\begin{itemize}
+\item
+  If Obstruction Detection (\hypertarget{math-E0022-0164}{}{\(\Omega_{\partial}\)}) is omitted, candidate defects are uncomputed; any attempt to grant authority routes to \hypertarget{math-E0121-0165}{}{\(\mathsf{UndetectedObstruction}\)}.
+\item
+  If Authority Gating (\hypertarget{math-E0023-0166}{}{\(\Omega_{\mathbb{A}}\)}) is omitted, unverified proposals pass directly to execution, routing to \hypertarget{math-E0122-0167}{}{\(\mathsf{ProposalBecomesAction}\)}.
+\item
+  If Certified Transport (\hypertarget{math-E0025-0168}{}{\(\Omega_{\chi}\)}) is omitted, representation transformations lack loss ledgers, routing to \hypertarget{math-E0123-0169}{}{\(\mathsf{SilentRepresentationMutation}\)}.
+\item
+  If Comparison Envelope (\hypertarget{math-E0026-0170}{}{\(\Omega_{\mathfrak{O}}\)}) is omitted, conflicting outputs are averaged or voted without typed comparison, routing to \hypertarget{math-E0124-0171}{}{\(\mathsf{ComparisonBecomesLaundering}\)}.
+\item
+  If Finite-Shadow Projection (\hypertarget{math-E0027-0172}{}{\(\Omega_{\kappa}\)}) is omitted, continuum models claim unbounded authority without query-relative finite projections, routing to \hypertarget{math-E0125-0173}{}{\(\mathsf{ContinuumShadowBecomesFakeAuthority}\)}.
+\item
+  If Typed Residual Closure (\hypertarget{math-E0028-0174}{}{\(\Omega_{\Lambda\Omega}\)}) is omitted, unabsorbable conflicts lack a lawful non-execution terminal, routing to \hypertarget{math-E0059-0175}{}{\(\mathsf{ResidualGetsHiddenOrRenamed}\)}.
+\end{itemize}
+
+The mechanized Lean formalization verifies constructor bijections, injectivity, refusal absorption, and quotient boundaries; it formalizes the declared contractual routing, not an architectural-necessity claim.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{7. Query-Relative Finite Shadows for Continuous Models}\label{query-relative-finite-shadows-for-continuous-models}
+
+In machine learning and agentic workflows, many models operate over continuous spaces (e.g., real-valued neural network weights, high-dimensional latent embeddings, probability distributions, continuous time trajectories).
+
+We assert the finite-shadow principle:
+
+\hypertarget{math-E0126-0176}{}{\[\boxed{ \text{Continuum coherence is not authority. Operational authority is finite-shadow, query-relative, and certificate-compatible.} }\]}
+
+This does not imply that continuous mathematics is invalid. Rather, it recognizes that in physical and computational systems, an execution decision is discrete and must be verified against finite, inspectable evidence.
+
+\subsubsection{7.1 Finite coverage and query factorization}\label{finite-coverage-and-query-factorization}
+
+A finite set of checked projections establishes only the declared finite coverage contract. For an exact query \hypertarget{math-E0127-0177}{}{\(Q:X\to T\)}, a projection \hypertarget{math-E0128-0178}{}{\(q_J:X\to Y_J\)} suffices precisely when there is a function \hypertarget{math-E0129-0179}{}{\(\widehat Q:q_J(X)\to T\)} with
+
+\hypertarget{math-E0130-0180}{}{\[Q=\widehat Q\circ q_J.\]}
+
+Equivalently, \hypertarget{math-E0131-0181}{}{\(Q\)} must be constant on the fibers of \hypertarget{math-E0132-0182}{}{\(q_J\)}. This is a specification to justify for each query. The Python finite-shadow checker checks supplied coherence data; it does not prove this factorization or grant authorization. A finite collection of projections is not automatically cofinal in an infinite index category; for example, no finite subset is cofinal in \hypertarget{math-E0133-0183}{}{\((\mathbb N,\le)\)}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{8. Typed Residual Closure and Honest Refusal (``I Do Not Know'')}\label{typed-residual-closure-and-honest-refusal-i-do-not-know}
+
+A primary driver of catastrophic agentic failure is the refusal to fail honestly. When an agent cannot solve a task or reconcile conflicting requirements, conventional systems often hallucinate an answer, average the contradiction, or loop indefinitely.
+
+The Residual Closure role (\hypertarget{math-E0028-0184}{}{\(\Omega_{\Lambda\Omega}\)}) provides a typed, lawful terminal for unabsorbable conflict.
+
+\subsubsection{Table 3: Mathematical classes and operational outcomes}\label{table-3-mathematical-classes-and-operational-outcomes}
+
+Mathematically, let \hypertarget{math-E0134-0185}{}{\(\operatorname{Exact}(r) \iff \exists\alpha,\ d_0\alpha = r\)} and \hypertarget{math-E0135-0186}{}{\(\operatorname{Closed}(r) \iff d_1 r = 0\)} in the declared complex. We distinguish:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \hypertarget{math-E0015-0187}{}{\(r = 0\)}: Zero defect;
+\item
+  \hypertarget{math-E0136-0188}{}{\(r \neq 0\)} and \hypertarget{math-E0137-0189}{}{\(\operatorname{Exact}(r)\)}: Nonzero but repairable defect;
+\item
+  \hypertarget{math-E0138-0190}{}{\(\operatorname{Closed}(r)\)} and \hypertarget{math-E0139-0191}{}{\(\neg\operatorname{Exact}(r)\)}: Closed, non-exact residual;
+\item
+  \hypertarget{math-E0140-0192}{}{\(\neg\operatorname{Closed}(r)\)}: Open residual.
+\end{enumerate}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Mathematical Condition
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Terminal Constructor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Operational Interpretation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Action Implication
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Zero defect \hypertarget{math-E0015-0193}{}{\(r = 0\)} & \hypertarget{math-E0058-0194}{}{\(\mathsf{ResolvedExact}\)} & Exact closure evaluated; invariant holds. & Requires distinct verification gate to issue authority. \\
+Nonzero exact defect \hypertarget{math-E0136-0195}{}{\(r \neq 0\)}, \hypertarget{math-E0137-0196}{}{\(\operatorname{Exact}(r)\)} & \hypertarget{math-E0058-0197}{}{\(\mathsf{ResolvedExact}\)} & Nonzero repairable defect in \hypertarget{math-E0141-0198}{}{\(\operatorname{im}(d_0)\)}. & Requires verified repair witness \hypertarget{math-E0054-0199}{}{\(\alpha\)}; authority withheld otherwise. \\
+Closed non-exact residual \hypertarget{math-E0053-0200}{}{\(\bar{d}_1(r) = 0\)}, \hypertarget{math-E0139-0201}{}{\(\neg\operatorname{Exact}(r)\)} & \hypertarget{math-E0142-0202}{}{\(\mathsf{ClosedResidual}\)} & Stable survivor defect; real unabsorbable conflict. & Block execution; route to human governance. \\
+Open boundary defect \hypertarget{math-E0143-0203}{}{\(\bar{d}_1(r) \neq 0\)} & \hypertarget{math-E0144-0204}{}{\(\mathsf{OpenResidual}\)} & Open boundary condition; incomplete evaluation. & Block execution; request additional evidence. \\
+Verified through dimension \hypertarget{math-E0145-0205}{}{\(N\)} & \hypertarget{math-E0146-0206}{}{\(\mathsf{CoherentUpTo}(N)\)} & Finite-horizon honesty; bounded coherence. & Coherence within horizon; does not grant execution authority. \\
+Computational budget exhausted & \hypertarget{math-E0147-0207}{}{\(\mathsf{BudgetUnknown}\)} & Resource ceiling reached; honest ``I do not know''. & Halt immediately; refuse speculative completion. \\
+\end{longtable}
+
+The \hypertarget{math-E0147-0208}{}{\(\mathsf{BudgetUnknown}\)} constructor records an incomplete computation. The label alone does not certify that the budget was enforced; that requires an execution record.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{9. Replay Custody, Verification Receipts, and Operator Memory}\label{replay-custody-verification-receipts-and-operator-memory}
+
+The Python reference model uses a verifier-owned in-memory receipt registry. It prevents a caller-supplied token from passing the local contract check, but it is not cryptographic custody, persistence, or independent third-party verification.
+
+\subsubsection{9.1 Verification Receipt Structure}\label{verification-receipt-structure}
+
+The following is an illustrative schema, not a cryptographic protocol or a claim of independent verification:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\{}
+  \DataTypeTok{"proposal\_id"}\FunctionTok{:} \DecValTok{10482}\FunctionTok{,}
+  \DataTypeTok{"proposal\_hash"}\FunctionTok{:} \StringTok{"sha256:7f83b165..."}\FunctionTok{,}
+  \DataTypeTok{"verifier\_identity"}\FunctionTok{:} \StringTok{"cochain\_exactness\_oracle\_v2"}\FunctionTok{,}
+  \DataTypeTok{"replayable"}\FunctionTok{:} \KeywordTok{true}\FunctionTok{,}
+  \DataTypeTok{"execution\_receipt"}\FunctionTok{:} \FunctionTok{\{}
+    \DataTypeTok{"timestamp\_epoch"}\FunctionTok{:} \DecValTok{1788825600}\FunctionTok{,}
+    \DataTypeTok{"stages\_passed"}\FunctionTok{:} \OtherTok{[}\StringTok{"obstruction"}\OtherTok{,} \StringTok{"transport"}\OtherTok{,} \StringTok{"descent"}\OtherTok{,} \StringTok{"verify"}\OtherTok{,} \StringTok{"terminalize"}\OtherTok{]}\FunctionTok{,}
+    \DataTypeTok{"defect\_norm"}\FunctionTok{:} \StringTok{"0.0"}\FunctionTok{,}
+    \DataTypeTok{"receipt\_digest"}\FunctionTok{:} \StringTok{"sha256:e3b0c442..."}
+  \FunctionTok{\}}
+\FunctionTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+In the reference model, replay means that the issuing in-memory registry recognizes the exact proposal binding. It provides neither cross-process custody nor cryptographic authenticity.
+
+\subsubsection{9.2 Reuse after a new check}\label{reuse-after-a-new-check}
+
+A stored successful run may inform a later proposal. Reusing it requires checking the current proposal, context, contract, and evidence again. Persistent, authenticated receipts and independent custody are future implementation work; the shipped in-memory registry does not supply them.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{10. Deterministic Adversarial Fixture Suite}\label{deterministic-adversarial-fixture-suite}
+
+This deterministic fixture suite evaluates 20 hand-authored strings and metadata mappings against fixed rules (\texttt{code/adversarial\_benchmark.py}). It performs no LLM invocation, sampling, or empirical model comparison.
+
+The suite includes 16 adversarially labelled fixtures and four benign fixtures covering input injection strings, role flags, payload mutation, capability checks, confidence claims, and receipt replay. These are hand-authored regression cases, not a sampled threat population.
+
+\subsubsection{10.2 Fixture Classification Results}\label{fixture-classification-results}
+
+The baseline is a deliberately hard-coded always-allow classifier. Its results are a reference row, not a measured baseline agent.
+
+\subsubsection{Table 4: Deterministic Fixture Classification}\label{table-4-deterministic-fixture-classification}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2222}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2778}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2778}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2222}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Metric
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Always-allow classifier
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Five-Stage Authority Pipeline
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Architectural Meaning
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Total Test Cases} & 20 & 20 & Complete benchmark suite evaluated \\
+\textbf{Adversarial Attack Cases} & 16 & 16 & Prompt injection, tool hijacking, role tampering, and spoofing \\
+\textbf{Attacks Intercepted} & 0 / 16 (0.0\%) & 16 / 16 (100.0\%) & Fail-closed refusal on all adversarial attempts \\
+\textbf{Benign Workflows Preserved} & 4 / 4 (100.0\%) & 4 / 4 (100.0\%) & Legitimate proposals reach valid terminal authority \\
+\textbf{False Refusals (False Positives)} & 0 / 4 (0.0\%) & 0 / 4 (0.0\%) & No benign fixture rejected \\
+\textbf{Overall Accuracy} & 4 / 20 (20.0\%) & 20 / 20 (100.0\%) & Correct classification and routing across all inputs \\
+\textbf{Attack Detection Recall} & 0.0\% & 100.0\% & All listed adversarial fixtures rejected \\
+\textbf{Benign Specificity} & 100.0\% & 100.0\% & Clean preservation of valid capability grants \\
+\end{longtable}
+
+\subsubsection{10.3 Fixture-Suite Claim Boundaries}\label{fixture-suite-claim-boundaries}
+
+Under the declared Claim Hygiene protocol:
+
+\begin{itemize}
+\item
+  \textbf{What this supports:} The fixed rules classify the 20 checked fixtures as expected.
+\item
+  \textbf{What this does not support:} It is not an LLM evaluation, a security benchmark, or evidence of cryptographic or independent verification.
+\item
+  \textbf{Narrowest defensible claim:} The reference contract refuses the listed malformed fixture inputs and registry validation rejects a hand-written receipt.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{11. Scope, Limitations, and Falsifiability}\label{scope-limitations-and-falsifiability}
+
+In accordance with strict claim hygiene, we make the following explicit non-claims:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{No Claim of Unconstrained AI Safety:} This monograph does not claim that the Omega Tower makes AI ``unconditionally safe'' or solves alignment in an absolute sense. It provides an architectural mechanism for fail-closed separation of privilege and role accountability.
+\item
+  \textbf{Compression Admissibility:} We do not claim that six separate software microservices must exist in every implementation. Components may be fused provided all six functional obligations and typed failure terminals are preserved.
+\item
+  \textbf{Implementation Falsifiability Challenge:} The architecture is falsifiable. If an investigator demonstrates an accepted terminal authority outcome for which any required obligation lacks valid supporting evidence under the declared contract, the authority gate implementation is refuted.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{12. References}\label{references}
+
+\begin{itemize}
+\item
+  Clark, D. D., \& Wilson, D. R. (1987). A comparison of commercial and military computer security policies. In \emph{IEEE Symposium on Security and Privacy} (pp.~184-195).
+\item
+  Dennis, J. B., \& Van Horn, E. C. (1966). Programming semantics for multiprogrammed computations. \emph{Communications of the ACM}, 9(3), 143-155.
+\item
+  Klein, G., Elphinstone, K., Heiser, G., Andronick, J., Cock, D., Derrin, P., Elkaduwe, D., Engelhardt, K., Kolanski, R., Norrish, M., Sewell, T., Tuch, H., \& Winwood, S. (2009). seL4: Formal verification of an OS kernel. In \emph{ACM SIGOPS Operating Systems Review} (Vol. 43, No.~4, pp.~207-220).
+\item
+  Lawvere, F. W. (1969). Adjointness in foundations. \emph{Dialectica}, 23(3/4), 281-296.
+\item
+  Lawvere, F. W. (1970). Equality in hyperdoctrines and comprehension schema as an adjoint functor. In \emph{Applications of Categorical Algebra} (Proc. Sympos. Pure Math., Vol. XVII, pp.~1-14). AMS.
+\item
+  Miller, M. S., Tulloh, B., \& Shapiro, J. S. (2005). The Structure of Authority: Why Security Is Not a Separable Concern. In \emph{Multiparadigm Programming in Mozart/Oz} (Lecture Notes in Computer Science, Vol. 3389, pp.~2-20). Springer.
+\item
+  Moggi, E. (1991). Notions of computation and monads. \emph{Information and Computation}, 93(1), 55-92.
+\item
+  Saltzer, J. H., \& Schroeder, M. D. (1975). The protection of information in computer systems. \emph{Proceedings of the IEEE}, 63(9), 1278-1308.
+\item
+  Wadler, P. (1992). The essence of functional programming. In \emph{Proceedings of the 19th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages} (pp.~1-14).
+\item
+  Zheng, L., Chiang, W. L., Sheng, Y., Tian, S., Wu, C., Zhuang, H., Hao, Z., Zhu, B., Kwon, W., Liu, D., \& Xing, E. P. (2023). Judging LLM-as-a-judge with MT-Bench and Chatbot Arena. \emph{Advances in Neural Information Processing Systems}, 36.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Appendix A: Summary of Machine-Checked Lean 4 Kernels}\label{appendix-a-summary-of-machine-checked-lean-4-kernels}
+
+The formal results in this monograph are verified in a self-contained Lean 4 package (\texttt{lean4/}), compiling under toolchain \texttt{v4.34.0} with zero \texttt{sorry} placeholders and strictly audited standard axioms (\texttt{Quot.sound}, \texttt{propext}):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{\texttt{RoleFailure.lean}}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Enumeration of \texttt{Role} (6 constructors) and \texttt{FailureMode} (6 constructors).
+  \item
+    Bijective mappings \texttt{roleToFailure} and \texttt{failureToRole}.
+  \item
+    Proofs: \texttt{failureToRole\_roleToFailure}, \texttt{roleToFailure\_failureToRole}, \texttt{roleToFailure\_injective}, \texttt{roleToFailure\_ne\_of\_ne}, \texttt{failureToRole\_injective}.
+  \item
+    Formalization of \texttt{collapseOutcome} and \texttt{collapse\_failure\_identifies\_removed\_role}.
+  \item
+    Obligation vector readiness: \texttt{missing\_obligation\_not\_ready}.
+  \end{itemize}
+\item
+  \textbf{\texttt{ExceptionPipeline.lean}}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Refusal monad \texttt{RefusalM\ T\ =\ success\ T\ \textbar{}\ refusal\ String}.
+  \item
+    Kleisli bind and Monad laws (\texttt{bind\_pure}, \texttt{bind\_right\_id}, \texttt{bindR\_assoc}).
+  \item
+    Left-zero absorption: \texttt{bindR\_refusal\_left\_zero}.
+  \item
+    Five-stage pipeline \texttt{pipeline5} and refusal propagation theorems for all five stages.
+  \end{itemize}
+\item
+  \textbf{\texttt{AuthorityResidual.lean}}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Proposal structure and \texttt{AuthorityToken} with replay custody.
+  \item
+    Terminal constructors: \texttt{authority}, \texttt{residualClosed}, \texttt{residualOpen}, \texttt{refusal}, \texttt{budgetUnknown}.
+  \item
+    Terminal constructor disjointness: \texttt{authority\_not\_residual}, \texttt{authority\_not\_refusal}, \texttt{residual\_not\_refusal}.
+  \item
+    Formal dependent type \texttt{Auth(p)} requiring valid, replayable tokens.
+  \item
+    Non-authority theorems for residual, refusal, and unreplayable tokens.
+  \item
+    Cohomological defect classification and the \texttt{non\_exact\_residual\_not\_resolved} and \texttt{renamed\_non\_exact\_as\_resolved\_contradiction} theorems.
+  \end{itemize}
+\item
+  \textbf{\texttt{QuotientBoundary.lean}}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Formalization of typed packets carrying \texttt{(payload,\ role)}.
+  \item
+    Definition of payload-erasure quotient using \texttt{Setoid} and \texttt{Quotient}.
+  \item
+    Two-way bridge theorem \texttt{payload\_classifier\_factors\_iff}.
+  \item
+    Direct non-existence theorem \texttt{role\_failure\_no\_quotient\_factor}: No quotient factor exists on the payload-only quotient for the role failure classifier.
+  \item
+    Theorem \texttt{role\_failure\_not\_factor\_through\_payload\_quotient}: Fiber invariance fails across distinct roles.
+  \item
+    Theorem \texttt{payload\_green\_role\_failure\_red}: Equal payloads may carry different role-failure labels; the role-sensitive classifier therefore cannot be recovered from the payload-only quotient.
+  \end{itemize}
+\item
+  \textbf{\texttt{AuthorityDescent.lean}}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Formalization of Lawvere universal quantification \hypertarget{math-E0148-0209}{}{\(\forall_q A(y) := \forall x, q(x) = y \to A(x)\)}.
+  \item
+    Adjunction theorem \texttt{lawvere\_adjunction}: \hypertarget{math-E0149-0210}{}{\(q^{-1}(B) \subseteq A \iff B \subseteq \forall_q A\)}.
+  \item
+    Theorem \texttt{descent\_soundness}: Sound authority descent along any projection.
+  \item
+    Theorem \texttt{descent\_maximality}: Any sound transported authority predicate factors through \hypertarget{math-E0064-0211}{}{\(\forall_q A\)}.
+  \item
+    Theorem \texttt{exact\_preservation\_iff\_fiber\_constant}: Exact descent holds if and only if authority is constant on fibers.
+  \item
+    Theorem \texttt{mixed\_fiber\_obstruction}: A mixed fiber prevents lossless authority transport.
+  \item
+    Theorem \texttt{descent\_composition}: Adjoint functoriality under projection composition \hypertarget{math-E0150-0212}{}{\(\forall_{q_2} (\forall_{q_1} A) = \forall_{q_2 \circ q_1} A\)}.
+  \item
+    Theorem \texttt{descent\_conjunction}: Distribution of universal quantification across obligation conjunctions.
+  \end{itemize}
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\end{document}

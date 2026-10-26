@@ -1,0 +1,740 @@
+{
+  "review_date": "2026-10-16",
+  "source_baseline_commit": "a93efbd5f432bc91f88e27d85c1ad99436147b52",
+  "publication_status": "PREPARED_REVISION_NOT_UPLOADED",
+  "external_deposit_performed": false,
+  "cold_archive_replay": {
+    "paper": "019_observer_robust_control_of_obstruction_diagnostics",
+    "verification_exit": 0,
+    "tests_exit": 0,
+    "verification_output": "OK: complete archive, sidecar and member bytes verified.\nOK: Manifest and two-way sweep checks passed.\nOK: Lean proofs and axiom census verified.\n\nVerification PASSED.\n",
+    "test_output": "......                                                                   [100%]\n6 passed in 1.22s\n\n....................                                                     [100%]\n20 passed in 1.19s\n\n.....                                                                    [100%]\n5 passed in 1.57s\n",
+    "archive_sha256": "4db7872577bcacfffa6d5a62dd76909fe5725d6300b5f33d62f9bb8d7fa20690"
+  },
+  "isolated_distribution_install": {
+    "paper": "019_observer_robust_control_of_obstruction_diagnostics",
+    "install_exit": 0,
+    "install_output": "Using CPython 3.13.11 interpreter at: C:\\Users\\a343o\\source\\repos\\the_symbol_game\\.venv\\Scripts\\python.exe\nResolved 1 package in 2ms\n   Building paper-019-observer-control @ file:///C:/Users/a343o/.codex/worktrees/222a/the_symbol_game/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/019_observer_robust_control_of_obstruction_diagnostics\n      Built paper-019-observer-control @ file:///C:/Users/a343o/.codex/worktrees/222a/the_symbol_game/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/019_observer_robust_control_of_obstruction_diagnostics\nPrepared 1 package in 1.28s\nInstalled 1 package in 5ms\n + paper-019-observer-control==2.1.2 (from file:///C:/Users/a343o/.codex/worktrees/222a/the_symbol_game/omega_engine_atlas/coda_atlas/F004_papers/001_finite_obstruction_calculus/019_observer_robust_control_of_obstruction_diagnostics)\n",
+    "import_exit": 0,
+    "import_output": "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\16\\01a145cd-4246-7653-965f-396e1a731f67\\installed-019\\mod_observer_robust_control_core.py\n"
+  },
+  "python_version": "3.13.11",
+  "python_tests_passed": 31,
+  "lean_toolchain": "leanprover/lean4:v4.33.1",
+  "lean_declarations_audited": 28,
+  "render": {
+    "source": "observer_control.md",
+    "tex": "observer_control.tex",
+    "pdf": "observer_control.pdf",
+    "sha256": {
+      "observer_control.md": "aa20e9dad3ddc19a6d5b964bec0725fce0d037641b9efe8447aa375e2eaa5038",
+      "observer_control.tex": "8ccc604a132ea2c5f3893e0c6247553e6f84b1452f9500b2da93e09286a3de1f",
+      "observer_control.pdf": "ab927e1c5b6fbff8a91a5386491627c5fdd9f3a2afe3b27c95ba0fa543af1559",
+      "scripts/build_pdf.py": "c39dd7c84fa3bd3a108bff9fb7f50bdc22327943407bb33109dae6f61611f2b4",
+      "scripts/paper_code_wrap.lua": "49aa40211133c471072887d6b4d86b20456af19c69af1e9c41e336041fd8d051"
+    },
+    "pages": 3,
+    "missing_glyphs": 0,
+    "overfull_hbox_gt_10pt": 0,
+    "pandoc": "pandoc 3.7.0.2",
+    "xelatex": "MiKTeX-XeTeX 4.16 (MiKTeX 25.12)",
+    "passes": 3,
+    "formal_replay": "NOT_PERFORMED"
+  },
+  "visual_review": {
+    "all_pages_inspected": true,
+    "pages": 3,
+    "finding": "No clipped mathematics, missing text or stranded references observed."
+  },
+  "lint": {
+    "markdown_files_across_four_packages": 28,
+    "markdown_exit": 0,
+    "python_files_across_four_packages": 48,
+    "ruff_rule_selection": "E9,F63,F7,F82",
+    "ruff_exit": 0
+  },
+  "broader_republication_checklist": {
+    "catalog_version": "omega.paper-republication-checklist.v1",
+    "catalog_origin": "new enumeration derived from canonical A-I obligations",
+    "snapshot_sha256": "9c5d0db77519665b0ad45ed6c465670b376d3362cc4f174338288ed93d03db0f",
+    "files": [
+      {
+        "path": "LICENSE",
+        "bytes": 18656,
+        "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "bytes": 11347,
+        "sha256": "dd34e7cd31897051ac37dc4f90708b1f120c778c6261c057122a47c9c050f338"
+      },
+      {
+        "path": "MANIFEST.sha256",
+        "bytes": 3238,
+        "sha256": "95c78fecf841c66fb542f40ea5e0ece7a165a430cdd95f074d33d0ca2304b305"
+      },
+      {
+        "path": "README.md",
+        "bytes": 1884,
+        "sha256": "ae9350ae3a79238fdd154d8a0522bb7bb482c6ab97455add85524c9d42183d41"
+      },
+      {
+        "path": "SHA256SUMS",
+        "bytes": 3320,
+        "sha256": "cff79a855a28203cd2e56a82d9d15b5c1b85c52f2879200a84ddff1dd1bcf38d"
+      },
+      {
+        "path": "code/deposit_paths.py",
+        "bytes": 4124,
+        "sha256": "c109aca88bc747b8578442a644adbdb6378a2bf8f42a95c14840535494898892"
+      },
+      {
+        "path": "code/mod_observer_robust_control_core.py",
+        "bytes": 19605,
+        "sha256": "a073a4a5fa9721c67bdded2ef106821045cb5137228144a2c8273ace243dd244"
+      },
+      {
+        "path": "code/tests/__init__.py",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "code/tests/test_coordinate_scope.py",
+        "bytes": 2152,
+        "sha256": "8ee9533ae953380bf7174e227433e89d1a48ba0d6886027b891e18c5e69af1f6"
+      },
+      {
+        "path": "code/tests/test_observer_robust_control.py",
+        "bytes": 21846,
+        "sha256": "d198a58068448c4ad421f5e1b518960735036cf113d999e8e7bd8b7b85cac061"
+      },
+      {
+        "path": "code/tests/test_release_envelope.py",
+        "bytes": 3510,
+        "sha256": "f5269d15270e9ddd44d9bd774d144e8dee62988b0e9308327c2e93facc410c05"
+      },
+      {
+        "path": "docs/descriptions.md",
+        "bytes": 2778,
+        "sha256": "14f3f32f6a6cbef1926dcd9d7fc986880834c6dc7b456c32248636c7dcc18536"
+      },
+      {
+        "path": "docs/keywords.md",
+        "bytes": 133,
+        "sha256": "1b3d0a7473fd31feaca89275e590da9a8eb691742cb11a5c8dab8380286c24dd"
+      },
+      {
+        "path": "docs/quick_start.md",
+        "bytes": 1281,
+        "sha256": "07bc68953a1c145b1640b9a82be48136e878a17084eccf28a6465f27b4f317b6"
+      },
+      {
+        "path": "docs/references.md",
+        "bytes": 331,
+        "sha256": "eab74a962ed55b7d60a6ed5bbba54919936737c2753cab99fa2b857edb6e311f"
+      },
+      {
+        "path": "lean4/Census.lean",
+        "bytes": 1583,
+        "sha256": "3ac3c5eaafeb7df371b9a12145f3786a1f6b3ab638e3c138ac7d853ede366d25"
+      },
+      {
+        "path": "lean4/JointDetectorAdequacy.lean",
+        "bytes": 8033,
+        "sha256": "a5b53fbb99a2a1d8f9d143c5c911961660d8e90b7577cde56a6191c697f48dab"
+      },
+      {
+        "path": "lean4/ObserverRobustControlCore.lean",
+        "bytes": 3553,
+        "sha256": "fa5e5a6ada5304d4fe1576e57f6712624b2465b06d0e99cdc534f98cf387cbc0"
+      },
+      {
+        "path": "lean4/axiom_binding.json",
+        "bytes": 2225,
+        "sha256": "8050c433646f78a5531995f4f964ab86635694960030c87208ea1cfdb836d9f7"
+      },
+      {
+        "path": "lean4/axiom_report.txt",
+        "bytes": 1992,
+        "sha256": "9e82f2d3151f87fe9cb2131116c481459b67a9fe31cde1a859b7f390b845bf73"
+      },
+      {
+        "path": "lean4/lake-manifest.json",
+        "bytes": 155,
+        "sha256": "9bb2dc663406c9706067297da0455ea30d63065bf9b2c8f2514e3670b850ad86"
+      },
+      {
+        "path": "lean4/lakefile.lean",
+        "bytes": 258,
+        "sha256": "8de736e18723e6473e332d1249889ed458fc3ad65588a8f2a53e3d7f2ca88ad9"
+      },
+      {
+        "path": "lean4/lean-toolchain",
+        "bytes": 25,
+        "sha256": "3aac669c7a910ec2389f4e4f921b605adf6ebf2d1e0c9b9cd0be4d33f3f5db71"
+      },
+      {
+        "path": "observer_control.md",
+        "bytes": 10018,
+        "sha256": "aa20e9dad3ddc19a6d5b964bec0725fce0d037641b9efe8447aa375e2eaa5038"
+      },
+      {
+        "path": "observer_control.pdf",
+        "bytes": 102908,
+        "sha256": "ab927e1c5b6fbff8a91a5386491627c5fdd9f3a2afe3b27c95ba0fa543af1559"
+      },
+      {
+        "path": "observer_control.tex",
+        "bytes": 12572,
+        "sha256": "8ccc604a132ea2c5f3893e0c6247553e6f84b1452f9500b2da93e09286a3de1f"
+      },
+      {
+        "path": "observer_control_change_log.md",
+        "bytes": 574,
+        "sha256": "8a72e5961069469535c45c7f7b9237fc2664471f3d7e28fa99e4a23bb6600843"
+      },
+      {
+        "path": "pyproject.toml",
+        "bytes": 612,
+        "sha256": "c06789bc916726333fd68c70270549a9a9d9a2def46418227ca8080debdd8318"
+      },
+      {
+        "path": "release_identity.json",
+        "bytes": 852,
+        "sha256": "120d6720c5a0b0bb12f37fe0d37b8719552363153f98c1452ea17011b73c29bb"
+      },
+      {
+        "path": "render_binding.json",
+        "bytes": 805,
+        "sha256": "24e600f296c82bdcb179d469d27c0adc06930cfea78c5568642e2dc44d694b3f"
+      },
+      {
+        "path": "scripts/build_pdf.py",
+        "bytes": 3405,
+        "sha256": "c39dd7c84fa3bd3a108bff9fb7f50bdc22327943407bb33109dae6f61611f2b4"
+      },
+      {
+        "path": "scripts/paper_code_wrap.lua",
+        "bytes": 244,
+        "sha256": "49aa40211133c471072887d6b4d86b20456af19c69af1e9c41e336041fd8d051"
+      },
+      {
+        "path": "scripts/regen_sha256sums.py",
+        "bytes": 3171,
+        "sha256": "e70ac60626e51034c3feff95fd68054bec6c949cd600eedafa1dbbc11b837527"
+      },
+      {
+        "path": "tools/rebuild_release.py",
+        "bytes": 14770,
+        "sha256": "1b00949fdf8f1e9af56db87c0923a7b9d4f2418bc8e467faf12e75791fd1f886"
+      },
+      {
+        "path": "tools/replay_lean_axiom_census.py",
+        "bytes": 4534,
+        "sha256": "d28818649897af1e24e5e12325941e40a7373b772224b2eb492e3ab91e5bba7f"
+      },
+      {
+        "path": "tools/validate_release.py",
+        "bytes": 3796,
+        "sha256": "a8d0c1f9be1a04f95e4efdb373ad3daa17d34c1547de1a942d5dc4edb6a01425"
+      },
+      {
+        "path": "verify_deposit.py",
+        "bytes": 8112,
+        "sha256": "f9f458cb87729fa9e513ceba6577bcf7d7beddcda4b10bfabaed785d130a2498"
+      },
+      {
+        "path": "zenodo_metadata.json",
+        "bytes": 2545,
+        "sha256": "efc232eceddf9c682e3a084460ba19655fc5567f7ac413fdedfaf781bb3a5c29"
+      }
+    ],
+    "checks": [
+      {
+        "id": "A01",
+        "channel": "A",
+        "method": "static",
+        "requirement": "Regular files and safe relative paths",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Snapshot contains only regular files with canonical relative names; cache directories were pruned before descent."
+      },
+      {
+        "id": "A02",
+        "channel": "A",
+        "method": "static",
+        "requirement": "Paths fit the declared Windows depth limit",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "All audited absolute paths must fit 250 characters."
+      },
+      {
+        "id": "A03",
+        "channel": "A",
+        "method": "static",
+        "requirement": "Canonical manuscript and release companions exist",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "FAIL",
+        "detail": "Missing/empty required files: []; scoped inventory: False; legacy claim ledgers: 0; change log required."
+      },
+      {
+        "id": "A04",
+        "channel": "A",
+        "method": "static",
+        "requirement": "Two-way manifest file sets agree",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Compared both complete file sets with the actual snapshot."
+      },
+      {
+        "id": "A05",
+        "channel": "A",
+        "method": "static",
+        "requirement": "Every manifest digest matches current bytes",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Checksum mismatches or missing files: []"
+      },
+      {
+        "id": "A06",
+        "channel": "A",
+        "method": "static",
+        "requirement": "Checksum manifests exclude themselves and outer archives",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "No self-reference or release ZIP is checksum payload."
+      },
+      {
+        "id": "A07",
+        "channel": "A",
+        "method": "static",
+        "requirement": "ZIP members are unique regular files matching the payload",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_APPLICABLE",
+        "detail": "No outer ZIP is present; an extracted package can still verify its payload."
+      },
+      {
+        "id": "A08",
+        "channel": "A",
+        "method": "static",
+        "requirement": "Declared release version and date agree across available metadata",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Compared metadata version/date with manuscript, README and available citation/project versions."
+      },
+      {
+        "id": "B01",
+        "channel": "B",
+        "method": "review",
+        "requirement": "Definitions, domains and hypotheses are mathematically adequate",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "B02",
+        "channel": "B",
+        "method": "review",
+        "requirement": "Proof steps establish the stated conclusions",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "B03",
+        "channel": "B",
+        "method": "review",
+        "requirement": "Degenerate and adversarial mathematical cases were examined",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "B04",
+        "channel": "B",
+        "method": "review",
+        "requirement": "Evidence ceilings match all substantive claims",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "B05",
+        "channel": "B",
+        "method": "review",
+        "requirement": "Citations resolve to the claimed external works and support their use",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "B06",
+        "channel": "B",
+        "method": "review",
+        "requirement": "Limitations and open obligations remain explicit",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "C01",
+        "channel": "C",
+        "method": "static",
+        "requirement": "Deposited PDF parses and contains pages",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "PyMuPDF is unavailable; PDF parsing/text comparison was not run."
+      },
+      {
+        "id": "C02",
+        "channel": "C",
+        "method": "static",
+        "requirement": "PDF text includes the declared title, version and date",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "PyMuPDF is unavailable; PDF parsing/text comparison was not run."
+      },
+      {
+        "id": "C03",
+        "channel": "C",
+        "method": "static",
+        "requirement": "TeX source exists and avoids a generated maketitle block",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "TeX presence, title-command, missing-glyph log, and Markdown MD004/MD034 checks passed."
+      },
+      {
+        "id": "C04",
+        "channel": "C",
+        "method": "execution",
+        "requirement": "Current source regenerates the deposited publication content",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "C05",
+        "channel": "C",
+        "method": "review",
+        "requirement": "Every PDF page was visually inspected",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "D01",
+        "channel": "D",
+        "method": "static",
+        "requirement": "Claim ledger has nonempty unique identifiers",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "FAIL",
+        "detail": "0 ledger identifiers; checked nonempty uniqueness."
+      },
+      {
+        "id": "D02",
+        "channel": "D",
+        "method": "review",
+        "requirement": "Material claims and evidence map in both directions",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "D03",
+        "channel": "D",
+        "method": "static",
+        "requirement": "Explicit pytest references resolve to local functions",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "FAIL",
+        "detail": "Unresolved pytest references: []; inspected 0 references."
+      },
+      {
+        "id": "D04",
+        "channel": "D",
+        "method": "review",
+        "requirement": "Formal statements match prose and ledger scope",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "D05",
+        "channel": "D",
+        "method": "execution",
+        "requirement": "Advertised numerical metrics match actual collection and results",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "E01",
+        "channel": "E",
+        "method": "static",
+        "requirement": "Python tests use the package code/tests location",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "3 named test files under code/tests; no execution inferred."
+      },
+      {
+        "id": "E02",
+        "channel": "E",
+        "method": "execution",
+        "requirement": "Named tests pass within bounded subprocess runs",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "E03",
+        "channel": "E",
+        "method": "execution",
+        "requirement": "Runtime line and branch coverage meet the declared threshold",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "E04",
+        "channel": "E",
+        "method": "execution",
+        "requirement": "Exact arithmetic and malformed inputs pass adversarial checks",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "E05",
+        "channel": "E",
+        "method": "execution",
+        "requirement": "Certificate and verifier tamper attacks fail for intended reasons",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "E06",
+        "channel": "E",
+        "method": "execution",
+        "requirement": "Declared lint and type gates pass",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "E07",
+        "channel": "E",
+        "method": "static",
+        "requirement": "Pytest sources do not directly import notebook execution clients",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Direct notebook-client imports in test sources: []; dynamic imports require review."
+      },
+      {
+        "id": "E08",
+        "channel": "E",
+        "method": "execution",
+        "requirement": "Documented installation and imports work in isolation",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "F01",
+        "channel": "F",
+        "method": "static",
+        "requirement": "Notebook JSON has supported cell structure",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_APPLICABLE",
+        "detail": "No corresponding artifacts or explicit claims were found; this is a scoped applicability decision."
+      },
+      {
+        "id": "F02",
+        "channel": "F",
+        "method": "static",
+        "requirement": "Stored code cells have execution counts and no error outputs",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_APPLICABLE",
+        "detail": "No corresponding artifacts or explicit claims were found; this is a scoped applicability decision."
+      },
+      {
+        "id": "F03",
+        "channel": "F",
+        "method": "execution",
+        "requirement": "Fresh replay matches deposited notebook outputs",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_APPLICABLE",
+        "detail": "No corresponding artifacts or explicit claims were found; this is a scoped applicability decision."
+      },
+      {
+        "id": "F04",
+        "channel": "F",
+        "method": "static",
+        "requirement": "Notebook code has no machine-specific absolute user paths",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_APPLICABLE",
+        "detail": "No corresponding artifacts or explicit claims were found; this is a scoped applicability decision."
+      },
+      {
+        "id": "F05",
+        "channel": "F",
+        "method": "execution",
+        "requirement": "Notebooks execute independently with the declared interpreter",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_APPLICABLE",
+        "detail": "No corresponding artifacts or explicit claims were found; this is a scoped applicability decision."
+      },
+      {
+        "id": "G01",
+        "channel": "G",
+        "method": "static",
+        "requirement": "Claimed Lean project has one local top-level Lake configuration",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Local Lake configurations: ['lean4/lakefile.lean']"
+      },
+      {
+        "id": "G02",
+        "channel": "G",
+        "method": "static",
+        "requirement": "Lean toolchain is pinned to a version or commit",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Pinned toolchain: 'leanprover/lean4:v4.33.1'"
+      },
+      {
+        "id": "G03",
+        "channel": "G",
+        "method": "static",
+        "requirement": "Lean source scan finds no unresolved proof escape hatches",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Potential proof escape hatches: []; lexical scan is not a kernel check."
+      },
+      {
+        "id": "G04",
+        "channel": "G",
+        "method": "execution",
+        "requirement": "The pinned Lean project actually builds",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "G05",
+        "channel": "G",
+        "method": "static",
+        "requirement": "A nonempty axiom report excludes platform target triples",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Checked report presence and absence of target triples; actual build/census provenance remains a separate obligation."
+      },
+      {
+        "id": "G06",
+        "channel": "G",
+        "method": "review",
+        "requirement": "Actual theorem census and imported axioms match supported claims",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "H01",
+        "channel": "H",
+        "method": "static",
+        "requirement": "README supplies local verification instructions",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "README contains a local verification command; execution and completeness require replay."
+      },
+      {
+        "id": "H02",
+        "channel": "H",
+        "method": "review",
+        "requirement": "Command evidence is current and bound to exact reviewed inputs",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "H03",
+        "channel": "H",
+        "method": "execution",
+        "requirement": "Clean archive extraction reproduces the claimed workflow",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent execution evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "H04",
+        "channel": "H",
+        "method": "static",
+        "requirement": "Release bytes remain unchanged throughout this audit",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Recomputed complete snapshot after inspection; compared path/size/digest identity."
+      },
+      {
+        "id": "H05",
+        "channel": "H",
+        "method": "static",
+        "requirement": "Payload excludes empty placeholders and internal review dossiers",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Internal dossier/placeholder/forbidden envelope paths: []"
+      },
+      {
+        "id": "I01",
+        "channel": "I",
+        "method": "static",
+        "requirement": "Publication metadata has the required identity fields",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "Required identity fields and named creators exist; external record identity is not inferred."
+      },
+      {
+        "id": "I02",
+        "channel": "I",
+        "method": "static",
+        "requirement": "License artifacts exist for the declared distribution",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "PASS",
+        "detail": "License artifacts exist; no legal or external authorization judgment is inferred."
+      },
+      {
+        "id": "I03",
+        "channel": "I",
+        "method": "review",
+        "requirement": "Actual DOI and version/concept relationships are established",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent review evidence; file presence or a claimed PASS is insufficient."
+      },
+      {
+        "id": "I04",
+        "channel": "I",
+        "method": "authorization",
+        "requirement": "Explicit author publication authorization is present",
+        "source": ".agents/skills/omega-paper-review-swarm/references/canonical_zenodo_republication_gate_prompt.md#required-evidence-channels",
+        "status": "NOT_VERIFIED",
+        "detail": "Requires independent authorization evidence; file presence or a claimed PASS is insufficient."
+      }
+    ],
+    "counts": {
+      "PASS": 18,
+      "FAIL": 3,
+      "NOT_APPLICABLE": 6,
+      "NOT_VERIFIED": 25
+    },
+    "recorded_evidence": [],
+    "errors": [],
+    "status": "BLOCKED",
+    "verdict": "NOT READY FOR ZENODO REPUBLICATION",
+    "authority_effect": "None",
+    "limitations": [
+      "Static PASS establishes only its named predicate.",
+      "Imported reports and PASS fields are provenance, never independently verified execution or proof.",
+      "Semantic, execution and authorization obligations need separate independent assessment."
+    ]
+  },
+  "semantic_review_limit": "Prose derivations reviewed by the preparing agent; no independent human referee or author sign-off is represented."
+}

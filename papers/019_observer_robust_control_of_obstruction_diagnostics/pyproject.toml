@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paper-019-observer-control"
+version = "2.1.3"
+description = "Observer-relative control of cochain residuals"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["numpy>=1.26", "scipy>=1.11"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10"]
+
+[tool.setuptools]
+package-dir = {"" = "code"}
+py-modules = ["mod_observer_robust_control_core", "deposit_paths"]
+
+[tool.pytest.ini_options]
+testpaths = ["code/tests"]
+pythonpath = ["code"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100

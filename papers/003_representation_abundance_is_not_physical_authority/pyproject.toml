@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "representation-abundance-is-not-physical-authority"
+version = "2.2.0"
+description = "Representation Abundance Is Not Physical Authority: Finite Selectors, Witnessed Differences, and the Local-Green Boundary"
+readme = "representation_abundance_is_not_physical_authority.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "code"}
+
+[tool.pytest.ini_options]
+testpaths = ["code/tests"]
+pythonpath = ["code", "."]
+addopts = "-p no:debugging -p no:cacheprovider"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+cache-dir = "~/.cache/ruff"
+
+[tool.mypy]
+mypy_path = ["code"]
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true

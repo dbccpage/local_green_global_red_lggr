@@ -1,0 +1,50 @@
+{
+  "title": "Proposal selection and continuation-stable diagnostics on finite graphs",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "publication_date": "2026-10-23",
+  "version": "2.0.5",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "description": "We separate the generation of candidate edge fields from a decision rule based\non independently computed diagnostics. On a finite connected graph, distance\nto the image of the incidence map measures failure of exactness. A declared\nface map supplies a closure residual. A lexicographic comparison of diagnostics,\nsubject to a ratio condition, defines one proposal-selection policy. Equal\ndiagnostic traces have equal decisions by construction, but equal current\ndiagnostics need not remain equal after further proposals. For a declared\nfamily of transformations, we characterize the largest equivalence relation\ninside diagnostic equality that is preserved by every finite continuation.\nWe give explicit cycle examples distinguishing local exactness from global\nexactness, and one-step decisions from continuation-stable state compression.\nExecutable paths additionally require agreement of adjacent endpoint states.\nThe accompanying exact rational checks and Lean results are scoped to their\nstated finite and abstract objects.\n\nThe scalar graph solver uses exact rational witnesses. The vector-valued extension is mathematical, not a generic numerical implementation. Label erasure for one-step decisions does not imply stable state compression under arbitrary continuations.",
+  "keywords": [
+    "finite graphs",
+    "primal-dual witness",
+    "diagnostic equivalence",
+    "continuation-stable quotient"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Software and tests: Apache-2.0. Published record DOI and concept DOI verified on 2026-10-23. This local DOI metadata refresh has not replaced the files deposited on Zenodo.",
+  "related_identifiers": [
+    {
+      "identifier": "https://pi.math.cornell.edu/~hatcher/AT/ATpage.html",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://web.stanford.edu/~boyd/cvxbook/",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.20213064",
+      "relation": "isNewVersionOf",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.20213063",
+      "relation": "isVersionOf",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    }
+  ],
+  "doi": "10.5281/zenodo.23604900"
+}

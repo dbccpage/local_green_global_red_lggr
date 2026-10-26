@@ -1,0 +1,6 @@
+OK: complete archive, sidecar and member bytes verified.
+OK: Manifest and two-way sweep checks passed.
+OK: Lean proofs and axiom census verified.
+
+Verification PASSED.
+

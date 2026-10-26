@@ -1,0 +1,26 @@
+{
+  "id": "20214468",
+  "doi": "10.5281/zenodo.20214468",
+  "titles": [
+    {
+      "title": "Observer-Robust Control of Obstruction Diagnostics"
+    }
+  ],
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H.",
+      "nameType": "Personal",
+      "givenName": "Jeremy H.",
+      "familyName": "Carroll",
+      "nameIdentifiers": [],
+      "affiliation": []
+    }
+  ],
+  "relatedIdentifiers": [
+    {
+      "relationType": "IsVersionOf",
+      "relatedIdentifier": "10.5281/zenodo.20214467",
+      "relatedIdentifierType": "DOI"
+    }
+  ]
+}

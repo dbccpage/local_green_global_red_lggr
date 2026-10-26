@@ -1,0 +1,31 @@
+import JointDetectorAdequacy
+import ObserverRobustControlCore
+
+#print axioms ObserverRobustControl.JointlyAdequate
+#print axioms ObserverRobustControl.bundle_relative_non_tearing
+#print axioms ObserverRobustControl.bundle_non_tearing_unit_bound
+#print axioms ObserverRobustControl.transfer_detected_and_rejected
+#print axioms ObserverRobustControl.O1
+#print axioms ObserverRobustControl.O2
+#print axioms ObserverRobustControl.O3
+#print axioms ObserverRobustControl.blindBundle
+#print axioms ObserverRobustControl.adequateBundle
+#print axioms ObserverRobustControl.blindBundle_unmonitored_coord2
+#print axioms ObserverRobustControl.blind_transfer_admitted
+#print axioms ObserverRobustControl.adequate_bundle_rejects_transfer
+#print axioms ObserverRobustControl.adequateBundle_is_jointly_adequate
+#print axioms ObserverRobustControl.worstPhi
+#print axioms ObserverRobustControl.CeilingAdmitted
+#print axioms ObserverRobustControl.worstPhi_ge_mem
+#print axioms ObserverRobustControl.ceiling_bounds_each
+#print axioms ObserverRobustControl.excess_not_ceiling
+#print axioms ObserverRobustControl.empty_not_jointly_adequate
+#print axioms ObserverRobustControl.getCoord
+#print axioms ObserverRobustControl.weightedNorm
+#print axioms ObserverRobustControl.totalNorm
+#print axioms ObserverRobustControl.Observer
+#print axioms ObserverRobustControl.ObserverBundle
+#print axioms ObserverRobustControl.AdmissibleObserver
+#print axioms ObserverRobustControl.BundleAdmissible
+#print axioms ObserverRobustControl.coord_le_weightedNorm
+#print axioms ObserverRobustControl.observer_bounds_coordinate

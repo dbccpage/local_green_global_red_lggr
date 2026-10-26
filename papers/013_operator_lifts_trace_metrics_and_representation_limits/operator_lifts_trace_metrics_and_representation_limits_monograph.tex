@@ -1,0 +1,313 @@
+% manuscript-sha256: 3523680c105e3b1c958fa854371f33fccae76ce254dda5c0e034c6d9a2cb0357
+% spine-sha256: 6d4dd33e5426d1dcc34356109b1677278f86a5ec3cee119380c36e880aac29a0
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  10pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Academic LaTeX preamble for representation abundance is not physical authority.
+%
+% Typesetting is not evidence for any claim.
+% Uses XeLaTeX for comprehensive Unicode and math font support.
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Latin Modern Roman}
+\setmonofont{Latin Modern Mono}[Scale=0.85]
+\setmathfont{Latin Modern Math}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.4em}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,
+            citecolor=RoyalBlue,breaklinks=true]{hyperref}
+\usepackage{fvextra}
+\usepackage{framed}
+\fvset{breaklines=true,breakanywhere=true,fontsize=\small}
+
+\AtBeginEnvironment{longtable}{\small}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\definecolor{quoterule}{gray}{0.75}
+\renewenvironment{quote}
+  {\begin{leftbar}\small}
+  {\end{leftbar}}
+
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\emergencystretch=3em
+\sloppy
+\hfuzz=0pt
+\vfuzz=0pt
+\hbadness=10000
+\vbadness=10000
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries Operator Lifts Trace Metrics and Representation Limits\par}
+Jeremy H. Carroll\par
+2026-10-23\par
+Version 2.1.1\par
+\end{center}
+
+\subsection{Abstract}\label{abstract}
+
+We compare two representations of a finite real cochain: its diagonal operator and the rank-one projector obtained from its normalized signed square-root coordinates. The diagonal map is injective and preserves the sum-of-absolute-values norm as trace norm. The projector identifies precisely the nonzero scalar multiples of a cochain, losing mass and global orientation while retaining every diagnostic constant on those fibers. Trace distance defines a pseudometric on nonzero cochains and a metric on their real projective quotient. We prove a chain-complex residual bound, describe local reconstruction using an orientation anchor, and show that a continuous global sign choice is impossible in dimension at least two. A guarded evaluator uses these representations under an explicit selection policy. The real-vector arguments are written proofs; the Lean package verifies narrower integer and rational identities. No physical quantum interpretation is asserted.
+
+\textbf{Why a researcher should care.} A representation can preserve some questions and erase others. The complete fiber description states which quantities can be recovered, which additional data reconstruction needs, and why a shape distance cannot replace a scale-sensitive residual.
+
+\subsection{1. Introduction: Representation vs.~Topology}\label{introduction-representation-vs.-topology}
+
+Modern computational verification and automated reasoning often translate discrete, combinatorial problem states into continuous or spectral vector spaces (embeddings, matrices, operator algebras). While continuous representations enable gradient-based search, spectral analysis, and metric comparisons, they introduce the epistemic risk of representation confusion: confusing a chosen continuous embedding with ground-truth correctness.
+
+This paper establishes the formal interface between discrete combinatorial cochains and continuous spectral operators. We define two canonical mappings:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{The Linear Trace Embedding} \protect\hypertarget{math-E0011-0001}{}{\(F_{\mathrm{lin}}: C^1(P; \mathbb{R}) \to \mathcal{B}_1(\mathcal{H}_E)\)}, which preserves exact \protect\hypertarget{math-E0001-0002}{}{\(\ell^1\)} norm as operator trace norm and remains injective in the canonical basis.
+\item
+  \textbf{The Nonlinear Density Lift} \protect\hypertarget{math-E0012-0003}{}{\(F_{\mathrm{den}}: C^1(P; \mathbb{R}) \setminus \{0\} \to \mathcal{S}(\mathcal{H}_E)\)}, which normalizes mass and identifies antipodal orientations to construct unit-trace rank-1 density matrices via the classical Mazur map \protect\hypertarget{math-E0009-0004}{}{\(M_{1,2}\)}.
+\end{enumerate}
+
+We establish the \textbf{Lossy Collision Principle}: the nonlinear density representation discards scalar magnitude and orientation sign, preventing reverse reconstruction of combinatorial configurations from spectral projections alone without extrinsic mass and orientation data.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{2. The Declared Selection Priority}\label{the-declared-selection-priority}
+
+\subsubsection{Specification 2.1 (The Declared Selection Priority --- Architectural Specification)}\label{specification-2.1-the-declared-selection-priority-architectural-specification}
+
+\protect\hypertarget{math-E0013-0005}{}{\[\boxed{\text{Discrete combinatorial structure takes priority over continuous spectral representations.}}\]}
+
+\begin{itemize}
+\item
+  Topological metrics \protect\hypertarget{math-E0014-0006}{}{\(\Phi_1([\omega_1])\)} and \protect\hypertarget{math-E0015-0007}{}{\(\Gamma_2(\omega_1)\)} define combinatorial feasibility boundaries.
+\item
+  Continuous spectral metrics derived via \protect\hypertarget{math-E0004-0008}{}{\(F_{\mathrm{lin}}\)} or \protect\hypertarget{math-E0003-0009}{}{\(F_{\mathrm{den}}\)} provide descriptive refinements.
+\item
+  In the guarded descent evaluator ordering, continuous representation metrics may not override or bypass a discrete topological obstruction.
+\item
+  \emph{Status:} This selection priority is verified by the reference \texttt{GuardedDescentEvaluator} and the integration test suite on discrete graph instances (\texttt{test\_guarded\_descent\_integration.py}), demonstrating that \protect\hypertarget{math-E0007-0010}{}{\(\Phi_1\)} and \protect\hypertarget{math-E0008-0011}{}{\(\Gamma_2\)} strictly dominate \protect\hypertarget{math-E0002-0012}{}{\(\Xi\)} across competing candidate cochains on finite cell complexes (Theta graphs and 2-complexes).
+\end{itemize}
+
+\textbf{Verification scope.} The exact rational checker confirms that the ratio ceiling is tested before a primary decrease, that a primary increase and a secondary increase are rejected once that guardrail passes, that a feasible candidate is preferred to an infeasible one, and that a lower primary value is preferred. The integration suite checks finite rankings of the floating-point evaluator. Proposition 2.2 stays a classical bound.
+
+\subsubsection{Proposition 2.2 (Chain Complex Compatibility Bound)}\label{proposition-2.2-chain-complex-compatibility-bound}
+
+Let \protect\hypertarget{math-E0016-0013}{}{\((C_\bullet, d)\)} be a finite 2-dimensional cochain complex satisfying the chain complex identity \protect\hypertarget{math-E0017-0014}{}{\(d_1 d_0 = 0\)}. For any 1-cochain \protect\hypertarget{math-E0018-0015}{}{\(v \in C^1(P; \mathbb{R})\)}, the secondary boundary defect \protect\hypertarget{math-E0019-0016}{}{\(\Gamma_2(v) = \|d_1 v\|_1\)} is bounded by the primary quotient residual \protect\hypertarget{math-E0020-0017}{}{\(\Phi_1(v) = \inf_{\alpha \in C^0} \|v - d_0 \alpha\|_1\)}: \protect\hypertarget{math-E0021-0018}{}{\[\boxed{\Gamma_2(v) \le \|d_1\|_{1\to 1} \Phi_1(v)},\]} where \protect\hypertarget{math-E0022-0019}{}{\(\|d_1\|_{1\to 1} = \max_j \sum_i |(d_1)_{ij}|\)} is the induced operator \protect\hypertarget{math-E0023-0020}{}{\(\ell^1 \to \ell^1\)} norm.
+
+Consequently: \protect\hypertarget{math-E0024-0021}{}{\[\boxed{\Phi_1(v) = 0 \implies \Gamma_2(v) = 0.}\]}
+
+\paragraph{Proof}\label{proof}
+
+Since \protect\hypertarget{math-E0017-0022}{}{\(d_1 d_0 = 0\)}, for every 0-cochain \protect\hypertarget{math-E0025-0023}{}{\(\alpha \in C^0\)}, we have \protect\hypertarget{math-E0026-0024}{}{\(d_1(d_0 \alpha) = 0\)}. Thus: \protect\hypertarget{math-E0027-0025}{}{\[d_1 v = d_1(v - d_0 \alpha).\]} Taking the \protect\hypertarget{math-E0001-0026}{}{\(\ell^1\)} norm and applying submultiplicativity: \protect\hypertarget{math-E0028-0027}{}{\[\Gamma_2(v) = \|d_1(v - d_0 \alpha)\|_1 \le \|d_1\|_{1\to 1} \|v - d_0 \alpha\|_1.\]} Taking the infimum over all \protect\hypertarget{math-E0025-0028}{}{\(\alpha \in C^0\)} yields \protect\hypertarget{math-E0029-0029}{}{\(\Gamma_2(v) \le \|d_1\|_{1\to 1} \Phi_1(v)\)}. \protect\hypertarget{math-E0030-0030}{}{\(\blacksquare\)}
+
+\emph{Remark on Numerical Thresholding Fixtures:} Because exact \protect\hypertarget{math-E0031-0031}{}{\(\Phi_1(v) = 0 \implies \Gamma_2(v) = 0\)}, an exact cochain on a valid complex cannot exhibit \protect\hypertarget{math-E0032-0032}{}{\(\Phi_1 = 0\)} with \protect\hypertarget{math-E0033-0033}{}{\(\Gamma_2 > 0\)}. However, in finite-precision floating-point arithmetic with numerical detection threshold \protect\hypertarget{math-E0034-0034}{}{\(\epsilon\)}, a candidate may satisfy \protect\hypertarget{math-E0035-0035}{}{\(\Phi_1 \le \epsilon\)} (classified numerically as resolved) while \protect\hypertarget{math-E0036-0036}{}{\(\Gamma_2 > \epsilon\)} persists. The guarded descent evaluator treats such states as possessing boundary ratio \protect\hypertarget{math-E0037-0037}{}{\(R_{\mathrm{cl}} = +\infty\)} and fail-closed rejects them before evaluating descent.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection[3. Linear Trace-Class Embedding ]{\texorpdfstring{3. Linear Trace-Class Embedding \protect\hypertarget{math-E0004-0038}{}{\(F_{\mathrm{lin}}\)}}{3. Linear Trace-Class Embedding F\_\{\textbackslash mathrm\{lin\}\}}}\label{linear-trace-class-embedding-f_mathrmlin}
+
+Let \protect\hypertarget{math-E0038-0039}{}{\(P = (V, E)\)} be a finite graph with edge set \protect\hypertarget{math-E0039-0040}{}{\(E = \{e_1, \dots, e_m\}\)}, let \protect\hypertarget{math-E0040-0041}{}{\(C^1(P; \mathbb{R})\)} denote the space of real 1-cochains represented in the canonical edge-coordinate basis, and let \protect\hypertarget{math-E0041-0042}{}{\(\mathcal{H}_E \cong \mathbb{R}^m\)} be the real Hilbert space (Euclidean space) with orthonormal basis \protect\hypertarget{math-E0042-0043}{}{\(\{|e_i\rangle\}_{i=1}^m\)}.
+
+\subsubsection{Definition 3.1 (Linear Embedding)}\label{definition-3.1-linear-embedding}
+
+For any real cochain \protect\hypertarget{math-E0043-0044}{}{\(v = (v_1, \dots, v_m) \in C^1(P; \mathbb{R})\)}, the linear embedding \protect\hypertarget{math-E0044-0045}{}{\(F_{\mathrm{lin}}(v) = T(v) \in \mathcal{B}(\mathcal{H}_E)\)} is the diagonal operator: \protect\hypertarget{math-E0045-0046}{}{\[T(v) = \sum_{i=1}^m v_i |e_i\rangle \langle e_i|.\]}
+
+\subsubsection{Proposition 3.1 (Isometry and Injectivity of Linear Embedding)}\label{proposition-3.1-isometry-and-injectivity-of-linear-embedding}
+
+Because coefficients \protect\hypertarget{math-E0046-0047}{}{\(v_i \in \mathbb{R}\)} are real, the operator \protect\hypertarget{math-E0047-0048}{}{\(T(v)\)} is self-adjoint (real symmetric). Its eigenvalues are the coordinate values \protect\hypertarget{math-E0048-0049}{}{\(v_i\)}, and its trace norm \protect\hypertarget{math-E0049-0050}{}{\(\|T(v)\|_{\mathrm{tr}} = \operatorname{Tr}\sqrt{T(v)^* T(v)}\)} satisfies: \protect\hypertarget{math-E0050-0051}{}{\[\|T(v)\|_{\mathrm{tr}} = \sum_{i=1}^m |v_i| = \|v\|_1.\]} Thus \protect\hypertarget{math-E0004-0052}{}{\(F_{\mathrm{lin}}\)} is an isometric and injective embedding of \protect\hypertarget{math-E0051-0053}{}{\((C^1(P; \mathbb{R}), \|\cdot\|_1)\)} into the Banach space of trace-class operators \protect\hypertarget{math-E0052-0054}{}{\((\mathcal{B}_1(\mathcal{H}_E), \|\cdot\|_{\mathrm{tr}})\)}. In the canonical edge basis, \protect\hypertarget{math-E0053-0055}{}{\(v\)} is uniquely recovered from the diagonal of \protect\hypertarget{math-E0047-0056}{}{\(T(v)\)} without information loss.
+
+\textbf{Verification scope.} The mechanized statement is the integer identity \protect\hypertarget{math-E0054-0057}{}{\(\sum_i |v_i| = \|v\|_1\)}. The Banach-space embedding is the classical reading of that identity.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection[4. Nonlinear Density Lift and the Lossy Collision Principle]{\texorpdfstring{4. Nonlinear Density Lift \protect\hypertarget{math-E0003-0058}{}{\(F_{\mathrm{den}}\)} and the Lossy Collision Principle}{4. Nonlinear Density Lift F\_\{\textbackslash mathrm\{den\}\} and the Lossy Collision Principle}}\label{nonlinear-density-lift-f_mathrmden-and-the-lossy-collision-principle}
+
+While \protect\hypertarget{math-E0004-0059}{}{\(F_{\mathrm{lin}}\)} preserves mass and coordinates, comparing the geometric shapes of residuals requires scale- and sign-invariant normalization.
+
+\subsubsection{Definition 4.1 (Density Lift and the Mazur Map)}\label{definition-4.1-density-lift-and-the-mazur-map}
+
+For \protect\hypertarget{math-E0018-0060}{}{\(v \in C^1(P; \mathbb{R})\)} with \protect\hypertarget{math-E0055-0061}{}{\(M(v) = \|v\|_1 > 0\)}, the state vector \protect\hypertarget{math-E0056-0062}{}{\(\psi(v) \in \mathcal{H}_E\)} is defined by: \protect\hypertarget{math-E0057-0063}{}{\[\psi(v)_i = \operatorname{sgn}(v_i) \sqrt{\frac{|v_i|}{M(v)}}.\]} This signed square-root coordinate transformation on the normalized \protect\hypertarget{math-E0001-0064}{}{\(\ell^1\)} sphere is the classical Mazur map \protect\hypertarget{math-E0009-0065}{}{\(M_{1,2}\)} between the unit sphere of \protect\hypertarget{math-E0001-0066}{}{\(\ell^1\)} and the unit sphere of \protect\hypertarget{math-E0058-0067}{}{\(\ell^2\)} (Mazur 1929). The contribution emphasized here is the resulting representation boundary and its application to obstruction diagnostics, rather than introducing the coordinate transformation as a new construction.
+
+The density lift \protect\hypertarget{math-E0059-0068}{}{\(F_{\mathrm{den}}(v)\)} is the rank-1 density operator: \protect\hypertarget{math-E0060-0069}{}{\[\rho(v) = |\psi(v)\rangle \langle \psi(v)|.\]}
+
+\subsubsection{Theorem 4.1 (The Lossy Collision Principle and Fiber Geometry)}\label{theorem-4.1-the-lossy-collision-principle-and-fiber-geometry}
+
+The map \protect\hypertarget{math-E0003-0070}{}{\(F_{\mathrm{den}}\)} is many-to-one on \protect\hypertarget{math-E0061-0071}{}{\(C^1(P; \mathbb{R}) \setminus \{0\}\)}. Specifically, for any \protect\hypertarget{math-E0062-0072}{}{\(v \in C^1(P; \mathbb{R}) \setminus \{0\}\)} and any nonzero real scalar \protect\hypertarget{math-E0063-0073}{}{\(c \in \mathbb{R} \setminus \{0\}\)}: \protect\hypertarget{math-E0064-0074}{}{\[F_{\mathrm{den}}(c \cdot v) = F_{\mathrm{den}}(v).\]} The complete preimage fiber under \protect\hypertarget{math-E0003-0075}{}{\(F_{\mathrm{den}}\)} is the punctured unoriented line: \protect\hypertarget{math-E0065-0076}{}{\[F_{\mathrm{den}}^{-1}(\rho(v)) = \{c \cdot v : c \in \mathbb{R} \setminus \{0\}\}.\]} Furthermore:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Reconstruction Obstruction without Mass:} Given solely the density operator \protect\hypertarget{math-E0066-0077}{}{\(\rho = F_{\mathrm{den}}(v)\)}, the source cochain \protect\hypertarget{math-E0053-0078}{}{\(v\)} cannot be reconstructed without external admission of the scalar mass \protect\hypertarget{math-E0067-0079}{}{\(M(v)\)}.
+\item
+  \textbf{Antipodal Ambiguity with Admitted Mass:} Admitting extrinsic mass \protect\hypertarget{math-E0067-0080}{}{\(M(v)\)} restricts the fiber to the intersection with the \protect\hypertarget{math-E0001-0081}{}{\(\ell^1\)}-sphere of radius \protect\hypertarget{math-E0067-0082}{}{\(M(v)\)}, yielding exactly the candidate pair \protect\hypertarget{math-E0068-0083}{}{\(\{v, -v\}\)}.
+\item
+  \textbf{Sign Resolution:} Resolving \protect\hypertarget{math-E0068-0084}{}{\(\{v, -v\}\)} to a single cochain requires an explicitly admitted orientation anchor (or sign anchor). The density operator \protect\hypertarget{math-E0069-0085}{}{\(\rho\)} is invariant under global sign flip \protect\hypertarget{math-E0070-0086}{}{\(\psi \mapsto -\psi\)}, identifying antipodal cochains intentionally to provide orientation-invariant shape comparison. Any internal state vector representation reflects an arbitrary gauge choice.
+\end{enumerate}
+
+\subsubsection{Proof}\label{proof-1}
+
+For any \protect\hypertarget{math-E0071-0087}{}{\(c \ne 0\)}, write \protect\hypertarget{math-E0072-0088}{}{\((c \cdot v)_i = c \cdot v_i\)}. The mass scales as \protect\hypertarget{math-E0073-0089}{}{\(M(c \cdot v) = \sum_i |c \cdot v_i| = |c| M(v)\)}. Evaluating the state vector: \protect\hypertarget{math-E0074-0090}{}{\[\psi(c \cdot v)_i = \operatorname{sgn}(c \cdot v_i) \sqrt{\frac{|c \cdot v_i|}{M(c \cdot v)}} = \operatorname{sgn}(c) \operatorname{sgn}(v_i) \sqrt{\frac{|c| |v_i|}{|c| M(v)}} = \operatorname{sgn}(c) \psi(v)_i.\]} For \protect\hypertarget{math-E0075-0091}{}{\(c > 0\)}, \protect\hypertarget{math-E0076-0092}{}{\(\operatorname{sgn}(c) = +1\)}, so \protect\hypertarget{math-E0077-0093}{}{\(\psi(c \cdot v) = \psi(v)\)}. For \protect\hypertarget{math-E0078-0094}{}{\(c < 0\)}, \protect\hypertarget{math-E0079-0095}{}{\(\operatorname{sgn}(c) = -1\)}, so \protect\hypertarget{math-E0080-0096}{}{\(\psi(c \cdot v) = -\psi(v)\)}. In both cases, the outer product yields: \protect\hypertarget{math-E0081-0097}{}{\[\rho(c \cdot v) = |\operatorname{sgn}(c) \psi(v)\rangle \langle \operatorname{sgn}(c) \psi(v)| = (\operatorname{sgn}(c))^2 |\psi(v)\rangle \langle \psi(v)| = |\psi(v)\rangle \langle \psi(v)| = \rho(v).\]} Thus \protect\hypertarget{math-E0082-0098}{}{\(F_{\mathrm{den}}(c \cdot v) = F_{\mathrm{den}}(v)\)} for all \protect\hypertarget{math-E0063-0099}{}{\(c \in \mathbb{R} \setminus \{0\}\)}.
+
+Conversely, suppose \protect\hypertarget{math-E0083-0100}{}{\(\rho(u) = \rho(v)\)} for nonzero cochains \protect\hypertarget{math-E0084-0101}{}{\(u, v \in C^1(P; \mathbb{R})\)}. Since both are rank-1 projectors onto 1-dimensional subspaces in real Hilbert space \protect\hypertarget{math-E0085-0102}{}{\(\mathcal{H}_E\)}, their unit state vectors must satisfy \protect\hypertarget{math-E0086-0103}{}{\(\psi(u) = \pm \psi(v)\)}. Equality up to a common sign gives \protect\hypertarget{math-E0087-0104}{}{\(|u_i| / M(u) = |v_i| / M(v)\)} and \protect\hypertarget{math-E0088-0105}{}{\(\operatorname{sgn}(u_i) = \pm \operatorname{sgn}(v_i)\)}, meaning \protect\hypertarget{math-E0089-0106}{}{\(u_i = \pm \frac{M(u)}{M(v)} v_i\)}. Setting \protect\hypertarget{math-E0090-0107}{}{\(c = \pm \frac{M(u)}{M(v)} \ne 0\)}, we obtain \protect\hypertarget{math-E0091-0108}{}{\(u = c \cdot v\)}. Thus \protect\hypertarget{math-E0005-0109}{}{\(F_{\mathrm{den}}^{-1}(\rho(v)) = \{c \cdot v : c \in \mathbb{R} \setminus \{0\}\}\)}.
+
+If only \protect\hypertarget{math-E0069-0110}{}{\(\rho\)} is provided, the scale factor \protect\hypertarget{math-E0092-0111}{}{\(|c| = M(u) / M(v)\)} is unrestricted across \protect\hypertarget{math-E0093-0112}{}{\((0, \infty)\)}, preventing reconstruction. When \protect\hypertarget{math-E0067-0113}{}{\(M(v)\)} is admitted, \protect\hypertarget{math-E0094-0114}{}{\(|c| = 1\)}, restricting \protect\hypertarget{math-E0095-0115}{}{\(c \in \{+1, -1\}\)} and leaving exactly two candidate cochains \protect\hypertarget{math-E0068-0116}{}{\(\{v, -v\}\)}. \protect\hypertarget{math-E0030-0117}{}{\(\blacksquare\)}
+
+\textbf{Verification scope.} Lean and the exact integer checker prove that a nonzero integer scale preserves normalized absolute weights, that \protect\hypertarget{math-E0096-0118}{}{\(|c| > 1\)} strictly increases a positive mass, and that negation preserves mass. The real punctured line and the Mazur square-root map remain the classical reading. The shipped reconstruction returns failure when no mass is admitted.
+
+\subsubsection{Proposition 4.2 (Preservation of Homogeneous Obstruction Diagnostics)}\label{proposition-4.2-preservation-of-homogeneous-obstruction-diagnostics}
+
+A function \protect\hypertarget{math-E0097-0119}{}{\(f: C^1(P; \mathbb{R}) \setminus \{0\} \to \mathbb{R}\)} factors through the density lift \protect\hypertarget{math-E0003-0120}{}{\(F_{\mathrm{den}}\)} if and only if: \protect\hypertarget{math-E0098-0121}{}{\[f(c \cdot v) = f(v) \quad \text{for every } c \in \mathbb{R} \setminus \{0\}.\]} Necessity follows from scale- and sign-invariance of \protect\hypertarget{math-E0003-0122}{}{\(F_{\mathrm{den}}\)}; sufficiency follows because punctured lines are the complete fibers (Theorem 4.1).
+
+In particular, let \protect\hypertarget{math-E0099-0123}{}{\(N\)} be any absolutely homogeneous functional on \protect\hypertarget{math-E0040-0124}{}{\(C^1(P; \mathbb{R})\)} satisfying \protect\hypertarget{math-E0100-0125}{}{\(N(c \cdot v) = |c| N(v)\)}. Then the normalized ratio: \protect\hypertarget{math-E0101-0126}{}{\[\boxed{\frac{N(v)}{\|v\|_1}}\]} is uniquely determined by the density operator \protect\hypertarget{math-E0102-0127}{}{\(\rho(v)\)}. To compute it from \protect\hypertarget{math-E0069-0128}{}{\(\rho\)}, choose either unit factor \protect\hypertarget{math-E0103-0129}{}{\(a\)} satisfying \protect\hypertarget{math-E0104-0130}{}{\(\rho = a a^\top\)}, and set \protect\hypertarget{math-E0105-0131}{}{\(s_i = a_i |a_i|\)}. Then \protect\hypertarget{math-E0106-0132}{}{\(s = \pm v / \|v\|_1\)}, so \protect\hypertarget{math-E0107-0133}{}{\(N(s) = N(v) / \|v\|_1\)} independently of the chosen sign.
+
+Consequently, the full coordinate-bearing density matrix retains: \protect\hypertarget{math-E0108-0134}{}{\[\frac{\Phi_1(v)}{\|v\|_1}, \qquad \frac{\Gamma_2(v)}{\|v\|_1}, \qquad \frac{\Gamma_2(v)}{\Phi_1(v)} \quad (\Phi_1(v) > 0),\]} as well as exactness and closedness. The density quotient loses precisely the information that varies along nonzero scalar fibers, and preserves every diagnostic constant on those fibers. The declared priority of combinatorial checks over \protect\hypertarget{math-E0002-0135}{}{\(\Xi\)} remains an architectural policy choice, rather than an assertion of complete topological blindness in the density representation.
+
+\textbf{Verification scope.} The proved identity is \protect\hypertarget{math-E0109-0136}{}{\((|c| n)\, d = n\, (|c| d)\)} for an integer scale \protect\hypertarget{math-E0110-0137}{}{\(c\)}. The factorisation through the operator \protect\hypertarget{math-E0069-0138}{}{\(\rho\)} is not constructed in this deposit.
+
+\subsubsection{Theorem 4.3 (Local Reconstruction Charts and Topological Obstruction to Global Sign Choice)}\label{theorem-4.3-local-reconstruction-charts-and-topological-obstruction-to-global-sign-choice}
+
+For dimension \protect\hypertarget{math-E0111-0139}{}{\(m \ge 2\)} and fixed positive mass \protect\hypertarget{math-E0112-0140}{}{\(M > 0\)}, there is no globally continuous map: \protect\hypertarget{math-E0113-0141}{}{\[s: F_{\mathrm{den}}(C^1(P; \mathbb{R}) \setminus \{0\}) \to C^1(P; \mathbb{R})\]} that selects one member of every antipodal reconstruction pair \protect\hypertarget{math-E0068-0142}{}{\(\{v, -v\}\)}.
+
+\paragraph{Proof}\label{proof-2}
+
+Consider the continuous closed family of 2-dimensional unit vectors: \protect\hypertarget{math-E0114-0143}{}{\[a(t) = (\cos t, \sin t), \quad \rho(t) = a(t) a(t)^\top, \quad 0 \le t \le \pi.\]} The endpoints satisfy \protect\hypertarget{math-E0115-0144}{}{\(\rho(0) = \begin{pmatrix}1&0\\0&0\end{pmatrix} = \rho(\pi)\)}, but their vector factors are opposite: \protect\hypertarget{math-E0116-0145}{}{\(a(\pi) = -a(0)\)}. The corresponding mass-one cochains under the inverse Mazur map are: \protect\hypertarget{math-E0117-0146}{}{\[v(t) = \bigl(\cos t \, |\cos t|, \, \sin t \, |\sin t|\bigr),\]} which satisfy \protect\hypertarget{math-E0118-0147}{}{\(v(\pi) = -v(0)\)}. For fixed mass \protect\hypertarget{math-E0119-0148}{}{\(M\)}, any continuous reconstruction selection must satisfy \protect\hypertarget{math-E0120-0149}{}{\(s(\rho(t)) = M\varepsilon(t) v(t)\)} where \protect\hypertarget{math-E0121-0150}{}{\(\varepsilon(t) \in \{+1, -1\}\)}. The coefficient \protect\hypertarget{math-E0122-0151}{}{\(\varepsilon(t)=\langle s(\rho(t)),v(t)\rangle/(M\|v(t)\|_2^2)\)} is continuous and takes values in \protect\hypertarget{math-E0123-0152}{}{\(\{-1,1\}\)}, so it is constant on \protect\hypertarget{math-E0124-0153}{}{\([0,\pi]\)}. For \protect\hypertarget{math-E0125-0154}{}{\(m>2\)}, use the same loop in a two-coordinate subspace. Therefore: \protect\hypertarget{math-E0126-0155}{}{\[s(\rho(\pi)) = M\varepsilon(0) v(\pi) = -M\varepsilon(0) v(0) = -s(\rho(0)),\]} which contradicts the fact that the density matrix endpoints are identical: \protect\hypertarget{math-E0127-0156}{}{\(\rho(\pi) = \rho(0)\)}. Thus no globally continuous selection map exists. \protect\hypertarget{math-E0030-0157}{}{\(\blacksquare\)}
+
+\emph{Local Reconstruction Charts:} An admitted linear orientation functional \protect\hypertarget{math-E0128-0158}{}{\(\ell \in (C^1(P; \mathbb{R}))^*\)} defines a local reconstruction chart on the open subset: \protect\hypertarget{math-E0129-0159}{}{\[U_\ell = \{\rho(v) : \ell(v) \ne 0\}.\]} Within \protect\hypertarget{math-E0130-0160}{}{\(U_\ell\)}, the condition \protect\hypertarget{math-E0131-0161}{}{\(\ell(v) > 0\)} selects a unique antipode continuously. At the boundary hyperplane \protect\hypertarget{math-E0132-0162}{}{\(\ell(v) = 0\)}, the chart fails, and another anchor---or an unresolved candidate pair---is strictly required.
+
+\textbf{Verification scope.} The continuous selection argument on the circle is not a Lean theorem in this deposit. The integer antipodal pair shares mass and absolute weights, and that pair is what the checker verifies.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection[5. Representative Distortion Metric ]{\texorpdfstring{5. Representative Distortion Metric \protect\hypertarget{math-E0002-0163}{}{\(\Xi\)}}{5. Representative Distortion Metric \textbackslash Xi}}\label{representative-distortion-metric-xi}
+
+Given two cochains \protect\hypertarget{math-E0133-0164}{}{\(u, v \in C^1(P; \mathbb{R}) \setminus \{0\}\)}, their representative distortion is the normalized trace distance between their density lifts: \protect\hypertarget{math-E0134-0165}{}{\[\Xi(u, v) = \frac{1}{2} \|\rho(u) - \rho(v)\|_{\mathrm{tr}} = \sqrt{1 - |\langle \psi(u) | \psi(v) \rangle|^2}.\]}
+
+\subsubsection{Numerically Stable Evaluation}\label{numerically-stable-evaluation}
+
+For normalized real unit state vectors \protect\hypertarget{math-E0135-0166}{}{\(a = \psi(u)\)} and \protect\hypertarget{math-E0136-0167}{}{\(b = \psi(v)\)}, \protect\hypertarget{math-E0002-0168}{}{\(\Xi\)} admits the equivalent formulation: \protect\hypertarget{math-E0137-0169}{}{\[\boxed{\Xi(a, b) = \frac{1}{2} \|a - b\|_2 \, \|a + b\|_2.}\]}
+
+\paragraph{Proof of Equivalence}\label{proof-of-equivalence}
+
+Expanding the \protect\hypertarget{math-E0058-0170}{}{\(\ell^2\)} norms on unit vectors: \protect\hypertarget{math-E0138-0171}{}{\[\|a - b\|_2^2 = \|a\|_2^2 + \|b\|_2^2 - 2\langle a, b \rangle = 2 - 2\langle a, b \rangle,\]} \protect\hypertarget{math-E0139-0172}{}{\[\|a + b\|_2^2 = \|a\|_2^2 + \|b\|_2^2 + 2\langle a, b \rangle = 2 + 2\langle a, b \rangle.\]} Multiplying gives: \protect\hypertarget{math-E0140-0173}{}{\[\frac{1}{4} \|a - b\|_2^2 \|a + b\|_2^2 = \frac{1}{4}(2 - 2\langle a, b \rangle)(2 + 2\langle a, b \rangle) = 1 - \langle a, b \rangle^2.\]} Taking square roots yields \protect\hypertarget{math-E0141-0174}{}{\(\frac{1}{2} \|a - b\|_2 \|a + b\|_2 = \sqrt{1 - |\langle a, b \rangle|^2}\)}. \protect\hypertarget{math-E0030-0175}{}{\(\blacksquare\)}
+
+\textbf{Verification scope.} When two integer vectors have equal sums of squares, the identity \protect\hypertarget{math-E0142-0176}{}{\(\|a-b\|_2^2 \|a+b\|_2^2 = 4(\|a\|_2^2 \|b\|_2^2 - \langle a,b\rangle^2)\)} is proved. The square-root metric and its triangle inequality remain the classical reading, and the existing floating-point test exercises that reading.
+
+This form avoids subtracting a nearly unit squared inner product from one and can improve numerical accuracy near coincident or antipodal states. Floating-point normalization, underflow, and roundoff still apply; the implementation does not certify the triangle inequality at every numerical scale.
+
+\subsubsection{Properties}\label{properties}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Unoriented Line Invariance:} \protect\hypertarget{math-E0143-0177}{}{\(\Xi(c_1 u, c_2 v) = \Xi(u, v)\)} for all nonzero scalars \protect\hypertarget{math-E0144-0178}{}{\(c_1, c_2 \in \mathbb{R} \setminus \{0\}\)}.
+\item
+  \textbf{Support Sensitivity:} If \protect\hypertarget{math-E0145-0179}{}{\(u\)} and \protect\hypertarget{math-E0053-0180}{}{\(v\)} have disjoint support, \protect\hypertarget{math-E0146-0181}{}{\(|\langle \psi(u) | \psi(v) \rangle| = 0\)}, yielding \protect\hypertarget{math-E0147-0182}{}{\(\Xi(u, v) = 1\)}.
+\item
+  \textbf{Unoriented Line Identity (Zero-Distance Criterion):} For any \protect\hypertarget{math-E0133-0183}{}{\(u, v \in C^1(P; \mathbb{R}) \setminus \{0\}\)}: \protect\hypertarget{math-E0148-0184}{}{\[\rho(u) = \rho(v) \iff \Xi(u, v) = 0 \iff u = c \cdot v \text{ for some } c \in \mathbb{R} \setminus \{0\}.\]} In particular, opposite open rays satisfy \protect\hypertarget{math-E0149-0185}{}{\(\Xi(v, -v) = 0\)}.
+\item
+  \textbf{Metric Space Classification:} \protect\hypertarget{math-E0002-0186}{}{\(\Xi\)} is a \textbf{pseudometric} on the space of nonzero real cochains \protect\hypertarget{math-E0061-0187}{}{\(C^1(P; \mathbb{R}) \setminus \{0\}\)}. Non-negativity and symmetry are immediate. The triangle inequality follows directly from the trace-norm triangle inequality on density matrices: \protect\hypertarget{math-E0150-0188}{}{\[\Xi(u, w) = \frac{1}{2} \|\rho(u) - \rho(w)\|_{\mathrm{tr}} \le \frac{1}{2} \|\rho(u) - \rho(v)\|_{\mathrm{tr}} + \frac{1}{2} \|\rho(v) - \rho(w)\|_{\mathrm{tr}} = \Xi(u, v) + \Xi(v, w).\]} Passing to the quotient by the equivalence relation \protect\hypertarget{math-E0151-0189}{}{\(u \sim v \iff u = c \cdot v\)} (\protect\hypertarget{math-E0152-0190}{}{\(c \in \mathbb{R}^\times\)}), \protect\hypertarget{math-E0002-0191}{}{\(\Xi\)} induces a genuine \textbf{metric} on the real projective quotient space: \protect\hypertarget{math-E0153-0192}{}{\[\mathbb{P}(C^1(P; \mathbb{R})) = (C^1(P; \mathbb{R}) \setminus \{0\}) / \mathbb{R}^\times.\]} On \protect\hypertarget{math-E0006-0193}{}{\(\mathbb{P}(C^1(P; \mathbb{R}))\)}, equivalence classes are unoriented lines \protect\hypertarget{math-E0154-0194}{}{\([v]\)}, and \protect\hypertarget{math-E0155-0195}{}{\(\Xi([u], [v]) = 0 \iff [u] = [v]\)}.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{6. Scope of the Operator Construction (Physical Nonclaims)}\label{scope-of-the-operator-construction-physical-nonclaims}
+
+\textbf{Verification scope.} This section is a negative boundary. It is not a proved theorem.
+
+We establish the scope and interpretive boundaries governing all spectral and operator constructions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Scope of Mathematical Representation:} \protect\hypertarget{math-E0085-0196}{}{\(\mathcal{H}_E\)} is a finite-dimensional real Hilbert space auxiliary to combinatorial analysis, used strictly to compute trace distances. No system governed by this framework is claimed to represent a quantum mechanical physical system, wavefunction, or microscopic state.
+\item
+  \textbf{Non-Physical Interpretation:} The use of trace distance and density matrix algebra does not imply that discrete topological constraints emerge from quantum mechanics. The discrete graph topology \protect\hypertarget{math-E0156-0197}{}{\(P\)} is foundational; the operator construction is a subordinate computational tool.
+\item
+  \textbf{Scope Statement Status:} This section constitutes an explicit declaration of methodology and scope, not a physical theorem or empirical finding.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{7. Conclusion}\label{conclusion}
+
+By formalizing \protect\hypertarget{math-E0004-0198}{}{\(F_{\mathrm{lin}}\)}, \protect\hypertarget{math-E0003-0199}{}{\(F_{\mathrm{den}}\)}, the complete unoriented line fiber \protect\hypertarget{math-E0157-0200}{}{\(F_{\mathrm{den}}^{-1}\)}, and the Lossy Collision Principle, this paper delineates the mathematical boundary between combinatorial topology and continuous operator representations. The linear embedding \protect\hypertarget{math-E0004-0201}{}{\(F_{\mathrm{lin}}\)} is injective and isometric, while the nonlinear density lift \protect\hypertarget{math-E0003-0202}{}{\(F_{\mathrm{den}}\)} purposefully abstracts away scalar magnitude and orientation sign to support projective shape comparisons. Continuous trace metrics provide descriptive tie-breaking under the declared selection priority without compromising the foundational integrity of discrete obstruction calculus.
+
+\subsection{References}\label{references}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Carroll, J. H. (2026). \emph{An L1 Obstruction Framework for Coboundary Defects}. Zenodo. DOI: 10.5281/zenodo.20186809.
+\item
+  Carroll, J. H. (2026). \emph{Conditional Density Lift and Dual-Witness Xi Functional}. Zenodo. DOI: 10.5281/zenodo.20192297.
+\item
+  Carroll, J. H. (2026). \emph{Operator Lifts Trace Metrics and Representation Limits}. Zenodo. DOI: 10.5281/zenodo.20213629.
+\item
+  Mazur, S. (1929). \emph{Une remarque sur l'homéomorphie des champs fonctionnels}. Comptes Rendus de l'Académie des Sciences Paris, 188, 224--225.
+\item
+  Reed, M., \& Simon, B. (1980). \emph{Methods of Modern Mathematical Physics I: Functional Analysis}. Academic Press.
+\item
+  Rockafellar, R. T. (1970). \emph{Convex Analysis}. Princeton University Press.
+\end{enumerate}
+
+\end{document}

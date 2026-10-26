@@ -1,0 +1,37 @@
+{
+  "title": "Conditional density lifts and a primal–dual alignment statistic",
+  "version": "2.0.5",
+  "publication_date": "2026-10-23",
+  "manuscript": "density_lift.md",
+  "archive": "density_lift.zip",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "component_licenses": {
+    "text": "CC-BY-4.0",
+    "reference_code_tests_and_lean": "MIT",
+    "renderer_lua_and_path_helper": "Apache-2.0"
+  },
+  "doi": "10.5281/zenodo.23604860",
+  "concept_doi": "10.5281/zenodo.20192296",
+  "status": "published_record_verified",
+  "external_deposit_performed": false,
+  "prior_record_verification": {
+    "record_doi": "10.5281/zenodo.20192297",
+    "concept_doi": "10.5281/zenodo.20192296",
+    "source": "https://api.datacite.org/dois/10.5281/zenodo.20192297",
+    "verified_on": "2026-10-16"
+  },
+  "source_baseline_commit": "a93efbd5f432bc91f88e27d85c1ad99436147b52",
+  "local_artifact_state": "doi_metadata_refresh_not_uploaded",
+  "current_record_verification": {
+    "record": "docs/publication_record.json",
+    "source": "https://zenodo.org/api/records/23604860",
+    "datacite_source": "https://api.datacite.org/dois/10.5281/zenodo.23604860",
+    "verified_on": "2026-10-23"
+  }
+}

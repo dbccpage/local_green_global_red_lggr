@@ -1,0 +1,8 @@
+'observation_decision_agrees' does not depend on any axioms
+'plenitude_inflation' does not depend on any axioms
+'cycle_coboundary_holonomy_zero' depends on axioms: [propext, Quot.sound]
+'false_green_holonomy' depends on axioms: [propext, Quot.sound]
+'false_green_local' depends on axioms: [propext, Quot.sound]
+'cycle_defect_bound' depends on axioms: [propext, Quot.sound]
+'sharp_cycle_attains' depends on axioms: [propext]
+'unique_acceptance_breaks' depends on axioms: [propext]

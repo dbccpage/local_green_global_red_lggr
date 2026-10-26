@@ -1,0 +1,27 @@
+{
+  "title": "Observer-Robust Control of Obstruction Diagnostics",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-08",
+  "version": "2.1.1",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "doi": "10.5281/zenodo.20214468",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "This paper establishes a formal architecture for the observer-robust control of discrete constraint systems. Shifting from a single-metric view of system error, the work defines a repair-policy layer that operates over a bundle of observer-induced geometries. A control policy (Ctrl) is defined as observer-robust if its performance remains bounded across a declared class of admissible observers. The core contribution is the operationalization of the Observer-Robust Control Criterion, evaluating policies based on their ability to stabilize obstruction diagnostics without assuming a universally privileged metric, preventing unmonitored residual surges and bounding coordinate diagnostics under joint detector adequacy. This monograph assigns no authorization and changes no jurisdiction. It carries no operational authority or institutional standing.",
+  "keywords": [
+    "observer-robust control",
+    "obstruction diagnostics",
+    "observer bundle",
+    "committed-state descent",
+    "piecewise closure ratio",
+    "anti-spoofing",
+    "finite obstruction calculus"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: Apache-2.0. To verify the deposit locally, run 'py -3.12 -m pytest code/tests/test_observer_robust_control.py' followed by 'py -3.12 verify_deposit.py'."
+}

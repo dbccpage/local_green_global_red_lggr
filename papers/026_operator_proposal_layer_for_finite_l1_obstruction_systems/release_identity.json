@@ -1,0 +1,36 @@
+{
+  "title": "Proposal selection and continuation-stable diagnostics on finite graphs",
+  "version": "2.0.5",
+  "publication_date": "2026-10-23",
+  "manuscript": "operator_proposals.md",
+  "archive": "operator_proposals.zip",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "component_licenses": {
+    "text": "CC-BY-4.0",
+    "software": "Apache-2.0"
+  },
+  "doi": "10.5281/zenodo.23604900",
+  "concept_doi": "10.5281/zenodo.20213063",
+  "status": "published_record_verified",
+  "external_deposit_performed": false,
+  "prior_record_verification": {
+    "record_doi": "10.5281/zenodo.20213064",
+    "concept_doi": "10.5281/zenodo.20213063",
+    "source": "https://api.datacite.org/dois/10.5281/zenodo.20213064",
+    "verified_on": "2026-10-16"
+  },
+  "source_baseline_commit": "a93efbd5f432bc91f88e27d85c1ad99436147b52",
+  "local_artifact_state": "doi_metadata_refresh_not_uploaded",
+  "current_record_verification": {
+    "record": "docs/publication_record.json",
+    "source": "https://zenodo.org/api/records/23604900",
+    "datacite_source": "https://api.datacite.org/dois/10.5281/zenodo.23604900",
+    "verified_on": "2026-10-23"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "scope": "Three-edge oriented cycle. C2 is zero, hence d1 and Gamma2 are zero. These are worked finite certificates, not complete paper proof coverage.",
+  "d0": [
+    [
+      -1,
+      1,
+      0
+    ],
+    [
+      0,
+      -1,
+      1
+    ],
+    [
+      1,
+      0,
+      -1
+    ]
+  ],
+  "cases": [
+    {
+      "name": "exact_difference",
+      "delta": [
+        1,
+        1,
+        -2
+      ],
+      "primal": [
+        0,
+        1,
+        2
+      ],
+      "dual": [
+        0,
+        0,
+        0
+      ],
+      "optimum": 0
+    },
+    {
+      "name": "positive_holonomy",
+      "delta": [
+        1,
+        1,
+        1
+      ],
+      "primal": [
+        0,
+        0,
+        0
+      ],
+      "dual": [
+        1,
+        1,
+        1
+      ],
+      "optimum": 3
+    }
+  ]
+}

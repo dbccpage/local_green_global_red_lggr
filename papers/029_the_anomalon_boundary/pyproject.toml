@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "the-anomalon-boundary"
+version = "2.1.1"
+description = "The Anomalon Boundary: Primitive Difference, Structure, and the Authority Boundary of Meaning"
+readme = "the_anomalon_boundary_monograph.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "code"}
+
+[tool.pytest.ini_options]
+testpaths = ["code/tests"]
+pythonpath = ["code", "."]
+addopts = "-p no:debugging"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.mypy]
+mypy_path = ["code"]
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
