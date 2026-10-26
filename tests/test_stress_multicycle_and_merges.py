@@ -50,6 +50,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
@@ -5889,6 +5890,47 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_SIX_ROLE_DEDUPLICATED_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_path_kernel_codebase_stage_vs_e2e_and_dashboard_adequacy_audit(self) -> None:
+        """Verify Theorem 115: Stage-level unit tests vs. end-to-end path-kernel & 4-tuple dashboard adequacy."""
+        mon = StreamingCodebasePathKernelDashboardMonitor(
+            scope_id="unit-codebase-path-kernel-dashboard-scope",
+        )
+        obs = mon.evaluate_three_phase_path_kernel_audit(
+            "codebase-path-kernel-eval-01",
+        )
+        self.assertEqual(obs["phase_1_egd_count"], 2)
+        self.assertEqual(obs["phase_1_evaluator_residual_re"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CANCELLATION_MASKED_STAGE_KERNEL_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_2_egd_count"], 1)
+        self.assertEqual(obs["phase_2_evaluator_residual_re"], -1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 5)
+        self.assertEqual(obs["phase_2_payout_cents"], 868)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "NGD_INTEGRATION_REGRESSION_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_3_egd_count"], 0)
+        self.assertEqual(obs["phase_3_evaluator_residual_re"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_PATH_KERNEL_DASHBOARD_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_PATH_KERNEL_DASHBOARD_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

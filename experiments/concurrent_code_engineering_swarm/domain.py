@@ -5892,5 +5892,295 @@ class SixRoleDeduplicationCodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
+# ---------------------------------------------------------------------------
+# Stage-vs-E2E Path-Kernel & Dashboard Adequacy Topology (Test 50, Theorem 115)
+# ---------------------------------------------------------------------------
+
+PATH_KERNEL_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_kernel",
+    "worker-1": "tax_kernel",
+    "worker-2": "settlement_kernel",
+}
+
+KERNEL_PRICING_ANCHOR_SRC = (
+    "def pricing_kernel(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+    "    gross = int(gross_cents)\n"
+    "    bps_disc = (gross * int(discount_bps)) // 10000\n"
+    "    rebate = int(rebate_cents)\n"
+    "    total_disc = bps_disc + rebate\n"
+    "    net = gross - total_disc\n"
+    "    return {\n"
+    "        'gross_cents': gross,\n"
+    "        'discount_cents': total_disc,\n"
+    "        'net_cents': net,\n"
+    "        'stage1_verdicts': [1, 0],\n"
+    "    }\n"
+)
+
+KERNEL_TAX_MASKED_SRC = (
+    "def tax_kernel(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax_cents = (net * int(tax_rate_bps)) // 10000\n"
+    "    return {\n"
+    "        'taxable_base_cents': net,\n"
+    "        'tax_cents': tax_cents,\n"
+    "        'gross_after_tax_cents': net + tax_cents,\n"
+    "        'stage2_verdicts': [1, 1],\n"
+    "        'allow_pgd_fallback': True,\n"
+    "    }\n"
+)
+
+KERNEL_TAX_NO_FALLBACK_SRC = (
+    "def tax_kernel(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax_cents = (net * int(tax_rate_bps)) // 10000\n"
+    "    return {\n"
+    "        'taxable_base_cents': net,\n"
+    "        'tax_cents': tax_cents,\n"
+    "        'gross_after_tax_cents': net + tax_cents,\n"
+    "        'stage2_verdicts': [1, 1],\n"
+    "        'allow_pgd_fallback': False,\n"
+    "    }\n"
+)
+
+KERNEL_SETTLEMENT_MASKED_SRC = (
+    "def settlement_kernel(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax = int(tax_quote['tax_cents'])\n"
+    "    fee_cents = (net * int(fee_bps)) // 10000\n"
+    "    composite_e2e_verdicts = [1, 0, 1, 0]\n"
+    "    four_tuple_dashboard_enabled = False\n"
+    "    surcharge = 10\n"
+    "    payout = net - fee_cents - surcharge\n"
+    "    return {\n"
+    "        'fee_cents': fee_cents,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        'kernel_discrepancy_surcharge_cents': surcharge,\n"
+    "        'gross_collected_cents': net + tax,\n"
+    "        'total_accounted_cents': payout + fee_cents + tax,\n"
+    "        'composite_e2e_verdicts': composite_e2e_verdicts,\n"
+    "        'four_tuple_dashboard_enabled': four_tuple_dashboard_enabled,\n"
+    "    }\n"
+)
+
+KERNEL_SETTLEMENT_NGD_SRC = (
+    "def settlement_kernel(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax = int(tax_quote['tax_cents'])\n"
+    "    fee_cents = (net * int(fee_bps)) // 10000\n"
+    "    composite_e2e_verdicts = [1, 0, 0, 0]\n"
+    "    four_tuple_dashboard_enabled = False\n"
+    "    surcharge = 5\n"
+    "    payout = net - fee_cents - surcharge\n"
+    "    return {\n"
+    "        'fee_cents': fee_cents,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        'kernel_discrepancy_surcharge_cents': surcharge,\n"
+    "        'gross_collected_cents': net + tax,\n"
+    "        'total_accounted_cents': payout + fee_cents + tax,\n"
+    "        'composite_e2e_verdicts': composite_e2e_verdicts,\n"
+    "        'four_tuple_dashboard_enabled': four_tuple_dashboard_enabled,\n"
+    "    }\n"
+)
+
+KERNEL_SETTLEMENT_REPAIRED_SRC = (
+    "def settlement_kernel(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax = int(tax_quote['tax_cents'])\n"
+    "    fee_cents = (net * int(fee_bps)) // 10000\n"
+    "    composite_e2e_verdicts = [1, 1, 0, 0]\n"
+    "    four_tuple_dashboard_enabled = True\n"
+    "    surcharge = 0\n"
+    "    payout = net - fee_cents - surcharge\n"
+    "    return {\n"
+    "        'fee_cents': fee_cents,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        'kernel_discrepancy_surcharge_cents': surcharge,\n"
+    "        'gross_collected_cents': net + tax,\n"
+    "        'total_accounted_cents': payout + fee_cents + tax,\n"
+    "        'composite_e2e_verdicts': composite_e2e_verdicts,\n"
+    "        'four_tuple_dashboard_enabled': four_tuple_dashboard_enabled,\n"
+    "    }\n"
+)
+
+
+def run_path_kernel_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated local unit tests for a path-kernel settlement module."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": f"{type(exc).__name__}: {exc}"}
+
+    fn = ns.get(module_name)
+    if not callable(fn):
+        return {"passed": False, "module": module_name, "error": f"Missing callable {module_name}"}
+
+    try:
+        if module_name == "pricing_kernel":
+            res = fn(1000, 500, 50)
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "pricing_kernel must return a dict"}
+            if res.get("net_cents") != 900 or res.get("discount_cents") != 100:
+                return {"passed": False, "module": module_name, "error": "pricing_kernel net_cents must equal 900"}
+            if res.get("stage1_verdicts") != [1, 0]:
+                return {"passed": False, "module": module_name, "error": "pricing_kernel must emit stage1_verdicts=[1, 0]"}
+            return {"passed": True, "module": module_name, "isolated_scope": "pricing_kernel isolated unit test"}
+
+        if module_name == "tax_kernel":
+            res = fn({"net_cents": 900}, 2000)
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "tax_kernel must return a dict"}
+            if res.get("tax_cents") != 180 or res.get("gross_after_tax_cents") != 1080:
+                return {"passed": False, "module": module_name, "error": "tax_kernel tax_cents must equal 180"}
+            if res.get("stage2_verdicts") != [1, 1] or not isinstance(res.get("allow_pgd_fallback"), bool):
+                return {"passed": False, "module": module_name, "error": "tax_kernel must emit stage2_verdicts=[1, 1] and bool allow_pgd_fallback"}
+            return {"passed": True, "module": module_name, "isolated_scope": "tax_kernel isolated unit test"}
+
+        if module_name == "settlement_kernel":
+            res = fn(
+                {"net_cents": 900, "stage1_verdicts": [1, 0]},
+                {"tax_cents": 180, "stage2_verdicts": [1, 1], "allow_pgd_fallback": True},
+                300,
+            )
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "settlement_kernel must return a dict"}
+            if res.get("fee_cents") != 27:
+                return {"passed": False, "module": module_name, "error": "settlement_kernel fee_cents must equal 27"}
+            e2e = res.get("composite_e2e_verdicts")
+            if (
+                not isinstance(e2e, list)
+                or len(e2e) != 4
+                or any(isinstance(b, bool) or b not in (0, 1) for b in e2e)
+            ):
+                return {"passed": False, "module": module_name, "error": "composite_e2e_verdicts must be a 4-element binary list"}
+            surcharge = res.get("kernel_discrepancy_surcharge_cents")
+            payout = res.get("merchant_payout_cents")
+            if surcharge not in (0, 5, 10) or payout != 873 - int(surcharge):
+                return {"passed": False, "module": module_name, "error": "merchant_payout_cents must equal 873 - kernel_discrepancy_surcharge_cents"}
+            return {"passed": True, "module": module_name, "isolated_scope": "settlement_kernel isolated unit test"}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": f"{type(exc).__name__}: {exc}"}
+
+    return {"passed": False, "module": module_name, "error": f"Unknown module {module_name}"}
+
+
+def path_kernel_fixture(seed: int) -> dict[str, Any]:
+    """Build initial 3-module workspace state for --topology path_kernel."""
+    if seed % 2 == 1:
+        return {
+            "seed": seed,
+            "kind": "infeasible_path_kernel_dashboard_lock",
+            "sources": {
+                "pricing_kernel": KERNEL_PRICING_ANCHOR_SRC,
+                "tax_kernel": KERNEL_TAX_MASKED_SRC,
+                "settlement_kernel": KERNEL_SETTLEMENT_MASKED_SRC,
+            },
+            "locked_workers": ["worker-1", "worker-2"],
+            "infeasible_constraint": (
+                "Tax and Settlement path-kernel modules are hardware-locked to PGD fallback cancellation masking "
+                "(allow_pgd_fallback = True, composite_e2e_verdicts = [1, 0, 1, 0], egd_count = 2, surcharge = 10) "
+                "and 3-tuple pass-rate reporting while global integration requires 4-tuple dashboard adequacy and zero EGD."
+            ),
+        }
+    return {
+        "seed": seed,
+        "kind": "repairable_path_kernel_dashboard_defect",
+        "sources": {
+            "pricing_kernel": KERNEL_PRICING_ANCHOR_SRC,
+            "tax_kernel": KERNEL_TAX_MASKED_SRC,
+            "settlement_kernel": KERNEL_SETTLEMENT_MASKED_SRC,
+        },
+        "locked_workers": [],
+        "infeasible_constraint": None,
+    }
+
+
+class PathKernelDashboardCodeWorkspace:
+    """Concurrent 3-module workspace for stage-vs-E2E path-kernel & 4-tuple dashboard adequacy code-engineering swarms."""
+
+    def __init__(self, initial: dict[str, Any]) -> None:
+        """Initialize the path-kernel dashboard workspace from a seed fixture."""
+        self.state = deepcopy(initial)
+        self.state.setdefault("escalations", {})
+
+    def local_test_verdicts(self) -> dict[str, bool]:
+        """Return isolated local unit test pass/fail booleans for all three modules."""
+        out: dict[str, bool] = {}
+        for m, src in self.state["sources"].items():
+            res = run_path_kernel_local_unit_tests(m, src)
+            out[m] = bool(res.get("passed"))
+        return out
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in PATH_KERNEL_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = PATH_KERNEL_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_path_kernel_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_kernel.py": "def pricing_kernel(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict",
+                    "tax_kernel.py": "def tax_kernel(pricing_quote: dict, tax_rate_bps: int) -> dict",
+                    "settlement_kernel.py": "def settlement_kernel(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_path_kernel_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_path_kernel_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; path-kernel composition and 4-tuple dashboard adequacy are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+
 
 

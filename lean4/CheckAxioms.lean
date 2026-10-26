@@ -131,6 +131,7 @@ import LggrVIII
 #print axioms LggrVIII.fiber_splitting_codebase_unassisted_reflection_and_tool_probe_audit
 #print axioms LggrVIII.disagreement_council_codebase_collapsing_consensus_and_side_channel_audit
 #print axioms LggrVIII.six_role_codebase_schema_validation_and_double_count_deduplication_audit
+#print axioms LggrVIII.path_kernel_codebase_stage_vs_e2e_and_dashboard_adequacy_audit
 
 
 

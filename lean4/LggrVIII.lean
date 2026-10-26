@@ -4838,5 +4838,76 @@ theorem six_role_codebase_schema_validation_and_double_count_deduplication_audit
     simp [Int.sub_mul, Int.one_mul]
     omega
 
+/-- Theorem 115 (Stage-Level Unit Tests vs. End-to-End Path-Kernel & Dashboard Adequacy in
+    Code-Engineering Swarms):
+    1. All-assignment 4-cell contingency reconstruction & kernel discrepancy laws:
+       - For any 4-cell contingency table `(n11, n10, n01, n00)` with `n_tot = n11 + n10 + n01 + n00`,
+         local pass sum `l_sum = n11 + n10`, and global pass sum `g_sum = n11 + n01`:
+           `g_sum - l_sum = n01 - n10`,
+           `l_sum - n10 = n11`,
+           `g_sum - l_sum + n10 = n01`, and
+           `n_tot - g_sum - n10 = n00`.
+    2. Concrete 3-phase codebase path-kernel & dashboard adequacy audit across `pricing_kernel`,
+       `tax_kernel`, and `settlement_kernel` (`z1 = 1`, `z2 = 2`, `z_prod = 2`, `5` cents surcharge
+       per pointwise disagreement `egd = n_neg + n_pos`):
+       - Phase 1 (Cancellation-masked 3-tuple dashboard `(n11, n10, n01, n00) = (1, 1, 1, 1)`):
+         each module passes its isolated unit test (`L_p1 = 1`) and `g_p1 = 2 = z_prod`, yet
+         `n_neg_p1 = 1 > 0` and `n_pos_p1 = 1 > 0` (`egd_p1 = 2 > 0`, `surcharge_p1 = 5 * 2 = 10`,
+         `payout_p1 = 873 - 10 = 863 ≠ 873`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (PGD fallback disabled `n_pos_p2 = 0`, unmasked NGD regression `(1, 1, 0, 2)`):
+         `g_p2 = 1 < 2 = z_prod` (`r_e_p2 = -1`), `n_neg_p2 = 1 > 0`, `egd_p2 = 1 < 2`,
+         `surcharge_p2 = 5 * 1 = 5`, `payout_p2 = 873 - 5 = 868 ≠ 873`
+         (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (4-tuple dashboard `(N, l_sum, g_sum, n_neg)` + path-kernel boundary repair `(2, 0, 0, 2)`):
+         `g_p3 = 2 = z_prod` (`r_e_p3 = 0`), `n_neg_p3 = 0`, `n_pos_p3 = 0`, `egd_p3 = 0`,
+         `surcharge_p3 = 0`, `payout_p3 = 873`, and `873 + 27 + 180 = 1080`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem path_kernel_codebase_stage_vs_e2e_and_dashboard_adequacy_audit :
+    (∀ n11 n10 n01 n00 : Int,
+      let n_tot := n11 + n10 + n01 + n00;
+      let l_sum := n11 + n10;
+      let g_sum := n11 + n01;
+      (g_sum - l_sum = n01 - n10) ∧
+      (l_sum - n10 = n11) ∧
+      (g_sum - l_sum + n10 = n01) ∧
+      (n_tot - g_sum - n10 = n00)) ∧
+    (let z1 : Int := 1; let z2 : Int := 2; let z_prod := z2 * z1;
+     let g_p1 : Int := 1 + 0 + 1 + 0;
+     let n_neg_p1 : Int := 1; let n_pos_p1 : Int := 1;
+     let egd_p1 := n_neg_p1 + n_pos_p1;
+     let g_p2 : Int := 1 + 0 + 0 + 0;
+     let r_e_p2 := g_p2 - z_prod;
+     let n_neg_p2 : Int := 1; let n_pos_p2 : Int := 0;
+     let egd_p2 := n_neg_p2 + n_pos_p2;
+     let g_p3 : Int := 1 + 1 + 0 + 0;
+     let r_e_p3 := g_p3 - z_prod;
+     let n_neg_p3 : Int := 0; let n_pos_p3 : Int := 0;
+     let egd_p3 := n_neg_p3 + n_pos_p3;
+     let surcharge_p1 := 5 * egd_p1;
+     let surcharge_p2 := 5 * egd_p2;
+     let surcharge_p3 := 5 * egd_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 180; let gross : Int := 1080;
+     let l_p1 := if (g_p1 = z_prod) ∧ (egd_p1 = 2) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (egd_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (r_e_p2 = -1) ∧ (egd_p2 = 1) ∧ (surcharge_p2 = 5) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (egd_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (r_e_p3 = 0) ∧ (egd_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (z_prod = 2 ∧ egd_p1 = 2 ∧ r_e_p2 = -1 ∧ egd_p2 = 1 ∧ egd_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 5 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 868 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro n11 n10 n01 n00
+    refine ⟨by omega, by omega, by omega, by omega⟩
+
 
 end LggrVIII
