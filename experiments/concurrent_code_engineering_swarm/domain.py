@@ -4681,8 +4681,10 @@ class WatcherDropoutCodeWorkspace:
         arguments: dict[str, Any],
         feedback: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        if worker not in GRAM_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
         module_name = GRAM_WORKER_MODULES[worker]
-        if name == "inspect_workspace":
+        if name == "inspect_workspace" and arguments == {}:
             own_src = self.state["sources"][module_name]
             local_res = run_gram_local_unit_tests(module_name, own_src)
             payload: dict[str, Any] = {
@@ -4702,7 +4704,7 @@ class WatcherDropoutCodeWorkspace:
                 payload["merge_gate_feedback"] = feedback
             return payload
 
-        if name == "run_local_unit_tests":
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
             own_src = self.state["sources"][module_name]
             return run_gram_local_unit_tests(module_name, own_src)
 

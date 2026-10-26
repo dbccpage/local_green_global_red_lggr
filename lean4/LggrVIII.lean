@@ -4533,7 +4533,7 @@ theorem contextual_sheaf_codebase_hollow_triangle_and_reconciliation_audit :
   omega
 
 /-- 110. Watcher-dropout and Gram rank-deficiency vs. full-rank critical watcher restoration in concurrent code-engineering swarms:
-    1. Universal 3-module watcher-row Gram nullspace vs. full-rank restoration law over ℤ³:
+    1. General 3-module watcher-row Gram nullspace vs. full-rank restoration law over ℤ³:
        - When `pricing_gram` emits anchor watcher row `q1 = (1, 1, 0)`, `tax_gram` emits collinear
          duplicate `q2_drop = (2, 2, 0) = 2·q1`, and `settlement_gram` emits `q3_drop = (0, 1, 1)`
          (dropping the critical watcher row `q4 = (1, 0, 1)`), every nonzero multiple of the

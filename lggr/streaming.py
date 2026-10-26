@@ -25718,9 +25718,20 @@ class StreamingCodebaseWatcherDropoutMonitor:
         t_out = ns["tax_gram"](p_out, tax_rate_bps)
         s_out = ns["settlement_gram"](p_out, t_out, fee_bps)
 
-        row_p = [int(v) for v in p_out.get("pricing_watcher_row", [1, 1, 0])]
-        row_t = [int(v) for v in t_out.get("tax_watcher_row", [2, 2, 0])]
-        row_s = [int(v) for v in s_out.get("settle_watcher_row", [0, 1, 1])]
+        if (
+            not isinstance(p_out, dict)
+            or "pricing_watcher_row" not in p_out
+            or not isinstance(t_out, dict)
+            or "tax_watcher_row" not in t_out
+            or not isinstance(s_out, dict)
+            or "settle_watcher_row" not in s_out
+        ):
+            raise ValidationError(
+                "Module outputs must contain pricing_watcher_row, tax_watcher_row, and settle_watcher_row"
+            )
+        row_p = [int(v) for v in p_out["pricing_watcher_row"]]
+        row_t = [int(v) for v in t_out["tax_watcher_row"]]
+        row_s = [int(v) for v in s_out["settle_watcher_row"]]
         if len(row_p) != 3 or len(row_t) != 3 or len(row_s) != 3:
             raise ValidationError("Each watcher row must have length 3")
 
@@ -25750,11 +25761,12 @@ class StreamingCodebaseWatcherDropoutMonitor:
         gross_collected = int(s_out["gross_collected_cents"])
         total_accounted = int(s_out["total_accounted_cents"])
 
-        expected_net = 900
-        expected_tax = 180
-        expected_fee = 27
-        expected_payout = 873
-        expected_gross_collected = 1080
+        expected_discount = (gross_cents * discount_bps) // 10000
+        expected_net = gross_cents - expected_discount - rebate_cents
+        expected_tax = (expected_net * tax_rate_bps) // 10000
+        expected_fee = (expected_net * fee_bps) // 10000
+        expected_payout = expected_net - expected_fee
+        expected_gross_collected = expected_net + expected_tax
 
         all_local_pass = all(
             bool(local_test_results.get(m, False))
