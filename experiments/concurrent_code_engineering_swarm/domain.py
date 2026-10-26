@@ -1811,6 +1811,326 @@ class MayerVietorisCodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
+# ---------------------------------------------------------------------------
+# 3-Module Sliding-Window Horizon Truncation & Rebalancing Codebase (`--topology windowed_drift`)
+# ---------------------------------------------------------------------------
+
+WIN_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_win",
+    "worker-1": "tax_win",
+    "worker-2": "settlement_win",
+}
+
+CANONICAL_PRICING_WIN_SOURCE = (
+    "def compute_pricing_win(items, discount_bps):\n"
+    "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+    "    discount = (subtotal * int(discount_bps)) // 10000\n"
+    "    net = subtotal - discount\n"
+    "    return {\n"
+    "        'subtotal_cents': subtotal,\n"
+    "        'discount_cents': discount,\n"
+    "        'net_cents': net,\n"
+    "        'epoch_drifts_cents': [1, -1],\n"
+    "    }\n"
+)
+
+CANONICAL_TAX_WIN_SOURCE = (
+    "def compute_tax_win(quote, tax_bps):\n"
+    "    net = int(quote['net_cents'])\n"
+    "    tax = (net * int(tax_bps)) // 10000\n"
+    "    gross = net + tax\n"
+    "    return {\n"
+    "        'net_cents': net,\n"
+    "        'tax_cents': tax,\n"
+    "        'gross_cents': gross,\n"
+    "        'epoch_drifts_cents': [1, -1],\n"
+    "    }\n"
+)
+
+CANONICAL_SETTLEMENT_WIN_SOURCE = (
+    "def compute_settlement_win(taxed_quote, fee_bps):\n"
+    "    net = int(taxed_quote['net_cents'])\n"
+    "    tax = int(taxed_quote['tax_cents'])\n"
+    "    gross = int(taxed_quote['gross_cents'])\n"
+    "    fee = (net * int(fee_bps)) // 10000\n"
+    "    payout = gross - fee - tax\n"
+    "    return {\n"
+    "        'gross_cents': gross,\n"
+    "        'platform_fee_cents': fee,\n"
+    "        'tax_reserve_cents': tax,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        'epoch_drifts_cents': [1, -1],\n"
+    "    }\n"
+)
+
+
+def run_win_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Run isolated length-2 sliding-window unit tests on a single windowed-drift module."""
+    func_map = {
+        "pricing_win": "compute_pricing_win",
+        "tax_win": "compute_tax_win",
+        "settlement_win": "compute_settlement_win",
+    }
+    if module_name not in func_map:
+        return {"passed": False, "error": f"Unknown windowed-drift module: {module_name}"}
+
+    ast_info = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(module_name, source_code)
+    if not ast_info["syntax_ok"] or not ast_info["sandbox_ok"]:
+        return {
+            "passed": False,
+            "module": module_name,
+            "error": ast_info.get("error") or str(ast_info.get("sandbox_violations")),
+        }
+
+    try:
+        env = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            module_name, source_code
+        )
+    except Exception as exc:
+        return {"passed": False, "error": f"SandboxCompileError: {exc}"}
+
+    fn = env.get(func_map[module_name])
+    if not callable(fn):
+        return {"passed": False, "error": f"Missing function {func_map[module_name]} in {module_name}.py"}
+
+    try:
+        if module_name == "pricing_win":
+            res = fn([{"sku": "a", "unit_cents": 600, "quantity": 1}, {"sku": "b", "unit_cents": 400, "quantity": 1}], 1000)
+            if not isinstance(res, dict):
+                return {"passed": False, "error": "compute_pricing_win must return a dict"}
+            drifts = res.get("epoch_drifts_cents")
+            ok = (
+                int(res.get("subtotal_cents", -1)) == 1000
+                and int(res.get("discount_cents", -1)) == 100
+                and int(res.get("net_cents", -1)) == 900
+                and isinstance(drifts, list)
+                and len(drifts) == 2
+                and sum(int(x) for x in drifts) <= 2
+            )
+            return {
+                "passed": ok,
+                "return_keys": sorted(res.keys()),
+                "sample_output": res,
+                "error": None if ok else "pricing_win arithmetic or window sum > 2",
+            }
+
+        if module_name == "tax_win":
+            res = fn({"subtotal_cents": 1000, "discount_cents": 100, "net_cents": 900, "epoch_drifts_cents": [1, -1]}, 2000)
+            if not isinstance(res, dict):
+                return {"passed": False, "error": "compute_tax_win must return a dict"}
+            drifts = res.get("epoch_drifts_cents")
+            ok = (
+                int(res.get("net_cents", -1)) == 900
+                and int(res.get("tax_cents", -1)) == 180
+                and int(res.get("gross_cents", -1)) == 1080
+                and isinstance(drifts, list)
+                and len(drifts) == 2
+                and sum(int(x) for x in drifts) <= 2
+            )
+            return {
+                "passed": ok,
+                "return_keys": sorted(res.keys()),
+                "sample_output": res,
+                "error": None if ok else "tax_win arithmetic or window sum > 2",
+            }
+
+        res = fn(
+            {
+                "net_cents": 900,
+                "tax_cents": 180,
+                "gross_cents": 1080,
+                "epoch_drifts_cents": [1, -1],
+            },
+            300,
+        )
+        if not isinstance(res, dict):
+            return {"passed": False, "error": "compute_settlement_win must return a dict"}
+        drifts = res.get("epoch_drifts_cents")
+        ok = (
+            int(res.get("gross_cents", -1)) == 1080
+            and int(res.get("platform_fee_cents", -1)) == 27
+            and int(res.get("tax_reserve_cents", -1)) == 180
+            and int(res.get("merchant_payout_cents", -1)) == 873
+            and isinstance(drifts, list)
+            and len(drifts) == 2
+            and sum(int(x) for x in drifts) <= 2
+        )
+        return {
+            "passed": ok,
+            "return_keys": sorted(res.keys()),
+            "sample_output": res,
+            "error": None if ok else "settlement_win arithmetic or window sum > 2",
+        }
+    except Exception as exc:
+        return {"passed": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+def win_fixture(seed: int) -> dict[str, Any]:
+    """Generate deterministic 3-agent windowed-drift codebase scenario for `seed`."""
+    kind = [
+        "unrebalanced_sliding_window_horizon_breach",
+        "infeasible_windowed_drift_lock",
+        "clean_windowed_drift_control",
+    ][seed % 3]
+
+    src_p_unreb = (
+        "def compute_pricing_win(items, discount_bps):\n"
+        "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'epoch_drifts_cents': [1, 1],\n"
+        "    }\n"
+    )
+    src_t_unreb = (
+        "def compute_tax_win(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'epoch_drifts_cents': [1, 1],\n"
+        "    }\n"
+    )
+    src_s_unreb = (
+        "def compute_settlement_win(taxed_quote, fee_bps):\n"
+        "    net = int(taxed_quote['net_cents'])\n"
+        "    tax = int(taxed_quote['tax_cents'])\n"
+        "    gross = int(taxed_quote['gross_cents'])\n"
+        "    fee = (net * int(fee_bps)) // 10000\n"
+        "    payout = gross - fee - tax\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'epoch_drifts_cents': [1, 1],\n"
+        "    }\n"
+    )
+
+    if kind == "unrebalanced_sliding_window_horizon_breach":
+        sources = {
+            "pricing_win": src_p_unreb,
+            "tax_win": src_t_unreb,
+            "settlement_win": src_s_unreb,
+        }
+        infeasible = None
+        locked_workers: list[str] = []
+    elif kind == "infeasible_windowed_drift_lock":
+        sources = {
+            "pricing_win": src_p_unreb,
+            "tax_win": src_t_unreb,
+            "settlement_win": src_s_unreb,
+        }
+        infeasible = {
+            "type": "LOCKED_UNREBALANCED_EPOCH_DRIFT_CONTRADICTION",
+            "locked_modules": ["pricing_win", "tax_win"],
+            "locked_prefix_drift_cents": 4,
+            "global_budget_cents": 3,
+            "reason": (
+                "Upstream modules `pricing_win.py` and `tax_win.py` are locked at `'epoch_drifts_cents': [1, 1]`, "
+                "causing cumulative prefix drift at epoch 4 to reach `4 > B_global = 3`."
+            ),
+        }
+        locked_workers = ["worker-0", "worker-1"]
+    else:
+        sources = {
+            "pricing_win": CANONICAL_PRICING_WIN_SOURCE,
+            "tax_win": CANONICAL_TAX_WIN_SOURCE,
+            "settlement_win": CANONICAL_SETTLEMENT_WIN_SOURCE,
+        }
+        infeasible = None
+        locked_workers = []
+
+    return {
+        "seed": seed,
+        "kind": kind,
+        "sources": sources,
+        "locked_workers": locked_workers,
+        "infeasible_constraint": infeasible,
+        "escalations": {},
+    }
+
+
+class WindowedDriftCodeWorkspace:
+    """Sandboxed 3-agent sliding-window horizon truncation & rebalancing codebase workspace."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def local_verdicts(self) -> dict[str, bool]:
+        return {
+            mname: bool(run_win_local_unit_tests(mname, src)["passed"])
+            for mname, src in self.state["sources"].items()
+        }
+
+    def tool(self, worker: str, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        if worker not in WIN_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = WIN_WORKER_MODULES[worker]
+
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_win_local_unit_tests(module_name, own_src)
+            peer_ast = {
+                m: StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(m, s)["functions"]
+                for m, s in self.state["sources"].items()
+            }
+            return {
+                "worker": worker,
+                "owned_module": module_name,
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test_result": local_res,
+                "peer_module_signatures": peer_ast,
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+
+        if name == "run_local_tests" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_win_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_win_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated sliding-window unit tests passed; 6-epoch cumulative horizon drift is checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+
 
 
 

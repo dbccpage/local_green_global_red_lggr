@@ -149,13 +149,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50
 | `9702` | `disconnected_overlap_coboundary_jump` | **B** | `one_sided_subswarm_v_adjustment` | `blocked_unresolved` | `1110` | `1080` | `30` | 2 | 13 | `$0.015792` |
 | `9702` | `disconnected_overlap_coboundary_jump` | **C** | `explicit_lggr_mayer_vietoris_coboundary_directive` | **`completed`** | **`1080`** | **`1080`** | **`0`** | **1** | **6** | **`$0.006775`** |
 
+## 8. 3-Agent Sliding-Window Horizon Truncation & Periodic Rebalancing Campaign (`--topology windowed_drift`)
+
+In `--topology windowed_drift`, 3 concurrent LLM workers edit `pricing_win.py`, `tax_win.py`, and `settlement_win.py` across a 6-epoch settlement drift stream (2 epochs per module) with sliding-window size $W = 2$, sliding-window budget $B_W = 2$ cents, and global horizon drift ceiling $B_{\mathrm{global}} = 3$ cents:
+- On `seed 9801` (`unrebalanced_sliding_window_horizon_breach`), every module initially emits `'epoch_drifts_cents': [1, 1]`, satisfying all isolated unit tests and every length-2 sliding window (`max_window_sum = 2 <= 2`, `local_green = 1`) yet breaching the global horizon ceiling (`max_prefix_drift = 6 > 3`, `global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `48` live API attempts, `$0.053738` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | Max Window | Max Prefix | Terminal Drift | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `9800` | `clean_windowed_drift_control` | **A / B / C** | All policies | `completed` | `1` | `1` | `0` | 0 | 0 | `$0.000000` |
+| `9801` | `unrebalanced_sliding_window_horizon_breach` | **A** | `sliding_window_local_gate` | `blocked_unresolved` | `2` | `6` | `6` | 2 | 12 | `$0.014319` |
+| `9801` | `unrebalanced_sliding_window_horizon_breach` | **B** | `late_terminal_sweep_only` | `blocked_unresolved` | `2` | `4` | `2` | 2 | 12 | `$0.014475` |
+| `9801` | `unrebalanced_sliding_window_horizon_breach` | **C** | `explicit_lggr_windowed_drift_rebalancing_directive` | **`completed`** | **`1`** | **`1`** | **`0`** | **1** | **6** | **`$0.006663`** |
+| `9802` | `infeasible_windowed_drift_lock` | **A / B / C** | All policies | `safe_escalated` | `2` | `6` | `6` | 1 | 6 | `$0.0059–$0.0065` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, and 3-agent Mayer-Vietoris evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, and 3-agent windowed-drift evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -163,4 +178,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/replay_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/coalitional_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/mayer_vietoris_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/windowed_drift_pilot_run/events.jsonl
 ```
