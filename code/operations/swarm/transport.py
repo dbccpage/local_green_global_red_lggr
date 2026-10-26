@@ -57,7 +57,7 @@ def count_params(payload):
 class AnthropicTransport:
     live = True
 
-    def __init__(self, concurrency=16, min_interval=0.0):
+    def __init__(self, concurrency=16, min_interval=0.0, max_input=MAX_INPUT):
         import anthropic
         key = api_key()
         if not key:
@@ -65,7 +65,7 @@ class AnthropicTransport:
         self.anthropic = anthropic
         self.client = anthropic.Anthropic(api_key=key, max_retries=0, timeout=180.0)
         self.sdk_version = anthropic.__version__
-        self.concurrency, self.min_interval = concurrency, min_interval
+        self.concurrency, self.min_interval, self.max_input = concurrency, min_interval, max_input
         self._gate, self._last = threading.Lock(), 0.0
 
     def model_info(self):
@@ -99,7 +99,7 @@ class AnthropicTransport:
             counted = self.client.messages.count_tokens(**count_params(payload)).input_tokens
         except Exception as error:  # noqa: BLE001 - every error is a recorded failure
             return {"outcome": "failure", "failure": self._failure("count_tokens", error), "elapsed": round(time.monotonic() - started, 3)}
-        if counted > MAX_INPUT:
+        if counted > self.max_input:
             return {"outcome": "refused_input", "count": counted, "elapsed": round(time.monotonic() - started, 3)}
         try:
             self._pace()
@@ -127,6 +127,23 @@ class ReplayTransport:
         if item["payload_sha256"] != digest(payload):
             raise HaltRun(f"request {key} differs from the recorded payload")
         return item["result"]
+
+
+class PrefixTransport:
+    """Sensitivity runs: reuse a recorded primary result when the request is identical except for the
+    output cap and the recorded response neither failed nor hit the cap; otherwise call `live`."""
+
+    def __init__(self, recorded, live, base_output=4096):
+        self.recorded, self.live, self.base_output = recorded, live, base_output
+        self.sdk_version, self.concurrency = live.sdk_version, live.concurrency
+
+    def call(self, key, payload):
+        item = self.recorded.get(key)
+        if item is not None and item["payload_sha256"] == digest(dict(payload, max_tokens=self.base_output)):
+            result = item["result"]
+            if result["outcome"] == "ok" and result["body"].get("stop_reason") != "max_tokens":
+                return {**result, "reused": True}
+        return self.live.call(key, payload)
 
 
 class FakeTransport:
@@ -182,7 +199,9 @@ def run_wave(transport, ledger, requests):
     # A halt above leaves reservations outstanding; reopening the ledger retains them.
     for k in keys:
         r = results[k]
-        if r["outcome"] == "ok":
+        if r.get("reused"):
+            r["charged_usd"] = str(ledger.release(k))  # charged in the primary run
+        elif r["outcome"] == "ok":
             usage = r["body"].get("usage") or {}
             try:
                 r["charged_usd"] = str(ledger.settle(k, usage))

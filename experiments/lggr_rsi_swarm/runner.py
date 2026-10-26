@@ -92,6 +92,8 @@ def files_text(ws):
 
 
 class Session:
+    max_tokens = 4096  # set per campaign from config["max_output"] (sensitivity runs use 8192)
+
     def __init__(self, sid, system, toolset, parallel=True):
         self.sid, self.system, self.toolset, self.parallel = sid, system, toolset, parallel
         self.messages, self.logged, self.pending, self.dead = [], 0, [], False
@@ -106,7 +108,7 @@ class Session:
 
     def payload(self):
         choice = {"type": "auto"} if self.parallel else {"type": "auto", "disable_parallel_tool_use": True}
-        return {"model": MODEL, "max_tokens": 4096,
+        return {"model": MODEL, "max_tokens": self.max_tokens,
                 "system": [{"type": "text", "text": self.system, "cache_control": {"type": "ephemeral"}}],
                 "tools": TOOLSETS[self.toolset], "tool_choice": choice,
                 "thinking": {"type": "adaptive", "display": "summarized"}, "output_config": {"effort": "low"},
@@ -123,6 +125,7 @@ class Campaign:
         self.index = {i["id"]: i for i in data["evaluation"] + data["development"]}
         self.expected_model = config.get("resolved_model")
         self.rng = random.Random(config["chunk_seed"])
+        Session.max_tokens = config.get("max_output", 4096)
 
     # ---- provider waves -------------------------------------------------
     def wave(self, label, items):
@@ -151,7 +154,8 @@ class Campaign:
             self.events.emit("response", {"key": key, "outcome": r["outcome"] if not failure else "failure",
                                           "transport_outcome": r["outcome"], "transport_failure": r.get("failure"),
                                           "failure": failure, "body": body, "headers": r.get("headers"),
-                                          "elapsed": r.get("elapsed"), "charged_usd": r["charged_usd"]})
+                                          "elapsed": r.get("elapsed"), "charged_usd": r["charged_usd"],
+                                          **({"reused": True} if r.get("reused") else {})})
             if failure:
                 session.dead = True
                 out[key] = None
@@ -515,7 +519,10 @@ class Campaign:
     # ---- driver -------------------------------------------------------------
     def run(self):
         cfg = self.config
-        cases = [(self.index[i], d) for i in cfg["instances"] for d in cfg["draws"]]
+        if cfg.get("cases"):
+            cases = [(self.index[i], d) for i, d in cfg["cases"]]
+        else:
+            cases = [(self.index[i], d) for i in cfg["instances"] for d in cfg["draws"]]
         summary = {"part": cfg["part"], "chunk": cfg["chunk"], "split": cfg["split"]}
         if cfg["part"] == "swarm":
             state = self.proposal(cases)
@@ -568,16 +575,14 @@ def source_hashes():
     return {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
 
 
-def replay(path):
-    records = load_events(path)
-    meta = records[0]["data"]
-    if records[0]["kind"] != "start":
-        raise ValueError("first event must be start")
-    if meta["source_hashes"] != source_hashes():
-        raise ValueError("source freeze differs")
-    data = load()
-    if digest(data) != meta["instances_sha256"]:
-        raise ValueError("instances differ")
+def reservation_for(config):
+    from decimal import Decimal
+    from swarm.ledger import RATES
+    return (config.get("max_input", 10000) * RATES["cache_write"] + config.get("max_output", 4096) * RATES["output"]) / Decimal(10 ** 6)
+
+
+def recorded_results(records):
+    """Map request key -> recorded payload hash and transport result."""
     recorded, requests = {}, {}
     for r in records:
         d = r["data"]
@@ -589,10 +594,26 @@ def replay(path):
                 result.update(body=d["body"], headers=d["headers"])
             elif d["transport_outcome"] == "failure":
                 result["failure"] = d["transport_failure"]
+            if d.get("reused"):
+                result["reused"] = True
             recorded[d["key"]] = {"payload_sha256": requests[d["key"]]["payload_sha256"], "result": result}
+    return recorded
+
+
+def replay(path):
+    records = load_events(path)
+    meta = records[0]["data"]
+    if records[0]["kind"] != "start":
+        raise ValueError("first event must be start")
+    if meta["source_hashes"] != source_hashes():
+        raise ValueError("source freeze differs")
+    data = load()
+    if digest(data) != meta["instances_sha256"]:
+        raise ValueError("instances differ")
+    recorded = recorded_results(records)
     events = Events(expected=records)
     events.emit("start", meta)
-    ledger = Ledger(None, meta["config"]["split"], persist=False)
+    ledger = Ledger(None, meta["config"]["split"], persist=False, reservation=reservation_for(meta["config"]))
     transport = ReplayTransport(recorded, meta["sdk_version"])
     campaign = Campaign(data, meta["config"], transport, ledger, events)
     try:
@@ -623,6 +644,48 @@ def execute(data, config, transport, ledger, out, model_info, commit, hashes):
     return compress(out / "events.jsonl"), summary
 
 
+SENSITIVITY_CAPS = {"max_input": 16000, "max_output": 8192}
+
+
+def sensitivity_config(data, cases, resolved_model):
+    subsets = data["subsets"]
+    cases = sorted([i, int(d)] for i, d in cases)
+    return {"split": "sensitivity", "part": "swarm", "chunk": 0, "instances": sorted({i for i, _ in cases}),
+            "draws": DRAWS, "cases": cases, "l0": subsets["l0"], "repair": subsets["repair"],
+            "chunk_seed": int(hashlib.sha256(b"sensitivity/swarm/0").hexdigest()[:8], 16),
+            "resolved_model": resolved_model, "prefix_from": [f"swarm-{c:02d}" for c in range(400 // SWARM_CHUNK)],
+            **SENSITIVITY_CAPS}
+
+
+def primary_records(config):
+    recorded = {}
+    for name in config["prefix_from"]:
+        recorded.update(recorded_results(load_events(HERE / "evidence" / "evaluation" / name / "events.jsonl.gz")))
+    return recorded
+
+
+def sensitivity_main(args):
+    from swarm.transport import PrefixTransport
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    hashes = source_hashes()
+    for name, value in hashes.items():
+        blob = subprocess.check_output(["git", "show", f"{commit}:{name}"], cwd=ROOT)
+        if hashlib.sha256(blob).hexdigest() != value:
+            raise SystemExit("live source is not committed: " + name)
+    data = load()
+    config = sensitivity_config(data, json.loads(Path(args.sensitivity).read_text(encoding="utf-8")), args.resolved_model)
+    out = Path(args.path)
+    out.mkdir(parents=True, exist_ok=False)
+    ledger = Ledger(HERE / "evidence" / "ledger.json", "sensitivity", reservation=reservation_for(config))
+    live = AnthropicTransport(concurrency=args.concurrency, min_interval=args.min_interval, max_input=config["max_input"])
+    transport = PrefixTransport(primary_records(config), live)
+    try:
+        execute(data, config, transport, ledger, out, live.model_info(), commit, hashes)
+    except HaltRun as error:
+        raise SystemExit("halted: " + str(error))
+    print(json.dumps({"complete": True, "part": "sensitivity", "ledger": ledger.summary()}))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=["live", "replay"])
@@ -633,10 +696,13 @@ def main():
     parser.add_argument("--concurrency", type=int, default=16)
     parser.add_argument("--min-interval", type=float, default=0.0)
     parser.add_argument("--resolved-model", default=None)
+    parser.add_argument("--sensitivity", help="JSON list of [instance, draw] cap-affected evaluation cases")
     args = parser.parse_args()
     if args.mode == "replay":
         print(json.dumps(replay(args.path)))
         return
+    if args.sensitivity:
+        return sensitivity_main(args)
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     hashes = source_hashes()
     for name, value in hashes.items():

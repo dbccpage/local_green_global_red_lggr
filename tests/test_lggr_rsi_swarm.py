@@ -433,6 +433,33 @@ class CampaignReplayTests(unittest.TestCase):
             self.assertTrue(restart_writes and all(r["data"]["denied"] for r in restart_writes))
             self.assertTrue(runner.replay(path)["complete"])
 
+    def test_sensitivity_reuses_prefix_and_resends_failed_tails(self):
+        from swarm.transport import PrefixTransport
+        with tempfile.TemporaryDirectory() as tmp:
+            failed = "dev-900001/d0/impl-0/p1"
+            path, _, _, _ = run_fake(tmp, fail_keys={failed})
+            recorded = runner.recorded_results(load_events(path))
+            config = dict(runner.chunk_config(DATA, "development", "swarm", 0), split="sensitivity",
+                          cases=[["dev-900001", 0], ["dev-900002", 0]], **runner.SENSITIVITY_CAPS)
+            model = FakeModel(DEV)
+            transport = PrefixTransport(recorded, FakeTransport(model))
+            ledger = Ledger(Path(tmp) / "s.json", "sensitivity", reservation=runner.reservation_for(config))
+            out = Path(tmp) / "sens"
+            out.mkdir()
+            spath, summary = runner.execute(DATA, config, transport, ledger, out, {}, "0" * 40, runner.source_hashes())
+            records = load_events(spath)
+            responses = [r["data"] for r in records if r["kind"] == "response"]
+            reused = [d for d in responses if d.get("reused")]
+            live = [d for d in responses if not d.get("reused")]
+            self.assertTrue(reused)
+            self.assertIn(failed, {d["key"] for d in live})
+            self.assertTrue(all(d["charged_usd"] == "0" for d in reused))
+            self.assertTrue(all(d["key"].startswith(("dev-900001", "dev-900002")) for d in responses))
+            # dev-900002 had no failure upstream, so its proposal requests are all reused
+            self.assertTrue(all(d.get("reused") for d in responses if d["key"].startswith("dev-900002") and d["key"].endswith(("/p1", "/p2"))))
+            self.assertEqual(runner.reservation_for(config), Decimal("0.006096"))
+            self.assertTrue(runner.replay(spath)["complete"])
+
     def test_model_drift_halts(self):
         with tempfile.TemporaryDirectory() as tmp:
             config = runner.chunk_config(DATA, "development", "swarm", 0, resolved_model="claude-haiku-5-5")

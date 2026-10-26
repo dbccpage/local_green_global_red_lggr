@@ -219,3 +219,12 @@ host-rule verdict and charge. API keys never enter evidence.
   results reach it only through team memory and the board, which is the channel the RSI arms compare.
   Repair waves keep continuing proposal histories as specified; their over-cap refusals (2/40 in
   swarm-dev2, final repair wave) are recorded failures. rsi-dev1 evidence is kept.
+- R4 (2026-10-26, after the primary evaluation finished and its RESULTS.json was committed; operational,
+  changes no primary condition): the owner set the cumulative ceiling to USD 150 (ledger cap lowered from
+  160). The owner also approved a cap sensitivity analysis, reported separately from the primary endpoints:
+  every evaluation (instance, draw) case in which any request was output-truncated (`max_tokens`) or
+  refused over the input cap is re-run with caps of 16,000 input / 8,192 output tokens (reservation USD
+  0.006096). A request is answered from the primary record when it is byte-identical apart from the output
+  cap and its recorded response neither failed nor hit the cap; every other request is sent live. Each
+  case therefore follows its primary trajectory up to its first capped failure and continues live from
+  there. The verifier checks every reused response against the primary evidence.

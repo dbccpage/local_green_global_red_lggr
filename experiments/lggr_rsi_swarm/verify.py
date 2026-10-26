@@ -35,11 +35,24 @@ def verify(directory):
         if result.returncode:
             raise ValueError(result.stderr[-2000:])
         replayed = json.loads(result.stdout)
+    reused = 0
+    if meta["config"].get("prefix_from"):
+        primary = {}
+        for name in meta["config"]["prefix_from"]:
+            for r in load_events(directory.parent.parent / "evaluation" / name / "events.jsonl.gz"):
+                if r["kind"] == "response":
+                    primary[r["data"]["key"]] = r["data"]["body"]
+        for r in records:
+            if r["kind"] == "response" and r["data"].get("reused"):
+                if primary.get(r["data"]["key"]) != r["data"]["body"]:
+                    raise ValueError("reused response differs from the primary record: " + r["data"]["key"])
+                reused += 1
     summary = json.loads((directory / "summary.json").read_text(encoding="utf-8"))
     if replayed["summary_sha256"] != digest(summary):
         raise ValueError("saved summary differs from replay")
     return {"run": directory.name, "events": len(records), "source_files": len(meta["source_hashes"]),
-            "source_commit": meta["source_commit"], "replay_complete": replayed["complete"], "summary_verified": True}
+            "source_commit": meta["source_commit"], "replay_complete": replayed["complete"], "summary_verified": True,
+            "reused_primary_responses_verified": reused}
 
 
 if __name__ == "__main__":

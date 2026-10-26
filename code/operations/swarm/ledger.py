@@ -16,8 +16,8 @@ import threading
 RATES = {"input": Decimal("0.10"), "cache_write": Decimal("0.125"), "cache_read": Decimal("0.01"), "output": Decimal("0.50")}
 MAX_INPUT, MAX_OUTPUT = 10000, 4096
 RESERVATION = (MAX_INPUT * RATES["cache_write"] + MAX_OUTPUT * RATES["output"]) / Decimal(10 ** 6)
-TOTAL_CEILING = Decimal("160")
-PHASE_CEILINGS = {"development": Decimal("20"), "evaluation": Decimal("140")}
+TOTAL_CEILING = Decimal("150")  # lowered from 160 at the owner's request (protocol R4)
+PHASE_CEILINGS = {"development": Decimal("20"), "evaluation": Decimal("140"), "sensitivity": Decimal("20")}
 
 
 class BudgetExceeded(Exception):
@@ -39,11 +39,12 @@ def usage_cost(usage):
 
 
 class Ledger:
-    def __init__(self, path, phase, persist=True):
+    def __init__(self, path, phase, persist=True, reservation=RESERVATION):
         if phase not in PHASE_CEILINGS:
             raise ValueError("unknown phase")
         self.path, self.phase, self.persist = Path(path) if path else None, phase, persist
         self.lock = threading.Lock()
+        self.reservation = reservation
         self.recovered = []
         if self.path and self.path.exists():
             self.state = json.loads(self.path.read_text(encoding="utf-8"))
@@ -76,11 +77,11 @@ class Ledger:
                 raise BudgetExceeded("previous wave has unsettled requests")
             if len(set(keys)) != len(keys):
                 raise ValueError("duplicate request keys")
-            need = RESERVATION * len(keys)
+            need = self.reservation * len(keys)
             if self.committed() + need > TOTAL_CEILING or self.committed(self.phase) + need > PHASE_CEILINGS[self.phase]:
                 raise BudgetExceeded(f"wave of {len(keys)} requests would exceed the {self.phase} or total ceiling")
             for key in keys:
-                self.state["inflight"][key] = {"phase": self.phase, "amount": str(RESERVATION)}
+                self.state["inflight"][key] = {"phase": self.phase, "amount": str(self.reservation)}
             self._save()
             return str(need)
 
@@ -91,7 +92,7 @@ class Ledger:
     def settle(self, key, usage):
         cost = usage_cost(usage)
         with self.lock:
-            if cost > RESERVATION:
+            if cost > self.reservation:
                 raise BudgetExceeded("charge exceeds reservation")
             bucket = self._close(key)
             bucket["settled"] = str(Decimal(bucket["settled"]) + cost)
@@ -102,10 +103,10 @@ class Ledger:
     def fail(self, key):
         with self.lock:
             bucket = self._close(key)
-            bucket["retained"] = str(Decimal(bucket["retained"]) + RESERVATION)
+            bucket["retained"] = str(Decimal(bucket["retained"]) + self.reservation)
             bucket["requests"] += 1
             self._save()
-        return RESERVATION
+        return self.reservation
 
     def release(self, key):
         with self.lock:
