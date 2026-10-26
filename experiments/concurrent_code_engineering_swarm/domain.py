@@ -13,9 +13,11 @@ from lggr.streaming import (
     StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSubgradientPivotMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingNonAbelianBraidHolonomyMonitor,
     StreamingStatefulCodebaseDFAMonitor,
+    StreamingSubgradientSensitivityMonitor,
 )
 
 CODE_SWARM_MODELS: list[str] = [
@@ -8589,6 +8591,215 @@ class NonAbelianBraidCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+SUBGRADIENT_PIVOT_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_pivot",
+    "worker-1": "tax_pivot",
+    "worker-2": "settlement_pivot",
+}
+
+INITIAL_PRICING_PIVOT_P1_PY = StreamingCodebaseSubgradientPivotMonitor.PHASE_1_PRICING_PIVOT_SOURCE
+INITIAL_PRICING_PIVOT_P2_P3_PY = StreamingCodebaseSubgradientPivotMonitor.PHASE_2_PRICING_PIVOT_SOURCE
+
+INITIAL_TAX_PIVOT_P1_PY = StreamingCodebaseSubgradientPivotMonitor.PHASE_1_TAX_PIVOT_SOURCE
+INITIAL_TAX_PIVOT_P2_PY = StreamingCodebaseSubgradientPivotMonitor.PHASE_2_TAX_PIVOT_SOURCE
+INITIAL_TAX_PIVOT_P3_PY = StreamingCodebaseSubgradientPivotMonitor.PHASE_3_TAX_PIVOT_SOURCE
+
+INITIAL_SETTLEMENT_PIVOT_P1_P2_PY = StreamingCodebaseSubgradientPivotMonitor.PHASE_1_SETTLEMENT_PIVOT_SOURCE
+INITIAL_SETTLEMENT_PIVOT_P3_PY = StreamingCodebaseSubgradientPivotMonitor.PHASE_3_SETTLEMENT_PIVOT_SOURCE
+
+
+def run_subgradient_pivot_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_pivot`, `tax_pivot`, or `settlement_pivot`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_pivot":
+            fn = ns.get("quote_pivot_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_pivot_pricing"}
+            res = fn(990)
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and res.get("initial_edge_weights") == [1, 4, 2]
+                and res.get("edge_weights") == [5, 4, 2]
+                and res.get("cycle_discrepancy") == 4
+                and res.get("r0_repair") in (0, 4)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_pivot":
+            fn = ns.get("quote_pivot_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_pivot_tax"}
+            res = fn(990)
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and (res.get("r1_repair"), res.get("r2_repair")) in ((0, 0), (4, 0), (0, 4))
+                and res.get("dual_witness") == [2, 2, 2]
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_pivot":
+            fn = ns.get("settle_pivot_invoice")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_pivot_invoice"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "net_after_fee_cents": 963,
+                    "platform_fee_cents": 27,
+                    "initial_edge_weights": [1, 4, 2],
+                    "edge_weights": [5, 4, 2],
+                    "cycle_discrepancy": 4,
+                    "r0_repair": 0,
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "r1_repair": 0,
+                    "r2_repair": 4,
+                    "dual_witness": [2, 2, 2],
+                },
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and res.get("merchant_payout_cents") == 873
+                and res.get("pivot_surcharge_cents") == 0
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def subgradient_pivot_fixture(seed: int) -> dict[str, Any]:
+    if seed in (12300, 12302):
+        return {
+            "seed": seed,
+            "kind": "repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_pivot": INITIAL_PRICING_PIVOT_P1_PY,
+                "tax_pivot": INITIAL_TAX_PIVOT_P1_PY,
+                "settlement_pivot": INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 12301:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_stale_pre_pivot_repair_edge",
+            "locked_workers": ["worker-0"],
+            "infeasible_constraint": (
+                "Legacy cycle-chord ROM lock: `pricing_pivot.py` is locked in read-only ROM "
+                "with `r0_repair = 4` on edge `e_0` (`w_0 = 5 > w_0^crit = 2`, weighted L1 cost "
+                "`20 > opt_cost = 8`), while the LGGR subgradient pivot merge gate requires "
+                "`repair_vector = [0, 0, 4]` on bottleneck edge `e_2` (`w_2 = 2 = w_min`, "
+                "`excess_subgradient_cost == 0`, `pivot_surcharge_cents == 0`). "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_pivot": INITIAL_PRICING_PIVOT_P1_PY,
+                "tax_pivot": INITIAL_TAX_PIVOT_P1_PY,
+                "settlement_pivot": INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported subgradient_pivot seed {seed}")
+
+
+class SubgradientPivotCodeWorkspace:
+    """Workspace for the 3-agent subgradient weight-sensitivity and bottleneck pivot swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in SUBGRADIENT_PIVOT_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = SUBGRADIENT_PIVOT_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_subgradient_pivot_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_pivot.py": "def quote_pivot_pricing(gross_cents: int) -> dict",
+                    "tax_pivot.py": "def quote_pivot_tax(gross_cents: int) -> dict",
+                    "settlement_pivot.py": "def settle_pivot_invoice(pricing: dict, tax: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_subgradient_pivot_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_subgradient_pivot_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; weighted L1 subgradient sensitivity and bottleneck pivot optimality are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
 
 

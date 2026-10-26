@@ -499,13 +499,27 @@ In `--topology non_abelian_braid`, the 3 concurrent agents maintain a 3-module n
 | `12200` | `repairable_non_abelian_braid_word_order_and_yang_baxter_defect` | **C** | `explicit_lggr_yang_baxter_directive` | **`completed`** | **`[1, 2, 1]`** | **`[2, 1, 2]`** | **`0`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.008031`** |
 | `12201` | `infeasible_hardware_locked_non_abelian_braid_word_order` | **A / B / C** | All policies | `safe_escalated` | `[1, 1, 2]` | `[2, 1, 1]` | `3` | `3` | `4` | `10` | 1 | 18 | `$0.024142` |
 
+## 33. L1 Dual-Witness Subgradient Weight Sensitivity & Bottleneck Pivot Audit (`--topology subgradient_pivot`, Theorem 126)
+
+In `--topology subgradient_pivot`, the 3 concurrent agents maintain a 3-module weighted-edge subgradient sensitivity settlement codebase (`pricing_pivot.py`, `tax_pivot.py`, `settlement_pivot.py`) on a 3-edge oriented cycle with holonomy discrepancy $d = 4$ and post-perturbation edge weights $w = [5, 4, 2]$ (shifted from initial weights $w^{(0)} = [1, 4, 2]$ across the critical pivot threshold $w_0^{\mathrm{crit}} = \min(w_1, w_2) = 2$ so the minimum-weight bottleneck shifts from edge $e_0$ to edge $e_2$ with $w_2 = 2 = w_{\min}$ and optimal weighted $\ell^1$ repair cost $\Phi_{1,w}^{\ast} = 2 \cdot 4 = 8$, certified by dual witness $z^{\ast} = [2, 2, 2]$) (`StreamingCodebaseSubgradientPivotMonitor`, Theorem 126):
+
+| Seed | Case | Arm | Gate Policy | Status | `repair_vector` | `weighted_l1_cost` | `opt_cost` | `excess_cost` | `hol_rem` | Surcharge | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `12300` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **A** | `stale_pre_pivot_edge_repair_gate` | `blocked_unresolved` | `[4, 0, 0]` | `20` | `8` | `12` | `0` | `12` | 2 | 18 | `$0.017414` |
+| `12300` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **B** | `intermediate_non_bottleneck_pivot_gate` | `blocked_unresolved` | `[0, 4, 0]` | `16` | `8` | `8` | `0` | `8` | 2 | 14 | `$0.014609` |
+| `12300` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **C** | `explicit_lggr_bottleneck_dual_witness_pivot_directive` | **`completed`** | **`[0, 0, 4]`** | **`8`** | **`8`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007732`** |
+| `12301` | `infeasible_hardware_locked_stale_pre_pivot_repair_edge` | **A / B / C** | All policies | `safe_escalated` | `[4, 0, 0]` | `20` | `8` | `12` | `0` | `12` | 1 | 18 | `$0.023846` |
+| `12302` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **A** | `stale_pre_pivot_edge_repair_gate` | `blocked_unresolved` | `[4, 0, 0]` | `20` | `8` | `12` | `0` | `12` | 2 | 18 | `$0.017414` |
+| `12302` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **B** | `intermediate_non_bottleneck_pivot_gate` | `blocked_unresolved` | `[0, 4, 0]` | `16` | `8` | `8` | `0` | `8` | 2 | 14 | `$0.014597` |
+| `12302` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **C** | `explicit_lggr_bottleneck_dual_witness_pivot_directive` | **`completed`** | **`[0, 0, 4]`** | **`8`** | **`8`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007632`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, and 3-agent non-abelian-braid evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, and 3-agent subgradient-pivot evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -538,4 +552,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/shared_chord_diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/governed_relaxation_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/non_abelian_braid_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/subgradient_pivot_pilot_run/events.jsonl
 ```

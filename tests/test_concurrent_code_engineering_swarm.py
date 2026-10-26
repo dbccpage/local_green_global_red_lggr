@@ -65,6 +65,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_HODGE_COHERENT_PY,
     INITIAL_PRICING_HODGE_P1_PY,
     INITIAL_PRICING_MIG_P1_P2_PY,
+    INITIAL_PRICING_PIVOT_P1_PY,
+    INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_RELAX_COHERENT_PY,
     INITIAL_PRICING_RELAX_P1_PY,
     INITIAL_PRICING_RELAX_P2_PY,
@@ -81,6 +83,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_HODGE_COHERENT_PY,
     INITIAL_SETTLEMENT_HODGE_P1_P2_PY,
     INITIAL_SETTLEMENT_MIG_P1_PY,
+    INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
+    INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_RELAX_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
     INITIAL_SETTLEMENT_WEDGE_PY,
@@ -94,6 +98,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_HODGE_COHERENT_PY,
     INITIAL_TAX_HODGE_P1_PY,
     INITIAL_TAX_MIG_MIGRATION_PY,
+    INITIAL_TAX_PIVOT_P1_PY,
+    INITIAL_TAX_PIVOT_P2_PY,
+    INITIAL_TAX_PIVOT_P3_PY,
     INITIAL_TAX_RELAX_COHERENT_PY,
     INITIAL_TAX_RELAX_P1_P3_PY,
     INITIAL_TAX_RELAX_P2_PY,
@@ -183,6 +190,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     SharedChordDiamondCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     StatefulDFACodeWorkspace,
+    SubgradientPivotCodeWorkspace,
     ThreePartyC3CodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -239,6 +247,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_six_role_local_unit_tests,
     run_split_local_unit_tests,
     run_stop_local_unit_tests,
+    run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
     run_win_local_unit_tests,
     schema_synthesis_fixture,
@@ -247,6 +256,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     six_role_fixture,
     split_fixture,
     stop_fixture,
+    subgradient_pivot_fixture,
     three_party_c3_fixture,
     win_fixture,
 )
@@ -283,6 +293,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     six_role_campaign,
     split_campaign,
     stop_campaign,
+    subgradient_pivot_campaign,
     three_party_c3_campaign,
     win_campaign,
 )
@@ -6737,6 +6748,246 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12200_arms["B"]["final_braid_surcharge_cents"], 6)
             self.assertEqual(seed_12200_arms["C"]["final_braid_surcharge_cents"], 0)
             self.assertEqual(seed_12200_arms["C"]["status"], "completed")
+
+    def test_subgradient_pivot_workspace_and_unit_tests(self) -> None:
+        """Verify SubgradientPivotCodeWorkspace and local unit tests across all 3 phases."""
+        from lggr.streaming import StreamingCodebaseSubgradientPivotMonitor
+
+        mon = StreamingCodebaseSubgradientPivotMonitor(scope_id="test-subgradient-pivot-ws")
+        p1 = mon.evaluate_subgradient_pivot_modules(
+            "p1",
+            pricing_pivot_source=INITIAL_PRICING_PIVOT_P1_PY,
+            tax_pivot_source=INITIAL_TAX_PIVOT_P1_PY,
+            settlement_pivot_source=INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["repair_vector"], [4, 0, 0])
+        self.assertEqual(p1["weighted_l1_cost"], 20)
+        self.assertEqual(p1["optimal_weighted_l1_cost"], 8)
+        self.assertEqual(p1["excess_subgradient_cost"], 12)
+        self.assertEqual(p1["pivot_surcharge_cents"], 12)
+        self.assertEqual(p1["merchant_payout_cents"], 861)
+
+        p2 = mon.evaluate_subgradient_pivot_modules(
+            "p2",
+            pricing_pivot_source=INITIAL_PRICING_PIVOT_P2_P3_PY,
+            tax_pivot_source=INITIAL_TAX_PIVOT_P2_PY,
+            settlement_pivot_source=INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["repair_vector"], [0, 4, 0])
+        self.assertEqual(p2["weighted_l1_cost"], 16)
+        self.assertEqual(p2["optimal_weighted_l1_cost"], 8)
+        self.assertEqual(p2["excess_subgradient_cost"], 8)
+        self.assertEqual(p2["pivot_surcharge_cents"], 8)
+        self.assertEqual(p2["merchant_payout_cents"], 865)
+
+        p3 = mon.evaluate_subgradient_pivot_modules(
+            "p3",
+            pricing_pivot_source=INITIAL_PRICING_PIVOT_P2_P3_PY,
+            tax_pivot_source=INITIAL_TAX_PIVOT_P3_PY,
+            settlement_pivot_source=INITIAL_SETTLEMENT_PIVOT_P3_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["repair_vector"], [0, 0, 4])
+        self.assertEqual(p3["weighted_l1_cost"], 8)
+        self.assertEqual(p3["optimal_weighted_l1_cost"], 8)
+        self.assertEqual(p3["excess_subgradient_cost"], 0)
+        self.assertEqual(p3["pivot_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_subgradient_pivot_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent subgradient_pivot campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_subgradient_pivot_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked pricing_pivot.py has r0_repair=4 on edge e_0 and cannot pivot to bottleneck edge e_2."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt or ("Arm B" in sys_prompt and worker == "worker-2"):
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    patch_map_b = {
+                        "worker-0": INITIAL_PRICING_PIVOT_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_PIVOT_P2_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map_b[worker]}),
+                        },
+                    }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_PIVOT_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_PIVOT_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_PIVOT_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "subgradient_pivot",
+                "seeds": [12300, 12301],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_subgradient_pivot_transport)
+            summary = subgradient_pivot_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.subgradient_pivot_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["pivot_surcharge_cents"] = int(gate_rec["pivot_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_subgradient_pivot_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live subgradient_pivot pilot evidence offline if present."""
+        pivot_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "subgradient_pivot_pilot_run"
+            / "events.jsonl"
+        )
+        pivot_summary = pivot_events.with_name("summary.json")
+        if pivot_events.exists() and pivot_summary.exists():
+            replayed = replay(pivot_events)
+            self.assertEqual(replayed["schema"], "lggr.subgradient_pivot_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_12300_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12300_arms["A"]["final_pivot_surcharge_cents"], 12)
+            self.assertEqual(seed_12300_arms["B"]["final_pivot_surcharge_cents"], 8)
+            self.assertEqual(seed_12300_arms["C"]["final_pivot_surcharge_cents"], 0)
+            self.assertEqual(seed_12300_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":
