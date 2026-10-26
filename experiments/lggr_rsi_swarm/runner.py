@@ -492,8 +492,14 @@ class Campaign:
                                     "orientation phase: write_file is disabled; read, recall and reconcile memory, and post notes.")
         go("rsi_restart", "s", 1, None)
         go("rsi_restart", "s", 2, lambda run, a: f"RESTART PHASE, wave 2 of 2 (orientation; write_file disabled).\n{board_text(run['ws'], 1, 'rsi_restart')}")
-        go("rsi_use", "u", 1, lambda run, a: f"USE PHASE, wave 1 of 2. write_file is enabled. Make the system satisfy the CURRENT contracts.\n"
-                                             f"{board_text(run['ws'], 1, 'rsi_restart')}")
+        for run in runs:
+            # Fresh sessions again (R3): orientation results reach the use phase only via team memory and the board.
+            orientation = board_text(run["ws"], 1, "rsi_restart").replace("{", "{{").replace("}", "}}")
+            run["sessions"] = fresh(run, "use", run["ws"],
+                                    "USE PHASE, wave 1 of 2. You are {agent}, in a fresh session; the orientation sessions "
+                                    "ended. Team memory persists. write_file is enabled. Make the system satisfy the CURRENT "
+                                    "contracts.\n" + orientation)
+        go("rsi_use", "u", 1, None)
         go("rsi_use", "u", 2, lambda run, a: f"USE PHASE, wave 2 of 2 (final). After this wave the files are frozen and verified.\n"
                                              f"{board_text(run['ws'], 1, 'rsi_use')}\nCurrent files:\n{files_text(run['ws'])}")
         results = []

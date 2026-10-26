@@ -155,7 +155,7 @@ Agents: five persistent sessions per (instance, draw): `impl-0`, `impl-1`,
    learn (fresh sessions, contract v1; between waves a postmortem reveals the v1
    grader result and measured hidden values), restart (fresh sessions, contract v2
    in which one hidden domain/value and one module demand change; write_file is
-   denied), use (restart sessions continue; build against v2). Outcome: blind
+   denied), use (fresh sessions again, see R3; build against v2). Outcome: blind
    grader pass on the v2 snapshot.
 
 Arm order is randomized per instance (seeded) and arms are interleaved within
@@ -213,3 +213,9 @@ host-rule verdict and charge. API keys never enter evidence.
   controllers also get the first verification's checks and verdict). They remain byte-identical across
   arms except the advisor note. In repair, all five agents (including the challenger) continue their own
   proposal histories. swarm-dev1 evidence is kept and is not evaluation evidence.
+- R3 (2026-10-26, after development runs `swarm-dev2` and `rsi-dev1`, before evaluation): in rsi-dev1
+  the use phase continued the restart sessions, and 12/20 final use-wave requests exceeded the input
+  cap. The use phase therefore also starts fresh sessions (same role prompts and tools); orientation
+  results reach it only through team memory and the board, which is the channel the RSI arms compare.
+  Repair waves keep continuing proposal histories as specified; their over-cap refusals (2/40 in
+  swarm-dev2, final repair wave) are recorded failures. rsi-dev1 evidence is kept.
