@@ -1,0 +1,174 @@
+{
+  "schema": "lggr.windowed_drift_code_engineering_swarm.v1",
+  "topology": "windowed_drift",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 9800,
+      "kind": "clean_windowed_drift_control",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_max_window_sum_cents": 1,
+          "final_max_prefix_drift_cents": 1,
+          "final_terminal_drift_cents": 0,
+          "final_status": "CODEBASE_WINDOWED_DRIFT_REBALANCED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        },
+        {
+          "arm": "B",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_max_window_sum_cents": 1,
+          "final_max_prefix_drift_cents": 1,
+          "final_terminal_drift_cents": 0,
+          "final_status": "CODEBASE_WINDOWED_DRIFT_REBALANCED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_max_window_sum_cents": 1,
+          "final_max_prefix_drift_cents": 1,
+          "final_terminal_drift_cents": 0,
+          "final_status": "CODEBASE_WINDOWED_DRIFT_REBALANCED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0"
+        }
+      ]
+    },
+    {
+      "seed": 9801,
+      "kind": "unrebalanced_sliding_window_horizon_breach",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_max_window_sum_cents": 2,
+          "final_max_prefix_drift_cents": 6,
+          "final_terminal_drift_cents": 6,
+          "final_status": "SLIDING_WINDOW_HORIZON_BREACH_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 12,
+          "cost_usd": "0.0143194418"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_max_window_sum_cents": 2,
+          "final_max_prefix_drift_cents": 4,
+          "final_terminal_drift_cents": 2,
+          "final_status": "LATE_TERMINAL_REBALANCING_PREFIX_BREACH_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 12,
+          "cost_usd": "0.0144750280"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_max_window_sum_cents": 1,
+          "final_max_prefix_drift_cents": 1,
+          "final_terminal_drift_cents": 0,
+          "final_status": "CODEBASE_WINDOWED_DRIFT_REBALANCED_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0066631618"
+        }
+      ]
+    },
+    {
+      "seed": 9802,
+      "kind": "infeasible_windowed_drift_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_max_window_sum_cents": 2,
+          "final_max_prefix_drift_cents": 6,
+          "final_terminal_drift_cents": 6,
+          "final_status": "INFEASIBLE_WINDOWED_DRIFT_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0059069946"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_max_window_sum_cents": 2,
+          "final_max_prefix_drift_cents": 6,
+          "final_terminal_drift_cents": 6,
+          "final_status": "INFEASIBLE_WINDOWED_DRIFT_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0058996682"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_max_window_sum_cents": 2,
+          "final_max_prefix_drift_cents": 6,
+          "final_terminal_drift_cents": 6,
+          "final_status": "INFEASIBLE_WINDOWED_DRIFT_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0064733028"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 48,
+  "charged_or_reserved_usd": "0.0537375972",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 16,
+  "scope": "Concurrent 3-agent windowed-drift Python code-engineering swarm (`pricing_win` -> `tax_win` -> `settlement_win`) comparing length-2 sliding-window local gating (A), late terminal-only module sweep (B), and explicit LGGR intra-window zero-sum rebalancing directives (C) with full cryptographic receipts retained in the host audit log."
+}

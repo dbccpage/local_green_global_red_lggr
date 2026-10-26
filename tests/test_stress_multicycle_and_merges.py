@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
     StreamingCrossRoleDeduplicationMonitor,
@@ -5226,6 +5227,56 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_windowed_drift_codebase_horizon_truncation_and_rebalancing_audit(self) -> None:
+        """Verify Theorem 101: Windowed-drift codebase horizon truncation and periodic rebalancing."""
+        mon = StreamingCodebaseWindowedDriftMonitor(
+            scope_id="unit-codebase-windowed-drift-scope",
+        )
+        obs = mon.record_three_phase_codebase_windowed_drift_audit(
+            "codebase-win-eval-01",
+        )
+        self.assertEqual(obs["phase_1_max_window_sum_cents"], 2)
+        self.assertEqual(obs["phase_1_max_prefix_drift_cents"], 6)
+        self.assertEqual(obs["phase_1_terminal_drift_cents"], 6)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SLIDING_WINDOW_HORIZON_BREACH_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "ENFORCE_INTRA_WINDOW_ZERO_SUM_SWEEP",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "ENFORCE_INTRA_WINDOW_ZERO_SUM_SWEEP",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "ENFORCE_INTRA_WINDOW_ZERO_SUM_SWEEP",
+        )
+
+        self.assertEqual(obs["phase_2_max_window_sum_cents"], 2)
+        self.assertEqual(obs["phase_2_max_prefix_drift_cents"], 4)
+        self.assertEqual(obs["phase_2_terminal_drift_cents"], 2)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "LATE_TERMINAL_REBALANCING_PREFIX_BREACH_LGGR")
+
+        self.assertEqual(obs["phase_3_max_window_sum_cents"], 1)
+        self.assertEqual(obs["phase_3_max_prefix_drift_cents"], 1)
+        self.assertEqual(obs["phase_3_terminal_drift_cents"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_WINDOWED_DRIFT_REBALANCED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_WINDOWED_DRIFT_REBALANCED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

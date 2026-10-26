@@ -21150,6 +21150,545 @@ class StreamingCodebaseMayerVietorisMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseWindowedDriftMonitor:
+    """Online sliding-window horizon truncation vs. periodic ledger rebalancing monitor for 3-module codebases (Theorem 101).
+
+    Composes ``StreamingWindowedDriftMonitor``, ``StreamingWindowedDriftRebalancingMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` to audit a 3-module
+    multi-epoch settlement codebase (``pricing_win.py``, ``tax_win.py``, ``settlement_win.py``)
+    emitting 2-epoch basis-point rounding residuals per module across a 6-epoch horizon under
+    sliding window ``W = 2``, window budget ``B_W = 2``, and global horizon budget ``B_global = 3``.
+    """
+
+    MODULES: tuple[str, ...] = (
+        "pricing_win",
+        "tax_win",
+        "settlement_win",
+    )
+
+    CANONICAL_WIN_MODULE_SPEC: dict[str, dict[str, Any]] = {
+        "worker-0": {
+            "module": "pricing_win",
+            "function": "compute_pricing_win",
+            "epochs": [1, 2],
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents", "epoch_drifts_cents"],
+        },
+        "worker-1": {
+            "module": "tax_win",
+            "function": "compute_tax_win",
+            "epochs": [3, 4],
+            "return_keys": ["net_cents", "tax_cents", "gross_cents", "epoch_drifts_cents"],
+        },
+        "worker-2": {
+            "module": "settlement_win",
+            "function": "compute_settlement_win",
+            "epochs": [5, 6],
+            "return_keys": [
+                "gross_cents",
+                "platform_fee_cents",
+                "tax_reserve_cents",
+                "merchant_payout_cents",
+                "epoch_drifts_cents",
+            ],
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        window_size: int = 2,
+        window_budget: int = 2,
+        global_budget: int = 3,
+        scope_id: str = "streaming-codebase-windowed-drift-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.window_size = exact_int(window_size, "window_size")
+        self.window_budget = exact_int(window_budget, "window_budget")
+        self.global_budget = exact_int(global_budget, "global_budget")
+        self.rebalancing_monitor = StreamingWindowedDriftRebalancingMonitor(
+            window_size=self.window_size,
+            window_budget=self.window_budget,
+            global_budget=self.global_budget,
+            scope_id=f"{self.scope_id}-rebalancing",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_windowed_drift(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit a 3-module codebase over a 6-epoch sliding-window vs. full-horizon drift stream."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        if not isinstance(sources, Mapping):
+            raise ValidationError("sources must be a mapping")
+        if not isinstance(local_test_results, Mapping):
+            raise ValidationError("local_test_results must be a mapping")
+
+        local_vec = [bool(local_test_results.get(m, False)) for m in self.MODULES]
+        all_local_pass = all(local_vec)
+
+        fn_map: dict[str, Any] = {}
+        ast_reports: dict[str, Any] = {}
+        func_names = {
+            "pricing_win": "compute_pricing_win",
+            "tax_win": "compute_tax_win",
+            "settlement_win": "compute_settlement_win",
+        }
+        for mname in self.MODULES:
+            src = str(sources.get(mname, ""))
+            fn, rep = StreamingCodebaseMayerVietorisMonitor._compile_mv_module(
+                mname, src, func_names[mname]
+            )
+            fn_map[mname] = fn
+            ast_reports[mname] = rep
+
+        items = [{"sku": "tier_a", "unit_cents": 600, "quantity": 1}, {"sku": "tier_b", "unit_cents": 400, "quantity": 1}]
+        runtime_error: str | None = None
+        quote_out: dict[str, Any] = {}
+        tax_out: dict[str, Any] = {}
+        settle_out: dict[str, Any] = {}
+
+        if all(fn_map[m] is not None for m in self.MODULES):
+            try:
+                q_res = fn_map["pricing_win"](items, 1000)
+                if not isinstance(q_res, Mapping):
+                    raise ValueError("pricing_win did not return a dict")
+                quote_out = dict(q_res)
+                t_res = fn_map["tax_win"](quote_out, 2000)
+                if not isinstance(t_res, Mapping):
+                    raise ValueError("tax_win did not return a dict")
+                tax_out = dict(t_res)
+                s_res = fn_map["settlement_win"](tax_out, 300)
+                if not isinstance(s_res, Mapping):
+                    raise ValueError("settlement_win did not return a dict")
+                settle_out = dict(s_res)
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+        else:
+            runtime_error = "One or more modules failed AST compilation"
+
+        p_drifts = [int(x) for x in quote_out.get("epoch_drifts_cents", [1, 1])] if runtime_error is None else [1, 1]
+        t_drifts = [int(x) for x in tax_out.get("epoch_drifts_cents", [1, 1])] if runtime_error is None else [1, 1]
+        s_drifts = [int(x) for x in settle_out.get("epoch_drifts_cents", [1, 1])] if runtime_error is None else [1, 1]
+        full_drifts = list(p_drifts) + list(t_drifts) + list(s_drifts)
+
+        win_mon = StreamingWindowedDriftMonitor(
+            self.window_size,
+            self.window_budget,
+            self.global_budget,
+            scope_id=f"{self.scope_id}-{eval_id}",
+        )
+        for idx, d in enumerate(full_drifts):
+            win_mon.record_step(f"epoch_{idx + 1}", d)
+        win_receipt = win_mon.get_receipt()
+
+        max_window_sum = int(rational(win_receipt["max_window_sum"]))
+        max_prefix_drift = int(rational(win_receipt["max_prefix_horizon_drift"]))
+        terminal_drift = int(rational(win_receipt["cumulative_horizon_drift"]))
+
+        net_val = int(quote_out.get("net_cents", 0)) if runtime_error is None else 0
+        gross_val = int(settle_out.get("gross_cents", 0)) if runtime_error is None else 0
+        fee_val = int(settle_out.get("platform_fee_cents", 0)) if runtime_error is None else 0
+        tax_val = int(settle_out.get("tax_reserve_cents", 0)) if runtime_error is None else 0
+        payout_val = int(settle_out.get("merchant_payout_cents", 0)) if runtime_error is None else 0
+
+        unrebalanced_modules = [
+            m
+            for m, d_pair in (
+                ("pricing_win", p_drifts),
+                ("tax_win", t_drifts),
+                ("settlement_win", s_drifts),
+            )
+            if d_pair != [1, -1]
+        ]
+
+        conservation_ok = (
+            runtime_error is None
+            and net_val == 900
+            and gross_val == 1080
+            and fee_val == 27
+            and tax_val == 180
+            and payout_val == 873
+            and payout_val + fee_val + tax_val == gross_val
+            and max_window_sum <= self.window_budget
+            and max_prefix_drift <= self.global_budget
+            and terminal_drift == 0
+            and len(unrebalanced_modules) == 0
+        )
+
+        reb_eval = self.rebalancing_monitor.record_rebalancing_evaluation(
+            f"{eval_id}_reb",
+            phase_1_drifts=[1, 1, 1, 1, 1, 1],
+            phase_2_drifts=[1, 1, 1, 1, -1, -1],
+            phase_3_drifts=[1, -1, 1, -1, 1, -1],
+            model_id=mid,
+        )
+
+        l_green = 1 if (all_local_pass and max_window_sum <= self.window_budget and infeasible_constraint is None) else 0
+        eg_green = 1 if (l_green == 1 and conservation_ok) else 0
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_tests_all_pass": all_local_pass,
+                "max_window_sum_within_budget": max_window_sum <= self.window_budget,
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "max_window_sum_cents": max_window_sum,
+                "max_prefix_drift_cents": max_prefix_drift,
+                "terminal_drift_cents": terminal_drift,
+            },
+        )
+
+        contract_mismatches: list[dict[str, Any]] = []
+        for m, d_pair in (
+            ("pricing_win", p_drifts),
+            ("tax_win", t_drifts),
+            ("settlement_win", s_drifts),
+        ):
+            if d_pair != [1, -1]:
+                contract_mismatches.append(
+                    {
+                        "module": m,
+                        "expected_epoch_drifts_cents": [1, -1],
+                        "actual_epoch_drifts_cents": d_pair,
+                    }
+                )
+        if runtime_error is not None:
+            contract_mismatches.append({"module": "pipeline", "runtime_error": runtime_error})
+
+        role_directives = self._build_win_directives(
+            module_drifts={
+                "pricing_win": p_drifts,
+                "tax_win": t_drifts,
+                "settlement_win": s_drifts,
+            },
+            max_window_sum=max_window_sum,
+            max_prefix_drift=max_prefix_drift,
+            terminal_drift=terminal_drift,
+            infeasible_constraint=infeasible_constraint,
+            integration_passed=(eg_green == 1),
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_WINDOWED_DRIFT_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_WINDOWED_DRIFT_REBALANCED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif terminal_drift > self.global_budget:
+            status = "SLIDING_WINDOW_HORIZON_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LATE_TERMINAL_REBALANCING_PREFIX_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "local_unit_test_verdicts": {
+                "pricing_win": local_vec[0],
+                "tax_win": local_vec[1],
+                "settlement_win": local_vec[2],
+            },
+            "window_size": self.window_size,
+            "window_budget_cents": self.window_budget,
+            "global_budget_cents": self.global_budget,
+            "full_epoch_drifts_cents": full_drifts,
+            "max_window_sum_cents": max_window_sum,
+            "max_prefix_drift_cents": max_prefix_drift,
+            "terminal_drift_cents": terminal_drift,
+            "unrebalanced_module_count": len(unrebalanced_modules),
+            "unrebalanced_modules": unrebalanced_modules,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "contract_mismatches": contract_mismatches,
+            "compact_role_directives": role_directives,
+            "windowed_drift_receipt": win_receipt,
+            "rebalancing_evaluation": reb_eval,
+            "ast_reports": ast_reports,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_win_directives(
+        cls,
+        *,
+        module_drifts: Mapping[str, list[int]],
+        max_window_sum: int,
+        max_prefix_drift: int,
+        terminal_drift: int,
+        infeasible_constraint: Mapping[str, Any] | None,
+        integration_passed: bool,
+    ) -> dict[str, dict[str, Any]]:
+        if integration_passed:
+            return {
+                wid: {
+                    "role": "VERIFIED_WINDOWED_DRIFT_MODULE_OWNER",
+                    "action": "NO_CHANGE_REQUIRED",
+                    "module": spec["module"],
+                    "function": spec["function"],
+                }
+                for wid, spec in cls.CANONICAL_WIN_MODULE_SPEC.items()
+            }
+
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "WINDOWED_DRIFT_CONFLICT_AUDITOR",
+                    "action": "ESCALATE_INFEASIBLE_WINDOWED_DRIFT_CONTRACT",
+                    "module": spec["module"],
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_WIN_MODULE_SPEC.items()
+            }
+
+        directives: dict[str, dict[str, Any]] = {}
+        for wid, spec in cls.CANONICAL_WIN_MODULE_SPEC.items():
+            mname = spec["module"]
+            curr_drifts = module_drifts.get(mname, [1, 1])
+            needs_reb = curr_drifts != [1, -1]
+            directives[wid] = {
+                "role": "WINDOWED_DRIFT_REBALANCING_MODULE_OWNER",
+                "action": "ENFORCE_INTRA_WINDOW_ZERO_SUM_SWEEP" if needs_reb else "HOLD_REBALANCED_MODULE",
+                "module": mname,
+                "function": spec["function"],
+                "epochs": list(spec["epochs"]),
+                "current_epoch_drifts_cents": curr_drifts,
+                "required_epoch_drifts_cents": [1, -1],
+                "max_window_sum_cents": max_window_sum,
+                "max_prefix_drift_cents": max_prefix_drift,
+                "terminal_drift_cents": terminal_drift,
+                "required_return_keys": list(spec["return_keys"]),
+                "instruction": (
+                    f"Your module `{mname}.py` currently emits `'epoch_drifts_cents': {curr_drifts}`, "
+                    f"contributing to 6-epoch cumulative prefix peak `{max_prefix_drift} > 3`. Update "
+                    f"`{spec['function']}` so `'epoch_drifts_cents': [1, -1]` (pairing the +1 rounding step "
+                    "with an intra-window -1 rebalancing sweep), while preserving the existing return dict "
+                    f"mapping keys `{list(spec['return_keys'])}` to their values."
+                ),
+            }
+        return directives
+
+    def record_three_phase_codebase_windowed_drift_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase 3-module windowed-drift codebase rebalancing audit (Theorem 101)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p_unreb = (
+            "def compute_pricing_win(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'epoch_drifts_cents': [1, 1],\n"
+            "    }\n"
+        )
+        src_p_canon = (
+            "def compute_pricing_win(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'epoch_drifts_cents': [1, -1],\n"
+            "    }\n"
+        )
+        src_t_unreb = (
+            "def compute_tax_win(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'epoch_drifts_cents': [1, 1],\n"
+            "    }\n"
+        )
+        src_t_canon = (
+            "def compute_tax_win(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'epoch_drifts_cents': [1, -1],\n"
+            "    }\n"
+        )
+        src_s_unreb = (
+            "def compute_settlement_win(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'epoch_drifts_cents': [1, 1],\n"
+            "    }\n"
+        )
+        src_s_late = (
+            "def compute_settlement_win(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'epoch_drifts_cents': [-1, -1],\n"
+            "    }\n"
+        )
+        src_s_canon = (
+            "def compute_settlement_win(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'epoch_drifts_cents': [1, -1],\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_win": True,
+            "tax_win": True,
+            "settlement_win": True,
+        }
+
+        p1 = self.evaluate_codebase_windowed_drift(
+            f"{eval_id}_phase1_unrebalanced_horizon_breach",
+            sources={
+                "pricing_win": src_p_unreb,
+                "tax_win": src_t_unreb,
+                "settlement_win": src_s_unreb,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_windowed_drift(
+            f"{eval_id}_phase2_late_terminal_sweep",
+            sources={
+                "pricing_win": src_p_unreb,
+                "tax_win": src_t_unreb,
+                "settlement_win": src_s_late,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_windowed_drift(
+            f"{eval_id}_phase3_periodic_rebalanced",
+            sources={
+                "pricing_win": src_p_canon,
+                "tax_win": src_t_canon,
+                "settlement_win": src_s_canon,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "window_size": self.window_size,
+                "window_budget_cents": self.window_budget,
+                "global_budget_cents": self.global_budget,
+                "phase_1_max_window_sum_cents": p1["max_window_sum_cents"],
+                "phase_1_max_prefix_drift_cents": p1["max_prefix_drift_cents"],
+                "phase_1_terminal_drift_cents": p1["terminal_drift_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_max_window_sum_cents": p2["max_window_sum_cents"],
+                "phase_2_max_prefix_drift_cents": p2["max_prefix_drift_cents"],
+                "phase_2_terminal_drift_cents": p2["terminal_drift_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_max_window_sum_cents": p3["max_window_sum_cents"],
+                "phase_3_max_prefix_drift_cents": p3["max_prefix_drift_cents"],
+                "phase_3_terminal_drift_cents": p3["terminal_drift_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase windowed-drift evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_windowed_drift.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "window_size": self.window_size,
+            "window_budget_cents": self.window_budget,
+            "global_budget_cents": self.global_budget,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "rebalancing_receipt": self.rebalancing_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
