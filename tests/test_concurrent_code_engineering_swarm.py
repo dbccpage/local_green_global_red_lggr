@@ -2016,9 +2016,9 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
                     "function": {"name": "inspect_workspace", "arguments": "{}"},
                 }
             else:
-                user_msgs = [m["content"] for m in messages if m.get("role") == "user"]
-                last_user = json.loads(user_msgs[-1])
-                if last_user.get("infeasible_constraint") is not None:
+                tool_result_msg = [m for m in messages if m.get("role") == "tool"][-1]
+                inspected = json.loads(tool_result_msg["content"])
+                if inspected.get("infeasible_constraint") is not None:
                     tool_call = {
                         "id": f"call_esc_{worker}",
                         "type": "function",
@@ -2030,8 +2030,6 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
                         },
                     }
                 elif arm == "A":
-                    tool_result_msg = [m for m in messages if m.get("role") == "tool"][-1]
-                    inspected = json.loads(tool_result_msg["content"])
                     tool_call = {
                         "id": f"call_patch_{worker}",
                         "type": "function",
@@ -2051,8 +2049,6 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
                             },
                         }
                     else:
-                        tool_result_msg = [m for m in messages if m.get("role") == "tool"][-1]
-                        inspected = json.loads(tool_result_msg["content"])
                         tool_call = {
                             "id": f"call_patch_{worker}",
                             "type": "function",
