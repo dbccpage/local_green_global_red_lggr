@@ -4599,5 +4599,61 @@ theorem watcher_dropout_codebase_gram_rank_deficiency_and_restoration_audit :
     dsimp only
     refine ⟨by omega, ⟨by omega, ⟨by omega, by omega⟩⟩⟩
 
+/-- 111. Multi-evaluator policy ranking under CF(p) vs. N_min(p) metric order reversal in concurrent code-engineering swarms:
+    1. General 3-module policy-ranking order-reversal and settlement surcharge law:
+       - Whenever `pricing_policy` emits Policy A with `(cf_a, n_a)` and `tax_policy` emits Policy B
+         with `(cf_b, n_b)` over common denominator `D = 768` (`m_ctx = 8`) such that `cf_a < cf_b`
+         while `n_b ≤ tau_n < n_a`, any `settlement_policy` that selects Policy A by minimizing coarse
+         fallback frequency `CF` alone breaches the signed negative-mass ceiling (`n_a > tau_n`) and
+         incurs strictly positive violation surcharge `surcharge_a = n_a - tau_n > 0`;
+       - Selecting Policy B via dual-metric `(CF, N_min)` order-reversal auditing (`cf_a < cf_b ∧ n_a > n_b`)
+         satisfies `n_b ≤ tau_n` with zero violation surcharge (`surcharge_b = 0`);
+    2. Concrete 3-phase 3-module policy-reversal codebase audit (`m_ctx = 8`, `D = 768`,
+       Policy A `Q_{5/8}`: `cf_a = 192`, `n_a = 96`; Policy B `p_*`: `cf_b = 228`, `n_b = 75`; `tau_n = 80`):
+       - Phase 1 (Single-scalar CF-only selector in `settlement_policy` + false `CF ≤ 2·N_min` surrogate in `tax_policy`):
+         each module passes its isolated unit test (`L_p1 = 1`), yet `settlement_policy` selects Policy A
+         (`192 < 228`), incurring `surcharge_a = 96 - 80 = 16 > 0` and `payout_a = 873 - 16 = 857 ≠ 873`
+         while `CF_B = 228 > 150 = 2·N_min_B` (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial repair: `tax_policy` enforces constructive `m`-context bound `CF ≤ 7·N_min`,
+         `192 ≤ 672` and `228 ≤ 525`, while `settlement_policy` still ranks by CF-only and selects Policy A):
+         `n_a = 96 > 80 = tau_n` and `payout_a = 857 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full dual-metric `(CF, N_min)` order-reversal repair across all 3 modules):
+         `tax_policy` enforces `CF ≤ 7·N_min` and `settlement_policy` detects `cf_a < cf_b ∧ n_a > n_b`,
+         selecting Policy B (`n_b = 75 ≤ 80 = tau_n`, `surcharge_b = 0`, `payout_b = 873`,
+         `873 + 27 + 180 = 1080`, `L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem policy_reversal_codebase_cf_vs_neg_mass_ranking_audit :
+    (∀ cf_a cf_b n_a n_b tau_n : Int,
+      (cf_a < cf_b ∧ n_b ≤ tau_n ∧ tau_n < n_a) →
+      (cf_a < cf_b ∧ n_a > n_b ∧ (n_a - tau_n > 0) ∧ (n_b ≤ tau_n))) ∧
+    (let m_ctx : Int := 8;
+     let cf_a : Int := 192; let n_a : Int := 96;
+     let cf_b : Int := 228; let n_b : Int := 75;
+     let tau_n : Int := 80;
+     let two_n_b := 2 * n_b;
+     let seven_n_a := (m_ctx - 1) * n_a;
+     let seven_n_b := (m_ctx - 1) * n_b;
+     let excess_two_b := cf_b - two_n_b;
+     let surcharge_a := n_a - tau_n;
+     let surcharge_b : Int := 0;
+     let payout_a : Int := 873 - surcharge_a;
+     let payout_b : Int := 873 - surcharge_b;
+     let fee : Int := 27; let tax : Int := 180; let gross : Int := 1080;
+     let l_p1 := if (cf_a < cf_b) ∧ (cf_a ≤ 2 * n_a) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (n_a ≤ tau_n) ∧ (cf_b ≤ two_n_b) ∧ (payout_a + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (cf_a < cf_b) ∧ (cf_a ≤ seven_n_a) ∧ (cf_b ≤ seven_n_b) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (n_a ≤ tau_n) ∧ (payout_a + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (cf_a < cf_b) ∧ (n_a > n_b) ∧ (cf_a ≤ seven_n_a) ∧ (cf_b ≤ seven_n_b) ∧ (payout_b + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (n_b ≤ tau_n) ∧ (surcharge_b = 0) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (excess_two_b = 78 ∧ surcharge_a = 16 ∧ payout_a = 857 ∧ payout_b = 873 ∧ seven_n_a = 672 ∧ seven_n_b = 525) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro cf_a cf_b n_a n_b tau_n ⟨h1, h2, h3⟩
+  omega
+
 
 end LggrVIII

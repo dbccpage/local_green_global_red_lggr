@@ -36,6 +36,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
@@ -56,6 +57,7 @@ from .domain import (
     KINDUCTION_WORKER_MODULES,
     LEASE_WORKER_MODULES,
     MV_WORKER_MODULES,
+    POLICY_WORKER_MODULES,
     QUORUM_WORKER_MODULES,
     REGGE_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
@@ -75,6 +77,7 @@ from .domain import (
     LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
+    PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
@@ -91,6 +94,7 @@ from .domain import (
     kinduction_fixture,
     lease_fixture,
     mv_fixture,
+    policy_fixture,
     quorum_fixture,
     regge_fixture,
     replay_fixture,
@@ -3775,6 +3779,224 @@ def gram_campaign(
     return summary
 
 
+def policy_system_prompt(worker: str, arm: str) -> str:
+    mod_name = POLICY_WORKER_MODULES[worker]
+    return (
+        f"You are concurrent code-engineering agent `{worker}`, sole owner of `{mod_name}.py` "
+        f"in a 3-module fallback-routing settlement codebase (`pricing_policy.py` -> `tax_policy.py` -> `settlement_policy.py`) (Arm `{arm}`). "
+        "First call `inspect_workspace`. "
+        "If `infeasible_constraint` is non-null, immediately call `escalate` with a concise reason. "
+        "Otherwise, follow `merge_gate_feedback` for your role: if your action is `HOLD` or `NONE`, "
+        "submit your existing `source_code` unchanged via `submit_module_patch`. "
+        "If your action is `PATCH_TAX_M_CONTEXT_BOUND` or `PATCH_MODULE` on `tax_policy.py`, update `tax_policy.py` "
+        "so `'surrogate_two_bound_assumed': False`. "
+        "If your action is `PATCH_MODULE` on `settlement_policy.py`, update `settlement_policy.py` so "
+        "`selected_policy_id = 'p_star'` and `surcharge = 0` (`payout = net - fee_cents - surcharge = 873`). "
+        "Do NOT call `escalate` when `infeasible_constraint` is null. Output ONLY tool calls with zero prose."
+    )
+
+
+def policy_merge_gate(
+    events: Events,
+    ws: PolicyReversalCodeWorkspace,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebasePolicyReversalMonitor(
+        scope_id=f"policy-swarm-seed-{ws.state['seed']}-arm-{arm}-{wave_label}",
+    )
+    verdicts = ws.local_test_verdicts()
+    eval_res = monitor.evaluate_policy_merge(
+        f"seed-{ws.state['seed']}-arm-{arm}-{wave_label}",
+        module_sources=ws.state["sources"],
+        local_test_results=verdicts,
+        infeasible_constraint=ws.state["infeasible_constraint"],
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "selected_policy_id": eval_res["selected_policy_id"],
+            "selected_neg_num": eval_res["selected_neg_num"],
+            "policy_violation_surcharge_cents": eval_res["policy_violation_surcharge_cents"],
+            "surrogate_two_bound_assumed": eval_res["surrogate_two_bound_assumed"],
+            "order_reversal_detected": eval_res["order_reversal_detected"],
+            "status": eval_res["status"],
+            "receipt_sha256": receipt["receipt_sha256"],
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in POLICY_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "HOLD",
+                "local_unit_test_passed": verdicts.get(mod_name, False),
+                "cf_a_lt_cf_b": eval_res["policy_a_cf_num"] < eval_res["policy_b_cf_num"],
+                "note": "Coarse CF-only ranking gate passed (CF_A=192 < CF_B=228); submit current source_code unchanged.",
+            }
+        elif arm == "B":
+            if w == "worker-1" and eval_res["surrogate_two_bound_assumed"]:
+                per_worker_fb[w] = {
+                    "arm": arm,
+                    "wave": wave_label,
+                    "action_required": "PATCH_TAX_M_CONTEXT_BOUND",
+                    "compact_role_directive": (
+                        "Update tax_policy.py so 'surrogate_two_bound_assumed' is False "
+                        "(enforcing constructive m-context bound CF <= 7*N_min)."
+                    ),
+                }
+            else:
+                per_worker_fb[w] = {
+                    "arm": arm,
+                    "wave": wave_label,
+                    "action_required": "HOLD",
+                    "note": "Submit current source_code unchanged in Arm B.",
+                }
+        else:
+            needs_patch = (
+                (w == "worker-1" and eval_res["surrogate_two_bound_assumed"])
+                or (
+                    w == "worker-2"
+                    and (
+                        eval_res["selected_policy_id"] != "p_star"
+                        or eval_res["policy_violation_surcharge_cents"] != 0
+                        or not eval_res["settlement_conserved"]
+                    )
+                )
+            )
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "PATCH_MODULE" if needs_patch else "HOLD",
+                "selected_policy_id": eval_res["selected_policy_id"],
+                "selected_neg_num": eval_res["selected_neg_num"],
+                "policy_violation_surcharge_cents": eval_res["policy_violation_surcharge_cents"],
+                "surrogate_two_bound_assumed": eval_res["surrogate_two_bound_assumed"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+
+    return eval_res, per_worker_fb
+
+
+def policy_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(POLICY_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = policy_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = PolicyReversalCodeWorkspace(base_state)
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_0, per_worker_fb = policy_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = (eval_0["local_green"] == 1) and (eval_0["global_green"] == 0)
+
+            histories: dict[str, list[dict[str, Any]]] = {}
+            for w in workers:
+                mod_name = POLICY_WORKER_MODULES[w]
+                histories[w] = [
+                    {"role": "system", "content": policy_system_prompt(w, arm)},
+                    {
+                        "role": "user",
+                        "content": json.dumps(
+                            {
+                                "seed": seed,
+                                "arm": arm,
+                                "wave": 1,
+                                "owned_module": f"{mod_name}.py",
+                                "merge_gate_feedback": per_worker_fb[w],
+                                "instruction": (
+                                    "First call `inspect_workspace`. Then follow `merge_gate_feedback`: "
+                                    "if `infeasible_constraint` is non-null, call `escalate`; otherwise "
+                                    "call `submit_module_patch` with the required `source_code`."
+                                ),
+                            },
+                            sort_keys=True,
+                        ),
+                    },
+                ]
+
+            round_turns(client, events, ws, histories, workers, per_worker_fb)
+            eval_1, _ = policy_merge_gate(events, ws, arm, "wave-1")
+
+            if ws.state["infeasible_constraint"] is not None:
+                outcome = "safe_escalated" if len(ws.state["escalations"]) >= 1 else "blocked_unresolved"
+            elif eval_1["global_green"] == 1 and eval_1["defect"] == 0:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_summary = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_1["local_green"],
+                "final_global_green": eval_1["global_green"],
+                "final_defect": eval_1["defect"],
+                "final_selected_policy_id": eval_1["selected_policy_id"],
+                "final_selected_neg_num": eval_1["selected_neg_num"],
+                "final_policy_violation_surcharge_cents": eval_1["policy_violation_surcharge_cents"],
+                "final_surrogate_two_bound_assumed": eval_1["surrogate_two_bound_assumed"],
+                "final_status": eval_1["status"],
+                "waves_run": 1,
+                "escalations": len(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.policy_reversal_code_engineering_swarm.v1",
+        "topology": "policy_reversal",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent policy-reversal Python code-engineering swarm (`pricing_policy` -> "
+            "`tax_policy` -> `settlement_policy`) comparing coarse CF-only ranking (A), "
+            "partial m-context bound update (B), and explicit LGGR dual-metric (CF, N_min) "
+            "order-reversal directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -3817,6 +4039,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = sheaf_campaign(client, events, config)
         elif config.get("topology") == "gram_dropout":
             summary = gram_campaign(client, events, config)
+        elif config.get("topology") == "policy_reversal":
+            summary = policy_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -3858,6 +4082,7 @@ def main() -> None:
             "lease",
             "contextuality",
             "gram_dropout",
+            "policy_reversal",
         ],
         default="linear",
     )
@@ -3915,6 +4140,8 @@ def main() -> None:
         seeds = [10600, 10601, 10602]
     elif args.topology == "gram_dropout":
         seeds = [10700, 10701, 10702]
+    elif args.topology == "policy_reversal":
+        seeds = [10800, 10801, 10802]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -4094,6 +4321,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = gram_campaign(client, events, config)
+    elif args.topology == "policy_reversal":
+        config = {
+            "topology": "policy_reversal",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = policy_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
