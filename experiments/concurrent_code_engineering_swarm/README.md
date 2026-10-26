@@ -179,13 +179,29 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `47
 | `9901` | `infeasible_optional_stopping_lock` | **A / B / C** | All policies | `safe_escalated` | `0` | `300` | `False` | 1 | 6 | `$0.0070–$0.0077` |
 | `9902` | `clean_optional_stopping_control` | **A / B / C** | All policies | `completed` | `0` | `100` | `True` | 0 | 0 | `$0.000000` |
 
+## 10. 3-Agent CPTP Channel State-Blindspot vs. Operator-Level Completeness Campaign (`--topology cptp`)
+
+In `--topology cptp`, 3 concurrent LLM workers edit `pricing_channel.py`, `tax_channel.py`, and `settlement_channel.py` acting on a 3-dimensional state space $\{\rho_0, \rho_1, \rho_2\}$ via Kraus operators $K_0 = \mathrm{diag}(k_0, 0, 0)$, $K_1 = \mathrm{diag}(0, k_1, 0)$, $K_2 = \mathrm{diag}(0, 0, k_2)$:
+- On `seeds 10000, 10001` (`incomplete_kraus_ground_state_blindspot`), `pricing_channel.py` sets `k0_diag = 1` while `tax_channel.py` sets `k1_diag = 0` and `settlement_channel.py` sets `k2_diag = 0`. Isolated unit tests probe only the ground state $\rho_0 = \mathrm{diag}(1, 0, 0)$, where $\mathrm{tr}(\mathcal{E}(\rho_0)) - \mathrm{tr}(\rho_0) = 0$ (`local_green = 1`), yet the operator trace-preservation residual $R_{\mathrm{TP}}(\mathcal{E}) = \sum_{r=0}^2 K_r^\top K_r - I_3 = \mathrm{diag}(0, -1, -1)$ has L1 norm $\|R_{\mathrm{TP}}\|_1 = 2 > 0$ (`global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50` live API attempts, `$0.063678` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | $(k_0, k_1, k_2)$ | $\|R_{\mathrm{TP}}\|_1$ | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| `10000` | `incomplete_kraus_ground_state_blindspot` | **A** | `ground_state_probe_trace_gate` | `blocked_unresolved` | `(1, 0, 0)` | `2` | 1 | 6 | `$0.006057` |
+| `10000` | `incomplete_kraus_ground_state_blindspot` | **B** | `partial_sector1_kraus_completion` | `blocked_unresolved` | `(1, 1, 0)` | `1` | 1 | 6 | `$0.005855` |
+| `10000` | `incomplete_kraus_ground_state_blindspot` | **C** | `explicit_lggr_cptp_operator_completion_directive` | **`completed`** | **`(1, 1, 1)`** | **`0`** | **2** | **13** | **`$0.019931`** |
+| `10001` | `incomplete_kraus_ground_state_blindspot` | **A** | `ground_state_probe_trace_gate` | `blocked_unresolved` | `(1, 0, 0)` | `2` | 1 | 6 | `$0.006075` |
+| `10001` | `incomplete_kraus_ground_state_blindspot` | **B** | `partial_sector1_kraus_completion` | `blocked_unresolved` | `(1, 1, 0)` | `1` | 1 | 6 | `$0.005855` |
+| `10001` | `incomplete_kraus_ground_state_blindspot` | **C** | `explicit_lggr_cptp_operator_completion_directive` | **`completed`** | **`(1, 1, 1)`** | **`0`** | **2** | **13** | **`$0.019904`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, and 3-agent optional-stopping evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, and 3-agent CPTP channel evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -195,4 +211,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/mayer_vietoris_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/windowed_drift_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/optional_stopping_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/cptp_pilot_run/events.jsonl
 ```

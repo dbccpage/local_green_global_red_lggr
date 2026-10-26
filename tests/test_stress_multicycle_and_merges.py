@@ -37,6 +37,7 @@ from lggr.streaming import (
     StreamingCoalitionalAttributionMonitor,
     StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
+    StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
@@ -5328,6 +5329,53 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_cptp_codebase_state_blindspot_and_operator_completion_audit(self) -> None:
+        """Verify Theorem 103: State-dependent CPTP channel codebase trace blindspot vs. operator completeness."""
+        mon = StreamingCodebaseCPTPChannelMonitor(
+            scope_id="unit-codebase-cptp-channel-scope",
+        )
+        obs = mon.record_three_phase_codebase_cptp_audit(
+            "codebase-cptp-eval-01",
+        )
+        self.assertEqual(obs["phase_1_residual_l1_norm"], 2)
+        self.assertEqual(obs["phase_1_trace_discrepancy_rho0"], 0)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CPTP_STATE_BLINDSPOT_NON_TP_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_GROUND_KRAUS_SECTOR",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "COMPLETE_TAX_KRAUS_SECTOR",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "COMPLETE_SETTLEMENT_KRAUS_SECTOR",
+        )
+
+        self.assertEqual(obs["phase_2_residual_l1_norm"], 1)
+        self.assertEqual(obs["phase_2_trace_discrepancy_rho2"], -1)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "EXCITED_STATE_TRACE_LEAKAGE_LGGR")
+
+        self.assertEqual(obs["phase_3_residual_l1_norm"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_CPTP_OPERATOR_COMPLETE_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_CPTP_OPERATOR_COMPLETE_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
 
 
 if __name__ == "__main__":
