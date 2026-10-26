@@ -4930,7 +4930,7 @@ theorem path_kernel_codebase_stage_vs_e2e_and_dashboard_adequacy_audit :
          `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
        - Phase 3 (Closed-loop v2 dynamic schema synthesis `S_2* = ["k1", "k2"]`, excluding `k_noise`):
          yields `4` distinct encoded fibers `(0, 1, 2, 3)`, `collisions_p3 = 0`, `surcharge_p3 = 0`,
-         `payout_p3 = 873`, and `873 + 27 + 180 = 1080` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+         `payout_p3 = 873`, and `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
 theorem dynamic_schema_codebase_online_collision_and_refinement_audit :
     ((∀ d0 : Int, d0 = 0 ∨ d0 = 1 →
         (1 - d0).natAbs + (0 - d0).natAbs + (0 - d0).natAbs + (1 - d0).natAbs = 2) ∧
@@ -4949,7 +4949,7 @@ theorem dynamic_schema_codebase_online_collision_and_refinement_audit :
      let payout_p1 : Int := 873 - surcharge_p1;
      let payout_p2 : Int := 873 - surcharge_p2;
      let payout_p3 : Int := 873 - surcharge_p3;
-     let fee : Int := 27; let tax : Int := 180; let gross : Int := 1080;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
      let l_p1 := if (q00 ≠ q01) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
      let eg_p1 := if (l_p1 = 1) ∧ (collisions_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
      let defect_p1 := eg_p1 - l_p1;
