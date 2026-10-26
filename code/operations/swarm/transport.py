@@ -16,7 +16,7 @@ from .ledger import MAX_INPUT
 
 MODEL = "claude-haiku-5-5"
 API_VERSION = "2023-06-01"
-KEEP_HEADERS = ("request-id", "anthropic-organization-id", "anthropic-ratelimit-requests-remaining",
+KEEP_HEADERS = ("request-id", "anthropic-ratelimit-requests-remaining",
                 "anthropic-ratelimit-input-tokens-remaining", "anthropic-ratelimit-output-tokens-remaining",
                 "retry-after")
 
@@ -69,7 +69,7 @@ class AnthropicTransport:
         self._gate, self._last = threading.Lock(), 0.0
 
     def model_info(self):
-        return self.client.models.retrieve(MODEL).to_dict()
+        return self.client.models.retrieve(MODEL).to_dict(mode="json")
 
     def _pace(self):
         with self._gate:

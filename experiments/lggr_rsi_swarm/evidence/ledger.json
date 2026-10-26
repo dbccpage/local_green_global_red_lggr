@@ -1,0 +1,16 @@
+{
+ "inflight": {},
+ "phases": {
+  "development": {
+   "requests": 2,
+   "retained": "0",
+   "settled": "0.00077229"
+  },
+  "evaluation": {
+   "requests": 0,
+   "retained": "0",
+   "settled": "0"
+  }
+ },
+ "schema": "lggr.rsi_swarm.ledger.v1"
+}

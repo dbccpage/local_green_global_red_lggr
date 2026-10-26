@@ -1,0 +1,158 @@
+{
+ "model_info": {
+  "capabilities": {
+   "batch": {
+    "supported": true
+   },
+   "citations": {
+    "supported": true
+   },
+   "code_execution": {
+    "supported": true
+   },
+   "context_management": {
+    "clear_thinking_20251015": {
+     "supported": true
+    },
+    "clear_tool_uses_20250919": {
+     "supported": true
+    },
+    "compact_20260112": {
+     "supported": true
+    },
+    "supported": true
+   },
+   "effort": {
+    "high": {
+     "supported": true
+    },
+    "low": {
+     "supported": true
+    },
+    "max": {
+     "supported": true
+    },
+    "medium": {
+     "supported": true
+    },
+    "supported": true,
+    "xhigh": {
+     "supported": true
+    }
+   },
+   "image_input": {
+    "supported": true
+   },
+   "pdf_input": {
+    "supported": true
+   },
+   "server_tools": {
+    "code_execution": {
+     "supported": true
+    },
+    "supported": true,
+    "web_search": {
+     "supported": true
+    }
+   },
+   "structured_outputs": {
+    "supported": true
+   },
+   "thinking": {
+    "supported": true,
+    "types": {
+     "adaptive": {
+      "supported": true
+     },
+     "between_tools": {
+      "supported": false
+     },
+     "disabled": {
+      "supported": true
+     },
+     "enabled": {
+      "supported": false
+     }
+    }
+   }
+  },
+  "created_at": "2026-10-07T18:00:00Z",
+  "deprecated_at": null,
+  "display_name": "Claude Haiku 5.5",
+  "id": "claude-haiku-5-5",
+  "lifecycle": "active",
+  "line": "haiku",
+  "max_input_tokens": 1000000,
+  "max_tokens": 128000,
+  "retires_at": null,
+  "type": "model"
+ },
+ "result": {
+  "body": {
+   "container": null,
+   "content": [
+    {
+     "signature": "CAQS0QkKEAgTGAI4AUIIdGhpbmtpbmcSDNkv3bVkoxdq5M8y1xoMpS1AdkUuWaJMkvZLIjCR7/jV9D87vmVkdMpoOlPt3TlaDQRvpzmshPdttrjop/SGbLmgoCSVBCDHjEyVvBoq7gjHZAS7+OURObtv8iCmmDQzhAA/mHacxmY0ABvkVtTC+YBRHk4YglIXJAzOPFSu1z6BQrty5dkpU2Ak/HwcHa2SmQPVXg/HXgaRgolyOEbIwN5Rc2L9jkDyU+81SmFZV4+5bkjvWCfsUOL7YdE3RG2MkgutEqLE/9IQaFV+B+XyFnvg3lbG6y9sU9F4c9KfJf6PNlZbbiPs77ilN70/zgFug5O2nEddsFPkN8eiGhpdH4oVmhMlUnm9kfFU6LQfhhxlIyJs/7B0XmeCfXSyUOYUyjFbI748FEBt1UnwJxzc/zQDNyLPXecX9TiMsOwTUWDGTpUfFni2uiaV3bPzUXDzRIux2jg4V7uu8/goV/il/LerGRDqc9OUaaXeXM0/Z809bXthLW5Q9Tg4t8WozW3h9fWaIShQpF1AxaLFm54Em3VXQxbX3MbICN8ZpmzEpQPihMEaUsmzY008x3R5J4JEVAJ6mRADyqTJfGH14WI21bZK5WlE6wjmmWjRkRrQA98JtqvnDrZqbU+xvFZzReG/XRxLsBP69pDAByh0UuSpiiEsynKbvwlv0psAmzggA7R9XnnUlF0zLiznE0ifzlvtaYnhU051wYZyGOe9IOx58JDBRaBX1CLz+Ts617eajtuKbsalXFAJjdISlKTmpjWGxnaiwFVImcwru2enF2iOIYqzqM7NYIt6qxpzpfbssI0oKB8+h5D5d/ejZnTreBoWRx//n3RwQpErEr3WbAvSY/ht6v8ASjdJAQNoYKUHyh7cTZTHG0ggNQ30AMw22l/9S9n0k4dbhhmIMcjUGO6bUVvk7KY48V3R98SM/AF3m/bUk/hwhnQO3k8KIunxLxk9sqmY+OvFSfEwyn+EwN+tZetqwnK6YK32k0FbBtxKtCq61ezHbtFNj6JO96cqErOMbMBzndyO6ipsUqb1UvfOz/yZlUA6p6jRy53hq4wQKXYLdTKupxv6ybpxPfjbgtpbvYBR46aiGHMLJJaP3f3ubgfVPXHmURqGwmSzE7Bkp2VonKmWQOLVS1VVp3eldIxdoIr6RWiEoZV5FOcodTGfEsJLYNfFOImxN0LPaSb4ZfkKEoQs5TALJ+5dHdLrJ0hwq+uRO15J9Dl0uDE62LlyQhNpvzDzZxi+Akq0AcBf/yLjMbfxp+ZNJlmP0RdIz3CHlZNxzoOFBc6QRRNIMWIPlrG9p/GSrjKzcsH9Sjo76JtNdnIRm59WMyFk3K5cKMu7qdcW7zshFxsKSBSfu/mOipabBxIAXJod8ENer/bsFnyrSQOvhYSC7i6iExx0RU1xn8QCQSQ5A3XPz15qPFVqxF+YQxR51cxrUv1gUrgJMCg0wdFCkHiinwJIj9uDBQV/7tn5i0wSCobNtKd2gqCyhfNychr/t4k5JynWFshBSH9oeaOaikqmeYV8RfqKQF0AyWUFLByyu6mEjSroT8DQl4KFnnkif8y82rif1u0ieGqtVayCdTBogyhiFn6SeqSELr7zZufgOYTpR+mgGW4YAQ==",
+     "thinking": "I'm working through the ingest sizing constraints, aiming to minimize footprint by keeping reserve times replicas at the floor of 4 while reducing overhead costs, since footprint scales with both the base reservation and the overhead per replica.\n\nGoing with replicas=1 and reserve=4 keeps footprint minimal (4+ovh, \u22646 total) while satisfying G2's constraint that reserve plus overhead stays under the node minimum. Now I'll write this configuration to the file, run the tests, and prepare a note about the decision.\n\n",
+     "type": "thinking"
+    },
+    {
+     "caller": {
+      "type": "direct"
+     },
+     "id": "toolu_01LbX8m1Vrqyrx78wqNe4Ych",
+     "input": {
+      "content": "# module ingest\nreplicas = 1\nreserve = 4\n",
+      "path": "modules/ingest.cfg"
+     },
+     "name": "write_file",
+     "type": "tool_use"
+    },
+    {
+     "caller": {
+      "type": "direct"
+     },
+     "id": "toolu_01LYV6xLmEsiT6wrcSLwYGtM",
+     "input": {},
+     "name": "run_local_tests",
+     "type": "tool_use"
+    }
+   ],
+   "diagnostics": null,
+   "id": "msg_011CgRD7zV1vx9uGmQWxrPMP",
+   "model": "claude-haiku-5-5",
+   "role": "assistant",
+   "stop_details": null,
+   "stop_reason": "tool_use",
+   "stop_sequence": null,
+   "type": "message",
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 0,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 2274,
+    "inference_geo": "global",
+    "input_tokens": 4,
+    "output_tokens": 429,
+    "output_tokens_details": {
+     "thinking_tokens": 306
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  },
+  "charged_usd": "0.00023764",
+  "count": 2278,
+  "elapsed": 3.958,
+  "headers": {
+   "anthropic-ratelimit-input-tokens-remaining": "10000000",
+   "anthropic-ratelimit-output-tokens-remaining": "2000000",
+   "anthropic-ratelimit-requests-remaining": "9999",
+   "request-id": "req_011CgRD7zFdt47UJXGmPARYv"
+  },
+  "outcome": "ok"
+ },
+ "sdk_version": "2.3.0"
+}
