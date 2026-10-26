@@ -147,7 +147,5 @@ import LggrVIII
 #print axioms LggrVIII.skew_repair_codebase_norm_attainment_divergence_audit
 #print axioms LggrVIII.poe_veto_codebase_zero_collapse_and_compromise_mass_audit
 #print axioms LggrVIII.simultaneous_split_codebase_budget_starvation_and_joint_guard_audit
-
-
-
+#print axioms LggrVIII.mermin_peres_codebase_parity_obstruction_and_noncontextual_audit
 

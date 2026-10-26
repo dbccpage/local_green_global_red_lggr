@@ -5888,4 +5888,68 @@ theorem simultaneous_split_codebase_budget_starvation_and_joint_guard_audit :
   intro d_def n_starv h1 h2
   omega
 
+/-- **Theorem 131 (Mermin-Peres Magic-Square Parity Obstruction & Non-Contextual Assignment Codebase Audit).**
+    In a 3-module 3×3 Mermin-Peres parity settlement codebase (`pricing_mp.py`,
+    `tax_mp.py`, `settlement_mp.py`) over row parity targets `R = [1, 1, 1]`
+    (`Π_R = +1`), column parity targets `C = [1, 1, c_2]` (`Π_C = c_2 ∈ {-1, 1}`),
+    and candidate non-contextual grid `A(a_12, a_22) = [[1, 1, 1], [1, 1, a_12], [1, 1, a_22]]`
+    with `a_12, a_22 ∈ {-1, 1}`:
+    1. Whenever `n_viol ≥ 1` and `p_obs ≥ 1`, the Mermin-Peres parity surcharge
+       `surcharge = 2 * n_viol + 4 * p_obs` satisfies `surcharge ≥ 6` and
+       `873 - surcharge ≤ 867 < 873`.
+    2. For the 3-phase Mermin-Peres parity codebase audit:
+       - Phase 1 (Contextual Mermin-Peres column target `c_2 = -1` and sign-flipped
+         candidate cells `a_12 = -1, a_22 = -1`):
+         `viol_p1 = 3`, `obs_p1 = 1`, `surcharge_p1 = 2 * 3 + 4 * 1 = 10`,
+         `payout_p1 = 873 - 10 = 863 ≠ 873` (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Candidate grid repaired `a_12 = 1, a_22 = 1` attaining 5/6 contexts,
+         yet column target `c_2 = -1` preserves Mermin-Peres parity obstruction `Π_R = +1 ≠ Π_C = -1`):
+         `viol_p2 = 1`, `obs_p2 = 1`, `surcharge_p2 = 2 * 1 + 4 * 1 = 6`,
+         `payout_p2 = 873 - 6 = 867 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Non-contextual column parity target reconciled `c_2 = 1` with
+         all-ones non-contextual grid `a_12 = 1, a_22 = 1` satisfying all 6/6 contexts):
+         `viol_p3 = 0`, `obs_p3 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`,
+         `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem mermin_peres_codebase_parity_obstruction_and_noncontextual_audit :
+    (∀ n_viol p_obs : Int,
+      (1 ≤ n_viol) →
+      (1 ≤ p_obs) →
+      (2 * n_viol + 4 * p_obs ≥ 6 ∧
+       873 - (2 * n_viol + 4 * p_obs) ≤ 867)) ∧
+    (let a12_p1 : Int := -1; let a22_p1 : Int := -1; let c2_p1 : Int := -1;
+     let a12_p2 : Int := 1;  let a22_p2 : Int := 1;  let c2_p2 : Int := -1;
+     let a12_p3 : Int := 1;  let a22_p3 : Int := 1;  let c2_p3 : Int := 1;
+     let viol_p1 : Int := (if a12_p1 = 1 then 0 else 1) + (if a22_p1 = 1 then 0 else 1) + (if a12_p1 * a22_p1 = c2_p1 then 0 else 1);
+     let viol_p2 : Int := (if a12_p2 = 1 then 0 else 1) + (if a22_p2 = 1 then 0 else 1) + (if a12_p2 * a22_p2 = c2_p2 then 0 else 1);
+     let viol_p3 : Int := (if a12_p3 = 1 then 0 else 1) + (if a22_p3 = 1 then 0 else 1) + (if a12_p3 * a22_p3 = c2_p3 then 0 else 1);
+     let obs_p1 : Int := if c2_p1 = 1 then 0 else 1;
+     let obs_p2 : Int := if c2_p2 = 1 then 0 else 1;
+     let obs_p3 : Int := if c2_p3 = 1 then 0 else 1;
+     let surcharge_p1 : Int := 2 * viol_p1 + 4 * obs_p1;
+     let surcharge_p2 : Int := 2 * viol_p2 + 4 * obs_p2;
+     let surcharge_p3 : Int := 2 * viol_p3 + 4 * obs_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (viol_p1 = 3) ∧ (obs_p1 = 1) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (viol_p1 = 0) ∧ (obs_p1 = 0) ∧ (surcharge_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (viol_p2 = 1) ∧ (obs_p2 = 1) ∧ (surcharge_p2 = 6) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (viol_p2 = 0) ∧ (obs_p2 = 0) ∧ (surcharge_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (viol_p3 = 0) ∧ (obs_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (viol_p1 = 3 ∧ viol_p2 = 1 ∧ viol_p3 = 0 ∧
+      obs_p1 = 1 ∧ obs_p2 = 1 ∧ obs_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 6 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 867 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro n_viol p_obs h1 h2
+  omega
+
 end LggrVIII

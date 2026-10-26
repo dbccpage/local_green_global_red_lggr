@@ -10,6 +10,7 @@ from lggr.streaming import (
     StreamingCodebaseFigureEightWedgeMonitor,
     StreamingCodebaseGovernedRelaxationMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseMerminPeresMonitor,
     StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebaseProductOfExpertsMonitor,
@@ -9671,3 +9672,223 @@ class SimultaneousSplitCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+MERMIN_PERES_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_mp",
+    "worker-1": "tax_mp",
+    "worker-2": "settlement_mp",
+}
+
+INITIAL_PRICING_MP_P1_PY = StreamingCodebaseMerminPeresMonitor.PHASE_1_PRICING_MP_SOURCE
+INITIAL_PRICING_MP_P2_P3_PY = StreamingCodebaseMerminPeresMonitor.PHASE_2_PRICING_MP_SOURCE
+
+INITIAL_TAX_MP_P1_P2_PY = StreamingCodebaseMerminPeresMonitor.PHASE_1_TAX_MP_SOURCE
+INITIAL_TAX_MP_P3_PY = StreamingCodebaseMerminPeresMonitor.PHASE_3_TAX_MP_SOURCE
+
+INITIAL_SETTLEMENT_MP_P1_P2_PY = StreamingCodebaseMerminPeresMonitor.PHASE_1_SETTLEMENT_MP_SOURCE
+INITIAL_SETTLEMENT_MP_P3_PY = StreamingCodebaseMerminPeresMonitor.PHASE_3_SETTLEMENT_MP_SOURCE
+
+
+def run_mermin_peres_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_mp`, `tax_mp`, or `settlement_mp`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_mp":
+            fn = ns.get("quote_mp_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_mp_pricing"}
+            res = fn(990)
+            a_12 = res.get("a_12") if isinstance(res, dict) else None
+            a_22 = res.get("a_22") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and a_12 in (-1, 1)
+                and a_22 in (-1, 1)
+                and res.get("row_targets") == [1, 1, 1]
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_mp":
+            fn = ns.get("compute_mp_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_mp_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "a_12": 1,
+                    "a_22": 1,
+                    "row_targets": [1, 1, 1],
+                }
+            )
+            c_2 = res.get("c_2") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and c_2 in (-1, 1)
+                and res.get("col_targets") == [1, 1, c_2]
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_mp":
+            fn = ns.get("settle_mp_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_mp_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "a_12": 1,
+                    "a_22": 1,
+                    "row_targets": [1, 1, 1],
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "a_12": 1,
+                    "a_22": 1,
+                    "c_2": 1,
+                    "col_targets": [1, 1, 1],
+                },
+            )
+            surcharge = res.get("mp_surcharge_cents") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and surcharge == 0
+                and res.get("grid_violated_contexts") == 0
+                and res.get("parity_obstruction") == 0
+                and res.get("merchant_payout_cents") == 873
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def mermin_peres_fixture(seed: int) -> dict[str, Any]:
+    if seed in (12800, 12802):
+        return {
+            "seed": seed,
+            "kind": "repairable_mermin_peres_parity_obstruction_and_candidate_grid_defect",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_mp": INITIAL_PRICING_MP_P1_PY,
+                "tax_mp": INITIAL_TAX_MP_P1_P2_PY,
+                "settlement_mp": INITIAL_SETTLEMENT_MP_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 12801:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_mermin_peres_contextual_column_parity",
+            "locked_workers": ["worker-1"],
+            "infeasible_constraint": (
+                "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM "
+                "with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, "
+                "`Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR "
+                "Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, "
+                "`a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, "
+                "`mp_surcharge_cents == 0`). Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_mp": INITIAL_PRICING_MP_P1_PY,
+                "tax_mp": INITIAL_TAX_MP_P1_P2_PY,
+                "settlement_mp": INITIAL_SETTLEMENT_MP_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported mermin_peres seed {seed}")
+
+
+class MerminPeresCodeWorkspace:
+    """Workspace for the 3-agent 3x3 Mermin-Peres parity contextuality & non-contextual grid swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in MERMIN_PERES_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = MERMIN_PERES_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_mermin_peres_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_mp.py": "def quote_mp_pricing(gross_cents: int = 990) -> dict",
+                    "tax_mp.py": "def compute_mp_tax(pricing_out: dict) -> dict",
+                    "settlement_mp.py": "def settle_mp_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_mermin_peres_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_mermin_peres_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; 3x3 Mermin-Peres parity product Pi_R == Pi_C and non-contextual grid satisfiability are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
