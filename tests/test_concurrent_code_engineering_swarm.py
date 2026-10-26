@@ -57,6 +57,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     GRAM_TAX_DROPOUT_SOURCE,
     GRAM_TAX_RESTORED_SOURCE,
     INITIAL_PRICING_C3_PY,
+    INITIAL_PRICING_CHORD_COHERENT_PY,
+    INITIAL_PRICING_CHORD_P1_PY,
+    INITIAL_PRICING_CHORD_P2_PY,
     INITIAL_PRICING_HODGE_COHERENT_PY,
     INITIAL_PRICING_HODGE_P1_PY,
     INITIAL_PRICING_MIG_P1_P2_PY,
@@ -67,6 +70,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_C3_COHERENT_PY,
     INITIAL_SETTLEMENT_C3_P1_PY,
     INITIAL_SETTLEMENT_C3_P2_PY,
+    INITIAL_SETTLEMENT_CHORD_PY,
     INITIAL_SETTLEMENT_HODGE_COHERENT_PY,
     INITIAL_SETTLEMENT_HODGE_P1_P2_PY,
     INITIAL_SETTLEMENT_MIG_P1_PY,
@@ -75,6 +79,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_C3_COHERENT_PY,
     INITIAL_TAX_C3_P1_PY,
     INITIAL_TAX_C3_P2_PY,
+    INITIAL_TAX_CHORD_COHERENT_PY,
+    INITIAL_TAX_CHORD_P1_P2_PY,
     INITIAL_TAX_HODGE_COHERENT_PY,
     INITIAL_TAX_HODGE_P1_PY,
     INITIAL_TAX_MIG_MIGRATION_PY,
@@ -159,6 +165,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
+    SharedChordDiamondCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     StatefulDFACodeWorkspace,
     ThreePartyC3CodeWorkspace,
@@ -208,6 +215,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
     run_schema_synthesis_local_unit_tests,
+    run_shared_chord_diamond_local_unit_tests,
     run_sheaf_local_unit_tests,
     run_six_role_local_unit_tests,
     run_split_local_unit_tests,
@@ -215,6 +223,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_three_party_c3_local_unit_tests,
     run_win_local_unit_tests,
     schema_synthesis_fixture,
+    shared_chord_diamond_fixture,
     sheaf_fixture,
     six_role_fixture,
     split_fixture,
@@ -248,6 +257,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     replay,
     replay_campaign,
     schema_synthesis_campaign,
+    shared_chord_diamond_campaign,
     sheaf_campaign,
     six_role_campaign,
     split_campaign,
@@ -5984,6 +5994,246 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_11900_arms["B"]["final_wedge_surcharge_cents"], 4)
             self.assertEqual(seed_11900_arms["C"]["final_wedge_surcharge_cents"], 0)
             self.assertEqual(seed_11900_arms["C"]["status"], "completed")
+
+    def test_shared_chord_diamond_workspace_and_unit_tests(self) -> None:
+        """Verify SharedChordDiamondCodeWorkspace and local unit tests across all 3 phases."""
+        from lggr.streaming import StreamingCodebaseSharedChordDiamondMonitor
+
+        mon = StreamingCodebaseSharedChordDiamondMonitor(scope_id="test-shared-chord-diamond-ws")
+        p1 = mon.evaluate_shared_chord_diamond_modules(
+            "p1",
+            pricing_chord_source=INITIAL_PRICING_CHORD_P1_PY,
+            tax_chord_source=INITIAL_TAX_CHORD_P1_P2_PY,
+            settlement_chord_source=INITIAL_SETTLEMENT_CHORD_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["norm2_exact"], 3)
+        self.assertEqual(p1["norm2_coexact"], 3)
+        self.assertEqual(p1["norm2_harmonic"], 24)
+        self.assertEqual(p1["chord_mismatch_cents"], 0)
+        self.assertEqual(p1["chord_surcharge_cents"], 27)
+        self.assertEqual(p1["merchant_payout_cents"], 846)
+
+        p2 = mon.evaluate_shared_chord_diamond_modules(
+            "p2",
+            pricing_chord_source=INITIAL_PRICING_CHORD_P2_PY,
+            tax_chord_source=INITIAL_TAX_CHORD_P1_P2_PY,
+            settlement_chord_source=INITIAL_SETTLEMENT_CHORD_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["norm2_exact"], 3)
+        self.assertEqual(p2["norm2_coexact"], 0)
+        self.assertEqual(p2["norm2_harmonic"], 24)
+        self.assertEqual(p2["chord_mismatch_cents"], 1)
+        self.assertEqual(p2["chord_surcharge_cents"], 25)
+        self.assertEqual(p2["merchant_payout_cents"], 848)
+
+        p3 = mon.evaluate_shared_chord_diamond_modules(
+            "p3",
+            pricing_chord_source=INITIAL_PRICING_CHORD_COHERENT_PY,
+            tax_chord_source=INITIAL_TAX_CHORD_COHERENT_PY,
+            settlement_chord_source=INITIAL_SETTLEMENT_CHORD_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["norm2_exact"], 7)
+        self.assertEqual(p3["norm2_coexact"], 0)
+        self.assertEqual(p3["norm2_harmonic"], 0)
+        self.assertEqual(p3["chord_mismatch_cents"], 0)
+        self.assertEqual(p3["chord_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_shared_chord_diamond_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent shared_chord_diamond campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_shared_chord_diamond_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked tax_chord.py has lower_unfilled_legs=[-4, -3] and cannot satisfy e_harm=0."
+                                }
+                            ),
+                        },
+                    }
+                elif (
+                    "Arm A" in sys_prompt
+                    or ("Arm B" in sys_prompt and worker in ("worker-1", "worker-2"))
+                    or ("Arm C" in sys_prompt and worker == "worker-2")
+                ):
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": INITIAL_PRICING_CHORD_P2_PY}),
+                        },
+                    }
+                else:
+                    patch_src = (
+                        INITIAL_PRICING_CHORD_COHERENT_PY
+                        if worker == "worker-0"
+                        else INITIAL_TAX_CHORD_COHERENT_PY
+                    )
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_src}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "shared_chord_diamond",
+                "seeds": [12000, 12001],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_shared_chord_diamond_transport)
+            summary = shared_chord_diamond_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.shared_chord_diamond_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["norm2_harmonic"] = int(gate_rec["norm2_harmonic"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_shared_chord_diamond_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live shared_chord_diamond pilot evidence offline if present."""
+        chord_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "shared_chord_diamond_pilot_run"
+            / "events.jsonl"
+        )
+        chord_summary = chord_events.with_name("summary.json")
+        if chord_events.exists() and chord_summary.exists():
+            replayed = replay(chord_events)
+            self.assertEqual(replayed["schema"], "lggr.shared_chord_diamond_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+            seed_12000_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12000_arms["A"]["final_chord_surcharge_cents"], 27)
+            self.assertEqual(seed_12000_arms["B"]["final_chord_surcharge_cents"], 25)
+            self.assertEqual(seed_12000_arms["C"]["final_chord_surcharge_cents"], 0)
+            self.assertEqual(seed_12000_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

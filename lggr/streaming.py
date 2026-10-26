@@ -31736,6 +31736,451 @@ class StreamingCodebaseFigureEightWedgeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseSharedChordDiamondMonitor:
+    """Audit 3-module shared-chord bicyclic diamond settlement codebases (`pricing_chord`,
+    `tax_chord`, `settlement_chord`) on the 4-vertex, 5-edge, 1-filled-triangle shared-chord
+    bicyclic diamond 2-complex K = T_filled U_{e01} T_unfilled sharing boundary chord
+    e01 = (v0, v1) under `StreamingSharedChordDiamondHodgeMonitor`,
+    `StreamingHodgeDecompositionMonitor`, `StreamingMayerVietorisMonitor`,
+    `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor` (Theorem 123).
+
+    AuthorityEffect: None.
+    """
+
+    DIAMOND_D0: tuple[tuple[int, ...], ...] = StreamingSharedChordDiamondHodgeMonitor.DIAMOND_D0
+    DIAMOND_D1: tuple[tuple[int, ...], ...] = StreamingSharedChordDiamondHodgeMonitor.DIAMOND_D1
+
+    PHASE_1_PRICING_CHORD_SOURCE = (
+        "def compute_pricing_chord(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 1: shared chord e0 = 0, upper filled-triangle legs [2, 1] -> curl = 0 + 2 + 1 = 3\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'shared_chord_e0': 0,\n"
+        "        'upper_filled_legs': [2, 1],\n"
+        "    }\n"
+    )
+    PHASE_1_TAX_CHORD_SOURCE = (
+        "def compute_tax_chord(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    # Phase 1: lower unfilled legs [-4, -3], tax_shared_chord_e0 = 0\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'shared_chord_e0': int(quote['shared_chord_e0']),\n"
+        "        'upper_filled_legs': list(quote['upper_filled_legs']),\n"
+        "        'lower_unfilled_legs': [-4, -3],\n"
+        "        'tax_shared_chord_e0': 0,\n"
+        "    }\n"
+    )
+    PHASE_1_SETTLEMENT_CHORD_SOURCE = (
+        "def compute_settlement_chord(taxed_quote, fee_bps):\n"
+        "    gross = int(taxed_quote['gross_cents'])\n"
+        "    net = int(taxed_quote['net_cents'])\n"
+        "    tax = int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * int(fee_bps)) // 10000\n"
+        "    e0 = int(taxed_quote['shared_chord_e0'])\n"
+        "    t_e0 = int(taxed_quote['tax_shared_chord_e0'])\n"
+        "    u_legs = [int(x) for x in taxed_quote['upper_filled_legs']]\n"
+        "    v_legs = [int(x) for x in taxed_quote['lower_unfilled_legs']]\n"
+        "    h_vec = [e0, u_legs[0], u_legs[1], v_legs[0], v_legs[1]]\n"
+        "    curl_u = e0 + u_legs[0] + u_legs[1]\n"
+        "    coexact_energy = (curl_u * curl_u) // 3\n"
+        "    circ_v = e0 + v_legs[0] + v_legs[1]\n"
+        "    # Harmonic counter-flow projection along [-2, 1, 1, -3, -3] (norm^2 = 24)\n"
+        "    harm_dot = -2 * h_vec[0] + h_vec[1] + h_vec[2] - 3 * h_vec[3] - 3 * h_vec[4]\n"
+        "    harmonic_energy = (harm_dot * harm_dot) // 24\n"
+        "    chord_mismatch = abs(e0 - t_e0)\n"
+        "    surcharge = coexact_energy + harmonic_energy + chord_mismatch\n"
+        "    payout = net - fee - surcharge\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'chord_surcharge_cents': surcharge,\n"
+        "        'cochain_1': h_vec,\n"
+        "        'coexact_energy': coexact_energy,\n"
+        "        'harmonic_energy': harmonic_energy,\n"
+        "        'chord_mismatch_cents': chord_mismatch,\n"
+        "        'shared_chord_e0': e0,\n"
+        "        'tax_shared_chord_e0': t_e0,\n"
+        "        'u_cycle_sum': curl_u,\n"
+        "        'v_cycle_sum': circ_v,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_CHORD_SOURCE = (
+        "def compute_pricing_chord(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 2: U = T_filled curl-cleared via e0 = -1, upper_filled_legs = [1, 0]\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'shared_chord_e0': -1,\n"
+        "        'upper_filled_legs': [1, 0],\n"
+        "    }\n"
+    )
+    PHASE_2_TAX_CHORD_SOURCE = PHASE_1_TAX_CHORD_SOURCE
+    PHASE_2_SETTLEMENT_CHORD_SOURCE = PHASE_1_SETTLEMENT_CHORD_SOURCE
+
+    PHASE_3_PRICING_CHORD_SOURCE = (
+        "def compute_pricing_chord(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 3: Coordinated potential phi = [0, 1, 2, 0] -> e0 = 1, upper_filled_legs = [1, -2]\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'shared_chord_e0': 1,\n"
+        "        'upper_filled_legs': [1, -2],\n"
+        "    }\n"
+    )
+    PHASE_3_TAX_CHORD_SOURCE = (
+        "def compute_tax_chord(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    # Phase 3: Coordinated potential phi = [0, 1, 2, 0] -> lower_unfilled_legs = [-1, 0], tax_shared_chord_e0 = 1\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'shared_chord_e0': int(quote['shared_chord_e0']),\n"
+        "        'upper_filled_legs': list(quote['upper_filled_legs']),\n"
+        "        'lower_unfilled_legs': [-1, 0],\n"
+        "        'tax_shared_chord_e0': 1,\n"
+        "    }\n"
+    )
+    PHASE_3_SETTLEMENT_CHORD_SOURCE = PHASE_1_SETTLEMENT_CHORD_SOURCE
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-shared-chord-diamond-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.diamond_monitor = StreamingSharedChordDiamondHodgeMonitor(
+            scope_id=f"{self.scope_id}-diamond",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_shared_chord_diamond_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_chord_source: str,
+        tax_chord_source: str,
+        settlement_chord_source: str,
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        ns_p = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_chord", pricing_chord_source
+        )
+        ns_t = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_chord", tax_chord_source
+        )
+        ns_s = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_chord", settlement_chord_source
+        )
+
+        for mod_name, ns, fn_name in (
+            ("pricing_chord", ns_p, "compute_pricing_chord"),
+            ("tax_chord", ns_t, "compute_tax_chord"),
+            ("settlement_chord", ns_s, "compute_settlement_chord"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} missing callable {fn_name}")
+
+        items = [
+            {"sku": "chord_u", "unit_cents": 600, "quantity": 1},
+            {"sku": "chord_v", "unit_cents": 400, "quantity": 1},
+        ]
+        quote = ns_p["compute_pricing_chord"](items, 1000)
+        taxed = ns_t["compute_tax_chord"](quote, 1000)
+        settled = ns_s["compute_settlement_chord"](taxed, 300)
+
+        h_vec = [exact_int(x, f"cochain_1[{idx}]") for idx, x in enumerate(settled["cochain_1"])]
+        if len(h_vec) != 5:
+            raise ValidationError("cochain_1 must have length 5")
+
+        e0 = exact_int(settled["shared_chord_e0"], "shared_chord_e0")
+        t_e0 = exact_int(settled["tax_shared_chord_e0"], "tax_shared_chord_e0")
+        chord_mismatch = abs(e0 - t_e0)
+
+        d0 = [list(row) for row in self.DIAMOND_D0]
+        d1 = [list(row) for row in self.DIAMOND_D1]
+
+        hodge_mon = StreamingHodgeDecompositionMonitor(
+            scope_id=f"{self.scope_id}-{eval_id}-hodge",
+        )
+        hrec = hodge_mon.record_complex_cochain(f"{eval_id}_hodge", d0, h_vec, D1=d1)
+        mvrec = StreamingSharedChordDiamondHodgeMonitor._record_diamond_mayer_vietoris(
+            f"{self.scope_id}-{eval_id}-mv", h_vec
+        )
+        self.diamond_monitor.record_diamond_evaluation(f"{eval_id}_diamond", model_id=mid)
+
+        norm2_exact = exact_int(int(Fraction(hrec["norm2_exact"])), "norm2_exact")
+        norm2_coexact = exact_int(int(Fraction(hrec["norm2_coexact"])), "norm2_coexact")
+        norm2_harmonic = exact_int(int(Fraction(hrec["norm2_harmonic"])), "norm2_harmonic")
+        norm2_total = exact_int(int(Fraction(hrec["norm2_total"])), "norm2_total")
+
+        surcharge_cents = exact_int(settled["chord_surcharge_cents"], "chord_surcharge_cents")
+        payout_cents = exact_int(settled["merchant_payout_cents"], "merchant_payout_cents")
+        fee_cents = exact_int(settled["platform_fee_cents"], "platform_fee_cents")
+        tax_cents = exact_int(settled["tax_reserve_cents"], "tax_reserve_cents")
+        gross_cents = exact_int(settled["gross_cents"], "gross_cents")
+
+        local_unit_ok = (
+            exact_int(quote["net_cents"], "net_cents") == 900
+            and tax_cents == 90
+            and gross_cents == 990
+            and fee_cents == 27
+            and bool(hrec["pythagorean_energy_verified"])
+            and bool(hrec["orthogonality_verified"])
+            and mvrec["overlap_vertices"] == ["v0", "v1"]
+            and surcharge_cents == norm2_coexact + norm2_harmonic + chord_mismatch
+        )
+
+        l_green = 1 if (local_unit_ok and infeasible_constraint is None) else 0
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and norm2_coexact == 0
+                and norm2_harmonic == 0
+                and chord_mismatch == 0
+                and bool(mvrec["u_locally_exact"])
+                and bool(mvrec["v_locally_exact"])
+                and bool(mvrec["union_globally_exact"])
+                and mvrec["connecting_coboundary_spread"] == "0"
+                and bool(mvrec["intersection_cocycle_locally_constant_verified"])
+                and e0 == 1
+                and t_e0 == 1
+                and h_vec == [1, 1, -2, -1, 0]
+                and surcharge_cents == 0
+                and payout_cents == 873
+                and payout_cents + fee_cents + tax_cents == gross_cents
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_SHARED_CHORD_DIAMOND_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "DIAMOND_CHORD_GLUED_EXACT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif norm2_coexact > 0:
+            status = "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, Any] = {
+            "worker-0": {
+                "module": "pricing_chord",
+                "action": (
+                    "HOLD_PRICING_CHORD"
+                    if (norm2_coexact == 0 and h_vec[:3] == [1, 1, -2] and e0 == 1)
+                    else "REPAIR_PRICING_CHORD_SHARED_CHORD_AND_UPPER_LEGS"
+                ),
+                "target_shared_chord_e0": 1,
+                "target_upper_filled_legs": [1, -2],
+            },
+            "worker-1": {
+                "module": "tax_chord",
+                "action": (
+                    "HOLD_TAX_CHORD"
+                    if (norm2_harmonic == 0 and h_vec[3:] == [-1, 0] and t_e0 == 1)
+                    else "REPAIR_TAX_CHORD_LOWER_LEGS_AND_SHARED_CHORD"
+                ),
+                "target_lower_unfilled_legs": [-1, 0],
+                "target_tax_shared_chord_e0": 1,
+            },
+            "worker-2": {
+                "module": "settlement_chord",
+                "action": (
+                    "HOLD_SETTLEMENT_CHORD"
+                    if eg_green == 1
+                    else "REPAIR_SETTLEMENT_CHORD_SURCHARGE_GATE"
+                ),
+                "target_surcharge_cents": 0,
+                "target_payout_cents": 873,
+            },
+        }
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_ok": local_unit_ok,
+                "pythagorean_energy_verified": bool(hrec["pythagorean_energy_verified"]),
+                "overlap_vertices": mvrec["overlap_vertices"],
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "cochain_1": h_vec,
+                "norm2_exact": norm2_exact,
+                "norm2_coexact": norm2_coexact,
+                "norm2_harmonic": norm2_harmonic,
+                "chord_mismatch_cents": chord_mismatch,
+                "chord_surcharge_cents": surcharge_cents,
+            },
+        )
+
+        rec: dict[str, Any] = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "cochain_1": h_vec,
+                "shared_chord_e0": e0,
+                "tax_shared_chord_e0": t_e0,
+                "chord_mismatch_cents": chord_mismatch,
+                "overlap_vertices": mvrec["overlap_vertices"],
+                "u_locally_exact": bool(mvrec["u_locally_exact"]),
+                "v_locally_exact": bool(mvrec["v_locally_exact"]),
+                "union_globally_exact": bool(mvrec["union_globally_exact"]),
+                "connecting_coboundary_spread": mvrec["connecting_coboundary_spread"],
+                "intersection_cocycle_locally_constant_verified": bool(
+                    mvrec["intersection_cocycle_locally_constant_verified"]
+                ),
+                "norm2_exact": norm2_exact,
+                "norm2_coexact": norm2_coexact,
+                "norm2_harmonic": norm2_harmonic,
+                "norm2_total": norm2_total,
+                "pythagorean_energy_verified": bool(hrec["pythagorean_energy_verified"]),
+                "orthogonality_verified": bool(hrec["orthogonality_verified"]),
+                "chord_surcharge_cents": surcharge_cents,
+                "merchant_payout_cents": payout_cents,
+                "platform_fee_cents": fee_cents,
+                "tax_reserve_cents": tax_cents,
+                "gross_cents": gross_cents,
+                "local_green": l_green,
+                "global_green": eg_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_shared_chord_diamond_modules(
+            f"{mid}::phase_1_diamond_chord_curl_and_harmonic",
+            pricing_chord_source=self.PHASE_1_PRICING_CHORD_SOURCE,
+            tax_chord_source=self.PHASE_1_TAX_CHORD_SOURCE,
+            settlement_chord_source=self.PHASE_1_SETTLEMENT_CHORD_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_shared_chord_diamond_modules(
+            f"{mid}::phase_2_diamond_coupled_harmonic_counterflow",
+            pricing_chord_source=self.PHASE_2_PRICING_CHORD_SOURCE,
+            tax_chord_source=self.PHASE_2_TAX_CHORD_SOURCE,
+            settlement_chord_source=self.PHASE_2_SETTLEMENT_CHORD_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_shared_chord_diamond_modules(
+            f"{mid}::phase_3_diamond_chord_glued_exact",
+            pricing_chord_source=self.PHASE_3_PRICING_CHORD_SOURCE,
+            tax_chord_source=self.PHASE_3_TAX_CHORD_SOURCE,
+            settlement_chord_source=self.PHASE_3_SETTLEMENT_CHORD_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "model_id": mid,
+                "phase_1_norm2_exact": p1["norm2_exact"],
+                "phase_1_norm2_coexact": p1["norm2_coexact"],
+                "phase_1_norm2_harmonic": p1["norm2_harmonic"],
+                "phase_1_chord_mismatch_cents": p1["chord_mismatch_cents"],
+                "phase_1_surcharge_cents": p1["chord_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_norm2_exact": p2["norm2_exact"],
+                "phase_2_norm2_coexact": p2["norm2_coexact"],
+                "phase_2_norm2_harmonic": p2["norm2_harmonic"],
+                "phase_2_chord_mismatch_cents": p2["chord_mismatch_cents"],
+                "phase_2_surcharge_cents": p2["chord_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_norm2_exact": p3["norm2_exact"],
+                "phase_3_norm2_coexact": p3["norm2_coexact"],
+                "phase_3_norm2_harmonic": p3["norm2_harmonic"],
+                "phase_3_chord_mismatch_cents": p3["chord_mismatch_cents"],
+                "phase_3_surcharge_cents": p3["chord_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase shared-chord diamond evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_shared_chord_diamond.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "shared_chord_diamond_hodge_receipt": (
+                self.diamond_monitor.current_receipt()
+                if self.diamond_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 
