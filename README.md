@@ -18,6 +18,14 @@ python learn/check.py
 
 **AuthorityEffect: None.** The course calls the monitors in this package. It does not admit an authority.
 
+## Drop-in composition gate
+
+If you want one tool to put in front of your merges, use [`lggr_guard/`](lggr_guard/README.md). It
+checks every change alone and together before merge, names the minimal set of changes that breaks
+the system when each passes alone (local green, global red), flags undeclared and emergent behaviour
+changes, bounds cumulative drift from the last approved state, and detects when a hosted reviewer has
+changed. It is standard library only. Run `python -m lggr_guard.demo` to see it.
+
 ## Foundational Context: LGGR Series & Positive-Extension / Projection Residuals
 
 This repository synthesizes executable finite verification rules from two related lines of work:
