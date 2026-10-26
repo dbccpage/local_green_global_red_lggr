@@ -700,6 +700,25 @@ In the `weighted_relaxation` topology (`StreamingCodebaseWeightedRelaxationMonit
 | `13302` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **B** | `unweighted_minimum_slack_tie_gate` | `blocked_unresolved` | `[2, 0]` | `2` | `6` | `0` | `4` | `4` | `869` | 2 | 14 | `$0.011971` |
 | `13302` | `repairable_weighted_policy_relaxation_pareto_tie_and_minimum_weighted_slack` | **C** | `explicit_lggr_weighted_minimum_slack_directive` | **`completed`** | **`[0, 2]`** | **`2`** | **`2`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **7** | **`$0.006466`** |
 
+## 44. Live 3-Agent Threshold Governance Prefix Excursion vs. Endpoint Cancellation Codebase Campaign (`--topology threshold_governance`, Theorem 137)
+
+- **Evidence path:** `experiments/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/`
+- **5-model benchmark receipt:** `receipts/live_benchmarks/codebase_threshold_governance_benchmark.json` (`SHA-256: f1ac88c6542faf6567c09215cc43c0d303e3559a8e5476f305ea9bd7bfad3fab`)
+- **Total API calls:** `96` (`max_inflight_requests = 3`, `concurrent_waves = 15`)
+- **Total OpenRouter spend:** `$0.0855950557`
+
+| Seed | Case | Arm | Gate Mode | Outcome | `step_deltas` | `prefix_sums` | `max_prefix_abs` | `max_coarse_abs` | `prefix_excess` | `coarse_excess` | Surcharge | Payout | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `13400` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **A** | `endpoint_drift_only_gate` | `blocked_unresolved` | `[3, 3, -3, -3]` | `[3, 6, 3, 0]` | `6` | `6` | `4` | `4` | `12` | `861` | 2 | 18 | `$0.013490` |
+| `13400` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **B** | `coarsened_macro_boundary_only_gate` | `blocked_unresolved` | `[3, -3, 3, -3]` | `[3, 0, 3, 0]` | `3` | `0` | `1` | `0` | `2` | `871` | 2 | 14 | `$0.012983` |
+| `13400` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **C** | `explicit_lggr_every_prefix_threshold_directive` | **`completed`** | **`[2, -2, 2, -2]`** | **`[2, 0, 2, 0]`** | **`2`** | **`0`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.006920`** |
+| `13401` | `infeasible_hardware_locked_step_amplitude_a_three` | **A** | `endpoint_drift_only_gate` | `safe_escalated` | `[3, 3, -3, -3]` | `[3, 6, 3, 0]` | `6` | `6` | `4` | `4` | `12` | `861` | 1 | 7 | `$0.006215` |
+| `13401` | `infeasible_hardware_locked_step_amplitude_a_three` | **B** | `coarsened_macro_boundary_only_gate` | `safe_escalated` | `[3, 3, -3, -3]` | `[3, 6, 3, 0]` | `6` | `6` | `4` | `4` | `12` | `861` | 1 | 7 | `$0.006966` |
+| `13401` | `infeasible_hardware_locked_step_amplitude_a_three` | **C** | `explicit_lggr_every_prefix_threshold_directive` | `safe_escalated` | `[3, 3, -3, -3]` | `[3, 6, 3, 0]` | `6` | `6` | `4` | `4` | `12` | `861` | 1 | 6 | `$0.006062` |
+| `13402` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **A** | `endpoint_drift_only_gate` | `blocked_unresolved` | `[3, 3, -3, -3]` | `[3, 6, 3, 0]` | `6` | `6` | `4` | `4` | `12` | `861` | 2 | 18 | `$0.013688` |
+| `13402` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **B** | `coarsened_macro_boundary_only_gate` | `blocked_unresolved` | `[3, -3, 3, -3]` | `[3, 0, 3, 0]` | `3` | `0` | `1` | `0` | `2` | `871` | 2 | 14 | `$0.012991` |
+| `13402` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **C** | `explicit_lggr_every_prefix_threshold_directive` | **`completed`** | **`[2, -2, 2, -2]`** | **`[2, 0, 2, 0]`** | **`2`** | **`0`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.006281`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
@@ -750,4 +769,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/projective_tower_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/bell_polytope_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/weighted_relaxation_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/events.jsonl
 ```

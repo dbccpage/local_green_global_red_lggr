@@ -6268,4 +6268,70 @@ theorem weighted_relaxation_codebase_pareto_tie_and_minimum_weighted_slack_audit
   intro unweighted_excess weighted_excess h1
   omega
 
+/-- **Theorem 137 (Threshold Governance Prefix Excursion vs. Endpoint Cancellation Codebase Audit).**
+    In a 3-module prefix-threshold settlement codebase (`pricing_thresh.py`, `tax_thresh.py`,
+    `settlement_thresh.py`) auditing 4-step signed drift trajectories
+    `δ = (δ_1, δ_2, δ_3, δ_4) ∈ Z^4` starting at `X_0 = 0` under per-step bound `|δ_t| ≤ 3`,
+    prefix ceiling `τ_prefix = 2`, prefix sums `S_k = ∑_{t=1}^k δ_t`, peak fine prefix
+    excursion `M_prefix = max_{1≤k≤4} |S_k|`, 2-step coarsened macro-boundary peak
+    `M_coarse = max(|S_2|, |S_4|)`, `prefix_excess = max(0, M_prefix - 2)`,
+    `coarse_excess = max(0, M_coarse - 2)`, and
+    `surcharge = 2 * prefix_excess + coarse_excess`:
+    1. Whenever `2 * prefix_excess + coarse_excess ≥ 2`, the net settlement payout
+       `873 - (2 * prefix_excess + coarse_excess)` is at most `871 < 873`.
+    2. For the 3-phase threshold governance codebase audit:
+       - Phase 1 (Block-cancelling trajectory `δ = (3, 3, -3, -3)`): satisfies `|δ_t| = 3 ≤ 3`
+         and cancels at the endpoint (`S_4 = 0`), yet prefix sums `(3, 6, 3, 0)` incur
+         `M_prefix = 6 > 2` (`prefix_excess_p1 = 4`) and `M_coarse = 6 > 2`
+         (`coarse_excess_p1 = 4`), yielding `surcharge_p1 = 2 * 4 + 4 = 12` and
+         `payout_p1 = 873 - 12 = 861 ≠ 873` (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Alternating trajectory `δ = (3, -3, 3, -3)` masking 2-step coarsened boundaries):
+         attains zero at both 2-step macro-boundaries `(S_2, S_4) = (0, 0)` (`M_coarse = 0 ≤ 2`,
+         `coarse_excess_p2 = 0`), yet odd prefixes `S_1 = 3 > 2` and `S_3 = 3 > 2` incur
+         `M_prefix = 3 > 2` (`prefix_excess_p2 = 1`), yielding `surcharge_p2 = 2 * 1 + 0 = 2`
+         and `payout_p2 = 873 - 2 = 871 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Prefix-bounded alternating trajectory `δ = (2, -2, 2, -2)`): satisfies
+         `|S_k| ≤ 2 = τ_prefix` across all 4 prefixes `(2, 0, 2, 0)` (`prefix_excess_p3 = 0`,
+         `coarse_excess_p3 = 0`), yielding `surcharge_p3 = 0`, `payout_p3 = 873`, and
+         `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem threshold_governance_codebase_prefix_excursion_and_endpoint_audit :
+    (∀ prefix_excess coarse_excess : Int,
+      (2 * prefix_excess + coarse_excess ≥ 2) →
+      (873 - (2 * prefix_excess + coarse_excess) ≤ 871)) ∧
+    (let s2_p1 : Int := 3 + 3; let s4_p1 : Int := 3 + 3 - 3 - 3;
+     let s1_p2 : Int := 3; let s2_p2 : Int := 3 - 3; let s4_p2 : Int := 3 - 3 + 3 - 3;
+     let s1_p3 : Int := 2; let s2_p3 : Int := 2 - 2; let s4_p3 : Int := 2 - 2 + 2 - 2;
+     let pref_ex_p1 : Int := s2_p1 - 2;
+     let pref_ex_p2 : Int := s1_p2 - 2;
+     let pref_ex_p3 : Int := s1_p3 - 2;
+     let coarse_ex_p1 : Int := s2_p1 - 2;
+     let coarse_ex_p2 : Int := s2_p2;
+     let coarse_ex_p3 : Int := s2_p3;
+     let surcharge_p1 : Int := 2 * pref_ex_p1 + coarse_ex_p1;
+     let surcharge_p2 : Int := 2 * pref_ex_p2 + coarse_ex_p2;
+     let surcharge_p3 : Int := 2 * pref_ex_p3 + coarse_ex_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (s4_p1 = 0) ∧ (pref_ex_p1 = 4) ∧ (coarse_ex_p1 = 4) ∧ (surcharge_p1 = 12) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (pref_ex_p1 = 0) ∧ (coarse_ex_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (s4_p2 = 0) ∧ (pref_ex_p2 = 1) ∧ (coarse_ex_p2 = 0) ∧ (surcharge_p2 = 2) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (pref_ex_p2 = 0) ∧ (coarse_ex_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (s4_p3 = 0) ∧ (pref_ex_p3 = 0) ∧ (coarse_ex_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (pref_ex_p1 = 4 ∧ pref_ex_p2 = 1 ∧ pref_ex_p3 = 0 ∧
+      coarse_ex_p1 = 4 ∧ coarse_ex_p2 = 0 ∧ coarse_ex_p3 = 0 ∧
+      surcharge_p1 = 12 ∧ surcharge_p2 = 2 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 861 ∧ payout_p2 = 871 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro prefix_excess coarse_excess h1
+  omega
+
 end LggrVIII

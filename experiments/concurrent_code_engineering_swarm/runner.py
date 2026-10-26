@@ -63,6 +63,7 @@ from lggr.streaming import (
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
+    StreamingCodebaseThresholdGovernanceMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWeightedRelaxationMonitor,
     StreamingCodebaseWindowedDriftMonitor,
@@ -112,6 +113,7 @@ from .domain import (
     STOP_WORKER_MODULES,
     SUBGRADIENT_PIVOT_WORKER_MODULES,
     THREE_PARTY_C3_WORKER_MODULES,
+    THRESHOLD_GOVERNANCE_WORKER_MODULES,
     WEIGHTED_RELAXATION_WORKER_MODULES,
     WIN_WORKER_MODULES,
     WORKER_MODULES,
@@ -155,6 +157,7 @@ from .domain import (
     StatefulDFACodeWorkspace,
     SubgradientPivotCodeWorkspace,
     ThreePartyC3CodeWorkspace,
+    ThresholdGovernanceCodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WeightedRelaxationCodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -204,6 +207,7 @@ from .domain import (
     run_skew_repair_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
+    run_threshold_governance_local_unit_tests,
     run_weighted_relaxation_local_unit_tests,
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
@@ -216,6 +220,7 @@ from .domain import (
     stop_fixture,
     subgradient_pivot_fixture,
     three_party_c3_fixture,
+    threshold_governance_fixture,
     weighted_relaxation_fixture,
     win_fixture,
 )
@@ -10543,6 +10548,290 @@ def weighted_relaxation_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Threshold Governance Prefix Excursion & Endpoint Audit Campaign (Test 72, Theorem 137)
+# ---------------------------------------------------------------------------
+
+
+def threshold_governance_system_prompt(worker: str, arm: str) -> str:
+    mod_name = THRESHOLD_GOVERNANCE_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "threshold governance prefix excursion & endpoint drift audit settlement pipeline "
+        "(`pricing_thresh.py` -> `tax_thresh.py` -> `settlement_thresh.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`endpoint_drift_only_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_ENDPOINT_CANCELLED_TRAJECTORY`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`coarsened_macro_boundary_only_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseThresholdGovernanceMonitor.PHASE_2_PRICING_THRESH_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`coarsened_macro_boundary_only_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseThresholdGovernanceMonitor.PHASE_2_TAX_THRESH_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`coarsened_macro_boundary_only_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_every_prefix_threshold_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseThresholdGovernanceMonitor.PHASE_3_PRICING_THRESH_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_every_prefix_threshold_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseThresholdGovernanceMonitor.PHASE_3_TAX_THRESH_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_every_prefix_threshold_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseThresholdGovernanceMonitor.PHASE_3_SETTLEMENT_THRESH_SOURCE
+        + "```\n"
+    )
+
+
+def threshold_governance_merge_gate(
+    events: Events,
+    ws: ThresholdGovernanceCodeWorkspace,
+    monitor: StreamingCodebaseThresholdGovernanceMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_threshold_governance_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_thresh", "tax_thresh", "settlement_thresh")
+    }
+    eval_res = monitor.evaluate_threshold_governance_modules(
+        f"{arm}-{wave_label}",
+        pricing_thresh_source=sources["pricing_thresh"],
+        tax_thresh_source=sources["tax_thresh"],
+        settlement_thresh_source=sources["settlement_thresh"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "step_deltas": eval_res["step_deltas"],
+            "prefix_sums": eval_res["prefix_sums"],
+            "max_prefix_abs": eval_res["max_prefix_abs"],
+            "max_coarse_abs": eval_res["max_coarse_abs"],
+            "prefix_excess": eval_res["prefix_excess"],
+            "coarse_excess": eval_res["coarse_excess"],
+            "thresh_surcharge_cents": eval_res["thresh_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in THRESHOLD_GOVERNANCE_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_ENDPOINT_CANCELLED_TRAJECTORY",
+                "note": "Block-cancel trajectory [3, 3, -3, -3] satisfies per-step bound |d_t| <= 3 and endpoint drift S_4 = 0 locally.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "CLEAR_COARSENED_MACRO_BOUNDARY_DRIFT",
+                "step_deltas": eval_res["step_deltas"],
+                "prefix_sums": eval_res["prefix_sums"],
+                "max_prefix_abs": eval_res["max_prefix_abs"],
+                "max_coarse_abs": eval_res["max_coarse_abs"],
+                "prefix_excess": eval_res["prefix_excess"],
+                "coarse_excess": eval_res["coarse_excess"],
+                "thresh_surcharge_cents": eval_res["thresh_surcharge_cents"],
+                "note": "Alternating-cancel trajectory [3, -3, 3, -3] clears coarse_excess=0 (S_2=0, S_4=0) yet incurs odd prefix_excess=1 (S_1=3, S_3=3, surcharge=2).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "step_deltas": eval_res["step_deltas"],
+                "prefix_sums": eval_res["prefix_sums"],
+                "max_prefix_abs": eval_res["max_prefix_abs"],
+                "max_coarse_abs": eval_res["max_coarse_abs"],
+                "prefix_excess": eval_res["prefix_excess"],
+                "coarse_excess": eval_res["coarse_excess"],
+                "thresh_surcharge_cents": eval_res["thresh_surcharge_cents"],
+                "action_required": "ENFORCE_EVERY_PREFIX_THRESHOLD_BOUND_2",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def threshold_governance_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(THRESHOLD_GOVERNANCE_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = threshold_governance_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = ThresholdGovernanceCodeWorkspace(base_state)
+            monitor = StreamingCodebaseThresholdGovernanceMonitor(
+                scope_id=f"threshold-governance-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = threshold_governance_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": threshold_governance_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{THRESHOLD_GOVERNANCE_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = threshold_governance_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_step_deltas": eval_res["step_deltas"],
+                "final_prefix_sums": eval_res["prefix_sums"],
+                "final_max_prefix_abs": eval_res["max_prefix_abs"],
+                "final_max_coarse_abs": eval_res["max_coarse_abs"],
+                "final_prefix_excess": eval_res["prefix_excess"],
+                "final_coarse_excess": eval_res["coarse_excess"],
+                "final_thresh_surcharge_cents": eval_res["thresh_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.threshold_governance_code_engineering_swarm.v1",
+        "topology": "threshold_governance",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent threshold governance prefix excursion & endpoint drift audit "
+            "Python code-engineering swarm (`pricing_thresh` -> `tax_thresh` -> `settlement_thresh`) comparing "
+            "block-cancel trajectory [3, 3, -3, -3] with S_2 = 6 > 2 (A), "
+            "alternating-cancel trajectory [3, -3, 3, -3] with coarsened S_2 = S_4 = 0 masking odd prefixes S_1 = S_3 = 3 > 2 (B), "
+            "and threshold-governed trajectory [2, -2, 2, -2] with every prefix |S_k| <= 2 (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -10637,6 +10926,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = bell_polytope_campaign(client, events, config)
         elif config.get("topology") == "weighted_relaxation":
             summary = weighted_relaxation_campaign(client, events, config)
+        elif config.get("topology") == "threshold_governance":
+            summary = threshold_governance_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -10704,6 +10995,7 @@ def main() -> None:
             "projective_tower",
             "bell_polytope",
             "weighted_relaxation",
+            "threshold_governance",
         ],
         default="linear",
     )
@@ -10813,6 +11105,8 @@ def main() -> None:
         seeds = [13200, 13201, 13202]
     elif args.topology == "weighted_relaxation":
         seeds = [13300, 13301, 13302]
+    elif args.topology == "threshold_governance":
+        seeds = [13400, 13401, 13402]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -11278,6 +11572,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = weighted_relaxation_campaign(client, events, config)
+    elif args.topology == "threshold_governance":
+        config = {
+            "topology": "threshold_governance",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = threshold_governance_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

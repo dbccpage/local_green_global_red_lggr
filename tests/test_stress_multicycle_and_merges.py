@@ -75,6 +75,7 @@ from lggr.streaming import (
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
+    StreamingCodebaseThresholdGovernanceMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWeightedRelaxationMonitor,
     StreamingCodebaseWindowedDriftMonitor,
@@ -7130,6 +7131,70 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_wrel_source="def quote_wrel_pricing(g):\n    return 123\n",
                 tax_wrel_source=mon.PHASE_1_TAX_WREL_SOURCE,
                 settlement_wrel_source=mon.PHASE_1_SETTLEMENT_WREL_SOURCE,
+            )
+
+    def test_threshold_governance_codebase_prefix_excursion_and_endpoint_audit(self) -> None:
+        """Verify Theorem 137: threshold governance prefix excursion vs. endpoint drift codebase audit."""
+        mon = StreamingCodebaseThresholdGovernanceMonitor(
+            scope_id="unit-codebase-threshold-governance-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-threshold-governance-eval-01",
+        )
+        self.assertEqual(obs["phase_1_step_deltas"], [3, 3, -3, -3])
+        self.assertEqual(obs["phase_1_prefix_sums"], [3, 6, 3, 0])
+        self.assertEqual(obs["phase_1_max_prefix_abs"], 6)
+        self.assertEqual(obs["phase_1_max_coarse_abs"], 6)
+        self.assertEqual(obs["phase_1_prefix_excess"], 4)
+        self.assertEqual(obs["phase_1_coarse_excess"], 4)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 12)
+        self.assertEqual(obs["phase_1_payout_cents"], 861)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR")
+
+        self.assertEqual(obs["phase_2_step_deltas"], [3, -3, 3, -3])
+        self.assertEqual(obs["phase_2_prefix_sums"], [3, 0, 3, 0])
+        self.assertEqual(obs["phase_2_max_prefix_abs"], 3)
+        self.assertEqual(obs["phase_2_max_coarse_abs"], 0)
+        self.assertEqual(obs["phase_2_prefix_excess"], 1)
+        self.assertEqual(obs["phase_2_coarse_excess"], 0)
+        self.assertTrue(obs["phase_2_hidden_excursion_masked"])
+        self.assertEqual(obs["phase_2_surcharge_cents"], 2)
+        self.assertEqual(obs["phase_2_payout_cents"], 871)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR")
+
+        self.assertEqual(obs["phase_3_step_deltas"], [2, -2, 2, -2])
+        self.assertEqual(obs["phase_3_prefix_sums"], [2, 0, 2, 0])
+        self.assertEqual(obs["phase_3_max_prefix_abs"], 2)
+        self.assertEqual(obs["phase_3_max_coarse_abs"], 0)
+        self.assertEqual(obs["phase_3_prefix_excess"], 0)
+        self.assertEqual(obs["phase_3_coarse_excess"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["threshold_governance_receipt"])
+        self.assertIsNotNone(receipt["fiber_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_threshold_governance_modules(
+                "bad-return",
+                pricing_thresh_source="def quote_thresh_pricing(g):\n    return 123\n",
+                tax_thresh_source=mon.PHASE_1_TAX_THRESH_SOURCE,
+                settlement_thresh_source=mon.PHASE_1_SETTLEMENT_THRESH_SOURCE,
             )
 
 

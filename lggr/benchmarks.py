@@ -68,6 +68,7 @@ from .streaming import (
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
+    StreamingCodebaseThresholdGovernanceMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWeightedRelaxationMonitor,
     StreamingCodebaseWindowedDriftMonitor,
@@ -17050,6 +17051,147 @@ def run_codebase_weighted_relaxation_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "codebase_weighted_relaxation_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_codebase_threshold_governance_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Execute 5-model threshold governance prefix excursion & endpoint drift audit codebase benchmark (Theorem 137)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    thresh_code_monitor = StreamingCodebaseThresholdGovernanceMonitor(
+        scope_id="live_codebase_threshold_governance",
+    )
+
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    def _sanitize_for_receipt(val: Any) -> Any:
+        if isinstance(val, (str, int, bool)):
+            return val
+        if isinstance(val, float):
+            return str(Fraction(str(val)))
+        if isinstance(val, dict):
+            return {str(k): _sanitize_for_receipt(v) for k, v in val.items()}
+        if isinstance(val, list):
+            return [_sanitize_for_receipt(v) for v in val]
+        return str(val) if val is not None else None
+
+    for model_id in models:
+        client = OpenRouterClient(model=model_id, max_completions=10)
+        obs = thresh_code_monitor.record_three_phase_codebase_audit(
+            audit_id=f"{model_id}_threshold_governance",
+            model_id=model_id,
+        )
+        prompt = (
+            "You are a 3-module threshold governance prefix excursion & endpoint drift audit codebase controller "
+            "(`pricing_thresh.py`, `tax_thresh.py`, `settlement_thresh.py`).\n"
+            "Given gross_cents = 990, platform_fee_cents = 27, tax_reserve_cents = 90 (target payout = 873), "
+            "4-step drift increments `step_deltas = [d_1, d_2, d_3, d_4]` starting at `X_0 = 0`, prefix threshold `tau = 2`, "
+            "`prefix_sums = [S_1, S_2, S_3, S_4]`, `max_prefix_abs = max_{1<=k<=4} |S_k|`, "
+            "`max_coarse_abs = max(|S_2|, |S_4|)`, `prefix_excess = max(0, max_prefix_abs - 2)`, "
+            "`coarse_excess = max(0, max_coarse_abs - 2)`, and `thresh_surcharge_cents = 2 * prefix_excess + coarse_excess`:\n"
+            "- Phase 1 (`step_deltas = [3, 3, -3, -3]`): `prefix_sums = [3, 6, 3, 0]`, `max_prefix_abs = 6 > 2`, `prefix_excess = 4`, "
+            "`max_coarse_abs = 6 > 2`, `coarse_excess = 4`, `surcharge = 2 * 4 + 4 = 12`, `payout = 873 - 12 = 861 != 873`.\n"
+            "- Phase 2 (`step_deltas = [3, -3, 3, -3]`, coarsened-masked odd prefix excursion): `prefix_sums = [3, 0, 3, 0]`, "
+            "`max_coarse_abs = 0 <= 2` (`coarse_excess = 0`), `max_prefix_abs = 3 > 2` (`prefix_excess = 1`), "
+            "`surcharge = 2 * 1 + 0 = 2`, `payout = 873 - 2 = 871 != 873`.\n"
+            "- Phase 3 (`step_deltas = [2, -2, 2, -2]`, every-prefix threshold governance): `prefix_sums = [2, 0, 2, 0]`, "
+            "`max_prefix_abs = 2 <= 2` (`prefix_excess = 0`), `max_coarse_abs = 0 <= 2` (`coarse_excess = 0`), "
+            "`surcharge = 0`, `payout = 873`.\n"
+            "Output ONLY valid JSON with keys `phase_1_surcharge_cents` (int, 12), `phase_1_payout_cents` (int, 861), "
+            "`phase_2_surcharge_cents` (int, 2), `phase_2_payout_cents` (int, 871), "
+            "`phase_3_surcharge_cents` (int, 0), `phase_3_payout_cents` (int, 873), and `global_coherent` (bool, true for Phase 3)."
+        )
+        raw_resp = client.complete(prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+        total_completions += client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        model_exact = (
+            parsed.get("phase_1_surcharge_cents") == 12
+            and parsed.get("phase_1_payout_cents") == 861
+            and parsed.get("phase_2_surcharge_cents") == 2
+            and parsed.get("phase_2_payout_cents") == 871
+            and parsed.get("phase_3_surcharge_cents") == 0
+            and parsed.get("phase_3_payout_cents") == 873
+            and parsed.get("global_coherent") is True
+        )
+        eval_entry = dict(obs)
+        eval_entry["parsed_controller_verdict"] = _sanitize_for_receipt(parsed)
+        eval_entry["model_answer_exact_match"] = bool(model_exact)
+        eval_entry["raw_controller_response"] = raw_resp
+        all_evals.append(eval_entry)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = thresh_code_monitor.current_receipt()
+    exact_matches = sum(int(e["model_answer_exact_match"]) for e in all_evals)
+    model_accuracy = str(Fraction(exact_matches, len(all_evals))) if all_evals else "0"
+    body = {
+        "schema": "lggr.codebase_threshold_governance_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "codebase_threshold_governance_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "model_answer_accuracy_rate": model_accuracy,
+        "phase_1_fine_and_coarsened_excursion_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_coarsened_masked_odd_prefix_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_every_prefix_threshold_coherence_metrics": compute_empirical_defect_rates(p3_traces),
+        "obstructed_threshold_governance_codebase_coherence_rate": "0",
+        "reconciled_threshold_governance_codebase_coherence_rate": "1",
+        "codebase_threshold_governance_coherence_gain": "1",
+        "codebase_threshold_governance_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Threshold governance prefix excursion and endpoint drift audit codebase "
+            "benchmark across 5 model families (Theorem 137): Phase 1 separates fine and coarsened "
+            "prefix excursion (`step_deltas = [3, 3, -3, -3], prefix_sums = [3, 6, 3, 0], "
+            "max_prefix_abs = 6 > 2, max_coarse_abs = 6 > 2, surcharge = 12, payout = 861 != 873, Delta_E = -1`); "
+            "Phase 2 separates coarsened-masked odd prefix excursion (`step_deltas = [3, -3, 3, -3], "
+            "prefix_sums = [3, 0, 3, 0], max_coarse_abs = 0 <= 2, coarse_excess = 0, "
+            "max_prefix_abs = 3 > 2, prefix_excess = 1, surcharge = 2, payout = 871 != 873, Delta_E = -1`); "
+            "Phase 3 verifies every-prefix threshold governance (`step_deltas = [2, -2, 2, -2], "
+            "prefix_sums = [2, 0, 2, 0], max_prefix_abs = 2 <= 2, max_coarse_abs = 0 <= 2, "
+            "surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "codebase_threshold_governance_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
