@@ -4455,3 +4455,290 @@ class ContextualSheafCodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
+# ---------------------------------------------------------------------------
+# Test 45 (--topology gram_dropout, Theorem 110): Watcher-Dropout & Gram
+# Rank-Deficiency vs. Full-Rank Critical Watcher Restoration Codebase Swarm
+# ---------------------------------------------------------------------------
+
+GRAM_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_gram",
+    "worker-1": "tax_gram",
+    "worker-2": "settlement_gram",
+}
+
+GRAM_PRICING_SOURCE: str = """\
+def pricing_gram(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:
+    discount_cents = (gross_cents * discount_bps) // 10_000
+    net_cents = gross_cents - discount_cents - rebate_cents
+    return {
+        "subtotal_cents": gross_cents,
+        "discount_cents": discount_cents,
+        "rebate_cents": rebate_cents,
+        "net_cents": net_cents,
+        "pricing_watcher_row": [1, 1, 0],
+    }
+"""
+
+GRAM_TAX_DROPOUT_SOURCE: str = """\
+def tax_gram(pricing_quote: dict, tax_rate_bps: int) -> dict:
+    net_cents = int(pricing_quote["net_cents"])
+    tax_cents = (net_cents * tax_rate_bps) // 10_000
+    return {
+        "taxable_cents": net_cents,
+        "tax_cents": tax_cents,
+        "tax_watcher_row": [2, 2, 0],
+    }
+"""
+
+GRAM_TAX_RESTORED_SOURCE: str = """\
+def tax_gram(pricing_quote: dict, tax_rate_bps: int) -> dict:
+    net_cents = int(pricing_quote["net_cents"])
+    tax_cents = (net_cents * tax_rate_bps) // 10_000
+    return {
+        "taxable_cents": net_cents,
+        "tax_cents": tax_cents,
+        "tax_watcher_row": [0, 1, 1],
+    }
+"""
+
+GRAM_SETTLEMENT_DROPOUT_SOURCE: str = """\
+def settlement_gram(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:
+    net_cents = int(pricing_quote["net_cents"])
+    tax_cents = int(tax_quote["tax_cents"])
+    fee_cents = (net_cents * fee_bps) // 10_000
+    dropout_reserve_cents = 12
+    payout_cents = net_cents - fee_cents - dropout_reserve_cents
+    return {
+        "gross_collected_cents": net_cents + tax_cents,
+        "fee_cents": fee_cents,
+        "tax_remitted_cents": tax_cents,
+        "dropout_reserve_cents": dropout_reserve_cents,
+        "merchant_payout_cents": payout_cents,
+        "settle_watcher_row": [0, 1, 1],
+        "total_accounted_cents": payout_cents + fee_cents + tax_cents,
+    }
+"""
+
+GRAM_SETTLEMENT_RESTORED_SOURCE: str = """\
+def settlement_gram(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:
+    net_cents = int(pricing_quote["net_cents"])
+    tax_cents = int(tax_quote["tax_cents"])
+    fee_cents = (net_cents * fee_bps) // 10_000
+    dropout_reserve_cents = 0
+    payout_cents = net_cents - fee_cents
+    return {
+        "gross_collected_cents": net_cents + tax_cents,
+        "fee_cents": fee_cents,
+        "tax_remitted_cents": tax_cents,
+        "dropout_reserve_cents": dropout_reserve_cents,
+        "merchant_payout_cents": payout_cents,
+        "settle_watcher_row": [1, 0, 1],
+        "total_accounted_cents": payout_cents + fee_cents + tax_cents,
+    }
+"""
+
+
+def run_gram_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Run isolated module-level unit tests for the 3-agent watcher-dropout Gram topology.
+
+    Each module's isolated unit test checks that its watcher row has length 3 and is non-zero,
+    but does not check whether the joint 3x3 watcher matrix Q = (q_1, q_2, q_3) has full
+    Gram rank 3 or whether ker(Q^T Q) contains the critical direction v_crit = (1, -1, 1).
+    """
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            module_name, source_code
+        )
+    except Exception as exc:
+        return {
+            "module": module_name,
+            "passed": False,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+
+    fn = ns.get(module_name)
+    if not callable(fn):
+        return {
+            "module": module_name,
+            "passed": False,
+            "error": f"expected callable `{module_name}(...)` in {module_name}.py",
+        }
+
+    try:
+        if module_name == "pricing_gram":
+            out = fn(1000, 500, 50)
+            row = out.get("pricing_watcher_row") if isinstance(out, dict) else None
+            ok = (
+                isinstance(out, dict)
+                and out.get("net_cents") == 900
+                and row == [1, 1, 0]
+            )
+            return {
+                "module": module_name,
+                "passed": bool(ok),
+                "note": "isolated pricing_gram test checks net_cents == 900 and pricing_watcher_row == [1, 1, 0]",
+            }
+
+        if module_name == "tax_gram":
+            out = fn({"net_cents": 900}, 2000)
+            row = out.get("tax_watcher_row") if isinstance(out, dict) else None
+            ok = (
+                isinstance(out, dict)
+                and out.get("tax_cents") == 180
+                and row in ([2, 2, 0], [0, 1, 1])
+            )
+            return {
+                "module": module_name,
+                "passed": bool(ok),
+                "note": "isolated tax_gram test checks nonzero 3-vector tax_watcher_row",
+            }
+
+        if module_name == "settlement_gram":
+            out = fn({"net_cents": 900}, {"tax_cents": 180}, 300)
+            res = int(out.get("dropout_reserve_cents", -1)) if isinstance(out, dict) else -1
+            gross_val = out.get("gross_collected_cents") if isinstance(out, dict) else None
+            total_val = out.get("total_accounted_cents") if isinstance(out, dict) else None
+            row = out.get("settle_watcher_row") if isinstance(out, dict) else None
+            ok = (
+                isinstance(out, dict)
+                and isinstance(gross_val, int)
+                and not isinstance(gross_val, bool)
+                and isinstance(total_val, int)
+                and not isinstance(total_val, bool)
+                and out.get("fee_cents") == 27
+                and res in (0, 12)
+                and out.get("merchant_payout_cents") == 900 - 27 - res
+                and row in ([0, 1, 1], [1, 0, 1])
+            )
+            return {
+                "module": module_name,
+                "passed": bool(ok),
+                "note": "isolated settlement_gram test checks nonzero 3-vector settle_watcher_row",
+            }
+    except Exception as exc:
+        return {
+            "module": module_name,
+            "passed": False,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+
+    return {"module": module_name, "passed": False, "error": f"unknown module {module_name}"}
+
+
+def gram_fixture(seed: int) -> dict[str, Any]:
+    """Create initial workspace state for the 3-agent watcher-dropout Gram topology."""
+    idx = seed % 3
+    if idx == 0:
+        return {
+            "seed": seed,
+            "kind": f"infeasible_watcher_dropout_lock_seed_{seed}",
+            "sources": {
+                "pricing_gram": GRAM_PRICING_SOURCE,
+                "tax_gram": GRAM_TAX_DROPOUT_SOURCE,
+                "settlement_gram": GRAM_SETTLEMENT_DROPOUT_SOURCE,
+            },
+            "locked_workers": ["worker-1", "worker-2"],
+            "infeasible_constraint": (
+                "Legacy telemetry freezes tax_gram (`tax_watcher_row = [2, 2, 0]`) and "
+                "settlement_gram (`settle_watcher_row = [0, 1, 1]`, `dropout_reserve_cents = 12`) "
+                "while the global audit requires rank(Q^T Q) = 3 and ker(Q^T Q) = {0} along "
+                "v_crit = (1, -1, 1) (which has ||Q_drop v_crit||_2^2 = 0); no full-rank "
+                "watcher restoration exists without unlocking the frozen telemetry modules."
+            ),
+            "escalations": {},
+        }
+    return {
+        "seed": seed,
+        "kind": f"repairable_watcher_dropout_seed_{seed}",
+        "sources": {
+            "pricing_gram": GRAM_PRICING_SOURCE,
+            "tax_gram": GRAM_TAX_DROPOUT_SOURCE,
+            "settlement_gram": GRAM_SETTLEMENT_DROPOUT_SOURCE,
+        },
+        "locked_workers": [],
+        "infeasible_constraint": None,
+        "escalations": {},
+    }
+
+
+class WatcherDropoutCodeWorkspace:
+    """Isolated 3-module workspace for the watcher-dropout Gram rank-deficiency swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def local_verdicts(self) -> dict[str, bool]:
+        verdicts: dict[str, bool] = {}
+        for mod_name in ("pricing_gram", "tax_gram", "settlement_gram"):
+            res = run_gram_local_unit_tests(mod_name, self.state["sources"][mod_name])
+            verdicts[mod_name] = bool(res.get("passed", False))
+        return verdicts
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        module_name = GRAM_WORKER_MODULES[worker]
+        if name == "inspect_workspace":
+            own_src = self.state["sources"][module_name]
+            local_res = run_gram_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_gram.py": "def pricing_gram(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict",
+                    "tax_gram.py": "def tax_gram(pricing_quote: dict, tax_rate_bps: int) -> dict",
+                    "settlement_gram.py": "def settlement_gram(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name == "run_local_unit_tests":
+            own_src = self.state["sources"][module_name]
+            return run_gram_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_gram_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; 3-module Gram rank 3 and critical-direction observability are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+

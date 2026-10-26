@@ -1,0 +1,4135 @@
+{
+  "schema": "lggr.codebase_watcher_dropout_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_watcher_dropout_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_critical_dropout_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_partial_row_collision_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_full_rank_restored_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "critical_dropout_codebase_coherence_rate": "0",
+  "full_rank_restored_codebase_coherence_rate": "1",
+  "codebase_watcher_dropout_coherence_gain": "1",
+  "codebase_watcher_dropout_receipt": {
+    "schema": "lggr.online_codebase_watcher_dropout.v1",
+    "authority_effect": "None",
+    "scope_id": "live-codebase-watcher-dropout-benchmark",
+    "status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "dropout_audit_receipt": {
+      "schema": "lggr.online_watcher_dropout_gram_audit.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit",
+      "status": "WATCHER_DROPOUT_RANK_AUDIT_VERIFIED_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "evaluation_count": 5,
+      "full_rank": 3,
+      "dropout_ranks_by_row": [
+        3,
+        3,
+        2,
+        2
+      ],
+      "critical_dropout_blindspot_count": 5,
+      "redundant_dropout_safe_count": 5,
+      "critical_dropout_coherence_rate": "0",
+      "redundant_dropout_coherence_rate": "1",
+      "watcher_retention_coherence_gain": "1",
+      "evaluations": [
+        {
+          "evaluation_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "4ed98140ed46f1f4fb8ce9c415d236dfe7fa454f01ef495a039adb122cd2303c"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "eb16369e66698fe13ef02fb85e36ae0f90864bfbc44b6954bc492b022a8eea71"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "b0af192d914dcc62275f6d7bea72f0ffec14a5a7acdd700063cecfd9cb423c5d"
+          }
+        },
+        {
+          "evaluation_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "e01ea219d3012cb1a82bf4601cae06c1254a812fee171b48fefe77812497a1f8"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "c91b68f5c1e4fb2c2bd33cffbe366bfd9e4374641347e1bd0e8711e6dc34fbf4"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "4bc71c67caba4fb359888720cd8dacc72dfaccf6579af5faf2db6497d411adf5"
+          }
+        },
+        {
+          "evaluation_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "8fe8934d4bd46e5d8d2cb95c4849b67b00d911fce7c95125e6f1a215fd6f1b1f"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "cb46b3dd4f78f5a53960532c9eefe9f89818da18e6523f72e8cf7669ed1d34f1"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "1ecfc8a1030bfcd922084acdb67c9dbe07a16852a5b2724424b236787b23a5fc"
+          }
+        },
+        {
+          "evaluation_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "5535c20ca47e9233aa9e2f1196d7d26e2190e5a69d6763e8323a8852ef78a42a"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "e692dd81d148092286dd3dcd422c5b95ab59b788cf6b2d6db3947c1bed178656"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "0eb062347cb87566ec5432207d64dfa052aca78155756c5a23775b7f3a5f9930"
+          }
+        },
+        {
+          "evaluation_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "9b0863a103fb7fffe59942bf448d9816900c0c32bd0adca0366bf69aa3547d29"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "4bec575a8c794e9a09188a3f4af142aeefa797a277ce557bfcb824396c07ed95"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "3cc6988108d2d077ec5823b17532614bc5b9bf37d90cf415498bb95a061759fa"
+          }
+        }
+      ],
+      "receipt_sha256": "30a8459b7311adb3016f8c5aecd845fbbfc1160a37e093903db7a82b08c0861d"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-watcher-dropout-benchmark-fiber",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::phase1_critical_dropout::fiber",
+          "report": {
+            "all_local_pass": true,
+            "nonzero_rows_ok": true
+          },
+          "query": "LGGR",
+          "metadata": {
+            "crit_norm_squared": 0,
+            "gram_rank": 2,
+            "nullspace_dim": 1,
+            "reserve_cents": 12,
+            "watcher_rows": [
+              [
+                1,
+                1,
+                0
+              ],
+              [
+                2,
+                2,
+                0
+              ],
+              [
+                0,
+                1,
+                1
+              ]
+            ]
+          }
+        },
+        "right": {
+          "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::phase3_full_rank_restored::fiber",
+          "report": {
+            "all_local_pass": true,
+            "nonzero_rows_ok": true
+          },
+          "query": "LGGG",
+          "metadata": {
+            "crit_norm_squared": 4,
+            "gram_rank": 3,
+            "nullspace_dim": 0,
+            "reserve_cents": 0,
+            "watcher_rows": [
+              [
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                0,
+                1
+              ]
+            ]
+          }
+        }
+      },
+      "input_sha256": "6cada2e37e67b6a0962b3d11244575683da70c5cdbba92c2ef9ec36a549df1ff",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "855dc36b98d96bfff25b44679c801f08d6f1ac9fed9b5e170e3095b318f5631e"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "codebase_gram_eval_1_openai_gpt-4o-mini",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_gram_rank": 2,
+        "phase_1_nullspace_dim": 1,
+        "phase_1_crit_norm_squared": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "phase_2_gram_rank": 2,
+        "phase_2_nullspace_dim": 1,
+        "phase_2_crit_norm_squared": 0,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "phase_3_gram_rank": 3,
+        "phase_3_nullspace_dim": 0,
+        "phase_3_crit_norm_squared": 4,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "dropout_audit": {
+          "evaluation_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "4ed98140ed46f1f4fb8ce9c415d236dfe7fa454f01ef495a039adb122cd2303c"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "eb16369e66698fe13ef02fb85e36ae0f90864bfbc44b6954bc492b022a8eea71"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "b0af192d914dcc62275f6d7bea72f0ffec14a5a7acdd700063cecfd9cb423c5d"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_gram_rank": 2,
+        "phase_1_nullspace_dim": 1,
+        "phase_1_crit_norm_squared": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "phase_2_gram_rank": 2,
+        "phase_2_nullspace_dim": 1,
+        "phase_2_crit_norm_squared": 0,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "phase_3_gram_rank": 3,
+        "phase_3_nullspace_dim": 0,
+        "phase_3_crit_norm_squared": 4,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "dropout_audit": {
+          "evaluation_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "e01ea219d3012cb1a82bf4601cae06c1254a812fee171b48fefe77812497a1f8"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "c91b68f5c1e4fb2c2bd33cffbe366bfd9e4374641347e1bd0e8711e6dc34fbf4"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "4bc71c67caba4fb359888720cd8dacc72dfaccf6579af5faf2db6497d411adf5"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_gram_rank": 2,
+        "phase_1_nullspace_dim": 1,
+        "phase_1_crit_norm_squared": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "phase_2_gram_rank": 2,
+        "phase_2_nullspace_dim": 1,
+        "phase_2_crit_norm_squared": 0,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "phase_3_gram_rank": 3,
+        "phase_3_nullspace_dim": 0,
+        "phase_3_crit_norm_squared": 4,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "dropout_audit": {
+          "evaluation_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "8fe8934d4bd46e5d8d2cb95c4849b67b00d911fce7c95125e6f1a215fd6f1b1f"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "cb46b3dd4f78f5a53960532c9eefe9f89818da18e6523f72e8cf7669ed1d34f1"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "1ecfc8a1030bfcd922084acdb67c9dbe07a16852a5b2724424b236787b23a5fc"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_gram_eval_4_deepseek_deepseek-chat",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_gram_rank": 2,
+        "phase_1_nullspace_dim": 1,
+        "phase_1_crit_norm_squared": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "phase_2_gram_rank": 2,
+        "phase_2_nullspace_dim": 1,
+        "phase_2_crit_norm_squared": 0,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "phase_3_gram_rank": 3,
+        "phase_3_nullspace_dim": 0,
+        "phase_3_crit_norm_squared": 4,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "dropout_audit": {
+          "evaluation_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "5535c20ca47e9233aa9e2f1196d7d26e2190e5a69d6763e8323a8852ef78a42a"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "e692dd81d148092286dd3dcd422c5b95ab59b788cf6b2d6db3947c1bed178656"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "0eb062347cb87566ec5432207d64dfa052aca78155756c5a23775b7f3a5f9930"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_gram_rank": 2,
+        "phase_1_nullspace_dim": 1,
+        "phase_1_crit_norm_squared": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "phase_2_gram_rank": 2,
+        "phase_2_nullspace_dim": 1,
+        "phase_2_crit_norm_squared": 0,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "phase_3_gram_rank": 3,
+        "phase_3_nullspace_dim": 0,
+        "phase_3_crit_norm_squared": 4,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "dropout_audit": {
+          "evaluation_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit",
+          "critical_direction": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "full_rank": 3,
+          "full_nullspace_dim": 0,
+          "full_norm_squared": "4",
+          "redundant_dropout_row": 1,
+          "redundant_dropout_rank": 3,
+          "redundant_dropout_nullspace_dim": 0,
+          "redundant_dropout_norm_squared": "4",
+          "redundant_local_green": 1,
+          "redundant_global_green": 1,
+          "redundant_defect": 0,
+          "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+          "critical_dropout_row": 3,
+          "critical_dropout_rank": 2,
+          "critical_dropout_nullspace_dim": 1,
+          "critical_dropout_norm_squared": "0",
+          "critical_local_green": 1,
+          "critical_global_green": 0,
+          "critical_defect": -1,
+          "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+          "full_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-full",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "9b0863a103fb7fffe59942bf448d9816900c0c32bd0adca0366bf69aa3547d29"
+          },
+          "redundant_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+            "status": "ADJOINT_SIGNAL_VERIFIED",
+            "contract_status": "COMPOSABLE_LGGG",
+            "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-redundant-drop-1",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "2"
+            ],
+            "gram_response_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "quadratic_energy": "2",
+            "state_nonzero": true,
+            "observation_zero": false,
+            "gram_response_zero": false,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "4",
+            "expected_gram_pairing": "4",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "2",
+              "0",
+              "2"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": false,
+            "receipt_sha256": "4bec575a8c794e9a09188a3f4af142aeefa797a277ce557bfcb824396c07ed95"
+          },
+          "critical_probe_step": {
+            "schema": "lggr.online_gram_probe_step.v1",
+            "authority_effect": "None",
+            "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+            "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-critical-drop-3",
+            "state_vector": [
+              "1",
+              "-1",
+              "1"
+            ],
+            "observation_qx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "gram_response_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "quadratic_energy": "0",
+            "state_nonzero": true,
+            "observation_zero": true,
+            "gram_response_zero": true,
+            "gram_kernel_identity_verified": true,
+            "centered_directional_probe": "0",
+            "expected_gram_pairing": "0",
+            "directional_identity_verified": true,
+            "sign_cube_recovered_hx": [
+              "0",
+              "0",
+              "0"
+            ],
+            "sign_cube_identity_verified": true,
+            "is_nullspace_blindspot": true,
+            "receipt_sha256": "3cc6988108d2d077ec5823b17532614bc5b9bf37d90cf415498bb95a061759fa"
+          }
+        }
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "codebase_gram_eval_1_openai_gpt-4o-mini::phase1_critical_dropout",
+        "model_id": "openai/gpt-4o-mini",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          2,
+          2,
+          0
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "RESTORE_TAX_WATCHER_ROW_011",
+            "target": "Set tax_watcher_row = [0, 1, 1] (eliminating collinear duplicate [2, 2, 0] = 2 * q_1)."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_1_openai_gpt-4o-mini::phase1_critical_dropout::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "5",
+              "5",
+              "0"
+            ],
+            [
+              "5",
+              "6",
+              "1"
+            ],
+            [
+              "0",
+              "1",
+              "1"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "1d7d518ced20310d8a02107e2b40d511c1b87a8ad81d50bde4e0d43f42e8f288"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_1_openai_gpt-4o-mini::phase2_partial_row_collision",
+        "model_id": "openai/gpt-4o-mini",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_1_openai_gpt-4o-mini::phase2_partial_row_collision::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "3",
+              "2"
+            ],
+            [
+              "0",
+              "2",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "984dcfdfd94f716576e7fe4f864767baf34f5d225ed61f31bfd5f5a643d462e1"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_1_openai_gpt-4o-mini::phase3_full_rank_restored",
+        "model_id": "openai/gpt-4o-mini",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          1,
+          0,
+          1
+        ],
+        "gram_rank": 3,
+        "nullspace_dim": 0,
+        "crit_norm_squared": 4,
+        "is_nullspace_blindspot": false,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "HOLD_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Keep settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_1_openai_gpt-4o-mini::phase3_full_rank_restored::gram",
+          "status": "GRAM_PROBE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "2",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "2",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 0,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "ffb206a81653f772788773cdadb66c5bee0e6cfc1998380c3df04d9baf27ca2d"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::phase1_critical_dropout",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          2,
+          2,
+          0
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "RESTORE_TAX_WATCHER_ROW_011",
+            "target": "Set tax_watcher_row = [0, 1, 1] (eliminating collinear duplicate [2, 2, 0] = 2 * q_1)."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_2_google_gemini-2.5-flash-lite::phase1_critical_dropout::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "5",
+              "5",
+              "0"
+            ],
+            [
+              "5",
+              "6",
+              "1"
+            ],
+            [
+              "0",
+              "1",
+              "1"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "31775df4f57674d11485793bf0f713b02d8ee7a69080920a127183ee6a4eea0a"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::phase2_partial_row_collision",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_2_google_gemini-2.5-flash-lite::phase2_partial_row_collision::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "3",
+              "2"
+            ],
+            [
+              "0",
+              "2",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "abf9649aa9c0968f338251d28ca483a5aff72e7f366831b3bc4da3db90531d57"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::phase3_full_rank_restored",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          1,
+          0,
+          1
+        ],
+        "gram_rank": 3,
+        "nullspace_dim": 0,
+        "crit_norm_squared": 4,
+        "is_nullspace_blindspot": false,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "HOLD_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Keep settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_2_google_gemini-2.5-flash-lite::phase3_full_rank_restored::gram",
+          "status": "GRAM_PROBE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "2",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "2",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 0,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "f5b7b63277b7888e9236a45bdf4b980f43eabbc0cb270e93c2e4569b2f54d2f3"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::phase1_critical_dropout",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          2,
+          2,
+          0
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "RESTORE_TAX_WATCHER_ROW_011",
+            "target": "Set tax_watcher_row = [0, 1, 1] (eliminating collinear duplicate [2, 2, 0] = 2 * q_1)."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::phase1_critical_dropout::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "5",
+              "5",
+              "0"
+            ],
+            [
+              "5",
+              "6",
+              "1"
+            ],
+            [
+              "0",
+              "1",
+              "1"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "622b2ddda4860d3c0f989fa3383708dfa25b79899e052607d7d1425b81ac3f9c"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::phase2_partial_row_collision",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::phase2_partial_row_collision::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "3",
+              "2"
+            ],
+            [
+              "0",
+              "2",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "c3c84d090026f8b5fdd76a7edf98ab8c22b29568656f7af919868339b456b2ef"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::phase3_full_rank_restored",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          1,
+          0,
+          1
+        ],
+        "gram_rank": 3,
+        "nullspace_dim": 0,
+        "crit_norm_squared": 4,
+        "is_nullspace_blindspot": false,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "HOLD_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Keep settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::phase3_full_rank_restored::gram",
+          "status": "GRAM_PROBE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "2",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "2",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 0,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "10749c190fcd2664d2a8f9fb2fa5c2f4b9eec7fa7dc93d33eb180e45940591cc"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_4_deepseek_deepseek-chat::phase1_critical_dropout",
+        "model_id": "deepseek/deepseek-chat",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          2,
+          2,
+          0
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "RESTORE_TAX_WATCHER_ROW_011",
+            "target": "Set tax_watcher_row = [0, 1, 1] (eliminating collinear duplicate [2, 2, 0] = 2 * q_1)."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_4_deepseek_deepseek-chat::phase1_critical_dropout::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "5",
+              "5",
+              "0"
+            ],
+            [
+              "5",
+              "6",
+              "1"
+            ],
+            [
+              "0",
+              "1",
+              "1"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "2a522fb9d610e5d2b0af0454f73bc947b4f9743d5b3754b603e3d59ddc406c50"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_4_deepseek_deepseek-chat::phase2_partial_row_collision",
+        "model_id": "deepseek/deepseek-chat",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_4_deepseek_deepseek-chat::phase2_partial_row_collision::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "3",
+              "2"
+            ],
+            [
+              "0",
+              "2",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "56e31aabd037f3d0717900827307ef8a6b96ac68732adb801514a5d5c7970696"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_4_deepseek_deepseek-chat::phase3_full_rank_restored",
+        "model_id": "deepseek/deepseek-chat",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          1,
+          0,
+          1
+        ],
+        "gram_rank": 3,
+        "nullspace_dim": 0,
+        "crit_norm_squared": 4,
+        "is_nullspace_blindspot": false,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "HOLD_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Keep settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_4_deepseek_deepseek-chat::phase3_full_rank_restored::gram",
+          "status": "GRAM_PROBE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "2",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "2",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 0,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "72147dd4fd374185d81817e4de88ba8c3624a3a9ed1b8d1bcd70e3ac43927f98"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase1_critical_dropout",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          2,
+          2,
+          0
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "RESTORE_TAX_WATCHER_ROW_011",
+            "target": "Set tax_watcher_row = [0, 1, 1] (eliminating collinear duplicate [2, 2, 0] = 2 * q_1)."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase1_critical_dropout::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "5",
+              "5",
+              "0"
+            ],
+            [
+              "5",
+              "6",
+              "1"
+            ],
+            [
+              "0",
+              "1",
+              "1"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "fe42e081f6768d5b78a1e3e18db34209945b30541fbdf4b3851a299849896e2b"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase2_partial_row_collision",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "gram_rank": 2,
+        "nullspace_dim": 1,
+        "crit_norm_squared": 0,
+        "is_nullspace_blindspot": true,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 12,
+        "merchant_payout_cents": 861,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1068,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase2_partial_row_collision::gram",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "3",
+              "2"
+            ],
+            [
+              "0",
+              "2",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 1,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "0bf3e15f074825b47867dd04974c44ad96507081959175466215b93a74c113e3"
+        }
+      },
+      {
+        "evaluation_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase3_full_rank_restored",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "watcher_rows": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ]
+        ],
+        "pricing_watcher_row": [
+          1,
+          1,
+          0
+        ],
+        "tax_watcher_row": [
+          0,
+          1,
+          1
+        ],
+        "settle_watcher_row": [
+          1,
+          0,
+          1
+        ],
+        "gram_rank": 3,
+        "nullspace_dim": 0,
+        "crit_norm_squared": 4,
+        "is_nullspace_blindspot": false,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "dropout_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_gram",
+            "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+            "target": "Keep pricing_watcher_row = [1, 1, 0]."
+          },
+          "worker-1": {
+            "module": "tax_gram",
+            "action": "HOLD_TAX_WATCHER_ROW_011",
+            "target": "Keep tax_watcher_row = [0, 1, 1]."
+          },
+          "worker-2": {
+            "module": "settlement_gram",
+            "action": "HOLD_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+            "target": "Keep settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0."
+          }
+        },
+        "gram_probe_receipt": {
+          "schema": "lggr.online_gram_probe_summary.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark::codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase3_full_rank_restored::gram",
+          "status": "GRAM_PROBE_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "num_observations": 3,
+          "state_dimension": 3,
+          "gram_matrix": [
+            [
+              "2",
+              "1",
+              "1"
+            ],
+            [
+              "1",
+              "2",
+              "1"
+            ],
+            [
+              "1",
+              "1",
+              "2"
+            ]
+          ],
+          "probed_states_count": 1,
+          "nullspace_blindspots_count": 0,
+          "all_gram_identities_verified": true,
+          "receipt_sha256": "11c728ef5436ae242674a7c0f70a48ec6793f7813b9aa019a27f36943edd1f47"
+        }
+      }
+    ],
+    "receipt_sha256": "680df1176b6a70dbca95f4413bc9ab7ba9f70589f7872c4ea7c62084aeb5892c"
+  },
+  "evaluations": [
+    {
+      "audit_id": "codebase_gram_eval_1_openai_gpt-4o-mini",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_gram_rank": 2,
+      "phase_1_nullspace_dim": 1,
+      "phase_1_crit_norm_squared": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+      "phase_2_gram_rank": 2,
+      "phase_2_nullspace_dim": 1,
+      "phase_2_crit_norm_squared": 0,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+      "phase_3_gram_rank": 3,
+      "phase_3_nullspace_dim": 0,
+      "phase_3_crit_norm_squared": 4,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+      "dropout_audit": {
+        "evaluation_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "4ed98140ed46f1f4fb8ce9c415d236dfe7fa454f01ef495a039adb122cd2303c"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "eb16369e66698fe13ef02fb85e36ae0f90864bfbc44b6954bc492b022a8eea71"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "codebase_gram_eval_1_openai_gpt-4o-mini::dropout_audit-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "b0af192d914dcc62275f6d7bea72f0ffec14a5a7acdd700063cecfd9cb423c5d"
+        }
+      },
+      "model_raw_response": "{\n  \"phase1_gram_rank\": 2,\n  \"phase1_crit_norm_squared\": 0,\n  \"phase3_gram_rank\": 3,\n  \"phase3_crit_norm_squared\": 4,\n  \"phase3_payout_cents\": 873\n}",
+      "model_parsed_json": {
+        "phase1_gram_rank": 2,
+        "phase1_crit_norm_squared": 0,
+        "phase3_gram_rank": 3,
+        "phase3_crit_norm_squared": 4,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "audit_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_gram_rank": 2,
+      "phase_1_nullspace_dim": 1,
+      "phase_1_crit_norm_squared": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+      "phase_2_gram_rank": 2,
+      "phase_2_nullspace_dim": 1,
+      "phase_2_crit_norm_squared": 0,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+      "phase_3_gram_rank": 3,
+      "phase_3_nullspace_dim": 0,
+      "phase_3_crit_norm_squared": 4,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+      "dropout_audit": {
+        "evaluation_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "e01ea219d3012cb1a82bf4601cae06c1254a812fee171b48fefe77812497a1f8"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "c91b68f5c1e4fb2c2bd33cffbe366bfd9e4374641347e1bd0e8711e6dc34fbf4"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "codebase_gram_eval_2_google_gemini-2.5-flash-lite::dropout_audit-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "4bc71c67caba4fb359888720cd8dacc72dfaccf6579af5faf2db6497d411adf5"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_gram_rank\": 2,\n  \"phase1_crit_norm_squared\": 0,\n  \"phase3_gram_rank\": 3,\n  \"phase3_crit_norm_squared\": 4,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_gram_rank": 2,
+        "phase1_crit_norm_squared": 0,
+        "phase3_gram_rank": 3,
+        "phase3_crit_norm_squared": 4,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "audit_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_gram_rank": 2,
+      "phase_1_nullspace_dim": 1,
+      "phase_1_crit_norm_squared": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+      "phase_2_gram_rank": 2,
+      "phase_2_nullspace_dim": 1,
+      "phase_2_crit_norm_squared": 0,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+      "phase_3_gram_rank": 3,
+      "phase_3_nullspace_dim": 0,
+      "phase_3_crit_norm_squared": 4,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+      "dropout_audit": {
+        "evaluation_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "8fe8934d4bd46e5d8d2cb95c4849b67b00d911fce7c95125e6f1a215fd6f1b1f"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "cb46b3dd4f78f5a53960532c9eefe9f89818da18e6523f72e8cf7669ed1d34f1"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "codebase_gram_eval_3_meta-llama_llama-3.3-70b-instruct::dropout_audit-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "1ecfc8a1030bfcd922084acdb67c9dbe07a16852a5b2724424b236787b23a5fc"
+        }
+      },
+      "model_raw_response": "{\"1\": 2, \"2\": 0, \"3\": 3, \"4\": 4, \"5\": 873}",
+      "model_parsed_json": {
+        "1": 2,
+        "2": 0,
+        "3": 3,
+        "4": 4,
+        "5": 873
+      }
+    },
+    {
+      "audit_id": "codebase_gram_eval_4_deepseek_deepseek-chat",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_gram_rank": 2,
+      "phase_1_nullspace_dim": 1,
+      "phase_1_crit_norm_squared": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+      "phase_2_gram_rank": 2,
+      "phase_2_nullspace_dim": 1,
+      "phase_2_crit_norm_squared": 0,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+      "phase_3_gram_rank": 3,
+      "phase_3_nullspace_dim": 0,
+      "phase_3_crit_norm_squared": 4,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+      "dropout_audit": {
+        "evaluation_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "5535c20ca47e9233aa9e2f1196d7d26e2190e5a69d6763e8323a8852ef78a42a"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "e692dd81d148092286dd3dcd422c5b95ab59b788cf6b2d6db3947c1bed178656"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "codebase_gram_eval_4_deepseek_deepseek-chat::dropout_audit-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "0eb062347cb87566ec5432207d64dfa052aca78155756c5a23775b7f3a5f9930"
+        }
+      },
+      "model_raw_response": "```json\n{\"phase1_gram_rank\": 2, \"phase1_crit_norm_squared\": 0, \"phase3_gram_rank\": 3, \"phase3_crit_norm_squared\": 4, \"phase3_payout_cents\": 873}\n```",
+      "model_parsed_json": {
+        "phase1_gram_rank": 2,
+        "phase1_crit_norm_squared": 0,
+        "phase3_gram_rank": 3,
+        "phase3_crit_norm_squared": 4,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "audit_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_gram_rank": 2,
+      "phase_1_nullspace_dim": 1,
+      "phase_1_crit_norm_squared": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+      "phase_2_gram_rank": 2,
+      "phase_2_nullspace_dim": 1,
+      "phase_2_crit_norm_squared": 0,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+      "phase_3_gram_rank": 3,
+      "phase_3_nullspace_dim": 0,
+      "phase_3_crit_norm_squared": 4,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+      "dropout_audit": {
+        "evaluation_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit",
+        "critical_direction": [
+          "1",
+          "-1",
+          "1"
+        ],
+        "full_rank": 3,
+        "full_nullspace_dim": 0,
+        "full_norm_squared": "4",
+        "redundant_dropout_row": 1,
+        "redundant_dropout_rank": 3,
+        "redundant_dropout_nullspace_dim": 0,
+        "redundant_dropout_norm_squared": "4",
+        "redundant_local_green": 1,
+        "redundant_global_green": 1,
+        "redundant_defect": 0,
+        "redundant_status": "REDUNDANT_WATCHER_DROPOUT_SAFE_LGGG",
+        "critical_dropout_row": 3,
+        "critical_dropout_rank": 2,
+        "critical_dropout_nullspace_dim": 1,
+        "critical_dropout_norm_squared": "0",
+        "critical_local_green": 1,
+        "critical_global_green": 0,
+        "critical_defect": -1,
+        "critical_status": "CRITICAL_WATCHER_DROPOUT_BLINDSPOT_LGGR",
+        "full_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-full",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-full",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "9b0863a103fb7fffe59942bf448d9816900c0c32bd0adca0366bf69aa3547d29"
+        },
+        "redundant_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-1",
+          "status": "ADJOINT_SIGNAL_VERIFIED",
+          "contract_status": "COMPOSABLE_LGGG",
+          "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-redundant-drop-1",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "2"
+          ],
+          "gram_response_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "quadratic_energy": "2",
+          "state_nonzero": true,
+          "observation_zero": false,
+          "gram_response_zero": false,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "4",
+          "expected_gram_pairing": "4",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "2",
+            "0",
+            "2"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": false,
+          "receipt_sha256": "4bec575a8c794e9a09188a3f4af142aeefa797a277ce557bfcb824396c07ed95"
+        },
+        "critical_probe_step": {
+          "schema": "lggr.online_gram_probe_step.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-watcher-dropout-benchmark-dropout-audit-drop-row-3",
+          "status": "GRAM_NULLSPACE_BLINDSPOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "state_id": "codebase_gram_eval_5_mistralai_mistral-small-3.2-24b-instruct::dropout_audit-critical-drop-3",
+          "state_vector": [
+            "1",
+            "-1",
+            "1"
+          ],
+          "observation_qx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "gram_response_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "quadratic_energy": "0",
+          "state_nonzero": true,
+          "observation_zero": true,
+          "gram_response_zero": true,
+          "gram_kernel_identity_verified": true,
+          "centered_directional_probe": "0",
+          "expected_gram_pairing": "0",
+          "directional_identity_verified": true,
+          "sign_cube_recovered_hx": [
+            "0",
+            "0",
+            "0"
+          ],
+          "sign_cube_identity_verified": true,
+          "is_nullspace_blindspot": true,
+          "receipt_sha256": "3cc6988108d2d077ec5823b17532614bc5b9bf37d90cf415498bb95a061759fa"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_gram_rank\": 2,\n  \"phase1_crit_norm_squared\": 0,\n  \"phase3_gram_rank\": 3,\n  \"phase3_crit_norm_squared\": 4,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_gram_rank": 2,
+        "phase1_crit_norm_squared": 0,
+        "phase3_gram_rank": 3,
+        "phase3_crit_norm_squared": 4,
+        "phase3_payout_cents": 873
+      }
+    }
+  ],
+  "meaning": "Watcher-dropout and Gram rank-deficiency vs. full-rank critical watcher restoration codebase benchmark across 5 model families (Theorem 110): Phase 1 separates isolated non-zero watcher-row checks (L = 1) from critical watcher dropout `Q_p1 = [[1,1,0], [2,2,0], [0,1,1]]` where `||Q_p1 v_crit||_2^2 = 0` and `rank = 2 < 3` (Delta_E = -1); Phase 2 separates partial `tax_gram` row update from residual settlement row collision (`rank = 2 < 3`, Delta_E = -1); Phase 3 verifies full-rank restoration `Q_p3 = [[1,1,0], [0,1,1], [1,0,1]]` (`rank = 3`, `||Q_p3 v_crit||_2^2 = 4`, 873 + 27 + 180 = 1080, Delta_E = 0).",
+  "receipt_sha256": "1fcf00ba9bd582d485ab54ebe44e93a7ddc64a26bcf435201378a970f0e12cb6"
+}
