@@ -26681,14 +26681,25 @@ class StreamingCodebaseFiberSplittingMonitor:
 
         if (
             not isinstance(p_out, dict)
-            or not all(k in p_out for k in ("state_targets", "coarse_status_tag"))
+            or not all(k in p_out for k in ("net_cents", "state_targets", "coarse_status_tag"))
             or not isinstance(t_out, dict)
-            or "tax_probe_bits" not in t_out
+            or not all(k in t_out for k in ("tax_cents", "tax_probe_bits"))
             or not isinstance(s_out, dict)
-            or not all(k in s_out for k in ("settle_probe_bits", "state_predictions", "ambiguity_surcharge_cents"))
+            or not all(
+                k in s_out
+                for k in (
+                    "fee_cents",
+                    "merchant_payout_cents",
+                    "gross_collected_cents",
+                    "total_accounted_cents",
+                    "settle_probe_bits",
+                    "state_predictions",
+                    "ambiguity_surcharge_cents",
+                )
+            )
         ):
             raise ValidationError(
-                "Module outputs must contain state_targets, tax_probe_bits, settle_probe_bits, state_predictions, and ambiguity_surcharge_cents"
+                "Module outputs must contain net_cents, tax_cents, fee_cents, merchant_payout_cents, gross_collected_cents, total_accounted_cents, state_targets, tax_probe_bits, settle_probe_bits, state_predictions, and ambiguity_surcharge_cents"
             )
 
         targets = [int(v) for v in p_out["state_targets"]]

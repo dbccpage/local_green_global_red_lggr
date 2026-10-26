@@ -4678,7 +4678,8 @@ theorem policy_reversal_codebase_cf_vs_neg_mass_ranking_audit :
          (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
 theorem fiber_splitting_codebase_unassisted_reflection_and_tool_probe_audit :
     ((∀ c : Int, (c).natAbs ≥ 6 ∨ (12 - c).natAbs ≥ 6) ∧
-     (∀ c0 c1 : Int, (c0).natAbs ≥ 2 ∨ (4 - c0).natAbs ≥ 2 ∨ (8 - c1).natAbs ≥ 2)) ∧
+     (∀ c0 : Int, (c0).natAbs ≥ 2 ∨ (4 - c0).natAbs ≥ 2) ∧
+     (∀ c1 : Int, (8 - c1).natAbs ≥ 2 ∨ (12 - c1).natAbs ≥ 2)) ∧
     (let f00 : Int := 0; let f01 : Int := 4; let f10 : Int := 8; let f11 : Int := 12;
      let w0 := f11 - f00;
      let floor0 := w0 / 2;
@@ -4705,10 +4706,12 @@ theorem fiber_splitting_codebase_unassisted_reflection_and_tool_probe_audit :
      (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
      (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
      (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
-  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  refine ⟨⟨?_, ?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
   · intro c
     omega
-  · intro c0 c1
+  · intro c0
+    omega
+  · intro c1
     omega
 
 

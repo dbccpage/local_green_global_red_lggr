@@ -5146,7 +5146,11 @@ def run_split_local_unit_tests(module_name: str, source_code: str) -> dict[str, 
             if res.get("tax_cents") != 180 or res.get("gross_after_tax_cents") != 1080:
                 return {"passed": False, "module": module_name, "error": "tax_split tax_cents must equal 180"}
             bits = res.get("tax_probe_bits")
-            if not isinstance(bits, list) or len(bits) != 4 or any(b not in (0, 1) for b in bits):
+            if (
+                not isinstance(bits, list)
+                or len(bits) != 4
+                or any(isinstance(b, bool) or b not in (0, 1) for b in bits)
+            ):
                 return {"passed": False, "module": module_name, "error": "tax_probe_bits must be a 4-element binary list"}
             return {"passed": True, "module": module_name, "isolated_scope": "tax_split isolated unit test"}
 
@@ -5162,10 +5166,18 @@ def run_split_local_unit_tests(module_name: str, source_code: str) -> dict[str, 
                 return {"passed": False, "module": module_name, "error": "settlement_split fee_cents must equal 27"}
             s_bits = res.get("settle_probe_bits")
             preds = res.get("state_predictions")
-            if not isinstance(s_bits, list) or len(s_bits) != 4 or any(b not in (0, 1) for b in s_bits):
+            if (
+                not isinstance(s_bits, list)
+                or len(s_bits) != 4
+                or any(isinstance(b, bool) or b not in (0, 1) for b in s_bits)
+            ):
                 return {"passed": False, "module": module_name, "error": "settle_probe_bits must be a 4-element binary list"}
-            if not isinstance(preds, list) or len(preds) != 4:
-                return {"passed": False, "module": module_name, "error": "state_predictions must be a 4-element list"}
+            if (
+                not isinstance(preds, list)
+                or len(preds) != 4
+                or any(isinstance(p, bool) or not isinstance(p, int) for p in preds)
+            ):
+                return {"passed": False, "module": module_name, "error": "state_predictions must be a 4-element integer list"}
             payout = res.get("merchant_payout_cents")
             surcharge = res.get("ambiguity_surcharge_cents")
             gross_val = res.get("gross_collected_cents")
