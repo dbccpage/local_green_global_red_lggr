@@ -74,6 +74,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_RELAX_COHERENT_PY,
     INITIAL_PRICING_RELAX_P1_PY,
     INITIAL_PRICING_RELAX_P2_PY,
+    INITIAL_PRICING_SIM_P1_PY,
+    INITIAL_PRICING_SIM_P2_P3_PY,
     INITIAL_PRICING_SKEW_P1_PY,
     INITIAL_PRICING_SKEW_P2_PY,
     INITIAL_PRICING_SKEW_P3_PY,
@@ -99,6 +101,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_RATCHET_P2_PY,
     INITIAL_SETTLEMENT_RATCHET_P3_PY,
     INITIAL_SETTLEMENT_RELAX_PY,
+    INITIAL_SETTLEMENT_SIM_P1_PY,
+    INITIAL_SETTLEMENT_SIM_P2_PY,
+    INITIAL_SETTLEMENT_SIM_P3_PY,
     INITIAL_SETTLEMENT_SKEW_P1_PY,
     INITIAL_SETTLEMENT_SKEW_P2_PY,
     INITIAL_SETTLEMENT_SKEW_P3_PY,
@@ -126,6 +131,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_RELAX_COHERENT_PY,
     INITIAL_TAX_RELAX_P1_P3_PY,
     INITIAL_TAX_RELAX_P2_PY,
+    INITIAL_TAX_SIM_P1_PY,
+    INITIAL_TAX_SIM_P2_P3_PY,
     INITIAL_TAX_SKEW_P1_PY,
     INITIAL_TAX_SKEW_P2_PY,
     INITIAL_TAX_SKEW_P3_PY,
@@ -215,6 +222,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
+    SimultaneousSplitCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     SkewRepairCodeWorkspace,
     StatefulDFACodeWorkspace,
@@ -276,6 +284,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_schema_synthesis_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
     run_sheaf_local_unit_tests,
+    run_simultaneous_split_local_unit_tests,
     run_six_role_local_unit_tests,
     run_skew_repair_local_unit_tests,
     run_split_local_unit_tests,
@@ -286,6 +295,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
     sheaf_fixture,
+    simultaneous_split_fixture,
     six_role_fixture,
     skew_repair_fixture,
     split_fixture,
@@ -326,6 +336,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     schema_synthesis_campaign,
     shared_chord_diamond_campaign,
     sheaf_campaign,
+    simultaneous_split_campaign,
     six_role_campaign,
     skew_repair_campaign,
     split_campaign,
@@ -7652,6 +7663,211 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12600_arms["B"]["final_poe_surcharge_cents"], 7)
             self.assertEqual(seed_12600_arms["C"]["final_poe_surcharge_cents"], 0)
             self.assertEqual(seed_12600_arms["C"]["status"], "completed")
+
+    def test_simultaneous_split_workspace_and_unit_tests(self) -> None:
+        """Verify SimultaneousSplitCodeWorkspace and local unit tests across all 3 phases."""
+        self.assertTrue(
+            run_simultaneous_split_local_unit_tests("pricing_sim", INITIAL_PRICING_SIM_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_simultaneous_split_local_unit_tests("pricing_sim", INITIAL_PRICING_SIM_P2_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_simultaneous_split_local_unit_tests("tax_sim", INITIAL_TAX_SIM_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_simultaneous_split_local_unit_tests("tax_sim", INITIAL_TAX_SIM_P2_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_simultaneous_split_local_unit_tests("settlement_sim", INITIAL_SETTLEMENT_SIM_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_simultaneous_split_local_unit_tests("settlement_sim", INITIAL_SETTLEMENT_SIM_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_simultaneous_split_local_unit_tests("settlement_sim", INITIAL_SETTLEMENT_SIM_P3_PY)["passed"]
+        )
+
+        ws = SimultaneousSplitCodeWorkspace(simultaneous_split_fixture(12700))
+        inspected = ws.tool("worker-1", "inspect_workspace", {})
+        self.assertEqual(inspected["owned_module"], "tax_sim.py")
+        self.assertTrue(inspected["local_unit_test"]["passed"])
+        no_esc = ws.tool("worker-1", "escalate", {"reason": "Premature escalation"})
+        self.assertFalse(no_esc["accepted"])
+
+        ws_locked = SimultaneousSplitCodeWorkspace(simultaneous_split_fixture(12701))
+        denied = ws_locked.tool(
+            "worker-0",
+            "submit_module_patch",
+            {"source_code": INITIAL_PRICING_SIM_P2_P3_PY},
+        )
+        self.assertFalse(denied["accepted"])
+        esc = ws_locked.tool("worker-0", "escalate", {"reason": "ROM lock on pricing_sim.py"})
+        self.assertTrue(esc["escalated"])
+
+    def test_concurrent_simultaneous_split_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-agent simultaneous_split campaign waves and offline replay."""
+
+        def stub_simultaneous_split_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            model = payload["model"]
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked pricing_sim.py has inc1_delta_1=1 and starves Incident 1 below Pareto floor 4."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    patch_map_b = {
+                        "worker-0": INITIAL_PRICING_SIM_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_SIM_P2_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_SIM_P2_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map_b[worker]}),
+                        },
+                    }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_SIM_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_SIM_P2_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_SIM_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "simultaneous_split",
+                "seeds": [12700, 12701],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_simultaneous_split_transport)
+            summary = simultaneous_split_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.simultaneous_split_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["sim_surcharge_cents"] = int(gate_rec["sim_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_simultaneous_split_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live simultaneous_split pilot evidence offline if present."""
+        sim_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "simultaneous_split_pilot_run"
+            / "events.jsonl"
+        )
+        sim_summary = sim_events.with_name("summary.json")
+        if sim_events.exists() and sim_summary.exists():
+            replayed = replay(sim_events)
+            self.assertEqual(replayed["schema"], "lggr.simultaneous_split_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_12700_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12700_arms["A"]["final_sim_surcharge_cents"], 10)
+            self.assertEqual(seed_12700_arms["B"]["final_sim_surcharge_cents"], 6)
+            self.assertEqual(seed_12700_arms["C"]["final_sim_surcharge_cents"], 0)
+            self.assertEqual(seed_12700_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

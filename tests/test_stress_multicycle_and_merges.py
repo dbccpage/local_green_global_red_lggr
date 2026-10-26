@@ -65,6 +65,7 @@ from lggr.streaming import (
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
@@ -6683,6 +6684,66 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_poe_source="def quote_poe_pricing(g):\n    return 123\n",
                 tax_poe_source=mon.PHASE_1_TAX_POE_SOURCE,
                 settlement_poe_source=mon.PHASE_1_SETTLEMENT_POE_SOURCE,
+            )
+
+    def test_simultaneous_split_codebase_budget_starvation_and_joint_guard_audit(self) -> None:
+        """Verify Theorem 130: Simultaneous budget-splitting starvation & priority-queued joint guard codebase audit."""
+        mon = StreamingCodebaseSimultaneousSplitMonitor(
+            scope_id="unit-codebase-simultaneous-split-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-simultaneous-split-eval-01",
+        )
+        self.assertEqual(obs["phase_1_weighted_slacks"], [2, 3, 0])
+        self.assertEqual(obs["phase_1_pareto_deficits"], [2, 0, 4])
+        self.assertEqual(obs["phase_1_total_pareto_deficit"], 6)
+        self.assertEqual(obs["phase_1_starved_incident_count"], 2)
+        self.assertEqual(obs["phase_1_peak_concurrent_drift"], 5)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR")
+
+        self.assertEqual(obs["phase_2_weighted_slacks"], [4, 3, 0])
+        self.assertEqual(obs["phase_2_pareto_deficits"], [0, 0, 4])
+        self.assertEqual(obs["phase_2_total_pareto_deficit"], 4)
+        self.assertEqual(obs["phase_2_starved_incident_count"], 1)
+        self.assertEqual(obs["phase_2_peak_concurrent_drift"], 4)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_2_payout_cents"], 867)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR")
+
+        self.assertEqual(obs["phase_3_weighted_slacks"], [4, 3, 4])
+        self.assertEqual(obs["phase_3_pareto_deficits"], [0, 0, 0])
+        self.assertEqual(obs["phase_3_total_pareto_deficit"], 0)
+        self.assertEqual(obs["phase_3_starved_incident_count"], 0)
+        self.assertEqual(obs["phase_3_peak_concurrent_drift"], 4)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["simultaneous_budget_split_receipt"])
+        self.assertIsNotNone(receipt["joint_multi_monitor_guard_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_simultaneous_split_modules(
+                "bad-return",
+                pricing_sim_source="def quote_sim_pricing(g):\n    return 123\n",
+                tax_sim_source=mon.PHASE_1_TAX_SIM_SOURCE,
+                settlement_sim_source=mon.PHASE_1_SETTLEMENT_SIM_SOURCE,
             )
 
 
