@@ -62,11 +62,17 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     QUORUM_SETTLEMENT_STRICT_SOURCE,
     QUORUM_TAX_ALIGNED_SOURCE,
     QUORUM_TAX_DRIFT_SOURCE,
+    SHEAF_PRICING_SOURCE,
+    SHEAF_SETTLEMENT_CONTEXTUAL_SOURCE,
+    SHEAF_SETTLEMENT_RECONCILED_SOURCE,
+    SHEAF_TAX_CONTEXTUAL_SOURCE,
+    SHEAF_TAX_RECONCILED_SOURCE,
     BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
     CoalitionalCodeWorkspace,
     CodeWorkspace,
+    ContextualSheafCodeWorkspace,
     DiamondCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
@@ -102,8 +108,10 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
+    run_sheaf_local_unit_tests,
     run_stop_local_unit_tests,
     run_win_local_unit_tests,
+    sheaf_fixture,
     stop_fixture,
     win_fixture,
 )
@@ -123,6 +131,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     regge_campaign,
     replay,
     replay_campaign,
+    sheaf_campaign,
     stop_campaign,
     win_campaign,
 )
@@ -132,6 +141,7 @@ from lggr.streaming import (
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
+    StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -2569,6 +2579,252 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if lease_events.exists() and lease_summary.exists():
             replayed = replay(lease_events)
             self.assertEqual(replayed["schema"], "lggr.lease_overlap_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_contextual_sheaf_hollow_triangle_vs_global_section_reconciled(self) -> None:
+        state = sheaf_fixture(10602)
+        ws = ContextualSheafCodeWorkspace(state)
+        local_res = ws.local_verdicts()
+        self.assertEqual(
+            local_res,
+            {"pricing_sheaf": True, "tax_sheaf": True, "settlement_sheaf": True},
+        )
+
+        monitor = StreamingCodebaseContextualSheafMonitor(scope_id="test-sheaf")
+        obs1 = monitor.evaluate_sheaf_merge(
+            "wave-0-contextual",
+            module_sources=ws.state["sources"],
+            local_test_results=local_res,
+        )
+        self.assertEqual(obs1["local_green"], 1)
+        self.assertEqual(obs1["global_green"], 0)
+        self.assertEqual(obs1["defect"], -1)
+        self.assertEqual(obs1["q_bc_num"], 0)
+        self.assertEqual(obs1["q_ca_num"], 0)
+        self.assertEqual(obs1["scaled_gap_m4"], 2)
+        self.assertEqual(obs1["contextuality_reserve_cents"], 11)
+        self.assertEqual(obs1["merchant_payout_cents"], 862)
+        self.assertEqual(obs1["status"], "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR")
+        self.assertEqual(
+            obs1["compact_role_directives"]["worker-0"]["action"],
+            "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+        )
+        self.assertEqual(
+            obs1["compact_role_directives"]["worker-1"]["action"],
+            "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+        )
+        self.assertEqual(
+            obs1["compact_role_directives"]["worker-2"]["action"],
+            "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+        )
+
+        # Partial repair: tax_sheaf reconciles table_bc (q_bc_num = 1) while settlement_sheaf stays at q_ca_num = 0
+        res_b = ws.tool("worker-1", "submit_module_patch", {"source_code": SHEAF_TAX_RECONCILED_SOURCE})
+        self.assertTrue(res_b["accepted"])
+        obs2 = monitor.evaluate_sheaf_merge(
+            "wave-1-partial",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_verdicts(),
+        )
+        self.assertEqual(obs2["local_green"], 1)
+        self.assertEqual(obs2["global_green"], 0)
+        self.assertEqual(obs2["defect"], -1)
+        self.assertEqual(obs2["q_bc_num"], 1)
+        self.assertEqual(obs2["q_ca_num"], 0)
+        self.assertEqual(obs2["scaled_gap_m4"], 1)
+        self.assertEqual(obs2["status"], "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR")
+
+        # Full repair: settlement_sheaf reconciles table_ca (q_ca_num = 1, reserve = 0)
+        res_c = ws.tool("worker-2", "submit_module_patch", {"source_code": SHEAF_SETTLEMENT_RECONCILED_SOURCE})
+        self.assertTrue(res_c["accepted"])
+        obs3 = monitor.evaluate_sheaf_merge(
+            "wave-1-reconciled",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_verdicts(),
+        )
+        self.assertEqual(obs3["local_green"], 1)
+        self.assertEqual(obs3["global_green"], 1)
+        self.assertEqual(obs3["defect"], 0)
+        self.assertEqual(obs3["q_bc_num"], 1)
+        self.assertEqual(obs3["q_ca_num"], 1)
+        self.assertEqual(obs3["scaled_gap_m4"], 0)
+        self.assertEqual(obs3["contextuality_reserve_cents"], 0)
+        self.assertEqual(obs3["merchant_payout_cents"], 873)
+        self.assertEqual(obs3["status"], "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG")
+
+    def test_contextual_sheaf_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        bad_import = run_sheaf_local_unit_tests(
+            "tax_sheaf",
+            "import os\ndef tax_sheaf(pricing_quote, tax_rate_bps):\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = ContextualSheafCodeWorkspace(sheaf_fixture(10602))
+        bad_patch = ws.tool(
+            "worker-1",
+            "submit_module_patch",
+            {"source_code": "def tax_sheaf(pricing_quote, tax_rate_bps):\n    return {'tax_cents': 0}\n"},
+        )
+        self.assertFalse(bad_patch["accepted"])
+
+        ws_locked = ContextualSheafCodeWorkspace(sheaf_fixture(10600))
+        locked_patch = ws_locked.tool(
+            "worker-1",
+            "submit_module_patch",
+            {"source_code": SHEAF_TAX_RECONCILED_SOURCE},
+        )
+        self.assertFalse(locked_patch["accepted"])
+
+    def test_concurrent_sheaf_campaign_replay_and_tamper_detection(self) -> None:
+        def stub_sheaf_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_text = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"agent {w}," in sys_text:
+                    worker = w
+                    break
+            arm = "A"
+            for a in ("A", "B", "C"):
+                if f"(Arm {a})" in sys_text:
+                    arm = a
+                    break
+
+            has_tool_response = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_response:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msgs = [m for m in messages if m.get("role") == "tool"]
+                inspected = json.loads(tool_msgs[-1]["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Infeasible hollow-triangle contextual sheaf lock."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif arm == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": SHEAF_TAX_RECONCILED_SOURCE}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": SHEAF_PRICING_SOURCE,
+                        "worker-1": SHEAF_TAX_RECONCILED_SOURCE,
+                        "worker-2": SHEAF_SETTLEMENT_RECONCILED_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "contextuality",
+                "seeds": [10602, 10600],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_sheaf_transport)
+            summary = sheaf_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.contextual_sheaf_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on sheaf gate scaled_gap_m4 field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["scaled_gap_m4"] = int(gate_rec["scaled_gap_m4"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_contextuality_pilot_evidence_replay_if_present(self) -> None:
+        sheaf_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "contextuality_pilot_run"
+            / "events.jsonl"
+        )
+        sheaf_summary = sheaf_events.with_name("summary.json")
+        if sheaf_events.exists() and sheaf_summary.exists():
+            replayed = replay(sheaf_events)
+            self.assertEqual(replayed["schema"], "lggr.contextual_sheaf_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 
