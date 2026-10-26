@@ -1,0 +1,29 @@
+### LGGR Wiki
+
+- **[Home](Home)**
+- **[Composition Gate (lggr_guard)](Composition-Gate)**
+- **Start here: adopt LGGR**
+  - [Learn: overview](https://github.com/dbccpage/local_green_global_red_lggr/blob/main/learn/README.md)
+  - [00 Where LGGR fits](https://github.com/dbccpage/local_green_global_red_lggr/blob/main/learn/guides/00_where_lggr_fits.md)
+  - [01 Report collision guard](https://github.com/dbccpage/local_green_global_red_lggr/blob/main/learn/guides/01_report_collision.md)
+  - [02 Authority firewall](https://github.com/dbccpage/local_green_global_red_lggr/blob/main/learn/guides/02_authority_firewall.md)
+  - [03 Collision-guided checks](https://github.com/dbccpage/local_green_global_red_lggr/blob/main/learn/guides/03_collision_guided_checks.md)
+  - [04 Checked memory](https://github.com/dbccpage/local_green_global_red_lggr/blob/main/learn/guides/04_checked_memory.md)
+- **[LGGR Series (Volumes I–VIII)](LGGR-Series-Volumes-I-to-VII)**
+  - [Vol. I: Evaluated Path Kernels](LGGR-Volume-I-Evaluated-Path-Kernels)
+  - [Vol. II: Organizational Gluing](LGGR-Volume-II-Organizational-Gluing)
+  - [Vol. III: Six-Role Overlay](LGGR-Volume-III-Six-Role-Overlay)
+  - [Vol. IV: Completion-Relative Obstruction](LGGR-Volume-IV-Completion-Relative-Obstruction)
+  - [Vol. V: Finite No-Recovery & Repair](LGGR-Volume-V-Finite-No-Recovery)
+  - [Vol. VI: Nonlinear Aggregation & Probing](LGGR-Volume-VI-Nonlinear-Aggregation-and-Adjoint-Probing)
+  - [Vol. VII: Projection Residuals & Witnesses](LGGR-Volume-VII-Projection-Residuals-and-Witness-Composition)
+  - [Vol. VIII: Online Streaming Discovery](Volume-VIII)
+- **[RSI & Bell Series (`012_rsi`)](RSI-and-Bell-Series-Overview)**
+  - [Paper 000: Relational Reasoning & Memory](RSI-Paper-000-Relational-Reasoning-Memory-and-Embedded-Knowledge)
+  - [Paper 001: Contextual Prediction & LP Duality](RSI-Paper-001-Contextual-Prediction-and-Self-Certification)
+  - [Paper 002: Institutions That Can Know](RSI-Paper-002-Institutions-That-Can-Know)
+  - [Paper 003: Bell Positive Extensions](RSI-Paper-003-Bell-Positive-Extensions-and-Projection-Residuals)
+- **[Online Discovery for Agentic Swarms](Online-LGGG-vs-LGGR-Discovery-for-Agentic-Swarms)**
+- **[Positive Extensions & Projection Residuals](Positive-Extensions-and-Projection-Residuals)**
+- **[Lean 4 Formalizations (69 Theorems)](Lean-4-Formalizations)**
+- **[Python API & CLI Reference (35 Monitors)](Python-API-and-CLI-Reference)**
