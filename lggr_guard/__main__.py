@@ -5,6 +5,8 @@ python -m lggr_guard compose --base main --branch feat-a --branch feat-b \
     [--observe "python tools/observe.py"] [--declare feat-a=parallelism] [--log decisions.jsonl]
 
 Exit status: 0 accept, 1 reject (NGD, undeclared behaviour or drift), 2 usage error.
+
+Ledger mode (see LEDGER.md): init, check, accept, checkpoint, blame, clear, status.
 """
 import argparse
 import json
@@ -14,7 +16,14 @@ from .git import compose_branches
 from .log import DecisionLog
 
 
+LEDGER_COMMANDS = {"init", "check", "accept", "checkpoint", "blame", "clear", "status"}
+
+
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] != ["compose"] and LEDGER_COMMANDS & set(argv):
+        from .ledger_cli import main as ledger_main
+        return ledger_main(argv)
     parser = argparse.ArgumentParser(prog="lggr_guard")
     sub = parser.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("compose", help="check branches alone and together against the base")

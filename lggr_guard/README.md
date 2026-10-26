@@ -7,6 +7,20 @@ anything. This package makes that failure explicit **before merge** and names th
 Pure Python standard library, no dependencies. Copy the `lggr_guard/` folder into your project,
 or install this repository (`pip install -e .`).
 
+## Two modes
+
+| Mode | Use it when | Entry point |
+|---|---|---|
+| **Batch** (this page) | You have a set of pending branches and want each one judged alone and all of them together before you merge the batch | `compose_check`, `python -m lggr_guard compose ...` |
+| **Ledger** ([LEDGER.md](LEDGER.md)) | Changes merge one at a time, for example from an orchestrator, and you want each candidate judged against **everything accepted since the last full check**. You also get a contract suite read from `main`, probes on every contract, declared-vs-observed mismatch alarms, an owner anchor for drift, and `blame` after a red post-merge smoke | `CompositionGate`, `python -m lggr_guard init / check / accept / checkpoint / blame` |
+
+Both modes name the minimal set of changes behind a failure, and both make no model calls.
+
+```bash
+python -m lggr_guard.demo          # batch: two changes silently disable the precheck, threshold drift, reviewer drift
+python -m lggr_guard.ledger_demo   # ledger: the same incident on a real git repo, plus authority and mismatch cases
+```
+
 ## What it checks
 
 | Your problem | What `lggr_guard` does |
