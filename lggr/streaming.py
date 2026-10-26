@@ -32879,6 +32879,13 @@ class StreamingNonAbelianBraidHolonomyMonitor:
         eval_id = text(evaluation_id, "evaluation_id")
         boolean(local_u_ok, "local_u_ok")
         boolean(local_v_ok, "local_v_ok")
+        if (
+            not isinstance(u_word, Sequence)
+            or isinstance(u_word, (str, bytes))
+            or not isinstance(v_word, Sequence)
+            or isinstance(v_word, (str, bytes))
+        ):
+            raise ValidationError("u_word and v_word must be sequences of generator indices in {1, 2}")
         u_list = [exact_int(x, "u_gen") for x in u_word]
         v_list = [exact_int(x, "v_gen") for x in v_word]
         if len(u_list) == 0 or len(v_list) == 0:
@@ -33145,9 +33152,15 @@ class StreamingCodebaseNonAbelianBraidMonitor:
 
         pricing_out = p_ns["quote_braid_pricing"](gross)
         tax_out = t_ns["quote_braid_tax"](gross)
+        if not isinstance(pricing_out, Mapping) or not isinstance(tax_out, Mapping):
+            raise ValidationError("quote_braid_pricing and quote_braid_tax must return mappings")
         try:
             settlement_out = s_ns["settle_braid_invoice"](pricing_out, tax_out)
+            if not isinstance(settlement_out, Mapping):
+                raise ValidationError("settle_braid_invoice must return a mapping")
             settlement_raised = False
+        except ValidationError:
+            raise
         except Exception:
             settlement_raised = True
             settlement_out = {}

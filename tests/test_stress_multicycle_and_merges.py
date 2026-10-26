@@ -6418,6 +6418,18 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
 
+        with self.assertRaises(ValidationError):
+            braid_mon.record_braid_pair("bad-bytes", u_word=b"\x01\x02\x01", v_word=[2, 1, 2])
+        with self.assertRaises(ValidationError):
+            braid_mon.record_braid_pair("bad-gen", u_word=[1, 3, 1], v_word=[2, 1, 2])
+        with self.assertRaises(ValidationError):
+            mon.evaluate_non_abelian_braid_modules(
+                "bad-return",
+                pricing_braid_source="def quote_braid_pricing(g):\n    return 123\n",
+                tax_braid_source=mon.PHASE_1_TAX_BRAID_SOURCE,
+                settlement_braid_source=mon.PHASE_1_SETTLEMENT_BRAID_SOURCE,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
