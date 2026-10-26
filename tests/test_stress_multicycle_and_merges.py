@@ -60,6 +60,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
@@ -6247,6 +6248,53 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "WEDGE_GAUGE_GLUED_EXACT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_shared_chord_diamond_codebase_hodge_and_mayer_vietoris_audit(self) -> None:
+        """Verify Theorem 123: Shared-chord bicyclic diamond Hodge & Mayer-Vietoris codebase audit."""
+        mon = StreamingCodebaseSharedChordDiamondMonitor(
+            scope_id="unit-codebase-shared-chord-diamond-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-shared-chord-diamond-eval-01",
+        )
+        self.assertEqual(obs["phase_1_norm2_exact"], 3)
+        self.assertEqual(obs["phase_1_norm2_coexact"], 3)
+        self.assertEqual(obs["phase_1_norm2_harmonic"], 24)
+        self.assertEqual(obs["phase_1_chord_mismatch_cents"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 27)
+        self.assertEqual(obs["phase_1_payout_cents"], 846)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "DIAMOND_CHORD_CURL_AND_HARMONIC_LGGR")
+
+        self.assertEqual(obs["phase_2_norm2_exact"], 3)
+        self.assertEqual(obs["phase_2_norm2_coexact"], 0)
+        self.assertEqual(obs["phase_2_norm2_harmonic"], 24)
+        self.assertEqual(obs["phase_2_chord_mismatch_cents"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 25)
+        self.assertEqual(obs["phase_2_payout_cents"], 848)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "DIAMOND_COUPLED_HARMONIC_COUNTERFLOW_LGGR")
+
+        self.assertEqual(obs["phase_3_norm2_exact"], 7)
+        self.assertEqual(obs["phase_3_norm2_coexact"], 0)
+        self.assertEqual(obs["phase_3_norm2_harmonic"], 0)
+        self.assertEqual(obs["phase_3_chord_mismatch_cents"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "DIAMOND_CHORD_GLUED_EXACT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "DIAMOND_CHORD_GLUED_EXACT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

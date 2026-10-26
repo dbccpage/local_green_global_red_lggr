@@ -10,6 +10,7 @@ from lggr.streaming import (
     StreamingCodebaseFigureEightWedgeMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseSharedChordDiamondMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
 )
@@ -7955,6 +7956,214 @@ class FigureEightWedgeCodeWorkspace:
                 "module": module_name,
                 "local_unit_test_result": local_res,
                 "scope": "isolated module unit tests passed; figure-eight wedge Hodge decomposition and junction gauge alignment are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+SHARED_CHORD_DIAMOND_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_chord",
+    "worker-1": "tax_chord",
+    "worker-2": "settlement_chord",
+}
+
+INITIAL_PRICING_CHORD_P1_PY = StreamingCodebaseSharedChordDiamondMonitor.PHASE_1_PRICING_CHORD_SOURCE
+INITIAL_PRICING_CHORD_P2_PY = StreamingCodebaseSharedChordDiamondMonitor.PHASE_2_PRICING_CHORD_SOURCE
+INITIAL_PRICING_CHORD_COHERENT_PY = StreamingCodebaseSharedChordDiamondMonitor.PHASE_3_PRICING_CHORD_SOURCE
+
+INITIAL_TAX_CHORD_P1_P2_PY = StreamingCodebaseSharedChordDiamondMonitor.PHASE_1_TAX_CHORD_SOURCE
+INITIAL_TAX_CHORD_COHERENT_PY = StreamingCodebaseSharedChordDiamondMonitor.PHASE_3_TAX_CHORD_SOURCE
+
+INITIAL_SETTLEMENT_CHORD_PY = StreamingCodebaseSharedChordDiamondMonitor.PHASE_1_SETTLEMENT_CHORD_SOURCE
+
+
+def run_shared_chord_diamond_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_chord`, `tax_chord`, or `settlement_chord`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_chord":
+            fn = ns.get("compute_pricing_chord")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_pricing_chord"}
+            items = [
+                {"sku": "chord_u", "unit_cents": 600, "quantity": 1},
+                {"sku": "chord_v", "unit_cents": 400, "quantity": 1},
+            ]
+            res = fn(items, 1000)
+            ok = (
+                isinstance(res, dict)
+                and res.get("net_cents") == 900
+                and res.get("shared_chord_e0") in (0, -1, 1)
+                and res.get("upper_filled_legs") in ([2, 1], [1, 0], [1, -2])
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_chord":
+            fn = ns.get("compute_tax_chord")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_tax_chord"}
+            res = fn(
+                {
+                    "subtotal_cents": 1000,
+                    "discount_cents": 100,
+                    "net_cents": 900,
+                    "shared_chord_e0": 1,
+                    "upper_filled_legs": [1, -2],
+                },
+                1000,
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_cents") == 90
+                and res.get("gross_cents") == 990
+                and res.get("lower_unfilled_legs") in ([-4, -3], [-1, 0])
+                and res.get("tax_shared_chord_e0") in (0, 1)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_chord":
+            fn = ns.get("compute_settlement_chord")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_settlement_chord"}
+            res = fn(
+                {
+                    "subtotal_cents": 1000,
+                    "discount_cents": 100,
+                    "net_cents": 900,
+                    "tax_cents": 90,
+                    "gross_cents": 990,
+                    "shared_chord_e0": 1,
+                    "upper_filled_legs": [1, -2],
+                    "lower_unfilled_legs": [-1, 0],
+                    "tax_shared_chord_e0": 1,
+                },
+                300,
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and int(res.get("merchant_payout_cents", 0)) in (846, 848, 873)
+                and int(res.get("chord_surcharge_cents", -1)) in (27, 25, 0)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def shared_chord_diamond_fixture(seed: int) -> dict[str, Any]:
+    if seed in (12000, 12002):
+        return {
+            "seed": seed,
+            "kind": "repairable_shared_chord_diamond_hodge_and_mayer_vietoris_defect",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_chord": INITIAL_PRICING_CHORD_P1_PY,
+                "tax_chord": INITIAL_TAX_CHORD_P1_P2_PY,
+                "settlement_chord": INITIAL_SETTLEMENT_CHORD_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 12001:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_lower_unfilled_legs_and_shared_chord",
+            "locked_workers": ["worker-1"],
+            "infeasible_constraint": (
+                "Legacy shared-chord diamond hardware lock: `tax_chord.py` is locked in read-only ROM "
+                "with `lower_unfilled_legs = [-4, -3]` (`e_harm = 24 > 0`) and `tax_shared_chord_e0 = 0`, "
+                "while the LGGR shared-chord diamond merge gate requires zero harmonic counter-flow (`e_harm == 0`), "
+                "zero 2-cell curl (`e_co == 0`), and coordinated shared-chord `e0 = 1`. "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_chord": INITIAL_PRICING_CHORD_P1_PY,
+                "tax_chord": INITIAL_TAX_CHORD_P1_P2_PY,
+                "settlement_chord": INITIAL_SETTLEMENT_CHORD_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported shared_chord_diamond seed {seed}")
+
+
+class SharedChordDiamondCodeWorkspace:
+    """Workspace for the 3-agent shared-chord bicyclic diamond Hodge & Mayer-Vietoris swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in SHARED_CHORD_DIAMOND_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = SHARED_CHORD_DIAMOND_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_shared_chord_diamond_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_chord.py": "def compute_pricing_chord(items, discount_bps) -> dict",
+                    "tax_chord.py": "def compute_tax_chord(quote, tax_bps) -> dict",
+                    "settlement_chord.py": "def compute_settlement_chord(taxed_quote, fee_bps) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_shared_chord_diamond_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_shared_chord_diamond_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; shared-chord diamond Hodge decomposition and Mayer-Vietoris coupling are checked at merge gate",
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
