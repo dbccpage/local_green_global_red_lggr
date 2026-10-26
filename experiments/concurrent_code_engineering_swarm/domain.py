@@ -17,6 +17,7 @@ from lggr.streaming import (
     StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebaseProductOfExpertsMonitor,
+    StreamingCodebaseProductRetractionMonitor,
     StreamingCodebaseProjectiveTowerMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
@@ -11401,6 +11402,224 @@ class ClosedLoopRepairCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+# ---------------------------------------------------------------------------
+# Product Retraction Non-Injective Projection vs. Section-Retraction Lift Workspace (Test 74, Theorem 139)
+# ---------------------------------------------------------------------------
+
+PRODUCT_RETRACTION_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_ret",
+    "worker-1": "tax_ret",
+    "worker-2": "settlement_ret",
+}
+
+INITIAL_PRICING_RET_P1_PY = StreamingCodebaseProductRetractionMonitor.PHASE_1_PRICING_RET_SOURCE
+INITIAL_PRICING_RET_P2_P3_PY = StreamingCodebaseProductRetractionMonitor.PHASE_2_PRICING_RET_SOURCE
+INITIAL_PRICING_RET_P2_PY = INITIAL_PRICING_RET_P2_P3_PY
+INITIAL_PRICING_RET_P3_PY = INITIAL_PRICING_RET_P2_P3_PY
+
+INITIAL_TAX_RET_P1_PY = StreamingCodebaseProductRetractionMonitor.PHASE_1_TAX_RET_SOURCE
+INITIAL_TAX_RET_P2_PY = StreamingCodebaseProductRetractionMonitor.PHASE_2_TAX_RET_SOURCE
+INITIAL_TAX_RET_P1_P2_PY = INITIAL_TAX_RET_P1_PY
+INITIAL_TAX_RET_P3_PY = StreamingCodebaseProductRetractionMonitor.PHASE_3_TAX_RET_SOURCE
+
+INITIAL_SETTLEMENT_RET_P1_P2_PY = StreamingCodebaseProductRetractionMonitor.PHASE_1_SETTLEMENT_RET_SOURCE
+INITIAL_SETTLEMENT_RET_P3_PY = StreamingCodebaseProductRetractionMonitor.PHASE_3_SETTLEMENT_RET_SOURCE
+
+
+def run_product_retraction_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_ret`, `tax_ret`, or `settlement_ret`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_ret":
+            fn = ns.get("quote_ret_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_ret_pricing"}
+            res = fn(990)
+            prod_res = res.get("product_residual_fourths") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and prod_res in (0, 2, 4)
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+
+        if module_name == "tax_ret":
+            fn = ns.get("compute_ret_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_ret_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "product_residual_fourths": 0,
+                }
+            )
+            rank = res.get("retracted_fiber_rank") if isinstance(res, dict) else None
+            collapsed = res.get("collapsed_fiber_deficit") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and rank in (2, 4)
+                and collapsed == 4 - rank
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_ret":
+            fn = ns.get("settle_ret_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_ret_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "product_residual_fourths": 0,
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "product_residual_fourths": 0,
+                    "retracted_fiber_rank": 4,
+                    "collapsed_fiber_deficit": 0,
+                    "left_inverse_verified": True,
+                },
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("merchant_payout_cents") == 873
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and res.get("ret_surcharge_cents") == 0
+                and res.get("product_residual_fourths") == 0
+                and res.get("collapsed_fiber_deficit") == 0
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def product_retraction_fixture(seed: int) -> dict[str, Any]:
+    """Build initial 3-module workspace state for product-retraction swarm (seeds 13600, 13601, 13602)."""
+    infeasible = seed == 13601
+    return {
+        "seed": seed,
+        "kind": (
+            "infeasible_hardware_locked_non_injective_rank_two"
+            if infeasible
+            else "repairable_non_injective_projection_and_section_retraction_lift"
+        ),
+        "sources": {
+            "pricing_ret": INITIAL_PRICING_RET_P1_PY,
+            "tax_ret": INITIAL_TAX_RET_P1_PY,
+            "settlement_ret": INITIAL_SETTLEMENT_RET_P1_P2_PY,
+        },
+        "locked_workers": ["worker-1"] if infeasible else [],
+        "infeasible_constraint": (
+            "Hardware ROM locks `tax_ret.py` (`worker-1`) to `retracted_fiber_rank = 2` "
+            "(leaving `collapsed_fiber_deficit = 4 - 2 = 2 > 0` and `ret_surcharge_cents >= 4 > 0`), "
+            "whereas the LGGR section-retraction merge gate requires full 4-fiber left-inverse lift "
+            "`retracted_fiber_rank == 4` (`collapsed_fiber_deficit == 0`). Escalate with reason."
+            if infeasible
+            else None
+        ),
+        "escalations": {},
+    }
+
+
+class ProductRetractionCodeWorkspace:
+    """Role-scoped tool dispatch for the 3-agent product-retraction code-engineering swarm."""
+
+    def __init__(self, state: dict[str, Any] | int) -> None:
+        if isinstance(state, int):
+            self.state = product_retraction_fixture(state)
+        else:
+            self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in PRODUCT_RETRACTION_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = PRODUCT_RETRACTION_WORKER_MODULES[worker]
+
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_product_retraction_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_ret.py": "def quote_ret_pricing(gross_cents: int = 990) -> dict",
+                    "tax_ret.py": "def compute_ret_tax(pricing_out: dict) -> dict",
+                    "settlement_ret.py": "def settle_ret_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_product_retraction_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_product_retraction_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; left-inverse section-retraction lift (prod_res=0, rank=4) is checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
 
 

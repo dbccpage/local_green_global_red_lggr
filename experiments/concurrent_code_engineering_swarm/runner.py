@@ -54,6 +54,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseProductOfExpertsMonitor,
+    StreamingCodebaseProductRetractionMonitor,
     StreamingCodebaseProjectiveTowerMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
@@ -100,6 +101,7 @@ from .domain import (
     POE_VETO_WORKER_MODULES,
     POLICY_RATCHET_WORKER_MODULES,
     POLICY_WORKER_MODULES,
+    PRODUCT_RETRACTION_WORKER_MODULES,
     PROJECTIVE_TOWER_WORKER_MODULES,
     QUORUM_WORKER_MODULES,
     REGGE_WORKER_MODULES,
@@ -149,6 +151,7 @@ from .domain import (
     PolicyRatchetCodeWorkspace,
     PolicyReversalCodeWorkspace,
     ProductOfExpertsCodeWorkspace,
+    ProductRetractionCodeWorkspace,
     ProjectiveTowerCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
@@ -191,6 +194,7 @@ from .domain import (
     poe_veto_fixture,
     policy_fixture,
     policy_ratchet_fixture,
+    product_retraction_fixture,
     projective_tower_fixture,
     quorum_fixture,
     regge_fixture,
@@ -205,6 +209,7 @@ from .domain import (
     run_non_abelian_braid_local_unit_tests,
     run_poe_veto_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
+    run_product_retraction_local_unit_tests,
     run_projective_tower_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
     run_side_info_capacity_local_unit_tests,
@@ -11113,6 +11118,282 @@ def closed_loop_repair_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Product Retraction Non-Injective Projection vs. Section-Retraction Lift Campaign (Test 74, Theorem 139)
+# ---------------------------------------------------------------------------
+
+
+def product_retraction_system_prompt(worker: str, arm: str) -> str:
+    mod_name = PRODUCT_RETRACTION_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "product-retraction non-injective projection & section-retraction lift settlement pipeline "
+        "(`pricing_ret.py` -> `tax_ret.py` -> `settlement_ret.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`non_injective_projection_baseline_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_LOCAL_MARGINAL_PROJECTION`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`marginal_product_retraction_only_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseProductRetractionMonitor.PHASE_2_PRICING_RET_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`marginal_product_retraction_only_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseProductRetractionMonitor.PHASE_2_TAX_RET_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`marginal_product_retraction_only_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_left_inverse_section_retraction_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseProductRetractionMonitor.PHASE_3_PRICING_RET_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_left_inverse_section_retraction_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseProductRetractionMonitor.PHASE_3_TAX_RET_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_left_inverse_section_retraction_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseProductRetractionMonitor.PHASE_3_SETTLEMENT_RET_SOURCE
+        + "```\n"
+    )
+
+
+def product_retraction_merge_gate(
+    events: Events,
+    ws: ProductRetractionCodeWorkspace,
+    monitor: StreamingCodebaseProductRetractionMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_product_retraction_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_ret", "tax_ret", "settlement_ret")
+    }
+    eval_res = monitor.evaluate_product_retraction_modules(
+        f"{arm}-{wave_label}",
+        pricing_ret_source=sources["pricing_ret"],
+        tax_ret_source=sources["tax_ret"],
+        settlement_ret_source=sources["settlement_ret"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "product_residual_fourths": eval_res["product_residual_fourths"],
+            "retracted_fiber_rank": eval_res["retracted_fiber_rank"],
+            "collapsed_fiber_deficit": eval_res["collapsed_fiber_deficit"],
+            "left_inverse_verified": eval_res["left_inverse_verified"],
+            "ret_surcharge_cents": eval_res["ret_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in PRODUCT_RETRACTION_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_LOCAL_MARGINAL_PROJECTION",
+                "note": "Correlated table (prod_res=4) and 2-fiber projection (rank=2) satisfy isolated module bounds locally.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "CLEAR_PRODUCT_RESIDUAL_WITHOUT_SECTION_LIFT",
+                "product_residual_fourths": eval_res["product_residual_fourths"],
+                "retracted_fiber_rank": eval_res["retracted_fiber_rank"],
+                "collapsed_fiber_deficit": eval_res["collapsed_fiber_deficit"],
+                "left_inverse_verified": eval_res["left_inverse_verified"],
+                "ret_surcharge_cents": eval_res["ret_surcharge_cents"],
+                "note": "Marginal product retraction clears prod_res=0 yet retains non-injective rank=2 < 4 (collapsed_deficit=2, surcharge=4).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "product_residual_fourths": eval_res["product_residual_fourths"],
+                "retracted_fiber_rank": eval_res["retracted_fiber_rank"],
+                "collapsed_fiber_deficit": eval_res["collapsed_fiber_deficit"],
+                "left_inverse_verified": eval_res["left_inverse_verified"],
+                "ret_surcharge_cents": eval_res["ret_surcharge_cents"],
+                "action_required": "ENFORCE_LEFT_INVERSE_SECTION_RETRACTION_RANK_4",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def product_retraction_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(PRODUCT_RETRACTION_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = product_retraction_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = ProductRetractionCodeWorkspace(base_state)
+            monitor = StreamingCodebaseProductRetractionMonitor(
+                scope_id=f"product-retraction-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = product_retraction_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": product_retraction_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{PRODUCT_RETRACTION_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = product_retraction_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_PRODUCT_RETRACTION_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_product_residual_fourths": eval_res["product_residual_fourths"],
+                "final_retracted_fiber_rank": eval_res["retracted_fiber_rank"],
+                "final_collapsed_fiber_deficit": eval_res["collapsed_fiber_deficit"],
+                "final_left_inverse_verified": eval_res["left_inverse_verified"],
+                "final_ret_surcharge_cents": eval_res["ret_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.product_retraction_code_engineering_swarm.v1",
+        "topology": "product_retraction",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent product-retraction non-injective projection & section-retraction lift "
+            "Python code-engineering swarm (`pricing_ret` -> `tax_ret` -> `settlement_ret`) comparing "
+            "correlated 2x2 table (prod_res = 4) with non-injective 2-fiber projection rank = 2 (A), "
+            "marginal product retraction (prod_res = 0) with unlifted 2-fiber projection rank = 2 (B), "
+            "and product retraction (prod_res = 0) with full 4-fiber left-inverse section-retraction lift rank = 4 (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -11211,6 +11492,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = threshold_governance_campaign(client, events, config)
         elif config.get("topology") == "closed_loop_repair":
             summary = closed_loop_repair_campaign(client, events, config)
+        elif config.get("topology") == "product_retraction":
+            summary = product_retraction_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -11280,6 +11563,7 @@ def main() -> None:
             "weighted_relaxation",
             "threshold_governance",
             "closed_loop_repair",
+            "product_retraction",
         ],
         default="linear",
     )
@@ -11393,6 +11677,8 @@ def main() -> None:
         seeds = [13400, 13401, 13402]
     elif args.topology == "closed_loop_repair":
         seeds = [13500, 13501, 13502]
+    elif args.topology == "product_retraction":
+        seeds = [13600, 13601, 13602]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -11880,6 +12166,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = closed_loop_repair_campaign(client, events, config)
+    elif args.topology == "product_retraction":
+        config = {
+            "topology": "product_retraction",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = product_retraction_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
