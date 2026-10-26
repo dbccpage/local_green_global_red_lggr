@@ -34,6 +34,7 @@ from lggr.streaming import (
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
+    StreamingCodebaseGracefulSheddingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -60,6 +61,7 @@ from .domain import (
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
+    GRACEFUL_SHEDDING_WORKER_MODULES,
     GRAM_WORKER_MODULES,
     JACOBIAN_WORKER_MODULES,
     KINDUCTION_WORKER_MODULES,
@@ -88,6 +90,7 @@ from .domain import (
     DisagreementCouncilCodeWorkspace,
     DynamicSchemaCodeWorkspace,
     FiberSplittingCodeWorkspace,
+    GracefulSheddingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
@@ -109,6 +112,7 @@ from .domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    graceful_shedding_fixture,
     gram_fixture,
     jacobian_fixture,
     kinduction_fixture,
@@ -5317,6 +5321,244 @@ def adversarial_schema_campaign(client: CodeBatchClient, events: Events, config:
     return summary
 
 
+# ---------------------------------------------------------------------------
+# 23. Variable-Duration Incident Burst & Graceful-Degradation Shedding Swarm
+#     (--topology graceful_shedding, Theorem 118)
+# ---------------------------------------------------------------------------
+
+
+def graceful_shedding_system_prompt(worker: str, arm: str) -> str:
+    module_name = GRACEFUL_SHEDDING_WORKER_MODULES[worker]
+    return (
+        f"You are `{worker}` owning `{module_name}.py` in a concurrent 3-agent Python "
+        f"code-engineering swarm (Arm `{arm}`). Always call `inspect_workspace` first.\n"
+        "- If `infeasible_constraint` is not null, call `escalate` with a clear explanation of the hardware lock.\n"
+        "- If `merge_gate_feedback.action_required` is `HOLD_DEFERRED_OVERLOAD_SLA` (Arm A), keep your current source code "
+        "unchanged by calling `submit_module_patch` with the exact existing `source_code`.\n"
+        "- If `merge_gate_feedback.action_required` is `INVERTED_PRIORITY_SHED_INCIDENT_1` (Arm B), `worker-1` (`tax_sla`) "
+        "sets `shed_incident_indices = [1]` and `start_ticks = [0, 0, 0]`, and `worker-2` (`settlement_sla`) keeps "
+        "`shedding_surcharge_cents = 10 * missed + excess_loss` (`7`, `merchant_payout_cents = 866`).\n"
+        "- If `merge_gate_feedback.action_required` is `REPAIR_GOVERNED_SHED_INCIDENT_3` (Arm C):\n"
+        "  * `worker-0` (`pricing_sla.py`): preserve `net_cents = 900`, `fee_cents = 27`, `horizon_drift_ceiling = 7`, "
+        "and the 3-incident burst specification.\n"
+        "  * `worker-1` (`tax_sla.py`): set `shed_incident_indices = [3]` and `start_ticks = [0, 0, 0]`.\n"
+        "  * `worker-2` (`settlement_sla.py`): set `shedding_surcharge_cents = 0` and "
+        "`merchant_payout_cents = net_cents - fee_cents` (`873`) so `873 + 27 + 90 = 990`."
+    )
+
+
+def graceful_shedding_merge_gate(
+    events: Events,
+    ws: GracefulSheddingCodeWorkspace,
+    monitor: StreamingCodebaseGracefulSheddingMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    from .domain import run_graceful_shedding_local_unit_tests
+
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_graceful_shedding_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_sla", "tax_sla", "settlement_sla")
+    }
+    eval_res = monitor.evaluate_graceful_shedding_modules(
+        f"{arm}-{wave_label}",
+        module_sources=sources,
+        local_test_results=verdicts,
+        subtotal_cents=int(ws.state["subtotal_cents"]),
+        discount_bps=int(ws.state["discount_bps"]),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "shed_incident_indices": eval_res["shed_incident_indices"],
+            "missed_deadline_count": eval_res["missed_deadline_count"],
+            "shed_criticality_loss": eval_res["shed_criticality_loss"],
+            "excess_criticality_loss": eval_res["excess_criticality_loss"],
+            "retained_criticality": eval_res["retained_criticality"],
+            "shedding_surcharge_cents": eval_res["shedding_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in GRACEFUL_SHEDDING_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_DEFERRED_OVERLOAD_SLA",
+                "note": "Multi-tick deferral without shedding baseline: only isolated module unit test status is visible.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "INVERTED_PRIORITY_SHED_INCIDENT_1",
+                "missed_deadline_count": eval_res["missed_deadline_count"],
+                "shed_criticality_loss": eval_res["shed_criticality_loss"],
+                "excess_criticality_loss": eval_res["excess_criticality_loss"],
+                "note": "Priority-inverted shedding: sheds high-criticality incident 1 (loss 10 > min_loss 3).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "shed_incident_indices": eval_res["shed_incident_indices"],
+                "missed_deadline_count": eval_res["missed_deadline_count"],
+                "shed_criticality_loss": eval_res["shed_criticality_loss"],
+                "excess_criticality_loss": eval_res["excess_criticality_loss"],
+                "retained_criticality": eval_res["retained_criticality"],
+                "shedding_surcharge_cents": eval_res["shedding_surcharge_cents"],
+                "action_required": "REPAIR_GOVERNED_SHED_INCIDENT_3",
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def graceful_shedding_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(GRACEFUL_SHEDDING_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = graceful_shedding_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = GracefulSheddingCodeWorkspace(base_state)
+            monitor = StreamingCodebaseGracefulSheddingMonitor(
+                scope_id=f"graceful-shedding-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = graceful_shedding_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": graceful_shedding_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{GRACEFUL_SHEDDING_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = graceful_shedding_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_GRACEFUL_SHEDDING_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_shed_incident_indices": eval_res["shed_incident_indices"],
+                "final_missed_deadline_count": eval_res["missed_deadline_count"],
+                "final_shed_criticality_loss": eval_res["shed_criticality_loss"],
+                "final_excess_criticality_loss": eval_res["excess_criticality_loss"],
+                "final_retained_criticality": eval_res["retained_criticality"],
+                "final_shedding_surcharge_cents": eval_res["shedding_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.graceful_shedding_code_engineering_swarm.v1",
+        "topology": "graceful_shedding",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent variable-duration burst & graceful-degradation shedding "
+            "Python code-engineering swarm (`pricing_sla` -> `tax_sla` -> `settlement_sla`) comparing "
+            "multi-tick deferral without shedding (A), priority-inverted shedding of high-criticality "
+            "Incident 1 (B), and governed minimum-criticality shedding of Incident 3 (`kappa_3 = 3`, "
+            "retaining `18/21` criticality) (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -5373,6 +5615,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = schema_synthesis_campaign(client, events, config)
         elif config.get("topology") == "adversarial_schema":
             summary = adversarial_schema_campaign(client, events, config)
+        elif config.get("topology") == "graceful_shedding":
+            summary = graceful_shedding_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -5421,6 +5665,7 @@ def main() -> None:
             "path_kernel",
             "schema_synthesis",
             "adversarial_schema",
+            "graceful_shedding",
         ],
         default="linear",
     )
@@ -5492,6 +5737,8 @@ def main() -> None:
         seeds = [11300, 11301, 11302]
     elif args.topology == "adversarial_schema":
         seeds = [11400, 11401, 11402]
+    elif args.topology == "graceful_shedding":
+        seeds = [11500, 11501, 11502]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -5748,6 +5995,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = adversarial_schema_campaign(client, events, config)
+    elif args.topology == "graceful_shedding":
+        config = {
+            "topology": "graceful_shedding",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = graceful_shedding_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

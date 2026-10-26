@@ -46,6 +46,7 @@ from lggr.streaming import (
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
+    StreamingCodebaseGracefulSheddingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -6018,6 +6019,48 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_ADVERSARIAL_SCHEMA_AUTHENTICATED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_graceful_shedding_codebase_variable_duration_burst_audit(self) -> None:
+        """Verify Theorem 118: Variable-duration incident burst & graceful-degradation shedding."""
+        mon = StreamingCodebaseGracefulSheddingMonitor(
+            scope_id="unit-codebase-graceful-shedding-scope",
+        )
+        obs = mon.evaluate_three_phase_graceful_shedding_audit(
+            "codebase-graceful-shedding-eval-01",
+        )
+        self.assertEqual(obs["phase_1_missed_deadlines"], 1)
+        self.assertEqual(obs["phase_1_excess_criticality_loss"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "VARIABLE_DURATION_DEADLINE_OVERLOAD_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_2_missed_deadlines"], 0)
+        self.assertEqual(obs["phase_2_excess_criticality_loss"], 7)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 7)
+        self.assertEqual(obs["phase_2_payout_cents"], 866)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "PRIORITY_INVERTED_SHEDDING_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_3_missed_deadlines"], 0)
+        self.assertEqual(obs["phase_3_excess_criticality_loss"], 0)
+        self.assertEqual(obs["phase_3_retained_criticality"], 18)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_GRACEFUL_SHEDDING_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_GRACEFUL_SHEDDING_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

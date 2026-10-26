@@ -55,6 +55,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     GRAM_SETTLEMENT_RESTORED_SOURCE,
     GRAM_TAX_DROPOUT_SOURCE,
     GRAM_TAX_RESTORED_SOURCE,
+    INITIAL_PRICING_SLA_PY,
+    INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
+    INITIAL_TAX_SLA_DEFERRED_PY,
     JACOBIAN_PRICING_SOURCE,
     JACOBIAN_SETTLEMENT_BLIND_SOURCE,
     JACOBIAN_SETTLEMENT_OBSERVABLE_SOURCE,
@@ -84,6 +87,10 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     QUORUM_SETTLEMENT_STRICT_SOURCE,
     QUORUM_TAX_ALIGNED_SOURCE,
     QUORUM_TAX_DRIFT_SOURCE,
+    REGGE_WORKER_MODULES,
+    REPAIRED_SETTLEMENT_SLA_GOVERNED_PY,
+    REPAIRED_TAX_SLA_GOVERNED_PY,
+    REPAIRED_TAX_SLA_INVERTED_PY,
     ROLE_PRICING_ANCHOR_SRC,
     ROLE_SETTLEMENT_DEDUP_SRC,
     ROLE_SETTLEMENT_RAW_P1_SRC,
@@ -112,6 +119,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     DisagreementCouncilCodeWorkspace,
     DynamicSchemaCodeWorkspace,
     FiberSplittingCodeWorkspace,
+    GracefulSheddingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
@@ -133,6 +141,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    graceful_shedding_fixture,
     gram_fixture,
     jacobian_fixture,
     kinduction_fixture,
@@ -149,6 +158,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_cptp_local_unit_tests,
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
+    run_graceful_shedding_local_unit_tests,
     run_gram_local_unit_tests,
     run_jacobian_local_unit_tests,
     run_kinduction_local_unit_tests,
@@ -183,6 +193,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     cptp_campaign,
     dfa_campaign,
     diamond_campaign,
+    graceful_shedding_campaign,
     gram_campaign,
     jacobian_campaign,
     kinduction_campaign,
@@ -212,6 +223,7 @@ from lggr.streaming import (
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
+    StreamingCodebaseGracefulSheddingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -4717,6 +4729,228 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if adv_events.exists() and adv_summary.exists():
             replayed = replay(adv_events)
             self.assertEqual(replayed["schema"], "lggr.adversarial_schema_side_channel_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+
+class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
+    """Tests for `--topology graceful_shedding` (Theorem 118)."""
+
+    def test_graceful_shedding_local_green_global_red_and_governed_repair(self) -> None:
+        """Verify 3-phase variable-duration burst and graceful-degradation shedding merge gate."""
+        state = graceful_shedding_fixture(11500)
+        for mod, src in state["sources"].items():
+            res = run_graceful_shedding_local_unit_tests(mod, src)
+            self.assertTrue(res["passed"], f"{mod} failed local unit tests: {res}")
+
+        mon = StreamingCodebaseGracefulSheddingMonitor(scope_id="test-graceful-shedding-merge")
+        p1 = mon.evaluate_graceful_shedding_modules(
+            "wave-0-deferred",
+            module_sources=state["sources"],
+            local_test_results={"pricing_sla": True, "tax_sla": True, "settlement_sla": True},
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["missed_deadline_count"], 1)
+        self.assertEqual(p1["excess_criticality_loss"], 0)
+        self.assertEqual(p1["shedding_surcharge_cents"], 10)
+        self.assertEqual(p1["merchant_payout_cents"], 863)
+        self.assertEqual(p1["status"], "VARIABLE_DURATION_DEADLINE_OVERLOAD_CODEBASE_LGGR")
+
+        p2_sources = {
+            "pricing_sla": INITIAL_PRICING_SLA_PY,
+            "tax_sla": REPAIRED_TAX_SLA_INVERTED_PY,
+            "settlement_sla": INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
+        }
+        p2 = mon.evaluate_graceful_shedding_modules(
+            "wave-1-inverted",
+            module_sources=p2_sources,
+            local_test_results={"pricing_sla": True, "tax_sla": True, "settlement_sla": True},
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["missed_deadline_count"], 0)
+        self.assertEqual(p2["excess_criticality_loss"], 7)
+        self.assertEqual(p2["shedding_surcharge_cents"], 7)
+        self.assertEqual(p2["merchant_payout_cents"], 866)
+        self.assertEqual(p2["status"], "PRIORITY_INVERTED_SHEDDING_CODEBASE_LGGR")
+
+        p3_sources = {
+            "pricing_sla": INITIAL_PRICING_SLA_PY,
+            "tax_sla": REPAIRED_TAX_SLA_GOVERNED_PY,
+            "settlement_sla": REPAIRED_SETTLEMENT_SLA_GOVERNED_PY,
+        }
+        p3 = mon.evaluate_graceful_shedding_modules(
+            "wave-1-governed",
+            module_sources=p3_sources,
+            local_test_results={"pricing_sla": True, "tax_sla": True, "settlement_sla": True},
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["missed_deadline_count"], 0)
+        self.assertEqual(p3["excess_criticality_loss"], 0)
+        self.assertEqual(p3["retained_criticality"], 18)
+        self.assertEqual(p3["shedding_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+        self.assertEqual(p3["status"], "CODEBASE_GRACEFUL_SHEDDING_COHERENT_LGGG")
+
+    def test_graceful_shedding_sandbox_and_locked_worker_refusal(self) -> None:
+        """Verify AST sandbox import blocking and locked-module patch refusal."""
+        bad = run_graceful_shedding_local_unit_tests(
+            "pricing_sla",
+            "import subprocess\ndef compute_pricing_sla_quote(s, d): return {}\n",
+        )
+        self.assertFalse(bad["passed"])
+
+        ws_locked = GracefulSheddingCodeWorkspace(graceful_shedding_fixture(11501))
+        refused = ws_locked.tool(
+            "worker-1",
+            "submit_module_patch",
+            {"source_code": REPAIRED_TAX_SLA_GOVERNED_PY},
+        )
+        self.assertFalse(refused["accepted"])
+
+    def test_graceful_shedding_concurrent_campaign_replay_and_tamper_detection(self) -> None:
+        """Verify 3-arm concurrent campaign, deterministic replay, and tamper detection."""
+
+        def stub_graceful_shedding_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_msg = messages[0]["content"]
+            worker = sys_msg.split("You are `")[1].split("`")[0]
+            arm = sys_msg.split("(Arm `")[1].split("`)")[0]
+
+            if messages[-1]["role"] == "user":
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(messages[-1]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Hardware lock prevents shedding incident 3 under fixed tau_horizon=7."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    src = {
+                        "worker-0": INITIAL_PRICING_SLA_PY,
+                        "worker-1": INITIAL_TAX_SLA_DEFERRED_PY,
+                        "worker-2": INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
+                    }[worker]
+                    tool_call = {
+                        "id": f"call_patch_a_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": src}),
+                        },
+                    }
+                elif arm == "B":
+                    src = {
+                        "worker-0": INITIAL_PRICING_SLA_PY,
+                        "worker-1": REPAIRED_TAX_SLA_INVERTED_PY,
+                        "worker-2": INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
+                    }[worker]
+                    tool_call = {
+                        "id": f"call_patch_b_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": src}),
+                        },
+                    }
+                else:
+                    src = {
+                        "worker-0": INITIAL_PRICING_SLA_PY,
+                        "worker-1": REPAIRED_TAX_SLA_GOVERNED_PY,
+                        "worker-2": REPAIRED_SETTLEMENT_SLA_GOVERNED_PY,
+                    }[worker]
+                    tool_call = {
+                        "id": f"call_patch_c_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": src}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": "stub-graceful-shedding",
+                    "model": payload["model"],
+                    "usage": {"prompt_tokens": 100, "completion_tokens": 30, "cost": "0.0001"},
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "graceful_shedding",
+                "seeds": [11500, 11501],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_graceful_shedding_transport)
+            summary = graceful_shedding_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.graceful_shedding_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["missed_deadline_count"] = int(gate_rec["missed_deadline_count"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_graceful_shedding_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live graceful_shedding pilot evidence offline if present."""
+        shed_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "graceful_shedding_pilot_run"
+            / "events.jsonl"
+        )
+        shed_summary = shed_events.with_name("summary.json")
+        if shed_events.exists() and shed_summary.exists():
+            replayed = replay(shed_events)
+            self.assertEqual(replayed["schema"], "lggr.graceful_shedding_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

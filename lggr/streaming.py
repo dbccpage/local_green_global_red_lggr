@@ -29489,6 +29489,494 @@ class StreamingCodebaseAdversarialSchemaMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseGracefulSheddingMonitor:
+    """Audit variable-duration incident bursts and graceful-degradation shedding
+    across concurrent code-engineering swarm modules (`pricing_sla`, `tax_sla`,
+    `settlement_sla`), composing `StreamingVariableDurationGracefulSheddingMonitor`,
+    `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor`
+    (Theorem 118).
+    """
+
+    DEFAULT_PRICING_SOURCE = (
+        "def compute_pricing_sla_quote(subtotal_cents: int, discount_bps: int) -> dict:\n"
+        "    discount = (subtotal_cents * discount_bps) // 10000\n"
+        "    net_cents = subtotal_cents - discount\n"
+        "    fee_cents = (net_cents * 300) // 10000\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'horizon_drift_ceiling': 7,\n"
+        "        'per_incident_lease_budget': 4,\n"
+        "        'incidents': [\n"
+        "            {'incident_index': 1, 'duration_ticks': 2, 'sla_deadline_tick': 2, 'min_weighted_pareto_floor': 4, 'criticality_weight': 10, 'lease_delta': [2, 0, 0]},\n"
+        "            {'incident_index': 2, 'duration_ticks': 1, 'sla_deadline_tick': 1, 'min_weighted_pareto_floor': 3, 'criticality_weight': 8, 'lease_delta': [0, 1, 0]},\n"
+        "            {'incident_index': 3, 'duration_ticks': 1, 'sla_deadline_tick': 2, 'min_weighted_pareto_floor': 4, 'criticality_weight': 3, 'lease_delta': [0, 0, 1]},\n"
+        "        ],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_DEFERRED_SOURCE = (
+        "def compute_tax_sla_schedule(quote: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    tax_cents = (net_cents * 1000) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'expansion_denied': True,\n"
+        "        'shed_incident_indices': [],\n"
+        "        'start_ticks': [0, 0, 2],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_INVERTED_SHED_SOURCE = (
+        "def compute_tax_sla_schedule(quote: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    tax_cents = (net_cents * 1000) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'expansion_denied': True,\n"
+        "        'shed_incident_indices': [1],\n"
+        "        'start_ticks': [0, 0, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_GOVERNED_SHED_SOURCE = (
+        "def compute_tax_sla_schedule(quote: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    tax_cents = (net_cents * 1000) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'expansion_denied': True,\n"
+        "        'shed_incident_indices': [3],\n"
+        "        'start_ticks': [0, 0, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_DEFERRED_SOURCE = (
+        "def route_settlement_sla_payout(quote: dict, tax_report: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    fee_cents = int(quote['fee_cents'])\n"
+        "    tax_cents = int(tax_report['tax_cents'])\n"
+        "    shed_indices = list(tax_report['shed_incident_indices'])\n"
+        "    start_ticks = list(tax_report['start_ticks'])\n"
+        "    incidents = list(quote['incidents'])\n"
+        "    missed = 0\n"
+        "    shed_loss = 0\n"
+        "    for idx, inc in enumerate(incidents):\n"
+        "        inc_id = int(inc['incident_index'])\n"
+        "        if inc_id in shed_indices:\n"
+        "            shed_loss += int(inc['criticality_weight'])\n"
+        "        else:\n"
+        "            if start_ticks[idx] + int(inc['duration_ticks']) > int(inc['sla_deadline_tick']):\n"
+        "                missed += 1\n"
+        "    min_loss = 3\n"
+        "    excess_loss = max(0, shed_loss - min_loss)\n"
+        "    shedding_surcharge_cents = 10 * missed + excess_loss\n"
+        "    merchant_payout_cents = net_cents - fee_cents - shedding_surcharge_cents\n"
+        "    return {\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'shed_incident_indices': shed_indices,\n"
+        "        'start_ticks': start_ticks,\n"
+        "        'missed_deadline_count': missed,\n"
+        "        'shed_criticality_loss': shed_loss,\n"
+        "        'excess_criticality_loss': excess_loss,\n"
+        "        'retained_criticality': 21 - shed_loss,\n"
+        "        'shedding_surcharge_cents': shedding_surcharge_cents,\n"
+        "        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_GOVERNED_SHED_SOURCE = (
+        "def route_settlement_sla_payout(quote: dict, tax_report: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    fee_cents = int(quote['fee_cents'])\n"
+        "    tax_cents = int(tax_report['tax_cents'])\n"
+        "    shed_indices = list(tax_report['shed_incident_indices'])\n"
+        "    start_ticks = list(tax_report['start_ticks'])\n"
+        "    shed_loss = 3 if shed_indices == [3] else 10\n"
+        "    missed = 0 if shed_indices == [3] and start_ticks[:2] == [0, 0] else 1\n"
+        "    excess_loss = max(0, shed_loss - 3)\n"
+        "    shedding_surcharge_cents = 0 if (missed == 0 and excess_loss == 0) else (10 * missed + excess_loss)\n"
+        "    merchant_payout_cents = net_cents - fee_cents - shedding_surcharge_cents\n"
+        "    return {\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'shed_incident_indices': shed_indices,\n"
+        "        'start_ticks': start_ticks,\n"
+        "        'missed_deadline_count': missed,\n"
+        "        'shed_criticality_loss': shed_loss,\n"
+        "        'excess_criticality_loss': excess_loss,\n"
+        "        'retained_criticality': 21 - shed_loss,\n"
+        "        'shedding_surcharge_cents': shedding_surcharge_cents,\n"
+        "        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
+
+    def __init__(self, scope_id: str = "streaming-codebase-graceful-shedding-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.shedding_monitor = StreamingVariableDurationGracefulSheddingMonitor(
+            scope_id=f"{self.scope_id}:graceful-shedding"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}:fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_graceful_shedding_modules(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        subtotal_cents: int = 1000,
+        discount_bps: int = 1000,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        required = ("pricing_sla", "tax_sla", "settlement_sla")
+        for mod_name in required:
+            if mod_name not in module_sources:
+                raise ValidationError(f"missing module source for {mod_name}")
+            if mod_name not in local_test_results:
+                raise ValidationError(f"missing local_test_results entry for {mod_name}")
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_sla", module_sources["pricing_sla"]
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_sla", module_sources["tax_sla"]
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_sla", module_sources["settlement_sla"]
+        )
+
+        for fn_name, ns, mod_name in (
+            ("compute_pricing_sla_quote", p_ns, "pricing_sla"),
+            ("compute_tax_sla_schedule", t_ns, "tax_sla"),
+            ("route_settlement_sla_payout", s_ns, "settlement_sla"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} must define callable {fn_name}")
+
+        quote = dict(p_ns["compute_pricing_sla_quote"](subtotal_cents, discount_bps))
+        tax_report = dict(t_ns["compute_tax_sla_schedule"](quote))
+        settlement = dict(s_ns["route_settlement_sla_payout"](quote, tax_report))
+
+        local_all_green = all(bool(local_test_results[m]) for m in required)
+        local_green = 1 if local_all_green else 0
+
+        net_cents = int(quote.get("net_cents", 900))
+        fee_cents = int(quote.get("fee_cents", 27))
+        tax_cents = int(tax_report.get("tax_cents", 90))
+        gross_collected_cents = int(tax_report.get("gross_collected_cents", 990))
+        expansion_denied = bool(tax_report.get("expansion_denied", True))
+        shed_indices = [int(x) for x in tax_report.get("shed_incident_indices", [])]
+        start_ticks = [int(x) for x in tax_report.get("start_ticks", [0, 0, 2])]
+        if len(start_ticks) != 3:
+            start_ticks = [0, 0, 2]
+
+        incidents_raw = list(quote.get("incidents", []))
+        if len(incidents_raw) != 3:
+            raise ValidationError("pricing_sla must provide 3 incidents")
+
+        missed_count = 0
+        shed_loss = 0
+        max_end = max(
+            (start_ticks[idx] + int(inc["duration_ticks"]) for idx, inc in enumerate(incidents_raw) if int(inc["incident_index"]) not in shed_indices),
+            default=1,
+        )
+        tick_loads = [0 for _ in range(max(1, max_end))]
+        for idx, inc in enumerate(incidents_raw):
+            inc_id = int(inc["incident_index"])
+            dur = int(inc["duration_ticks"])
+            dl = int(inc["sla_deadline_tick"])
+            flr = int(inc["min_weighted_pareto_floor"])
+            crit = int(inc["criticality_weight"])
+            if inc_id in shed_indices:
+                shed_loss += crit
+            else:
+                st = start_ticks[idx]
+                if st + dur > dl:
+                    missed_count += 1
+                for u in range(st, st + dur):
+                    tick_loads[u] += flr
+
+        peak_drift = max(tick_loads, default=0)
+        tau_h = int(quote.get("horizon_drift_ceiling", 7))
+        horizon_respected = peak_drift <= tau_h
+        min_loss = 3
+        excess_loss = max(0, shed_loss - min_loss)
+        retained_criticality = 21 - shed_loss
+
+        shedding_surcharge_cents = int(
+            settlement.get("shedding_surcharge_cents", 10 * missed_count + excess_loss)
+        )
+        merchant_payout_cents = int(settlement.get("merchant_payout_cents", 0))
+        total_accounted_cents = int(
+            settlement.get(
+                "total_accounted_cents",
+                merchant_payout_cents + fee_cents + tax_cents,
+            )
+        )
+
+        incidents_spec = []
+        for idx, inc in enumerate(incidents_raw):
+            inc_id = int(inc["incident_index"])
+            delta = list(inc["lease_delta"])
+            incidents_spec.append(
+                {
+                    "incident_index": inc_id,
+                    "duration_ticks": int(inc["duration_ticks"]),
+                    "sla_deadline_tick": int(inc["sla_deadline_tick"]),
+                    "min_weighted_pareto_floor": int(inc["min_weighted_pareto_floor"]),
+                    "criticality_weight": int(inc["criticality_weight"]),
+                    "phase_1_deferral_lease_delta": delta,
+                    "phase_1_start_tick": 0 if idx < 2 else 2,
+                    "phase_1_restores_pareto": True,
+                    "phase_1_candidate_passes": True,
+                    "phase_2_inverted_shed_lease_delta": [0, 0, 0] if inc_id == 1 else delta,
+                    "phase_2_start_tick": 0,
+                    "phase_2_shed": (inc_id == 1),
+                    "phase_2_restores_pareto": True,
+                    "phase_2_candidate_passes": True,
+                    "phase_3_governed_shed_lease_delta": [0, 0, 0] if inc_id == 3 else delta,
+                    "phase_3_start_tick": 0,
+                    "phase_3_shed": (inc_id == 3),
+                    "phase_3_restores_pareto": True,
+                    "phase_3_candidate_passes": True,
+                }
+            )
+
+        burst_rec = self.shedding_monitor.observe_burst(
+            burst_id=f"{eval_id}::burst",
+            baseline_policy=[2, 3, 0],
+            risk_weights=[2, 3, 4],
+            per_incident_lease_budget=int(quote.get("per_incident_lease_budget", 4)),
+            horizon_drift_ceiling=tau_h,
+            arrival_tick=0,
+            expansion_denied=expansion_denied,
+            incidents=incidents_spec,
+        )
+
+        settlement_conserved = (
+            merchant_payout_cents == net_cents - fee_cents
+            and shedding_surcharge_cents == 0
+            and total_accounted_cents == gross_collected_cents
+            and merchant_payout_cents + fee_cents + tax_cents == gross_collected_cents
+        )
+        shedding_optimal = (
+            horizon_respected
+            and missed_count == 0
+            and shed_indices == [3]
+            and shed_loss == min_loss
+            and excess_loss == 0
+            and retained_criticality == 18
+        )
+
+        global_green = 1 if (local_green == 1 and settlement_conserved and shedding_optimal) else 0
+        defect = global_green - local_green
+
+        mismatches: list[str] = []
+        if missed_count > 0 or not horizon_respected:
+            mismatches.append(
+                f"variable_duration_deadline_overload:missed={missed_count}:peak_drift={peak_drift}:tau_h={tau_h}"
+            )
+        if excess_loss > 0 or shed_indices != [3]:
+            mismatches.append(
+                f"suboptimal_criticality_shedding:shed={shed_indices}:shed_loss={shed_loss}:excess={excess_loss}"
+            )
+        if not settlement_conserved:
+            mismatches.append(
+                f"shedding_surcharge_or_conservation_breach:surcharge={shedding_surcharge_cents}:payout={merchant_payout_cents}:expected={net_cents - fee_cents}"
+            )
+
+        if global_green == 1:
+            status = "CODEBASE_GRACEFUL_SHEDDING_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+            directives = {
+                "worker-0": "HOLD:pricing_sla_burst_contract_verified",
+                "worker-1": "HOLD:tax_sla_governed_shed_verified",
+                "worker-2": "HOLD:settlement_sla_payout_verified",
+            }
+        elif missed_count > 0:
+            status = "VARIABLE_DURATION_DEADLINE_OVERLOAD_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "ANCHOR_PRICING_SLA:preserve net_cents=900, horizon_drift_ceiling=7, and 3-incident burst specification",
+                "worker-1": "REPAIR_TAX_SLA:set shed_incident_indices=[3] and start_ticks=[0, 0, 0]",
+                "worker-2": "REPAIR_SETTLEMENT_SLA:set shedding_surcharge_cents=0 so merchant_payout_cents=873",
+            }
+        else:
+            status = "PRIORITY_INVERTED_SHEDDING_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "ANCHOR_PRICING_SLA:preserve net_cents=900, horizon_drift_ceiling=7, and 3-incident burst specification",
+                "worker-1": "REPAIR_TAX_SLA:shed lowest-criticality incident 3 (shed_incident_indices=[3], start_ticks=[0, 0, 0]) instead of high-criticality incident 1",
+                "worker-2": "REPAIR_SETTLEMENT_SLA:set shedding_surcharge_cents=0 so merchant_payout_cents=873",
+            }
+
+        self.fiber_monitor.observe(
+            state_id=eval_id,
+            report={
+                "local_green": local_green,
+                "missed_deadline_count": missed_count,
+                "excess_criticality_loss": excess_loss,
+            },
+            query={
+                "global_green": global_green,
+                "settlement_conserved": settlement_conserved,
+                "status": status,
+            },
+        )
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "shed_incident_indices": shed_indices,
+                "start_ticks": start_ticks,
+                "missed_deadline_count": missed_count,
+                "peak_concurrent_drift": peak_drift,
+                "horizon_drift_ceiling": tau_h,
+                "shed_criticality_loss": shed_loss,
+                "minimum_criticality_loss": min_loss,
+                "excess_criticality_loss": excess_loss,
+                "retained_criticality": retained_criticality,
+                "shedding_surcharge_cents": shedding_surcharge_cents,
+                "net_cents": net_cents,
+                "fee_cents": fee_cents,
+                "tax_cents": tax_cents,
+                "gross_collected_cents": gross_collected_cents,
+                "merchant_payout_cents": merchant_payout_cents,
+                "total_accounted_cents": total_accounted_cents,
+                "settlement_conserved": settlement_conserved,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+                "variable_duration_burst_receipt": burst_rec,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def evaluate_three_phase_graceful_shedding_audit(
+        self,
+        audit_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {
+            "pricing_sla": True,
+            "tax_sla": True,
+            "settlement_sla": True,
+        }
+        p1 = self.evaluate_graceful_shedding_modules(
+            f"{aid}::phase1_deferred_overload",
+            module_sources={
+                "pricing_sla": self.DEFAULT_PRICING_SOURCE,
+                "tax_sla": self.DEFAULT_TAX_DEFERRED_SOURCE,
+                "settlement_sla": self.DEFAULT_SETTLEMENT_DEFERRED_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_graceful_shedding_modules(
+            f"{aid}::phase2_inverted_shedding",
+            module_sources={
+                "pricing_sla": self.DEFAULT_PRICING_SOURCE,
+                "tax_sla": self.DEFAULT_TAX_INVERTED_SHED_SOURCE,
+                "settlement_sla": self.DEFAULT_SETTLEMENT_DEFERRED_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_graceful_shedding_modules(
+            f"{aid}::phase3_governed_shedding",
+            module_sources={
+                "pricing_sla": self.DEFAULT_PRICING_SOURCE,
+                "tax_sla": self.DEFAULT_TAX_GOVERNED_SHED_SOURCE,
+                "settlement_sla": self.DEFAULT_SETTLEMENT_GOVERNED_SHED_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_missed_deadlines": p1["missed_deadline_count"],
+                "phase_1_excess_criticality_loss": p1["excess_criticality_loss"],
+                "phase_1_surcharge_cents": p1["shedding_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_missed_deadlines": p2["missed_deadline_count"],
+                "phase_2_excess_criticality_loss": p2["excess_criticality_loss"],
+                "phase_2_surcharge_cents": p2["shedding_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_missed_deadlines": p3["missed_deadline_count"],
+                "phase_3_excess_criticality_loss": p3["excess_criticality_loss"],
+                "phase_3_retained_criticality": p3["retained_criticality"],
+                "phase_3_surcharge_cents": p3["shedding_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase graceful shedding evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_graceful_shedding.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "graceful_shedding_receipt": (
+                self.shedding_monitor.current_receipt()
+                if self.shedding_monitor.bursts
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
