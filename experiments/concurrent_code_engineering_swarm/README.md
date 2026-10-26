@@ -377,13 +377,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `48
 | `11200` | `repairable_path_kernel_dashboard_defect` | **C** | `explicit_lggr_path_kernel_dashboard_directive` | **`completed`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007013`** |
 | `11201` | `infeasible_path_kernel_dashboard_lock` | **A / B / C** | All policies | `safe_escalated` | `2` | `0` | `10` | 1 | 18 | `$0.021099` |
 
+## 23. 3-Agent Dynamic Boundary Schema Synthesis Under Online Fiber Collisions Campaign (`--topology schema_synthesis`)
+
+In `--topology schema_synthesis`, 3 concurrent LLM workers edit `pricing_schema.py`, `tax_schema.py`, and `settlement_schema.py` over a 4-state XNOR parity stream $X = \{s_{00}, s_{01}, s_{10}, s_{11}\}$ with candidate metadata features `(k_noise, k1, k2)` and 5 cents surcharge per active fiber collision:
+- On `seed 11300` (`repairable_dynamic_schema_collision_defect`), `tax_schema.py` initially locks `lock_schema_v1 = True` (`schema_version = 'v1'`) and `settlement_schema.py` projects with `active_schema_keys = []` (`collision_count = 2`, `decoder_size = 0`, `schema_collision_surcharge_cents = 10`, `payout = 863 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 11301` (`infeasible_hardware_locked_schema_v1`), legacy constraints lock `tax_schema.py` and `settlement_schema.py` to the 0-feature v1 schema while requiring 4-fiber XNOR parity separation, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `48` live API attempts, `$0.051015` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `active_keys` | `collisions` | `surcharge` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `11300` | `repairable_dynamic_schema_collision_defect` | **A** | `static_zero_feature_schema_v1_gate` | `blocked_unresolved` | `[]` | `2` | `10` | 2 | 12 | `$0.012618` |
+| `11300` | `repairable_dynamic_schema_collision_defect` | **B** | `greedy_single_feature_k2_expansion` | `blocked_unresolved` | `['k2']` | `1` | `5` | 2 | 12 | `$0.013034` |
+| `11300` | `repairable_dynamic_schema_collision_defect` | **C** | `explicit_lggr_dynamic_schema_v2_directive` | **`completed`** | **`['k1', 'k2']`** | **`0`** | **`0`** | **1** | **6** | **`$0.007159`** |
+| `11301` | `infeasible_hardware_locked_schema_v1` | **A / B / C** | All policies | `safe_escalated` | `[]` | `2` | `10` | 1 | 18 | `$0.018204` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, and 3-agent path-kernel dashboard evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, and 3-agent dynamic-schema synthesis evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -406,4 +421,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/council_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/six_role_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/path_kernel_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/schema_synthesis_pilot_run/events.jsonl
 ```

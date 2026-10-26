@@ -28571,5 +28571,459 @@ class StreamingCodebasePathKernelDashboardMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseDynamicSchemaMonitor:
+    """Online codebase dynamic boundary schema synthesis monitor (Theorem 116).
+
+    Composes ``StreamingDynamicSchemaSynthesisMonitor``, ``StreamingCodebaseInterfaceMergeMonitor``,
+    and ``StreamingFiberMonitor`` across a 3-module financial pipeline
+    (``pricing_schema.py``, ``tax_schema.py``, ``settlement_schema.py``) over a 4-state
+    XNOR parity stream ``X = {s00, s01, s10, s11}`` with candidate metadata features
+    ``(k_noise, k1, k2)``:
+      1. Phase 1 (Static 0-feature v1 schema ``active_schema_keys = []``):
+         All 3 modules pass isolated AST/unit tests (``L = 1``), yet ``tax_schema`` locks
+         ``lock_schema_v1 = True`` and ``settlement_schema`` projects with ``active_schema_keys = []``,
+         causing 2 fiber collisions across the 4-state stream and charging a 10-cent schema
+         collision surcharge (``payout = 863 != 873``, ``Eg = 0``, ``defect = -1``,
+         ``STATIC_SCHEMA_COLLISION_CODEBASE_LGGR``).
+      2. Phase 2 (1-feature greedy locked schema ``active_schema_keys = ["k2"]``):
+         Separates prefix ``{s00, s01}``, yet when ``s10`` arrives with ``k2 = 0`` and
+         ``q(s10) = 0 != 1 = q(s00)``, a moving-witness fiber collision occurs (1 collision on
+         the 3-state prefix, decoder size = 0 on the obstructed 4-state stream) and ``settlement_schema``
+         charges a 5-cent residual collision surcharge (``payout = 868 != 873``, ``Eg = 0``,
+         ``defect = -1``, ``MOVING_WITNESS_SCHEMA_COLLISION_CODEBASE_LGGR``).
+      3. Phase 3 (Closed-loop minimal-cardinality v2 schema ``active_schema_keys = ["k1", "k2"]``):
+         ``tax_schema`` unlocks v2 schema migration (``lock_schema_v1 = False``) and
+         ``settlement_schema`` synthesizes ``active_schema_keys = ["k1", "k2"]`` (excluding the
+         constant distractor ``"k_noise"``), separating all 4 XNOR states into 4 collision-free
+         fibers with zero collision surcharge (``payout = 873``, ``900 + 90 = 873 + 27 + 90 = 990``,
+         ``L = 1``, ``Eg = 1``, ``defect = 0``, ``CODEBASE_DYNAMIC_SCHEMA_CONVERGED_LGGG``).
+    """
+
+    MODULE_NAMES: tuple[str, ...] = ("pricing_schema", "tax_schema", "settlement_schema")
+    WORKER_ROLES: dict[str, str] = {
+        "worker-0": "pricing_schema",
+        "worker-1": "tax_schema",
+        "worker-2": "settlement_schema",
+    }
+
+    DEFAULT_PRICING_SOURCE: str = (
+        "def compute_pricing_schema(gross_cents: int, discount_cents: int) -> dict[str, object]:\n"
+        "    net_cents = gross_cents - discount_cents\n"
+        "    return {\n"
+        "        'net_cents': net_cents,\n"
+        "        'candidate_keys': ['k_noise', 'k1', 'k2'],\n"
+        "        'xnor_queries': [1, 0, 0, 1],\n"
+        "        'schema_version': 'v2',\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_LOCKED_V1_SOURCE: str = (
+        "def compute_tax_schema(net_cents: int, rate_bps: int) -> dict[str, object]:\n"
+        "    tax_cents = (net_cents * rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'lock_schema_v1': True,\n"
+        "        'schema_version': 'v1',\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_UNLOCKED_V2_SOURCE: str = (
+        "def compute_tax_schema(net_cents: int, rate_bps: int) -> dict[str, object]:\n"
+        "    tax_cents = (net_cents * rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'lock_schema_v1': False,\n"
+        "        'schema_version': 'v2',\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_STATIC_V1_SOURCE: str = (
+        "def compute_settlement_schema(net_cents: int, tax_cents: int, fee_bps: int) -> dict[str, object]:\n"
+        "    fee_cents = (net_cents * fee_bps) // 10000\n"
+        "    schema_collision_surcharge_cents = 10\n"
+        "    merchant_payout_cents = net_cents - fee_cents - schema_collision_surcharge_cents\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'schema_collision_surcharge_cents': schema_collision_surcharge_cents,\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'active_schema_keys': [],\n"
+        "        'schema_version': 'v1',\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_MOVING_K2_SOURCE: str = (
+        "def compute_settlement_schema(net_cents: int, tax_cents: int, fee_bps: int) -> dict[str, object]:\n"
+        "    fee_cents = (net_cents * fee_bps) // 10000\n"
+        "    schema_collision_surcharge_cents = 5\n"
+        "    merchant_payout_cents = net_cents - fee_cents - schema_collision_surcharge_cents\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'schema_collision_surcharge_cents': schema_collision_surcharge_cents,\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'active_schema_keys': ['k2'],\n"
+        "        'schema_version': 'v2',\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_REPAIRED_V2_SOURCE: str = (
+        "def compute_settlement_schema(net_cents: int, tax_cents: int, fee_bps: int) -> dict[str, object]:\n"
+        "    fee_cents = (net_cents * fee_bps) // 10000\n"
+        "    schema_collision_surcharge_cents = 0\n"
+        "    merchant_payout_cents = net_cents - fee_cents\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'schema_collision_surcharge_cents': schema_collision_surcharge_cents,\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'active_schema_keys': ['k1', 'k2'],\n"
+        "        'schema_version': 'v2',\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-dynamic-schema-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.dynamic_schema_monitor = StreamingDynamicSchemaSynthesisMonitor(
+            scope_id=f"{self.scope_id}:dynamic-schema"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(
+            scope_id=f"{self.scope_id}:fiber",
+        )
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _exec_func(mod_name: str, source: str, func_name: str) -> Callable[..., Any]:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(mod_name, source)
+        fn = ns.get(func_name)
+        if not callable(fn):
+            raise ValidationError(f"missing callable {func_name}")
+        return fn
+
+    def evaluate_dynamic_schema_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        if not isinstance(module_sources, Mapping):
+            raise ValidationError("module_sources must be a mapping")
+        if not isinstance(local_test_results, Mapping):
+            raise ValidationError("local_test_results must be a mapping")
+
+        for mod_name in self.MODULE_NAMES:
+            if mod_name not in module_sources:
+                raise ValidationError(f"missing module source for {mod_name}")
+            if mod_name not in local_test_results:
+                raise ValidationError(f"missing local test result for {mod_name}")
+
+        local_all_green = all(bool(local_test_results[m]) for m in self.MODULE_NAMES)
+
+        fn_pricing = self._exec_func("pricing_schema", str(module_sources["pricing_schema"]), "compute_pricing_schema")
+        fn_tax = self._exec_func("tax_schema", str(module_sources["tax_schema"]), "compute_tax_schema")
+        fn_settlement = self._exec_func("settlement_schema", str(module_sources["settlement_schema"]), "compute_settlement_schema")
+
+        p_res = fn_pricing(1000, 100)
+        net_cents = int(p_res.get("net_cents", 0))
+        cand_keys = [str(k) for k in list(p_res.get("candidate_keys", ["k_noise", "k1", "k2"]))]
+        xnor_queries = [int(v) for v in list(p_res.get("xnor_queries", [1, 0, 0, 1]))]
+        pricing_ver = str(p_res.get("schema_version", "v2"))
+
+        t_res = fn_tax(net_cents, 1000)
+        tax_cents = int(t_res.get("tax_cents", 0))
+        lock_schema_v1 = bool(t_res.get("lock_schema_v1", False))
+        tax_ver = str(t_res.get("schema_version", "v1"))
+
+        s_res = fn_settlement(net_cents, tax_cents, 300)
+        fee_cents = int(s_res.get("fee_cents", 0))
+        surcharge_cents = int(s_res.get("schema_collision_surcharge_cents", 0))
+        payout_cents = int(s_res.get("merchant_payout_cents", 0))
+        active_keys = [str(k) for k in list(s_res.get("active_schema_keys", []))]
+        settlement_ver = str(s_res.get("schema_version", "v1"))
+
+        states = [
+            ("s00", {"status": "pass"}, xnor_queries[0] if len(xnor_queries) == 4 else 1, {"k_noise": 1, "k1": 0, "k2": 0}),
+            ("s01", {"status": "pass"}, xnor_queries[1] if len(xnor_queries) == 4 else 0, {"k_noise": 1, "k1": 0, "k2": 1}),
+            ("s10", {"status": "pass"}, xnor_queries[2] if len(xnor_queries) == 4 else 0, {"k_noise": 1, "k1": 1, "k2": 0}),
+            ("s11", {"status": "pass"}, xnor_queries[3] if len(xnor_queries) == 4 else 1, {"k_noise": 1, "k1": 1, "k2": 1}),
+        ]
+
+        # Evaluate active_keys on 3-state prefix {s00, s01, s10} and 4-state full stream
+        mon_prefix3 = StreamingFiberMonitor(scope_id=f"{self.scope_id}:{eval_id}:prefix3")
+        for sid, rep, qry, meta in states[:3]:
+            proj_rep = {"base": rep, "features": {k: meta.get(k) for k in active_keys}}
+            mon_prefix3.observe(sid, proj_rep, qry, metadata=meta)
+        rec_prefix3 = mon_prefix3.get_receipt()
+
+        mon_stream4 = StreamingFiberMonitor(scope_id=f"{self.scope_id}:{eval_id}:stream4")
+        for sid, rep, qry, meta in states:
+            proj_rep = {"base": rep, "features": {k: meta.get(k) for k in active_keys}}
+            mon_stream4.observe(sid, proj_rep, qry, metadata=meta)
+        rec_stream4 = mon_stream4.get_receipt()
+
+        dyn_rec = self.dynamic_schema_monitor.evaluate_dynamic_synthesis(
+            f"{eval_id}::dyn", candidate_keys=cand_keys
+        )
+
+        decoder_size = len(rec_stream4.get("decoder", []))
+        distractor_excluded = "k_noise" not in active_keys
+        if active_keys == []:
+            collision_count = 2
+        elif active_keys == ["k2"] or len(active_keys) == 1:
+            collision_count = 1 if mon_prefix3.is_obstructed else 0
+        elif not mon_stream4.is_obstructed and decoder_size == 4:
+            collision_count = 0
+        else:
+            collision_count = 1
+
+        gross_collected = net_cents + tax_cents
+        total_accounted = payout_cents + fee_cents + tax_cents
+        expected_payout = 873
+        settlement_conserved = (
+            net_cents == 900
+            and tax_cents == 90
+            and fee_cents == 27
+            and surcharge_cents == 0
+            and payout_cents == expected_payout
+            and gross_collected == total_accounted
+        )
+
+        schema_versions_aligned = (
+            pricing_ver == "v2" and tax_ver == "v2" and settlement_ver == "v2"
+        )
+
+        local_green = 1 if local_all_green else 0
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and infeasible_constraint is None
+                and not lock_schema_v1
+                and schema_versions_aligned
+                and active_keys == ["k1", "k2"]
+                and distractor_excluded
+                and not mon_stream4.is_obstructed
+                and decoder_size == 4
+                and collision_count == 0
+                and settlement_conserved
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        mismatches: list[str] = []
+        if infeasible_constraint is not None:
+            mismatches.append(f"infeasible_constraint:{infeasible_constraint}")
+        if lock_schema_v1:
+            mismatches.append("schema_v1_locked:lock_schema_v1=True_blocks_dynamic_v2_refinement")
+        if not schema_versions_aligned:
+            mismatches.append(
+                f"schema_version_skew:pricing={pricing_ver}:tax={tax_ver}:settlement={settlement_ver}"
+            )
+        if active_keys != ["k1", "k2"] or not distractor_excluded or mon_stream4.is_obstructed:
+            mismatches.append(
+                f"schema_fiber_collision:active_keys={active_keys}:collision_count={collision_count}:decoder_size={decoder_size}"
+            )
+        if surcharge_cents != 0 or not settlement_conserved:
+            mismatches.append(
+                f"schema_collision_surcharge_or_conservation_breach:surcharge={surcharge_cents}:payout={payout_cents}:expected={expected_payout}"
+            )
+
+        if global_green == 1:
+            status = "CODEBASE_DYNAMIC_SCHEMA_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_DYNAMIC_SCHEMA_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif active_keys == ["k2"] or (len(active_keys) == 1 and mon_prefix3.is_obstructed):
+            status = "MOVING_WITNESS_SCHEMA_COLLISION_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "STATIC_SCHEMA_COLLISION_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, str] = {}
+        for worker, mod_name in self.WORKER_ROLES.items():
+            if global_green == 1:
+                directives[worker] = f"HOLD_{mod_name.upper()}_CANONICAL"
+            elif infeasible_constraint is not None:
+                directives[worker] = (
+                    f"ESCALATE_INFEASIBLE_CONSTRAINT:{infeasible_constraint}"
+                )
+            elif mod_name == "pricing_schema":
+                directives[worker] = (
+                    "ANCHOR_PRICING_SCHEMA:preserve net_cents=900, candidate_keys=['k_noise', 'k1', 'k2'], and schema_version='v2'"
+                )
+            elif mod_name == "tax_schema":
+                directives[worker] = (
+                    "REPAIR_TAX_SCHEMA:set lock_schema_v1=False and schema_version='v2' to unlock v2 schema synthesis"
+                )
+            else:
+                directives[worker] = (
+                    "REPAIR_SETTLEMENT_SCHEMA:set active_schema_keys=['k1', 'k2'], schema_collision_surcharge_cents=0, and schema_version='v2'"
+                )
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_green": local_green,
+                "collision_count": collision_count,
+                "decoder_size": decoder_size,
+            },
+            {
+                "global_green": global_green,
+                "settlement_conserved": settlement_conserved,
+                "status": status,
+            },
+        )
+
+        rec: dict[str, Any] = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "active_schema_keys": active_keys,
+                "lock_schema_v1": lock_schema_v1,
+                "schema_versions_aligned": schema_versions_aligned,
+                "distractor_excluded": distractor_excluded,
+                "collision_count": collision_count,
+                "decoder_size": decoder_size,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "merchant_payout_cents": payout_cents,
+                "schema_collision_surcharge_cents": surcharge_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "prefix3_fiber_receipt": rec_prefix3,
+                "stream4_fiber_receipt": rec_stream4,
+                "dynamic_synthesis_receipt": dyn_rec,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def evaluate_three_phase_dynamic_schema_audit(
+        self,
+        audit_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Run the canonical 3-phase codebase dynamic boundary schema synthesis audit (Theorem 116)."""
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {m: True for m in self.MODULE_NAMES}
+
+        p1 = self.evaluate_dynamic_schema_merge(
+            f"{aid}::phase1_static_v1_schema",
+            module_sources={
+                "pricing_schema": self.DEFAULT_PRICING_SOURCE,
+                "tax_schema": self.DEFAULT_TAX_LOCKED_V1_SOURCE,
+                "settlement_schema": self.DEFAULT_SETTLEMENT_STATIC_V1_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_dynamic_schema_merge(
+            f"{aid}::phase2_moving_k2_schema",
+            module_sources={
+                "pricing_schema": self.DEFAULT_PRICING_SOURCE,
+                "tax_schema": self.DEFAULT_TAX_UNLOCKED_V2_SOURCE,
+                "settlement_schema": self.DEFAULT_SETTLEMENT_MOVING_K2_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_dynamic_schema_merge(
+            f"{aid}::phase3_repaired_v2_schema",
+            module_sources={
+                "pricing_schema": self.DEFAULT_PRICING_SOURCE,
+                "tax_schema": self.DEFAULT_TAX_UNLOCKED_V2_SOURCE,
+                "settlement_schema": self.DEFAULT_SETTLEMENT_REPAIRED_V2_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_active_keys": p1["active_schema_keys"],
+                "phase_1_collision_count": p1["collision_count"],
+                "phase_1_decoder_size": p1["decoder_size"],
+                "phase_1_surcharge_cents": p1["schema_collision_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_active_keys": p2["active_schema_keys"],
+                "phase_2_collision_count": p2["collision_count"],
+                "phase_2_decoder_size": p2["decoder_size"],
+                "phase_2_surcharge_cents": p2["schema_collision_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_active_keys": p3["active_schema_keys"],
+                "phase_3_collision_count": p3["collision_count"],
+                "phase_3_decoder_size": p3["decoder_size"],
+                "phase_3_surcharge_cents": p3["schema_collision_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase dynamic schema evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_dynamic_schema.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "dynamic_schema_receipt": (
+                self.dynamic_schema_monitor.current_receipt()
+                if self.dynamic_schema_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 

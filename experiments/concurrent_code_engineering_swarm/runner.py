@@ -31,6 +31,7 @@ from lggr.streaming import (
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseDisagreementCouncilMonitor,
+    StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -67,6 +68,7 @@ from .domain import (
     QUORUM_WORKER_MODULES,
     REGGE_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
+    SCHEMA_SYNTHESIS_WORKER_MODULES,
     SHEAF_WORKER_MODULES,
     SIX_ROLE_WORKER_MODULES,
     SPLIT_WORKER_MODULES,
@@ -81,6 +83,7 @@ from .domain import (
     ContextualSheafCodeWorkspace,
     DiamondCodeWorkspace,
     DisagreementCouncilCodeWorkspace,
+    DynamicSchemaCodeWorkspace,
     FiberSplittingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
@@ -112,6 +115,7 @@ from .domain import (
     quorum_fixture,
     regge_fixture,
     replay_fixture,
+    schema_synthesis_fixture,
     sheaf_fixture,
     six_role_fixture,
     split_fixture,
@@ -4883,6 +4887,218 @@ def path_kernel_campaign(client: CodeBatchClient, events: Events, config: dict[s
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Dynamic Boundary Schema Synthesis Campaign (Test 51, Theorem 116)
+# ---------------------------------------------------------------------------
+
+
+def schema_synthesis_system_prompt(worker: str, arm: str) -> str:
+    """Build the system prompt for a worker in the `--topology schema_synthesis` campaign."""
+    mod_name = SCHEMA_SYNTHESIS_WORKER_MODULES[worker]
+    return (
+        f"You are `{worker}` owning `{mod_name}.py` in a concurrent 3-agent Python code-engineering swarm "
+        f"(Arm `{arm}`). Always call `inspect_workspace` first.\n"
+        "- If `infeasible_constraint` is not null, call `escalate` with a clear explanation of the hardware lock.\n"
+        "- If `merge_gate_feedback.action_required` is `HOLD_STATIC_SCHEMA_V1` (Arm A), keep your current source code "
+        "unchanged by calling `submit_module_patch` with the exact existing `source_code`.\n"
+        "- If `merge_gate_feedback.action_required` is `EXPAND_SINGLE_FEATURE_K2_ONLY` (Arm B), `worker-1` (`tax_schema`) "
+        "sets `lock_schema_v1 = False` and `schema_version = 'v2'`, and `worker-2` (`settlement_schema`) sets "
+        "`active_schema_keys = ['k2']`, `schema_collision_surcharge_cents = 5`, `merchant_payout_cents = net_cents - fee_cents - schema_collision_surcharge_cents`, "
+        "and `schema_version = 'v2'`.\n"
+        "- If `merge_gate_feedback.action_required` is `REPAIR_DYNAMIC_SCHEMA_V2` (Arm C):\n"
+        "  * `worker-0` (`pricing_schema.py`): preserve `net_cents = 900`, `candidate_keys = ['k_noise', 'k1', 'k2']`, "
+        "`xnor_queries = [1, 0, 0, 1]`, and `schema_version = 'v2'`.\n"
+        "  * `worker-1` (`tax_schema.py`): set `lock_schema_v1 = False` and `schema_version = 'v2'`.\n"
+        "  * `worker-2` (`settlement_schema.py`): set `active_schema_keys = ['k1', 'k2']` (excluding constant distractor `'k_noise'`), "
+        "`schema_collision_surcharge_cents = 0`, `merchant_payout_cents = net_cents - fee_cents` (`873`), and `schema_version = 'v2'` "
+        "so `873 + 27 + 90 = 990`."
+    )
+
+
+def schema_synthesis_merge_gate(
+    events: Events,
+    ws: DynamicSchemaCodeWorkspace,
+    monitor: StreamingCodebaseDynamicSchemaMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    """Evaluate the 3-module dynamic schema synthesis merge gate and emit per-worker feedback."""
+    verdicts = ws.local_test_verdicts()
+    eval_res = monitor.evaluate_dynamic_schema_merge(
+        f"{arm}-{wave_label}",
+        module_sources=ws.state["sources"],
+        local_test_results=verdicts,
+        infeasible_constraint=ws.state["infeasible_constraint"],
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "active_schema_keys": eval_res["active_schema_keys"],
+            "collision_count": eval_res["collision_count"],
+            "decoder_size": eval_res["decoder_size"],
+            "schema_collision_surcharge_cents": eval_res["schema_collision_surcharge_cents"],
+            "status": eval_res["status"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in SCHEMA_SYNTHESIS_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "HOLD_STATIC_SCHEMA_V1",
+                "local_unit_test_passed": verdicts[mod_name],
+                "note": "Static 0-feature v1 schema baseline: only isolated module unit test status is visible.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "EXPAND_SINGLE_FEATURE_K2_ONLY",
+                "active_schema_keys": eval_res["active_schema_keys"],
+                "collision_count": eval_res["collision_count"],
+                "note": "Greedy 1-feature expansion to ['k2'] after {s00, s01} prefix, leaving moving-witness collision at s10 (surcharge=5).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "REPAIR_DYNAMIC_SCHEMA_V2",
+                "global_green": eval_res["global_green"],
+                "active_schema_keys": eval_res["active_schema_keys"],
+                "collision_count": eval_res["collision_count"],
+                "decoder_size": eval_res["decoder_size"],
+                "schema_collision_surcharge_cents": eval_res["schema_collision_surcharge_cents"],
+                "mismatches": eval_res["mismatches"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def schema_synthesis_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    """Run the 3-arm concurrent code-engineering swarm campaign for `--topology schema_synthesis`."""
+    seeds: list[int] = list(config["seeds"])
+    workers = list(SCHEMA_SYNTHESIS_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = schema_synthesis_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = DynamicSchemaCodeWorkspace(base_state)
+            monitor = StreamingCodebaseDynamicSchemaMonitor(
+                scope_id=f"schema-synthesis-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = schema_synthesis_merge_gate(events, ws, monitor, arm, "wave-0")
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": schema_synthesis_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{SCHEMA_SYNTHESIS_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = schema_synthesis_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_active_schema_keys": eval_res["active_schema_keys"],
+                "final_collision_count": eval_res["collision_count"],
+                "final_decoder_size": eval_res["decoder_size"],
+                "final_schema_collision_surcharge_cents": eval_res["schema_collision_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": eval_res["status"],
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.dynamic_schema_synthesis_code_engineering_swarm.v1",
+        "topology": "schema_synthesis",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent dynamic boundary schema synthesis Python code-engineering swarm "
+            "(`pricing_schema` -> `tax_schema` -> `settlement_schema`) comparing static 0-feature v1 schema "
+            "pass-only gating (A), greedy 1-feature locked schema expansion ['k2'] (B), and closed-loop LGGR "
+            "minimal-cardinality v2 schema synthesis ['k1', 'k2'] excluding distractor 'k_noise' (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -4935,6 +5151,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = six_role_campaign(client, events, config)
         elif config.get("topology") == "path_kernel":
             summary = path_kernel_campaign(client, events, config)
+        elif config.get("topology") == "schema_synthesis":
+            summary = schema_synthesis_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -4981,6 +5199,7 @@ def main() -> None:
             "council",
             "six_role",
             "path_kernel",
+            "schema_synthesis",
         ],
         default="linear",
     )
@@ -5048,6 +5267,8 @@ def main() -> None:
         seeds = [11100, 11101, 11102]
     elif args.topology == "path_kernel":
         seeds = [11200, 11201, 11202]
+    elif args.topology == "schema_synthesis":
+        seeds = [11300, 11301, 11302]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -5282,6 +5503,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = path_kernel_campaign(client, events, config)
+    elif args.topology == "schema_synthesis":
+        config = {
+            "topology": "schema_synthesis",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = schema_synthesis_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
