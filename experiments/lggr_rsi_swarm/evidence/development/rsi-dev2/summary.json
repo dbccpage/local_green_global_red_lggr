@@ -1,0 +1,821 @@
+{
+ "chunk": 0,
+ "part": "rsi",
+ "resolved_model": "claude-haiku-5-5",
+ "rsi": [
+  {
+   "arm": "D",
+   "dead": [],
+   "draw": 0,
+   "family": "temporal",
+   "files": {
+    "modules/build.cfg": "# module build\nrate = 5\nstart = 4\nticks = 3\n",
+    "modules/plan.cfg": "# module plan\nrate = 6\nstart = 0\nticks = 2\n",
+    "modules/ship.cfg": "# module ship\nrate = 8\nstart = 9\nticks = 1\n"
+   },
+   "grader": {
+    "global": {
+     "D1": true,
+     "O1": true,
+     "O2": true,
+     "P1": true,
+     "P2": true,
+     "P3": true
+    },
+    "local": {
+     "build": true,
+     "plan": true,
+     "ship": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "instance": "dev-900002",
+   "learn_final": {
+    "global": {
+     "D1": true,
+     "O1": true,
+     "O2": true,
+     "P1": true,
+     "P2": true,
+     "P3": true
+    },
+    "local": {
+     "build": true,
+     "plan": true,
+     "ship": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "learn_grade": {
+    "global": {
+     "D1": true,
+     "O1": true,
+     "O2": false,
+     "P1": true,
+     "P2": true,
+     "P3": true
+    },
+    "local": {
+     "build": true,
+     "plan": true,
+     "ship": true
+    },
+    "local_green": true,
+    "system_passes": false,
+    "target": "reject",
+    "units": 16
+   },
+   "memory": {
+    "bound": true,
+    "obligations": [
+     {
+      "agent": "impl-1",
+      "id": 0,
+      "source_ref": "file:modules/build.cfg",
+      "source_sha256": "7999f354e7d5449901a6e49fda7ab0a040bdeb3741887d9e8f04910ea66d5da2",
+      "text": "impl-2 must set ship start so ship.start >= build.start+build.ticks+lat (=6+lat with build 5x3 start 3) and keep ship product <=12; re-verify O2 and D1 once ship.cfg is posted."
+     },
+     {
+      "agent": "impl-2",
+      "id": 1,
+      "source_ref": "file:modules/ship.cfg",
+      "source_sha256": "4f8ecf651d64edf26f8d13f396946bb740e6e240cfa22aede064c912d3f5ba5f",
+      "text": "Recheck ship.start (currently 9) against build.start+build.ticks+lat and D1 whenever plan/build change; D1 fails for lat=2 at start=9."
+     },
+     {
+      "agent": "tester",
+      "id": 2,
+      "source_ref": "contract:global",
+      "source_sha256": "95885fce91e97d66a8f281d3981c7aed72e08987d8643b42831251b7767c0da3",
+      "text": "Re-verify O2 (ship.start >= build.start+build.ticks+lat) after impl-1/impl-2 finalize build and ship; confirm P1 limitation at base=12,setup=1 is recorded as known unavoidable."
+     },
+     {
+      "agent": "challenger",
+      "id": 3,
+      "source_ref": "contract:global",
+      "source_sha256": "95885fce91e97d66a8f281d3981c7aed72e08987d8643b42831251b7767c0da3",
+      "text": "Re-verify O2, D1 and P2 for the final plan/build/ship files against measured deployment (base=16, lat=0, refill=13, setup=1) and against lat=2."
+     }
+    ],
+    "records": [
+     {
+      "agent": "impl-0",
+      "content": "Plan work must be 11..13 but only 12 is factorable (rate<=8, ticks<=6), so P1 can fail at base=12,setup=1 for any plan choice. Plan rate=6 ticks=2 start=0 is the chosen value. Measured base=16 refill=13 lat=0 setup=1: P1,P2,P3,O1,D1 pass with plan=12; O2 failed due to build/ship timing (build 3x5 start 4 ends 9 > ship start 6), not plan.",
+      "key": "dev-900002/plan-lesson",
+      "seq": 0,
+      "source_ref": "file:modules/plan.cfg",
+      "source_sha256": "90f0e4d00ca5590c3230819bda505bd79990498f0687d452a85c24e03801348d"
+     },
+     {
+      "agent": "impl-1",
+      "content": "Measured deployment: base=16, refill=13, lat=0, setup=1. P2 is tight: plan product + build product + 2*setup <= base+refill. With plan=12, build product must be <=15 at these values. Build product must be 14..16 (L1/L2), so 15 (5x3 or 3x5) is the only safe choice. Ship product must be <=12 for P3. Keep build start >= plan.start+plan.ticks+lat.",
+      "key": "dev-900002/build-lessons",
+      "seq": 1,
+      "source_ref": "file:modules/build.cfg",
+      "source_sha256": "7999f354e7d5449901a6e49fda7ab0a040bdeb3741887d9e8f04910ea66d5da2"
+     },
+     {
+      "agent": "impl-2",
+      "content": "Ship must start >= build.start+build.ticks+lat (O2). Early guess start=6 failed O2 because build was 4+5. Ship set to rate=4, ticks=2, start=9: O2 ok at lat=0 (measured), D1 ok (9+2+0=11<=12). If build changes, recheck O2 and D1 (start+ticks+lat<=12 breaks at lat>=2 with start=9).",
+      "key": "dev-900002/ship-lesson",
+      "seq": 2,
+      "source_ref": "file:modules/ship.cfg",
+      "source_sha256": "4f8ecf651d64edf26f8d13f396946bb740e6e240cfa22aede064c912d3f5ba5f"
+     },
+     {
+      "agent": "tester",
+      "content": "Plan forced product 12 (11, 13 prime-unreachable). P1 fails at base=12,setup=1 for every plan choice (unavoidable). Build product 14 (7x2) is smaller than 15/16 and eases P2 (needs base+refill >= 26+2*setup). Timing set plan 6x2 start0, build 7x2 or 8x2 start4, ship 4x2 or 5x2 start8 satisfies O1,O2,D1 for lat in {0,1,2}. Postmortem: build 3x5 start4 ends 9 > ship start 6 -> O2 fail.",
+      "key": "dev-900002/learn-findings",
+      "seq": 3,
+      "source_ref": "file:modules/build.cfg",
+      "source_sha256": "7999f354e7d5449901a6e49fda7ab0a040bdeb3741887d9e8f04910ea66d5da2"
+     },
+     {
+      "agent": "challenger",
+      "content": "Plan/build/ship: check O2 (ship.start >= build.start+build.ticks+lat) before posting ship start; build 4+5=9 invalidated ship.start=6. Products: plan 11 and 13 unreachable; build 14 unreachable; ship 8..10 reachable only with listed factorizations. P2 at base=16,refill=13,setup=1 needs plan+build+2 <= 29.",
+      "key": "dev-900002/lesson-timing",
+      "seq": 4,
+      "source_ref": "contract:global",
+      "source_sha256": "95885fce91e97d66a8f281d3981c7aed72e08987d8643b42831251b7767c0da3"
+     },
+     {
+      "agent": "tester",
+      "content": "Restart orientation (tester). P1 unsatisfiable at base=11,setup=1 (plan product forced 12). P2 unsatisfiable at base=11,refill=14,setup=1 (min 29 > 25). Lat=2 needs build.start>=4 and ship.start in [build.start+build.ticks+2, 8]; with build 5x3 this is infeasible, so ship must be ticks=1 rate=8 start=9 if build stays 5x3 at start 4. Base list is [11,13,15]; earlier memory mention of base=12 was wrong.",
+      "key": "dev-900002-v2:restart-orientation",
+      "seq": 5,
+      "source_ref": "contract:global",
+      "source_sha256": "07058e26f1af0722fcc100d22bf1b936954a376f3622fa8aead3fd92c63c4480"
+     },
+     {
+      "agent": "impl-0",
+      "content": "plan: L1/L2 force rate*ticks=12 (11, 13 prime and unreachable with rate<=8). Only ticks>=2 options; 6x2 s0 ends at tick 2 (earliest handoff). P1 fails at base=11 with setup=1 regardless of plan. Keep 6x2 s0.",
+      "key": "plan-analysis-phase-use",
+      "seq": 6,
+      "source_ref": "file:modules/plan.cfg",
+      "source_sha256": "90f0e4d00ca5590c3230819bda505bd79990498f0687d452a85c24e03801348d"
+     },
+     {
+      "agent": "tester",
+      "content": "Plan product must be 12 (11 and 13 unreachable), build product 15 or 16, ship product 8-10. P1 at base=11 needs 12+setup<=11: always fails. P2 at (base 13, refill 14, setup 1) needs 29<=27: fails for any config. Contract is unsatisfiable in some hidden worlds; needs contract-owner decision. Best timing-valid files: plan 6x2 s0, build 5x3 s4, ship 8x1 s9 (O1 at lat2, O2 9>=9, D1 12<=12).",
+      "key": "dev-900002-v2:infeasibility",
+      "seq": 7,
+      "source_ref": "contract:global",
+      "source_sha256": "07058e26f1af0722fcc100d22bf1b936954a376f3622fa8aead3fd92c63c4480"
+     },
+     {
+      "agent": "challenger",
+      "content": "Global contract is unsatisfiable in some hidden worlds for ANY config. base=11: plan product must be 12 (11 and 13 unfactorable within rate<=8, ticks<=6), so P1 needs 12+setup<=11, always fails. (13,14,setup=1): P2 needs 27+2>27, fails. Timing-feasible file set for lat 0..2: plan 6x2 s0, build 5x3 s4, ship 8x1 s9 (O1, O2, D1 at lat=2 all pass). Needs lead decision on base=11 worlds.",
+      "key": "dev-900002-v2:infeasibility",
+      "seq": 8,
+      "source_ref": "file:modules/plan.cfg",
+      "source_sha256": "90f0e4d00ca5590c3230819bda505bd79990498f0687d452a85c24e03801348d"
+     },
+     {
+      "agent": "impl-2",
+      "content": "Final ship = rate 8, start 9, ticks 1. Valid with plan 6x2 s0 and build 5x3 s4 for lat 0..2 (O2 9>=7+lat, D1 12<=12). Global P1/P2 infeasible in some hidden worlds (base=11; base=13,refill=14,setup=1) for any config.",
+      "key": "dev-900002-v2:ship-final",
+      "seq": 9,
+      "source_ref": "file:modules/ship.cfg",
+      "source_sha256": "8cec2f2d4550e8107ccdd24bf1c83e37f3322491c7e993edf6da4f9089ea42dd"
+     }
+    ]
+   }
+  },
+  {
+   "arm": "C",
+   "dead": [],
+   "draw": 0,
+   "family": "temporal",
+   "files": {
+    "modules/build.cfg": "# module build\nrate = 8\nstart = 4\nticks = 2\n",
+    "modules/plan.cfg": "# module plan\nrate = 6\nstart = 0\nticks = 2\n",
+    "modules/ship.cfg": "# module ship\nrate = 8\nstart = 9\nticks = 1\n"
+   },
+   "grader": {
+    "global": {
+     "D1": true,
+     "O1": true,
+     "O2": true,
+     "P1": true,
+     "P2": false,
+     "P3": true
+    },
+    "local": {
+     "build": true,
+     "plan": true,
+     "ship": true
+    },
+    "local_green": true,
+    "system_passes": false,
+    "target": "reject",
+    "units": 16
+   },
+   "instance": "dev-900002",
+   "learn_final": {
+    "global": {
+     "D1": true,
+     "O1": true,
+     "O2": true,
+     "P1": true,
+     "P2": true,
+     "P3": true
+    },
+    "local": {
+     "build": true,
+     "plan": true,
+     "ship": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "learn_grade": {
+    "global": {
+     "D1": true,
+     "O1": true,
+     "O2": true,
+     "P1": true,
+     "P2": true,
+     "P3": true
+    },
+    "local": {
+     "build": true,
+     "plan": true,
+     "ship": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "memory": {
+    "bound": false,
+    "obligations": [
+     {
+      "agent": "impl-0",
+      "id": 0,
+      "source_ref": "contract:global",
+      "text": "Escalate to global contract owner: P1 (base=12, setup=1) and P2 (base=12, refill=13, setup=1) are infeasible for every legal plan/build choice. Confirm whether hidden base=12 worlds are in scope before final sign-off."
+     },
+     {
+      "agent": "impl-2",
+      "id": 1,
+      "source_ref": "contract:global",
+      "text": "Confirm with global-contract owner whether P1/P2 must hold for base=12 (infeasible for any legal plan/build work targets per tester and challenger). ship.cfg is fixed as rate 4, start 7, ticks 2; revisit only if start/ticks interact with build.start or lat changes."
+     },
+     {
+      "agent": "tester",
+      "id": 2,
+      "source_ref": "contract:global",
+      "text": "Re-check the global contract if the hidden values are not fixed to base=16, lat=0, refill=13, setup=1. Base=12 worlds are infeasible for P1 and P2 under any legal module config."
+     },
+     {
+      "agent": "challenger",
+      "id": 3,
+      "source_ref": "contract:global",
+      "text": "Confirm with global contract owner whether P1/P2 must hold for all hidden values (base=12 worlds infeasible) or only the deployed values (base=16, refill=13, setup=1, lat=0). Re-check O1/D1 at lat=2 if the all-values reading holds."
+     }
+    ],
+    "records": [
+     {
+      "agent": "tester",
+      "content": "Global contract infeasible at worst hidden values: P1 fails at base=12,setup=1 (plan work forced to 12); P2 fails at base=12,refill=13,setup=1 (min plan+build+2 = 27 > 25). Verify before relying on it.",
+      "key": "dev-900002:feasibility",
+      "seq": 0,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "challenger",
+      "content": "Work-product factorability: rate in [1,8], ticks in [1,6]. Achievable products: 8,9,10,12,15,16 (11,13,14 impossible). Plan work must be 12; build work 15 or 16; ship 8-10. P1 fails at base=12,setup=1; P2 fails at base=12,refill=13 since 12+15>25. Global contract appears infeasible as stated.",
+      "key": "dev-900002/challenger-wave1",
+      "seq": 1,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "impl-0",
+      "content": "plan.cfg = rate 6, start 0, ticks 2 (work 12). Passes local tests and, per production verification, all global constraints at measured base=16, lat=0, refill=13, setup=1. Work must be 12 (11 and 13 unfactorable under rate<=8, ticks<=6); 12 is the minimum-spend choice. Known open risk: P1 at base=12 with setup=1 cannot hold for any plan choice (12+1>12), and P2 at base=12, refill=13 is infeasible for any build choice. This is a contract-level question, not a plan.cfg fix.",
+      "key": "dev-900002/plan-lessons",
+      "seq": 2,
+      "source_ref": "file:modules/plan.cfg"
+     },
+     {
+      "agent": "impl-2",
+      "content": "ship.cfg = rate 4, start 7, ticks 2 (work 8 = minimum for L1, minimises P3 spend). Passes local tests. Postmortem: all global constraints pass at measured base=16, lat=0, refill=13, setup=1. Worst-case feasibility concerns (base=12 for P1/P2) are raised by tester and challenger; they are outside the measured deployment but unresolved at contract level.",
+      "key": "dev-900002/ship",
+      "seq": 3,
+      "source_ref": "file:modules/ship.cfg"
+     },
+     {
+      "agent": "tester",
+      "content": "Correction to my wave-1 note and challenger's: build work 14 IS reachable as rate=7, ticks=2 (7x2). Only 11 and 13 are unreachable under rate<=8, ticks<=6. Postmortem measured base=16, lat=0, refill=13, setup=1 and all global checks passed there. Infeasibility stands only in base=12 worlds: P1 at base=12,setup=1 and P2 at base=12,refill=13,setup=1 (needs plan+build+2 <= 25 but min is 27). Deployment world is not proof for other hidden values.",
+      "key": "dev-900002:correction",
+      "seq": 4,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "impl-2",
+      "content": "impl-2 restart reconcile: ship.cfg (rate 4, start 7, ticks 2) stays. Checked vs global at all hidden values: L1/L2 ok (work 8); O2 needs start>=build.start+build.ticks+lat=7+lat, ok only if build stays start 3 ticks 2 and lat<=2 with ship.start 7 (7>=7+lat fails at lat>=1 with build start 3 ticks 2 -> 3+2+lat<=7 needs lat<=2 ok); D1 7+2+2=11<=12 ok; P3 worst-case ok. P2 is the binding issue: plan product 12 + build product 14 + 2*setup exceeds base+refill at base=11, refill=14 (25). Ship cannot fix P2. Note challenger's base=12 analysis is outside the hidden domain [11,13,15]. Concern is for plan/build owners.",
+      "key": "dev-900002/ship-restart",
+      "seq": 5,
+      "source_ref": "file:modules/ship.cfg"
+     },
+     {
+      "agent": "tester",
+      "content": "Current global contract lists base in [11,13,15] (not 12). Earlier obligations citing base=12 are stale. Feasibility analysis: plan product must be 12 (11 and 13 unreachable with rate<=8, ticks<=6). Build product 15 or 16. P1 fails for base=11,setup=1. P2 fails for base=11,refill=14 (min 26>25) and for base=13,refill=14,setup=1 (plan12+build15+2>27). Current files fail: build product 14 (L1), and O1 at lat=2 (build.start 3 < 0+2+2). Suggested build: rate 8 ticks 2 (16) or rate 5 ticks 3 (15); build.start>=4 for lat=2.",
+      "key": "dev-900002-v2/contract-revision",
+      "seq": 6,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "challenger",
+      "content": "Correction: base is in {11,13,15}, refill in {14,16,18}; base=12 and refill=13 are NOT legal hidden values, so earlier notes using them are off-domain. Build work must be 15 or 16 (local L1 needs >=15), so tester's \"build 14 reachable\" is wrong: 7x2=14 fails build L1. Real failures: P1 fails at base=11 for any setup (plan work 12 > 11). P2 at base=11, refill=14 fails for any build (12+15+2*setup > 25). Verify before relying on earlier notes.",
+      "key": "dev-900002/challenger-correction-wave2",
+      "seq": 7,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "tester",
+      "content": "Global contract infeasible at base=11: plan work forced to 12 by local L1/L2 (11,13 unfactorable with rate<=8, ticks<=6), so P1 needs 12+setup<=11 which fails. Also P2 at base=11,refill=14 needs plan 12 + build>=15 + 2*setup <=25, fails. Needs contract owner decision. Build must be 5x3 or 4x4 (not 7x2).",
+      "key": "dev-900002-v2:infeasibility",
+      "seq": 8,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "challenger",
+      "content": "Global contract infeasible at base=11 for any modules: plan work must be 12 (11 and 13 unfactorable under rate<=8, ticks<=6), so P1 needs 12+setup<=11, false. Also P2 at base=11,refill=14 needs 12+build(>=15)+2*setup<=25, false. Best-effort set that satisfies locals, O1, O2, D1 at lat<=2: plan rate6 ticks2 start0; build rate5 ticks3 start4; ship rate8 ticks1 start9. P1/P2/P3 hold for base>=13 (setup-dependent). Source: contract:global and team board.",
+      "key": "dev-900002-v2/challenger-wave1",
+      "seq": 9,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "impl-1",
+      "content": "build = rate 8, start 4, ticks 2 (work 16). Chosen over 5x3 because ship.start=8 needs build end <=6 for O2 at lat=2; the global contract is infeasible at base=11 regardless.",
+      "key": "impl-1 final build choice",
+      "seq": 10,
+      "source_ref": "contract:global"
+     }
+    ]
+   }
+  },
+  {
+   "arm": "D",
+   "dead": [],
+   "draw": 0,
+   "family": "interface",
+   "files": {
+    "modules/consumer.cfg": "# module consumer\naccept_hi = 67\ntimeout = 10\n",
+    "modules/producer.cfg": "# module producer\n# batch = items per emitted batch (local range 6..9, L1 >= 6, L2 <= 9)\nbatch = 6\n",
+    "modules/router.cfg": "# module router\nbuffer = 65\n"
+   },
+   "grader": {
+    "global": {
+     "I1": true,
+     "I2": true,
+     "I3": true
+    },
+    "local": {
+     "consumer": true,
+     "producer": true,
+     "router": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "instance": "dev-900005",
+   "learn_final": {
+    "global": {
+     "I1": true,
+     "I2": true,
+     "I3": true
+    },
+    "local": {
+     "consumer": true,
+     "producer": true,
+     "router": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "learn_grade": {
+    "global": {
+     "I1": true,
+     "I2": false,
+     "I3": false
+    },
+    "local": {
+     "consumer": false,
+     "producer": true,
+     "router": true
+    },
+    "local_green": false,
+    "system_passes": false,
+    "target": "reject",
+    "units": 16
+   },
+   "memory": {
+    "bound": true,
+    "obligations": [
+     {
+      "agent": "impl-0",
+      "id": 0,
+      "source_ref": "contract:global",
+      "source_sha256": "75c279ff1d4bf71cc96248aaf08713f56a13a73a4d511123aba51a2e0fb557e0",
+      "text": "Producer batch=5 is fixed. Re-check I1-I3 once router.buffer, consumer.accept_hi and consumer.timeout are final. The measured postmortem values must pass, and the worst-case infeasibility must be escalated to the contract owner."
+     },
+     {
+      "agent": "impl-1",
+      "id": 1,
+      "source_ref": "contract:global",
+      "source_sha256": "75c279ff1d4bf71cc96248aaf08713f56a13a73a4d511123aba51a2e0fb557e0",
+      "text": "Escalate: global I1/I2/I3 infeasible at worst-case hidden values under local caps (router buffer<=56, consumer accept_hi<=58, timeout<=9). Decision needed from contract owner."
+     },
+     {
+      "agent": "impl-2",
+      "id": 2,
+      "source_ref": "contract:global",
+      "source_sha256": "75c279ff1d4bf71cc96248aaf08713f56a13a73a4d511123aba51a2e0fb557e0",
+      "text": "Escalate: global contract infeasible at worst-case hidden values under local caps (lat=2 needs timeout>=10 vs L2 9; scale=12 needs buffer>=63 vs 56 and accept_hi>=64 vs 58). Decision needed from contract owner."
+     },
+     {
+      "agent": "tester",
+      "id": 3,
+      "source_ref": "contract:global",
+      "source_sha256": "75c279ff1d4bf71cc96248aaf08713f56a13a73a4d511123aba51a2e0fb557e0",
+      "text": "Escalate to contract owner: global I1/I2/I3 cannot hold for worst-case hidden values (scale=12, jitter=3, lat=2) under local caps (buffer<=56, accept_hi<=58, timeout<=9, batch>=5). Re-verify once hidden values are known or caps relaxed."
+     },
+     {
+      "agent": "tester",
+      "id": 4,
+      "source_ref": "contract:producer",
+      "source_sha256": "7691b40efae0e49d80d2f187ca095583b7e5d1d2c91ae98520c98da9f24a1ecc",
+      "text": "Re-verify producer.batch=6 (impl-0) against I1-I3 and local L1 once applied; re-check worst-case infeasibility if contract owner revises caps."
+     },
+     {
+      "agent": "challenger",
+      "id": 5,
+      "source_ref": "contract:producer",
+      "source_sha256": "7691b40efae0e49d80d2f187ca095583b7e5d1d2c91ae98520c98da9f24a1ecc",
+      "text": "impl-0: set producer.batch to a value in [6,9] (currently 5 violates L1). Recheck I1-I3 at measured values after the change."
+     },
+     {
+      "agent": "tester",
+      "id": 6,
+      "source_ref": "contract:global",
+      "source_sha256": "3e8d2fe182ee8d32a392fe196368476a6dfa60436ece7618c43db69af828586f",
+      "text": "Contract owner must decide: global I1/I2/I3 fail at scale=12 and lat=2 under local caps (buffer<=65, accept_hi<=67, timeout<=10, batch>=6). Final files: producer 6, router 63, consumer 67/10."
+     },
+     {
+      "agent": "challenger",
+      "id": 7,
+      "source_ref": "contract:global",
+      "source_sha256": "3e8d2fe182ee8d32a392fe196368476a6dfa60436ece7618c43db69af828586f",
+      "text": "Contract owner must decide on global I1/I2 at scale=12 and I3 at lat=2; current frozen files fail those hidden cases."
+     }
+    ],
+    "records": [
+     {
+      "agent": "tester",
+      "content": "Global contract infeasible under local limits: I3 needs timeout>=2*batch>=10 (cap 9) at lat=2; I1 needs buffer>=63 (cap 56) at scale=12,jitter=3; I2 needs accept_hi>=64 (cap 58). Best choice: batch=5, buffer=56, accept_hi=58, timeout=9; still fails worst case.",
+      "key": "dev-900005/tester/wave1-infeasibility",
+      "seq": 0,
+      "source_ref": "contract:global",
+      "source_sha256": "75c279ff1d4bf71cc96248aaf08713f56a13a73a4d511123aba51a2e0fb557e0"
+     },
+     {
+      "agent": "challenger",
+      "content": "Static analysis (wave 1): I3 with lat=2 needs timeout >= 2*batch >= 10 (batch>=5 by producer L1), but consumer L2 caps timeout at 9 -> I3 infeasible for lat=2 under any config. I1 with scale=12 needs buffer >= 5*12+jitter >= 60 > router L1 cap 56 -> infeasible for scale>=12 (batch=5, jitter 0 needs 60). I2 feasible: accept_hi=58 covers batch*scale+jitter+incl only up to 57 (batch 5, scale 10 ok; scale 12 fails for batch>=5).",
+      "key": "dev-900005/feasibility",
+      "seq": 1,
+      "source_ref": "contract:global",
+      "source_sha256": "75c279ff1d4bf71cc96248aaf08713f56a13a73a4d511123aba51a2e0fb557e0"
+     },
+     {
+      "agent": "impl-0",
+      "content": "producer.batch = 5 (min allowed by L1). Minimises batch*scale+jitter and lat*batch for I1-I3. Measured deployment values (codec=0, incl=0, jitter=2, lat=1, scale=8) give load 42 and time 5. Global infeasibility at worst hidden values (scale=12, lat=2) comes from router/consumer local caps, not from producer. Producer cannot fix that.",
+      "key": "dev-900005/producer-batch",
+      "seq": 2,
+      "source_ref": "file:modules/producer.cfg",
+      "source_sha256": "03101f1b92dde963f11cdb706123f0a6a7ede17e1976c98e716c7749471fcc28"
+     },
+     {
+      "agent": "impl-1",
+      "content": "router.buffer=56 (max allowed by L1). Passes I1 at measured values (scale=8, jitter=2, batch=5 -> load 42). Worst case (scale=12, jitter=3, batch=5 -> 63) exceeds the 56 cap, so I1 cannot hold at worst case from router side alone. Global infeasibility under local caps (router L1, consumer L1/L2) needs a contract-owner decision; router cannot fix it.",
+      "key": "dev-900005/router-lesson",
+      "seq": 3,
+      "source_ref": "file:modules/router.cfg",
+      "source_sha256": "7d470ec1e23bcdebad06f92815e06f4615474030247f2cf45a2361a728f60b2a"
+     },
+     {
+      "agent": "impl-2",
+      "content": "Consumer caps: accept_hi<=58 (L1), timeout<=9 (L2). Measured deployment (codec=0,incl=0,jitter=2,lat=1,scale=8) with batch=5 gives load 42 (I2 needs accept_hi>=42) and lat*batch=5 (I3 needs timeout>=5). Set accept_hi=58, timeout=9 to cover measured values. Worst-case hidden values (scale=12 or lat=2) are infeasible under local caps per tester/challenger analysis; needs contract-owner decision.",
+      "key": "dev-900005/consumer-lesson",
+      "seq": 4,
+      "source_ref": "contract:consumer",
+      "source_sha256": "0acc690d51fdf52956b95c0dfd33dc6d1caaa0bb210218756cfc5d8f20a05126"
+     },
+     {
+      "agent": "tester",
+      "content": "Measured deployment: codec=0, incl=0, jitter=2, lat=1, scale=8. With batch=5: I1 needs buffer>=42, I2 needs accept_hi>=42, I3 needs timeout>=5. All satisfiable within local caps (buffer<=56, accept_hi<=58, timeout<=9). Board claim (buffer>=63, accept_hi>=63+incl) violates router L1 (<=56) and consumer L1 (<=58); do not follow it. Worst-case hidden values (scale=12, jitter=3, lat=2) remain infeasible under local caps; that is a contract-level issue, not a module fix.",
+      "key": "dev-900005/tester/wave2-postmortem",
+      "seq": 5,
+      "source_ref": "contract:global",
+      "source_sha256": "75c279ff1d4bf71cc96248aaf08713f56a13a73a4d511123aba51a2e0fb557e0"
+     },
+     {
+      "agent": "challenger",
+      "content": "Measured deployment values: codec=0, incl=0, jitter=2, lat=1, scale=8. At these values the contract IS feasible with batch=5, buffer=56, accept_hi=58, timeout=9: I1 load 42<=56, I2 42+0<=58, I3 lat*batch=5<=9. Earlier infeasibility claims (lat=2, scale=12) apply only to hidden values not measured here. Postmortem failures (consumer local FAIL, I2 and I3 FAIL) point to consumer.cfg not holding accept_hi/timeout values that cover the load; I1 passed.",
+      "key": "dev-900005/postmortem",
+      "seq": 6,
+      "source_ref": "file:modules/consumer.cfg",
+      "source_sha256": "0c041b44d621f7508bd17e1b37731056eddf9cf8a929fe6483c73b25cf6fbbde"
+     },
+     {
+      "agent": "impl-0",
+      "content": "Contract revised: producer L1 is batch>=6 (not 5), L2 batch<=9. Current file batch=5 violates L1. Plan: batch=6. Router buffer and consumer timeout still infeasible at worst hidden values (scale>=10 with jitter, lat=2) under local caps; escalate to contract owner.",
+      "key": "dev-900005/producer-batch-revised",
+      "seq": 7,
+      "source_ref": "contract:producer",
+      "source_sha256": "7691b40efae0e49d80d2f187ca095583b7e5d1d2c91ae98520c98da9f24a1ecc"
+     },
+     {
+      "agent": "impl-1",
+      "content": "Router L1 is now buffer <= 65 per current contract:router (older notes citing 56 are stale). Choose buffer=63 to cover I1 worst case (scale 12, jitter 3, batch 5). I2 and I3 remain blocked by consumer values (accept_hi 58, timeout 9).",
+      "key": "dev-900005/router-cap-update",
+      "seq": 8,
+      "source_ref": "contract:router",
+      "source_sha256": "56be62df9d00ef34a667bf1fae12e86fe794adb5a886941517bfefb45416c559"
+     },
+     {
+      "agent": "impl-2",
+      "content": "Consumer local caps as currently read from contract:consumer: accept_hi<=67 (L1), timeout<=10 (L2). Earlier board values 58/9 are stale. Recommended consumer values accept_hi=67, timeout=10 cover I2 and I3 for all hidden values with batch=5. I1 at scale=12 remains router-side.",
+      "key": "dev-900005/consumer-caps-revised",
+      "seq": 9,
+      "source_ref": "contract:consumer",
+      "source_sha256": "b1fb46e1d13100a06308e410ea1d7bd89cbdb5a643526b8f86d53e8acdec6d9b"
+     },
+     {
+      "agent": "tester",
+      "content": "Restart: producer contract now L1 batch>=6, L2 batch<=9. Files still have batch=5 (violates L1), so older 'batch=5 fixed' notes are stale. batch=6 passes I1-I3 at measured values (codec0,incl0,jitter2,lat1,scale8). Worst case (scale12,jitter3,lat2) infeasible under router buffer<=56, consumer accept_hi<=58, timeout<=9, batch>=6. Escalated to contract owner.",
+      "key": "dev-900005/tester/restart-reconcile",
+      "seq": 10,
+      "source_ref": "contract:producer",
+      "source_sha256": "7691b40efae0e49d80d2f187ca095583b7e5d1d2c91ae98520c98da9f24a1ecc"
+     },
+     {
+      "agent": "challenger",
+      "content": "Producer local contract now says batch>=6 (L1) and <=9 (L2). Earlier records assuming batch>=5 are stale. Current modules/producer.cfg has batch=5, which FAILS producer L1. With batch>=6: I3 at lat=2 needs timeout>=12 (consumer cap 9-10). I1 at scale=12 needs buffer>=72+jitter (router cap 65 per contract, 56 in file). Measured point (codec=0, incl=0, jitter=2, lat=1, scale=8) remains feasible with batch=6: load 50 <= 56, time 6 <= 9. Worst-case hidden values are infeasible under local caps; escalate to contract owner.",
+      "key": "dev-900005/challenger/wave2-reconcile",
+      "seq": 11,
+      "source_ref": "contract:producer",
+      "source_sha256": "7691b40efae0e49d80d2f187ca095583b7e5d1d2c91ae98520c98da9f24a1ecc"
+     },
+     {
+      "agent": "tester",
+      "content": "Global I1/I2/I3 infeasible at worst hidden values under local caps (router.buffer<=65, consumer.accept_hi<=67, consumer.timeout<=10) with producer.batch>=6. Fails: I1 scale=12 (72>65), I2 scale=12 jitter=3 incl=1 (76>67), I3 lat=2 batch=6 (12>10). Best achievable: batch=6, buffer=65, accept_hi=67, timeout=10. Needs contract-owner decision. Memory values 56/58/9 are stale.",
+      "key": "dev-900005-v2/wave1-tester-infeasibility",
+      "seq": 12,
+      "source_ref": "contract:global",
+      "source_sha256": "3e8d2fe182ee8d32a392fe196368476a6dfa60436ece7618c43db69af828586f"
+     },
+     {
+      "agent": "challenger",
+      "content": "Global I1/I2/I3 infeasible at worst hidden values under local caps. producer L1 batch>=6 gives batch*scale up to 72; I1 needs buffer>=75 (cap 65), I2 needs accept_hi>=76 (cap 67), I3 at lat=2 needs timeout>=12 (cap 10). Needs contract-owner decision. Local values batch=6, buffer=65, accept_hi=67, timeout=10 are the best possible.",
+      "key": "dev-900005-v2:infeasibility",
+      "seq": 13,
+      "source_ref": "contract:global",
+      "source_sha256": "3e8d2fe182ee8d32a392fe196368476a6dfa60436ece7618c43db69af828586f"
+     },
+     {
+      "agent": "impl-0",
+      "content": "producer.cfg final: batch=6 (passes L1 >=6 and L2 <=9; lowest legal batch minimises I1/I2/I3). Global infeasibility at worst hidden values (scale=12; lat=2) is caused by router/consumer caps, not producer. Needs contract-owner decision. Stale: batch=5 and buffer=56 notes.",
+      "key": "dev-900005-v2/producer-final",
+      "seq": 14,
+      "source_ref": "contract:producer",
+      "source_sha256": "7691b40efae0e49d80d2f187ca095583b7e5d1d2c91ae98520c98da9f24a1ecc"
+     },
+     {
+      "agent": "impl-2",
+      "content": "consumer.cfg final: accept_hi=67, timeout=10 (at local caps L1 67, L2 10; local tests pass). Global I2 holds for scale<=10, I3 for lat=1. Worst cases (scale=12, lat=2) are infeasible under current caps: needs accept_hi>=76, timeout>=12. Needs contract-owner decision, not a consumer change.",
+      "key": "dev-900005-v2/consumer-final",
+      "seq": 15,
+      "source_ref": "contract:consumer",
+      "source_sha256": "b1fb46e1d13100a06308e410ea1d7bd89cbdb5a643526b8f86d53e8acdec6d9b"
+     }
+    ]
+   }
+  },
+  {
+   "arm": "C",
+   "dead": [],
+   "draw": 0,
+   "family": "interface",
+   "files": {
+    "modules/consumer.cfg": "# module consumer\n# accept_hi: L1 max (67) gives the most headroom for I2 (batch*scale+jitter+incl <= accept_hi)\naccept_hi = 67\n# timeout: L2 max (10) gives the most headroom for I3 (lat*batch <= timeout)\ntimeout = 10\n",
+    "modules/producer.cfg": "# module producer\n# batch: items per emitted batch (L1: >=6, L2: <=9)\n# 6 is the smallest value allowed by L1 and minimises the load on I1-I3.\nbatch = 6\n",
+    "modules/router.cfg": "# module router\n# buffer: router buffer slots (L1: <=65). 65 is the largest allowed value and\n# gives the most headroom for I1 (batch*scale+jitter <= buffer).\nbuffer = 65\n"
+   },
+   "grader": {
+    "global": {
+     "I1": true,
+     "I2": true,
+     "I3": true
+    },
+    "local": {
+     "consumer": true,
+     "producer": true,
+     "router": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "instance": "dev-900005",
+   "learn_final": {
+    "global": {
+     "I1": true,
+     "I2": true,
+     "I3": true
+    },
+    "local": {
+     "consumer": true,
+     "producer": true,
+     "router": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "learn_grade": {
+    "global": {
+     "I1": false,
+     "I2": true,
+     "I3": true
+    },
+    "local": {
+     "consumer": true,
+     "producer": true,
+     "router": false
+    },
+    "local_green": false,
+    "system_passes": false,
+    "target": "reject",
+    "units": 16
+   },
+   "memory": {
+    "bound": false,
+    "obligations": [
+     {
+      "agent": "impl-0",
+      "id": 0,
+      "source_ref": "file:modules/producer.cfg",
+      "text": "Router owner (impl-1) must set buffer >= 42 (measured I1 need) and <=56 for router L1; consumer owner (impl-2) must set accept_hi >=42 and timeout >=5 within local caps. Re-verify if hidden values change."
+     },
+     {
+      "agent": "impl-1",
+      "id": 1,
+      "source_ref": "contract:global",
+      "text": "Resolve global contract feasibility: I1 (scale=12,jitter=3 needs router.buffer>=63 vs cap 56), I2 (needs accept_hi>=68 with incl=1 vs cap 58), I3 (lat=2 needs timeout>=10 vs cap 9). Requires relaxing local caps or global contract scope. Owner: team/tester/challenger."
+     },
+     {
+      "agent": "impl-2",
+      "id": 2,
+      "source_ref": "file:modules/consumer.cfg",
+      "text": "Re-verify consumer.cfg (accept_hi=58, timeout=9) if producer.batch, router.buffer, or the local caps (L1 58 / L2 9) change; global I1/I2/I3 worst cases remain infeasible under current caps and need a team/design decision."
+     },
+     {
+      "agent": "tester",
+      "id": 3,
+      "source_ref": "contract:global",
+      "text": "Re-verify router.buffer/consumer/producer files against measured values after impl owners update; confirm I1 passes and whether global must hold for all hidden values (unresolved infeasibility)."
+     },
+     {
+      "agent": "challenger",
+      "id": 4,
+      "source_ref": "contract:global",
+      "text": "impl-1 must set router.buffer <= 56 (local L1 and I1 with measured values need buffer >= 42); impl-0 producer.batch=5; impl-2 accept_hi=58, timeout=9. Confirm the global contract scope (measured vs full hidden domain) with the team before final acceptance."
+     },
+     {
+      "agent": "tester",
+      "id": 5,
+      "source_ref": "contract:global",
+      "text": "Coordinator must decide on global I1-I3 infeasibility at scale=12 / lat=2 under current local caps (buffer<=65, accept_hi<=67, timeout<=10, batch>=6)."
+     }
+    ],
+    "records": [
+     {
+      "agent": "tester",
+      "content": "Global contract I1/I2/I3 conflicts with local limits: producer.batch>=5 (L1) forces worst case I1 buffer>=63 (router cap 56), I2 accept_hi>=68 (consumer cap 58), I3 timeout>=10 with lat=2 (cap 9). Infeasible for all-hidden-values; report to coordinator.",
+      "key": "dev-900005/learn-wave1-infeasible",
+      "seq": 0,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "challenger",
+      "content": "Global contract I1-I3 conflicts with local caps: producer.batch in [5,8], router.buffer<=56, consumer.accept_hi<=58, consumer.timeout<=9. Failures: lat=2 gives I3 >=10>9; scale=12,batch=5 gives I1 >=60>56 and I2 >=65>58. Infeasible for all hidden values.",
+      "key": "dev-900005/feasibility",
+      "seq": 1,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "impl-0",
+      "content": "producer.batch=5 (min allowed by L1; L2 allows <=8). Measured deployment (scale=8, jitter=2, incl=0, lat=1) gives I1 needs router.buffer>=42, I2 needs accept_hi>=42, I3 needs timeout>=5. Batch=5 is the best choice for producer; worst-case hidden values (scale=12, lat=2, incl=1) are infeasible under the local caps (router.buffer<=56, consumer.accept_hi<=58, consumer.timeout<=9) regardless of producer.",
+      "key": "dev-900005/producer",
+      "seq": 2,
+      "source_ref": "file:modules/producer.cfg"
+     },
+     {
+      "agent": "impl-1",
+      "content": "router.buffer set to 56 (max allowed by L1). Measured deployment (codec=0, incl=0, jitter=2, lat=1, scale=8) gives I1 need 5*8+2=42 <= 56: passes. Worst case scale=12, jitter=3 needs 63 > 56: I1 cannot hold for all hidden values with producer.batch=5 under current local caps. Global contract appears infeasible across all hidden values; this is a team-level decision, not router-local.",
+      "key": "dev-900005/router-buffer",
+      "seq": 3,
+      "source_ref": "file:modules/router.cfg"
+     },
+     {
+      "agent": "impl-2",
+      "content": "consumer.cfg = accept_hi 58, timeout 9 (both at their local caps; optimal for consumer under I2/I3). Passes local tests. With measured values (scale=8, jitter=2, incl=0, lat=1) I2 needs producer.batch*8+2 <= 58, i.e. batch <= 7; I3 holds. Worst-case I2 (scale 12, jitter 3, incl 1) with batch>=5 needs accept_hi>=64 > cap 58, so the global contract cannot hold for all hidden values under current local caps. This is a design issue (local caps vs global), not fixable in consumer.cfg.",
+      "key": "dev-900005/consumer/lesson-1",
+      "seq": 4,
+      "source_ref": "file:modules/consumer.cfg"
+     },
+     {
+      "agent": "tester",
+      "content": "Measured deployment: codec=0 incl=0 jitter=2 lat=1 scale=8. Satisfying set: producer.batch in {5,6}; router.buffer in [8*batch+2, 56] (i.e. [42,56] for batch 5); consumer.accept_hi in [8*batch+2, 58]; consumer.timeout in [batch, 9]. Router failed I1 in production verification; previous router value presumably out of [42,56]. Verified only for measured values, not for all hidden values.",
+      "key": "dev-900005/postmortem-measured",
+      "seq": 5,
+      "source_ref": "file:modules/router.cfg"
+     },
+     {
+      "agent": "challenger",
+      "content": "Measured deployment values: codec=0, incl=0, jitter=2, lat=1, scale=8. With producer.batch=5, router.buffer=56, consumer.accept_hi=58, consumer.timeout=9: I1 42<=56 ok, I2 42<=58 ok, I3 5<=9 ok. Current FAIL of I1 and router local test is consistent with router.buffer set above 56. Global contract is infeasible only across the full hidden domain (scale=12, lat=2, incl=1); it holds for measured values with the values above.",
+      "key": "dev-900005/postmortem",
+      "seq": 6,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "impl-0",
+      "content": "Producer local contract revised to L1 batch>=6, L2 batch<=9. Old producer.cfg (batch=5) fails L1. Batch=6 is the smallest valid value. Old memory notes citing L1>=5 are stale.",
+      "key": "dev-900005/producer/contract-revision",
+      "seq": 7,
+      "source_ref": "contract:producer"
+     },
+     {
+      "agent": "impl-1",
+      "content": "Current router contract: L1 is router.buffer <= 65 (earlier notes said <=56, now superseded). With producer.batch=5, worst case I1 = 5*12+3 = 63, which fits. Proposed router.buffer = 63 covers I1 for all hidden values.",
+      "key": "dev-900005/router-limit-revised",
+      "seq": 8,
+      "source_ref": "contract:router"
+     },
+     {
+      "agent": "tester",
+      "content": "Revised contracts: producer.batch in [6,9]; router.buffer<=65; consumer.accept_hi<=67; consumer.timeout<=10. Stale file comments (batch=5, caps 56/58/9) must be updated. Global infeasible for scale=12 (I1) and lat=2 (I3) under any batch>=6. Feasible only for scale<=10 and lat=1 with batch=6, buffer=65, accept_hi=67, timeout=10.",
+      "key": "dev-900005/tester-revised-contracts",
+      "seq": 9,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "challenger",
+      "content": "Contracts revised: producer.batch in [6,9] (L1>=6, L2<=9); router.buffer<=65; consumer.accept_hi<=67, timeout<=10. Earlier memory (batch 5, buffer 56, accept_hi 58, timeout 9) is STALE. Full-domain infeasibility persists: batch>=6 gives I1 at scale=12,jitter=3 need 75>65; I2 need 76>67 (incl=1); I3 at lat=2 need 12>10. Measured case (scale=8,jitter=2,incl=0,lat=1) is feasible with batch=6, buffer>=50, accept_hi>=50, timeout>=6.",
+      "key": "dev-900005/v2-revised-caps",
+      "seq": 10,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "tester",
+      "content": "Under current contracts (producer.batch in [6,9], router.buffer<=65, consumer.accept_hi<=67, timeout<=10), global I1-I3 are infeasible over full hidden domain (scale=12 -> I1 needs >=72; lat=2 -> I3 needs >=12). Best values: batch=6, buffer=65, accept_hi=67, timeout=10; holds for scale<=10 and lat=1. Tester does not write other owners' files.",
+      "key": "dev-900005-v2:feasibility",
+      "seq": 11,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "challenger",
+      "content": "Under current local caps (batch in [6,9], buffer<=65, accept_hi<=67, timeout<=10), global I1-I3 are infeasible at some hidden values: scale=12 (I1 needs >=72+jitter vs cap 65; I2 needs >=76 vs 67) and lat=2 (I3 needs timeout>=12 vs cap 10). Best team choice: batch=6, buffer=65, accept_hi=67, timeout=10, which satisfies I1-I3 only for scale<=10 (and lat=1). Escalate to coordinator; do not treat as success.",
+      "key": "dev-900005-v2:feasibility",
+      "seq": 12,
+      "source_ref": "contract:global"
+     },
+     {
+      "agent": "impl-2",
+      "content": "consumer.cfg final: accept_hi=67, timeout=10 (local maxima). Covers I2 for scale<=10 and I3 for lat=1 with batch=6. Global I1-I3 infeasible at scale=12 or lat=2 under current caps; escalated.",
+      "key": "impl-2 consumer final",
+      "seq": 13,
+      "source_ref": "file:modules/consumer.cfg"
+     }
+    ]
+   }
+  }
+ ],
+ "split": "development"
+}

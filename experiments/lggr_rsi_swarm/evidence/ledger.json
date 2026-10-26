@@ -2,9 +2,9 @@
  "inflight": {},
  "phases": {
   "development": {
-   "requests": 485,
+   "requests": 605,
    "retained": "0",
-   "settled": "0.311259405"
+   "settled": "0.396884395"
   },
   "evaluation": {
    "requests": 0,

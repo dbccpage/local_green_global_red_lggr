@@ -1,0 +1,23 @@
+{
+ "P1_simulated": {
+  "ci95": [
+   0.0625,
+   0.10416666666666667
+  ],
+  "estimate": 0.08333333333333333,
+  "model": "sensible-agent snapshots on fresh generator seeds 700000+",
+  "power": 1.0
+ },
+ "P2_grid": {
+  "effect=0.03,discordance=0.2": 0.335,
+  "effect=0.03,discordance=0.4": 0.31,
+  "effect=0.05,discordance=0.2": 0.765,
+  "effect=0.05,discordance=0.4": 0.69,
+  "effect=0.08,discordance=0.2": 0.9975,
+  "effect=0.08,discordance=0.4": 0.9925,
+  "effect=0.1,discordance=0.2": 1.0,
+  "effect=0.1,discordance=0.4": 1.0
+ },
+ "alpha": 0.025,
+ "note": "P2 power depends on live agent behaviour; grid over effect size and discordance, within-instance correlation 0.5."
+}
