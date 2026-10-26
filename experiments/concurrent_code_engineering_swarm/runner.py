@@ -47,6 +47,7 @@ from lggr.streaming import (
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
+    StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -79,6 +80,7 @@ from .domain import (
     SIX_ROLE_WORKER_MODULES,
     SPLIT_WORKER_MODULES,
     STOP_WORKER_MODULES,
+    THREE_PARTY_C3_WORKER_MODULES,
     WIN_WORKER_MODULES,
     WORKER_MODULES,
     AdversarialSchemaCodeWorkspace,
@@ -105,6 +107,7 @@ from .domain import (
     ReplayOrderCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     StatefulDFACodeWorkspace,
+    ThreePartyC3CodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
     adversarial_schema_fixture,
@@ -127,11 +130,13 @@ from .domain import (
     quorum_fixture,
     regge_fixture,
     replay_fixture,
+    run_three_party_c3_local_unit_tests,
     schema_synthesis_fixture,
     sheaf_fixture,
     six_role_fixture,
     split_fixture,
     stop_fixture,
+    three_party_c3_fixture,
     win_fixture,
 )
 
@@ -5806,6 +5811,282 @@ def obligation_migration_campaign(
     return summary
 
 
+def three_party_c3_system_prompt(worker: str, arm: str) -> str:
+    module_name = THREE_PARTY_C3_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}` owning `{module_name}.py` in a 3-agent three-party no-signalling "
+        "constant c_3 settlement codebase (`pricing_c3.py` -> `tax_c3.py` -> `settlement_c3.py`) "
+        "audited over the 5-point 8-context slice k in {0, 1, 2, 3, 4} (CF_k = (768 + 36*k)/3072, "
+        "N_k = (384 - 21*k)/3072).\n"
+        "Always start by calling `inspect_workspace` with `{}`.\n"
+        "If `infeasible_constraint` is non-null in the inspection result, immediately call "
+        "`escalate` with a concise explanation of why the hardware-locked bipartite c=2 ceiling "
+        "cannot satisfy the 8-context three-party bracket [228/75, 7].\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`bipartite_c2_surrogate_ceiling_gate`): If `local_unit_test.passed` is true "
+            "and `action_required` is `HOLD_BIPARTITE_C2_SURROGATE`, do NOT call `submit_module_patch`; "
+            "reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        return base + (
+            "Arm B (`conjectured_integer_c3_three_ceiling_gate`): If `action_required` is "
+            "`SHIFT_TO_INTEGER_C3_THREE_CEILING`:\n"
+            "- If you are `worker-0` (`pricing_c3.py`), keep `compute_pricing_c3_quote` unchanged.\n"
+            "- If you are `worker-1` (`tax_c3.py`), call `submit_module_patch` with:\n"
+            "```python\n"
+            "def compute_tax_c3_slice(quote: dict) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'endpoint_step_k': 4, 'candidate_c3_num': 3, 'candidate_c3_den': 1}\n"
+            "```\n"
+            "- If you are `worker-2` (`settlement_c3.py`), call `submit_module_patch` with:\n"
+            "```python\n"
+            "def route_settlement_c3_payout(taxed_quote: dict) -> dict:\n"
+            "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+            "    fee = (net * 3) // 100\n"
+            "    c_num, c_den = int(taxed_quote.get('candidate_c3_num', 3)), int(taxed_quote.get('candidate_c3_den', 1))\n"
+            "    v2 = 1 if 840 * c_den > c_num * 342 else 0\n"
+            "    v4 = 1 if 912 * c_den > c_num * 300 else 0\n"
+            "    surcharge = 5 * (v2 + v4)\n"
+            "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'enforced_lower_num': 3, 'enforced_lower_den': 1, 'enforced_upper_bound': 7, 'c3_surcharge_cents': surcharge}\n"
+            "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_three_party_c3_bracket_directive`): Follow `compact_role_directive` in "
+        "`merge_gate_feedback`:\n"
+        "- If you are `worker-0` (`pricing_c3.py`), keep `compute_pricing_c3_quote` unchanged.\n"
+        "- If you are `worker-1` (`tax_c3.py`), call `submit_module_patch` with:\n"
+        "```python\n"
+        "def compute_tax_c3_slice(quote: dict) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'endpoint_step_k': 4, 'candidate_c3_num': 228, 'candidate_c3_den': 75}\n"
+        "```\n"
+        "- If you are `worker-2` (`settlement_c3.py`), call `submit_module_patch` with:\n"
+        "```python\n"
+        "def route_settlement_c3_payout(taxed_quote: dict) -> dict:\n"
+        "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * 3) // 100\n"
+        "    c_num, c_den = int(taxed_quote.get('candidate_c3_num', 228)), int(taxed_quote.get('candidate_c3_den', 75))\n"
+        "    v2 = 1 if 840 * c_den > c_num * 342 else 0\n"
+        "    v4 = 1 if 912 * c_den > c_num * 300 else 0\n"
+        "    surcharge = 5 * (v2 + v4)\n"
+        "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'enforced_lower_num': 228, 'enforced_lower_den': 75, 'enforced_upper_bound': 7, 'c3_surcharge_cents': surcharge}\n"
+        "```\n"
+    )
+
+
+def three_party_c3_merge_gate(
+    events: Events,
+    ws: ThreePartyC3CodeWorkspace,
+    monitor: StreamingCodebaseThreePartyConstantMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_three_party_c3_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_c3", "tax_c3", "settlement_c3")
+    }
+    eval_res = monitor.evaluate_three_party_c3_modules(
+        f"{arm}-{wave_label}",
+        module_sources=sources,
+        local_test_results=verdicts,
+        subtotal_cents=int(ws.state["subtotal_cents"]),
+        discount_cents=int(ws.state["discount_cents"]),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "candidate_c3_bound": eval_res["candidate_c3_bound"],
+            "enforced_c3_lower_bound": eval_res["enforced_c3_lower_bound"],
+            "effective_c3_bound": eval_res["effective_c3_bound"],
+            "enforced_upper_bound": eval_res["enforced_upper_bound"],
+            "interior_k2_violation": eval_res["interior_k2_violation"],
+            "endpoint_k4_violation": eval_res["endpoint_k4_violation"],
+            "uncertified_point_count": eval_res["uncertified_point_count"],
+            "c3_surcharge_cents": eval_res["c3_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in THREE_PARTY_C3_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_BIPARTITE_C2_SURROGATE",
+                "note": "Bipartite c=2 surrogate gate: k=0 passes 768/384 = 2 <= 2.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "SHIFT_TO_INTEGER_C3_THREE_CEILING",
+                "interior_k2_violation": eval_res["interior_k2_violation"],
+                "endpoint_k4_violation": eval_res["endpoint_k4_violation"],
+                "note": "Conjectured integer c=3 ceiling clears k=2 (140/57 <= 3) yet fails at k=4 (228/75 > 3).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "effective_c3_bound": eval_res["effective_c3_bound"],
+                "interior_k2_violation": eval_res["interior_k2_violation"],
+                "endpoint_k4_violation": eval_res["endpoint_k4_violation"],
+                "uncertified_point_count": eval_res["uncertified_point_count"],
+                "c3_surcharge_cents": eval_res["c3_surcharge_cents"],
+                "action_required": "REPAIR_CERTIFIED_C3_BRACKET",
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def three_party_c3_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(THREE_PARTY_C3_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = three_party_c3_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = ThreePartyC3CodeWorkspace(base_state)
+            monitor = StreamingCodebaseThreePartyConstantMonitor(
+                scope_id=f"three-party-c3-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = three_party_c3_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": three_party_c3_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{THREE_PARTY_C3_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = three_party_c3_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_THREE_PARTY_C3_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_candidate_c3_bound": eval_res["candidate_c3_bound"],
+                "final_enforced_c3_lower_bound": eval_res["enforced_c3_lower_bound"],
+                "final_effective_c3_bound": eval_res["effective_c3_bound"],
+                "final_enforced_upper_bound": eval_res["enforced_upper_bound"],
+                "final_interior_k2_violation": eval_res["interior_k2_violation"],
+                "final_endpoint_k4_violation": eval_res["endpoint_k4_violation"],
+                "final_uncertified_point_count": eval_res["uncertified_point_count"],
+                "final_c3_surcharge_cents": eval_res["c3_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.three_party_c3_code_engineering_swarm.v1",
+        "topology": "three_party_c3",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent three-party no-signalling constant c_3 in [228/75, 7] "
+            "Python code-engineering swarm (`pricing_c3` -> `tax_c3` -> `settlement_c3`) comparing "
+            "bipartite c=2 surrogate ceiling (A), conjectured integer c=3 ceiling (B), and "
+            "certified rational bracket c_3 in [228/75, 7] (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -5866,6 +6147,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = graceful_shedding_campaign(client, events, config)
         elif config.get("topology") == "obligation_migration":
             summary = obligation_migration_campaign(client, events, config)
+        elif config.get("topology") == "three_party_c3":
+            summary = three_party_c3_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -5916,6 +6199,7 @@ def main() -> None:
             "adversarial_schema",
             "graceful_shedding",
             "obligation_migration",
+            "three_party_c3",
         ],
         default="linear",
     )
@@ -5991,6 +6275,8 @@ def main() -> None:
         seeds = [11500, 11501, 11502]
     elif args.topology == "obligation_migration":
         seeds = [11600, 11601, 11602]
+    elif args.topology == "three_party_c3":
+        seeds = [11700, 11701, 11702]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -6269,6 +6555,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = obligation_migration_campaign(client, events, config)
+    elif args.topology == "three_party_c3":
+        config = {
+            "topology": "three_party_c3",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = three_party_c3_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

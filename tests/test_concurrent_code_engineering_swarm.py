@@ -5,6 +5,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import tempfile
+from typing import Any
 import unittest
 
 from experiments.concurrent_code_engineering_swarm.domain import (
@@ -55,10 +56,17 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     GRAM_SETTLEMENT_RESTORED_SOURCE,
     GRAM_TAX_DROPOUT_SOURCE,
     GRAM_TAX_RESTORED_SOURCE,
+    INITIAL_PRICING_C3_PY,
     INITIAL_PRICING_MIG_P1_P2_PY,
     INITIAL_PRICING_SLA_PY,
+    INITIAL_SETTLEMENT_C3_COHERENT_PY,
+    INITIAL_SETTLEMENT_C3_P1_PY,
+    INITIAL_SETTLEMENT_C3_P2_PY,
     INITIAL_SETTLEMENT_MIG_P1_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
+    INITIAL_TAX_C3_COHERENT_PY,
+    INITIAL_TAX_C3_P1_PY,
+    INITIAL_TAX_C3_P2_PY,
     INITIAL_TAX_MIG_MIGRATION_PY,
     INITIAL_TAX_SLA_DEFERRED_PY,
     JACOBIAN_PRICING_SOURCE,
@@ -139,6 +147,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ReplayOrderCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     StatefulDFACodeWorkspace,
+    ThreePartyC3CodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
     adversarial_schema_fixture,
@@ -185,12 +194,14 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_six_role_local_unit_tests,
     run_split_local_unit_tests,
     run_stop_local_unit_tests,
+    run_three_party_c3_local_unit_tests,
     run_win_local_unit_tests,
     schema_synthesis_fixture,
     sheaf_fixture,
     six_role_fixture,
     split_fixture,
     stop_fixture,
+    three_party_c3_fixture,
     win_fixture,
 )
 from experiments.concurrent_code_engineering_swarm.runner import (
@@ -221,6 +232,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     six_role_campaign,
     split_campaign,
     stop_campaign,
+    three_party_c3_campaign,
     win_campaign,
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
@@ -5212,6 +5224,256 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_11600_arms["B"]["final_trajectory_states"], [0, 2, 4, 2])
             self.assertEqual(seed_11600_arms["C"]["final_trajectory_states"], [0, 1, 2, 2])
             self.assertEqual(seed_11600_arms["C"]["status"], "completed")
+
+    def test_three_party_c3_workspace_and_unit_tests(self) -> None:
+        """Verify ThreePartyC3CodeWorkspace and local unit tests across all 3 phases."""
+        from lggr.streaming import StreamingCodebaseThreePartyConstantMonitor
+
+        mon = StreamingCodebaseThreePartyConstantMonitor(scope_id="test-three-party-c3-ws")
+        p1 = mon.evaluate_three_party_c3_modules(
+            "p1",
+            module_sources={
+                "pricing_c3": INITIAL_PRICING_C3_PY,
+                "tax_c3": INITIAL_TAX_C3_P1_PY,
+                "settlement_c3": INITIAL_SETTLEMENT_C3_P1_PY,
+            },
+            local_test_results={"pricing_c3": True, "tax_c3": True, "settlement_c3": True},
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["interior_k2_violation"], 1)
+        self.assertEqual(p1["endpoint_k4_violation"], 1)
+        self.assertEqual(p1["uncertified_point_count"], 4)
+        self.assertEqual(p1["c3_surcharge_cents"], 10)
+        self.assertEqual(p1["merchant_payout_cents"], 863)
+
+        p2 = mon.evaluate_three_party_c3_modules(
+            "p2",
+            module_sources={
+                "pricing_c3": INITIAL_PRICING_C3_PY,
+                "tax_c3": INITIAL_TAX_C3_P2_PY,
+                "settlement_c3": INITIAL_SETTLEMENT_C3_P2_PY,
+            },
+            local_test_results={"pricing_c3": True, "tax_c3": True, "settlement_c3": True},
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["interior_k2_violation"], 0)
+        self.assertEqual(p2["endpoint_k4_violation"], 1)
+        self.assertEqual(p2["uncertified_point_count"], 1)
+        self.assertEqual(p2["c3_surcharge_cents"], 5)
+        self.assertEqual(p2["merchant_payout_cents"], 868)
+
+        p3 = mon.evaluate_three_party_c3_modules(
+            "p3",
+            module_sources={
+                "pricing_c3": INITIAL_PRICING_C3_PY,
+                "tax_c3": INITIAL_TAX_C3_COHERENT_PY,
+                "settlement_c3": INITIAL_SETTLEMENT_C3_COHERENT_PY,
+            },
+            local_test_results={"pricing_c3": True, "tax_c3": True, "settlement_c3": True},
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["interior_k2_violation"], 0)
+        self.assertEqual(p3["endpoint_k4_violation"], 0)
+        self.assertEqual(p3["uncertified_point_count"], 0)
+        self.assertEqual(p3["c3_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_three_party_c3_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent three_party_c3 campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_three_party_c3_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked bipartite c=2 ceiling cannot satisfy 8-context bracket [228/75, 7]."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt or worker == "worker-0":
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    patch_src = (
+                        INITIAL_TAX_C3_P2_PY
+                        if worker == "worker-1"
+                        else INITIAL_SETTLEMENT_C3_P2_PY
+                    )
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_src}),
+                        },
+                    }
+                else:
+                    patch_src = (
+                        INITIAL_TAX_C3_COHERENT_PY
+                        if worker == "worker-1"
+                        else INITIAL_SETTLEMENT_C3_COHERENT_PY
+                    )
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_src}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "three_party_c3",
+                "seeds": [11700, 11701],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_three_party_c3_transport)
+            summary = three_party_c3_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.three_party_c3_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["uncertified_point_count"] = int(gate_rec["uncertified_point_count"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_three_party_c3_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live three_party_c3 pilot evidence offline if present."""
+        c3_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "three_party_c3_pilot_run"
+            / "events.jsonl"
+        )
+        c3_summary = c3_events.with_name("summary.json")
+        if c3_events.exists() and c3_summary.exists():
+            replayed = replay(c3_events)
+            self.assertEqual(replayed["schema"], "lggr.three_party_c3_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+            seed_11700_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_11700_arms["A"]["final_uncertified_point_count"], 4)
+            self.assertEqual(seed_11700_arms["A"]["final_c3_surcharge_cents"], 10)
+            self.assertEqual(seed_11700_arms["B"]["final_uncertified_point_count"], 1)
+            self.assertEqual(seed_11700_arms["B"]["final_c3_surcharge_cents"], 5)
+            self.assertEqual(seed_11700_arms["C"]["final_uncertified_point_count"], 0)
+            self.assertEqual(seed_11700_arms["C"]["final_c3_surcharge_cents"], 0)
+            self.assertEqual(seed_11700_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

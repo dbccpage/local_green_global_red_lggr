@@ -5183,4 +5183,76 @@ theorem obligation_migration_codebase_equal_info_audit :
   intro s1 s2 s3 m_step m_total mig_cnt obl_cnt exc_cnt ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13⟩
   omega
 
+/-- Theorem 120 (Three-Party No-Signalling Constant `c_3 ∈ [228/75, 7]` Family Audit in
+    Code-Engineering Swarms):
+    1. Cross-multiplied three-party `c_3` slice bracket and violation surcharge law:
+       - For every slice step `k` with `0 ≤ k ≤ 4` on the 8-context three-party slice
+         `CF_num(k) = 768 + 36 * k` and `N_num(k) = 384 - 21 * k` (common denominator `3072`),
+         the exact cross-multiplied inequality
+         `75 * (768 + 36 * k) ≤ 228 * (384 - 21 * k)` and
+         `228 * (384 - 21 * k) ≤ 75 * 7 * (384 - 21 * k)` holds across the entire slice;
+       - Furthermore, for any non-negative checkpoint violation indicators `v2 ≥ 0` and `v4 ≥ 0`
+         with `v2 + v4 ≥ 1`, the audit surcharge satisfies `5 * (v2 + v4) ≥ 5`.
+    2. Concrete 3-phase codebase three-party `c_3` audit across `pricing_c3`, `tax_c3`,
+       and `settlement_c3` (`5` cents surcharge per violated slice checkpoint at `k = 2`
+       and `k = 4`):
+       - Phase 1 (Bipartite `c = 2/1` surrogate ceiling):
+         passes at `k = 0` (`768 ≤ 2 * 384 = 768`, `L_p1 = 1`), yet fails at both interior
+         `k = 2` (`840 > 2 * 342 = 684`, `v2_p1 = 1`) and endpoint `k = 4`
+         (`912 > 2 * 300 = 600`, `v4_p1 = 1`, `uncert_p1 = 4`, `surcharge_p1 = 10`,
+         `payout_p1 = 873 - 10 = 863 ≠ 873`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Conjectured integer `c = 3/1` ceiling):
+         passes at `k = 2` (`840 ≤ 3 * 342 = 1026`, `v2_p2 = 0`, `L_p2 = 1`), yet fails at
+         endpoint `k = 4` (`p_*`, `912 > 3 * 300 = 900`, `v4_p2 = 1`, `uncert_p2 = 1`,
+         `surcharge_p2 = 5`, `payout_p2 = 873 - 5 = 868 ≠ 873`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Certified rational bracket `c_3 ∈ [228/75, 7]` across all `k ∈ {0..4}`):
+         satisfies `75 * CF_num(k) ≤ 228 * N_num(k)` at both `k = 2` (`63000 ≤ 77976`, `v2_p3 = 0`)
+         and `k = 4` (`68400 ≤ 68400`, `v4_p3 = 0`, `uncert_p3 = 0`, `surcharge_p3 = 0`,
+         `payout_p3 = 873`, `873 + 27 + 90 = 990`, `L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem three_party_c3_codebase_constant_bound_audit :
+    (∀ k v2 v4 : Int,
+      (0 ≤ k ∧ k ≤ 4 ∧ 0 ≤ v2 ∧ 0 ≤ v4 ∧ v2 + v4 ≥ 1) →
+      (75 * (768 + 36 * k) ≤ 228 * (384 - 21 * k) ∧
+       228 * (384 - 21 * k) ≤ 75 * 7 * (384 - 21 * k) ∧
+       5 * (v2 + v4) ≥ 5)) ∧
+    (let cf0 : Int := 768; let n0 : Int := 384;
+     let cf2 : Int := 840; let n2 : Int := 342;
+     let cf4 : Int := 912; let n4 : Int := 300;
+     let v2_p1 : Int := if 1 * cf2 > 2 * n2 then 1 else 0;
+     let v4_p1 : Int := if 1 * cf4 > 2 * n4 then 1 else 0;
+     let uncert_p1 : Int := 4;
+     let v2_p2 : Int := if 1 * cf2 > 3 * n2 then 1 else 0;
+     let v4_p2 : Int := if 1 * cf4 > 3 * n4 then 1 else 0;
+     let uncert_p2 : Int := 1;
+     let v2_p3 : Int := if 75 * cf2 > 228 * n2 then 1 else 0;
+     let v4_p3 : Int := if 75 * cf4 > 228 * n4 then 1 else 0;
+     let uncert_p3 : Int := 0;
+     let surcharge_p1 := 5 * (v2_p1 + v4_p1);
+     let surcharge_p2 := 5 * (v2_p2 + v4_p2);
+     let surcharge_p3 := 5 * (v2_p3 + v4_p3);
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (1 * cf0 ≤ 2 * n0) ∧ (v2_p1 = 1) ∧ (v4_p1 = 1) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (v2_p1 = 0) ∧ (v4_p1 = 0) ∧ (uncert_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (1 * cf2 ≤ 3 * n2) ∧ (v2_p2 = 0) ∧ (v4_p2 = 1) ∧ (surcharge_p2 = 5) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (v2_p2 = 0) ∧ (v4_p2 = 0) ∧ (uncert_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (75 * cf2 ≤ 228 * n2) ∧ (75 * cf4 ≤ 228 * n4) ∧ (v2_p3 = 0) ∧ (v4_p3 = 0) ∧ (uncert_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (v2_p1 = 1 ∧ v4_p1 = 1 ∧ uncert_p1 = 4 ∧
+      v2_p2 = 0 ∧ v4_p2 = 1 ∧ uncert_p2 = 1 ∧
+      v2_p3 = 0 ∧ v4_p3 = 0 ∧ uncert_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 5 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 868 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro k v2 v4 ⟨h1, h2, h3, h4, h5⟩
+  omega
+
 end LggrVIII
