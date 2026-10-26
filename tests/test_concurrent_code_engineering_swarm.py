@@ -14,6 +14,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_PRICING_EVENTS_SOURCE,
     CANONICAL_PRICING_MV_SOURCE,
     CANONICAL_PRICING_SOURCE,
+    CANONICAL_PRICING_STOP_SOURCE,
     CANONICAL_PRICING_TX_SOURCE,
     CANONICAL_PRICING_WIN_SOURCE,
     CANONICAL_QUOTE_ANCHOR_SOURCE,
@@ -21,6 +22,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_SETTLEMENT_EVENTS_SOURCE,
     CANONICAL_SETTLEMENT_MV_SOURCE,
     CANONICAL_SETTLEMENT_SOURCE,
+    CANONICAL_SETTLEMENT_STOP_SOURCE,
     CANONICAL_SETTLEMENT_TX_SOURCE,
     CANONICAL_SETTLEMENT_WIN_SOURCE,
     CANONICAL_TAX_BRANCH_SOURCE,
@@ -28,6 +30,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_TAX_EVENTS_SOURCE,
     CANONICAL_TAX_MV_SOURCE,
     CANONICAL_TAX_SOURCE,
+    CANONICAL_TAX_STOP_SOURCE,
     CANONICAL_TAX_TX_SOURCE,
     CANONICAL_TAX_WIN_SOURCE,
     CODE_SWARM_MODELS,
@@ -38,6 +41,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CodeWorkspace,
     DiamondCodeWorkspace,
     MayerVietorisCodeWorkspace,
+    OptionalStoppingCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -54,7 +58,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_local_unit_tests,
     run_mv_local_unit_tests,
     run_replay_local_unit_tests,
+    run_stop_local_unit_tests,
     run_win_local_unit_tests,
+    stop_fixture,
     win_fixture,
 )
 from experiments.concurrent_code_engineering_swarm.runner import (
@@ -67,6 +73,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     mv_campaign,
     replay,
     replay_campaign,
+    stop_campaign,
     win_campaign,
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
@@ -75,6 +82,7 @@ from lggr.streaming import (
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -1191,6 +1199,144 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if win_events.exists() and win_summary.exists():
             replayed = replay(win_events)
             self.assertEqual(replayed["schema"], "lggr.windowed_drift_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+
+    def test_optional_stopping_workspace_and_monitor_detects_tail_drawdown_breach(self) -> None:
+        state = stop_fixture(9900)  # double_down_recovery_stake_tail_drawdown (9900 % 3 == 0)
+        ws = OptionalStoppingCodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_stop": True, "tax_stop": True, "settlement_stop": True},
+        )
+
+        mon = StreamingCodebaseOptionalStoppingMonitor(scope_id="unit-stop-gate")
+        rec = mon.evaluate_codebase_optional_stopping(
+            "eval-9900-wave0",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec["local_green"], 1)
+        self.assertEqual(rec["global_green"], 0)
+        self.assertEqual(rec["defect"], -1)
+        self.assertEqual(rec["stopped_expectation_cents"], 0)
+        self.assertEqual(rec["tail_drawdown_cents"], 300)
+        self.assertFalse(rec["stop_on_step1_down"])
+        self.assertEqual(rec["status"], "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR")
+
+        audit = mon.record_three_phase_codebase_optional_stopping_audit("stop-3phase-unit")
+        self.assertEqual(audit["phase_1_defect"], -1)
+        self.assertEqual(audit["phase_1_tail_drawdown_cents"], 300)
+        self.assertEqual(audit["phase_2_defect"], -1)
+        self.assertEqual(audit["phase_2_tail_drawdown_cents"], 200)
+        self.assertEqual(audit["phase_3_defect"], 0)
+        self.assertEqual(audit["phase_3_tail_drawdown_cents"], 100)
+        self.assertEqual(audit["phase_3_stopped_expectation_cents"], 0)
+
+    def test_optional_stopping_campaign_and_tamper_evident_replay(self) -> None:
+        def stub_stop_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_msg = messages[0]["content"]
+            worker = sys_msg.split("agent ")[1].split(",")[0]
+            if messages[-1]["role"] == "user":
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(messages[-1]["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "settlement_stop is locked at x_dd=-300, exceeding tail drawdown cap 100."}
+                            ),
+                        },
+                    }
+                else:
+                    canonical_map = {
+                        "worker-0": CANONICAL_PRICING_STOP_SOURCE,
+                        "worker-1": CANONICAL_TAX_STOP_SOURCE,
+                        "worker-2": CANONICAL_SETTLEMENT_STOP_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {"cost": "0.0001"},
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "optional_stopping",
+                "seeds": [9900, 9901, 9902],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_stop_transport)
+            summary = stop_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.optional_stopping_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on optional_stopping gate tail_drawdown_cents field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["tail_drawdown_cents"] = int(gate_rec["tail_drawdown_cents"]) + 50
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_optional_stopping_pilot_evidence_replay_if_present(self) -> None:
+        stop_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "optional_stopping_pilot_run"
+            / "events.jsonl"
+        )
+        stop_summary = stop_events.with_name("summary.json")
+        if stop_events.exists() and stop_summary.exists():
+            replayed = replay(stop_events)
+            self.assertEqual(replayed["schema"], "lggr.optional_stopping_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 3)
 
 

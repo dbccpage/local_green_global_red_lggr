@@ -21688,6 +21688,495 @@ class StreamingCodebaseWindowedDriftMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseOptionalStoppingMonitor:
+    """Online martingale optional-stopping early-gain halting vs. tail-drawdown cap monitor for a 3-module codebase (Theorem 102).
+
+    Composes `StreamingMartingaleOptionalStoppingMonitor`, `StreamingOptionalStoppingDrawdownMonitor`,
+    `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor` across a 3-module
+    adaptive retry/hedging settlement codebase (`pricing_stop.py`, `tax_stop.py`, `settlement_stop.py`):
+      - `pricing_stop.py` (`worker-0`, `compute_stopped_quote`): defines root `x0_cents = 0` and
+        step-1 branch payoffs `x_u_cents = 100`, `x_d_cents = -100` (`stop_on_step1_up = True`,
+        local martingale balance `x_u + x_d == 2 * x0`).
+      - `tax_stop.py` (`worker-1`, `apply_stopped_tax`): defines upper step-2 continuation leaves
+        `x_uu_cents = 200`, `x_ud_cents = 0` (local martingale balance `x_uu + x_ud == 2 * x_u`).
+      - `settlement_stop.py` (`worker-2`, `route_stopped_settlement`): defines lower step-2
+        recovery/hedging leaves `x_du_cents, x_dd_cents` and stopping flag `stop_on_step1_down`
+        against maximum tail-drawdown budget `max_tail_drawdown_budget_cents = 100`.
+      - Separates:
+          1. Phase 1 (Double-down recovery stake on step-1 loss: `x_du = 100, x_dd = -300, stop_on_step1_down = False`):
+             Every node satisfies local martingale conservation (`x_du + x_dd == -200 == 2 * x_d`),
+             stopped expectation is `E[X_tau] == 0 == X_0`, win probability is `3/4`, and all 3
+             modules pass isolated local unit tests (`local_green = 1`), yet adverse-leaf tail
+             drawdown reaches `300 > 100 = B_tail` (`MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR`,
+             `global_green = 0`, `defect = -1`).
+          2. Phase 2 (Reduced break-even stake on step-1 loss: `x_du = 0, x_dd = -200, stop_on_step1_down = False`):
+             Stopped expectation remains `0` (`local_green = 1`), yet residual tail drawdown is
+             `200 > 100 = B_tail` (`RESIDUAL_TAIL_DRAWDOWN_BREACH_LGGR`, `global_green = 0`, `defect = -1`).
+          3. Phase 3 (Loss-capped halting on step-1 loss: `x_du = -100, x_dd = -100, stop_on_step1_down = True`):
+             Stopped expectation is `0`, tail drawdown is bounded by `100 <= 100 = B_tail`, and
+             settlement conservation `873 + 27 + 180 = 1080` holds (`CODEBASE_OPTIONAL_STOPPING_DRAWDOWN_CAPPED_LGGG`,
+             `local_green = 1`, `global_green = 1`, `defect = 0`).
+    """
+
+    MODULES: tuple[str, ...] = ("pricing_stop", "tax_stop", "settlement_stop")
+    MODULE_FUNCTIONS: dict[str, str] = {
+        "pricing_stop": "compute_stopped_quote",
+        "tax_stop": "apply_stopped_tax",
+        "settlement_stop": "route_stopped_settlement",
+    }
+
+    def __init__(
+        self,
+        *,
+        max_tail_drawdown_budget_cents: int = 100,
+        scope_id: str = "streaming-codebase-optional-stopping-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.max_tail_drawdown_budget = exact_int(
+            max_tail_drawdown_budget_cents, "max_tail_drawdown_budget_cents"
+        )
+        if self.max_tail_drawdown_budget < 0:
+            raise ValidationError("max_tail_drawdown_budget_cents must be >= 0")
+        self.drawdown_monitor = StreamingOptionalStoppingDrawdownMonitor(
+            max_tail_drawdown_budget=self.max_tail_drawdown_budget,
+            scope_id=f"{self.scope_id}-drawdown",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_optional_stopping(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        for m in self.MODULES:
+            if m not in sources:
+                raise ValidationError(f"missing source for module {m}")
+            if m not in local_test_results:
+                raise ValidationError(f"missing local_test_results for module {m}")
+
+        all_local_pass = all(bool(local_test_results[m]) for m in self.MODULES)
+
+        ast_summaries: dict[str, dict[str, Any]] = {}
+        fn_map: dict[str, Any] = {}
+        for m in self.MODULES:
+            fname = self.MODULE_FUNCTIONS[m]
+            ast_summaries[m] = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(
+                m, sources[m]
+            )
+            try:
+                ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(m, sources[m])
+                fn_map[m] = ns.get(fname)
+            except ValidationError:
+                fn_map[m] = None
+
+        items = [
+            {"sku": "tier_a", "unit_cents": 600, "qty": 1},
+            {"sku": "tier_b", "unit_cents": 400, "qty": 1},
+        ]
+        runtime_error: str | None = None
+        quote_out: dict[str, Any] = {}
+        tax_out: dict[str, Any] = {}
+        settle_out: dict[str, Any] = {}
+
+        if all(fn_map[m] is not None for m in self.MODULES):
+            try:
+                q_res = fn_map["pricing_stop"](items, 1000)
+                if not isinstance(q_res, Mapping):
+                    raise ValidationError("pricing_stop did not return a dict")
+                quote_out = dict(q_res)
+                t_res = fn_map["tax_stop"](quote_out, 2000)
+                if not isinstance(t_res, Mapping):
+                    raise ValidationError("tax_stop did not return a dict")
+                tax_out = dict(t_res)
+                s_res = fn_map["settlement_stop"](tax_out, 300)
+                if not isinstance(s_res, Mapping):
+                    raise ValidationError("settlement_stop did not return a dict")
+                settle_out = dict(s_res)
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+        else:
+            runtime_error = "One or more modules failed AST compilation"
+
+        x0 = int(quote_out.get("x0_cents", 0)) if runtime_error is None else 0
+        x_u = int(quote_out.get("x_u_cents", 100)) if runtime_error is None else 100
+        x_d = int(quote_out.get("x_d_cents", -100)) if runtime_error is None else -100
+        stop_u = bool(quote_out.get("stop_on_step1_up", True)) if runtime_error is None else True
+
+        x_uu = int(tax_out.get("x_uu_cents", 200)) if runtime_error is None else 200
+        x_ud = int(tax_out.get("x_ud_cents", 0)) if runtime_error is None else 0
+
+        x_du = int(settle_out.get("x_du_cents", 100)) if runtime_error is None else 100
+        x_dd = int(settle_out.get("x_dd_cents", -300)) if runtime_error is None else -300
+        stop_d = bool(settle_out.get("stop_on_step1_down", False)) if runtime_error is None else False
+
+        mart_mon = StreamingMartingaleOptionalStoppingMonitor(
+            self.max_tail_drawdown_budget,
+            scope_id=f"{self.scope_id}-{eval_id}",
+        )
+        tree_rec = mart_mon.record_stopped_tree(
+            "codebase_stopped_tree",
+            x0,
+            x_u,
+            x_d,
+            x_uu,
+            x_ud,
+            x_du,
+            x_dd,
+            stop_on_step1_up=stop_u,
+            stop_on_step1_down=stop_d,
+        )
+        mart_receipt = mart_mon.get_receipt()
+
+        local_martingale_ok = int(tree_rec["local_martingale_product"]) == 1
+        stopped_exp = int(rational(tree_rec["stopped_expectation"]))
+        tail_drawdown = int(rational(tree_rec["tail_drawdown"]))
+
+        net_val = int(quote_out.get("net_cents", 0)) if runtime_error is None else 0
+        gross_val = int(settle_out.get("gross_cents", 0)) if runtime_error is None else 0
+        fee_val = int(settle_out.get("platform_fee_cents", 0)) if runtime_error is None else 0
+        tax_val = int(settle_out.get("tax_reserve_cents", 0)) if runtime_error is None else 0
+        payout_val = int(settle_out.get("merchant_payout_cents", 0)) if runtime_error is None else 0
+
+        conservation_ok = (
+            runtime_error is None
+            and net_val == 900
+            and gross_val == 1080
+            and fee_val == 27
+            and tax_val == 180
+            and payout_val == 873
+            and payout_val + fee_val + tax_val == gross_val
+            and local_martingale_ok
+            and stopped_exp == x0
+            and tail_drawdown <= self.max_tail_drawdown_budget
+            and stop_d is True
+            and x_du == -100
+            and x_dd == -100
+        )
+
+        dd_eval = self.drawdown_monitor.record_stopping_evaluation(
+            f"{eval_id}_dd",
+            x0=0,
+            x_u=100,
+            x_d=-100,
+            x_uu=200,
+            x_ud=0,
+            phase_1_du_dd=(100, -300),
+            phase_2_du_dd=(0, -200),
+            phase_3_du_dd=(-100, -100),
+            model_id=mid,
+        )
+
+        l_green = 1 if (all_local_pass and local_martingale_ok and stopped_exp == x0 and infeasible_constraint is None) else 0
+        eg_green = 1 if (l_green == 1 and conservation_ok) else 0
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_tests_all_pass": all_local_pass,
+                "local_martingale_conservation": local_martingale_ok and (stopped_exp == x0),
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "stopped_expectation_cents": stopped_exp,
+                "tail_drawdown_cents": tail_drawdown,
+                "stop_on_step1_down": stop_d,
+                "x_du_cents": x_du,
+                "x_dd_cents": x_dd,
+            },
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_OPTIONAL_STOPPING_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_OPTIONAL_STOPPING_DRAWDOWN_CAPPED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l_green == 1 and tail_drawdown >= 300:
+            status = "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif l_green == 1 and tail_drawdown > self.max_tail_drawdown_budget:
+            status = "RESIDUAL_TAIL_DRAWDOWN_BREACH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_UNIT_OR_MARTINGALE_FAILURE_LRGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if infeasible_constraint is not None:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "HALT_AND_ESCALATE",
+                    "reason": str(
+                        infeasible_constraint.get(
+                            "reason", "Infeasible optional-stopping drawdown lock."
+                        )
+                    ),
+                }
+        elif eg_green == 1:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "NO_OP_DRAWDOWN_CAPPED",
+                    "reason": (
+                        "Martingale optional-stopping expectation is 0 and adverse-branch tail drawdown "
+                        "is capped at 100 <= 100 cents with exact settlement conservation 873 + 27 + 180 = 1080."
+                    ),
+                }
+        else:
+            directives["worker-0"] = {
+                "module": "pricing_stop",
+                "action": "HOLD_STEP1_MARTINGALE_ROOT",
+                "target_step1_branch": {"x0_cents": 0, "x_u_cents": 100, "x_d_cents": -100, "stop_on_step1_up": True},
+                "reason": (
+                    "Hold `pricing_stop.py` at root `x0_cents = 0` and step-1 payoffs `x_u_cents = 100, x_d_cents = -100` "
+                    "(`stop_on_step1_up = True`, `net_cents = 900`)."
+                ),
+            }
+            directives["worker-1"] = {
+                "module": "tax_stop",
+                "action": "HOLD_UPPER_CONTINUATION_BRANCH",
+                "target_upper_leaves": {"x_uu_cents": 200, "x_ud_cents": 0},
+                "reason": (
+                    "Hold `tax_stop.py` at upper continuation leaves `x_uu_cents = 200, x_ud_cents = 0` "
+                    "(`tax_cents = 180`, `gross_cents = 1080`)."
+                ),
+            }
+            directives["worker-2"] = {
+                "module": "settlement_stop",
+                "action": "ENFORCE_LOSS_CAPPED_STEP1_HALT",
+                "current_tail_drawdown_cents": tail_drawdown,
+                "max_tail_drawdown_budget_cents": self.max_tail_drawdown_budget,
+                "target_lower_leaves": {"x_du_cents": -100, "x_dd_cents": -100, "stop_on_step1_down": True},
+                "reason": (
+                    f"Martingale optional-stopping audit detected `tail_drawdown = {tail_drawdown} > "
+                    f"B_tail = {self.max_tail_drawdown_budget}` cents (`x_du_cents = {x_du}, x_dd_cents = {x_dd}, "
+                    f"stop_on_step1_down = {stop_d}`). Update `settlement_stop.py` so `'x_du_cents': -100, "
+                    "`'x_dd_cents': -100, 'stop_on_step1_down': True` (loss-capped step-1 halting with zero "
+                    "step-2 recovery stake) and `merchant_payout_cents = gross - fee - tax = 873`."
+                ),
+            }
+
+        rec_body: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "max_tail_drawdown_budget_cents": self.max_tail_drawdown_budget,
+            "stopped_expectation_cents": stopped_exp,
+            "tail_drawdown_cents": tail_drawdown,
+            "stop_on_step1_down": stop_d,
+            "x_du_cents": x_du,
+            "x_dd_cents": x_dd,
+            "conservation_ok": conservation_ok,
+            "runtime_error": runtime_error,
+            "ast_summaries": ast_summaries,
+            "compact_role_directives": directives,
+            "martingale_tree_receipt": mart_receipt,
+            "drawdown_evaluation": dd_eval,
+        }
+        signed_rec = json_value({**rec_body, "receipt_sha256": digest(rec_body)})
+        self.evaluations.append(signed_rec)
+        return signed_rec
+
+    def record_three_phase_codebase_optional_stopping_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record the 3-phase optional-stopping codebase audit (Theorem 102)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p = (
+            "def compute_stopped_quote(items: list[dict], discount_bps: int) -> dict:\n"
+            "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'x0_cents': 0,\n"
+            "        'x_u_cents': 100,\n"
+            "        'x_d_cents': -100,\n"
+            "        'stop_on_step1_up': True,\n"
+            "    }\n"
+        )
+        src_t = (
+            "def apply_stopped_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'x0_cents': int(quote.get('x0_cents', 0)),\n"
+            "        'x_u_cents': int(quote.get('x_u_cents', 100)),\n"
+            "        'x_d_cents': int(quote.get('x_d_cents', -100)),\n"
+            "        'stop_on_step1_up': bool(quote.get('stop_on_step1_up', True)),\n"
+            "        'x_uu_cents': 200,\n"
+            "        'x_ud_cents': 0,\n"
+            "    }\n"
+        )
+        src_s_p1 = (
+            "def route_stopped_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'x_du_cents': 100,\n"
+            "        'x_dd_cents': -300,\n"
+            "        'stop_on_step1_down': False,\n"
+            "    }\n"
+        )
+        src_s_p2 = (
+            "def route_stopped_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'x_du_cents': 0,\n"
+            "        'x_dd_cents': -200,\n"
+            "        'stop_on_step1_down': False,\n"
+            "    }\n"
+        )
+        src_s_p3 = (
+            "def route_stopped_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'x_du_cents': -100,\n"
+            "        'x_dd_cents': -100,\n"
+            "        'stop_on_step1_down': True,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_stop": True,
+            "tax_stop": True,
+            "settlement_stop": True,
+        }
+
+        p1 = self.evaluate_codebase_optional_stopping(
+            f"{eval_id}_phase1_double_down_stake",
+            sources={
+                "pricing_stop": src_p,
+                "tax_stop": src_t,
+                "settlement_stop": src_s_p1,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_optional_stopping(
+            f"{eval_id}_phase2_break_even_stake",
+            sources={
+                "pricing_stop": src_p,
+                "tax_stop": src_t,
+                "settlement_stop": src_s_p2,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_optional_stopping(
+            f"{eval_id}_phase3_loss_capped_halt",
+            sources={
+                "pricing_stop": src_p,
+                "tax_stop": src_t,
+                "settlement_stop": src_s_p3,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "max_tail_drawdown_budget_cents": self.max_tail_drawdown_budget,
+                "phase_1_stopped_expectation_cents": p1["stopped_expectation_cents"],
+                "phase_1_tail_drawdown_cents": p1["tail_drawdown_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_stopped_expectation_cents": p2["stopped_expectation_cents"],
+                "phase_2_tail_drawdown_cents": p2["tail_drawdown_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_stopped_expectation_cents": p3["stopped_expectation_cents"],
+                "phase_3_tail_drawdown_cents": p3["tail_drawdown_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase optional-stopping evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_optional_stopping.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "max_tail_drawdown_budget_cents": self.max_tail_drawdown_budget,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "drawdown_receipt": self.drawdown_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 

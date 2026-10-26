@@ -164,13 +164,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `48
 | `9801` | `unrebalanced_sliding_window_horizon_breach` | **C** | `explicit_lggr_windowed_drift_rebalancing_directive` | **`completed`** | **`1`** | **`1`** | **`0`** | **1** | **6** | **`$0.006663`** |
 | `9802` | `infeasible_windowed_drift_lock` | **A / B / C** | All policies | `safe_escalated` | `2` | `6` | `6` | 1 | 6 | `$0.0059–$0.0065` |
 
+## 9. 3-Agent Martingale Optional-Stopping Early-Gain Halting vs. Tail-Drawdown Cap Campaign (`--topology optional_stopping`)
+
+In `--topology optional_stopping`, 3 concurrent LLM workers edit `pricing_stop.py`, `tax_stop.py`, and `settlement_stop.py` under a 2-step stopped martingale tree ($X_0 = 0$, $X_u = 100$, $X_d = -100$, $X_{uu} = 200$, $X_{ud} = 0$) with maximum tail-drawdown budget $B_{\mathrm{tail}} = 100$ cents:
+- On `seed 9900` (`double_down_recovery_stake_tail_drawdown`), `settlement_stop.py` sets `'x_du_cents': 100, 'x_dd_cents': -300, 'stop_on_step1_down': False`. Every node satisfies local martingale conservation ($X_{du} + X_{dd} = -200 = 2 X_d$), stopped expectation is $\mathbb{E}[X_\tau] = 0 = X_0$ with win probability $3/4$, and all isolated unit tests pass (`local_green = 1`), yet adverse-leaf tail drawdown reaches $300 > B_{\mathrm{tail}} = 100$ cents (`global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `47` live API attempts, `$0.060785` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | $\mathbb{E}[X_\tau]$ | Tail Drawdown | Stop on $d$ | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `9900` | `double_down_recovery_stake_tail_drawdown` | **A** | `martingale_expectation_and_win_rate_gate` | `blocked_unresolved` | `0` | `300` | `False` | 2 | 11 | `$0.015255` |
+| `9900` | `double_down_recovery_stake_tail_drawdown` | **B** | `reduced_break_even_recovery_stake` | `blocked_unresolved` | `0` | `200` | `False` | 2 | 12 | `$0.015931` |
+| `9900` | `double_down_recovery_stake_tail_drawdown` | **C** | `explicit_lggr_optional_stopping_drawdown_cap_directive` | **`completed`** | **`0`** | **`100`** | **`True`** | **1** | **6** | **`$0.007450`** |
+| `9901` | `infeasible_optional_stopping_lock` | **A / B / C** | All policies | `safe_escalated` | `0` | `300` | `False` | 1 | 6 | `$0.0070–$0.0077` |
+| `9902` | `clean_optional_stopping_control` | **A / B / C** | All policies | `completed` | `0` | `100` | `True` | 0 | 0 | `$0.000000` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, and 3-agent windowed-drift evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, and 3-agent optional-stopping evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -179,4 +194,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/coalitional_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/mayer_vietoris_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/windowed_drift_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/optional_stopping_pilot_run/events.jsonl
 ```

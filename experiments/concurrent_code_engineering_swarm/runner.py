@@ -29,6 +29,7 @@ from lggr.streaming import (
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -43,6 +44,7 @@ from .domain import (
     DIAMOND_WORKTREE_BRANCHES,
     MV_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
+    STOP_WORKER_MODULES,
     WIN_WORKER_MODULES,
     WORKER_MODULES,
     CatalystCodeWorkspace,
@@ -50,6 +52,7 @@ from .domain import (
     CodeWorkspace,
     DiamondCodeWorkspace,
     MayerVietorisCodeWorkspace,
+    OptionalStoppingCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -60,6 +63,7 @@ from .domain import (
     fixture,
     mv_fixture,
     replay_fixture,
+    stop_fixture,
     win_fixture,
 )
 
@@ -1782,6 +1786,222 @@ def win_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]
     return summary
 
 
+def stop_system_prompt(worker: str, arm: str) -> str:
+    module_name = STOP_WORKER_MODULES[worker]
+    policy = {
+        "A": (
+            "Arm A (martingale_expectation_and_win_rate_gate): rely on zero-mean stopped martingale "
+            "expectation (`E[X_tau] == 0 == X_0`) and high win probability (`3/4`). If your isolated "
+            "unit tests pass (`local_martingale_product == 1` and `stopped_expectation == 0`), keep "
+            "your current module implementation unchanged."
+        ),
+        "B": (
+            "Arm B (reduced_break_even_recovery_stake): when a tail-drawdown breach is reported, "
+            "`worker-0` (`pricing_stop`) and `worker-1` (`tax_stop`) keep their modules unchanged, "
+            "while `worker-2` (`settlement_stop`) reduces its step-2 recovery stake on the down branch "
+            "from double-down (`'x_du_cents': 100, 'x_dd_cents': -300, 'stop_on_step1_down': False`) "
+            "to break-even (`'x_du_cents': 0, 'x_dd_cents': -200, 'stop_on_step1_down': False`)."
+        ),
+        "C": (
+            "Arm C (explicit_lggr_optional_stopping_drawdown_cap_directive): follow the host LGGR "
+            "`StreamingCodebaseOptionalStoppingMonitor` directive (`HOLD_STEP1_MARTINGALE_ROOT`, "
+            "`HOLD_UPPER_CONTINUATION_BRANCH`, or `ENFORCE_LOSS_CAPPED_STEP1_HALT`) so `settlement_stop.py` "
+            "enforces `'x_du_cents': -100, 'x_dd_cents': -100, 'stop_on_step1_down': True` (halting at "
+            "step-1 loss with zero step-2 recovery stake) to cap adverse-branch tail drawdown at "
+            "`100 <= B_tail = 100` cents."
+        ),
+    }[arm]
+    return (
+        f"You are concurrent coding agent {worker}, owner of `{module_name}.py` in a 3-module "
+        "adaptive retry/hedging settlement pipeline (`pricing_stop.py` -> `tax_stop.py` -> "
+        "`settlement_stop.py`) evaluated under a 2-step stopped martingale tree with tail-drawdown "
+        "budget `B_tail = 100` cents.\n"
+        f"{policy}\n"
+        "Always call `inspect_workspace` first. Then either call `submit_module_patch` with "
+        "valid Python source code for your owned module, or call `escalate` if `infeasible_constraint` "
+        "is non-null and locks a contradictory tail-drawdown state."
+    )
+
+
+def stop_merge_gate(
+    events: Events,
+    workspace: OptionalStoppingCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseOptionalStoppingMonitor(
+        scope_id=f"swarm-stop-{ workspace.state['seed'] }-{arm}-{step_tag}"
+    )
+    local_results = workspace.local_verdicts()
+    eval_rec = monitor.evaluate_codebase_optional_stopping(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    events.emit(
+        "gate",
+        {
+            "seed": workspace.state["seed"],
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "stopped_expectation_cents": eval_rec["stopped_expectation_cents"],
+            "tail_drawdown_cents": eval_rec["tail_drawdown_cents"],
+            "stop_on_step1_down": eval_rec["stop_on_step1_down"],
+            "status": eval_rec["status"],
+            "receipt_sha256": eval_rec["receipt_sha256"],
+        },
+    )
+    return eval_rec, eval_rec["compact_role_directives"]
+
+
+def stop_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(STOP_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = stop_fixture(seed)
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = OptionalStoppingCodeWorkspace(base_state)
+            start_calls = client.calls
+            start_cost = client.spent
+            eval_rec, directives = stop_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+
+            histories: dict[str, list[dict[str, Any]]] = {
+                w: [{"role": "system", "content": stop_system_prompt(w, arm)}]
+                for w in workers
+            }
+
+            waves_run = 0
+            for wave_idx in (1, 2):
+                if eval_rec["global_green"] == 1 or len(ws.state["escalations"]) > 0:
+                    break
+                waves_run = wave_idx
+                per_worker_fb: dict[str, str] = {}
+                for w in workers:
+                    mname = STOP_WORKER_MODULES[w]
+                    if ws.state["infeasible_constraint"] is not None:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "infeasible_constraint": ws.state["infeasible_constraint"],
+                                "instruction": "Call `inspect_workspace` then `escalate` with a clear explanation.",
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "A":
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "local_unit_test_passed": True,
+                                "stopped_expectation_cents": eval_rec["stopped_expectation_cents"],
+                                "instruction": (
+                                    "Your isolated unit tests and zero-mean martingale expectation (`E[X_tau] == 0`) "
+                                    "pass (`local_green = 1`). Call `inspect_workspace` and submit your current "
+                                    "module source unchanged."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "B":
+                        if w == "worker-2":
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "module": mname,
+                                    "instruction": (
+                                        "Reduce step-2 recovery stake on the down branch to break-even by setting "
+                                        "`'x_du_cents': 0, 'x_dd_cents': -200, 'stop_on_step1_down': False` in "
+                                        "`settlement_stop.py`."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                        else:
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "module": mname,
+                                    "instruction": (
+                                        "Call `inspect_workspace` and submit your current module source unchanged."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                    else:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "lggr_optional_stopping_directive": directives[w],
+                                "instruction": (
+                                    "Call `inspect_workspace` and apply `lggr_optional_stopping_directive` via `submit_module_patch`."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+
+                round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, directives = stop_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+
+            escalations = len(ws.state["escalations"])
+            if ws.state["infeasible_constraint"] is not None and escalations > 0:
+                outcome = "safe_escalated"
+            elif eval_rec["global_green"] == 1:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_stopped_expectation_cents": eval_rec["stopped_expectation_cents"],
+                "final_tail_drawdown_cents": eval_rec["tail_drawdown_cents"],
+                "final_stop_on_step1_down": eval_rec["stop_on_step1_down"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.optional_stopping_code_engineering_swarm.v1",
+        "topology": "optional_stopping",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent optional-stopping Python code-engineering swarm (`pricing_stop` -> `tax_stop` -> "
+            "`settlement_stop`) comparing zero-mean martingale expectation gating (A), reduced break-even "
+            "recovery stake (B), and explicit LGGR loss-capped step-1 halting directives (C) with full "
+            "cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -1806,6 +2026,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = mv_campaign(client, events, config)
         elif config.get("topology") == "windowed_drift":
             summary = win_campaign(client, events, config)
+        elif config.get("topology") == "optional_stopping":
+            summary = stop_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -1829,7 +2051,17 @@ def main() -> None:
     parser.add_argument("path")
     parser.add_argument(
         "--topology",
-        choices=["linear", "diamond", "catalyst", "dfa", "replay", "coalitional", "mayer_vietoris", "windowed_drift"],
+        choices=[
+            "linear",
+            "diamond",
+            "catalyst",
+            "dfa",
+            "replay",
+            "coalitional",
+            "mayer_vietoris",
+            "windowed_drift",
+            "optional_stopping",
+        ],
         default="linear",
     )
     parser.add_argument("--seeds", nargs="+", type=int, default=None)
@@ -1868,6 +2100,8 @@ def main() -> None:
         seeds = [9700, 9701, 9702]
     elif args.topology == "windowed_drift":
         seeds = [9800, 9801, 9802]
+    elif args.topology == "optional_stopping":
+        seeds = [9900, 9901, 9902]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -1948,6 +2182,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = win_campaign(client, events, config)
+    elif args.topology == "optional_stopping":
+        config = {
+            "topology": "optional_stopping",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = stop_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

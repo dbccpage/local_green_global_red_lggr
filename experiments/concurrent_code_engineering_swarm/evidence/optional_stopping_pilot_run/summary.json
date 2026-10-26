@@ -1,0 +1,174 @@
+{
+  "schema": "lggr.optional_stopping_code_engineering_swarm.v1",
+  "topology": "optional_stopping",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 9900,
+      "kind": "double_down_recovery_stake_tail_drawdown",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 300,
+          "final_stop_on_step1_down": false,
+          "final_status": "MARTINGALE_STOPPING_TAIL_DRAWDOWN_NGD_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 11,
+          "cost_usd": "0.0152552594"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 200,
+          "final_stop_on_step1_down": false,
+          "final_status": "RESIDUAL_TAIL_DRAWDOWN_BREACH_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 12,
+          "cost_usd": "0.0159314077"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 100,
+          "final_stop_on_step1_down": true,
+          "final_status": "CODEBASE_OPTIONAL_STOPPING_DRAWDOWN_CAPPED_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0074498167"
+        }
+      ]
+    },
+    {
+      "seed": 9901,
+      "kind": "infeasible_optional_stopping_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 300,
+          "final_stop_on_step1_down": false,
+          "final_status": "INFEASIBLE_OPTIONAL_STOPPING_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0069778949"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 300,
+          "final_stop_on_step1_down": false,
+          "final_status": "INFEASIBLE_OPTIONAL_STOPPING_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 6,
+          "cost_usd": "0.0075017551"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 300,
+          "final_stop_on_step1_down": false,
+          "final_status": "INFEASIBLE_OPTIONAL_STOPPING_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0076692117"
+        }
+      ]
+    },
+    {
+      "seed": 9902,
+      "kind": "clean_optional_stopping_control",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 100,
+          "final_stop_on_step1_down": true,
+          "final_status": "CODEBASE_OPTIONAL_STOPPING_DRAWDOWN_CAPPED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-10"
+        },
+        {
+          "arm": "B",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 100,
+          "final_stop_on_step1_down": true,
+          "final_status": "CODEBASE_OPTIONAL_STOPPING_DRAWDOWN_CAPPED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-10"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_stopped_expectation_cents": 0,
+          "final_tail_drawdown_cents": 100,
+          "final_stop_on_step1_down": true,
+          "final_status": "CODEBASE_OPTIONAL_STOPPING_DRAWDOWN_CAPPED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-10"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 47,
+  "charged_or_reserved_usd": "0.0607853455",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 16,
+  "scope": "Concurrent 3-agent optional-stopping Python code-engineering swarm (`pricing_stop` -> `tax_stop` -> `settlement_stop`) comparing zero-mean martingale expectation gating (A), reduced break-even recovery stake (B), and explicit LGGR loss-capped step-1 halting directives (C) with full cryptographic receipts retained in the host audit log."
+}
