@@ -488,13 +488,24 @@ In `--topology governed_relaxation`, the 3 concurrent agents maintain a 3-module
 | `12100` | `repairable_governed_relaxation_authority_gate_and_minimum_slack_defect` | **C** | `explicit_lggr_governed_minimum_slack_directive` | **`completed`** | **`True`** | **`P_star`** | **`[5, 3]`** | **`2`** | **`0`** | **`0`** | **1** | **8** | **`$0.010746`** |
 | `12101` | `infeasible_hardware_locked_unauthenticated_policy_relaxation` | **A / B / C** | All policies | `safe_escalated` | `False` | `P_star` | `[5, 3]` | `2` | `0` | `10` | 1 | 19 | `$0.022162` |
 
+## 32. Non-Abelian Braid Word Ordering & Yang-Baxter Holonomy Audit (`--topology non_abelian_braid`, Theorem 125)
+
+In `--topology non_abelian_braid`, the 3 concurrent agents maintain a 3-module non-Abelian braid word holonomy settlement codebase (`pricing_braid.py`, `tax_braid.py`, `settlement_braid.py`) over $SL_2(\mathbb{Z})$ with generators $\sigma_1 = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ (`1`) and $\sigma_2 = \begin{pmatrix} 1 & 0 \\ -1 & 1 \end{pmatrix}$ (`2`) and canonical Yang-Baxter target $M_{\mathrm{YB}} = M([1, 2, 1]) = M([2, 1, 2]) = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$ (`StreamingCodebaseNonAbelianBraidMonitor`, Theorem 125):
+
+| Seed | Case | Arm | Gate Policy | Status | `u_braid_word` | `v_braid_word` | `u_yb_l1` | `v_yb_l1` | `holonomy_l1` | Surcharge | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `12200` | `repairable_non_abelian_braid_word_order_and_yang_baxter_defect` | **A** | `abelian_generator_count_gate` | `blocked_unresolved` | `[1, 1, 2]` | `[2, 1, 1]` | `3` | `3` | `4` | `10` | 2 | 18 | `$0.017387` |
+| `12200` | `repairable_non_abelian_braid_word_order_and_yang_baxter_defect` | **B** | `single_branch_yang_baxter_gate` | `blocked_unresolved` | `[1, 2, 1]` | `[2, 1, 1]` | `0` | `3` | `3` | `6` | 2 | 17 | `$0.017949` |
+| `12200` | `repairable_non_abelian_braid_word_order_and_yang_baxter_defect` | **C** | `explicit_lggr_yang_baxter_directive` | **`completed`** | **`[1, 2, 1]`** | **`[2, 1, 2]`** | **`0`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.008031`** |
+| `12201` | `infeasible_hardware_locked_non_abelian_braid_word_order` | **A / B / C** | All policies | `safe_escalated` | `[1, 1, 2]` | `[2, 1, 1]` | `3` | `3` | `4` | `10` | 1 | 18 | `$0.024142` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, and 3-agent governed-relaxation evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, and 3-agent non-abelian-braid evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -526,4 +537,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/figure_eight_wedge_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/shared_chord_diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/governed_relaxation_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/non_abelian_braid_pilot_run/events.jsonl
 ```

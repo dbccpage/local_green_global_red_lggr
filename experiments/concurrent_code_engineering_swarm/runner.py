@@ -43,6 +43,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseMultiLoopHodgeMonitor,
+    StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
@@ -76,6 +77,7 @@ from .domain import (
     LEASE_WORKER_MODULES,
     MULTI_LOOP_HODGE_WORKER_MODULES,
     MV_WORKER_MODULES,
+    NON_ABELIAN_BRAID_WORKER_MODULES,
     OBLIGATION_MIGRATION_WORKER_MODULES,
     PATH_KERNEL_WORKER_MODULES,
     POLICY_WORKER_MODULES,
@@ -110,6 +112,7 @@ from .domain import (
     LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
     MultiLoopHodgeCodeWorkspace,
+    NonAbelianBraidCodeWorkspace,
     ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
@@ -139,6 +142,7 @@ from .domain import (
     lease_fixture,
     multi_loop_hodge_fixture,
     mv_fixture,
+    non_abelian_braid_fixture,
     obligation_migration_fixture,
     path_kernel_fixture,
     policy_fixture,
@@ -148,6 +152,7 @@ from .domain import (
     run_figure_eight_wedge_local_unit_tests,
     run_governed_relaxation_local_unit_tests,
     run_multi_loop_hodge_local_unit_tests,
+    run_non_abelian_braid_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
     run_three_party_c3_local_unit_tests,
     schema_synthesis_fixture,
@@ -7169,6 +7174,274 @@ def governed_relaxation_campaign(
     return summary
 
 
+def non_abelian_braid_system_prompt(worker: str, arm: str) -> str:
+    mod_name = NON_ABELIAN_BRAID_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible exclusively for `{mod_name}.py` in a 3-module "
+        "non-Abelian braid word holonomy and Yang-Baxter settlement codebase "
+        "(`pricing_braid.py` -> `tax_braid.py` -> `settlement_braid.py`) over SL_2(Z) with "
+        "sigma_1 = [[1, 1], [0, 1]] (generator 1) and sigma_2 = [[1, 0], [-1, 1]] (generator 2), "
+        "where M([1, 2, 1]) = M([2, 1, 2]) = M_YB = [[0, 1], [-1, 0]].\n"
+        "Always call `inspect_workspace` first.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`abelian_generator_count_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_ABELIAN_GENERATOR_COUNT`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`single_branch_yang_baxter_gate`): Call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseNonAbelianBraidMonitor.PHASE_2_PRICING_BRAID_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`single_branch_yang_baxter_gate`): Do NOT call `submit_module_patch`; "
+            "keep your module unchanged and reply concisely."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_yang_baxter_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseNonAbelianBraidMonitor.PHASE_3_PRICING_BRAID_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_yang_baxter_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseNonAbelianBraidMonitor.PHASE_3_TAX_BRAID_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_yang_baxter_directive`): Follow `compact_role_directive` "
+        "and call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseNonAbelianBraidMonitor.PHASE_3_SETTLEMENT_BRAID_SOURCE
+        + "```\n"
+    )
+
+
+def non_abelian_braid_merge_gate(
+    events: Events,
+    ws: NonAbelianBraidCodeWorkspace,
+    monitor: StreamingCodebaseNonAbelianBraidMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_non_abelian_braid_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_braid", "tax_braid", "settlement_braid")
+    }
+    eval_res = monitor.evaluate_non_abelian_braid_modules(
+        f"{arm}-{wave_label}",
+        pricing_braid_source=sources["pricing_braid"],
+        tax_braid_source=sources["tax_braid"],
+        settlement_braid_source=sources["settlement_braid"],
+        infeasible_constraint=(
+            {"reason": ws.state["infeasible_constraint"]}
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "u_braid_word": eval_res["u_braid_word"],
+            "v_braid_word": eval_res["v_braid_word"],
+            "u_yb_l1": eval_res["u_yb_l1"],
+            "v_yb_l1": eval_res["v_yb_l1"],
+            "holonomy_l1": eval_res["holonomy_l1"],
+            "braid_surcharge_cents": eval_res["braid_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in NON_ABELIAN_BRAID_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_ABELIAN_GENERATOR_COUNT",
+                "note": "Local unit test and Abelian generator multiplicity pass under [1, 1, 2] vs [2, 1, 1].",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "REPAIR_SINGLE_BRANCH_YANG_BAXTER_WORD",
+                "u_braid_word": eval_res["u_braid_word"],
+                "v_braid_word": eval_res["v_braid_word"],
+                "braid_surcharge_cents": eval_res["braid_surcharge_cents"],
+                "note": "Single-branch Yang-Baxter repair on u_braid_word = [1, 2, 1] leaves v_braid_word = [2, 1, 1] with surcharge 6.",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "u_braid_word": eval_res["u_braid_word"],
+                "v_braid_word": eval_res["v_braid_word"],
+                "u_yb_l1": eval_res["u_yb_l1"],
+                "v_yb_l1": eval_res["v_yb_l1"],
+                "holonomy_l1": eval_res["holonomy_l1"],
+                "braid_surcharge_cents": eval_res["braid_surcharge_cents"],
+                "action_required": "REPAIR_NON_ABELIAN_YANG_BAXTER_HOLONOMY",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def non_abelian_braid_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(NON_ABELIAN_BRAID_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = non_abelian_braid_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = NonAbelianBraidCodeWorkspace(base_state)
+            monitor = StreamingCodebaseNonAbelianBraidMonitor(
+                scope_id=f"non-abelian-braid-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = non_abelian_braid_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": non_abelian_braid_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{NON_ABELIAN_BRAID_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = non_abelian_braid_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_u_braid_word": eval_res["u_braid_word"],
+                "final_v_braid_word": eval_res["v_braid_word"],
+                "final_u_yb_l1": eval_res["u_yb_l1"],
+                "final_v_yb_l1": eval_res["v_yb_l1"],
+                "final_holonomy_l1": eval_res["holonomy_l1"],
+                "final_braid_surcharge_cents": eval_res["braid_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.non_abelian_braid_code_engineering_swarm.v1",
+        "topology": "non_abelian_braid",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent non-Abelian braid word holonomy & Yang-Baxter equivalence "
+            "Python code-engineering swarm (`pricing_braid` -> `tax_braid` -> `settlement_braid`) comparing "
+            "Abelian generator-count matching (A), single-branch Yang-Baxter word repair (B), "
+            "and joint Yang-Baxter holonomy alignment [1, 2, 1] vs [2, 1, 2] (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -7239,6 +7512,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = shared_chord_diamond_campaign(client, events, config)
         elif config.get("topology") == "governed_relaxation":
             summary = governed_relaxation_campaign(client, events, config)
+        elif config.get("topology") == "non_abelian_braid":
+            summary = non_abelian_braid_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -7294,6 +7569,7 @@ def main() -> None:
             "figure_eight_wedge",
             "shared_chord_diamond",
             "governed_relaxation",
+            "non_abelian_braid",
         ],
         default="linear",
     )
@@ -7379,6 +7655,8 @@ def main() -> None:
         seeds = [12000, 12001, 12002]
     elif args.topology == "governed_relaxation":
         seeds = [12100, 12101, 12102]
+    elif args.topology == "non_abelian_braid":
+        seeds = [12200, 12201, 12202]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -7712,6 +7990,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = governed_relaxation_campaign(client, events, config)
+    elif args.topology == "non_abelian_braid":
+        config = {
+            "topology": "non_abelian_braid",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = non_abelian_braid_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

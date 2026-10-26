@@ -56,6 +56,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     GRAM_SETTLEMENT_RESTORED_SOURCE,
     GRAM_TAX_DROPOUT_SOURCE,
     GRAM_TAX_RESTORED_SOURCE,
+    INITIAL_PRICING_BRAID_P1_PY,
+    INITIAL_PRICING_BRAID_P2_P3_PY,
     INITIAL_PRICING_C3_PY,
     INITIAL_PRICING_CHORD_COHERENT_PY,
     INITIAL_PRICING_CHORD_P1_PY,
@@ -70,6 +72,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_WEDGE_COHERENT_PY,
     INITIAL_PRICING_WEDGE_P1_PY,
     INITIAL_PRICING_WEDGE_P2_PY,
+    INITIAL_SETTLEMENT_BRAID_P1_P2_PY,
+    INITIAL_SETTLEMENT_BRAID_P3_PY,
     INITIAL_SETTLEMENT_C3_COHERENT_PY,
     INITIAL_SETTLEMENT_C3_P1_PY,
     INITIAL_SETTLEMENT_C3_P2_PY,
@@ -80,6 +84,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_RELAX_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
     INITIAL_SETTLEMENT_WEDGE_PY,
+    INITIAL_TAX_BRAID_P1_P2_PY,
+    INITIAL_TAX_BRAID_P3_PY,
     INITIAL_TAX_C3_COHERENT_PY,
     INITIAL_TAX_C3_P1_PY,
     INITIAL_TAX_C3_P2_PY,
@@ -167,6 +173,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     LeaseOverlapCodeWorkspace,
      MayerVietorisCodeWorkspace,
     MultiLoopHodgeCodeWorkspace,
+    NonAbelianBraidCodeWorkspace,
     ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
@@ -196,6 +203,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     lease_fixture,
     multi_loop_hodge_fixture,
     mv_fixture,
+    non_abelian_braid_fixture,
     obligation_migration_fixture,
     path_kernel_fixture,
     policy_fixture,
@@ -218,6 +226,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_local_unit_tests,
     run_multi_loop_hodge_local_unit_tests,
     run_mv_local_unit_tests,
+    run_non_abelian_braid_local_unit_tests,
     run_obligation_migration_local_unit_tests,
     run_path_kernel_local_unit_tests,
     run_policy_local_unit_tests,
@@ -260,6 +269,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     lease_campaign,
     multi_loop_hodge_campaign,
     mv_campaign,
+    non_abelian_braid_campaign,
     obligation_migration_campaign,
     path_kernel_campaign,
     policy_campaign,
@@ -6488,6 +6498,245 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12100_arms["B"]["final_relaxation_surcharge_cents"], 6)
             self.assertEqual(seed_12100_arms["C"]["final_relaxation_surcharge_cents"], 0)
             self.assertEqual(seed_12100_arms["C"]["status"], "completed")
+
+    def test_non_abelian_braid_workspace_and_unit_tests(self) -> None:
+        """Verify NonAbelianBraidCodeWorkspace and local unit tests across all 3 phases."""
+        from lggr.streaming import StreamingCodebaseNonAbelianBraidMonitor
+
+        mon = StreamingCodebaseNonAbelianBraidMonitor(scope_id="test-non-abelian-braid-ws")
+        p1 = mon.evaluate_non_abelian_braid_modules(
+            "p1",
+            pricing_braid_source=INITIAL_PRICING_BRAID_P1_PY,
+            tax_braid_source=INITIAL_TAX_BRAID_P1_P2_PY,
+            settlement_braid_source=INITIAL_SETTLEMENT_BRAID_P1_P2_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["u_braid_word"], [1, 1, 2])
+        self.assertEqual(p1["v_braid_word"], [2, 1, 1])
+        self.assertEqual(p1["u_yb_l1"], 3)
+        self.assertEqual(p1["v_yb_l1"], 3)
+        self.assertEqual(p1["holonomy_l1"], 4)
+        self.assertEqual(p1["braid_surcharge_cents"], 10)
+        self.assertEqual(p1["merchant_payout_cents"], 863)
+
+        p2 = mon.evaluate_non_abelian_braid_modules(
+            "p2",
+            pricing_braid_source=INITIAL_PRICING_BRAID_P2_P3_PY,
+            tax_braid_source=INITIAL_TAX_BRAID_P1_P2_PY,
+            settlement_braid_source=INITIAL_SETTLEMENT_BRAID_P1_P2_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["u_braid_word"], [1, 2, 1])
+        self.assertEqual(p2["v_braid_word"], [2, 1, 1])
+        self.assertEqual(p2["u_yb_l1"], 0)
+        self.assertEqual(p2["v_yb_l1"], 3)
+        self.assertEqual(p2["holonomy_l1"], 3)
+        self.assertEqual(p2["braid_surcharge_cents"], 6)
+        self.assertEqual(p2["merchant_payout_cents"], 867)
+
+        p3 = mon.evaluate_non_abelian_braid_modules(
+            "p3",
+            pricing_braid_source=INITIAL_PRICING_BRAID_P2_P3_PY,
+            tax_braid_source=INITIAL_TAX_BRAID_P3_PY,
+            settlement_braid_source=INITIAL_SETTLEMENT_BRAID_P3_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["u_braid_word"], [1, 2, 1])
+        self.assertEqual(p3["v_braid_word"], [2, 1, 2])
+        self.assertEqual(p3["u_yb_l1"], 0)
+        self.assertEqual(p3["v_yb_l1"], 0)
+        self.assertEqual(p3["holonomy_l1"], 0)
+        self.assertEqual(p3["braid_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_non_abelian_braid_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent non_abelian_braid campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_non_abelian_braid_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked pricing_braid.py has u_braid_word=[1, 1, 2] and cannot satisfy Yang-Baxter holonomy."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt or ("Arm B" in sys_prompt and worker in ("worker-1", "worker-2")):
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": INITIAL_PRICING_BRAID_P2_P3_PY}),
+                        },
+                    }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_BRAID_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_BRAID_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_BRAID_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "non_abelian_braid",
+                "seeds": [12200, 12201],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_non_abelian_braid_transport)
+            summary = non_abelian_braid_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.non_abelian_braid_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["braid_surcharge_cents"] = int(gate_rec["braid_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_non_abelian_braid_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live non_abelian_braid pilot evidence offline if present."""
+        braid_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "non_abelian_braid_pilot_run"
+            / "events.jsonl"
+        )
+        braid_summary = braid_events.with_name("summary.json")
+        if braid_events.exists() and braid_summary.exists():
+            replayed = replay(braid_events)
+            self.assertEqual(replayed["schema"], "lggr.non_abelian_braid_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+            seed_12200_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12200_arms["A"]["final_braid_surcharge_cents"], 10)
+            self.assertEqual(seed_12200_arms["B"]["final_braid_surcharge_cents"], 6)
+            self.assertEqual(seed_12200_arms["C"]["final_braid_surcharge_cents"], 0)
+            self.assertEqual(seed_12200_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,2709 @@
+{
+  "schema": "lggr.non_abelian_braid_code_engineering_swarm.v1",
+  "topology": "non_abelian_braid",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 12200,
+      "kind": "repairable_non_abelian_braid_word_order_and_yang_baxter_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "final_v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "final_u_yb_l1": 3,
+          "final_v_yb_l1": 3,
+          "final_holonomy_l1": 4,
+          "final_braid_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+          "final_receipt_sha256": "1c5568ceca710502d0d2a065f5a6b901b0555e1d6d6f5d1764f807e820a8afc3",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_non_abelian_braid.v1",
+            "authority_effect": "None",
+            "scope_id": "non-abelian-braid-seed-12200-arm-A",
+            "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "non_abelian_braid_holonomy_receipt": {
+              "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+              "authority_effect": "None",
+              "scope_id": "non-abelian-braid-seed-12200-arm-A:braid",
+              "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 3,
+              "lggr_obstruction_count": 3,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "A-wave-0:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-1:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-2:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "9bffd6aeec16b3e46aaf20473747d915b0c7071ae29485740a3c45268f7a259f"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "u_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    },
+                    "v_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    }
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "3dc913bc686722742c73fbb21cc4930bdd52541653ebb4be1b547edc4890f5c5",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "b07cb83af7d9ddf1532cdada68fa18519aed44acefce437375bb456004eec539"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "1c5568ceca710502d0d2a065f5a6b901b0555e1d6d6f5d1764f807e820a8afc3"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0173868044"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "final_v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "final_u_yb_l1": 0,
+          "final_v_yb_l1": 3,
+          "final_holonomy_l1": 3,
+          "final_braid_surcharge_cents": 6,
+          "final_merchant_payout_cents": 867,
+          "final_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+          "final_receipt_sha256": "31e5704fa00de89cf16568814b69b7424c288c6afe9627108f184abd8e9da24f",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_non_abelian_braid.v1",
+            "authority_effect": "None",
+            "scope_id": "non-abelian-braid-seed-12200-arm-B",
+            "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "non_abelian_braid_holonomy_receipt": {
+              "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+              "authority_effect": "None",
+              "scope_id": "non-abelian-braid-seed-12200-arm-B:braid",
+              "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 3,
+              "lggr_obstruction_count": 3,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "B-wave-0:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-1:braid",
+                  "u_braid_word": [
+                    1,
+                    2,
+                    1
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 0,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 3,
+                  "braid_surcharge_cents": 6,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-2:braid",
+                  "u_braid_word": [
+                    1,
+                    2,
+                    1
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 0,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 3,
+                  "braid_surcharge_cents": 6,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "3089716e93b7161b0efac6fc7d866cf8e2f1c6f2b4ce80e149529c43e123c6cd"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "u_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    },
+                    "v_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    }
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "26564c4a1bd72f50777aceb3d5592ac7a41c22c2b4b2c4c5c8d14889505d55b4",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "9899d34954f60faaab1e3d9cb8721a637e6228ee4b8fab32ef4e5164876000ff"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  2,
+                  1
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    -1,
+                    0
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 0,
+                "v_yb_l1": 3,
+                "holonomy_l1": 3,
+                "braid_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  2,
+                  1
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    -1,
+                    0
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 0,
+                "v_yb_l1": 3,
+                "holonomy_l1": 3,
+                "braid_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "31e5704fa00de89cf16568814b69b7424c288c6afe9627108f184abd8e9da24f"
+          },
+          "escalations": {},
+          "api_attempts": 17,
+          "cost_usd": "0.0179490827"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "final_v_braid_word": [
+            2,
+            1,
+            2
+          ],
+          "final_u_yb_l1": 0,
+          "final_v_yb_l1": 0,
+          "final_holonomy_l1": 0,
+          "final_braid_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+          "final_receipt_sha256": "5d19662465769d3c04deed1703fa47d89482a99b2e29defe891fe28d67866417",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_non_abelian_braid.v1",
+            "authority_effect": "None",
+            "scope_id": "non-abelian-braid-seed-12200-arm-C",
+            "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "non_abelian_braid_holonomy_receipt": {
+              "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+              "authority_effect": "None",
+              "scope_id": "non-abelian-braid-seed-12200-arm-C:braid",
+              "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 1,
+              "lggg_coherent_count": 1,
+              "evaluations": [
+                {
+                  "evaluation_id": "C-wave-0:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "C-wave-1:braid",
+                  "u_braid_word": [
+                    1,
+                    2,
+                    1
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    2
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 1,
+                    "2": 2
+                  },
+                  "u_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 0,
+                  "v_yb_l1": 0,
+                  "holonomy_l1": 0,
+                  "braid_surcharge_cents": 0,
+                  "local_green": 1,
+                  "global_green": 1,
+                  "defect": 0,
+                  "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+                  "contract_status": "COMPOSABLE_LGGG"
+                }
+              ],
+              "receipt_sha256": "f542c876a0401aca747c9848e94bfebdce14add1dc48de25c06e657847e53c4f"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "u_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    },
+                    "v_generator_counts": {
+                      "1": 1,
+                      "2": 2
+                    }
+                  },
+                  "query": "LGGG"
+                },
+                {
+                  "report": {
+                    "local_green": 1,
+                    "u_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    },
+                    "v_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    }
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "b47ba45dec62557fc323c4c040ff6aa40b11117f197b03491f55ca7a64fcf1d3",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "47b011f0b9bec5820606ba6bf26f729eb358f7afb3153545311952db25952d0b"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  2,
+                  1
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  2
+                ],
+                "u_matrix": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    -1,
+                    0
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    -1,
+                    0
+                  ]
+                ],
+                "u_yb_l1": 0,
+                "v_yb_l1": 0,
+                "holonomy_l1": 0,
+                "braid_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "HOLD_YANG_BAXTER_RIGHT_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "5d19662465769d3c04deed1703fa47d89482a99b2e29defe891fe28d67866417"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0080314670"
+        }
+      ]
+    },
+    {
+      "seed": 12201,
+      "kind": "infeasible_hardware_locked_non_abelian_braid_word_order",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "final_v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "final_u_yb_l1": 3,
+          "final_v_yb_l1": 3,
+          "final_holonomy_l1": 4,
+          "final_braid_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "0a63d16c72bcddc774b9809378a9fa259ab0dd4fb946ffc8246c6991c6a89506",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_non_abelian_braid.v1",
+            "authority_effect": "None",
+            "scope_id": "non-abelian-braid-seed-12201-arm-A",
+            "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "non_abelian_braid_holonomy_receipt": {
+              "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+              "authority_effect": "None",
+              "scope_id": "non-abelian-braid-seed-12201-arm-A:braid",
+              "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 2,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "A-wave-0:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-1:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "dc5d03b5edacfe96289e3330e8e5c593962d7772ef1c2b6966fea0a8e350f654"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "u_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    },
+                    "v_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    }
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "003c3f5d9678beb066a7cedbbfeae309f8e8e998134f5e7409322cabfa72213a",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "42ee4c779b3c8c0d0b081aed01d4f7e15c641ffeb2563d8c656a7f4ff0657e7b"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "0a63d16c72bcddc774b9809378a9fa259ab0dd4fb946ffc8246c6991c6a89506"
+          },
+          "escalations": {
+            "worker-0": "Legacy braid-generator ROM lock: `pricing_braid.py` is locked in read-only ROM with `u_braid_word = [1, 1, 2]` (`u_matrix = [[-1, 2], [-1, 1]]`, `u_yb_l1 = 3 > 0`), while the LGGR Yang-Baxter merge gate requires `u_braid_word = [1, 2, 1]` and `v_braid_word = [2, 1, 2]` (`u_yb_l1 == 0`, `v_yb_l1 == 0`, `holonomy_l1 == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy braid-generator ROM lock: `pricing_braid.py` is locked in read-only ROM with `u_braid_word = [1, 1, 2]` (`u_matrix = [[-1, 2], [-1, 1]]`, `u_yb_l1 = 3 > 0`), while the LGGR Yang-Baxter merge gate requires `u_braid_word = [1, 2, 1]` and `v_braid_word = [2, 1, 2]` (`u_yb_l1 == 0`, `v_yb_l1 == 0`, `holonomy_l1 == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0078937033"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "final_v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "final_u_yb_l1": 3,
+          "final_v_yb_l1": 3,
+          "final_holonomy_l1": 4,
+          "final_braid_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "6a3f10312d15aa16c454f8db689e31513470e288163a60dc42806f840b13f464",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_non_abelian_braid.v1",
+            "authority_effect": "None",
+            "scope_id": "non-abelian-braid-seed-12201-arm-B",
+            "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "non_abelian_braid_holonomy_receipt": {
+              "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+              "authority_effect": "None",
+              "scope_id": "non-abelian-braid-seed-12201-arm-B:braid",
+              "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 2,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "B-wave-0:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-1:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "c291572d75ba31e4c0c52cef32bfe4ad12ef2eafaa3106dbc1fc8bad74691c50"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "u_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    },
+                    "v_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    }
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "ba1f745b8c077ca47146e888a3ca8873af71a2273f1b97e4dfd52deba930017a",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "cfe99eb1bfe9239968c492523976ce70f1c9ed295d471ed9176d30764a1cf79f"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "6a3f10312d15aa16c454f8db689e31513470e288163a60dc42806f840b13f464"
+          },
+          "escalations": {
+            "worker-0": "Legacy braid-generator ROM lock: `pricing_braid.py` is locked in read-only ROM with `u_braid_word = [1, 1, 2]` (`u_matrix = [[-1, 2], [-1, 1]]`, `u_yb_l1 = 3 > 0`), while the LGGR Yang-Baxter merge gate requires `u_braid_word = [1, 2, 1]` and `v_braid_word = [2, 1, 2] (`u_yb_l1 == 0`, `v_yb_l1 == 0`, `holonomy_l1 == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy braid-generator ROM lock in `pricing_braid.py` prevents the required Yang-Baxter merge gate configuration (`u_braid_word = [1, 2, 1]`, `v_braid_word = [2, 1, 2]`). Current locked configuration has `u_braid_word = [1, 1, 2]` (`u_yb_l1 = 3 > 0`), which is incompatible with the LGGR requirements."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0078381880"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "final_v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "final_u_yb_l1": 3,
+          "final_v_yb_l1": 3,
+          "final_holonomy_l1": 4,
+          "final_braid_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "3daccf7839444fc79fe90f7c1b714e6e8dbb9c89a009651fee0e9afa4d53be51",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_non_abelian_braid.v1",
+            "authority_effect": "None",
+            "scope_id": "non-abelian-braid-seed-12201-arm-C",
+            "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "non_abelian_braid_holonomy_receipt": {
+              "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+              "authority_effect": "None",
+              "scope_id": "non-abelian-braid-seed-12201-arm-C:braid",
+              "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 2,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "C-wave-0:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "C-wave-1:braid",
+                  "u_braid_word": [
+                    1,
+                    1,
+                    2
+                  ],
+                  "v_braid_word": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "u_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "v_generator_counts": {
+                    "1": 2,
+                    "2": 1
+                  },
+                  "u_matrix": [
+                    [
+                      -1,
+                      2
+                    ],
+                    [
+                      -1,
+                      1
+                    ]
+                  ],
+                  "v_matrix": [
+                    [
+                      1,
+                      2
+                    ],
+                    [
+                      -1,
+                      -1
+                    ]
+                  ],
+                  "yang_baxter_target_matrix": [
+                    [
+                      0,
+                      1
+                    ],
+                    [
+                      -1,
+                      0
+                    ]
+                  ],
+                  "u_det": 1,
+                  "v_det": 1,
+                  "u_yb_l1": 3,
+                  "v_yb_l1": 3,
+                  "holonomy_l1": 4,
+                  "braid_surcharge_cents": 10,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "33dac9063cc525949089a5f332941facef9d0a360593335bd69f446bf057b396"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "u_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    },
+                    "v_generator_counts": {
+                      "1": 2,
+                      "2": 1
+                    }
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "83434ae6531adda30db50c207a6f25b7127e4658d007abe540393c9ef792f031",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "005aed9fc69a06406ee081a80a56b65c1a962ed20ce0c1f86a55779fa110df1b"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "u_braid_word": [
+                  1,
+                  1,
+                  2
+                ],
+                "v_braid_word": [
+                  2,
+                  1,
+                  1
+                ],
+                "u_matrix": [
+                  [
+                    -1,
+                    2
+                  ],
+                  [
+                    -1,
+                    1
+                  ]
+                ],
+                "v_matrix": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    -1,
+                    -1
+                  ]
+                ],
+                "u_yb_l1": 3,
+                "v_yb_l1": 3,
+                "holonomy_l1": 4,
+                "braid_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+                    "target_u_braid_word": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "target_u_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_braid",
+                    "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+                    "target_v_braid_word": [
+                      2,
+                      1,
+                      2
+                    ],
+                    "target_v_matrix": [
+                      [
+                        0,
+                        1
+                      ],
+                      [
+                        -1,
+                        0
+                      ]
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "3daccf7839444fc79fe90f7c1b714e6e8dbb9c89a009651fee0e9afa4d53be51"
+          },
+          "escalations": {
+            "worker-0": "Legacy braid-generator ROM lock: `pricing_braid.py` is locked in read-only ROM with `u_braid_word = [1, 1, 2]` (`u_matrix = [[-1, 2], [-1, 1]]`, `u_yb_l1 = 3 > 0`), while the LGGR Yang-Baxter merge gate requires `u_braid_word = [1, 2, 1]` and `v_braid_word = [2, 1, 2] (`u_yb_l1 == 0`, `v_yb_l1 == 0`, `holonomy_l1 == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy braid-generator ROM lock: `pricing_braid.py` is locked in read-only ROM with `u_braid_word = [1, 1, 2]` (`u_matrix = [[-1, 2], [-1, 1]]`, `u_yb_l1 = 3 > 0`), while the LGGR Yang-Baxter merge gate requires `u_braid_word = [1, 2, 1]` and `v_braid_word = [2, 1, 2]` (`u_yb_l1 == 0`, `v_yb_l1 == 0`, `holonomy_l1 == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0084097947"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 59,
+  "charged_or_reserved_usd": "0.0675090401",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 20,
+  "scope": "Concurrent 3-agent non-Abelian braid word holonomy & Yang-Baxter equivalence Python code-engineering swarm (`pricing_braid` -> `tax_braid` -> `settlement_braid`) comparing Abelian generator-count matching (A), single-branch Yang-Baxter word repair (B), and joint Yang-Baxter holonomy alignment [1, 2, 1] vs [2, 1, 2] (C) with full cryptographic receipts."
+}

@@ -32784,6 +32784,660 @@ class StreamingCodebaseGovernedRelaxationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingNonAbelianBraidHolonomyMonitor:
+    """Online non-Abelian braid word holonomy and Yang-Baxter equivalence monitor over SL_2(Z).
+
+    Audits pairs of generator words (u_word, v_word) over the braid generators
+    sigma_1 = [[1, 1], [0, 1]] (generator 1) and sigma_2 = [[1, 0], [-1, 1]] (generator 2)
+    in SL_2(Z), relative to the canonical Yang-Baxter target matrix
+    M_YB = M([1, 2, 1]) = M([2, 1, 2]) = [[0, 1], [-1, 0]]:
+      - Evaluates the 2x2 integer matrix products M(u_word) and M(v_word) in SL_2(Z),
+        together with their determinants det(M(u_word)) = det(M(v_word)) = 1.
+      - Computes the L1 matrix distances:
+          * u_yb_l1 = ||M(u_word) - M_YB||_1,
+          * v_yb_l1 = ||M(v_word) - M_YB||_1,
+          * holonomy_l1 = ||M(u_word) - M(v_word)||_1,
+        and the total braid surcharge S = u_yb_l1 + v_yb_l1 + holonomy_l1.
+      - Distinguishes Abelianized generator multiplicity from non-Abelian word ordering:
+          * NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR (u_yb_l1 > 0 and v_yb_l1 > 0,
+            e.g., [1, 1, 2] vs [2, 1, 1], which share identical generator counts with
+            [1, 2, 1] yet evaluate to distinct matrices in SL_2(Z) with S = 3 + 3 + 4 = 10),
+          * PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR (exactly one branch matches M_YB,
+            e.g., [1, 2, 1] vs [2, 1, 1], leaving S = 0 + 3 + 3 = 6 > 0),
+          * YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG (u_yb_l1 == 0, v_yb_l1 == 0,
+            and holonomy_l1 == 0, e.g., [1, 2, 1] and [2, 1, 2]).
+    """
+
+    SIGMA_1: tuple[tuple[int, int], tuple[int, int]] = ((1, 1), (0, 1))
+    SIGMA_2: tuple[tuple[int, int], tuple[int, int]] = ((1, 0), (-1, 1))
+    IDENTITY_2: tuple[tuple[int, int], tuple[int, int]] = ((1, 0), (0, 1))
+    YANG_BAXTER_TARGET: tuple[tuple[int, int], tuple[int, int]] = ((0, 1), (-1, 0))
+
+    def __init__(self, *, scope_id: str = "streaming-non-abelian-braid-holonomy") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    @classmethod
+    def mat_mul(
+        cls,
+        a: tuple[tuple[int, int], tuple[int, int]],
+        b: tuple[tuple[int, int], tuple[int, int]],
+    ) -> tuple[tuple[int, int], tuple[int, int]]:
+        return (
+            (
+                a[0][0] * b[0][0] + a[0][1] * b[1][0],
+                a[0][0] * b[0][1] + a[0][1] * b[1][1],
+            ),
+            (
+                a[1][0] * b[0][0] + a[1][1] * b[1][0],
+                a[1][0] * b[0][1] + a[1][1] * b[1][1],
+            ),
+        )
+
+    @classmethod
+    def mat_det(cls, m: tuple[tuple[int, int], tuple[int, int]]) -> int:
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0]
+
+    @classmethod
+    def mat_l1_dist(
+        cls,
+        a: tuple[tuple[int, int], tuple[int, int]],
+        b: tuple[tuple[int, int], tuple[int, int]],
+    ) -> int:
+        return (
+            abs(a[0][0] - b[0][0])
+            + abs(a[0][1] - b[0][1])
+            + abs(a[1][0] - b[1][0])
+            + abs(a[1][1] - b[1][1])
+        )
+
+    @classmethod
+    def eval_braid_word(cls, word: Sequence[int]) -> tuple[tuple[int, int], tuple[int, int]]:
+        if not isinstance(word, Sequence) or isinstance(word, (str, bytes)):
+            raise ValidationError("braid word must be a sequence of generator indices in {1, 2}")
+        acc = cls.IDENTITY_2
+        for g_raw in reversed(list(word)):
+            g = exact_int(g_raw, "generator")
+            if g == 1:
+                gen = cls.SIGMA_1
+            elif g == 2:
+                gen = cls.SIGMA_2
+            else:
+                raise ValidationError(f"braid generator must be 1 or 2, got {g}")
+            acc = cls.mat_mul(gen, acc)
+        return acc
+
+    def record_braid_pair(
+        self,
+        evaluation_id: str,
+        *,
+        u_word: Sequence[int],
+        v_word: Sequence[int],
+        local_u_ok: bool = True,
+        local_v_ok: bool = True,
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        boolean(local_u_ok, "local_u_ok")
+        boolean(local_v_ok, "local_v_ok")
+        if (
+            not isinstance(u_word, Sequence)
+            or isinstance(u_word, (str, bytes))
+            or not isinstance(v_word, Sequence)
+            or isinstance(v_word, (str, bytes))
+        ):
+            raise ValidationError("u_word and v_word must be sequences of generator indices in {1, 2}")
+        u_list = [exact_int(x, "u_gen") for x in u_word]
+        v_list = [exact_int(x, "v_gen") for x in v_word]
+        if len(u_list) == 0 or len(v_list) == 0:
+            raise ValidationError("u_word and v_word must be non-empty generator words")
+
+        m_u = self.eval_braid_word(u_list)
+        m_v = self.eval_braid_word(v_list)
+        det_u = self.mat_det(m_u)
+        det_v = self.mat_det(m_v)
+
+        u_yb_l1 = self.mat_l1_dist(m_u, self.YANG_BAXTER_TARGET)
+        v_yb_l1 = self.mat_l1_dist(m_v, self.YANG_BAXTER_TARGET)
+        holonomy_l1 = self.mat_l1_dist(m_u, m_v)
+        braid_surcharge_cents = u_yb_l1 + v_yb_l1 + holonomy_l1
+
+        u_gen_counts = {"1": u_list.count(1), "2": u_list.count(2)}
+        v_gen_counts = {"1": v_list.count(1), "2": v_list.count(2)}
+        local_green = 1 if (local_u_ok and local_v_ok and len(u_list) == 3 and len(v_list) == 3) else 0
+        global_green = 1 if (local_green == 1 and braid_surcharge_cents == 0) else 0
+        defect = global_green - local_green
+
+        if local_green == 0:
+            status = "LOCAL_BRAID_WORD_LENGTH_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif u_yb_l1 > 0 and v_yb_l1 > 0:
+            status = "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif braid_surcharge_cents > 0:
+            status = "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "u_braid_word": u_list,
+                "v_braid_word": v_list,
+                "u_generator_counts": u_gen_counts,
+                "v_generator_counts": v_gen_counts,
+                "u_matrix": [[m_u[0][0], m_u[0][1]], [m_u[1][0], m_u[1][1]]],
+                "v_matrix": [[m_v[0][0], m_v[0][1]], [m_v[1][0], m_v[1][1]]],
+                "yang_baxter_target_matrix": [[0, 1], [-1, 0]],
+                "u_det": det_u,
+                "v_det": det_v,
+                "u_yb_l1": u_yb_l1,
+                "v_yb_l1": v_yb_l1,
+                "holonomy_l1": holonomy_l1,
+                "braid_surcharge_cents": braid_surcharge_cents,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one non-Abelian braid evaluation must be recorded")
+        last = self.evaluations[-1]
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        body = {
+            "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": len(self.evaluations),
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCodebaseNonAbelianBraidMonitor:
+    """Online 3-module codebase non-Abelian braid word holonomy and Yang-Baxter monitor (Theorem 125).
+
+    Composes `StreamingNonAbelianBraidHolonomyMonitor`, `StreamingCodebaseInterfaceMergeMonitor`,
+    and `StreamingFiberMonitor` across 3 Python modules (`pricing_braid.py`, `tax_braid.py`,
+    `settlement_braid.py`):
+      - Phase 1 (`NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR`):
+        `pricing_braid.py` emits `u_braid_word = [1, 1, 2]` (M = [[-1, 2], [-1, 1]], `u_yb_l1 = 3`)
+        and `tax_braid.py` emits `v_braid_word = [2, 1, 1]` (M = [[1, 2], [-1, -1]], `v_yb_l1 = 3`),
+        giving `holonomy_l1 = 4`, `braid_surcharge_cents = 3 + 3 + 4 = 10`, and `payout = 863 != 873`
+        (`local_green = 1, global_green = 0, defect = -1`).
+      - Phase 2 (`PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR`):
+        `pricing_braid.py` is repaired to `u_braid_word = [1, 2, 1]` (`u_yb_l1 = 0`), while
+        `tax_braid.py` remains on `v_braid_word = [2, 1, 1]` (`v_yb_l1 = 3`, `holonomy_l1 = 3`),
+        leaving `braid_surcharge_cents = 0 + 3 + 3 = 6` and `payout = 867 != 873`
+        (`local_green = 1, global_green = 0, defect = -1`).
+      - Phase 3 (`YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG`):
+        `pricing_braid.py` emits `u_braid_word = [1, 2, 1]` and `tax_braid.py` emits
+        `v_braid_word = [2, 1, 2]`, so `M(u) = M(v) = M_YB = [[0, 1], [-1, 0]]`,
+        `u_yb_l1 = 0`, `v_yb_l1 = 0`, `holonomy_l1 = 0`, `braid_surcharge_cents = 0`,
+        and `settlement_braid.py` verifies `873 + 27 + 90 = 990`
+        (`local_green = 1, global_green = 1, defect = 0`).
+    """
+
+    PHASE_1_PRICING_BRAID_SOURCE = (
+        "def quote_braid_pricing(gross_cents: int) -> dict:\n"
+        "    # Phase 1: Abelian-equivalent permutation [1, 1, 2] != [1, 2, 1] in SL_2(Z)\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    fee_cents = (net_cents * 3) // 100\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'u_braid_word': [1, 1, 2],\n"
+        "        'u_matrix': [[-1, 2], [-1, 1]],\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_BRAID_SOURCE = (
+        "def quote_braid_tax(gross_cents: int) -> dict:\n"
+        "    # Phase 1: reversed permutation [2, 1, 1] != [2, 1, 2] in SL_2(Z)\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    tax_cents = (net_cents * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_cents,\n"
+        "        'v_braid_word': [2, 1, 1],\n"
+        "        'v_matrix': [[1, 2], [-1, -1]],\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_BRAID_SOURCE = (
+        "def settle_braid_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    u_mat = pricing['u_matrix']\n"
+        "    v_mat = tax['v_matrix']\n"
+        "    yb = [[0, 1], [-1, 0]]\n"
+        "    u_yb_l1 = (\n"
+        "        abs(u_mat[0][0] - yb[0][0]) + abs(u_mat[0][1] - yb[0][1])\n"
+        "        + abs(u_mat[1][0] - yb[1][0]) + abs(u_mat[1][1] - yb[1][1])\n"
+        "    )\n"
+        "    v_yb_l1 = (\n"
+        "        abs(v_mat[0][0] - yb[0][0]) + abs(v_mat[0][1] - yb[0][1])\n"
+        "        + abs(v_mat[1][0] - yb[1][0]) + abs(v_mat[1][1] - yb[1][1])\n"
+        "    )\n"
+        "    holonomy_l1 = (\n"
+        "        abs(u_mat[0][0] - v_mat[0][0]) + abs(u_mat[0][1] - v_mat[0][1])\n"
+        "        + abs(u_mat[1][0] - v_mat[1][0]) + abs(u_mat[1][1] - v_mat[1][1])\n"
+        "    )\n"
+        "    surcharge = u_yb_l1 + v_yb_l1 + holonomy_l1\n"
+        "    payout = pricing['net_after_fee_cents'] - tax['tax_reserve_cents'] - surcharge\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': pricing['platform_fee_cents'],\n"
+        "        'tax_reserve_cents': tax['tax_reserve_cents'],\n"
+        "        'u_yb_l1': u_yb_l1,\n"
+        "        'v_yb_l1': v_yb_l1,\n"
+        "        'holonomy_l1': holonomy_l1,\n"
+        "        'braid_surcharge_cents': surcharge,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_BRAID_SOURCE = (
+        "def quote_braid_pricing(gross_cents: int) -> dict:\n"
+        "    # Phase 2: pricing repaired to canonical Yang-Baxter word [1, 2, 1]\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    fee_cents = (net_cents * 3) // 100\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'u_braid_word': [1, 2, 1],\n"
+        "        'u_matrix': [[0, 1], [-1, 0]],\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_BRAID_SOURCE = PHASE_1_TAX_BRAID_SOURCE
+    PHASE_2_SETTLEMENT_BRAID_SOURCE = PHASE_1_SETTLEMENT_BRAID_SOURCE
+
+    PHASE_3_PRICING_BRAID_SOURCE = PHASE_2_PRICING_BRAID_SOURCE
+
+    PHASE_3_TAX_BRAID_SOURCE = (
+        "def quote_braid_tax(gross_cents: int) -> dict:\n"
+        "    # Phase 3: tax aligned to Yang-Baxter dual word [2, 1, 2]\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    tax_cents = (net_cents * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_cents,\n"
+        "        'v_braid_word': [2, 1, 2],\n"
+        "        'v_matrix': [[0, 1], [-1, 0]],\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_BRAID_SOURCE = (
+        "def settle_braid_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    u_mat = pricing['u_matrix']\n"
+        "    v_mat = tax['v_matrix']\n"
+        "    yb = [[0, 1], [-1, 0]]\n"
+        "    u_yb_l1 = (\n"
+        "        abs(u_mat[0][0] - yb[0][0]) + abs(u_mat[0][1] - yb[0][1])\n"
+        "        + abs(u_mat[1][0] - yb[1][0]) + abs(u_mat[1][1] - yb[1][1])\n"
+        "    )\n"
+        "    v_yb_l1 = (\n"
+        "        abs(v_mat[0][0] - yb[0][0]) + abs(v_mat[0][1] - yb[0][1])\n"
+        "        + abs(v_mat[1][0] - yb[1][0]) + abs(v_mat[1][1] - yb[1][1])\n"
+        "    )\n"
+        "    holonomy_l1 = (\n"
+        "        abs(u_mat[0][0] - v_mat[0][0]) + abs(u_mat[0][1] - v_mat[0][1])\n"
+        "        + abs(u_mat[1][0] - v_mat[1][0]) + abs(u_mat[1][1] - v_mat[1][1])\n"
+        "    )\n"
+        "    surcharge = u_yb_l1 + v_yb_l1 + holonomy_l1\n"
+        "    if surcharge != 0:\n"
+        "        raise ValueError(f'non-zero non-Abelian braid holonomy surcharge {surcharge}')\n"
+        "    payout = pricing['net_after_fee_cents'] - tax['tax_reserve_cents']\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': pricing['platform_fee_cents'],\n"
+        "        'tax_reserve_cents': tax['tax_reserve_cents'],\n"
+        "        'u_yb_l1': u_yb_l1,\n"
+        "        'v_yb_l1': v_yb_l1,\n"
+        "        'holonomy_l1': holonomy_l1,\n"
+        "        'braid_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-non-abelian-braid") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.braid_monitor = StreamingNonAbelianBraidHolonomyMonitor(
+            scope_id=f"{self.scope_id}:braid"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_non_abelian_braid_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_braid_source: str,
+        tax_braid_source: str,
+        settlement_braid_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_braid", pricing_braid_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_braid", tax_braid_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_braid", settlement_braid_source
+        )
+        for mod_name, ns, fn_name in (
+            ("pricing_braid", p_ns, "quote_braid_pricing"),
+            ("tax_braid", t_ns, "quote_braid_tax"),
+            ("settlement_braid", s_ns, "settle_braid_invoice"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} missing callable {fn_name}")
+
+        pricing_out = p_ns["quote_braid_pricing"](gross)
+        tax_out = t_ns["quote_braid_tax"](gross)
+        if not isinstance(pricing_out, Mapping) or not isinstance(tax_out, Mapping):
+            raise ValidationError("quote_braid_pricing and quote_braid_tax must return mappings")
+        try:
+            settlement_out = s_ns["settle_braid_invoice"](pricing_out, tax_out)
+            if not isinstance(settlement_out, Mapping):
+                raise ValidationError("settle_braid_invoice must return a mapping")
+            settlement_raised = False
+        except ValidationError:
+            raise
+        except Exception:
+            settlement_raised = True
+            settlement_out = {}
+
+        u_word = [exact_int(x, "u_gen") for x in pricing_out.get("u_braid_word", [1, 1, 2])]
+        v_word = [exact_int(x, "v_gen") for x in tax_out.get("v_braid_word", [2, 1, 1])]
+        m_u_true = StreamingNonAbelianBraidHolonomyMonitor.eval_braid_word(u_word)
+        m_v_true = StreamingNonAbelianBraidHolonomyMonitor.eval_braid_word(v_word)
+        m_u_reported = pricing_out.get("u_matrix", [[0, 0], [0, 0]])
+        m_v_reported = tax_out.get("v_matrix", [[0, 0], [0, 0]])
+        u_matrix_matches_word = (
+            [[m_u_true[0][0], m_u_true[0][1]], [m_u_true[1][0], m_u_true[1][1]]] == m_u_reported
+        )
+        v_matrix_matches_word = (
+            [[m_v_true[0][0], m_v_true[0][1]], [m_v_true[1][0], m_v_true[1][1]]] == m_v_reported
+        )
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+        net_base = (gross * 10) // 11
+
+        local_p_ok = (fee == (net_base * 3) // 100) and (net == gross - fee) and (len(u_word) == 3) and u_matrix_matches_word
+        local_t_ok = (tax == (net_base * 10) // 100) and (len(v_word) == 3) and v_matrix_matches_word
+
+        braid_rec = self.braid_monitor.record_braid_pair(
+            f"{eval_id}:braid",
+            u_word=u_word,
+            v_word=v_word,
+            local_u_ok=local_p_ok,
+            local_v_ok=local_t_ok,
+        )
+        u_yb_l1 = braid_rec["u_yb_l1"]
+        v_yb_l1 = braid_rec["v_yb_l1"]
+        holonomy_l1 = braid_rec["holonomy_l1"]
+        surcharge = braid_rec["braid_surcharge_cents"]
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents")
+            reported_surcharge = exact_int(
+                settlement_out.get("braid_surcharge_cents", surcharge),
+                "braid_surcharge_cents",
+            )
+            local_s_ok = (reported_surcharge == surcharge) and (payout == net - tax - surcharge)
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = 1 if (local_p_ok and local_t_ok and local_s_ok and not infeasible_spec_contradiction) else 0
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and u_word == [1, 2, 1]
+            and v_word == [2, 1, 2]
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "u_generator_counts": braid_rec["u_generator_counts"],
+                "v_generator_counts": braid_rec["v_generator_counts"],
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "u_braid_word": u_word,
+                "v_braid_word": v_word,
+                "u_yb_l1": u_yb_l1,
+                "v_yb_l1": v_yb_l1,
+                "holonomy_l1": holonomy_l1,
+                "braid_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_NON_ABELIAN_BRAID_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_BRAID_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif u_yb_l1 > 0 and v_yb_l1 > 0:
+            status = "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_braid",
+                    "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+                    "target_u_braid_word": [1, 2, 1],
+                    "target_u_matrix": [[0, 1], [-1, 0]],
+                },
+                "worker-1": {
+                    "module": "tax_braid",
+                    "action": "HOLD_YANG_BAXTER_RIGHT_WORD",
+                    "target_v_braid_word": [2, 1, 2],
+                    "target_v_matrix": [[0, 1], [-1, 0]],
+                },
+                "worker-2": {
+                    "module": "settlement_braid",
+                    "action": "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE",
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_braid",
+                    "action": (
+                        "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD"
+                        if (u_word != [1, 2, 1] or not u_matrix_matches_word)
+                        else "HOLD_YANG_BAXTER_LEFT_WORD"
+                    ),
+                    "target_u_braid_word": [1, 2, 1],
+                    "target_u_matrix": [[0, 1], [-1, 0]],
+                },
+                "worker-1": {
+                    "module": "tax_braid",
+                    "action": (
+                        "REPAIR_TAX_BRAID_YANG_BAXTER_WORD"
+                        if (v_word != [2, 1, 2] or not v_matrix_matches_word)
+                        else "HOLD_YANG_BAXTER_RIGHT_WORD"
+                    ),
+                    "target_v_braid_word": [2, 1, 2],
+                    "target_v_matrix": [[0, 1], [-1, 0]],
+                },
+                "worker-2": {
+                    "module": "settlement_braid",
+                    "action": (
+                        "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE"
+                        if not conservation_ok
+                        else "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE"
+                    ),
+                    "target_braid_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "u_braid_word": u_word,
+                "v_braid_word": v_word,
+                "u_matrix": [[m_u_true[0][0], m_u_true[0][1]], [m_u_true[1][0], m_u_true[1][1]]],
+                "v_matrix": [[m_v_true[0][0], m_v_true[0][1]], [m_v_true[1][0], m_v_true[1][1]]],
+                "u_yb_l1": u_yb_l1,
+                "v_yb_l1": v_yb_l1,
+                "holonomy_l1": holonomy_l1,
+                "braid_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_non_abelian_braid_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_non_abelian_braid_modules(
+            f"{audit_id}_p1",
+            pricing_braid_source=self.PHASE_1_PRICING_BRAID_SOURCE,
+            tax_braid_source=self.PHASE_1_TAX_BRAID_SOURCE,
+            settlement_braid_source=self.PHASE_1_SETTLEMENT_BRAID_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_non_abelian_braid_modules(
+            f"{audit_id}_p2",
+            pricing_braid_source=self.PHASE_2_PRICING_BRAID_SOURCE,
+            tax_braid_source=self.PHASE_2_TAX_BRAID_SOURCE,
+            settlement_braid_source=self.PHASE_2_SETTLEMENT_BRAID_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_non_abelian_braid_modules(
+            f"{audit_id}_p3",
+            pricing_braid_source=self.PHASE_3_PRICING_BRAID_SOURCE,
+            tax_braid_source=self.PHASE_3_TAX_BRAID_SOURCE,
+            settlement_braid_source=self.PHASE_3_SETTLEMENT_BRAID_SOURCE,
+            model_id=mid,
+        )
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_u_braid_word": p1["u_braid_word"],
+                "phase_1_v_braid_word": p1["v_braid_word"],
+                "phase_1_u_yb_l1": p1["u_yb_l1"],
+                "phase_1_v_yb_l1": p1["v_yb_l1"],
+                "phase_1_holonomy_l1": p1["holonomy_l1"],
+                "phase_1_surcharge_cents": p1["braid_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_u_braid_word": p2["u_braid_word"],
+                "phase_2_v_braid_word": p2["v_braid_word"],
+                "phase_2_u_yb_l1": p2["u_yb_l1"],
+                "phase_2_v_yb_l1": p2["v_yb_l1"],
+                "phase_2_holonomy_l1": p2["holonomy_l1"],
+                "phase_2_surcharge_cents": p2["braid_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_u_braid_word": p3["u_braid_word"],
+                "phase_3_v_braid_word": p3["v_braid_word"],
+                "phase_3_u_yb_l1": p3["u_yb_l1"],
+                "phase_3_v_yb_l1": p3["v_yb_l1"],
+                "phase_3_holonomy_l1": p3["holonomy_l1"],
+                "phase_3_surcharge_cents": p3["braid_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase non-Abelian braid evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_non_abelian_braid.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "non_abelian_braid_holonomy_receipt": (
+                self.braid_monitor.emit_receipt()
+                if self.braid_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
