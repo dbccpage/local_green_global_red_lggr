@@ -4204,4 +4204,72 @@ theorem regge_codebase_hinge_deficit_and_gauss_bonnet_holonomy_audit :
   intro a0 b0 c0 a1 b1 c1 a2 b2 c2 h
   omega
 
+/-- 105. Bounded-depth k-induction unrolling vs. inductive invariant strengthening in a 3-module codebase
+    (`pricing_ind`, `tax_ind`, `settlement_ind`):
+    1. Symbolic carrier-completion & bounded-depth k <= 3 escape law:
+       - For any integer `x : Int`, `3 * x + 1 ≠ 0` (no integer completion root in `ℤ`, even though
+         `(1, 1, 5, 5)` satisfies `(3 * x_k + 1) % 2^k = 0` for `m_k ∈ {2, 4, 8, 16}`);
+       - For any non-negative reachable state `x ≥ 0`, `3 * x + 3 ≠ 0` (the unique integer root
+         `x_* = -1 < 0` lies outside the reachable carrier `[0, 10]`, while the modular thread
+         `x_k = 2^k - 1 ∈ {1, 3, 7, 15}` stays within the bounded threshold `x_k ≤ 7` for all `k ≤ 3`
+         before jumping by `x_4 - x_3 = 8 > 0` at depth `k = 4`);
+       - For `3 * x - 6 = 0`, the unique integer root `x_* = 2 ∈ [0, 10]` lies inside the reachable
+         carrier and the stabilized thread `(0, 2, 2, 2)` has zero step differences from depth 2 onward;
+    2. Concrete 3-phase 3-module k-induction codebase audit (`m_k ∈ {2, 4, 8, 16}`, `M_reach = 10`):
+       - Phase 1 (Bounded-depth k <= 3 unrolling pass with fractional & out-of-carrier depth-4 escape):
+         `tax_ind` thread `(1, 1, 5, 5)` (`3x + 1 ≡ 0 mod 2^k`) and `settlement_ind` thread
+         `(1, 3, 7, 15)` (`3x + 3 ≡ 0 mod 2^k`, where `x_1, x_2, x_3 ≤ 7`) pass all local modular
+         and k <= 3 unrolling checks (`L_p1 = 1`), yet `tax_ind` lacks an integer root and
+         `settlement_ind` has `x_* = -1 ∉ [0, 10]` and depth-4 carry overflow `x_4 - x_3 = 8 > 0`
+         (`payout = 865 ≠ 873`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial invariant repair in `tax_ind` to `3x - 6 ≡ 0 mod 2^k`, thread `(0, 2, 2, 2)`):
+         `tax_ind` stabilizes at `x_* = 2 ∈ [0, 10]` (`L_p2 = 1`), yet `settlement_ind` retains
+         out-of-carrier root `x_* = -1 ∉ [0, 10]` and depth-4 step jump `x_4 - x_3 = 8 > 0`
+         (`Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full inductive invariant strengthening `(0, 2, 2, 2)` across `tax_ind` and `settlement_ind`):
+         both modules stabilize at `x_* = 2 ∈ [0, 10]` with `x_4 - x_3 = 0`, zero depth-4 overflow,
+         and exact settlement conservation `873 + 27 + 180 = 1080`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem kinduction_codebase_bounded_unrolling_and_invariant_strengthening_audit :
+    ((∀ x : Int, 3 * x + 1 ≠ 0) ∧
+     (∀ x : Int, 0 ≤ x → 3 * x + 3 ≠ 0)) ∧
+    (let m1 : Int := 2; let m2 : Int := 4; let m3 : Int := 8; let m4 : Int := 16;
+     let m_reach : Int := 10;
+     let f1 : Int := 1; let f2 : Int := 1; let f3 : Int := 5; let f4 : Int := 5;
+     let c1 : Int := 1; let c2 : Int := 3; let c3 : Int := 7; let c4 : Int := 15;
+     let x_star_carr : Int := -1;
+     let r1 : Int := 0; let r2 : Int := 2; let r3 : Int := 2; let r4 : Int := 2;
+     let x_star_reach : Int := 2;
+     let overflow_k4_bad := c4 - c3;
+     let overflow_k4_good := r4 - r3;
+     let payout_bad : Int := 873 - overflow_k4_bad;
+     let payout_good : Int := 873 - overflow_k4_good;
+     let fee : Int := 27;
+     let tax : Int := 180;
+     let gross : Int := 1080;
+     let l_p1 := if (3 * f1 + 1) % m1 = 0 ∧ (3 * f2 + 1) % m2 = 0 ∧ (3 * f3 + 1) % m3 = 0 ∧ (3 * f4 + 1) % m4 = 0 ∧
+                    (3 * c1 + 3) % m1 = 0 ∧ (3 * c2 + 3) % m2 = 0 ∧ (3 * c3 + 3) % m3 = 0 ∧ (3 * c4 + 3) % m4 = 0 ∧
+                    (c1 ≤ 7 ∧ c2 ≤ 7 ∧ c3 ≤ 7) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (0 ≤ x_star_carr ∧ x_star_carr ≤ m_reach) ∧ (overflow_k4_bad = 0) ∧ (payout_bad + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (3 * r1 - 6) % m1 = 0 ∧ (3 * r2 - 6) % m2 = 0 ∧ (3 * r3 - 6) % m3 = 0 ∧ (3 * r4 - 6) % m4 = 0 ∧
+                    (0 ≤ x_star_reach ∧ x_star_reach ≤ m_reach) ∧ (r4 - r3 = 0) ∧
+                    (c1 ≤ 7 ∧ c2 ≤ 7 ∧ c3 ≤ 7) ∧ (3 * x_star_carr + 3 = 0) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (0 ≤ x_star_carr ∧ x_star_carr ≤ m_reach) ∧ (overflow_k4_bad = 0) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (3 * r1 - 6) % m1 = 0 ∧ (3 * r2 - 6) % m2 = 0 ∧ (3 * r3 - 6) % m3 = 0 ∧ (3 * r4 - 6) % m4 = 0 ∧
+                    (3 * x_star_reach - 6 = 0) ∧ (0 ≤ x_star_reach ∧ x_star_reach ≤ m_reach) ∧
+                    (r3 - r2 = 0) ∧ (overflow_k4_good = 0) ∧ (payout_good + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (overflow_k4_good < overflow_k4_bad) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (overflow_k4_bad = 8 ∧ overflow_k4_good = 0 ∧ payout_bad = 865 ∧ payout_good = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro x hx
+    omega
+  · intro x hpos hx
+    omega
+
 end LggrVIII

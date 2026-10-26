@@ -29,6 +29,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseKInductionMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
@@ -45,6 +46,7 @@ from .domain import (
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
+    KINDUCTION_WORKER_MODULES,
     MV_WORKER_MODULES,
     REGGE_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
@@ -56,6 +58,7 @@ from .domain import (
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    KInductionCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
@@ -68,6 +71,7 @@ from .domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    kinduction_fixture,
     mv_fixture,
     regge_fixture,
     replay_fixture,
@@ -2462,6 +2466,239 @@ def regge_campaign(
     return summary
 
 
+def kinduction_system_prompt(worker: str, arm: str) -> str:
+    module_name = KINDUCTION_WORKER_MODULES[worker]
+    policy = {
+        "A": (
+            "Arm A (local_bounded_k3_unrolling_gate): rely on isolated modular stage compatibility "
+            "and bounded-depth `k <= 3` threshold checks (`x_k <= 7`). If your isolated unit tests "
+            "pass, keep your current module implementation unchanged."
+        ),
+        "B": (
+            "Arm B (partial_tax_tower_strengthening): when a projective-tower lifting defect is "
+            "reported, `worker-0` (`pricing_ind`) and `worker-2` (`settlement_ind`) keep their "
+            "modules unchanged, while `worker-1` (`tax_ind`) strengthens its projective tower to "
+            "`'tax_const_b': -6, 'tax_unrolling_thread': [0, 2, 2, 2]` (leaving `settlement_ind` "
+            "at `settle_const_b = 3, thread = [1, 3, 7, 15]`)."
+        ),
+        "C": (
+            "Arm C (explicit_lggr_k_induction_carrier_directive): follow the host LGGR "
+            "`StreamingCodebaseKInductionMonitor` directive (`HOLD_INDUCTIVE_PRICING_ANCHOR`, "
+            "`STRENGTHEN_TAX_TOWER_INVARIANT`, or `STRENGTHEN_SETTLEMENT_CARRIER_INVARIANT`) so "
+            "`pricing_ind.py` holds `tower_coeff_a = 3`, `tax_ind.py` sets `'tax_const_b': -6, "
+            "'tax_unrolling_thread': [0, 2, 2, 2]`, and `settlement_ind.py` sets `'settle_const_b': -6, "
+            "'settle_unrolling_thread': [0, 2, 2, 2]` with `depth4_overflow == 0` and "
+            "`merchant_payout_cents = gross - fee - tax = 873`."
+        ),
+    }[arm]
+    return (
+        f"You are concurrent coding agent {worker}, owner of `{module_name}.py` in a 3-module "
+        "stateful retry-accumulator settlement pipeline (`pricing_ind.py` -> `tax_ind.py` -> "
+        "`settlement_ind.py`) audited across modular unrolling depths `m_k in (2, 4, 8, 16)`.\n"
+        f"{policy}\n"
+        "Always call `inspect_workspace` first. Then either call `submit_module_patch` with "
+        "valid Python source code for your owned module, or call `escalate` if `infeasible_constraint` "
+        "is non-null and locks a non-stabilizing k-induction shim."
+    )
+
+
+def kinduction_merge_gate(
+    events: Events,
+    workspace: KInductionCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseKInductionMonitor(
+        scope_id=f"swarm-kinduction-{workspace.state['seed']}-{arm}-{step_tag}"
+    )
+    local_results = workspace.local_verdicts()
+    eval_rec = monitor.evaluate_codebase_k_induction(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    events.emit(
+        "gate",
+        {
+            "seed": workspace.state["seed"],
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "tax_const_b": eval_rec["tax_const_b"],
+            "tax_unrolling_thread": eval_rec["tax_unrolling_thread"],
+            "tax_integral_root": eval_rec["tax_integral_root"],
+            "settle_const_b": eval_rec["settle_const_b"],
+            "settle_unrolling_thread": eval_rec["settle_unrolling_thread"],
+            "settle_integral_root": eval_rec["settle_integral_root"],
+            "settle_depth4_overflow": eval_rec["settle_depth4_overflow"],
+            "status": eval_rec["status"],
+            "receipt_sha256": eval_rec["receipt_sha256"],
+        },
+    )
+    return eval_rec, eval_rec["compact_role_directives"]
+
+
+def kinduction_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(KINDUCTION_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = kinduction_fixture(seed)
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = KInductionCodeWorkspace(base_state)
+            start_calls = client.calls
+            start_cost = client.spent
+            eval_rec, directives = kinduction_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+
+            histories: dict[str, list[dict[str, Any]]] = {
+                w: [{"role": "system", "content": kinduction_system_prompt(w, arm)}]
+                for w in workers
+            }
+
+            waves_run = 0
+            for wave_idx in (1, 2):
+                if eval_rec["global_green"] == 1 or len(ws.state["escalations"]) > 0:
+                    break
+                waves_run = wave_idx
+                per_worker_fb: dict[str, str] = {}
+                for w in workers:
+                    mname = KINDUCTION_WORKER_MODULES[w]
+                    if ws.state["infeasible_constraint"] is not None:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "infeasible_constraint": ws.state["infeasible_constraint"],
+                                "instruction": "Call `inspect_workspace` then `escalate` with a clear explanation.",
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "A":
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "A",
+                                "owned_module": mname,
+                                "local_unit_test_passed": True,
+                                "bounded_k3_unrolling_passed": True,
+                                "instruction": (
+                                    "Your isolated unit tests and bounded-depth `k <= 3` unrolling "
+                                    "checks passed. Call `inspect_workspace` and submit your current "
+                                    "source code unchanged."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "B":
+                        if w in ("worker-0", "worker-2"):
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        f"Call `inspect_workspace` and keep `{mname}.py` unchanged by "
+                                        "submitting its existing source code."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                        else:
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        "Update `tax_ind.py` via `submit_module_patch` so "
+                                        "`'tax_const_b': -6` and `'tax_unrolling_thread': [0, 2, 2, 2]` "
+                                        "(while keeping `tax_cents = 180` and `gross_cents = 1080`)."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                    else:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "C",
+                                "owned_module": mname,
+                                "lggr_kinduction_role_directive": directives[w],
+                                "instruction": (
+                                    "Follow `lggr_kinduction_role_directive` for your module and call "
+                                    "`submit_module_patch` with the updated Python implementation."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+
+                round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, directives = kinduction_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+                if arm in ("A", "B"):
+                    break
+
+            escalations = len(ws.state["escalations"])
+            if ws.state["infeasible_constraint"] is not None and escalations > 0:
+                outcome = "safe_escalated"
+            elif eval_rec["global_green"] == 1:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_tax_const_b": eval_rec["tax_const_b"],
+                "final_tax_unrolling_thread": eval_rec["tax_unrolling_thread"],
+                "final_tax_integral_root": eval_rec["tax_integral_root"],
+                "final_settle_const_b": eval_rec["settle_const_b"],
+                "final_settle_unrolling_thread": eval_rec["settle_unrolling_thread"],
+                "final_settle_integral_root": eval_rec["settle_integral_root"],
+                "final_settle_depth4_overflow": eval_rec["settle_depth4_overflow"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.k_induction_code_engineering_swarm.v1",
+        "topology": "kinduction",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent k-induction Python code-engineering swarm (`pricing_ind` -> "
+            "`tax_ind` -> `settlement_ind`) comparing bounded-depth k <= 3 unrolling gating (A), "
+            "partial tax projective-tower strengthening (B), and explicit LGGR k-induction "
+            "carrier-invariant directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -2492,6 +2729,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = cptp_campaign(client, events, config)
         elif config.get("topology") == "regge":
             summary = regge_campaign(client, events, config)
+        elif config.get("topology") == "kinduction":
+            summary = kinduction_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -2527,6 +2766,7 @@ def main() -> None:
             "optional_stopping",
             "cptp",
             "regge",
+            "kinduction",
         ],
         default="linear",
     )
@@ -2572,6 +2812,8 @@ def main() -> None:
         seeds = [10000, 10001, 10002]
     elif args.topology == "regge":
         seeds = [10100, 10101, 10102]
+    elif args.topology == "kinduction":
+        seeds = [10200, 10201, 10202]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -2685,6 +2927,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = regge_campaign(client, events, config)
+    elif args.topology == "kinduction":
+        config = {
+            "topology": "kinduction",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = kinduction_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

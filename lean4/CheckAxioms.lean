@@ -121,5 +121,6 @@ import LggrVIII
 #print axioms LggrVIII.optional_stopping_codebase_early_gain_skew_and_drawdown_cap_audit
 #print axioms LggrVIII.cptp_codebase_state_blindspot_and_operator_completion_audit
 #print axioms LggrVIII.regge_codebase_hinge_deficit_and_gauss_bonnet_holonomy_audit
+#print axioms LggrVIII.kinduction_codebase_bounded_unrolling_and_invariant_strengthening_audit
 
 
