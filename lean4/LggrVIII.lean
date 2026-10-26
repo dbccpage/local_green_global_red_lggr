@@ -4025,4 +4025,63 @@ theorem windowed_drift_codebase_horizon_truncation_and_rebalancing_audit :
   intro d hd
   omega
 
+/-- 102. Martingale optional-stopping early-gain halting vs. tail-drawdown cap in a 3-module codebase
+    (`pricing_stop`, `tax_stop`, `settlement_stop`):
+    1. Symbolic 2-step stopped martingale expectation vs. adverse-branch tail-drawdown law:
+       - For any step-1 stake `s ≥ 1` (`X_u = s`, `X_d = -s`) and step-2 recovery stake `r ≥ 1` on the
+         down branch (`X_du = -s + r`, `X_dd = -s - r`) with early-gain halting on `u`, the local
+         martingale condition `X_du + X_dd = -2 * s = 2 * X_d` and scaled stopped expectation
+         `2 * X_u + X_du + X_dd = 0` hold identically, yet the adverse leaf drawdown reaches
+         `-(X_dd) = s + r > s`;
+       - Enforcing loss-capped halting (`r = 0`, `X_du = -s`, `X_dd = -s`) preserves
+         `2 * X_u + X_du + X_dd = 0` while bounding tail drawdown to `s ≤ s`;
+    2. Concrete 3-phase 3-module optional-stopping codebase audit (`s = 100`, `B_tail = 100`):
+       - Phase 1 (Double-down recovery stake `r = 200` in `settlement_stop`: `X_du = 100, X_dd = -300`):
+         stopped expectation is `0` (`L_stop = 1`), yet tail drawdown reaches `300 > 100 = B_tail`
+         (`Eg_stop = 0`, `Δ_{E,stop} = -1`);
+       - Phase 2 (Break-even recovery stake `r = 100` in `settlement_stop`: `X_du = 0, X_dd = -200`):
+         stopped expectation is `0` (`L_part = 1`), yet residual tail drawdown is `200 > 100 = B_tail`
+         (`Eg_part = 0`, `Δ_{E,part} = -1`);
+       - Phase 3 (Loss-capped halting `r = 0, stop_on_step1_down = true` in `settlement_stop`:
+         `X_du = -100, X_dd = -100`):
+         stopped expectation is `0`, tail drawdown is `100 ≤ 100 = B_tail`, and exact settlement
+         conservation `873 + 27 + 180 = 1080` holds (`L_cap = 1`, `Eg_cap = 1`, `Δ_{E,cap} = 0`). -/
+theorem optional_stopping_codebase_early_gain_skew_and_drawdown_cap_audit :
+    (∀ s r : Int,
+      (s ≥ 1 ∧ r ≥ 1) →
+      (let x_u := s;
+       let x_du := -s + r;
+       let x_dd := -s - r;
+       (x_du + x_dd = -2 * s) ∧
+       (2 * x_u + x_du + x_dd = 0) ∧
+       (-x_dd = s + r) ∧
+       (-x_dd > s) ∧
+       (2 * x_u + (-s) + (-s) = 0))) ∧
+    (let b_tail : Int := 100;
+     let exp_p1 : Int := 0;
+     let dd_p1 : Int := 300;
+     let exp_p2 : Int := 0;
+     let dd_p2 : Int := 200;
+     let exp_p3 : Int := 0;
+     let dd_p3 : Int := 100;
+     let payout_p3 : Int := 873;
+     let fee_p3 : Int := 27;
+     let tax_p3 : Int := 180;
+     let gross_p3 : Int := 1080;
+     let l_stop := if (exp_p1 = 0) ∧ (dd_p1 > b_tail) then (1 : Int) else 0;
+     let eg_stop := if (l_stop = 1) ∧ (dd_p1 ≤ b_tail) then (1 : Int) else 0;
+     let defect_stop := eg_stop - l_stop;
+     let l_part := if (exp_p2 = 0) ∧ (dd_p2 < dd_p1) ∧ (dd_p2 > b_tail) then (1 : Int) else 0;
+     let eg_part := if (l_part = 1) ∧ (dd_p2 ≤ b_tail) then (1 : Int) else 0;
+     let defect_part := eg_part - l_part;
+     let l_cap := if (exp_p3 = 0) ∧ (dd_p3 ≤ b_tail) ∧ (payout_p3 + fee_p3 + tax_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_cap := if (l_cap = 1) ∧ (dd_p3 < dd_p2) then (1 : Int) else 0;
+     let defect_cap := eg_cap - l_cap;
+     (l_stop = 1 ∧ eg_stop = 0 ∧ defect_stop = -1) ∧
+     (l_part = 1 ∧ eg_part = 0 ∧ defect_part = -1) ∧
+     (l_cap = 1 ∧ eg_cap = 1 ∧ defect_cap = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro s r h
+  omega
+
 end LggrVIII

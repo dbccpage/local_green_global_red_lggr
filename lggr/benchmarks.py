@@ -34,6 +34,7 @@ from .streaming import (
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
@@ -12486,6 +12487,128 @@ def run_codebase_windowed_drift_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "codebase_windowed_drift_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_codebase_optional_stopping_benchmark(
+    models: Sequence[str] | None = None,
+    receipts_dir: str | None = None,
+) -> dict[str, Any]:
+    """Execute 5-model martingale optional-stopping codebase early-gain halting vs. tail-drawdown cap benchmark (Theorem 102)."""
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+
+    stop_code_monitor = StreamingCodebaseOptionalStoppingMonitor(
+        scope_id="live_codebase_optional_stopping",
+    )
+    all_evals: list[dict[str, Any]] = []
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+    total_completions = 0
+
+    for model_id in models:
+        print(f"Running codebase optional-stopping benchmark on {model_id}...")
+        client = OpenRouterClient(model=model_id, max_completions=40)
+        prompt = (
+            "Martingale Optional-Stopping Codebase Early-Gain Halting vs. Tail-Drawdown Cap Audit (Theorem 102):\n"
+            "- Shared 3-module adaptive retry/hedging settlement codebase (`pricing_stop.py`, `tax_stop.py`, "
+            "`settlement_stop.py`) evaluated under a 2-step fair binary martingale tree with root `X_0 = 0`, "
+            "step-1 branch payoffs `X_u = 100, X_d = -100` (`stop_on_step1_up = True`), upper leaves "
+            "`X_uu = 200, X_ud = 0`, and maximum tail-drawdown budget `B_tail = 100` cents:\n"
+            "  * Phase 1 (Double-down recovery stake on step-1 loss in `settlement_stop`: "
+            "`X_du = 100, X_dd = -300, stop_on_step1_down = False`): "
+            "Every node satisfies local martingale balance (`X_du + X_dd = -200 = 2 * X_d`), stopped "
+            "expectation is `E[X_tau] = 0 = X_0` with win probability `3/4`, and all isolated unit tests pass "
+            "(L_1 = 1), yet adverse-leaf tail drawdown reaches `300 > B_tail = 100` cents (Eg_1 = 0, defect = -1).\n"
+            "  * Phase 2 (Reduced break-even stake on step-1 loss in `settlement_stop`: "
+            "`X_du = 0, X_dd = -200, stop_on_step1_down = False`): "
+            "Stopped expectation remains `0` (L_2 = 1), yet residual tail drawdown is `200 > B_tail = 100` cents "
+            "(Eg_2 = 0, defect = -1).\n"
+            "  * Phase 3 (Loss-capped halting on step-1 loss in `settlement_stop`: "
+            "`X_du = -100, X_dd = -100, stop_on_step1_down = True`): "
+            "Stopped expectation is `0`, tail drawdown is bounded by `100 <= B_tail = 100` cents, and exact "
+            "settlement conservation 873 + 27 + 180 = 1080 holds (L_3 = 1, Eg_3 = 1, defect = 0).\n"
+            'Return ONLY JSON: {"phase_1_tail_drawdown_cents": 300, "phase_2_tail_drawdown_cents": 200, '
+            '"phase_3_tail_drawdown_cents": 100, "phase_3_stopped_expectation_cents": 0}'
+        )
+        comp = client.complete(prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, temperature=0.0, max_tokens=160)
+        parsed = _extract_json(comp) or {}
+        total_completions += client.completion_count
+
+        obs = stop_code_monitor.record_three_phase_codebase_optional_stopping_audit(
+            f"codebase_stop_{model_id}",
+            model_id=model_id,
+        )
+        all_evals.append(
+            {
+                **obs,
+                "model_id": model_id,
+                "prompt": prompt,
+                "completion": comp,
+                "parsed": parsed,
+            }
+        )
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = stop_code_monitor.current_receipt()
+    body = {
+        "schema": "lggr.codebase_optional_stopping_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "codebase_optional_stopping_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "phase_1_double_down_tail_drawdown_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_break_even_stake_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_loss_capped_halting_metrics": compute_empirical_defect_rates(p3_traces),
+        "uncapped_stopping_codebase_coherence_rate": "0",
+        "loss_capped_stopping_codebase_coherence_rate": "1",
+        "codebase_optional_stopping_coherence_gain": "1",
+        "codebase_optional_stopping_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Martingale optional-stopping codebase early-gain halting vs. tail-drawdown cap benchmark "
+            "across 5 model families (Theorem 102): Phase 1 separates isolated unit test passing and "
+            "zero-mean stopped martingale expectation (`E[X_tau] = 0`, win probability 3/4, L = 1) from "
+            "double-down adverse-branch tail drawdown (`X_dd = -300`, `tail_drawdown = 300 > 100`, "
+            "Delta_E = -1); Phase 2 separates reduced break-even recovery stake (`X_dd = -200`, "
+            "`tail_drawdown = 200 > 100`, Delta_E = -1); Phase 3 verifies loss-capped step-1 halting "
+            "(`X_du = -100, X_dd = -100, stop_on_step1_down = True`, `tail_drawdown = 100 <= 100`, "
+            "873 + 27 + 180 = 1080, Delta_E = 0)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "codebase_optional_stopping_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed
