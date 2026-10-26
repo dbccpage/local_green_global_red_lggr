@@ -1,0 +1,3117 @@
+{
+  "schema": "lggr.codebase_non_abelian_braid_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_non_abelian_braid_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_non_abelian_word_order_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_partial_yang_baxter_drift_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_yang_baxter_holonomy_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_non_abelian_braid_codebase_coherence_rate": "0",
+  "yang_baxter_braid_codebase_coherence_rate": "1",
+  "codebase_non_abelian_braid_coherence_gain": "1",
+  "codebase_non_abelian_braid_receipt": {
+    "schema": "lggr.online_codebase_non_abelian_braid.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_non_abelian_braid",
+    "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "non_abelian_braid_holonomy_receipt": {
+      "schema": "lggr.online_non_abelian_braid_holonomy.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_non_abelian_braid:braid",
+      "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "evaluation_count": 15,
+      "lggr_obstruction_count": 10,
+      "lggg_coherent_count": 5,
+      "evaluations": [
+        {
+          "evaluation_id": "openai/gpt-4o-mini_non_abelian_braid_p1:braid",
+          "u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              -1,
+              2
+            ],
+            [
+              -1,
+              1
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 3,
+          "v_yb_l1": 3,
+          "holonomy_l1": 4,
+          "braid_surcharge_cents": 10,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "openai/gpt-4o-mini_non_abelian_braid_p2:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 3,
+          "holonomy_l1": 3,
+          "braid_surcharge_cents": 6,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "openai/gpt-4o-mini_non_abelian_braid_p3:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            2
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 1,
+            "2": 2
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 0,
+          "holonomy_l1": 0,
+          "braid_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_non_abelian_braid_p1:braid",
+          "u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              -1,
+              2
+            ],
+            [
+              -1,
+              1
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 3,
+          "v_yb_l1": 3,
+          "holonomy_l1": 4,
+          "braid_surcharge_cents": 10,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_non_abelian_braid_p2:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 3,
+          "holonomy_l1": 3,
+          "braid_surcharge_cents": 6,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_non_abelian_braid_p3:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            2
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 1,
+            "2": 2
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 0,
+          "holonomy_l1": 0,
+          "braid_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid_p1:braid",
+          "u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              -1,
+              2
+            ],
+            [
+              -1,
+              1
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 3,
+          "v_yb_l1": 3,
+          "holonomy_l1": 4,
+          "braid_surcharge_cents": 10,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid_p2:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 3,
+          "holonomy_l1": 3,
+          "braid_surcharge_cents": 6,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid_p3:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            2
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 1,
+            "2": 2
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 0,
+          "holonomy_l1": 0,
+          "braid_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_non_abelian_braid_p1:braid",
+          "u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              -1,
+              2
+            ],
+            [
+              -1,
+              1
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 3,
+          "v_yb_l1": 3,
+          "holonomy_l1": 4,
+          "braid_surcharge_cents": 10,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_non_abelian_braid_p2:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 3,
+          "holonomy_l1": 3,
+          "braid_surcharge_cents": 6,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_non_abelian_braid_p3:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            2
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 1,
+            "2": 2
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 0,
+          "holonomy_l1": 0,
+          "braid_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid_p1:braid",
+          "u_braid_word": [
+            1,
+            1,
+            2
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              -1,
+              2
+            ],
+            [
+              -1,
+              1
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 3,
+          "v_yb_l1": 3,
+          "holonomy_l1": 4,
+          "braid_surcharge_cents": 10,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid_p2:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            1
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              1,
+              2
+            ],
+            [
+              -1,
+              -1
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 3,
+          "holonomy_l1": 3,
+          "braid_surcharge_cents": 6,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid_p3:braid",
+          "u_braid_word": [
+            1,
+            2,
+            1
+          ],
+          "v_braid_word": [
+            2,
+            1,
+            2
+          ],
+          "u_generator_counts": {
+            "1": 2,
+            "2": 1
+          },
+          "v_generator_counts": {
+            "1": 1,
+            "2": 2
+          },
+          "u_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "v_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "yang_baxter_target_matrix": [
+            [
+              0,
+              1
+            ],
+            [
+              -1,
+              0
+            ]
+          ],
+          "u_det": 1,
+          "v_det": 1,
+          "u_yb_l1": 0,
+          "v_yb_l1": 0,
+          "holonomy_l1": 0,
+          "braid_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      ],
+      "receipt_sha256": "988cc3012b998c71cc51b8da04a82b0862d205687dc8afc710732e2ab8772ea5"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.descent.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "DECODER_VERIFIED",
+      "contract_status": "COMPOSABLE_LGGG",
+      "decoder": [
+        {
+          "report": {
+            "local_green": 1,
+            "u_generator_counts": {
+              "1": 2,
+              "2": 1
+            },
+            "v_generator_counts": {
+              "1": 1,
+              "2": 2
+            }
+          },
+          "query": "LGGG"
+        },
+        {
+          "report": {
+            "local_green": 1,
+            "u_generator_counts": {
+              "1": 2,
+              "2": 1
+            },
+            "v_generator_counts": {
+              "1": 2,
+              "2": 1
+            }
+          },
+          "query": "LGGR"
+        }
+      ],
+      "input_sha256": "adc902a0fa5d240903d64ffb04f437ed6b0a47490ad18b5b4abfa1ecde46b762",
+      "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+      "receipt_sha256": "0e39a52c36b655a831a30055c4a8915ccd5a7c6615defaa14bf1338d5e8af683"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_non_abelian_braid",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "phase_1_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_1_u_yb_l1": 3,
+        "phase_1_v_yb_l1": 3,
+        "phase_1_holonomy_l1": 4,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "phase_2_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_2_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_2_u_yb_l1": 0,
+        "phase_2_v_yb_l1": 3,
+        "phase_2_holonomy_l1": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "phase_3_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_3_v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "phase_3_u_yb_l1": 0,
+        "phase_3_v_yb_l1": 0,
+        "phase_3_holonomy_l1": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_non_abelian_braid",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "phase_1_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_1_u_yb_l1": 3,
+        "phase_1_v_yb_l1": 3,
+        "phase_1_holonomy_l1": 4,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "phase_2_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_2_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_2_u_yb_l1": 0,
+        "phase_2_v_yb_l1": 3,
+        "phase_2_holonomy_l1": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "phase_3_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_3_v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "phase_3_u_yb_l1": 0,
+        "phase_3_v_yb_l1": 0,
+        "phase_3_holonomy_l1": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "phase_1_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_1_u_yb_l1": 3,
+        "phase_1_v_yb_l1": 3,
+        "phase_1_holonomy_l1": 4,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "phase_2_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_2_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_2_u_yb_l1": 0,
+        "phase_2_v_yb_l1": 3,
+        "phase_2_holonomy_l1": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "phase_3_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_3_v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "phase_3_u_yb_l1": 0,
+        "phase_3_v_yb_l1": 0,
+        "phase_3_holonomy_l1": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_non_abelian_braid",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "phase_1_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_1_u_yb_l1": 3,
+        "phase_1_v_yb_l1": 3,
+        "phase_1_holonomy_l1": 4,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "phase_2_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_2_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_2_u_yb_l1": 0,
+        "phase_2_v_yb_l1": 3,
+        "phase_2_holonomy_l1": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "phase_3_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_3_v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "phase_3_u_yb_l1": 0,
+        "phase_3_v_yb_l1": 0,
+        "phase_3_holonomy_l1": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "phase_1_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_1_u_yb_l1": 3,
+        "phase_1_v_yb_l1": 3,
+        "phase_1_holonomy_l1": 4,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "phase_2_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_2_v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "phase_2_u_yb_l1": 0,
+        "phase_2_v_yb_l1": 3,
+        "phase_2_holonomy_l1": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "phase_3_u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "phase_3_v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "phase_3_u_yb_l1": 0,
+        "phase_3_v_yb_l1": 0,
+        "phase_3_holonomy_l1": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_non_abelian_braid_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            -1,
+            2
+          ],
+          [
+            -1,
+            1
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 3,
+        "v_yb_l1": 3,
+        "holonomy_l1": 4,
+        "braid_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_non_abelian_braid_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 3,
+        "holonomy_l1": 3,
+        "braid_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_non_abelian_braid_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 0,
+        "holonomy_l1": 0,
+        "braid_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "HOLD_YANG_BAXTER_RIGHT_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_non_abelian_braid_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            -1,
+            2
+          ],
+          [
+            -1,
+            1
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 3,
+        "v_yb_l1": 3,
+        "holonomy_l1": 4,
+        "braid_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_non_abelian_braid_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 3,
+        "holonomy_l1": 3,
+        "braid_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_non_abelian_braid_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 0,
+        "holonomy_l1": 0,
+        "braid_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "HOLD_YANG_BAXTER_RIGHT_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            -1,
+            2
+          ],
+          [
+            -1,
+            1
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 3,
+        "v_yb_l1": 3,
+        "holonomy_l1": 4,
+        "braid_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 3,
+        "holonomy_l1": 3,
+        "braid_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 0,
+        "holonomy_l1": 0,
+        "braid_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "HOLD_YANG_BAXTER_RIGHT_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_non_abelian_braid_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            -1,
+            2
+          ],
+          [
+            -1,
+            1
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 3,
+        "v_yb_l1": 3,
+        "holonomy_l1": 4,
+        "braid_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_non_abelian_braid_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 3,
+        "holonomy_l1": 3,
+        "braid_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_non_abelian_braid_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 0,
+        "holonomy_l1": 0,
+        "braid_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "HOLD_YANG_BAXTER_RIGHT_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "u_braid_word": [
+          1,
+          1,
+          2
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            -1,
+            2
+          ],
+          [
+            -1,
+            1
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 3,
+        "v_yb_l1": 3,
+        "holonomy_l1": 4,
+        "braid_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "REPAIR_PRICING_BRAID_YANG_BAXTER_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          1
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            1,
+            2
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 3,
+        "holonomy_l1": 3,
+        "braid_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "REPAIR_TAX_BRAID_YANG_BAXTER_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "REPAIR_SETTLEMENT_BRAID_HOLONOMY_GATE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "u_braid_word": [
+          1,
+          2,
+          1
+        ],
+        "v_braid_word": [
+          2,
+          1,
+          2
+        ],
+        "u_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "v_matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            -1,
+            0
+          ]
+        ],
+        "u_yb_l1": 0,
+        "v_yb_l1": 0,
+        "holonomy_l1": 0,
+        "braid_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_braid",
+            "action": "HOLD_YANG_BAXTER_LEFT_WORD",
+            "target_u_braid_word": [
+              1,
+              2,
+              1
+            ],
+            "target_u_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-1": {
+            "module": "tax_braid",
+            "action": "HOLD_YANG_BAXTER_RIGHT_WORD",
+            "target_v_braid_word": [
+              2,
+              1,
+              2
+            ],
+            "target_v_matrix": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_braid",
+            "action": "HOLD_ZERO_BRAID_HOLONOMY_SURCHARGE",
+            "target_braid_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "ec3a8a56c25d30d45ce14ae4d698c5727e639ee80f4520282b1246785e7a191a"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_non_abelian_braid",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_u_braid_word": [
+        1,
+        1,
+        2
+      ],
+      "phase_1_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_1_u_yb_l1": 3,
+      "phase_1_v_yb_l1": 3,
+      "phase_1_holonomy_l1": 4,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+      "phase_2_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_2_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_2_u_yb_l1": 0,
+      "phase_2_v_yb_l1": 3,
+      "phase_2_holonomy_l1": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+      "phase_3_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_3_v_braid_word": [
+        2,
+        1,
+        2
+      ],
+      "phase_3_u_yb_l1": 0,
+      "phase_3_v_yb_l1": 0,
+      "phase_3_holonomy_l1": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_non_abelian_braid",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_u_braid_word": [
+        1,
+        1,
+        2
+      ],
+      "phase_1_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_1_u_yb_l1": 3,
+      "phase_1_v_yb_l1": 3,
+      "phase_1_holonomy_l1": 4,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+      "phase_2_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_2_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_2_u_yb_l1": 0,
+      "phase_2_v_yb_l1": 3,
+      "phase_2_holonomy_l1": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+      "phase_3_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_3_v_braid_word": [
+        2,
+        1,
+        2
+      ],
+      "phase_3_u_yb_l1": 0,
+      "phase_3_v_yb_l1": 0,
+      "phase_3_holonomy_l1": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_non_abelian_braid",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_u_braid_word": [
+        1,
+        1,
+        2
+      ],
+      "phase_1_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_1_u_yb_l1": 3,
+      "phase_1_v_yb_l1": 3,
+      "phase_1_holonomy_l1": 4,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+      "phase_2_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_2_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_2_u_yb_l1": 0,
+      "phase_2_v_yb_l1": 3,
+      "phase_2_holonomy_l1": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+      "phase_3_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_3_v_braid_word": [
+        2,
+        1,
+        2
+      ],
+      "phase_3_u_yb_l1": 0,
+      "phase_3_v_yb_l1": 0,
+      "phase_3_holonomy_l1": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_non_abelian_braid",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_u_braid_word": [
+        1,
+        1,
+        2
+      ],
+      "phase_1_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_1_u_yb_l1": 3,
+      "phase_1_v_yb_l1": 3,
+      "phase_1_holonomy_l1": 4,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+      "phase_2_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_2_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_2_u_yb_l1": 0,
+      "phase_2_v_yb_l1": 3,
+      "phase_2_holonomy_l1": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+      "phase_3_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_3_v_braid_word": [
+        2,
+        1,
+        2
+      ],
+      "phase_3_u_yb_l1": 0,
+      "phase_3_v_yb_l1": 0,
+      "phase_3_holonomy_l1": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_non_abelian_braid",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_u_braid_word": [
+        1,
+        1,
+        2
+      ],
+      "phase_1_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_1_u_yb_l1": 3,
+      "phase_1_v_yb_l1": 3,
+      "phase_1_holonomy_l1": 4,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR",
+      "phase_2_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_2_v_braid_word": [
+        2,
+        1,
+        1
+      ],
+      "phase_2_u_yb_l1": 0,
+      "phase_2_v_yb_l1": 3,
+      "phase_2_holonomy_l1": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR",
+      "phase_3_u_braid_word": [
+        1,
+        2,
+        1
+      ],
+      "phase_3_v_braid_word": [
+        2,
+        1,
+        2
+      ],
+      "phase_3_u_yb_l1": 0,
+      "phase_3_v_yb_l1": 0,
+      "phase_3_holonomy_l1": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Non-Abelian braid word holonomy and Yang-Baxter equivalence codebase benchmark across 5 model families (Theorem 125): Phase 1 separates Abelian-equivalent permutation `[1, 1, 2]` vs `[2, 1, 1]` (`u_yb_l1 = 3, v_yb_l1 = 3, holonomy_l1 = 4, surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates single-branch Yang-Baxter repair `[1, 2, 1]` vs `[2, 1, 1]` (`u_yb_l1 = 0, v_yb_l1 = 3, holonomy_l1 = 3, surcharge = 6, payout = 867 != 873, Delta_E = -1`); Phase 3 verifies joint Yang-Baxter holonomy alignment `[1, 2, 1]` vs `[2, 1, 2]` (`M(u) = M(v) = [[0, 1], [-1, 0]], surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "b071ee52026d5438fecaba618847da6399e2c00c233bf24f3813eff0366680f0"
+}

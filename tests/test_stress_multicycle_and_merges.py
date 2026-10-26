@@ -55,6 +55,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseMultiLoopHodgeMonitor,
+    StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
@@ -91,6 +92,7 @@ from lggr.streaming import (
     StreamingMinimumSlackPolicyRelaxationMonitor,
     StreamingMultiLoopCupHodgeMonitor,
     StreamingMultiTurnPairwiseTranscriptMonitor,
+    StreamingNonAbelianBraidHolonomyMonitor,
     StreamingOptionalStoppingDrawdownMonitor,
     StreamingOrganizationalGluingMonitor,
     StreamingOverloadedDeadlineBinPackingMonitor,
@@ -6346,6 +6348,72 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "GOVERNED_MINIMUM_SLACK_RELAXATION_CODEBASE_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_non_abelian_braid_codebase_word_ordering_and_yang_baxter_audit(self) -> None:
+        """Verify Theorem 125: Non-Abelian braid word holonomy & Yang-Baxter equivalence codebase audit."""
+        braid_mon = StreamingNonAbelianBraidHolonomyMonitor(
+            scope_id="unit-non-abelian-braid-holonomy-scope"
+        )
+        p1_pair = braid_mon.record_braid_pair(
+            "p1",
+            u_word=[1, 1, 2],
+            v_word=[2, 1, 1],
+        )
+        self.assertEqual(p1_pair["u_matrix"], [[-1, 2], [-1, 1]])
+        self.assertEqual(p1_pair["v_matrix"], [[1, 2], [-1, -1]])
+        self.assertEqual(p1_pair["u_yb_l1"], 3)
+        self.assertEqual(p1_pair["v_yb_l1"], 3)
+        self.assertEqual(p1_pair["holonomy_l1"], 4)
+        self.assertEqual(p1_pair["braid_surcharge_cents"], 10)
+        self.assertEqual(p1_pair["status"], "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR")
+
+        mon = StreamingCodebaseNonAbelianBraidMonitor(
+            scope_id="unit-codebase-non-abelian-braid-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-non-abelian-braid-eval-01",
+        )
+        self.assertEqual(obs["phase_1_u_braid_word"], [1, 1, 2])
+        self.assertEqual(obs["phase_1_v_braid_word"], [2, 1, 1])
+        self.assertEqual(obs["phase_1_u_yb_l1"], 3)
+        self.assertEqual(obs["phase_1_v_yb_l1"], 3)
+        self.assertEqual(obs["phase_1_holonomy_l1"], 4)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "NON_ABELIAN_BRAID_WORD_ORDER_MISMATCH_LGGR")
+
+        self.assertEqual(obs["phase_2_u_braid_word"], [1, 2, 1])
+        self.assertEqual(obs["phase_2_v_braid_word"], [2, 1, 1])
+        self.assertEqual(obs["phase_2_u_yb_l1"], 0)
+        self.assertEqual(obs["phase_2_v_yb_l1"], 3)
+        self.assertEqual(obs["phase_2_holonomy_l1"], 3)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_2_payout_cents"], 867)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "PARTIAL_BRAID_YANG_BAXTER_DRIFT_LGGR")
+
+        self.assertEqual(obs["phase_3_u_braid_word"], [1, 2, 1])
+        self.assertEqual(obs["phase_3_v_braid_word"], [2, 1, 2])
+        self.assertEqual(obs["phase_3_u_yb_l1"], 0)
+        self.assertEqual(obs["phase_3_v_yb_l1"], 0)
+        self.assertEqual(obs["phase_3_holonomy_l1"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "YANG_BAXTER_BRAID_HOLONOMY_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

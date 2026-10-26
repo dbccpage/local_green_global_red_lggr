@@ -10,9 +10,11 @@ from lggr.streaming import (
     StreamingCodebaseFigureEightWedgeMonitor,
     StreamingCodebaseGovernedRelaxationMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingDiamondCodebasePullbackMonitor,
+    StreamingNonAbelianBraidHolonomyMonitor,
     StreamingStatefulCodebaseDFAMonitor,
 )
 
@@ -8380,6 +8382,214 @@ class GovernedRelaxationCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+NON_ABELIAN_BRAID_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_braid",
+    "worker-1": "tax_braid",
+    "worker-2": "settlement_braid",
+}
+
+INITIAL_PRICING_BRAID_P1_PY = StreamingCodebaseNonAbelianBraidMonitor.PHASE_1_PRICING_BRAID_SOURCE
+INITIAL_PRICING_BRAID_P2_P3_PY = StreamingCodebaseNonAbelianBraidMonitor.PHASE_2_PRICING_BRAID_SOURCE
+
+INITIAL_TAX_BRAID_P1_P2_PY = StreamingCodebaseNonAbelianBraidMonitor.PHASE_1_TAX_BRAID_SOURCE
+INITIAL_TAX_BRAID_P3_PY = StreamingCodebaseNonAbelianBraidMonitor.PHASE_3_TAX_BRAID_SOURCE
+
+INITIAL_SETTLEMENT_BRAID_P1_P2_PY = StreamingCodebaseNonAbelianBraidMonitor.PHASE_1_SETTLEMENT_BRAID_SOURCE
+INITIAL_SETTLEMENT_BRAID_P3_PY = StreamingCodebaseNonAbelianBraidMonitor.PHASE_3_SETTLEMENT_BRAID_SOURCE
+
+
+def run_non_abelian_braid_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_braid`, `tax_braid`, or `settlement_braid`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_braid":
+            fn = ns.get("quote_braid_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_braid_pricing"}
+            res = fn(990)
+            u_word = res.get("u_braid_word")
+            u_mat = res.get("u_matrix")
+            m_true = StreamingNonAbelianBraidHolonomyMonitor.eval_braid_word(u_word)
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and u_word in ([1, 1, 2], [1, 2, 1])
+                and [[m_true[0][0], m_true[0][1]], [m_true[1][0], m_true[1][1]]] == u_mat
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_braid":
+            fn = ns.get("quote_braid_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_braid_tax"}
+            res = fn(990)
+            v_word = res.get("v_braid_word")
+            v_mat = res.get("v_matrix")
+            m_true = StreamingNonAbelianBraidHolonomyMonitor.eval_braid_word(v_word)
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and v_word in ([2, 1, 1], [2, 1, 2])
+                and [[m_true[0][0], m_true[0][1]], [m_true[1][0], m_true[1][1]]] == v_mat
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_braid":
+            fn = ns.get("settle_braid_invoice")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_braid_invoice"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "net_after_fee_cents": 963,
+                    "platform_fee_cents": 27,
+                    "u_braid_word": [1, 2, 1],
+                    "u_matrix": [[0, 1], [-1, 0]],
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "v_braid_word": [2, 1, 2],
+                    "v_matrix": [[0, 1], [-1, 0]],
+                },
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and res.get("merchant_payout_cents") == 873
+                and res.get("braid_surcharge_cents") == 0
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def non_abelian_braid_fixture(seed: int) -> dict[str, Any]:
+    if seed in (12200, 12202):
+        return {
+            "seed": seed,
+            "kind": "repairable_non_abelian_braid_word_order_and_yang_baxter_defect",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_braid": INITIAL_PRICING_BRAID_P1_PY,
+                "tax_braid": INITIAL_TAX_BRAID_P1_P2_PY,
+                "settlement_braid": INITIAL_SETTLEMENT_BRAID_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 12201:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_non_abelian_braid_word_order",
+            "locked_workers": ["worker-0"],
+            "infeasible_constraint": (
+                "Legacy braid-generator ROM lock: `pricing_braid.py` is locked in read-only ROM "
+                "with `u_braid_word = [1, 1, 2]` (`u_matrix = [[-1, 2], [-1, 1]]`, `u_yb_l1 = 3 > 0`), "
+                "while the LGGR Yang-Baxter merge gate requires `u_braid_word = [1, 2, 1]` and "
+                "`v_braid_word = [2, 1, 2]` (`u_yb_l1 == 0`, `v_yb_l1 == 0`, `holonomy_l1 == 0`). "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_braid": INITIAL_PRICING_BRAID_P1_PY,
+                "tax_braid": INITIAL_TAX_BRAID_P1_P2_PY,
+                "settlement_braid": INITIAL_SETTLEMENT_BRAID_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported non_abelian_braid seed {seed}")
+
+
+class NonAbelianBraidCodeWorkspace:
+    """Workspace for the 3-agent non-Abelian braid word holonomy and Yang-Baxter swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in NON_ABELIAN_BRAID_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = NON_ABELIAN_BRAID_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_non_abelian_braid_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_braid.py": "def quote_braid_pricing(gross_cents: int) -> dict",
+                    "tax_braid.py": "def quote_braid_tax(gross_cents: int) -> dict",
+                    "settlement_braid.py": "def settle_braid_invoice(pricing: dict, tax: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_non_abelian_braid_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_non_abelian_braid_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; non-Abelian braid word holonomy and Yang-Baxter equivalence are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
 
 
