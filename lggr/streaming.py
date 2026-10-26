@@ -38676,6 +38676,547 @@ class StreamingCodebaseProjectiveTowerMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseBellPolytopeMonitor:
+    """Online 3-module codebase Bell polytope CHSH non-signalling PR-box violation vs. LHV factorization monitor (Theorem 135).
+
+    AuthorityEffect: None. Composes StreamingBellPolytopeMonitor,
+    StreamingCodebaseInterfaceMergeMonitor, and StreamingFiberMonitor to audit a
+    3-module Bell polytope settlement codebase (`pricing_bell.py`, `tax_bell.py`,
+    `settlement_bell.py`) over 4-context CHSH correlator fourths
+    `(c_00, c_01, c_10, c_11)` in `[-4, 4]^4` where `E_xy = c_xy / 4 in [-1, 1]`,
+    canonical CHSH fourths `chsh_s_fourths = c_00 + c_01 + c_10 - c_11`, and
+    Bell polytope violation fourths `violation_fourths = max(0, max_chsh_s_fourths - 8)`
+    against the classical LHV bound `S <= 2` (`max_chsh_s_fourths <= 8`, critical
+    isotropic PR-box visibility `v_crit = 1/2`):
+      - Phase 1 (Maximal PR-box non-signalling correlators `(4, 4, 4, -4)` at `v = 1`):
+        `max_chsh_s_fourths = 16 > 8` (`S = 4 > 2`), `violation_fourths = 8`
+        (`N_min = 1/2`, `CF = 1`), `bell_surcharge_cents = 2 * 8 = 16`,
+        `payout = 857 != 873` (`L_p1 = 1, Eg_p1 = 0, defect_p1 = -1`);
+      - Phase 2 (Isotropic PR-box mixture `(3, 3, 3, -3)` at visibility `v = 3/4 > v_crit = 1/2`):
+        `max_chsh_s_fourths = 12 > 8` (`S = 3 > 2`), `violation_fourths = 4`
+        (`N_min = 1/4`, `CF = 1/2`), `bell_surcharge_cents = 2 * 4 = 8`,
+        `payout = 865 != 873` (`L_p2 = 1, Eg_p2 = 0, defect_p2 = -1`);
+      - Phase 3 (Classical LHV critical-visibility correlators `(2, 2, 2, -2)` at `v = 1/2 <= v_crit`):
+        `max_chsh_s_fourths = 8 <= 8` (`S = 2 <= 2`), `violation_fourths = 0`
+        (`N_min = 0`, `CF = 0`), `bell_surcharge_cents = 0`, `payout = 873`,
+        `873 + 27 + 90 = 990` (`L_p3 = 1, Eg_p3 = 1, defect_p3 = 0`).
+    """
+
+    TARGET_PRICING_FOURTHS = (2, 2, 2)
+    TARGET_TAX_C11_FOURTH = -2
+
+    PHASE_1_PRICING_BELL_SOURCE = (
+        "def quote_bell_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'pricing_correlator_fourths': [4, 4, 4],\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_BELL_SOURCE = (
+        "def compute_bell_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    fourths = list(pricing_out.get('pricing_correlator_fourths', [4, 4, 4]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'pricing_correlator_fourths': fourths,\n"
+        "        'tax_c11_fourth': -4,\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_BELL_SOURCE = (
+        "def settle_bell_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    c00, c01, c10 = [int(x) for x in tax_out.get('pricing_correlator_fourths', [4, 4, 4])]\n"
+        "    c11 = int(tax_out.get('tax_c11_fourth', -4))\n"
+        "    facets = [\n"
+        "        abs(c00 + c01 + c10 - c11),\n"
+        "        abs(c00 + c01 - c10 + c11),\n"
+        "        abs(c00 - c01 + c10 + c11),\n"
+        "        abs(-c00 + c01 + c10 + c11),\n"
+        "    ]\n"
+        "    max_chsh = max(facets)\n"
+        "    violation = max(0, max_chsh - 8)\n"
+        "    surcharge = 2 * violation\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'bell_surcharge_cents': surcharge,\n"
+        "        'max_chsh_s_fourths': max_chsh,\n"
+        "        'violation_fourths': violation,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_BELL_SOURCE = (
+        "def quote_bell_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'pricing_correlator_fourths': [3, 3, 3],\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_BELL_SOURCE = (
+        "def compute_bell_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    fourths = list(pricing_out.get('pricing_correlator_fourths', [3, 3, 3]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'pricing_correlator_fourths': fourths,\n"
+        "        'tax_c11_fourth': -3,\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_BELL_SOURCE = PHASE_1_SETTLEMENT_BELL_SOURCE
+
+    PHASE_3_PRICING_BELL_SOURCE = (
+        "def quote_bell_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'pricing_correlator_fourths': [2, 2, 2],\n"
+        "    }\n"
+    )
+
+    PHASE_3_TAX_BELL_SOURCE = (
+        "def compute_bell_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    fourths = list(pricing_out.get('pricing_correlator_fourths', [2, 2, 2]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'pricing_correlator_fourths': fourths,\n"
+        "        'tax_c11_fourth': -2,\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_BELL_SOURCE = (
+        "def settle_bell_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    fourths = [int(x) for x in tax_out.get('pricing_correlator_fourths', [2, 2, 2])]\n"
+        "    c11 = int(tax_out.get('tax_c11_fourth', -2))\n"
+        "    if fourths != [2, 2, 2] or c11 != -2:\n"
+        "        raise ValueError('Bell polytope CHSH violation or LHV correlator mismatch detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'bell_surcharge_cents': 0,\n"
+        "        'max_chsh_s_fourths': 8,\n"
+        "        'violation_fourths': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-bell-polytope-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+        self.last_bell_receipt: dict[str, Any] | None = None
+
+    @staticmethod
+    def _validate_pricing_fourths(raw: Any, label: str) -> list[int]:
+        if not isinstance(raw, (list, tuple)) or len(raw) != 3:
+            raise ValidationError(f"{label} must be a 3-element list of correlator fourths")
+        fourths = [exact_int(v, f"{label}[{idx}]", minimum=-4) for idx, v in enumerate(raw)]
+        if any(v > 4 for v in fourths) or fourths not in ([4, 4, 4], [3, 3, 3], [2, 2, 2]):
+            raise ValidationError(
+                f"{label} must be in {{[4, 4, 4], [3, 3, 3], [2, 2, 2]}}, got {fourths}"
+            )
+        return fourths
+
+    @staticmethod
+    def _validate_tax_c11_fourth(raw: Any, label: str) -> int:
+        val = exact_int(raw, label, minimum=-4)
+        if val > 4 or val not in (-4, -3, -2):
+            raise ValidationError(f"{label} must be in {{-4, -3, -2}}, got {val}")
+        return val
+
+    def evaluate_bell_polytope_modules(
+        self,
+        evaluation_id: str,
+        pricing_bell_source: str = PHASE_1_PRICING_BELL_SOURCE,
+        tax_bell_source: str = PHASE_1_TAX_BELL_SOURCE,
+        settlement_bell_source: str = PHASE_1_SETTLEMENT_BELL_SOURCE,
+        *,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_bell", pricing_bell_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_bell", tax_bell_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_bell", settlement_bell_source
+        )
+
+        if "quote_bell_pricing" not in p_ns or not callable(p_ns["quote_bell_pricing"]):
+            raise ValidationError("pricing_bell must define callable quote_bell_pricing")
+        if "compute_bell_tax" not in t_ns or not callable(t_ns["compute_bell_tax"]):
+            raise ValidationError("tax_bell must define callable compute_bell_tax")
+        if "settle_bell_payout" not in s_ns or not callable(s_ns["settle_bell_payout"]):
+            raise ValidationError("settlement_bell must define callable settle_bell_payout")
+
+        pricing_out = p_ns["quote_bell_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_bell_pricing must return a dict")
+        tax_out = t_ns["compute_bell_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_bell_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_bell_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_bell_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        pricing_fourths = self._validate_pricing_fourths(
+            pricing_out.get("pricing_correlator_fourths", [4, 4, 4]),
+            "pricing_correlator_fourths",
+        )
+        c11 = self._validate_tax_c11_fourth(
+            tax_out.get("tax_c11_fourth", -4),
+            "tax_c11_fourth",
+        )
+        c00, c01, c10 = pricing_fourths
+        correlator_fourths = [c00, c01, c10, c11]
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        isotropic_vis: Fraction | None = None
+        if c00 == c01 == c10 and c11 == -c00 and 0 <= c00 <= 4:
+            isotropic_vis = Fraction(c00, 4)
+
+        bell_mon = StreamingBellPolytopeMonitor(scope_id=f"{self.scope_id}:{eval_id}")
+        model_rec = bell_mon.observe_correlators(
+            f"{eval_id}:{mod_id}",
+            Fraction(c00, 4),
+            Fraction(c01, 4),
+            Fraction(c10, 4),
+            Fraction(c11, 4),
+            isotropic_visibility=isotropic_vis,
+        )
+        bell_rec = bell_mon.get_receipt()
+        self.last_bell_receipt = bell_rec
+
+        facets = [
+            abs(c00 + c01 + c10 - c11),
+            abs(c00 + c01 - c10 + c11),
+            abs(c00 - c01 + c10 + c11),
+            abs(-c00 + c01 + c10 + c11),
+        ]
+        canonical_chsh_s_fourths = c00 + c01 + c10 - c11
+        max_chsh_s_fourths = max(facets)
+        violation_fourths = max(0, max_chsh_s_fourths - 8)
+        expected_surcharge = 2 * violation_fourths
+
+        if settlement_raised:
+            surcharge = expected_surcharge
+            payout = net - tax - surcharge
+        else:
+            surcharge = exact_int(
+                settlement_out.get("bell_surcharge_cents", expected_surcharge),
+                "bell_surcharge_cents",
+            )
+            payout = exact_int(
+                settlement_out.get("merchant_payout_cents", 0),
+                "merchant_payout_cents",
+            )
+
+        local_p_ok = (
+            pricing_out.get("gross_cents") == gross
+            and fee == (gross * 27) // 990
+            and net == gross - fee
+            and pricing_fourths in ([4, 4, 4], [3, 3, 3], [2, 2, 2])
+        )
+        local_t_ok = (
+            tax == (gross * 90) // 990
+            and c11 in (-4, -3, -2)
+            and tax_out.get("pricing_correlator_fourths") == pricing_fourths
+        )
+        local_s_ok = settlement_raised or (
+            surcharge == expected_surcharge
+            and payout == net - tax - surcharge
+        )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint)
+        local_green = (
+            1
+            if (
+                local_p_ok
+                and local_t_ok
+                and local_s_ok
+                and bell_rec["all_16_lhv_vertices_bounded_by_2"]
+                and bell_rec["all_packing_identities_verified"]
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and pricing_fourths == [2, 2, 2]
+            and c11 == -2
+            and violation_fourths == 0
+            and max_chsh_s_fourths <= 8
+            and bell_rec["status"] == "LOCAL_LHV_EXTENSION_LGGG"
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "single_context_correlators_bounded": all(-4 <= c <= 4 for c in correlator_fourths),
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "correlator_fourths": correlator_fourths,
+                "max_chsh_s_fourths": max_chsh_s_fourths,
+                "violation_fourths": violation_fourths,
+                "bell_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_BELL_POLYTOPE_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif max_chsh_s_fourths >= 16:
+            status = "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif violation_fourths > 0:
+            status = "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "BELL_POLYTOPE_SURCHARGE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+                    "target_pricing_correlator_fourths": [2, 2, 2],
+                },
+                "worker-1": {
+                    "module": "tax_bell",
+                    "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+                    "target_tax_c11_fourth": -2,
+                },
+                "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_bell",
+                    "action": (
+                        "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2"
+                        if (pricing_fourths != [2, 2, 2] or not local_p_ok)
+                        else "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2"
+                    ),
+                    "target_pricing_correlator_fourths": [2, 2, 2],
+                },
+                "worker-1": {
+                    "module": "tax_bell",
+                    "action": (
+                        "SET_TAX_C11_FOURTH_TO_MINUS_TWO"
+                        if (c11 != -2 or not local_t_ok)
+                        else "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO"
+                    ),
+                    "target_tax_c11_fourth": -2,
+                },
+                "worker-2": {
+                    "module": "settlement_bell",
+                    "action": (
+                        "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD"
+                        if not conservation_ok
+                        else "HOLD_BELL_POLYTOPE_LHV_GUARD"
+                    ),
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "correlator_fourths": correlator_fourths,
+                "pricing_correlator_fourths": pricing_fourths,
+                "tax_c11_fourth": c11,
+                "canonical_chsh_s_fourths": canonical_chsh_s_fourths,
+                "max_chsh_s_fourths": max_chsh_s_fourths,
+                "violation_fourths": violation_fourths,
+                "canonical_chsh_s": model_rec["canonical_chsh_s"],
+                "max_chsh_facet_s": model_rec["max_chsh_facet_s"],
+                "min_negative_mass_n_min": model_rec["min_negative_mass_n_min"],
+                "contextual_fraction_cf": model_rec["contextual_fraction_cf"],
+                "local_packing_fraction": model_rec["local_packing_fraction"],
+                "isotropic_visibility": model_rec["isotropic_visibility"],
+                "all_16_lhv_vertices_bounded_by_2": model_rec["all_16_lhv_vertices_bounded_by_2"],
+                "packing_identity_verified": model_rec["packing_identity_verified"],
+                "bell_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        audit_id: str = "codebase_bell_polytope_three_phase",
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_bell_polytope_modules(
+            f"{audit_id}_p1",
+            pricing_bell_source=self.PHASE_1_PRICING_BELL_SOURCE,
+            tax_bell_source=self.PHASE_1_TAX_BELL_SOURCE,
+            settlement_bell_source=self.PHASE_1_SETTLEMENT_BELL_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_bell_polytope_modules(
+            f"{audit_id}_p2",
+            pricing_bell_source=self.PHASE_2_PRICING_BELL_SOURCE,
+            tax_bell_source=self.PHASE_2_TAX_BELL_SOURCE,
+            settlement_bell_source=self.PHASE_2_SETTLEMENT_BELL_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_bell_polytope_modules(
+            f"{audit_id}_p3",
+            pricing_bell_source=self.PHASE_3_PRICING_BELL_SOURCE,
+            tax_bell_source=self.PHASE_3_TAX_BELL_SOURCE,
+            settlement_bell_source=self.PHASE_3_SETTLEMENT_BELL_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_correlator_fourths": p1["correlator_fourths"],
+                "phase_1_max_chsh_s_fourths": p1["max_chsh_s_fourths"],
+                "phase_1_violation_fourths": p1["violation_fourths"],
+                "phase_1_min_negative_mass_n_min": p1["min_negative_mass_n_min"],
+                "phase_1_contextual_fraction_cf": p1["contextual_fraction_cf"],
+                "phase_1_isotropic_visibility": p1["isotropic_visibility"],
+                "phase_1_surcharge_cents": p1["bell_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_correlator_fourths": p2["correlator_fourths"],
+                "phase_2_max_chsh_s_fourths": p2["max_chsh_s_fourths"],
+                "phase_2_violation_fourths": p2["violation_fourths"],
+                "phase_2_min_negative_mass_n_min": p2["min_negative_mass_n_min"],
+                "phase_2_contextual_fraction_cf": p2["contextual_fraction_cf"],
+                "phase_2_isotropic_visibility": p2["isotropic_visibility"],
+                "phase_2_surcharge_cents": p2["bell_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_correlator_fourths": p3["correlator_fourths"],
+                "phase_3_max_chsh_s_fourths": p3["max_chsh_s_fourths"],
+                "phase_3_violation_fourths": p3["violation_fourths"],
+                "phase_3_min_negative_mass_n_min": p3["min_negative_mass_n_min"],
+                "phase_3_contextual_fraction_cf": p3["contextual_fraction_cf"],
+                "phase_3_isotropic_visibility": p3["isotropic_visibility"],
+                "phase_3_surcharge_cents": p3["bell_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    evaluate_three_phase_bell_polytope_audit = record_three_phase_codebase_audit
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module Bell polytope audit."""
+        if not self.evaluations:
+            raise ValidationError(
+                "at least one codebase bell polytope evaluation must be recorded"
+            )
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "bell_polytope_receipt": self.last_bell_receipt,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
+
 
 
 

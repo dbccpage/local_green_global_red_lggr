@@ -74,6 +74,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_PACK_P2_P3_PY,
     INITIAL_PRICING_TOWER_P1_PY,
     INITIAL_PRICING_TOWER_P2_P3_PY,
+    INITIAL_PRICING_BELL_P1_PY,
+    INITIAL_PRICING_BELL_P2_PY,
+    INITIAL_PRICING_BELL_P3_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_POE_P1_PY,
@@ -109,6 +112,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_PACK_P3_PY,
     INITIAL_SETTLEMENT_TOWER_P1_P2_PY,
     INITIAL_SETTLEMENT_TOWER_P3_PY,
+    INITIAL_SETTLEMENT_BELL_P1_P2_PY,
+    INITIAL_SETTLEMENT_BELL_P3_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_POE_P1_PY,
@@ -146,6 +151,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_TOWER_P1_PY,
     INITIAL_TAX_TOWER_P2_PY,
     INITIAL_TAX_TOWER_P3_PY,
+    INITIAL_TAX_BELL_P1_PY,
+    INITIAL_TAX_BELL_P2_PY,
+    INITIAL_TAX_BELL_P3_PY,
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
@@ -221,6 +229,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     SPLIT_SETTLEMENT_FULL_SRC,
     SPLIT_TAX_1BIT_SRC,
     AdversarialSchemaCodeWorkspace,
+    BellPolytopeCodeWorkspace,
     BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
@@ -262,6 +271,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
     adversarial_schema_fixture,
+    bell_polytope_fixture,
     catalyst_fixture,
     coalitional_fixture,
     council_fixture,
@@ -291,6 +301,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     regge_fixture,
     replay_fixture,
     run_adversarial_schema_local_unit_tests,
+    run_bell_polytope_local_unit_tests,
     run_coalitional_local_unit_tests,
     run_council_local_unit_tests,
     run_cptp_local_unit_tests,
@@ -346,6 +357,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
 from experiments.concurrent_code_engineering_swarm.runner import (
     CodeBatchClient,
     adversarial_schema_campaign,
+    bell_polytope_campaign,
     campaign,
     catalyst_campaign,
     coalitional_campaign,
@@ -391,6 +403,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
 from experiments.live_five_agent_swarm.client import Events, event_digest
 from lggr.streaming import (
     StreamingCodebaseAdversarialSchemaMonitor,
+    StreamingCodebaseBellPolytopeMonitor,
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
@@ -8905,6 +8918,229 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_13100_arms["B"]["final_tower_surcharge_cents"], 4)
             self.assertEqual(seed_13100_arms["C"]["final_tower_surcharge_cents"], 0)
             self.assertEqual(seed_13100_arms["C"]["status"], "completed")
+
+    def test_bell_polytope_workspace_campaign_and_tamper_detection(self) -> None:
+        """Verify 3-agent bell_polytope workspace, campaign arms A/B/C, and replay tamper detection."""
+        ws = BellPolytopeCodeWorkspace(bell_polytope_fixture(13200))
+        insp0 = ws.tool("worker-0", "inspect_workspace", {})
+        self.assertTrue(insp0["local_unit_test"]["passed"])
+        self.assertFalse(insp0["locked"])
+        self.assertFalse(ws.tool("worker-0", "escalate", {"reason": "premature"})["accepted"])
+
+        ws_lock = BellPolytopeCodeWorkspace(bell_polytope_fixture(13201))
+        self.assertFalse(
+            ws_lock.tool("worker-1", "submit_module_patch", {"source_code": INITIAL_TAX_BELL_P3_PY})["accepted"]
+        )
+        esc_res = ws_lock.tool("worker-1", "escalate", {"reason": "tax_c11_fourth = -4 locked in ROM"})
+        self.assertTrue(esc_res["escalated"])
+
+        def stub_bell_polytope_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            model = str(payload.get("model", "openai/gpt-4o-mini"))
+            messages = payload.get("messages", [])
+            sys_prompt = messages[0]["content"] if messages else ""
+            worker = "worker-0"
+            if "`worker-1`" in sys_prompt:
+                worker = "worker-1"
+            elif "`worker-2`" in sys_prompt:
+                worker = "worker-2"
+
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call-insp-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msgs = [m for m in messages if m.get("role") == "tool"]
+                last_tool_msg = tool_msgs[-1]["content"]
+                tool_data = json.loads(last_tool_msg)
+                if len(tool_msgs) >= 2:
+                    return {
+                        "response": {
+                            "id": f"stub-stop-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                if tool_data.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-esc-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Maximal PR-box anti-correlator tax_c11_fourth = -4 locked in ROM."}
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-hold-a-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    if worker == "worker-0":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_PRICING_BELL_P2_PY}),
+                            },
+                        }
+                    elif worker == "worker-1":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_TAX_BELL_P2_PY}),
+                            },
+                        }
+                    else:
+                        return {
+                            "response": {
+                                "id": f"stub-hold-b-{worker}",
+                                "model": model,
+                                "usage": {
+                                    "prompt_tokens": 100,
+                                    "completion_tokens": 20,
+                                    "cost": "0.000100",
+                                },
+                                "choices": [
+                                    {
+                                        "index": 0,
+                                        "finish_reason": "stop",
+                                        "message": {"role": "assistant", "content": "Done."},
+                                    }
+                                ],
+                            },
+                            "started_ns": 10,
+                            "finished_ns": 20,
+                        }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_BELL_P3_PY,
+                        "worker-1": INITIAL_TAX_BELL_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_BELL_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "bell_polytope",
+                "seeds": [13200, 13201],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_bell_polytope_transport)
+            summary = bell_polytope_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.bell_polytope_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["bell_surcharge_cents"] = int(gate_rec["bell_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_bell_polytope_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live bell_polytope pilot evidence offline if present."""
+        bell_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "bell_polytope_pilot_run"
+            / "events.jsonl"
+        )
+        bell_summary = bell_events.with_name("summary.json")
+        if bell_events.exists() and bell_summary.exists():
+            replayed = replay(bell_events)
+            self.assertEqual(replayed["schema"], "lggr.bell_polytope_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_13200_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_13200_arms["A"]["final_bell_surcharge_cents"], 16)
+            self.assertEqual(seed_13200_arms["B"]["final_bell_surcharge_cents"], 8)
+            self.assertEqual(seed_13200_arms["C"]["final_bell_surcharge_cents"], 0)
+            self.assertEqual(seed_13200_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

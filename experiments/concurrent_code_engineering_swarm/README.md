@@ -653,6 +653,22 @@ The `--topology deadline_bin_packing` campaign (`evidence/deadline_bin_packing_p
 | `13102` | `repairable_projective_tower_r1_lim_obstruction_and_integral_lift_alignment` | **B** | `stage_root_alignment_non_integral_coset_gate` | `blocked_unresolved` | `[0, 2, 2]` | `2` | `0` | `1` | `None` | `"1/3"` | `4` | `869` | 2 | 15 | `$0.012026` |
 | `13102` | `repairable_projective_tower_r1_lim_obstruction_and_integral_lift_alignment` | **C** | `explicit_lggr_integral_lift_directive` | **`completed`** | **`[0, 2, 2]`** | **`-6`** | **`0`** | **`0`** | **`2`** | **`"0"`** | **`0`** | **`873`** | **1** | **6** | **`$0.005791`** |
 
+### 42. Bell Polytope CHSH Violation & LHV Factorization Topology (`--topology bell_polytope`, `evidence/bell_polytope_pilot_run/summary.json`, Theorem 135)
+
+3-agent concurrent Bell polytope CHSH violation and classical LHV factorization settlement codebase (`pricing_bell.py` $\to$ `tax_bell.py` $\to$ `settlement_bell.py`) evaluating 4-context CHSH correlator fourths $(c_{00}, c_{01}, c_{10}, c_{11}) \in [-4, 4]^4$ ($E_{xy} = c_{xy} / 4$) against the classical Bell polytope bound $S_{\max}(E) \le 2$ (`max_chsh_s_fourths <= 8`, critical isotropic PR-box visibility $v_{\mathrm{crit}} = 1/2$), audited by `StreamingCodebaseBellPolytopeMonitor` (`96` live API calls, `$0.083948` total cost, `max_inflight_requests = 3`, `concurrent_waves = 30`):
+
+| Seed | Kind | Arm | Gate Mode | Status | `correlator_fourths` | `chsh_4` | `viol_4` | `N_min` | `CF` | `vis_v` | `surcharge` | `payout` | Waves | Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `13200` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **A** | `single_context_marginal_correlator_only_gate` | `blocked_unresolved` | `[4, 4, 4, -4]` | `16` | `8` | `"1/2"` | `"1"` | `"1"` | `16` | `857` | 2 | 18 | `$0.013356` |
+| `13200` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **B** | `isotropic_visibility_v_three_fourths_gate` | `blocked_unresolved` | `[3, 3, 3, -3]` | `12` | `4` | `"1/4"` | `"1/2"` | `"3/4"` | `8` | `865` | 2 | 14 | `$0.011012` |
+| `13200` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **C** | `explicit_lggr_lhv_critical_visibility_directive` | **`completed`** | **`[2, 2, 2, -2]`** | **`8`** | **`0`** | **`"0"`** | **`"0"`** | **`"1/2"`** | **`0`** | **`873`** | **1** | **6** | **`$0.005649`** |
+| `13201` | `infeasible_hardware_locked_pr_box_anti_correlator_c11_minus_four` | **A** | `single_context_marginal_correlator_only_gate` | `safe_escalated` | `[4, 4, 4, -4]` | `16` | `8` | `"1/2"` | `"1"` | `"1"` | `16` | `857` | 1 | 6 | `$0.006102` |
+| `13201` | `infeasible_hardware_locked_pr_box_anti_correlator_c11_minus_four` | **B** | `isotropic_visibility_v_three_fourths_gate` | `safe_escalated` | `[4, 4, 4, -4]` | `16` | `8` | `"1/2"` | `"1"` | `"1"` | `16` | `857` | 1 | 7 | `$0.006926` |
+| `13201` | `infeasible_hardware_locked_pr_box_anti_correlator_c11_minus_four` | **C** | `explicit_lggr_lhv_critical_visibility_directive` | `safe_escalated` | `[4, 4, 4, -4]` | `16` | `8` | `"1/2"` | `"1"` | `"1"` | `16` | `857` | 1 | 7 | `$0.010504` |
+| `13202` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **A** | `single_context_marginal_correlator_only_gate` | `blocked_unresolved` | `[4, 4, 4, -4]` | `16` | `8` | `"1/2"` | `"1"` | `"1"` | `16` | `857` | 2 | 18 | `$0.013347` |
+| `13202` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **B** | `isotropic_visibility_v_three_fourths_gate` | `blocked_unresolved` | `[3, 3, 3, -3]` | `12` | `4` | `"1/4"` | `"1/2"` | `"3/4"` | `8` | `865` | 2 | 14 | `$0.011403` |
+| `13202` | `repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment` | **C** | `explicit_lggr_lhv_critical_visibility_directive` | **`completed`** | **`[2, 2, 2, -2]`** | **`8`** | **`0`** | **`"0"`** | **`"0"`** | **`"1/2"`** | **`0`** | **`873`** | **1** | **6** | **`$0.005649`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
@@ -701,4 +717,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/side_info_capacity_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/deadline_bin_packing_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/projective_tower_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/bell_polytope_pilot_run/events.jsonl
 ```
