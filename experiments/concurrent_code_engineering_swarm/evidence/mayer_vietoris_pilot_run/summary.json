@@ -1,0 +1,174 @@
+{
+  "schema": "lggr.mayer_vietoris_code_engineering_swarm.v1",
+  "topology": "mayer_vietoris",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 9700,
+      "kind": "infeasible_mayer_vietoris_clearing_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_fu_w1_cents": 1110,
+          "final_fv_w1_cents": 1050,
+          "final_coboundary_spread_cents": 60,
+          "final_status": "INFEASIBLE_MAYER_VIETORIS_CLEARING_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.00686836"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_fu_w1_cents": 1110,
+          "final_fv_w1_cents": 1050,
+          "final_coboundary_spread_cents": 60,
+          "final_status": "INFEASIBLE_MAYER_VIETORIS_CLEARING_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.00646722"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": false,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_fu_w1_cents": 1110,
+          "final_fv_w1_cents": 1050,
+          "final_coboundary_spread_cents": 60,
+          "final_status": "INFEASIBLE_MAYER_VIETORIS_CLEARING_LOCK_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.00754039"
+        }
+      ]
+    },
+    {
+      "seed": 9701,
+      "kind": "clean_mayer_vietoris_control",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_fu_w1_cents": 1080,
+          "final_fv_w1_cents": 1080,
+          "final_coboundary_spread_cents": 0,
+          "final_status": "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-8"
+        },
+        {
+          "arm": "B",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_fu_w1_cents": 1080,
+          "final_fv_w1_cents": 1080,
+          "final_coboundary_spread_cents": 0,
+          "final_status": "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-8"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": false,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_fu_w1_cents": 1080,
+          "final_fv_w1_cents": 1080,
+          "final_coboundary_spread_cents": 0,
+          "final_status": "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG",
+          "waves_run": 0,
+          "escalations": 0,
+          "api_attempts": 0,
+          "cost_usd": "0E-8"
+        }
+      ]
+    },
+    {
+      "seed": 9702,
+      "kind": "disconnected_overlap_coboundary_jump",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_fu_w1_cents": 1110,
+          "final_fv_w1_cents": 1050,
+          "final_coboundary_spread_cents": 60,
+          "final_status": "MAYER_VIETORIS_DISCONNECTED_OVERLAP_OBSTRUCTION_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.01631986"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_fu_w1_cents": 1110,
+          "final_fv_w1_cents": 1080,
+          "final_coboundary_spread_cents": 30,
+          "final_status": "RESIDUAL_MAYER_VIETORIS_COBOUNDARY_SPREAD_LGGR",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.01579190"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_fu_w1_cents": 1080,
+          "final_fv_w1_cents": 1080,
+          "final_coboundary_spread_cents": 0,
+          "final_status": "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.00677465"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 50,
+  "charged_or_reserved_usd": "0.05976238",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 16,
+  "scope": "Concurrent 3-agent Mayer-Vietoris Python code-engineering swarm (`pricing_mv` -> `tax_mv` -> `settlement_mv`) comparing isolated subswarm exactness gating (A), one-sided subswarm V adjustment (B), and explicit LGGR Mayer-Vietoris connecting-coboundary reconciliation directives (C) with full cryptographic receipts retained in the host audit log."
+}

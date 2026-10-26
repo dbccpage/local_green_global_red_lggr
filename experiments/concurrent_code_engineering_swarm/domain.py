@@ -1508,6 +1508,310 @@ class CoalitionalCodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
+# ---------------------------------------------------------------------------
+# 3-Module Mayer-Vietoris Disconnected Overlap Coboundary Codebase (`--topology mayer_vietoris`)
+# ---------------------------------------------------------------------------
+
+MV_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_mv",
+    "worker-1": "tax_mv",
+    "worker-2": "settlement_mv",
+}
+
+CANONICAL_PRICING_MV_SOURCE = (
+    "def compute_pricing_mv(items, discount_bps):\n"
+    "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+    "    discount = (subtotal * int(discount_bps)) // 10000\n"
+    "    net = subtotal - discount\n"
+    "    return {\n"
+    "        'subtotal_cents': subtotal,\n"
+    "        'discount_cents': discount,\n"
+    "        'net_cents': net,\n"
+    "        'usd_anchor_cents': 0,\n"
+    "    }\n"
+)
+
+CANONICAL_TAX_MV_SOURCE = (
+    "def compute_tax_mv(quote, tax_bps):\n"
+    "    net = int(quote['net_cents'])\n"
+    "    tax = (net * int(tax_bps)) // 10000\n"
+    "    gross = net + tax\n"
+    "    return {\n"
+    "        'net_cents': net,\n"
+    "        'tax_cents': tax,\n"
+    "        'gross_cents': gross,\n"
+    "        'eur_clearing_delta_cents': tax,\n"
+    "    }\n"
+)
+
+CANONICAL_SETTLEMENT_MV_SOURCE = (
+    "def compute_settlement_mv(taxed_quote, fee_bps):\n"
+    "    net = int(taxed_quote['net_cents'])\n"
+    "    tax = int(taxed_quote['tax_cents'])\n"
+    "    gross = int(taxed_quote['gross_cents'])\n"
+    "    fee = (net * int(fee_bps)) // 10000\n"
+    "    payout = gross - fee - tax\n"
+    "    return {\n"
+    "        'gross_cents': gross,\n"
+    "        'platform_fee_cents': fee,\n"
+    "        'tax_reserve_cents': tax,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        'clearing_offset_cents': tax,\n"
+    "    }\n"
+)
+
+
+def run_mv_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Run isolated subswarm unit tests on a single Mayer-Vietoris module."""
+    func_map = {
+        "pricing_mv": "compute_pricing_mv",
+        "tax_mv": "compute_tax_mv",
+        "settlement_mv": "compute_settlement_mv",
+    }
+    if module_name not in func_map:
+        return {"passed": False, "error": f"Unknown Mayer-Vietoris module: {module_name}"}
+
+    ast_info = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(module_name, source_code)
+    if not ast_info["syntax_ok"] or not ast_info["sandbox_ok"]:
+        return {
+            "passed": False,
+            "module": module_name,
+            "error": ast_info.get("error") or str(ast_info.get("sandbox_violations")),
+        }
+
+    try:
+        env = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            module_name, source_code
+        )
+    except Exception as exc:
+        return {"passed": False, "error": f"SandboxCompileError: {exc}"}
+
+    fn = env.get(func_map[module_name])
+    if not callable(fn):
+        return {"passed": False, "error": f"Missing function {func_map[module_name]} in {module_name}.py"}
+
+    try:
+        if module_name == "pricing_mv":
+            res = fn([{"sku": "a", "unit_cents": 600, "quantity": 1}, {"sku": "b", "unit_cents": 400, "quantity": 1}], 1000)
+            if not isinstance(res, dict):
+                return {"passed": False, "error": "compute_pricing_mv must return a dict"}
+            ok = (
+                int(res.get("subtotal_cents", -1)) == 1000
+                and int(res.get("discount_cents", -1)) == 100
+                and int(res.get("net_cents", -1)) == 900
+                and int(res.get("usd_anchor_cents", -1)) == 0
+            )
+            return {
+                "passed": ok,
+                "return_keys": sorted(res.keys()),
+                "sample_output": res,
+                "error": None if ok else "pricing_mv arithmetic or usd_anchor_cents mismatch",
+            }
+
+        if module_name == "tax_mv":
+            res = fn({"subtotal_cents": 1000, "discount_cents": 100, "net_cents": 900, "usd_anchor_cents": 0}, 2000)
+            if not isinstance(res, dict):
+                return {"passed": False, "error": "compute_tax_mv must return a dict"}
+            eur_delta = int(res.get("eur_clearing_delta_cents", -1))
+            ok = (
+                int(res.get("net_cents", -1)) == 900
+                and int(res.get("tax_cents", -1)) == 180
+                and int(res.get("gross_cents", -1)) == 1080
+                and eur_delta in (150, 180, 210)
+            )
+            return {
+                "passed": ok,
+                "return_keys": sorted(res.keys()),
+                "eur_clearing_delta_cents": eur_delta,
+                "sample_output": res,
+                "error": None if ok else f"tax_mv local check failed (eur_clearing_delta_cents={eur_delta})",
+            }
+
+        res = fn(
+            {
+                "net_cents": 900,
+                "tax_cents": 180,
+                "gross_cents": 1080,
+                "eur_clearing_delta_cents": 180,
+            },
+            300,
+        )
+        if not isinstance(res, dict):
+            return {"passed": False, "error": "compute_settlement_mv must return a dict"}
+        clearing_offset = int(res.get("clearing_offset_cents", -1))
+        ok = (
+            int(res.get("gross_cents", -1)) == 1080
+            and int(res.get("platform_fee_cents", -1)) == 27
+            and int(res.get("tax_reserve_cents", -1)) == 180
+            and int(res.get("merchant_payout_cents", -1)) == 873
+            and clearing_offset in (150, 180, 210)
+        )
+        return {
+            "passed": ok,
+            "return_keys": sorted(res.keys()),
+            "clearing_offset_cents": clearing_offset,
+            "sample_output": res,
+            "error": None if ok else f"settlement_mv local check failed (clearing_offset_cents={clearing_offset})",
+        }
+    except Exception as exc:
+        return {"passed": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+def mv_fixture(seed: int) -> dict[str, Any]:
+    """Generate deterministic 3-agent Mayer-Vietoris codebase scenario for `seed`."""
+    kind = [
+        "disconnected_overlap_coboundary_jump",
+        "infeasible_mayer_vietoris_clearing_lock",
+        "clean_mayer_vietoris_control",
+    ][seed % 3]
+
+    src_t_fault = (
+        "def compute_tax_mv(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'eur_clearing_delta_cents': tax + 30,\n"
+        "    }\n"
+    )
+    src_s_fault = (
+        "def compute_settlement_mv(taxed_quote, fee_bps):\n"
+        "    net = int(taxed_quote['net_cents'])\n"
+        "    tax = int(taxed_quote['tax_cents'])\n"
+        "    gross = int(taxed_quote['gross_cents'])\n"
+        "    fee = (net * int(fee_bps)) // 10000\n"
+        "    payout = gross - fee - tax\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'clearing_offset_cents': tax - 30,\n"
+        "    }\n"
+    )
+
+    if kind == "disconnected_overlap_coboundary_jump":
+        sources = {
+            "pricing_mv": CANONICAL_PRICING_MV_SOURCE,
+            "tax_mv": src_t_fault,
+            "settlement_mv": src_s_fault,
+        }
+        infeasible = None
+        locked_workers: list[str] = []
+    elif kind == "infeasible_mayer_vietoris_clearing_lock":
+        sources = {
+            "pricing_mv": CANONICAL_PRICING_MV_SOURCE,
+            "tax_mv": src_t_fault,
+            "settlement_mv": src_s_fault,
+        }
+        infeasible = {
+            "type": "LOCKED_DISCONNECTED_OVERLAP_GAUGE_CONTRADICTION",
+            "locked_module": "tax_mv",
+            "locked_eur_clearing_delta_cents": 210,
+            "locked_fu_w1_cents": 1110,
+            "required_global_clearing_w1_cents": 1080,
+            "reason": (
+                "Subswarm U (`tax_mv.py`) is locked with `'eur_clearing_delta_cents': 210` (`f_U(w1) = 1110`), "
+                "while global settlement conservation requires `f_U(w1) = f_V(w1) = gross_cents = 1080`."
+            ),
+        }
+        locked_workers = ["worker-1"]
+    else:
+        sources = {
+            "pricing_mv": CANONICAL_PRICING_MV_SOURCE,
+            "tax_mv": CANONICAL_TAX_MV_SOURCE,
+            "settlement_mv": CANONICAL_SETTLEMENT_MV_SOURCE,
+        }
+        infeasible = None
+        locked_workers = []
+
+    return {
+        "seed": seed,
+        "kind": kind,
+        "sources": sources,
+        "locked_workers": locked_workers,
+        "infeasible_constraint": infeasible,
+        "escalations": {},
+    }
+
+
+class MayerVietorisCodeWorkspace:
+    """Sandboxed 3-agent Mayer-Vietoris disconnected overlap codebase workspace."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def local_verdicts(self) -> dict[str, bool]:
+        return {
+            mname: bool(run_mv_local_unit_tests(mname, src)["passed"])
+            for mname, src in self.state["sources"].items()
+        }
+
+    def tool(self, worker: str, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        if worker not in MV_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = MV_WORKER_MODULES[worker]
+
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_mv_local_unit_tests(module_name, own_src)
+            peer_ast = {
+                m: StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(m, s)["functions"]
+                for m, s in self.state["sources"].items()
+            }
+            return {
+                "worker": worker,
+                "owned_module": module_name,
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test_result": local_res,
+                "peer_module_signatures": peer_ast,
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+
+        if name == "run_local_tests" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_mv_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_mv_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated subswarm unit tests passed; Mayer-Vietoris disconnected overlap gluing is checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+
 
 
 

@@ -28,6 +28,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
@@ -39,12 +40,14 @@ from .domain import (
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
+    MV_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
     WORKER_MODULES,
     CatalystCodeWorkspace,
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    MayerVietorisCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     catalyst_fixture,
@@ -52,6 +55,7 @@ from .domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    mv_fixture,
     replay_fixture,
 )
 
@@ -1418,6 +1422,185 @@ def coalitional_campaign(client: CodeBatchClient, events: Events, config: dict[s
     return summary
 
 
+def mv_system_prompt(worker: str) -> str:
+    module_name = MV_WORKER_MODULES[worker]
+    return (
+        f"You are concurrent code-engineering agent {worker}, sole owner of `{module_name}.py` "
+        "in a 3-module multi-currency settlement codebase (`pricing_mv.py` -> `tax_mv.py` -> `settlement_mv.py`) "
+        "partitioned into two subswarm covers `U` and `V` over disconnected overlap `U cap V = {w0, w1}`.\n"
+        "Workflow:\n"
+        "1. Call `inspect_workspace` first to inspect your module's Python source code, isolated "
+        "unit test result, and `infeasible_constraint`.\n"
+        "2. If `infeasible_constraint` is non-null, call `escalate` with a concise explanation of the "
+        "Mayer-Vietoris clearing lock contradiction.\n"
+        "3. Otherwise, follow the merge-gate feedback in the user prompt. If instructed to keep your "
+        "module unchanged, submit your current `source_code` via `submit_module_patch`. If instructed "
+        "to reconcile your module's clearing delta/offset on `w1`, submit the complete updated Python "
+        "source for your owned module via `submit_module_patch`."
+    )
+
+
+def mv_merge_gate(
+    events: Events,
+    workspace: MayerVietorisCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    monitor = StreamingCodebaseMayerVietorisMonitor(
+        scope_id=f"mv-code-swarm-gate-{arm}-{step_tag}",
+    )
+    eval_rec = monitor.evaluate_codebase_mayer_vietoris(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=workspace.local_verdicts(),
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    full_receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "step_tag": step_tag,
+            "u_locally_exact": eval_rec["u_locally_exact"],
+            "v_locally_exact": eval_rec["v_locally_exact"],
+            "union_globally_exact": eval_rec["union_globally_exact"],
+            "fu_w1_cents": eval_rec["fu_w1_cents"],
+            "fv_w1_cents": eval_rec["fv_w1_cents"],
+            "coboundary_spread_cents": eval_rec["coboundary_spread_cents"],
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "status": eval_rec["status"],
+            "host_lggr_receipt_sha256": full_receipt["receipt_sha256"],
+            "host_lggr_receipt": full_receipt,
+        },
+    )
+    return eval_rec, full_receipt
+
+
+def mv_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = ["worker-0", "worker-1", "worker-2"]
+    for seed in config["seeds"]:
+        base_state = mv_fixture(seed)
+        events.emit("case_start", {"seed": seed, "kind": base_state["kind"], "fixture": base_state})
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = MayerVietorisCodeWorkspace(base_state)
+            histories = {w: [{"role": "system", "content": mv_system_prompt(w)}] for w in workers}
+            events.emit("arm_start", {"seed": seed, "arm": arm, "kind": base_state["kind"]})
+            start_calls = client.calls
+            start_cost = client.spent
+            escalations = 0
+            waves_run = 0
+            eval_rec, _ = mv_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+            feasible_case = base_state["infeasible_constraint"] is None
+
+            for wave_idx in range(1, 3):
+                if eval_rec["global_green"] == 1 or (not feasible_case and escalations > 0):
+                    break
+                waves_run += 1
+                per_worker_fb: dict[str, dict[str, Any]] = {}
+                for w in workers:
+                    mname = MV_WORKER_MODULES[w]
+                    if arm == "A":
+                        per_worker_fb[w] = {
+                            "arm": "A_isolated_subswarm_exactness_gate",
+                            "local_unit_test_passed": True,
+                            "u_locally_exact": eval_rec["u_locally_exact"],
+                            "v_locally_exact": eval_rec["v_locally_exact"],
+                            "global_integration_passed": False,
+                            "instruction": (
+                                f"Your module `{mname}.py` passed its isolated unit test and its subswarm is "
+                                "locally tree-exact (`u_locally_exact = True`, `v_locally_exact = True`). "
+                                "If `infeasible_constraint` is non-null, call `escalate`. Otherwise, because "
+                                "your subswarm is locally exact, keep your existing `source_code` unchanged "
+                                "and submit via `submit_module_patch`."
+                            ),
+                        }
+                    elif arm == "B":
+                        if w == "worker-2":
+                            per_worker_fb[w] = {
+                                "arm": "B_one_sided_subswarm_v_adjustment",
+                                "local_unit_test_passed": True,
+                                "fv_w1_cents": eval_rec["fv_w1_cents"],
+                                "instruction": (
+                                    "If `infeasible_constraint` is non-null, call `escalate`. Otherwise, "
+                                    "update `compute_settlement_mv` in `settlement_mv.py` so `'clearing_offset_cents': tax` "
+                                    "(`180`), setting `f_V(w1) = 900 + 180 = 1080` while preserving return keys "
+                                    "`['gross_cents', 'platform_fee_cents', 'tax_reserve_cents', 'merchant_payout_cents', 'clearing_offset_cents']`."
+                                ),
+                            }
+                        else:
+                            per_worker_fb[w] = {
+                                "arm": "B_one_sided_subswarm_v_adjustment",
+                                "local_unit_test_passed": True,
+                                "instruction": (
+                                    "If `infeasible_constraint` is non-null, call `escalate`. Otherwise, "
+                                    "downstream subswarm `V` (`settlement_mv.py`) is adjusting its clearing offset; "
+                                    f"keep your `{mname}.py` `source_code` unchanged and submit via `submit_module_patch`."
+                                ),
+                            }
+                    else:
+                        per_worker_fb[w] = {
+                            "arm": "C_explicit_lggr_mayer_vietoris_coboundary_directive",
+                            "role_directive": eval_rec["compact_role_directives"][w],
+                        }
+
+                escalations += round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, _ = mv_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+
+            if eval_rec["global_green"] == 1 and feasible_case:
+                outcome = "completed"
+            elif not feasible_case and escalations > 0 and eval_rec["global_green"] == 0:
+                outcome = "safe_escalated"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_fu_w1_cents": eval_rec["fu_w1_cents"],
+                "final_fv_w1_cents": eval_rec["fv_w1_cents"],
+                "final_coboundary_spread_cents": eval_rec["coboundary_spread_cents"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.mayer_vietoris_code_engineering_swarm.v1",
+        "topology": "mayer_vietoris",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent Mayer-Vietoris Python code-engineering swarm (`pricing_mv` -> `tax_mv` -> "
+            "`settlement_mv`) comparing isolated subswarm exactness gating (A), one-sided subswarm V adjustment (B), "
+            "and explicit LGGR Mayer-Vietoris connecting-coboundary reconciliation directives (C) with full "
+            "cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -1438,6 +1621,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = replay_campaign(client, events, config)
         elif config.get("topology") == "coalitional":
             summary = coalitional_campaign(client, events, config)
+        elif config.get("topology") == "mayer_vietoris":
+            summary = mv_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -1461,7 +1646,7 @@ def main() -> None:
     parser.add_argument("path")
     parser.add_argument(
         "--topology",
-        choices=["linear", "diamond", "catalyst", "dfa", "replay", "coalitional"],
+        choices=["linear", "diamond", "catalyst", "dfa", "replay", "coalitional", "mayer_vietoris"],
         default="linear",
     )
     parser.add_argument("--seeds", nargs="+", type=int, default=None)
@@ -1496,6 +1681,8 @@ def main() -> None:
         seeds = [9500, 9501, 9502]
     elif args.topology == "coalitional":
         seeds = [9600, 9601, 9602]
+    elif args.topology == "mayer_vietoris":
+        seeds = [9700, 9701, 9702]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -1554,6 +1741,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = coalitional_campaign(client, events, config)
+    elif args.topology == "mayer_vietoris":
+        config = {
+            "topology": "mayer_vietoris",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = mv_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

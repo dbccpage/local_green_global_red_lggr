@@ -20566,6 +20566,591 @@ class StreamingCodebaseCoalitionalMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseMayerVietorisMonitor:
+    """Online Mayer-Vietoris disconnected overlap coboundary reconciliation monitor for 3-module codebases (Theorem 100).
+
+    Composes ``StreamingMayerVietorisMonitor``, ``StreamingMayerVietorisReconciliationMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` to audit a 3-module
+    multi-currency settlement codebase (``pricing_mv.py``, ``tax_mv.py``, ``settlement_mv.py``)
+    partitioned into two overlapping subswarm covers ``U = {w0 -> u -> w1}`` and
+    ``V = {w0 -> v -> w1}`` with disconnected interface overlap ``U cap V = {w0, w1}``
+    (``w0 = 'usd_anchor'`` at potential ``0``, ``w1 = 'eur_clearing'`` at target potential ``1080``).
+    """
+
+    MODULES: tuple[str, ...] = (
+        "pricing_mv",
+        "tax_mv",
+        "settlement_mv",
+    )
+
+    CANONICAL_MV_MODULE_SPEC: dict[str, dict[str, Any]] = {
+        "worker-0": {
+            "module": "pricing_mv",
+            "function": "compute_pricing_mv",
+            "subswarm": "U_and_V_anchor",
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents", "usd_anchor_cents"],
+        },
+        "worker-1": {
+            "module": "tax_mv",
+            "function": "compute_tax_mv",
+            "subswarm": "U",
+            "return_keys": ["net_cents", "tax_cents", "gross_cents", "eur_clearing_delta_cents"],
+        },
+        "worker-2": {
+            "module": "settlement_mv",
+            "function": "compute_settlement_mv",
+            "subswarm": "V",
+            "return_keys": [
+                "gross_cents",
+                "platform_fee_cents",
+                "tax_reserve_cents",
+                "merchant_payout_cents",
+                "clearing_offset_cents",
+            ],
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-mayer-vietoris-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.mv_reconciliation_monitor = StreamingMayerVietorisReconciliationMonitor(
+            scope_id=f"{self.scope_id}-mv-reconciliation",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _compile_mv_module(module_name: str, source_code: str, func_name: str) -> tuple[Any | None, dict[str, Any]]:
+        try:
+            tree = ast.parse(source_code, filename=f"{module_name}.py")
+        except SyntaxError as exc:
+            return None, {"valid_syntax": False, "error": f"SyntaxError: {exc}"}
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                return None, {"valid_syntax": False, "error": "Import statements are forbidden"}
+            if isinstance(node, ast.Name) and node.id.startswith("__"):
+                return None, {"valid_syntax": False, "error": f"Dunder identifier forbidden: {node.id}"}
+        safe_builtins = {
+            "abs": abs,
+            "all": all,
+            "any": any,
+            "bool": bool,
+            "dict": dict,
+            "enumerate": enumerate,
+            "int": int,
+            "isinstance": isinstance,
+            "len": len,
+            "list": list,
+            "max": max,
+            "min": min,
+            "range": range,
+            "round": round,
+            "set": set,
+            "sorted": sorted,
+            "str": str,
+            "sum": sum,
+            "tuple": tuple,
+            "ValueError": ValueError,
+            "KeyError": KeyError,
+            "RuntimeError": RuntimeError,
+        }
+        env: dict[str, Any] = {"__builtins__": safe_builtins}
+        try:
+            exec(compile(tree, filename=f"{module_name}.py", mode="exec"), env, env)
+        except Exception as exc:
+            return None, {"valid_syntax": False, "error": f"CompileError: {exc}"}
+        fn = env.get(func_name)
+        if not callable(fn):
+            return None, {"valid_syntax": False, "error": f"Missing callable {func_name}"}
+        return fn, {"valid_syntax": True, "error": None}
+
+    def evaluate_codebase_mayer_vietoris(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit a 3-module codebase over disconnected Mayer-Vietoris overlap U cap V = {w0, w1}."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        if not isinstance(sources, Mapping):
+            raise ValidationError("sources must be a mapping")
+        if not isinstance(local_test_results, Mapping):
+            raise ValidationError("local_test_results must be a mapping")
+
+        local_vec = [bool(local_test_results.get(m, False)) for m in self.MODULES]
+        all_local_pass = all(local_vec)
+
+        fn_map: dict[str, Any] = {}
+        ast_reports: dict[str, Any] = {}
+        func_names = {
+            "pricing_mv": "compute_pricing_mv",
+            "tax_mv": "compute_tax_mv",
+            "settlement_mv": "compute_settlement_mv",
+        }
+        for mname in self.MODULES:
+            src = str(sources.get(mname, ""))
+            fn, rep = self._compile_mv_module(mname, src, func_names[mname])
+            fn_map[mname] = fn
+            ast_reports[mname] = rep
+
+        items = [{"sku": "tier_a", "unit_cents": 600, "quantity": 1}, {"sku": "tier_b", "unit_cents": 400, "quantity": 1}]
+        runtime_error: str | None = None
+        quote_out: dict[str, Any] = {}
+        tax_out: dict[str, Any] = {}
+        settle_out: dict[str, Any] = {}
+
+        if all(fn_map[m] is not None for m in self.MODULES):
+            try:
+                q_res = fn_map["pricing_mv"](items, 1000)
+                if not isinstance(q_res, Mapping):
+                    raise ValueError("pricing_mv did not return a dict")
+                quote_out = dict(q_res)
+                t_res = fn_map["tax_mv"](quote_out, 2000)
+                if not isinstance(t_res, Mapping):
+                    raise ValueError("tax_mv did not return a dict")
+                tax_out = dict(t_res)
+                s_res = fn_map["settlement_mv"](tax_out, 300)
+                if not isinstance(s_res, Mapping):
+                    raise ValueError("settlement_mv did not return a dict")
+                settle_out = dict(s_res)
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+        else:
+            runtime_error = "One or more modules failed AST compilation"
+
+        net_u = int(quote_out.get("net_cents", 0)) if runtime_error is None else 0
+        eur_delta_u = int(tax_out.get("eur_clearing_delta_cents", 0)) if runtime_error is None else 0
+        clearing_offset_v = int(settle_out.get("clearing_offset_cents", 0)) if runtime_error is None else 0
+        gross_val = int(settle_out.get("gross_cents", 0)) if runtime_error is None else 0
+        fee_val = int(settle_out.get("platform_fee_cents", 0)) if runtime_error is None else 0
+        tax_val = int(settle_out.get("tax_reserve_cents", 0)) if runtime_error is None else 0
+        payout_val = int(settle_out.get("merchant_payout_cents", 0)) if runtime_error is None else 0
+
+        mv_mon = StreamingMayerVietorisMonitor(scope_id=f"{self.scope_id}-{eval_id}")
+        mv_mon.record_edge("w0", "u", net_u, in_u=True, in_v=False)
+        mv_mon.record_edge("u", "w1", eur_delta_u, in_u=True, in_v=False)
+        mv_mon.record_edge("w0", "v", net_u, in_u=False, in_v=True)
+        mv_mon.record_edge("v", "w1", clearing_offset_v, in_u=False, in_v=True)
+        mv_receipt = mv_mon.get_receipt()
+
+        fu_w1 = net_u + eur_delta_u
+        fv_w1 = net_u + clearing_offset_v
+        coboundary_spread_cents = abs(fu_w1 - fv_w1)
+        signed_overlap_delta_w1 = fu_w1 - fv_w1
+
+        conservation_ok = (
+            runtime_error is None
+            and net_u == 900
+            and gross_val == 1080
+            and fee_val == 27
+            and tax_val == 180
+            and payout_val == 873
+            and payout_val + fee_val + tax_val == gross_val
+            and fu_w1 == 1080
+            and fv_w1 == 1080
+            and coboundary_spread_cents == 0
+            and bool(mv_receipt["union_globally_exact"])
+        )
+
+        mv_rec_eval = self.mv_reconciliation_monitor.evaluate_mv_reconciliation(
+            f"{eval_id}_mv_rec",
+            initial_v_to_w1=0,
+            partial_v_to_w1=1,
+            reconciled_v_to_w1=2,
+        )
+
+        l_green = 1 if (all_local_pass and bool(mv_receipt["u_locally_exact"]) and bool(mv_receipt["v_locally_exact"]) and infeasible_constraint is None) else 0
+        eg_green = 1 if (l_green == 1 and conservation_ok) else 0
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_tests_all_pass": all_local_pass,
+                "u_locally_exact": bool(mv_receipt["u_locally_exact"]),
+                "v_locally_exact": bool(mv_receipt["v_locally_exact"]),
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "fu_w1_cents": fu_w1,
+                "fv_w1_cents": fv_w1,
+                "coboundary_spread_cents": coboundary_spread_cents,
+            },
+        )
+
+        contract_mismatches: list[dict[str, Any]] = []
+        if eur_delta_u != 180:
+            contract_mismatches.append(
+                {
+                    "module": "tax_mv",
+                    "subswarm": "U",
+                    "expected_eur_clearing_delta_cents": 180,
+                    "actual_eur_clearing_delta_cents": eur_delta_u,
+                    "fu_w1_cents": fu_w1,
+                }
+            )
+        if clearing_offset_v != 180:
+            contract_mismatches.append(
+                {
+                    "module": "settlement_mv",
+                    "subswarm": "V",
+                    "expected_clearing_offset_cents": 180,
+                    "actual_clearing_offset_cents": clearing_offset_v,
+                    "fv_w1_cents": fv_w1,
+                }
+            )
+        if runtime_error is not None:
+            contract_mismatches.append(
+                {
+                    "module": "pipeline",
+                    "runtime_error": runtime_error,
+                }
+            )
+
+        role_directives = self._build_mv_directives(
+            eur_delta_u=eur_delta_u,
+            clearing_offset_v=clearing_offset_v,
+            fu_w1=fu_w1,
+            fv_w1=fv_w1,
+            coboundary_spread_cents=coboundary_spread_cents,
+            infeasible_constraint=infeasible_constraint,
+            integration_passed=(eg_green == 1),
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_MAYER_VIETORIS_CLEARING_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif eur_delta_u != 180 and clearing_offset_v != 180:
+            status = "MAYER_VIETORIS_DISCONNECTED_OVERLAP_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "RESIDUAL_MAYER_VIETORIS_COBOUNDARY_SPREAD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "local_unit_test_verdicts": {
+                "pricing_mv": local_vec[0],
+                "tax_mv": local_vec[1],
+                "settlement_mv": local_vec[2],
+            },
+            "u_locally_exact": bool(mv_receipt["u_locally_exact"]),
+            "v_locally_exact": bool(mv_receipt["v_locally_exact"]),
+            "union_globally_exact": bool(mv_receipt["union_globally_exact"]),
+            "fu_w1_cents": fu_w1,
+            "fv_w1_cents": fv_w1,
+            "signed_overlap_delta_w1_cents": signed_overlap_delta_w1,
+            "coboundary_spread_cents": coboundary_spread_cents,
+            "eur_clearing_delta_cents": eur_delta_u,
+            "clearing_offset_cents": clearing_offset_v,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "contract_mismatches": contract_mismatches,
+            "compact_role_directives": role_directives,
+            "mayer_vietoris_receipt": mv_receipt,
+            "mv_reconciliation_evaluation": mv_rec_eval,
+            "ast_reports": ast_reports,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_mv_directives(
+        cls,
+        *,
+        eur_delta_u: int,
+        clearing_offset_v: int,
+        fu_w1: int,
+        fv_w1: int,
+        coboundary_spread_cents: int,
+        infeasible_constraint: Mapping[str, Any] | None,
+        integration_passed: bool,
+    ) -> dict[str, dict[str, Any]]:
+        if integration_passed:
+            return {
+                wid: {
+                    "role": "VERIFIED_MAYER_VIETORIS_SUBSWARM_OWNER",
+                    "action": "NO_CHANGE_REQUIRED",
+                    "module": spec["module"],
+                    "function": spec["function"],
+                }
+                for wid, spec in cls.CANONICAL_MV_MODULE_SPEC.items()
+            }
+
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "MAYER_VIETORIS_CONFLICT_AUDITOR",
+                    "action": "ESCALATE_INFEASIBLE_MAYER_VIETORIS_CONTRACT",
+                    "module": spec["module"],
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_MV_MODULE_SPEC.items()
+            }
+
+        directives: dict[str, dict[str, Any]] = {}
+        for wid, spec in cls.CANONICAL_MV_MODULE_SPEC.items():
+            mname = spec["module"]
+            if mname == "pricing_mv":
+                directives[wid] = {
+                    "role": "MAYER_VIETORIS_SUBSWARM_ANCHOR_OWNER",
+                    "action": "HOLD_ANCHOR_POTENTIAL_ZERO",
+                    "module": mname,
+                    "function": spec["function"],
+                    "subswarm": spec["subswarm"],
+                    "coboundary_spread_cents": coboundary_spread_cents,
+                    "required_return_keys": list(spec["return_keys"]),
+                    "instruction": (
+                        "Your module `pricing_mv.py` anchors `w0 = 'usd_anchor'` at `0` and `net_cents = 900`. "
+                        "Keep your existing `source_code` unchanged and submit via `submit_module_patch`."
+                    ),
+                }
+            elif mname == "tax_mv":
+                needs_u_fix = eur_delta_u != 180
+                directives[wid] = {
+                    "role": "MAYER_VIETORIS_SUBSWARM_U_OWNER",
+                    "action": "RECONCILE_SUBSWARM_U_COBOUNDARY" if needs_u_fix else "HOLD_RECONCILED_SUBSWARM_U",
+                    "module": mname,
+                    "function": spec["function"],
+                    "subswarm": "U",
+                    "fu_w1_cents": fu_w1,
+                    "target_w1_cents": 1080,
+                    "coboundary_spread_cents": coboundary_spread_cents,
+                    "required_return_keys": list(spec["return_keys"]),
+                    "instruction": (
+                        "Your module `tax_mv.py` on subswarm `U` currently sets `'eur_clearing_delta_cents'` "
+                        f"to `{eur_delta_u}` (`f_U(w1) = {fu_w1} != 1080`). Update `compute_tax_mv` so "
+                        "`'eur_clearing_delta_cents': tax` (`180`), reconciling `f_U(w1) = 900 + 180 = 1080` "
+                        "while preserving the return dict mapping keys "
+                        "`['net_cents', 'tax_cents', 'gross_cents', 'eur_clearing_delta_cents']` to their integer values."
+                    ),
+                }
+            else:
+                needs_v_fix = clearing_offset_v != 180
+                directives[wid] = {
+                    "role": "MAYER_VIETORIS_SUBSWARM_V_OWNER",
+                    "action": "RECONCILE_SUBSWARM_V_COBOUNDARY" if needs_v_fix else "HOLD_RECONCILED_SUBSWARM_V",
+                    "module": mname,
+                    "function": spec["function"],
+                    "subswarm": "V",
+                    "fv_w1_cents": fv_w1,
+                    "target_w1_cents": 1080,
+                    "coboundary_spread_cents": coboundary_spread_cents,
+                    "required_return_keys": list(spec["return_keys"]),
+                    "instruction": (
+                        "Your module `settlement_mv.py` on subswarm `V` currently sets `'clearing_offset_cents'` "
+                        f"to `{clearing_offset_v}` (`f_V(w1) = {fv_w1} != 1080`). Update `compute_settlement_mv` so "
+                        "`'clearing_offset_cents': tax` (`180`), reconciling `f_V(w1) = 900 + 180 = 1080` "
+                        "while preserving the return dict mapping keys "
+                        "`['gross_cents', 'platform_fee_cents', 'tax_reserve_cents', 'merchant_payout_cents', 'clearing_offset_cents']` "
+                        "to their integer values."
+                    ),
+                }
+        return directives
+
+    def record_three_phase_codebase_mayer_vietoris_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase 3-module Mayer-Vietoris codebase coboundary reconciliation audit (Theorem 100):
+        - Phase 1 (Disconnected overlap gauge jump across U and V: `eur_clearing_delta_cents = 210` on
+          `tax_mv` and `clearing_offset_cents = 150` on `settlement_mv`):
+          Both subswarms U and V are locally exact trees (`L = 1`), yet `f_U(w1) = 1110 != 1050 = f_V(w1)`
+          yields connecting coboundary spread `Delta_MV = 60 > 0`
+          (`MAYER_VIETORIS_DISCONNECTED_OVERLAP_OBSTRUCTION_LGGR`, `defect = -1`).
+        - Phase 2 (One-sided subswarm V adjustment fixing `settlement_mv` to `180` while `tax_mv` on U
+          remains at `210`):
+          `f_U(w1) = 1110 != 1080 = f_V(w1)` leaves residual spread `Delta_MV = 30 > 0`
+          (`RESIDUAL_MAYER_VIETORIS_COBOUNDARY_SPREAD_LGGR`, `defect = -1`).
+        - Phase 3 (Bilateral Mayer-Vietoris coboundary reconciliation across U and V:
+          `eur_clearing_delta_cents = 180` and `clearing_offset_cents = 180`):
+          `f_U(w1) = f_V(w1) = 1080`, `Delta_MV = 0`, `union_globally_exact = True`, and exact
+          settlement conservation `873 + 27 + 180 = 1080`
+          (`CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG`, `defect = 0`).
+        """
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p_canon = (
+            "def compute_pricing_mv(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'usd_anchor_cents': 0,\n"
+            "    }\n"
+        )
+        src_t_fault = (
+            "def compute_tax_mv(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'eur_clearing_delta_cents': tax + 30,\n"
+            "    }\n"
+        )
+        src_t_canon = (
+            "def compute_tax_mv(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'eur_clearing_delta_cents': tax,\n"
+            "    }\n"
+        )
+        src_s_fault = (
+            "def compute_settlement_mv(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'clearing_offset_cents': tax - 30,\n"
+            "    }\n"
+        )
+        src_s_canon = (
+            "def compute_settlement_mv(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'clearing_offset_cents': tax,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_mv": True,
+            "tax_mv": True,
+            "settlement_mv": True,
+        }
+
+        p1 = self.evaluate_codebase_mayer_vietoris(
+            f"{eval_id}_phase1_disconnected_overlap_jump",
+            sources={
+                "pricing_mv": src_p_canon,
+                "tax_mv": src_t_fault,
+                "settlement_mv": src_s_fault,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_mayer_vietoris(
+            f"{eval_id}_phase2_one_sided_subswarm_v_adjusted",
+            sources={
+                "pricing_mv": src_p_canon,
+                "tax_mv": src_t_fault,
+                "settlement_mv": src_s_canon,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_mayer_vietoris(
+            f"{eval_id}_phase3_bilateral_coboundary_reconciled",
+            sources={
+                "pricing_mv": src_p_canon,
+                "tax_mv": src_t_canon,
+                "settlement_mv": src_s_canon,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_fu_w1_cents": p1["fu_w1_cents"],
+                "phase_1_fv_w1_cents": p1["fv_w1_cents"],
+                "phase_1_coboundary_spread_cents": p1["coboundary_spread_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_fu_w1_cents": p2["fu_w1_cents"],
+                "phase_2_fv_w1_cents": p2["fv_w1_cents"],
+                "phase_2_coboundary_spread_cents": p2["coboundary_spread_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_fu_w1_cents": p3["fu_w1_cents"],
+                "phase_3_fv_w1_cents": p3["fv_w1_cents"],
+                "phase_3_coboundary_spread_cents": p3["coboundary_spread_cents"],
+                "phase_3_union_globally_exact": p3["union_globally_exact"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase Mayer-Vietoris evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_mayer_vietoris.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "mv_reconciliation_receipt": self.mv_reconciliation_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
