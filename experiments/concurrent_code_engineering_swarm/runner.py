@@ -5573,19 +5573,19 @@ def obligation_migration_system_prompt(worker: str, arm: str) -> str:
     module_name = OBLIGATION_MIGRATION_WORKER_MODULES[worker]
     return (
         f"You are `{worker}` owning `{module_name}.py` in a concurrent 3-agent Python "
-        f"code-engineering swarm (Arm `{arm}`). Always call `inspect_workspace` first.\n"
+        f"code-engineering swarm (Arm `{arm}`). Always call `inspect_workspace` first. "
+        "Do not output any conversational text before calling a tool.\n"
         "- If `infeasible_constraint` is not null, call `escalate` with a clear explanation of the hardware lock.\n"
         "- If `merge_gate_feedback.action_required` is `HOLD_UNCERTIFIED_MIGRATION_TRAJECTORY` (Arm A), keep your current "
         "source code unchanged by calling `submit_module_patch` with the exact existing `source_code`.\n"
         "- If `merge_gate_feedback.action_required` is `SHIFT_TO_DEFERRED_OBLIGATION_EXCURSION` (Arm B), `worker-0` (`pricing_mig`) "
         "keeps `step_0_state = 2`, `worker-1` (`tax_mig`) sets `step_1_state = 4`, `step_1_representation_id = 'rep-v1'`, "
         "and `step_1_obligations = ['recheck_schema_invariant']`, and `worker-2` (`settlement_mig`) sets `s2 = 2` so "
-        "`migration_surcharge_cents = 10` and `merchant_payout_cents = 863`.\n"
+        "`surcharge = 10` and `payout = 863`.\n"
         "- If `merge_gate_feedback.action_required` is `REPAIR_COHERENT_MIGRATION_OBLIGATION` (Arm C):\n"
         "  * `worker-0` (`pricing_mig.py`): set `step_0_state = 1`, `step_0_representation_id = 'rep-v1'`, and `step_0_obligations = []`.\n"
         "  * `worker-1` (`tax_mig.py`): set `step_1_state = 2`, `step_1_representation_id = 'rep-v1'`, and `step_1_obligations = []`.\n"
-        "  * `worker-2` (`settlement_mig.py`): set `s2 = 2` (`step_2_state = 2`) so `migration_surcharge_cents = 0` and "
-        "`merchant_payout_cents = net_cents - fee_cents` (`873`, `873 + 27 + 90 = 990`)."
+        "  * `worker-2` (`settlement_mig.py`): set `s2 = 2` so `surcharge = 0` and `payout = net - fee` (`873`, `873 + 27 + 90 = 990`)."
     )
 
 

@@ -428,10 +428,10 @@ In `--topology obligation_migration`, the 3 concurrent agents maintain a 3-step 
 
 | Seed | Case | Arm | Gate Policy | Status | Trajectory | Migration Count | Obligation Count | Excursion | Surcharge | Waves | API Calls | Cost (USD) |
 | :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **A** | `conventional_local_endpoint_baseline_gate` | `blocked_unresolved` | `[0, 2, 3, 1]` | `1` | `0` | `0` | `5` | 2 | 12 | `$0.014342` |
-| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **B** | `deferred_obligation_prefix_excursion_gate` | `blocked_unresolved` | `[0, 2, 4, 2]` | `0` | `1` | `1` | `10` | 2 | 14 | `$0.015853` |
-| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **C** | `explicit_lggr_equal_info_migration_obligation_directive` | **`completed`** | **`[0, 1, 2, 2]`** | **`0`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007445`** |
-| `11601` | `infeasible_hardware_locked_unmigrated_legacy_rep_v2_and_deferred_obligation` | **A / B / C** | All policies | `safe_escalated` | `[0, 2, 3, 1]` | `1` | `0` | `0` | `5` | 1 | 18 | `$0.022763` |
+| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **A** | `conventional_local_endpoint_baseline_gate` | `blocked_unresolved` | `[0, 2, 3, 1]` | `1` | `0` | `0` | `5` | 2 | 12 | `$0.012420` |
+| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **B** | `deferred_obligation_prefix_excursion_gate` | `blocked_unresolved` | `[0, 2, 4, 2]` | `0` | `1` | `1` | `10` | 2 | 12 | `$0.014020` |
+| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **C** | `explicit_lggr_equal_info_migration_obligation_directive` | **`completed`** | **`[0, 1, 2, 2]`** | **`0`** | **`0`** | **`0`** | **`0`** | **2** | **12** | **`$0.014586`** |
+| `11601` | `infeasible_hardware_locked_unmigrated_legacy_rep_v2_and_deferred_obligation` | **A / B / C** | All policies | `safe_escalated` | `[0, 2, 3, 1]` | `1` | `0` | `0` | `5` | 1 | 18 | `$0.018465` |
 
 ## Offline Verification & Live Execution
 

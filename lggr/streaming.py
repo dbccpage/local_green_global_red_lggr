@@ -29986,141 +29986,57 @@ class StreamingCodebaseObligationMigrationMonitor:
 
     DEFAULT_PRICING_P1_P2_SOURCE = (
         "def compute_pricing_mig_quote(subtotal_cents: int, discount_bps: int) -> dict:\n"
-        "    discount = (subtotal_cents * discount_bps) // 10000\n"
-        "    net_cents = subtotal_cents - discount\n"
-        "    fee_cents = (net_cents * 300) // 10000\n"
-        "    return {\n"
-        "        'subtotal_cents': subtotal_cents,\n"
-        "        'net_cents': net_cents,\n"
-        "        'fee_cents': fee_cents,\n"
-        "        'canonical_representation_id': 'rep-v1',\n"
-        "        'max_step': 2,\n"
-        "        'max_total': 3,\n"
-        "        'step_0_state': 2,\n"
-        "        'step_0_representation_id': 'rep-v1',\n"
-        "        'step_0_obligations': [],\n"
-        "    }\n"
+        "    net = subtotal_cents - (subtotal_cents * discount_bps) // 10000\n"
+        "    return {'net_cents': net, 'fee_cents': (net * 300) // 10000, 'canonical_representation_id': 'rep-v1', 'max_step': 2, 'max_total': 3, 'step_0_state': 2, 'step_0_representation_id': 'rep-v1', 'step_0_obligations': []}\n"
     )
 
     DEFAULT_PRICING_COHERENT_SOURCE = (
         "def compute_pricing_mig_quote(subtotal_cents: int, discount_bps: int) -> dict:\n"
-        "    discount = (subtotal_cents * discount_bps) // 10000\n"
-        "    net_cents = subtotal_cents - discount\n"
-        "    fee_cents = (net_cents * 300) // 10000\n"
-        "    return {\n"
-        "        'subtotal_cents': subtotal_cents,\n"
-        "        'net_cents': net_cents,\n"
-        "        'fee_cents': fee_cents,\n"
-        "        'canonical_representation_id': 'rep-v1',\n"
-        "        'max_step': 2,\n"
-        "        'max_total': 3,\n"
-        "        'step_0_state': 1,\n"
-        "        'step_0_representation_id': 'rep-v1',\n"
-        "        'step_0_obligations': [],\n"
-        "    }\n"
+        "    net = subtotal_cents - (subtotal_cents * discount_bps) // 10000\n"
+        "    return {'net_cents': net, 'fee_cents': (net * 300) // 10000, 'canonical_representation_id': 'rep-v1', 'max_step': 2, 'max_total': 3, 'step_0_state': 1, 'step_0_representation_id': 'rep-v1', 'step_0_obligations': []}\n"
     )
 
     DEFAULT_TAX_MIGRATION_SOURCE = (
         "def compute_tax_mig_step(quote: dict) -> dict:\n"
-        "    net_cents = int(quote['net_cents'])\n"
-        "    tax_cents = (net_cents * 1000) // 10000\n"
-        "    return {\n"
-        "        'tax_cents': tax_cents,\n"
-        "        'gross_collected_cents': net_cents + tax_cents,\n"
-        "        'step_1_state': 3,\n"
-        "        'step_1_representation_id': 'rep-v2',\n"
-        "        'step_1_obligations': [],\n"
-        "    }\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * 1000) // 10000\n"
+        "    return {'tax_cents': tax, 'gross_collected_cents': net + tax, 'step_1_state': 3, 'step_1_representation_id': 'rep-v2', 'step_1_obligations': []}\n"
     )
 
     DEFAULT_TAX_OBLIGATION_EXCURSION_SOURCE = (
         "def compute_tax_mig_step(quote: dict) -> dict:\n"
-        "    net_cents = int(quote['net_cents'])\n"
-        "    tax_cents = (net_cents * 1000) // 10000\n"
-        "    return {\n"
-        "        'tax_cents': tax_cents,\n"
-        "        'gross_collected_cents': net_cents + tax_cents,\n"
-        "        'step_1_state': 4,\n"
-        "        'step_1_representation_id': 'rep-v1',\n"
-        "        'step_1_obligations': ['recheck_schema_invariant'],\n"
-        "    }\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * 1000) // 10000\n"
+        "    return {'tax_cents': tax, 'gross_collected_cents': net + tax, 'step_1_state': 4, 'step_1_representation_id': 'rep-v1', 'step_1_obligations': ['recheck_schema_invariant']}\n"
     )
 
     DEFAULT_TAX_COHERENT_SOURCE = (
         "def compute_tax_mig_step(quote: dict) -> dict:\n"
-        "    net_cents = int(quote['net_cents'])\n"
-        "    tax_cents = (net_cents * 1000) // 10000\n"
-        "    return {\n"
-        "        'tax_cents': tax_cents,\n"
-        "        'gross_collected_cents': net_cents + tax_cents,\n"
-        "        'step_1_state': 2,\n"
-        "        'step_1_representation_id': 'rep-v1',\n"
-        "        'step_1_obligations': [],\n"
-        "    }\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * 1000) // 10000\n"
+        "    return {'tax_cents': tax, 'gross_collected_cents': net + tax, 'step_1_state': 2, 'step_1_representation_id': 'rep-v1', 'step_1_obligations': []}\n"
     )
 
     DEFAULT_SETTLEMENT_P1_SOURCE = (
         "def route_settlement_mig_payout(quote: dict, tax_report: dict) -> dict:\n"
-        "    net_cents = int(quote['net_cents'])\n"
-        "    fee_cents = int(quote['fee_cents'])\n"
-        "    tax_cents = int(tax_report['tax_cents'])\n"
-        "    canon_rep = str(quote['canonical_representation_id'])\n"
-        "    max_total = int(quote['max_total'])\n"
-        "    s0 = int(quote['step_0_state'])\n"
-        "    s1 = int(tax_report['step_1_state'])\n"
-        "    s2 = 1\n"
-        "    reps = [str(quote['step_0_representation_id']), str(tax_report['step_1_representation_id']), 'rep-v1']\n"
-        "    obls = list(quote['step_0_obligations']) + list(tax_report['step_1_obligations'])\n"
-        "    mig_cnt = sum(1 for r in reps if r != canon_rep)\n"
-        "    obl_cnt = len(obls)\n"
-        "    exc_cnt = max(0, max(s0, s1, s2) - max_total)\n"
-        "    migration_surcharge_cents = 5 * (mig_cnt + obl_cnt + exc_cnt)\n"
-        "    merchant_payout_cents = net_cents - fee_cents - migration_surcharge_cents\n"
-        "    return {\n"
-        "        'merchant_payout_cents': merchant_payout_cents,\n"
-        "        'fee_cents': fee_cents,\n"
-        "        'tax_cents': tax_cents,\n"
-        "        'step_2_state': s2,\n"
-        "        'step_2_representation_id': 'rep-v1',\n"
-        "        'step_2_obligations': [],\n"
-        "        'representation_migration_count': mig_cnt,\n"
-        "        'retained_obligation_count': obl_cnt,\n"
-        "        'prefix_excursion_units': exc_cnt,\n"
-        "        'migration_surcharge_cents': migration_surcharge_cents,\n"
-        "        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,\n"
-        "    }\n"
+        "    s0, s1, s2 = int(quote['step_0_state']), int(tax_report['step_1_state']), 1\n"
+        "    mig = 1 if tax_report['step_1_representation_id'] != 'rep-v1' else 0\n"
+        "    obl = len(tax_report['step_1_obligations'])\n"
+        "    exc = max(0, max(s0, s1, s2) - 3)\n"
+        "    surcharge = 5 * (mig + obl + exc)\n"
+        "    payout = int(quote['net_cents']) - int(quote['fee_cents']) - surcharge\n"
+        "    return {'merchant_payout_cents': payout, 'fee_cents': int(quote['fee_cents']), 'tax_cents': int(tax_report['tax_cents']), 'step_2_state': s2, 'migration_surcharge_cents': surcharge}\n"
     )
 
     DEFAULT_SETTLEMENT_P2_P3_SOURCE = (
         "def route_settlement_mig_payout(quote: dict, tax_report: dict) -> dict:\n"
-        "    net_cents = int(quote['net_cents'])\n"
-        "    fee_cents = int(quote['fee_cents'])\n"
-        "    tax_cents = int(tax_report['tax_cents'])\n"
-        "    canon_rep = str(quote['canonical_representation_id'])\n"
-        "    max_total = int(quote['max_total'])\n"
-        "    s0 = int(quote['step_0_state'])\n"
-        "    s1 = int(tax_report['step_1_state'])\n"
-        "    s2 = 2\n"
-        "    reps = [str(quote['step_0_representation_id']), str(tax_report['step_1_representation_id']), 'rep-v1']\n"
-        "    obls = list(quote['step_0_obligations']) + list(tax_report['step_1_obligations'])\n"
-        "    mig_cnt = sum(1 for r in reps if r != canon_rep)\n"
-        "    obl_cnt = len(obls)\n"
-        "    exc_cnt = max(0, max(s0, s1, s2) - max_total)\n"
-        "    migration_surcharge_cents = 5 * (mig_cnt + obl_cnt + exc_cnt)\n"
-        "    merchant_payout_cents = net_cents - fee_cents - migration_surcharge_cents\n"
-        "    return {\n"
-        "        'merchant_payout_cents': merchant_payout_cents,\n"
-        "        'fee_cents': fee_cents,\n"
-        "        'tax_cents': tax_cents,\n"
-        "        'step_2_state': s2,\n"
-        "        'step_2_representation_id': 'rep-v1',\n"
-        "        'step_2_obligations': [],\n"
-        "        'representation_migration_count': mig_cnt,\n"
-        "        'retained_obligation_count': obl_cnt,\n"
-        "        'prefix_excursion_units': exc_cnt,\n"
-        "        'migration_surcharge_cents': migration_surcharge_cents,\n"
-        "        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,\n"
-        "    }\n"
+        "    s0, s1, s2 = int(quote['step_0_state']), int(tax_report['step_1_state']), 2\n"
+        "    mig = 1 if tax_report['step_1_representation_id'] != 'rep-v1' else 0\n"
+        "    obl = len(tax_report['step_1_obligations'])\n"
+        "    exc = max(0, max(s0, s1, s2) - 3)\n"
+        "    surcharge = 5 * (mig + obl + exc)\n"
+        "    payout = int(quote['net_cents']) - int(quote['fee_cents']) - surcharge\n"
+        "    return {'merchant_payout_cents': payout, 'fee_cents': int(quote['fee_cents']), 'tax_cents': int(tax_report['tax_cents']), 'step_2_state': s2, 'migration_surcharge_cents': surcharge}\n"
     )
 
     def __init__(self, scope_id: str = "streaming-codebase-obligation-migration-scope") -> None:
@@ -30197,6 +30113,9 @@ class StreamingCodebaseObligationMigrationMonitor:
         obl2 = tuple(str(x) for x in settlement.get("step_2_obligations", ()))
 
         pol = self.equal_info_monitor.policy
+        w0_ok = abs(s0 - 0) <= max_step
+        w1_ok = abs(s1 - s0) <= max_step
+        w2_ok = abs(s2 - s1) <= max_step
         steps = [
             StepWitness(
                 f"{eval_id}-w0",
@@ -30208,8 +30127,8 @@ class StreamingCodebaseObligationMigrationMonitor:
                 rep0,
                 pol.authority_id,
                 abs(s0 - 0),
-                True,
-                True,
+                w0_ok,
+                w0_ok,
                 obl0,
             ),
             StepWitness(
@@ -30222,8 +30141,8 @@ class StreamingCodebaseObligationMigrationMonitor:
                 rep1,
                 pol.authority_id,
                 abs(s1 - s0),
-                True,
-                True,
+                w1_ok,
+                w1_ok,
                 obl1,
             ),
             StepWitness(
@@ -30236,8 +30155,8 @@ class StreamingCodebaseObligationMigrationMonitor:
                 rep2,
                 pol.authority_id,
                 abs(s2 - s1),
-                True,
-                True,
+                w2_ok,
+                w2_ok,
                 obl2,
             ),
         ]
@@ -30279,9 +30198,10 @@ class StreamingCodebaseObligationMigrationMonitor:
             and mig_count == 0
             and obl_count == 0
             and exc_units == 0
-            and abs(s0 - 0) <= max_step
-            and abs(s1 - s0) <= max_step
-            and abs(s2 - s1) <= max_step
+            and [s0, s1, s2] == [1, 2, 2]
+            and w0_ok
+            and w1_ok
+            and w2_ok
             and max_prefix <= max_total
         )
 

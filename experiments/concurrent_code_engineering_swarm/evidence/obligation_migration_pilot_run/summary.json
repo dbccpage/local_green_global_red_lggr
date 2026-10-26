@@ -867,7 +867,7 @@
           },
           "escalations": {},
           "api_attempts": 12,
-          "cost_usd": "0.0143421528"
+          "cost_usd": "0.0124196802"
         },
         {
           "arm": "B",
@@ -880,7 +880,7 @@
             0,
             2,
             4,
-            1
+            2
           ],
           "final_step_representations": [
             "rep-v1",
@@ -896,7 +896,7 @@
           "final_migration_surcharge_cents": 10,
           "final_merchant_payout_cents": 863,
           "final_status": "DEFERRED_OBLIGATION_PREFIX_EXCURSION_CODEBASE_LGGR",
-          "final_receipt_sha256": "426341f05f884a4b349c61933a1b2fa3dc98c2b3c6bde31780f10f642618f9e8",
+          "final_receipt_sha256": "d584d3520e407dcebd68ed50109df7431a4b03dded9e8b8f2162fa8003e70c09",
           "final_receipt": {
             "schema": "lggr.online_codebase_obligation_migration.v1",
             "authority_effect": "None",
@@ -989,7 +989,7 @@
                     "retained_obligations": [
                       "recheck_schema_invariant"
                     ],
-                    "lggr_batch_status": "INVALID_WITNESS",
+                    "lggr_batch_status": "OBSTRUCTION_DETECTED",
                     "lggr_stream_contract_status": "OBSTRUCTED_LGGR"
                   },
                   {
@@ -1041,7 +1041,7 @@
                     "retained_obligations": [
                       "recheck_schema_invariant"
                     ],
-                    "lggr_batch_status": "INVALID_WITNESS",
+                    "lggr_batch_status": "OBSTRUCTION_DETECTED",
                     "lggr_stream_contract_status": "OBSTRUCTED_LGGR"
                   },
                   {
@@ -1083,7 +1083,7 @@
                     "lggr_stream_contract_status": "COMPOSABLE_LGGG"
                   }
                 ],
-                "receipt_sha256": "b43329c03c4be0c6478610c4f94fddf9cd39ed66ff5e1f77519cbe1cab7d7ea5"
+                "receipt_sha256": "b8465d08629eb03958b73ee25ecc46f4c7d44fc144e317385b8f275606c96b6d"
               },
               "evaluations": [
                 {
@@ -1300,7 +1300,7 @@
                   }
                 }
               ],
-              "receipt_sha256": "7a1a50e5adb0686620e02073866778a5ca610a6d17316850d6878fe42257cfd7"
+              "receipt_sha256": "da4c304540e68463f61cb321e869e2837b0b30a46e99e8ae7b55c28f9fb9ffb9"
             },
             "fiber_receipt": {
               "schema": "lggr.descent.v1",
@@ -1490,7 +1490,7 @@
                   0,
                   2,
                   4,
-                  1
+                  2
                 ],
                 "step_representations": [
                   "rep-v1",
@@ -1539,9 +1539,9 @@
                   "retained_obligations": [
                     "recheck_schema_invariant"
                   ],
-                  "lggr_batch_status": "INVALID_WITNESS",
+                  "lggr_batch_status": "OBSTRUCTION_DETECTED",
                   "lggr_stream_contract_status": "OBSTRUCTED_LGGR",
-                  "receipt_sha256": "7ba577e741bc6524f1064064632a96900cf1d9215a1e17d909ec0981318b2871"
+                  "receipt_sha256": "7ae05f5eff0b1320ce802e7bd2e3fbfbd2abb6b6968e669cec0cba38d0b10a29"
                 },
                 "equal_info_comparison_receipt": {
                   "evaluation_id": "B-wave-1::equal_info",
@@ -1627,7 +1627,7 @@
                   0,
                   2,
                   4,
-                  1
+                  2
                 ],
                 "step_representations": [
                   "rep-v1",
@@ -1676,9 +1676,9 @@
                   "retained_obligations": [
                     "recheck_schema_invariant"
                   ],
-                  "lggr_batch_status": "INVALID_WITNESS",
+                  "lggr_batch_status": "OBSTRUCTION_DETECTED",
                   "lggr_stream_contract_status": "OBSTRUCTED_LGGR",
-                  "receipt_sha256": "cb10a8e34c13fa51465fd77e35cbe44f4c5d5a3ae499157f078ddb944dfb3961"
+                  "receipt_sha256": "12c86eb5f428416e48e3b3e73bdeba84dc92c5bb6fe929dff5041d70df1736b3"
                 },
                 "equal_info_comparison_receipt": {
                   "evaluation_id": "B-wave-2::equal_info",
@@ -1753,16 +1753,16 @@
                 }
               }
             ],
-            "receipt_sha256": "426341f05f884a4b349c61933a1b2fa3dc98c2b3c6bde31780f10f642618f9e8"
+            "receipt_sha256": "d584d3520e407dcebd68ed50109df7431a4b03dded9e8b8f2162fa8003e70c09"
           },
           "escalations": {},
-          "api_attempts": 14,
-          "cost_usd": "0.0158534000"
+          "api_attempts": 12,
+          "cost_usd": "0.0140197840"
         },
         {
           "arm": "C",
           "status": "completed",
-          "waves_executed": 1,
+          "waves_executed": 2,
           "final_local_green": 1,
           "final_global_green": 1,
           "final_defect": 0,
@@ -1770,7 +1770,7 @@
             0,
             1,
             2,
-            1
+            2
           ],
           "final_step_representations": [
             "rep-v1",
@@ -1784,15 +1784,15 @@
           "final_migration_surcharge_cents": 0,
           "final_merchant_payout_cents": 873,
           "final_status": "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG",
-          "final_receipt_sha256": "1da4a1802aff019ac6a550af65192ddb47605216d2a813fe585da377b4c4c8e0",
+          "final_receipt_sha256": "248fd5f24cfe8ebde9c9d30e475190c75bfc99390ee0e5996069e090f3be2548",
           "final_receipt": {
             "schema": "lggr.online_codebase_obligation_migration.v1",
             "authority_effect": "None",
             "scope_id": "obligation-migration-seed-11600-arm-C",
             "status": "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG",
             "contract_status": "COMPOSABLE_LGGG",
-            "evaluation_count": 2,
-            "lggr_obstruction_count": 1,
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 2,
             "lggg_coherent_count": 1,
             "equal_info_migration_obligation_receipt": {
               "schema": "lggr.online_equal_info_migration_obligation.v1",
@@ -1800,21 +1800,21 @@
               "scope_id": "obligation-migration-seed-11600-arm-C:equal-info",
               "status": "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG",
               "contract_status": "COMPOSABLE_LGGG",
-              "evaluation_count": 2,
-              "phase_1_migration_false_acceptance_count": 2,
-              "phase_2_obligation_false_acceptance_count": 2,
-              "phase_3_equal_info_coherent_count": 2,
+              "evaluation_count": 3,
+              "phase_1_migration_false_acceptance_count": 3,
+              "phase_2_obligation_false_acceptance_count": 3,
+              "phase_3_equal_info_coherent_count": 3,
               "conventional_checker_soundness_rate": "0",
               "lggr_equal_info_soundness_rate": "1",
               "equal_info_soundness_gain": "1",
               "baseline_comparator_receipt": {
                 "schema": "lggr.online_baseline_comparison_summary.v1",
                 "authority_effect": "None",
-                "traces_evaluated": 8,
-                "conventional_false_acceptances": 5,
+                "traces_evaluated": 12,
+                "conventional_false_acceptances": 7,
                 "conventional_false_refusals": 0,
-                "faults_localized_online": 5,
-                "traces_with_retained_obligations": 2,
+                "faults_localized_online": 7,
+                "traces_with_retained_obligations": 3,
                 "comparisons": [
                   {
                     "trace_id": "C-wave-0::trace",
@@ -1915,9 +1915,59 @@
                     "retained_obligations": [],
                     "lggr_batch_status": "COMPOSITION_VERIFIED",
                     "lggr_stream_contract_status": "COMPOSABLE_LGGG"
+                  },
+                  {
+                    "trace_id": "C-wave-2::trace",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": true,
+                    "conventional_false_acceptance": false,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": null,
+                    "retained_obligations": [],
+                    "lggr_batch_status": "COMPOSITION_VERIFIED",
+                    "lggr_stream_contract_status": "COMPOSABLE_LGGG"
+                  },
+                  {
+                    "trace_id": "C-wave-2::equal_info::phase_1_migration",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": false,
+                    "conventional_false_acceptance": true,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": 1,
+                    "retained_obligations": [],
+                    "lggr_batch_status": "UNSUPPORTED",
+                    "lggr_stream_contract_status": "OBSTRUCTED_LGGR"
+                  },
+                  {
+                    "trace_id": "C-wave-2::equal_info::phase_2_obligation",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": false,
+                    "conventional_false_acceptance": true,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": 1,
+                    "retained_obligations": [
+                      "recheck_schema_invariant"
+                    ],
+                    "lggr_batch_status": "OBSTRUCTION_DETECTED",
+                    "lggr_stream_contract_status": "OBSTRUCTED_LGGR"
+                  },
+                  {
+                    "trace_id": "C-wave-2::equal_info::phase_3_coherent",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": true,
+                    "conventional_false_acceptance": false,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": null,
+                    "retained_obligations": [],
+                    "lggr_batch_status": "COMPOSITION_VERIFIED",
+                    "lggr_stream_contract_status": "COMPOSABLE_LGGG"
                   }
                 ],
-                "receipt_sha256": "2c2c097778be2c70e71619b51cf2c44708cb8fdfa0feea6ed9a5103124455b38"
+                "receipt_sha256": "3e41a3ceb743ad4ffd694cac6a5542e76fdb7891fe8505464b76adebcb00c5ef"
               },
               "evaluations": [
                 {
@@ -2061,19 +2111,106 @@
                     "lggr_stream_contract_status": "COMPOSABLE_LGGG",
                     "receipt_sha256": "7bde35e588b7314cac36546009bd7d57b70f653d1fa8d7907d33a12192ab5b47"
                   }
+                },
+                {
+                  "evaluation_id": "C-wave-2::equal_info",
+                  "phase_1_first_fault_step": 1,
+                  "phase_2_first_fault_step": 1,
+                  "phase_2_retained_obligations": [
+                    "recheck_schema_invariant"
+                  ],
+                  "phase_3_first_fault_step": null,
+                  "phase_1_local_green": 1,
+                  "phase_1_global_green": 0,
+                  "phase_1_defect": -1,
+                  "phase_1_status": "UNCERTIFIED_REPRESENTATION_MIGRATION_FALSE_ACCEPT_LGGR",
+                  "phase_2_local_green": 1,
+                  "phase_2_global_green": 0,
+                  "phase_2_defect": -1,
+                  "phase_2_status": "DEFERRED_OBLIGATION_PREFIX_EXCURSION_FALSE_ACCEPT_LGGR",
+                  "phase_3_local_green": 1,
+                  "phase_3_global_green": 1,
+                  "phase_3_defect": 0,
+                  "phase_3_status": "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG",
+                  "phase_1_comparison": {
+                    "schema": "lggr.online_baseline_comparison.v1",
+                    "authority_effect": "None",
+                    "status": "CONVENTIONAL_FALSE_ACCEPTANCE",
+                    "trace_id": "C-wave-2::equal_info::phase_1_migration",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": false,
+                    "conventional_false_acceptance": true,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": 1,
+                    "retained_obligations": [],
+                    "lggr_batch_status": "UNSUPPORTED",
+                    "lggr_stream_contract_status": "OBSTRUCTED_LGGR",
+                    "receipt_sha256": "7dae7cd3cce554e4c1af891a7d37e9da0adc22b651b347b312ee98407dff4b16"
+                  },
+                  "phase_2_comparison": {
+                    "schema": "lggr.online_baseline_comparison.v1",
+                    "authority_effect": "None",
+                    "status": "CONVENTIONAL_FALSE_ACCEPTANCE",
+                    "trace_id": "C-wave-2::equal_info::phase_2_obligation",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": false,
+                    "conventional_false_acceptance": true,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": 1,
+                    "retained_obligations": [
+                      "recheck_schema_invariant"
+                    ],
+                    "lggr_batch_status": "OBSTRUCTION_DETECTED",
+                    "lggr_stream_contract_status": "OBSTRUCTED_LGGR",
+                    "receipt_sha256": "4e9c6fd73d9891ab164b02a46c2cc1cd172880c9358bdd30d60fee8d3f91c79e"
+                  },
+                  "phase_3_comparison": {
+                    "schema": "lggr.online_baseline_comparison.v1",
+                    "authority_effect": "None",
+                    "status": "AGREEMENT_VERIFIED",
+                    "trace_id": "C-wave-2::equal_info::phase_3_coherent",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": true,
+                    "conventional_false_acceptance": false,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": null,
+                    "retained_obligations": [],
+                    "lggr_batch_status": "COMPOSITION_VERIFIED",
+                    "lggr_stream_contract_status": "COMPOSABLE_LGGG",
+                    "receipt_sha256": "f47bfeba0b44c847a4bdf7a39197dfb5a6d05c95ada0eb0c675e91c86ce38e7e"
+                  }
                 }
               ],
-              "receipt_sha256": "53006afcd6b195ff860a1d45c918abbf53376c8f10e9398dc48a2de9ff645e5a"
+              "receipt_sha256": "571269b8d8f9b97a7c650a5334f0ba748f6962d001796eade9841751a6bcc92c"
             },
             "fiber_receipt": {
-              "schema": "lggr.descent.v1",
+              "schema": "lggr.online_collision.v1",
               "authority_effect": "None",
               "scope_id": "obligation-migration-seed-11600-arm-C:fiber",
-              "carrier_size": 2,
-              "status": "DECODER_VERIFIED",
-              "contract_status": "COMPOSABLE_LGGG",
-              "decoder": [
-                {
+              "carrier_size": 3,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-1",
+                  "report": {
+                    "conventional_accepts": true,
+                    "local_green": 1,
+                    "prefix_excursion_units": 0,
+                    "representation_migration_count": 0,
+                    "retained_obligation_count": 0
+                  },
+                  "query": {
+                    "global_green": 0,
+                    "settlement_conserved": true,
+                    "status": "DEFERRED_OBLIGATION_PREFIX_EXCURSION_CODEBASE_LGGR"
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-2",
                   "report": {
                     "conventional_accepts": true,
                     "local_green": 1,
@@ -2086,25 +2223,11 @@
                     "settlement_conserved": true,
                     "status": "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG"
                   }
-                },
-                {
-                  "report": {
-                    "conventional_accepts": true,
-                    "local_green": 1,
-                    "prefix_excursion_units": 0,
-                    "representation_migration_count": 1,
-                    "retained_obligation_count": 0
-                  },
-                  "query": {
-                    "global_green": 0,
-                    "settlement_conserved": false,
-                    "status": "UNCERTIFIED_REPRESENTATION_MIGRATION_CODEBASE_LGGR"
-                  }
                 }
-              ],
-              "input_sha256": "5adb6ea4c1e58d41989c4ac14048e5ec9f644358246146255c886c81c53dee27",
-              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
-              "receipt_sha256": "1f738cfd2b9e57e8a0e6a808eb38eb68e44b4d8c52659f668ab42122d18d6a43"
+              },
+              "input_sha256": "5ba96acd634500efeb645de12a12725723af981f1a1c07f5f853f3b83f1399e4",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "a9ae73d1a1c983b6756529aff08ebc7df9c182d36d91fd6c1a08bad747ddac70"
             },
             "three_phase_audits": [],
             "evaluations": [
@@ -2245,10 +2368,10 @@
                 "evaluation_id": "C-wave-1",
                 "model_id": "deterministic",
                 "local_green": 1,
-                "global_green": 1,
-                "defect": 0,
-                "status": "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG",
-                "contract_status": "COMPOSABLE_LGGG",
+                "global_green": 0,
+                "defect": -1,
+                "status": "DEFERRED_OBLIGATION_PREFIX_EXCURSION_CODEBASE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
                 "trajectory_states": [
                   0,
                   1,
@@ -2279,9 +2402,9 @@
                 "settlement_conserved": true,
                 "mismatches": [],
                 "compact_role_directives": {
-                  "worker-0": "HOLD:pricing_mig_step_0_verified",
-                  "worker-1": "HOLD:tax_mig_step_1_verified",
-                  "worker-2": "HOLD:settlement_mig_payout_verified"
+                  "worker-0": "REPAIR_PRICING_MIG:set step_0_state=1, step_0_representation_id='rep-v1', step_0_obligations=[]",
+                  "worker-1": "REPAIR_TAX_MIG:discharge step_1_obligations=[] and bound step_1_state=2 <= max_total=3 under step_1_representation_id='rep-v1'",
+                  "worker-2": "REPAIR_SETTLEMENT_MIG:set step_2_state=2 and migration_surcharge_cents=0 so merchant_payout_cents=873"
                 },
                 "trace_comparison_receipt": {
                   "schema": "lggr.online_baseline_comparison.v1",
@@ -2370,13 +2493,143 @@
                     "receipt_sha256": "7bde35e588b7314cac36546009bd7d57b70f653d1fa8d7907d33a12192ab5b47"
                   }
                 }
+              },
+              {
+                "evaluation_id": "C-wave-2",
+                "model_id": "deterministic",
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "trajectory_states": [
+                  0,
+                  1,
+                  2,
+                  2
+                ],
+                "step_representations": [
+                  "rep-v1",
+                  "rep-v1",
+                  "rep-v1"
+                ],
+                "retained_obligations": [],
+                "representation_migration_count": 0,
+                "retained_obligation_count": 0,
+                "max_prefix_state": 2,
+                "prefix_excursion_units": 0,
+                "conventional_accepts": true,
+                "lggr_accepts": true,
+                "conventional_false_acceptance": false,
+                "first_fault_step_index": null,
+                "migration_surcharge_cents": 0,
+                "net_cents": 900,
+                "fee_cents": 27,
+                "tax_cents": 90,
+                "gross_collected_cents": 990,
+                "merchant_payout_cents": 873,
+                "total_accounted_cents": 990,
+                "settlement_conserved": true,
+                "mismatches": [],
+                "compact_role_directives": {
+                  "worker-0": "HOLD:pricing_mig_step_0_verified",
+                  "worker-1": "HOLD:tax_mig_step_1_verified",
+                  "worker-2": "HOLD:settlement_mig_payout_verified"
+                },
+                "trace_comparison_receipt": {
+                  "schema": "lggr.online_baseline_comparison.v1",
+                  "authority_effect": "None",
+                  "status": "AGREEMENT_VERIFIED",
+                  "trace_id": "C-wave-2::trace",
+                  "steps_count": 3,
+                  "conventional_accepts": true,
+                  "lggr_accepts": true,
+                  "conventional_false_acceptance": false,
+                  "conventional_false_refusal": false,
+                  "first_fault_step_index": null,
+                  "retained_obligations": [],
+                  "lggr_batch_status": "COMPOSITION_VERIFIED",
+                  "lggr_stream_contract_status": "COMPOSABLE_LGGG",
+                  "receipt_sha256": "eacc42dc587c4e97a627c8f019c0c040df78a9e65e7abdc75e02fc07aaf3dcd2"
+                },
+                "equal_info_comparison_receipt": {
+                  "evaluation_id": "C-wave-2::equal_info",
+                  "phase_1_first_fault_step": 1,
+                  "phase_2_first_fault_step": 1,
+                  "phase_2_retained_obligations": [
+                    "recheck_schema_invariant"
+                  ],
+                  "phase_3_first_fault_step": null,
+                  "phase_1_local_green": 1,
+                  "phase_1_global_green": 0,
+                  "phase_1_defect": -1,
+                  "phase_1_status": "UNCERTIFIED_REPRESENTATION_MIGRATION_FALSE_ACCEPT_LGGR",
+                  "phase_2_local_green": 1,
+                  "phase_2_global_green": 0,
+                  "phase_2_defect": -1,
+                  "phase_2_status": "DEFERRED_OBLIGATION_PREFIX_EXCURSION_FALSE_ACCEPT_LGGR",
+                  "phase_3_local_green": 1,
+                  "phase_3_global_green": 1,
+                  "phase_3_defect": 0,
+                  "phase_3_status": "EQUAL_INFO_MIGRATION_OBLIGATION_AUDIT_COHERENT_LGGG",
+                  "phase_1_comparison": {
+                    "schema": "lggr.online_baseline_comparison.v1",
+                    "authority_effect": "None",
+                    "status": "CONVENTIONAL_FALSE_ACCEPTANCE",
+                    "trace_id": "C-wave-2::equal_info::phase_1_migration",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": false,
+                    "conventional_false_acceptance": true,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": 1,
+                    "retained_obligations": [],
+                    "lggr_batch_status": "UNSUPPORTED",
+                    "lggr_stream_contract_status": "OBSTRUCTED_LGGR",
+                    "receipt_sha256": "7dae7cd3cce554e4c1af891a7d37e9da0adc22b651b347b312ee98407dff4b16"
+                  },
+                  "phase_2_comparison": {
+                    "schema": "lggr.online_baseline_comparison.v1",
+                    "authority_effect": "None",
+                    "status": "CONVENTIONAL_FALSE_ACCEPTANCE",
+                    "trace_id": "C-wave-2::equal_info::phase_2_obligation",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": false,
+                    "conventional_false_acceptance": true,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": 1,
+                    "retained_obligations": [
+                      "recheck_schema_invariant"
+                    ],
+                    "lggr_batch_status": "OBSTRUCTION_DETECTED",
+                    "lggr_stream_contract_status": "OBSTRUCTED_LGGR",
+                    "receipt_sha256": "4e9c6fd73d9891ab164b02a46c2cc1cd172880c9358bdd30d60fee8d3f91c79e"
+                  },
+                  "phase_3_comparison": {
+                    "schema": "lggr.online_baseline_comparison.v1",
+                    "authority_effect": "None",
+                    "status": "AGREEMENT_VERIFIED",
+                    "trace_id": "C-wave-2::equal_info::phase_3_coherent",
+                    "steps_count": 3,
+                    "conventional_accepts": true,
+                    "lggr_accepts": true,
+                    "conventional_false_acceptance": false,
+                    "conventional_false_refusal": false,
+                    "first_fault_step_index": null,
+                    "retained_obligations": [],
+                    "lggr_batch_status": "COMPOSITION_VERIFIED",
+                    "lggr_stream_contract_status": "COMPOSABLE_LGGG",
+                    "receipt_sha256": "f47bfeba0b44c847a4bdf7a39197dfb5a6d05c95ada0eb0c675e91c86ce38e7e"
+                  }
+                }
               }
             ],
-            "receipt_sha256": "1da4a1802aff019ac6a550af65192ddb47605216d2a813fe585da377b4c4c8e0"
+            "receipt_sha256": "248fd5f24cfe8ebde9c9d30e475190c75bfc99390ee0e5996069e090f3be2548"
           },
           "escalations": {},
-          "api_attempts": 6,
-          "cost_usd": "0.0074447336"
+          "api_attempts": 12,
+          "cost_usd": "0.0145855544"
         }
       ]
     },
@@ -2990,11 +3243,11 @@
           },
           "escalations": {
             "worker-0": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. Escalate to human architecture review.",
-            "worker-1": "Legacy representation-migration hardware lock: `tax_mig.py` is locked in read-only ROM with `step_1_representation_id = 'rep-v2'` and `step_1_state = 3`, while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. The module cannot be modified to satisfy the merge gate requirements due to ROM lock constraints. This is a fundamental hardware-level architecture conflict that requires human review to resolve the incompatibility between the locked ROM state and the merge gate specification.",
-            "worker-2": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. This is an infeasible constraint that requires human architecture review."
+            "worker-1": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. The module is locked and cannot be modified to satisfy the conflicting requirements. Escalate to human architecture review.",
+            "worker-2": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. Escalate to human architecture review."
           },
           "api_attempts": 6,
-          "cost_usd": "0.0074211723"
+          "cost_usd": "0.0060932262"
         },
         {
           "arm": "B",
@@ -3601,12 +3854,12 @@
             "receipt_sha256": "07753e0d8210a1557cc78db96df3923f824a16b90ac46214d5a756fa0fe12dd9"
           },
           "escalations": {
-            "worker-0": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. Escalate to human architecture review.",
-            "worker-1": "Legacy representation-migration hardware lock: `tax_mig.py` is locked in read-only ROM with `step_1_representation_id = 'rep-v2'` and `step_1_state = 3`, while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. The module cannot be modified to satisfy the merge gate requirements due to ROM lock constraints. This is a fundamental hardware-level architecture conflict that requires human review to resolve the incompatibility between the locked ROM state and the merge gate specification.",
+            "worker-0": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges.",
+            "worker-1": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. The module is locked and cannot be modified to satisfy the conflicting requirements. Escalate to human architecture review.",
             "worker-2": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. Escalate to human architecture review."
           },
           "api_attempts": 6,
-          "cost_usd": "0.0074129427"
+          "cost_usd": "0.0060884262"
         },
         {
           "arm": "C",
@@ -4213,18 +4466,19 @@
             "receipt_sha256": "48de7563eb0749568edfefd8549209fd91236a1a3d6f8104c653f675178ec4e1"
           },
           "escalations": {
-            "worker-0": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges.",
+            "worker-0": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. Escalate to human architecture review.",
+            "worker-1": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. The module is locked and cannot be modified to satisfy the conflicting requirement of changing `step_1_representation_id` from `'rep-v2'` to `'rep-v1'`. This requires human architecture review to resolve the ROM lock or reconcile the merge gate specification.",
             "worker-2": "Legacy representation-migration hardware lock: `tax_mig.py` and `settlement_mig.py` are locked in read-only ROM (`step_1_representation_id = 'rep-v2'` and `step_2_state = 1`), while the LGGR equal-information merge gate requires uniform representation `'rep-v1'`, zero retained deferred obligations, and every-prefix bound `max_prefix <= 3` without migration surcharges. Escalate to human architecture review."
           },
           "api_attempts": 6,
-          "cost_usd": "0.0079289570"
+          "cost_usd": "0.0062832262"
         }
       ]
     }
   ],
-  "api_attempts": 50,
-  "charged_or_reserved_usd": "0.0604033584",
+  "api_attempts": 54,
+  "charged_or_reserved_usd": "0.0594898972",
   "max_inflight_requests": 3,
-  "concurrent_waves": 16,
+  "concurrent_waves": 18,
   "scope": "Concurrent 3-agent equal-information representation migration & deferred-obligation Python code-engineering swarm (`pricing_mig` -> `tax_mig` -> `settlement_mig`) comparing uncertified representation migration on `0 -> 2 -> 3 -> 1` (A), retained deferred obligation with intermediate prefix excursion on `0 -> 2 -> 4 -> 2` (B), and representation-stable, obligation-cleared, prefix-bounded trajectory `0 -> 1 -> 2 -> 2` (C) with full cryptographic receipts."
 }

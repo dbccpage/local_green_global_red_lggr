@@ -7018,141 +7018,57 @@ OBLIGATION_MIGRATION_WORKER_MODULES: dict[str, str] = {
 
 INITIAL_PRICING_MIG_P1_P2_PY = """\
 def compute_pricing_mig_quote(subtotal_cents: int, discount_bps: int) -> dict:
-    discount = (subtotal_cents * discount_bps) // 10000
-    net_cents = subtotal_cents - discount
-    fee_cents = (net_cents * 300) // 10000
-    return {
-        'subtotal_cents': subtotal_cents,
-        'net_cents': net_cents,
-        'fee_cents': fee_cents,
-        'canonical_representation_id': 'rep-v1',
-        'max_step': 2,
-        'max_total': 3,
-        'step_0_state': 2,
-        'step_0_representation_id': 'rep-v1',
-        'step_0_obligations': [],
-    }
+    net = subtotal_cents - (subtotal_cents * discount_bps) // 10000
+    return {'net_cents': net, 'fee_cents': (net * 300) // 10000, 'canonical_representation_id': 'rep-v1', 'max_step': 2, 'max_total': 3, 'step_0_state': 2, 'step_0_representation_id': 'rep-v1', 'step_0_obligations': []}
 """
 
 REPAIRED_PRICING_MIG_COHERENT_PY = """\
 def compute_pricing_mig_quote(subtotal_cents: int, discount_bps: int) -> dict:
-    discount = (subtotal_cents * discount_bps) // 10000
-    net_cents = subtotal_cents - discount
-    fee_cents = (net_cents * 300) // 10000
-    return {
-        'subtotal_cents': subtotal_cents,
-        'net_cents': net_cents,
-        'fee_cents': fee_cents,
-        'canonical_representation_id': 'rep-v1',
-        'max_step': 2,
-        'max_total': 3,
-        'step_0_state': 1,
-        'step_0_representation_id': 'rep-v1',
-        'step_0_obligations': [],
-    }
+    net = subtotal_cents - (subtotal_cents * discount_bps) // 10000
+    return {'net_cents': net, 'fee_cents': (net * 300) // 10000, 'canonical_representation_id': 'rep-v1', 'max_step': 2, 'max_total': 3, 'step_0_state': 1, 'step_0_representation_id': 'rep-v1', 'step_0_obligations': []}
 """
 
 INITIAL_TAX_MIG_MIGRATION_PY = """\
 def compute_tax_mig_step(quote: dict) -> dict:
-    net_cents = int(quote['net_cents'])
-    tax_cents = (net_cents * 1000) // 10000
-    return {
-        'tax_cents': tax_cents,
-        'gross_collected_cents': net_cents + tax_cents,
-        'step_1_state': 3,
-        'step_1_representation_id': 'rep-v2',
-        'step_1_obligations': [],
-    }
+    net = int(quote['net_cents'])
+    tax = (net * 1000) // 10000
+    return {'tax_cents': tax, 'gross_collected_cents': net + tax, 'step_1_state': 3, 'step_1_representation_id': 'rep-v2', 'step_1_obligations': []}
 """
 
 REPAIRED_TAX_MIG_OBLIGATION_EXCURSION_PY = """\
 def compute_tax_mig_step(quote: dict) -> dict:
-    net_cents = int(quote['net_cents'])
-    tax_cents = (net_cents * 1000) // 10000
-    return {
-        'tax_cents': tax_cents,
-        'gross_collected_cents': net_cents + tax_cents,
-        'step_1_state': 4,
-        'step_1_representation_id': 'rep-v1',
-        'step_1_obligations': ['recheck_schema_invariant'],
-    }
+    net = int(quote['net_cents'])
+    tax = (net * 1000) // 10000
+    return {'tax_cents': tax, 'gross_collected_cents': net + tax, 'step_1_state': 4, 'step_1_representation_id': 'rep-v1', 'step_1_obligations': ['recheck_schema_invariant']}
 """
 
 REPAIRED_TAX_MIG_COHERENT_PY = """\
 def compute_tax_mig_step(quote: dict) -> dict:
-    net_cents = int(quote['net_cents'])
-    tax_cents = (net_cents * 1000) // 10000
-    return {
-        'tax_cents': tax_cents,
-        'gross_collected_cents': net_cents + tax_cents,
-        'step_1_state': 2,
-        'step_1_representation_id': 'rep-v1',
-        'step_1_obligations': [],
-    }
+    net = int(quote['net_cents'])
+    tax = (net * 1000) // 10000
+    return {'tax_cents': tax, 'gross_collected_cents': net + tax, 'step_1_state': 2, 'step_1_representation_id': 'rep-v1', 'step_1_obligations': []}
 """
 
 INITIAL_SETTLEMENT_MIG_P1_PY = """\
 def route_settlement_mig_payout(quote: dict, tax_report: dict) -> dict:
-    net_cents = int(quote['net_cents'])
-    fee_cents = int(quote['fee_cents'])
-    tax_cents = int(tax_report['tax_cents'])
-    canon_rep = str(quote['canonical_representation_id'])
-    max_total = int(quote['max_total'])
-    s0 = int(quote['step_0_state'])
-    s1 = int(tax_report['step_1_state'])
-    s2 = 1
-    reps = [str(quote['step_0_representation_id']), str(tax_report['step_1_representation_id']), 'rep-v1']
-    obls = list(quote['step_0_obligations']) + list(tax_report['step_1_obligations'])
-    mig_cnt = sum(1 for r in reps if r != canon_rep)
-    obl_cnt = len(obls)
-    exc_cnt = max(0, max(s0, s1, s2) - max_total)
-    migration_surcharge_cents = 5 * (mig_cnt + obl_cnt + exc_cnt)
-    merchant_payout_cents = net_cents - fee_cents - migration_surcharge_cents
-    return {
-        'merchant_payout_cents': merchant_payout_cents,
-        'fee_cents': fee_cents,
-        'tax_cents': tax_cents,
-        'step_2_state': s2,
-        'step_2_representation_id': 'rep-v1',
-        'step_2_obligations': [],
-        'representation_migration_count': mig_cnt,
-        'retained_obligation_count': obl_cnt,
-        'prefix_excursion_units': exc_cnt,
-        'migration_surcharge_cents': migration_surcharge_cents,
-        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,
-    }
+    s0, s1, s2 = int(quote['step_0_state']), int(tax_report['step_1_state']), 1
+    mig = 1 if tax_report['step_1_representation_id'] != 'rep-v1' else 0
+    obl = len(tax_report['step_1_obligations'])
+    exc = max(0, max(s0, s1, s2) - 3)
+    surcharge = 5 * (mig + obl + exc)
+    payout = int(quote['net_cents']) - int(quote['fee_cents']) - surcharge
+    return {'merchant_payout_cents': payout, 'fee_cents': int(quote['fee_cents']), 'tax_cents': int(tax_report['tax_cents']), 'step_2_state': s2, 'migration_surcharge_cents': surcharge}
 """
 
 REPAIRED_SETTLEMENT_MIG_COHERENT_PY = """\
 def route_settlement_mig_payout(quote: dict, tax_report: dict) -> dict:
-    net_cents = int(quote['net_cents'])
-    fee_cents = int(quote['fee_cents'])
-    tax_cents = int(tax_report['tax_cents'])
-    canon_rep = str(quote['canonical_representation_id'])
-    max_total = int(quote['max_total'])
-    s0 = int(quote['step_0_state'])
-    s1 = int(tax_report['step_1_state'])
-    s2 = 2
-    reps = [str(quote['step_0_representation_id']), str(tax_report['step_1_representation_id']), 'rep-v1']
-    obls = list(quote['step_0_obligations']) + list(tax_report['step_1_obligations'])
-    mig_cnt = sum(1 for r in reps if r != canon_rep)
-    obl_cnt = len(obls)
-    exc_cnt = max(0, max(s0, s1, s2) - max_total)
-    migration_surcharge_cents = 5 * (mig_cnt + obl_cnt + exc_cnt)
-    merchant_payout_cents = net_cents - fee_cents - migration_surcharge_cents
-    return {
-        'merchant_payout_cents': merchant_payout_cents,
-        'fee_cents': fee_cents,
-        'tax_cents': tax_cents,
-        'step_2_state': s2,
-        'step_2_representation_id': 'rep-v1',
-        'step_2_obligations': [],
-        'representation_migration_count': mig_cnt,
-        'retained_obligation_count': obl_cnt,
-        'prefix_excursion_units': exc_cnt,
-        'migration_surcharge_cents': migration_surcharge_cents,
-        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,
-    }
+    s0, s1, s2 = int(quote['step_0_state']), int(tax_report['step_1_state']), 2
+    mig = 1 if tax_report['step_1_representation_id'] != 'rep-v1' else 0
+    obl = len(tax_report['step_1_obligations'])
+    exc = max(0, max(s0, s1, s2) - 3)
+    surcharge = 5 * (mig + obl + exc)
+    payout = int(quote['net_cents']) - int(quote['fee_cents']) - surcharge
+    return {'merchant_payout_cents': payout, 'fee_cents': int(quote['fee_cents']), 'tax_cents': int(tax_report['tax_cents']), 'step_2_state': s2, 'migration_surcharge_cents': surcharge}
 """
 
 

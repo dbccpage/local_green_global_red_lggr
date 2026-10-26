@@ -5207,6 +5207,11 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             replayed = replay(mig_events)
             self.assertEqual(replayed["schema"], "lggr.obligation_migration_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
+            seed_11600_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_11600_arms["A"]["final_trajectory_states"], [0, 2, 3, 1])
+            self.assertEqual(seed_11600_arms["B"]["final_trajectory_states"], [0, 2, 4, 2])
+            self.assertEqual(seed_11600_arms["C"]["final_trajectory_states"], [0, 1, 2, 2])
+            self.assertEqual(seed_11600_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":
