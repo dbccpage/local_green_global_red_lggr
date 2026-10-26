@@ -1,0 +1,234 @@
+{
+  "schema": "lggr.lease_overlap_code_engineering_swarm.v1",
+  "topology": "lease",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 10500,
+      "kind": "repairable_lease_overlap_seed_10500",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_lease_windows": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "final_fencing_tokens": [
+            1,
+            1,
+            1
+          ],
+          "final_max_concurrent_leases": 3,
+          "final_peak_concurrent_drift": 11,
+          "final_split_brain_reserve_cents": 10,
+          "final_status": "LEASE_OVERLAP_SPLIT_BRAIN_NGD_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 7,
+          "cost_usd": "0.0055991313"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_lease_windows": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          "final_fencing_tokens": [
+            1,
+            2,
+            2
+          ],
+          "final_max_concurrent_leases": 2,
+          "final_peak_concurrent_drift": 7,
+          "final_split_brain_reserve_cents": 10,
+          "final_status": "LEASE_PARTIAL_FENCING_COLLISION_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0052557898"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_lease_windows": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ]
+          ],
+          "final_fencing_tokens": [
+            1,
+            2,
+            3
+          ],
+          "final_max_concurrent_leases": 1,
+          "final_peak_concurrent_drift": 4,
+          "final_split_brain_reserve_cents": 0,
+          "final_status": "CODEBASE_LEASE_FENCING_SERIALIZED_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0057020262"
+        }
+      ]
+    },
+    {
+      "seed": 10502,
+      "kind": "infeasible_lease_overlap_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_lease_windows": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "final_fencing_tokens": [
+            1,
+            1,
+            1
+          ],
+          "final_max_concurrent_leases": 3,
+          "final_peak_concurrent_drift": 11,
+          "final_split_brain_reserve_cents": 10,
+          "final_status": "INFEASIBLE_LEASE_OVERLAP_LOCK",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0056193972"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_lease_windows": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "final_fencing_tokens": [
+            1,
+            1,
+            1
+          ],
+          "final_max_concurrent_leases": 3,
+          "final_peak_concurrent_drift": 11,
+          "final_split_brain_reserve_cents": 10,
+          "final_status": "INFEASIBLE_LEASE_OVERLAP_LOCK",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 7,
+          "cost_usd": "0.0068583978"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_lease_windows": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "final_fencing_tokens": [
+            1,
+            1,
+            1
+          ],
+          "final_max_concurrent_leases": 3,
+          "final_peak_concurrent_drift": 11,
+          "final_split_brain_reserve_cents": 10,
+          "final_status": "INFEASIBLE_LEASE_OVERLAP_LOCK",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0056807354"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 38,
+  "charged_or_reserved_usd": "0.0347154777",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 12,
+  "scope": "Concurrent 3-agent lease-overlap Python code-engineering swarm (`pricing_lease` -> `tax_lease` -> `settlement_lease`) comparing isolated lease-duration gating (A), partial tax lease serialization under concurrent settlement overlap (B), and explicit LGGR fencing-token & disjoint lease serialization directives (C) with full cryptographic receipts retained in the host audit log."
+}

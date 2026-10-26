@@ -52,6 +52,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     KINDUCTION_SETTLEMENT_SOUND_SOURCE,
     KINDUCTION_TAX_FRACTIONAL_SOURCE,
     KINDUCTION_TAX_SOUND_SOURCE,
+    LEASE_PRICING_SOURCE,
+    LEASE_SETTLEMENT_OVERLAP_SOURCE,
+    LEASE_SETTLEMENT_SERIALIZED_SOURCE,
+    LEASE_TAX_OVERLAP_SOURCE,
+    LEASE_TAX_SERIALIZED_SOURCE,
     QUORUM_PRICING_SOURCE,
     QUORUM_SETTLEMENT_QUORUM_SOURCE,
     QUORUM_SETTLEMENT_STRICT_SOURCE,
@@ -65,6 +70,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     DiamondCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
+    LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
@@ -79,6 +85,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     fixture,
     jacobian_fixture,
     kinduction_fixture,
+    lease_fixture,
     mv_fixture,
     quorum_fixture,
     regge_fixture,
@@ -89,6 +96,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_diamond_local_unit_tests,
     run_jacobian_local_unit_tests,
     run_kinduction_local_unit_tests,
+    run_lease_local_unit_tests,
     run_local_unit_tests,
     run_mv_local_unit_tests,
     run_quorum_local_unit_tests,
@@ -109,6 +117,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     diamond_campaign,
     jacobian_campaign,
     kinduction_campaign,
+    lease_campaign,
     mv_campaign,
     quorum_campaign,
     regge_campaign,
@@ -126,6 +135,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
+    StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
@@ -2353,6 +2363,212 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if quorum_events.exists() and quorum_summary.exists():
             replayed = replay(quorum_events)
             self.assertEqual(replayed["schema"], "lggr.boundary_quorum_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_lease_initial_fixture_is_local_green_global_red(self) -> None:
+        state = lease_fixture(10500)
+        ws = LeaseOverlapCodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_lease": True, "tax_lease": True, "settlement_lease": True},
+        )
+        mon = StreamingCodebaseLeaseOverlapMonitor(scope_id="unit-lease-init")
+        rec1 = mon.evaluate_codebase_lease(
+            "eval-lease-p1",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec1["local_green"], 1)
+        self.assertEqual(rec1["global_green"], 0)
+        self.assertEqual(rec1["defect"], -1)
+        self.assertEqual(rec1["lease_windows"], [[0, 1], [0, 3], [0, 3]])
+        self.assertEqual(rec1["fencing_tokens"], [1, 1, 1])
+        self.assertEqual(rec1["peak_concurrent_drift"], 11)
+        self.assertEqual(rec1["status"], "LEASE_OVERLAP_SPLIT_BRAIN_NGD_LGGR")
+
+        # Phase 2: serialize tax_lease while settlement_lease retains concurrent start
+        sources_p2 = dict(ws.state["sources"])
+        sources_p2["tax_lease"] = LEASE_TAX_SERIALIZED_SOURCE
+        rec2 = mon.evaluate_codebase_lease(
+            "eval-lease-p2",
+            sources=sources_p2,
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec2["local_green"], 1)
+        self.assertEqual(rec2["global_green"], 0)
+        self.assertEqual(rec2["defect"], -1)
+        self.assertEqual(rec2["lease_windows"], [[0, 1], [1, 2], [1, 4]])
+        self.assertEqual(rec2["fencing_tokens"], [1, 2, 2])
+        self.assertEqual(rec2["peak_concurrent_drift"], 7)
+        self.assertEqual(rec2["status"], "LEASE_PARTIAL_FENCING_COLLISION_LGGR")
+
+        # Phase 3: serialize settlement_lease with monotonic fencing token
+        sources_p3 = dict(sources_p2)
+        sources_p3["settlement_lease"] = LEASE_SETTLEMENT_SERIALIZED_SOURCE
+        rec3 = mon.evaluate_codebase_lease(
+            "eval-lease-p3",
+            sources=sources_p3,
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec3["local_green"], 1)
+        self.assertEqual(rec3["global_green"], 1)
+        self.assertEqual(rec3["defect"], 0)
+        self.assertEqual(rec3["lease_windows"], [[0, 1], [1, 2], [2, 3]])
+        self.assertEqual(rec3["fencing_tokens"], [1, 2, 3])
+        self.assertEqual(rec3["peak_concurrent_drift"], 4)
+        self.assertEqual(rec3["split_brain_reserve_cents"], 0)
+        self.assertEqual(rec3["status"], "CODEBASE_LEASE_FENCING_SERIALIZED_LGGG")
+
+    def test_lease_campaign_and_tamper_detection(self) -> None:
+        def stub_lease_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_text = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"agent {w}" in sys_text:
+                    worker = w
+                    break
+            arm = "A"
+            if "Arm B" in sys_text:
+                arm = "B"
+            elif "Arm C" in sys_text:
+                arm = "C"
+
+            has_tool_result = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_result:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_result_msg = [m for m in messages if m.get("role") == "tool"][-1]
+                inspected = json.loads(tool_result_msg["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Infeasible lease overlap lock."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif arm == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": LEASE_TAX_SERIALIZED_SOURCE}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": LEASE_PRICING_SOURCE,
+                        "worker-1": LEASE_TAX_SERIALIZED_SOURCE,
+                        "worker-2": LEASE_SETTLEMENT_SERIALIZED_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "lease",
+                "seeds": [10500, 10502],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_lease_transport)
+            summary = lease_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.lease_overlap_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on lease gate peak_concurrent_drift field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["peak_concurrent_drift"] = int(gate_rec["peak_concurrent_drift"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_lease_pilot_evidence_replay_if_present(self) -> None:
+        lease_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "lease_pilot_run"
+            / "events.jsonl"
+        )
+        lease_summary = lease_events.with_name("summary.json")
+        if lease_events.exists() and lease_summary.exists():
+            replayed = replay(lease_events)
+            self.assertEqual(replayed["schema"], "lggr.lease_overlap_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

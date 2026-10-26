@@ -257,13 +257,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `37
 | `10402` | `repairable_quorum_masking_seed_10402` | **C** | `explicit_lggr_boundary_product_directive` | **`completed`** | **`net_cents`** | **`strict_product`** | **`0`** | **1** | **6** | **`$0.006468`** |
 | `10400` | `infeasible_quorum_governance_lock` | **A / B / C** | All policies | `safe_escalated` | `subtotal_cents` | `quorum_2_of_3` | `9` | 1 | 18 | `$0.021341` |
 
+## 15. 3-Agent Concurrent Resource Lease Overlap & Split-Brain Fencing-Token Synthesis Campaign (`--topology lease`)
+
+In `--topology lease`, 3 concurrent LLM workers edit `pricing_lease.py`, `tax_lease.py`, and `settlement_lease.py` where each module acquires a half-open lease window $[s_i, e_i)$ satisfying its isolated duration bound ($e_i - s_i \le \tau_{\mathrm{dur}} = 3$, weighted lease slacks $(4, 3, 4) \le \tau_{\mathrm{lease}} = 4$) and presents a fencing token $k_i$:
+- On `seed 10500` (`repairable_lease_overlap_seed_10500`), all 3 modules start concurrently at $t = 0$ (`windows = [[0, 1], [0, 3], [0, 3]]`, `tokens = [1, 1, 1]`, `local_green = 1`), producing `max_concurrent_leases = 3`, `peak_concurrent_drift = 11 > 6`, and `split_brain_reserve_cents = 10` (`payout = 863 != 873`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 10502` (`infeasible_lease_overlap_lock`), legacy constraints lock `tax_lease.py` and `settlement_lease.py` to their overlapping windows at $t = 0$ while requiring disjoint fencing-serialized leases, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `38` live API attempts, `$0.034715` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `lease_windows` | `fencing_tokens` | `peak_drift` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10500` | `repairable_lease_overlap_seed_10500` | **A** | `isolated_lease_duration_gate` | `blocked_unresolved` | `[[0,1],[0,3],[0,3]]` | `[1, 1, 1]` | `11` | 1 | 7 | `$0.005599` |
+| `10500` | `repairable_lease_overlap_seed_10500` | **B** | `partial_tax_lease_serialization` | `blocked_unresolved` | `[[0,1],[1,2],[1,4]]` | `[1, 2, 2]` | `7` | 1 | 6 | `$0.005256` |
+| `10500` | `repairable_lease_overlap_seed_10500` | **C** | `explicit_lggr_fencing_token_directive` | **`completed`** | **`[[0,1],[1,2],[2,3]]`** | **`[1, 2, 3]`** | **`4`** | **1** | **6** | **`$0.005702`** |
+| `10502` | `infeasible_lease_overlap_lock` | **A / B / C** | All policies | `safe_escalated` | `[[0,1],[0,3],[0,3]]` | `[1, 1, 1]` | `11` | 1 | 19 | `$0.018159` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, and 3-agent boundary-quorum evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, and 3-agent lease-overlap evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -278,4 +293,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/kinduction_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/jacobian_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/quorum_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/lease_pilot_run/events.jsonl
 ```

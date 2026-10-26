@@ -4405,5 +4405,65 @@ theorem boundary_quorum_codebase_mixing_and_quorum_masking_audit :
   · intro e1 e2 e3 ⟨h1, h2, h3, hsum⟩
     rcases h1 with rfl | rfl <;> rcases h2 with rfl | rfl <;> rcases h3 with rfl | rfl <;> omega
 
+/-- 108. Concurrent resource lease overlap and split-brain fencing-token synthesis
+    in a 3-module codebase (`pricing_lease`, `tax_lease`, `settlement_lease`):
+    1. Universal lease-window overlap & monotonic fencing-token serialization law:
+       - For any two half-open lease windows `[s1, e1)` and `[s2, e2)` with `s1 ≤ s2 < e1`
+         and `s2 < e2`, arrival tick `t = s2` lies in both active windows simultaneously
+         (`s1 ≤ s2 ∧ s2 < e1 ∧ s2 ≤ s2 ∧ s2 < e2`), inducing concurrent lease overlap;
+       - When sequential lease handoff enforces `e1 ≤ s2`, `e2 ≤ s3`, and strictly increasing
+         fencing tokens `k1 < k2 < k3`, no tick `t ∈ ℤ` lies in two consecutive windows
+         simultaneously (`¬ (s1 ≤ t ∧ t < e1 ∧ s2 ≤ t ∧ t < e2)`);
+    2. Concrete 3-phase 3-module lease-overlap codebase audit (`w = (2, 3, 4)`, `τ_lease = 4`,
+       `τ_horizon = 6`, individual duration bound `τ_dur = 3`, weighted slacks `(4, 3, 4)`):
+       - Phase 1 (Overlapping windows `[0, 3), [1, 4), [2, 5)` and duplicate fencing tokens `(1, 1, 1)`):
+         every module satisfies `e_i - s_i = 3 ≤ τ_dur` and `slack_i ≤ τ_lease = 4` (`L_p1 = 1`),
+         yet tick `t = 2` activates all 3 leases (`ov_tick2 = 4 + 3 + 4 = 11 > 6`), tokens are
+         non-monotonic, and split-brain reserve `10` reduces payout to `863 ≠ 873` (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial repair: `tax_lease` serializes `[1, 2), k2 = 2` after `pricing_lease` `[0, 1), k1 = 1`
+         while `settlement_lease` retains overlapping `[1, 4), k3 = 2`): individual durations `(1, 1, 3) ≤ 3`
+         pass local tests (`L_p2 = 1`), yet tick `t = 1` still overlaps `[1, 2)` and `[1, 4)` with
+         concurrent drift `3 + 4 = 7 > 6` and duplicate token `k2 = k3 = 2` (`Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full lease window serialization `[0, 1), [1, 2), [2, 3)` and monotonic fencing tokens `(1, 2, 3)`):
+         peak concurrent drift drops `11 → 7 → 4 ≤ 6`, `k1 < k2 < k3`, `split_brain_reserve = 0`, and
+         exact settlement conservation `873 + 27 + 180 = 1080` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem lease_overlap_codebase_split_brain_and_fencing_token_audit :
+    (∀ s1 e1 e1_adj s2 e2 k1 k2 k3 t : Int,
+      ((s1 ≤ s2 ∧ s2 < e1 ∧ s2 < e2) → (s1 ≤ s2 ∧ s2 < e1 ∧ s2 ≤ s2 ∧ s2 < e2)) ∧
+      ((e1_adj ≤ s2 ∧ k1 < k2 ∧ k2 < k3) → (¬ (s1 ≤ t ∧ t < e1_adj ∧ s2 ≤ t ∧ t < e2) ∧ k1 < k3))) ∧
+    (let slack_1 : Int := 4; let slack_2 : Int := 3; let slack_3 : Int := 4;
+     let tau_lease : Int := 4; let tau_horizon : Int := 6;
+     let peak_p1 := slack_1 + slack_2 + slack_3;
+     let peak_p2 := slack_2 + slack_3;
+     let peak_p3 := slack_1;
+     let k1 : Int := 1; let k2_bad : Int := 1; let k2_good : Int := 2; let k3_bad : Int := 2; let k3_good : Int := 3;
+     let reserve_overlap : Int := 10;
+     let reserve_serial : Int := 0;
+     let payout_overlap : Int := 873 - reserve_overlap;
+     let payout_serial : Int := 873 - reserve_serial;
+     let fee : Int := 27; let tax : Int := 180; let gross : Int := 1080;
+     let l_p1 := if (slack_1 ≤ tau_lease) ∧ (slack_2 ≤ tau_lease) ∧ (slack_3 ≤ tau_lease) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (peak_p1 ≤ tau_horizon) ∧ (k1 < k2_bad ∧ k2_bad < k3_bad) ∧ (payout_overlap + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (slack_1 ≤ tau_lease) ∧ (slack_2 ≤ tau_lease) ∧ (slack_3 ≤ tau_lease) ∧ (k1 < k2_good) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (peak_p2 ≤ tau_horizon) ∧ (k2_good < k3_bad) ∧ (payout_overlap + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (slack_1 ≤ tau_lease) ∧ (slack_2 ≤ tau_lease) ∧ (slack_3 ≤ tau_lease) ∧ (peak_p3 ≤ tau_horizon) ∧ (k1 < k2_good ∧ k2_good < k3_good) ∧ (payout_serial + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (peak_p3 < peak_p2) ∧ (peak_p2 < peak_p1) ∧ (reserve_serial = 0) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (peak_p1 = 11 ∧ peak_p2 = 7 ∧ peak_p3 = 4 ∧ payout_overlap = 863 ∧ payout_serial = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro s1 e1 e1_adj s2 e2 k1 k2 k3 t
+  refine ⟨?_, ?_⟩
+  · intro ⟨h1, h2, h3⟩
+    omega
+  · intro ⟨h_disj, hk12, hk23⟩
+    refine ⟨?_, by omega⟩
+    intro ⟨_, ht1, ht2, _⟩
+    omega
+
 
 end LggrVIII

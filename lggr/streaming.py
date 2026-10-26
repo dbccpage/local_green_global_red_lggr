@@ -24583,6 +24583,535 @@ class StreamingCodebaseBoundaryQuorumMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseLeaseOverlapMonitor:
+    """Online LGGR VIII monitor for concurrent resource lease overlap and split-brain fencing-token synthesis in code-engineering swarms.
+
+    Audits a 3-module codebase (`pricing_lease`, `tax_lease`, `settlement_lease`) where each module
+    acquires a half-open ledger lease window `[s_i, e_i)` with individual duration bound
+    `e_i - s_i <= tau_dur = 3`, weighted lease slack `<= tau_lease = 4` (`w = (2, 3, 4)`,
+    slacks `(4, 3, 4)`), global concurrent horizon ceiling `tau_horizon = 6`, and fencing token `k_i`:
+      - `pricing_lease.py` (`worker-0`): sets anchor window `pricing_lease_window = [0, 1]` and
+        `pricing_fencing_token = 1` (`slack = 4 <= 4`).
+      - `tax_lease.py` (`worker-1`): in Phase 1 sets overlapping window `tax_lease_window = [0, 3]`
+        and duplicate token `tax_fencing_token = 1`; when serialized sets `tax_lease_window = [1, 2]`
+        and `tax_fencing_token = 2`.
+      - `settlement_lease.py` (`worker-2`): in Phase 1 & 2 starts concurrently with `tax_lease`
+        (`s3 = tax_lease_window[0]`, `e3 = s3 + 3`) and reuses `settle_fencing_token = tax_fencing_token`
+        while deducting `split_brain_reserve_cents = 10` (`payout = 863 != 873`); when serialized sets
+        `settle_lease_window = [2, 3]`, `settle_fencing_token = 3`, and `split_brain_reserve_cents = 0`
+        (`payout = 873`).
+      - Composes `StreamingConcurrentLeaseOverlapMonitor`, `StreamingCodebaseInterfaceMergeMonitor`,
+        and `StreamingFiberMonitor`.
+
+    AuthorityEffect: None.
+    """
+
+    BASELINE_POLICY: tuple[int, int, int] = (2, 3, 0)
+    RISK_WEIGHTS: tuple[int, int, int] = (2, 3, 4)
+    MODULE_DELTAS: tuple[tuple[int, int, int], ...] = (
+        (2, 0, 0),
+        (0, 1, 0),
+        (0, 0, 1),
+    )
+
+    def __init__(
+        self,
+        *,
+        individual_lease_budget: int = 4,
+        horizon_drift_ceiling: int = 6,
+        max_lease_duration_ticks: int = 3,
+        scope_id: str = "streaming-codebase-lease-overlap-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.individual_lease_budget = exact_int(individual_lease_budget, "individual_lease_budget")
+        self.horizon_drift_ceiling = exact_int(horizon_drift_ceiling, "horizon_drift_ceiling")
+        self.max_lease_duration_ticks = exact_int(max_lease_duration_ticks, "max_lease_duration_ticks")
+        self.lease_overlap_monitor = StreamingConcurrentLeaseOverlapMonitor(
+            scope_id=f"{self.scope_id}-concurrent-lease"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_lease(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        for req_mod in ("pricing_lease", "tax_lease", "settlement_lease"):
+            if req_mod not in sources:
+                raise ValidationError(f"missing required lease module '{req_mod}'")
+
+        ast_summaries = {
+            m: StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(m, src)
+            for m, src in sources.items()
+        }
+        all_syntax_ok = all(s["syntax_ok"] for s in ast_summaries.values())
+        l_green = 1 if (all_syntax_ok and all(bool(local_test_results.get(m, False)) for m in ("pricing_lease", "tax_lease", "settlement_lease"))) else 0
+
+        runtime_error: str | None = None
+        w_p: list[int] = [0, 1]
+        w_t: list[int] = [0, 3]
+        w_s: list[int] = [0, 3]
+        k1 = 1
+        k2 = 1
+        k3 = 1
+        split_brain_reserve_cents = 10
+        payout_cents = 863
+        conservation_ok = False
+
+        if all_syntax_ok:
+            try:
+                ns_p = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("pricing_lease", sources["pricing_lease"])
+                ns_t = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("tax_lease", sources["tax_lease"])
+                ns_s = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("settlement_lease", sources["settlement_lease"])
+
+                fn_p = ns_p.get("compute_lease_quote")
+                fn_t = ns_t.get("apply_lease_tax")
+                fn_s = ns_s.get("route_lease_settlement")
+                if not (callable(fn_p) and callable(fn_t) and callable(fn_s)):
+                    raise ValueError("missing required callable entrypoints compute_lease_quote / apply_lease_tax / route_lease_settlement")
+
+                q_out = fn_p([{"sku": "LEASE-1", "unit_cents": 500, "qty": 2}], 1000)
+                t_out = fn_t(q_out, 2000)
+                s_out = fn_s(t_out, 300)
+
+                wp_raw = q_out.get("pricing_lease_window", [0, 1])
+                if isinstance(wp_raw, (list, tuple)) and len(wp_raw) == 2:
+                    w_p = [int(wp_raw[0]), int(wp_raw[1])]
+                wt_raw = t_out.get("tax_lease_window", [0, 3])
+                if isinstance(wt_raw, (list, tuple)) and len(wt_raw) == 2:
+                    w_t = [int(wt_raw[0]), int(wt_raw[1])]
+                ws_raw = s_out.get("settle_lease_window", [0, 3])
+                if isinstance(ws_raw, (list, tuple)) and len(ws_raw) == 2:
+                    w_s = [int(ws_raw[0]), int(ws_raw[1])]
+
+                k1 = int(q_out.get("pricing_fencing_token", 1))
+                k2 = int(t_out.get("tax_fencing_token", 1))
+                k3 = int(s_out.get("settle_fencing_token", 1))
+
+                gross = int(s_out.get("gross_cents", -1))
+                fee = int(s_out.get("platform_fee_cents", -1))
+                tax_res = int(s_out.get("tax_reserve_cents", -1))
+                payout_cents = int(s_out.get("merchant_payout_cents", -1))
+                split_brain_reserve_cents = 873 - payout_cents
+                conservation_ok = (
+                    gross == 1080
+                    and fee == 27
+                    and tax_res == 180
+                    and payout_cents == 873
+                    and (payout_cents + fee + tax_res == gross)
+                )
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+
+        windows = [w_p, w_t, w_s]
+        fencing_tokens = [k1, k2, k3]
+        fencing_monotonic = (k1 < k2 < k3)
+        windows_disjoint_serialized = (
+            w_p[0] < w_p[1] <= w_t[0] < w_t[1] <= w_s[0] < w_s[1]
+        )
+
+        leases_candidate = [
+            {
+                "incident_index": idx + 1,
+                "incident_pair_id": mod_name,
+                "arrival_tick": win[0],
+                "expiration_tick": max(win[1], win[0] + 1),
+                "authority_signature_valid": True,
+                "overlap_accounting_enforced": windows_disjoint_serialized and fencing_monotonic,
+                "lease_delta_vector": list(self.MODULE_DELTAS[idx]),
+                "post_relaxation_monitor_a_passed": True,
+                "post_relaxation_monitor_b_passed": True,
+            }
+            for idx, (mod_name, win) in enumerate(
+                (("pricing_lease", w_p), ("tax_lease", w_t), ("settlement_lease", w_s))
+            )
+        ]
+        leases_reference_serial = [
+            {
+                "incident_index": idx + 1,
+                "incident_pair_id": mod_name,
+                "arrival_tick": idx,
+                "expiration_tick": idx + 1,
+                "authority_signature_valid": True,
+                "overlap_accounting_enforced": True,
+                "lease_delta_vector": list(self.MODULE_DELTAS[idx]),
+                "post_relaxation_monitor_a_passed": True,
+                "post_relaxation_monitor_b_passed": True,
+            }
+            for idx, mod_name in enumerate(("pricing_lease", "tax_lease", "settlement_lease"))
+        ]
+
+        schedule_obs = self.lease_overlap_monitor.record_overlap_schedule(
+            schedule_id=f"{eval_id}-schedule",
+            model_id=mid,
+            prior_ratchet_receipt_sha256="a" * 64,
+            baseline_policy_sha256="b" * 64,
+            baseline_policy_vector=self.BASELINE_POLICY,
+            risk_weight_vector=self.RISK_WEIGHTS,
+            individual_lease_budget=self.individual_lease_budget,
+            horizon_drift_ceiling=self.horizon_drift_ceiling,
+            uncoordinated_overlapping_leases=leases_candidate,
+            overlap_accounted_leases=leases_reference_serial,
+        )
+        cand_audit = schedule_obs["phase_1_uncoordinated_overlap_schedule"]
+        peak_concurrent_drift = int(Fraction(cand_audit["peak_concurrent_weighted_l1_drift"]))
+        max_concurrent_leases = int(cand_audit["max_concurrent_active_leases"])
+        overlap_tick_count = int(cand_audit["overlap_tick_count"])
+
+        lease_serialized_ok = (
+            windows_disjoint_serialized
+            and fencing_monotonic
+            and peak_concurrent_drift <= self.horizon_drift_ceiling
+            and max_concurrent_leases == 1
+            and split_brain_reserve_cents == 0
+        )
+
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and runtime_error is None
+                and lease_serialized_ok
+                and conservation_ok
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_lease_state",
+            report={
+                "pricing_unit_pass": bool(local_test_results.get("pricing_lease", False)),
+                "tax_unit_pass": bool(local_test_results.get("tax_lease", False)),
+                "settlement_unit_pass": bool(local_test_results.get("settlement_lease", False)),
+                "individual_durations_within_bound": all(
+                    0 < (w[1] - w[0]) <= self.max_lease_duration_ticks for w in windows
+                ),
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "lease_windows": windows,
+                "fencing_tokens": fencing_tokens,
+                "peak_concurrent_drift": peak_concurrent_drift,
+            },
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_LEASE_OVERLAP_LOCK"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif l_green == 1 and eg_green == 1:
+            status = "CODEBASE_LEASE_FENCING_SERIALIZED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l_green == 1 and eg_green == 0:
+            if w_t != [1, 2] or k2 != 2:
+                status = "LEASE_OVERLAP_SPLIT_BRAIN_NGD_LGGR"
+            else:
+                status = "LEASE_PARTIAL_FENCING_COLLISION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_UNIT_TEST_RED_LRLR"
+            contract_status = "REJECTED_LRLR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if infeasible_constraint is not None:
+            for w_id, m_name in (
+                ("worker-0", "pricing_lease"),
+                ("worker-1", "tax_lease"),
+                ("worker-2", "settlement_lease"),
+            ):
+                directives[w_id] = {
+                    "module": m_name,
+                    "action": "HALT_AND_ESCALATE_INFEASIBLE_LEASE_LOCK",
+                    "infeasible_constraint": dict(infeasible_constraint),
+                    "reason": "Incompatible lease contract locks overlapping windows `[0, 3)` and `[1, 4)` while requiring non-overlapping fencing-token serialization.",
+                }
+        elif eg_green == 1:
+            for w_id, m_name in (
+                ("worker-0", "pricing_lease"),
+                ("worker-1", "tax_lease"),
+                ("worker-2", "settlement_lease"),
+            ):
+                directives[w_id] = {
+                    "module": m_name,
+                    "action": "HOLD_VERIFIED_FENCING_LEASE_CONTRACT",
+                    "reason": "Lease windows `[[0, 1], [1, 2], [2, 3]]` and monotonic fencing tokens `[1, 2, 3]` verified (`peak_concurrent_drift = 4 <= 6`).",
+                }
+        else:
+            directives["worker-0"] = {
+                "module": "pricing_lease",
+                "action": "HOLD_ANCHOR_PRICING_LEASE_WINDOW",
+                "target_lease": {
+                    "pricing_lease_window": [0, 1],
+                    "pricing_fencing_token": 1,
+                },
+                "reason": "Hold `pricing_lease.py` anchor at `'pricing_lease_window': [0, 1]` and `'pricing_fencing_token': 1` (`net_cents = 900`).",
+            }
+            directives["worker-1"] = {
+                "module": "tax_lease",
+                "action": (
+                    "SERIALIZE_TAX_LEASE_WINDOW_AND_TOKEN"
+                    if (w_t != [1, 2] or k2 != 2)
+                    else "HOLD_SERIALIZED_TAX_LEASE_WINDOW"
+                ),
+                "current_lease_window": w_t,
+                "current_fencing_token": k2,
+                "target_lease": {
+                    "tax_lease_window": [1, 2],
+                    "tax_fencing_token": 2,
+                },
+                "reason": (
+                    f"Concurrent lease audit on `tax_lease.py` detected `tax_lease_window = {w_t}` "
+                    f"and `tax_fencing_token = {k2}` (`peak_concurrent_drift = {peak_concurrent_drift} > 6`). "
+                    "Update `tax_lease.py` so `tax_lease_window = [1, 2]` and `tax_fencing_token = 2`."
+                ),
+            }
+            directives["worker-2"] = {
+                "module": "settlement_lease",
+                "action": "SERIALIZE_SETTLEMENT_LEASE_AND_FENCING_TOKEN",
+                "current_lease_window": w_s,
+                "current_fencing_token": k3,
+                "target_lease": {
+                    "settle_lease_window": [2, 3],
+                    "settle_fencing_token": 3,
+                    "split_brain_reserve_cents": 0,
+                },
+                "reason": (
+                    f"Concurrent lease audit on `settlement_lease.py` detected `settle_lease_window = {w_s}` "
+                    f"and `settle_fencing_token = {k3}` (`split_brain_reserve_cents = {split_brain_reserve_cents}`, `payout = {payout_cents} != 873`). "
+                    "Update `settlement_lease.py` so `settle_lease_window = [2, 3]`, `settle_fencing_token = 3`, "
+                    "and `merchant_payout_cents = gross - fee - tax = 873` (`split_brain_reserve_cents = 0`)."
+                ),
+            }
+
+        rec_body: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "lease_windows": windows,
+            "fencing_tokens": fencing_tokens,
+            "fencing_monotonic": fencing_monotonic,
+            "windows_disjoint_serialized": windows_disjoint_serialized,
+            "max_concurrent_leases": max_concurrent_leases,
+            "overlap_tick_count": overlap_tick_count,
+            "peak_concurrent_drift": peak_concurrent_drift,
+            "horizon_drift_ceiling": self.horizon_drift_ceiling,
+            "split_brain_reserve_cents": split_brain_reserve_cents,
+            "merchant_payout_cents": payout_cents,
+            "conservation_ok": conservation_ok,
+            "runtime_error": runtime_error,
+            "ast_summaries": ast_summaries,
+            "compact_role_directives": directives,
+            "lease_schedule_observation": schedule_obs,
+        }
+        signed_rec = json_value({**rec_body, "receipt_sha256": digest(rec_body)})
+        self.evaluations.append(signed_rec)
+        return signed_rec
+
+    def record_three_phase_codebase_lease_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record the 3-phase concurrent lease overlap & split-brain fencing-token codebase audit (Theorem 108)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p = (
+            "def compute_lease_quote(items: list[dict], discount_bps: int) -> dict:\n"
+            "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'pricing_lease_window': [0, 1],\n"
+            "        'pricing_fencing_token': 1,\n"
+            "    }\n"
+        )
+        src_t_overlap = (
+            "def apply_lease_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'pricing_lease_window': list(quote['pricing_lease_window']),\n"
+            "        'pricing_fencing_token': int(quote['pricing_fencing_token']),\n"
+            "        'tax_lease_window': [0, 3],\n"
+            "        'tax_fencing_token': 1,\n"
+            "    }\n"
+        )
+        src_t_serial = (
+            "def apply_lease_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    p_end = int(quote['pricing_lease_window'][1])\n"
+            "    p_tok = int(quote['pricing_fencing_token'])\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'pricing_lease_window': list(quote['pricing_lease_window']),\n"
+            "        'pricing_fencing_token': p_tok,\n"
+            "        'tax_lease_window': [p_end, p_end + 1],\n"
+            "        'tax_fencing_token': p_tok + 1,\n"
+            "    }\n"
+        )
+        src_s_overlap = (
+            "def route_lease_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    t_start = int(taxed_quote['tax_lease_window'][0])\n"
+            "    t_tok = int(taxed_quote['tax_fencing_token'])\n"
+            "    settle_window = [t_start, t_start + 3]\n"
+            "    settle_token = t_tok\n"
+            "    split_brain_reserve_cents = 10 if (settle_window != [2, 3] or settle_token != 3) else 0\n"
+            "    payout = gross - fee - tax - split_brain_reserve_cents\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_lease_window': settle_window,\n"
+            "        'settle_fencing_token': settle_token,\n"
+            "    }\n"
+        )
+        src_s_serial = (
+            "def route_lease_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    t_end = int(taxed_quote['tax_lease_window'][1])\n"
+            "    t_tok = int(taxed_quote['tax_fencing_token'])\n"
+            "    settle_window = [t_end, t_end + 1]\n"
+            "    settle_token = t_tok + 1\n"
+            "    split_brain_reserve_cents = 10 if (settle_window != [2, 3] or settle_token != 3) else 0\n"
+            "    payout = gross - fee - tax - split_brain_reserve_cents\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_lease_window': settle_window,\n"
+            "        'settle_fencing_token': settle_token,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_lease": True,
+            "tax_lease": True,
+            "settlement_lease": True,
+        }
+
+        p1 = self.evaluate_codebase_lease(
+            f"{eval_id}_phase1_overlap_split_brain",
+            sources={
+                "pricing_lease": src_p,
+                "tax_lease": src_t_overlap,
+                "settlement_lease": src_s_overlap,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_lease(
+            f"{eval_id}_phase2_partial_fencing_collision",
+            sources={
+                "pricing_lease": src_p,
+                "tax_lease": src_t_serial,
+                "settlement_lease": src_s_overlap,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_lease(
+            f"{eval_id}_phase3_fencing_serialized",
+            sources={
+                "pricing_lease": src_p,
+                "tax_lease": src_t_serial,
+                "settlement_lease": src_s_serial,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_lease_windows": p1["lease_windows"],
+                "phase_1_fencing_tokens": p1["fencing_tokens"],
+                "phase_1_peak_concurrent_drift": p1["peak_concurrent_drift"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_lease_windows": p2["lease_windows"],
+                "phase_2_fencing_tokens": p2["fencing_tokens"],
+                "phase_2_peak_concurrent_drift": p2["peak_concurrent_drift"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_lease_windows": p3["lease_windows"],
+                "phase_3_fencing_tokens": p3["fencing_tokens"],
+                "phase_3_peak_concurrent_drift": p3["peak_concurrent_drift"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase lease-overlap evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_lease_overlap.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "lease_overlap_receipt": self.lease_overlap_monitor.emit_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
