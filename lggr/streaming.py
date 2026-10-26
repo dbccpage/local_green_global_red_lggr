@@ -25556,3 +25556,453 @@ class StreamingCodebaseContextualSheafMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+
+class StreamingCodebaseWatcherDropoutMonitor:
+    """Audit watcher-dropout and Gram rank-deficiency vs. full-rank critical watcher restoration across 3-module settlement codebases (Theorem 110).
+
+    Composes:
+      - StreamingGramProbeMonitor (evaluates Gram matrix Q^T Q and quadratic energy ||Q v_crit||_2^2),
+      - StreamingWatcherDropoutGramAuditMonitor (compares redundant row dropout vs. critical row dropout on the 4-row watcher bank),
+      - StreamingCodebaseInterfaceMergeMonitor (executes sandboxed Python module sources), and
+      - StreamingFiberMonitor (records coarse local row-nonempty pass vs. global Gram full-rank observability).
+
+    Separates three codebase regimes over `pricing_gram.py`, `tax_gram.py`, and `settlement_gram.py`
+    along critical perturbation `v_crit = (1, -1, 1)` (`||v_crit||_1 = 3 > 0`):
+      - Phase 1 (Critical watcher dropout `Q_p1 = [[1,1,0], [2,2,0], [0,1,1]]`, `dropout_reserve_cents = 12`):
+        each module's watcher row is nonzero (`L_p1 = 1`), yet `tax_gram.py` emits collinear duplicate
+        `[2, 2, 0] = 2 * q_1` and `settlement_gram.py` omits critical row `[1, 0, 1]`, yielding
+        `rank(Q_p1^T Q_p1) = 2 < 3`, `nullspace_dim = 1 > 0`, `||Q_p1 v_crit||_2^2 = 0`, and
+        `payout = 861 != 873` (`Eg_p1 = 0`, `Delta_{E,p1} = -1`, `WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR`).
+      - Phase 2 (Partial repair: `tax_gram.py` updates `tax_watcher_row` to `[0, 1, 1]` while
+        `settlement_gram.py` retains `[0, 1, 1]` and `dropout_reserve_cents = 12`):
+        `Q_p2 = [[1,1,0], [0,1,1], [0,1,1]]` still has `rank(Q_p2^T Q_p2) = 2 < 3`,
+        `nullspace_dim = 1 > 0`, and `||Q_p2 v_crit||_2^2 = 0` (`L_p2 = 1`, `Eg_p2 = 0`,
+        `Delta_{E,p2} = -1`, `WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR`).
+      - Phase 3 (Full critical watcher restoration `Q_p3 = [[1,1,0], [0,1,1], [1,0,1]]` and
+        `dropout_reserve_cents = 0`): `rank(Q_p3^T Q_p3) = 3`, `nullspace_dim = 0`,
+        `||Q_p3 v_crit||_2^2 = 4 > 0`, and exact settlement conservation `873 + 27 + 180 = 1080`
+        (`L_p3 = 1`, `Eg_p3 = 1`, `Delta_{E,p3} = 0`, `CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG`).
+
+    AuthorityEffect: None.
+    """
+
+    CRITICAL_DIRECTION: tuple[int, int, int] = (1, -1, 1)
+    REFERENCE_FOUR_WATCHER_MATRIX: tuple[tuple[int, int, int], ...] = (
+        (1, 1, 0),
+        (2, 2, 0),
+        (0, 1, 1),
+        (1, 0, 1),
+    )
+
+    DEFAULT_PRICING_SOURCE: str = (
+        "def pricing_gram(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+        "    discount_cents = (gross_cents * discount_bps) // 10_000\n"
+        "    net_cents = gross_cents - discount_cents - rebate_cents\n"
+        "    return {\n"
+        "        'subtotal_cents': gross_cents,\n"
+        "        'discount_cents': discount_cents,\n"
+        "        'rebate_cents': rebate_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'pricing_watcher_row': [1, 1, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_DROPOUT_SOURCE: str = (
+        "def tax_gram(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net_cents * tax_rate_bps) // 10_000\n"
+        "    return {\n"
+        "        'taxable_cents': net_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'tax_watcher_row': [2, 2, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_RESTORED_SOURCE: str = (
+        "def tax_gram(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net_cents * tax_rate_bps) // 10_000\n"
+        "    return {\n"
+        "        'taxable_cents': net_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'tax_watcher_row': [0, 1, 1],\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_DROPOUT_SOURCE: str = (
+        "def settlement_gram(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net_cents * fee_bps) // 10_000\n"
+        "    dropout_reserve_cents = 12\n"
+        "    payout_cents = net_cents - fee_cents - dropout_reserve_cents\n"
+        "    return {\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_remitted_cents': tax_cents,\n"
+        "        'dropout_reserve_cents': dropout_reserve_cents,\n"
+        "        'merchant_payout_cents': payout_cents,\n"
+        "        'settle_watcher_row': [0, 1, 1],\n"
+        "        'total_accounted_cents': payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_RESTORED_SOURCE: str = (
+        "def settlement_gram(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net_cents * fee_bps) // 10_000\n"
+        "    dropout_reserve_cents = 0\n"
+        "    payout_cents = net_cents - fee_cents\n"
+        "    return {\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_remitted_cents': tax_cents,\n"
+        "        'dropout_reserve_cents': dropout_reserve_cents,\n"
+        "        'merchant_payout_cents': payout_cents,\n"
+        "        'settle_watcher_row': [1, 0, 1],\n"
+        "        'total_accounted_cents': payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-watcher-dropout-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.dropout_audit_monitor = StreamingWatcherDropoutGramAuditMonitor(
+            observation_matrix=self.REFERENCE_FOUR_WATCHER_MATRIX,
+            scope_id=f"{self.scope_id}-dropout-audit",
+        )
+        self.fiber_monitor = StreamingFiberMonitor(
+            scope_id=f"{self.scope_id}-fiber",
+        )
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _exec_gram_modules(
+        module_sources: Mapping[str, str],
+    ) -> dict[str, Any]:
+        ns: dict[str, Any] = {}
+        for mod_name in ("pricing_gram", "tax_gram", "settlement_gram"):
+            if mod_name not in module_sources:
+                raise ValidationError(f"Missing module source for {mod_name!r}")
+            src = text(module_sources[mod_name], f"module_sources[{mod_name}]")
+            mod_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(mod_name, src)
+            if mod_name not in mod_ns or not callable(mod_ns[mod_name]):
+                raise ValidationError(f"Module {mod_name} must define callable {mod_name}(...)")
+            ns[mod_name] = mod_ns[mod_name]
+        return ns
+
+    def evaluate_gram_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        gross_cents: int = 1000,
+        discount_bps: int = 500,
+        rebate_cents: int = 50,
+        tax_rate_bps: int = 2000,
+        fee_bps: int = 300,
+        model_id: str = "deterministic-fixture",
+        infeasible_constraint: str | None = None,
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        ns = self._exec_gram_modules(module_sources)
+
+        p_out = ns["pricing_gram"](gross_cents, discount_bps, rebate_cents)
+        t_out = ns["tax_gram"](p_out, tax_rate_bps)
+        s_out = ns["settlement_gram"](p_out, t_out, fee_bps)
+
+        if (
+            not isinstance(p_out, dict)
+            or "pricing_watcher_row" not in p_out
+            or not isinstance(t_out, dict)
+            or "tax_watcher_row" not in t_out
+            or not isinstance(s_out, dict)
+            or "settle_watcher_row" not in s_out
+        ):
+            raise ValidationError(
+                "Module outputs must contain pricing_watcher_row, tax_watcher_row, and settle_watcher_row"
+            )
+        row_p = [int(v) for v in p_out["pricing_watcher_row"]]
+        row_t = [int(v) for v in t_out["tax_watcher_row"]]
+        row_s = [int(v) for v in s_out["settle_watcher_row"]]
+        if len(row_p) != 3 or len(row_t) != 3 or len(row_s) != 3:
+            raise ValidationError("Each watcher row must have length 3")
+
+        q_rows = [row_p, row_t, row_s]
+        gram_probe_mon = StreamingGramProbeMonitor(
+            q_rows,
+            scope_id=f"{self.scope_id}::{eval_id}::gram",
+        )
+        gram_rank, gram_nullspace = StreamingDefectSoundnessMonitor._rref_and_nullspace(
+            gram_probe_mon.gram_matrix
+        )
+        nullspace_dim = len(gram_nullspace)
+
+        probe_step = gram_probe_mon.probe_state(
+            f"{eval_id}::vcrit",
+            self.CRITICAL_DIRECTION,
+            direction=self.CRITICAL_DIRECTION,
+        )
+        crit_norm_squared = int(Fraction(2) * rational(probe_step["quadratic_energy"]))
+        is_nullspace_blindspot = bool(probe_step["is_nullspace_blindspot"])
+
+        net_cents = int(p_out["net_cents"])
+        tax_cents = int(t_out["tax_cents"])
+        fee_cents = int(s_out["fee_cents"])
+        payout_cents = int(s_out["merchant_payout_cents"])
+        reserve_cents = int(s_out.get("dropout_reserve_cents", 0))
+        gross_collected = int(s_out["gross_collected_cents"])
+        total_accounted = int(s_out["total_accounted_cents"])
+
+        expected_discount = (gross_cents * discount_bps) // 10000
+        expected_net = gross_cents - expected_discount - rebate_cents
+        expected_tax = (expected_net * tax_rate_bps) // 10000
+        expected_fee = (expected_net * fee_bps) // 10000
+        expected_payout = expected_net - expected_fee
+        expected_gross_collected = expected_net + expected_tax
+
+        all_local_pass = all(
+            bool(local_test_results.get(m, False))
+            for m in ("pricing_gram", "tax_gram", "settlement_gram")
+        )
+        nonzero_rows_ok = all(any(v != 0 for v in r) for r in q_rows)
+        local_green = 1 if (all_local_pass and nonzero_rows_ok) else 0
+
+        settlement_conserved = (
+            net_cents == expected_net
+            and tax_cents == expected_tax
+            and fee_cents == expected_fee
+            and payout_cents == expected_payout
+            and reserve_cents == 0
+            and gross_collected == expected_gross_collected
+            and total_accounted == expected_gross_collected
+            and payout_cents + fee_cents + tax_cents == expected_gross_collected
+        )
+
+        global_green = 1 if (
+            local_green == 1
+            and gram_rank == 3
+            and nullspace_dim == 0
+            and crit_norm_squared > 0
+            and not is_nullspace_blindspot
+            and settlement_conserved
+            and infeasible_constraint is None
+        ) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}::fiber",
+            report={"all_local_pass": all_local_pass, "nonzero_rows_ok": nonzero_rows_ok},
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "watcher_rows": q_rows,
+                "gram_rank": gram_rank,
+                "nullspace_dim": nullspace_dim,
+                "crit_norm_squared": crit_norm_squared,
+                "reserve_cents": reserve_cents,
+            },
+        )
+
+        directives: dict[str, dict[str, Any]] = {
+            "worker-0": {
+                "module": "pricing_gram",
+                "action": "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+                "target": "Keep pricing_watcher_row = [1, 1, 0].",
+            }
+        }
+        if row_t != [0, 1, 1]:
+            directives["worker-1"] = {
+                "module": "tax_gram",
+                "action": "RESTORE_TAX_WATCHER_ROW_011",
+                "target": "Set tax_watcher_row = [0, 1, 1] (eliminating collinear duplicate [2, 2, 0] = 2 * q_1).",
+            }
+        else:
+            directives["worker-1"] = {
+                "module": "tax_gram",
+                "action": "HOLD_TAX_WATCHER_ROW_011",
+                "target": "Keep tax_watcher_row = [0, 1, 1].",
+            }
+
+        if row_s != [1, 0, 1] or reserve_cents != 0 or not settlement_conserved:
+            directives["worker-2"] = {
+                "module": "settlement_gram",
+                "action": "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+                "target": (
+                    "Set settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0 "
+                    "so payout_cents = net_cents - fee_cents (873)."
+                ),
+            }
+        else:
+            directives["worker-2"] = {
+                "module": "settlement_gram",
+                "action": "HOLD_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+                "target": "Keep settle_watcher_row = [1, 0, 1] and dropout_reserve_cents = 0.",
+            }
+
+        if infeasible_constraint is not None and global_green == 0:
+            status = "INFEASIBLE_WATCHER_DROPOUT_LOCK"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 1:
+            status = "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_green == 1 and row_t == [0, 1, 1] and (row_s != [1, 0, 1] or reserve_cents != 0):
+            status = "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 1:
+            status = "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "WATCHER_DROPOUT_LOCAL_UNIT_FAILURE"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "watcher_rows": q_rows,
+                "pricing_watcher_row": row_p,
+                "tax_watcher_row": row_t,
+                "settle_watcher_row": row_s,
+                "gram_rank": gram_rank,
+                "nullspace_dim": nullspace_dim,
+                "crit_norm_squared": crit_norm_squared,
+                "is_nullspace_blindspot": is_nullspace_blindspot,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "dropout_reserve_cents": reserve_cents,
+                "merchant_payout_cents": payout_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "compact_role_directives": directives,
+                "gram_probe_receipt": gram_probe_mon.get_receipt(),
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def evaluate_three_phase_gram_audit(
+        self,
+        audit_id: str,
+        *,
+        model_id: str = "deterministic-fixture",
+    ) -> dict[str, Any]:
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {
+            "pricing_gram": True,
+            "tax_gram": True,
+            "settlement_gram": True,
+        }
+
+        p1 = self.evaluate_gram_merge(
+            f"{aid}::phase1_critical_dropout",
+            module_sources={
+                "pricing_gram": self.DEFAULT_PRICING_SOURCE,
+                "tax_gram": self.DEFAULT_TAX_DROPOUT_SOURCE,
+                "settlement_gram": self.DEFAULT_SETTLEMENT_DROPOUT_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_gram_merge(
+            f"{aid}::phase2_partial_row_collision",
+            module_sources={
+                "pricing_gram": self.DEFAULT_PRICING_SOURCE,
+                "tax_gram": self.DEFAULT_TAX_RESTORED_SOURCE,
+                "settlement_gram": self.DEFAULT_SETTLEMENT_DROPOUT_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_gram_merge(
+            f"{aid}::phase3_full_rank_restored",
+            module_sources={
+                "pricing_gram": self.DEFAULT_PRICING_SOURCE,
+                "tax_gram": self.DEFAULT_TAX_RESTORED_SOURCE,
+                "settlement_gram": self.DEFAULT_SETTLEMENT_RESTORED_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        dropout_rec = self.dropout_audit_monitor.observe_watcher_dropout(
+            evaluation_id=f"{aid}::dropout_audit",
+            critical_direction=self.CRITICAL_DIRECTION,
+            redundant_dropout_row=1,
+            critical_dropout_row=3,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_gram_rank": p1["gram_rank"],
+                "phase_1_nullspace_dim": p1["nullspace_dim"],
+                "phase_1_crit_norm_squared": p1["crit_norm_squared"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_gram_rank": p2["gram_rank"],
+                "phase_2_nullspace_dim": p2["nullspace_dim"],
+                "phase_2_crit_norm_squared": p2["crit_norm_squared"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_gram_rank": p3["gram_rank"],
+                "phase_3_nullspace_dim": p3["nullspace_dim"],
+                "phase_3_crit_norm_squared": p3["crit_norm_squared"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "dropout_audit": dropout_rec,
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase watcher-dropout evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_watcher_dropout.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "dropout_audit_receipt": (
+                self.dropout_audit_monitor.current_receipt()
+                if self.dropout_audit_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+

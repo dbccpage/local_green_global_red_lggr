@@ -287,13 +287,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `40
 | `10602` | `repairable_contextual_sheaf_seed_10602` | **C** | `explicit_lggr_global_section_directive` | **`completed`** | **`1`** | **`1`** | **`0`** | **1** | **6** | **`$0.005698`** |
 | `10600` | `infeasible_contextual_sheaf_lock` | **A / B / C** | All policies | `safe_escalated` | `0` | `0` | `2` | 1 | 21 | `$0.022104` |
 
+## 17. 3-Agent Watcher-Dropout & Gram Rank-Deficiency vs. Full-Rank Critical Watcher Restoration Campaign (`--topology gram_dropout`)
+
+In `--topology gram_dropout`, 3 concurrent LLM workers edit `pricing_gram.py`, `tax_gram.py`, and `settlement_gram.py` where each module emits a 3-element watcher row (`pricing_watcher_row`, `tax_watcher_row`, `settle_watcher_row`) forming the $3 \times 3$ observation matrix $Q = (q_1, q_2, q_3)$ evaluated along the settlement-critical perturbation $v_{\mathrm{crit}} = (1, -1, 1)$ ($\|v_{\mathrm{crit}}\|_1 = 3 > 0$):
+- On `seed 10700` (`repairable_watcher_dropout_seed_10700`), `tax_gram.py` emits collinear row `[2, 2, 0] = 2 * q_1` and `settlement_gram.py` omits critical row `[1, 0, 1]` (`settle_watcher_row = [0, 1, 1]`, `dropout_reserve_cents = 12`, `local_green = 1`), yielding $\mathrm{rank}(Q^\top Q) = 2 < 3$, $\dim \ker(Q^\top Q) = 1 > 0$, $\|Q v_{\mathrm{crit}}\|_2^2 = 0$, and `payout = 861 != 873` (`global_green = 0`, $\Delta_E = -1$).
+- On `seed 10701` (`infeasible_watcher_dropout_lock_seed_10701`), legacy constraints lock `tax_gram.py` and `settlement_gram.py` to their rank-deficient watcher rows while requiring $\mathrm{rank}(Q^\top Q) = 3$, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `42` live API attempts, `$0.039763` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `gram_rank` | `nullspace_dim` | `crit_norm_sq` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10700` | `repairable_watcher_dropout_seed_10700` | **A** | `local_nonzero_row_gate_only` | `blocked_unresolved` | `2` | `1` | `0` | 1 | 6 | `$0.006228` |
+| `10700` | `repairable_watcher_dropout_seed_10700` | **B** | `partial_tax_watcher_row_update` | `blocked_unresolved` | `2` | `1` | `0` | 1 | 6 | `$0.005993` |
+| `10700` | `repairable_watcher_dropout_seed_10700` | **C** | `explicit_lggr_watcher_gram_restoration_directive` | **`completed`** | **`3`** | **`0`** | **`4`** | **1** | **6** | **`$0.006413`** |
+| `10701` | `infeasible_watcher_dropout_lock_seed_10701` | **A / B / C** | All policies | `safe_escalated` | `2` | `1` | `0` | 1 | 24 | `$0.021129` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, and 3-agent contextual-sheaf evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, and 3-agent watcher-dropout evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -310,4 +325,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/quorum_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/lease_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/contextuality_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/gram_dropout_pilot_run/events.jsonl
 ```

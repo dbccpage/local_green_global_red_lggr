@@ -38,6 +38,7 @@ from lggr.streaming import (
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
@@ -50,6 +51,7 @@ from .domain import (
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
+    GRAM_WORKER_MODULES,
     JACOBIAN_WORKER_MODULES,
     KINDUCTION_WORKER_MODULES,
     LEASE_WORKER_MODULES,
@@ -76,6 +78,7 @@ from .domain import (
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
+    WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
     catalyst_fixture,
     coalitional_fixture,
@@ -83,6 +86,7 @@ from .domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    gram_fixture,
     jacobian_fixture,
     kinduction_fixture,
     lease_fixture,
@@ -3557,6 +3561,220 @@ def sheaf_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Test 45 (--topology gram_dropout, Theorem 110): Watcher-Dropout & Gram
+# Rank-Deficiency vs. Full-Rank Critical Watcher Restoration Swarm Campaign
+# ---------------------------------------------------------------------------
+
+
+def gram_system_prompt(worker: str, arm: str) -> str:
+    module_name = GRAM_WORKER_MODULES[worker]
+    return (
+        f"You are concurrent code-engineering agent {worker}, sole owner of `{module_name}.py` "
+        f"in a 3-module watcher-telemetry settlement codebase (`pricing_gram.py` -> `tax_gram.py` -> `settlement_gram.py`) (Arm {arm}). "
+        "First call `inspect_workspace`. "
+        "If `infeasible_constraint` is non-null, immediately call `escalate` with a concise reason. "
+        "Otherwise, follow `merge_gate_feedback` for your role: if your action is to HOLD your module or "
+        "no changes are requested for your module, submit your existing `source_code` unchanged via `submit_module_patch`. "
+        "If your action is `RESTORE_TAX_WATCHER_ROW_011`, update `tax_gram.py` so `tax_watcher_row` is `[0, 1, 1]`. "
+        "If your action is `RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101`, update `settlement_gram.py` so "
+        "`settle_watcher_row` is `[1, 0, 1]` and `dropout_reserve_cents = 0` (`payout_cents = net_cents - fee_cents`). "
+        "Do NOT call `escalate` when `infeasible_constraint` is null; only call `escalate` when `infeasible_constraint` "
+        "is non-null and locks rank-deficient watcher rows. Output ONLY tool calls with zero prose."
+    )
+
+
+def gram_merge_gate(
+    events: Events,
+    workspace: WatcherDropoutCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseWatcherDropoutMonitor(
+        scope_id=f"swarm-gram-{workspace.state['seed']}-{arm}-{step_tag}"
+    )
+    local_results = workspace.local_verdicts()
+    eval_rec = monitor.evaluate_gram_merge(
+        f"eval-{arm}-{step_tag}",
+        module_sources=workspace.state["sources"],
+        local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    events.emit(
+        "gate",
+        {
+            "seed": workspace.state["seed"],
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "gram_rank": eval_rec["gram_rank"],
+            "nullspace_dim": eval_rec["nullspace_dim"],
+            "crit_norm_squared": eval_rec["crit_norm_squared"],
+            "dropout_reserve_cents": eval_rec["dropout_reserve_cents"],
+            "status": eval_rec["status"],
+        },
+    )
+
+    per_worker_feedback: dict[str, dict[str, Any]] = {}
+    for w, mod_name in GRAM_WORKER_MODULES.items():
+        if workspace.state["infeasible_constraint"] is not None:
+            per_worker_feedback[w] = {
+                "arm": arm,
+                "status": "INFEASIBLE_WATCHER_DROPOUT_LOCK",
+                "infeasible_constraint": workspace.state["infeasible_constraint"],
+                "directive": "ESCALATE_IMMEDIATELY",
+            }
+        elif arm == "A":
+            per_worker_feedback[w] = {
+                "arm": "A",
+                "mode": "local_nonzero_row_gate_only",
+                "owned_module": f"{mod_name}.py",
+                "local_unit_test_passed": local_results[mod_name],
+                "action": "HOLD_LOCAL_NONZERO_WATCHER_ROW",
+                "instruction": (
+                    "Your isolated watcher-row non-zero check passed (`L = 1`). "
+                    "Submit your current `source_code` unchanged."
+                ),
+            }
+        elif arm == "B":
+            if w == "worker-1":
+                per_worker_feedback[w] = {
+                    "arm": "B",
+                    "mode": "partial_tax_watcher_row_update",
+                    "owned_module": "tax_gram.py",
+                    "action": "RESTORE_TAX_WATCHER_ROW_011",
+                    "instruction": (
+                        "Update `tax_gram.py` so `tax_watcher_row` is `[0, 1, 1]` "
+                        "(removing the collinear duplicate `[2, 2, 0] = 2 * q_1`)."
+                    ),
+                }
+            else:
+                per_worker_feedback[w] = {
+                    "arm": "B",
+                    "mode": "partial_tax_watcher_row_update",
+                    "owned_module": f"{mod_name}.py",
+                    "action": "HOLD_CURRENT_WATCHER_ROW",
+                    "instruction": "Submit your current `source_code` unchanged.",
+                }
+        else:
+            role_dir = eval_rec["compact_role_directives"][w]
+            per_worker_feedback[w] = {
+                "arm": "C",
+                "mode": "explicit_lggr_watcher_gram_restoration_directive",
+                "owned_module": f"{mod_name}.py",
+                "action": role_dir["action"],
+                "target": role_dir["target"],
+                "gram_rank": eval_rec["gram_rank"],
+                "nullspace_dim": eval_rec["nullspace_dim"],
+                "crit_norm_squared": eval_rec["crit_norm_squared"],
+            }
+
+    return eval_rec, per_worker_feedback
+
+
+def gram_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(GRAM_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = gram_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = WatcherDropoutCodeWorkspace(base_state)
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_0, per_worker_fb = gram_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = (eval_0["local_green"] == 1) and (eval_0["global_green"] == 0)
+
+            histories: dict[str, list[dict[str, Any]]] = {}
+            for w in workers:
+                mod_name = GRAM_WORKER_MODULES[w]
+                histories[w] = [
+                    {"role": "system", "content": gram_system_prompt(w, arm)},
+                    {
+                        "role": "user",
+                        "content": json.dumps(
+                            {
+                                "seed": seed,
+                                "arm": arm,
+                                "wave": 1,
+                                "owned_module": f"{mod_name}.py",
+                                "merge_gate_feedback": per_worker_fb[w],
+                                "instruction": (
+                                    "First call `inspect_workspace`. Then follow `merge_gate_feedback`: "
+                                    "if `infeasible_constraint` is non-null, call `escalate`; otherwise "
+                                    "call `submit_module_patch` with the required `source_code`."
+                                ),
+                            },
+                            sort_keys=True,
+                        ),
+                    },
+                ]
+
+            round_turns(client, events, ws, histories, workers, per_worker_fb)
+            eval_1, _ = gram_merge_gate(events, ws, arm, "wave-1")
+
+            if ws.state["infeasible_constraint"] is not None:
+                outcome = "safe_escalated" if len(ws.state["escalations"]) >= 1 else "blocked_unresolved"
+            elif eval_1["global_green"] == 1 and eval_1["defect"] == 0:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_summary = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_1["local_green"],
+                "final_global_green": eval_1["global_green"],
+                "final_defect": eval_1["defect"],
+                "final_gram_rank": eval_1["gram_rank"],
+                "final_nullspace_dim": eval_1["nullspace_dim"],
+                "final_crit_norm_squared": eval_1["crit_norm_squared"],
+                "final_dropout_reserve_cents": eval_1["dropout_reserve_cents"],
+                "final_status": eval_1["status"],
+                "waves_run": 1,
+                "escalations": len(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.watcher_dropout_code_engineering_swarm.v1",
+        "topology": "gram_dropout",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent watcher-dropout Gram Python code-engineering swarm (`pricing_gram` -> "
+            "`tax_gram` -> `settlement_gram`) comparing isolated non-zero watcher-row gating (A), "
+            "partial tax watcher-row update (B), and explicit LGGR full-rank Gram restoration "
+            "directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -3597,6 +3815,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = lease_campaign(client, events, config)
         elif config.get("topology") == "contextuality":
             summary = sheaf_campaign(client, events, config)
+        elif config.get("topology") == "gram_dropout":
+            summary = gram_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -3637,6 +3857,7 @@ def main() -> None:
             "quorum",
             "lease",
             "contextuality",
+            "gram_dropout",
         ],
         default="linear",
     )
@@ -3692,6 +3913,8 @@ def main() -> None:
         seeds = [10500, 10501, 10502]
     elif args.topology == "contextuality":
         seeds = [10600, 10601, 10602]
+    elif args.topology == "gram_dropout":
+        seeds = [10700, 10701, 10702]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -3860,6 +4083,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = sheaf_campaign(client, events, config)
+    elif args.topology == "gram_dropout":
+        config = {
+            "topology": "gram_dropout",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = gram_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

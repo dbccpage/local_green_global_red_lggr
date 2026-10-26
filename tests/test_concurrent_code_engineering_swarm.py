@@ -42,6 +42,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CODE_SWARM_MODELS,
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKTREE_BRANCHES,
+    GRAM_PRICING_SOURCE,
+    GRAM_SETTLEMENT_DROPOUT_SOURCE,
+    GRAM_SETTLEMENT_RESTORED_SOURCE,
+    GRAM_TAX_DROPOUT_SOURCE,
+    GRAM_TAX_RESTORED_SOURCE,
     JACOBIAN_PRICING_SOURCE,
     JACOBIAN_SETTLEMENT_BLIND_SOURCE,
     JACOBIAN_SETTLEMENT_OBSERVABLE_SOURCE,
@@ -82,6 +87,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
+    WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
     catalyst_fixture,
     coalitional_fixture,
@@ -89,6 +95,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    gram_fixture,
     jacobian_fixture,
     kinduction_fixture,
     lease_fixture,
@@ -100,6 +107,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_cptp_local_unit_tests,
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
+    run_gram_local_unit_tests,
     run_jacobian_local_unit_tests,
     run_kinduction_local_unit_tests,
     run_lease_local_unit_tests,
@@ -123,6 +131,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     cptp_campaign,
     dfa_campaign,
     diamond_campaign,
+    gram_campaign,
     jacobian_campaign,
     kinduction_campaign,
     lease_campaign,
@@ -150,6 +159,7 @@ from lggr.streaming import (
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
@@ -2825,6 +2835,252 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if sheaf_events.exists() and sheaf_summary.exists():
             replayed = replay(sheaf_events)
             self.assertEqual(replayed["schema"], "lggr.contextual_sheaf_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_watcher_dropout_gram_blindspot_vs_full_rank_restoration(self) -> None:
+        state = gram_fixture(10700)
+        ws = WatcherDropoutCodeWorkspace(state)
+        local_res = ws.local_verdicts()
+        self.assertEqual(
+            local_res,
+            {"pricing_gram": True, "tax_gram": True, "settlement_gram": True},
+        )
+
+        monitor = StreamingCodebaseWatcherDropoutMonitor(scope_id="test-gram")
+        obs1 = monitor.evaluate_gram_merge(
+            "wave-0-dropout",
+            module_sources=ws.state["sources"],
+            local_test_results=local_res,
+        )
+        self.assertEqual(obs1["local_green"], 1)
+        self.assertEqual(obs1["global_green"], 0)
+        self.assertEqual(obs1["defect"], -1)
+        self.assertEqual(obs1["gram_rank"], 2)
+        self.assertEqual(obs1["nullspace_dim"], 1)
+        self.assertEqual(obs1["crit_norm_squared"], 0)
+        self.assertEqual(obs1["dropout_reserve_cents"], 12)
+        self.assertEqual(obs1["merchant_payout_cents"], 861)
+        self.assertEqual(obs1["status"], "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR")
+        self.assertEqual(
+            obs1["compact_role_directives"]["worker-0"]["action"],
+            "HOLD_ANCHOR_PRICING_WATCHER_ROW_110",
+        )
+        self.assertEqual(
+            obs1["compact_role_directives"]["worker-1"]["action"],
+            "RESTORE_TAX_WATCHER_ROW_011",
+        )
+        self.assertEqual(
+            obs1["compact_role_directives"]["worker-2"]["action"],
+            "RESTORE_SETTLEMENT_CRITICAL_WATCHER_ROW_101",
+        )
+
+        # Partial repair: tax_gram updates row to [0, 1, 1] while settlement_gram stays at [0, 1, 1]
+        res_b = ws.tool("worker-1", "submit_module_patch", {"source_code": GRAM_TAX_RESTORED_SOURCE})
+        self.assertTrue(res_b["accepted"])
+        obs2 = monitor.evaluate_gram_merge(
+            "wave-1-partial",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_verdicts(),
+        )
+        self.assertEqual(obs2["local_green"], 1)
+        self.assertEqual(obs2["global_green"], 0)
+        self.assertEqual(obs2["defect"], -1)
+        self.assertEqual(obs2["gram_rank"], 2)
+        self.assertEqual(obs2["nullspace_dim"], 1)
+        self.assertEqual(obs2["crit_norm_squared"], 0)
+        self.assertEqual(obs2["status"], "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR")
+
+        # Full repair: settlement_gram restores critical row [1, 0, 1] and reserve = 0
+        res_c = ws.tool("worker-2", "submit_module_patch", {"source_code": GRAM_SETTLEMENT_RESTORED_SOURCE})
+        self.assertTrue(res_c["accepted"])
+        obs3 = monitor.evaluate_gram_merge(
+            "wave-1-restored",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_verdicts(),
+        )
+        self.assertEqual(obs3["local_green"], 1)
+        self.assertEqual(obs3["global_green"], 1)
+        self.assertEqual(obs3["defect"], 0)
+        self.assertEqual(obs3["gram_rank"], 3)
+        self.assertEqual(obs3["nullspace_dim"], 0)
+        self.assertEqual(obs3["crit_norm_squared"], 4)
+        self.assertEqual(obs3["dropout_reserve_cents"], 0)
+        self.assertEqual(obs3["merchant_payout_cents"], 873)
+        self.assertEqual(obs3["status"], "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG")
+
+    def test_watcher_dropout_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        bad_import = run_gram_local_unit_tests(
+            "tax_gram",
+            "import os\ndef tax_gram(pricing_quote, tax_rate_bps):\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = WatcherDropoutCodeWorkspace(gram_fixture(10700))
+        bad_patch = ws.tool(
+            "worker-1",
+            "submit_module_patch",
+            {"source_code": "def tax_gram(pricing_quote, tax_rate_bps):\n    return {'tax_cents': 0}\n"},
+        )
+        self.assertFalse(bad_patch["accepted"])
+
+        ws_locked = WatcherDropoutCodeWorkspace(gram_fixture(10701))
+        locked_patch = ws_locked.tool(
+            "worker-1",
+            "submit_module_patch",
+            {"source_code": GRAM_TAX_RESTORED_SOURCE},
+        )
+        self.assertFalse(locked_patch["accepted"])
+
+    def test_concurrent_gram_campaign_replay_and_tamper_detection(self) -> None:
+        def stub_gram_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_text = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"agent {w}," in sys_text:
+                    worker = w
+                    break
+            arm = "A"
+            for a in ("A", "B", "C"):
+                if f"(Arm {a})" in sys_text:
+                    arm = a
+                    break
+
+            has_tool_response = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_response:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msgs = [m for m in messages if m.get("role") == "tool"]
+                inspected = json.loads(tool_msgs[-1]["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Infeasible watcher-dropout Gram blindspot lock."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif arm == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": GRAM_TAX_RESTORED_SOURCE}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": GRAM_PRICING_SOURCE,
+                        "worker-1": GRAM_TAX_RESTORED_SOURCE,
+                        "worker-2": GRAM_SETTLEMENT_RESTORED_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "gram_dropout",
+                "seeds": [10700, 10701],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_gram_transport)
+            summary = gram_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.watcher_dropout_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on gram gate gram_rank field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["gram_rank"] = int(gate_rec["gram_rank"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_gram_dropout_pilot_evidence_replay_if_present(self) -> None:
+        gram_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "gram_dropout_pilot_run"
+            / "events.jsonl"
+        )
+        gram_summary = gram_events.with_name("summary.json")
+        if gram_events.exists() and gram_summary.exists():
+            replayed = replay(gram_events)
+            self.assertEqual(replayed["schema"], "lggr.watcher_dropout_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

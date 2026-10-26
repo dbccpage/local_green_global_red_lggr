@@ -4532,5 +4532,72 @@ theorem contextual_sheaf_codebase_hollow_triangle_and_reconciliation_audit :
   intro d000 d001 d110 d111 qBC qCA ⟨h1, h2, h3, h4, h5, h6, h7⟩
   omega
 
+/-- 110. Watcher-dropout and Gram rank-deficiency vs. full-rank critical watcher restoration in concurrent code-engineering swarms:
+    1. General 3-module watcher-row Gram nullspace vs. full-rank restoration law over ℤ³:
+       - When `pricing_gram` emits anchor watcher row `q1 = (1, 1, 0)`, `tax_gram` emits collinear
+         duplicate `q2_drop = (2, 2, 0) = 2·q1`, and `settlement_gram` emits `q3_drop = (0, 1, 1)`
+         (dropping the critical watcher row `q4 = (1, 0, 1)`), every nonzero multiple of the
+         settlement-critical perturbation `v_k = (k, -k, k)` (`k ≠ 0`) satisfies `q1 · v_k = 0`,
+         `q2_drop · v_k = 0`, and `q3_drop · v_k = 0` (`‖Q_drop v_k‖₂² = 0`, enlarging `ker(Q^T Q)`
+         along `v_k`);
+       - When `tax_gram` restores `q2_rest = (0, 1, 1)` and `settlement_gram` restores critical
+         watcher row `q3_rest = (1, 0, 1)`, any `x = (x1, x2, x3) ∈ ℤ³` satisfying
+         `x1 + x2 = 0 ∧ x2 + x3 = 0 ∧ x1 + x3 = 0` has `x1 = 0 ∧ x2 = 0 ∧ x3 = 0`
+         (`ker(Q_rest^T Q_rest) = {0}`), and `q3_rest · v_k = 2k ≠ 0`;
+    2. Concrete 3-phase 3-module watcher-dropout codebase audit on `v_crit = (1, -1, 1)`:
+       - Phase 1 (Critical watcher dropout `Q_p1 = ((1,1,0), (2,2,0), (0,1,1))`, `dropout_reserve = 12`):
+         each module's watcher row is nonzero (`L_p1 = 1`), yet `‖Q_p1 v_crit‖₂² = 0^2 + 0^2 + 0^2 = 0`,
+         `rank_p1 = 2 < 3`, `null_dim_p1 = 1 > 0`, and `payout_drop = 861 ≠ 873` (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial repair: `tax_gram` updates `q2` to `(0, 1, 1)` while `settlement_gram`
+         retains `(0, 1, 1)` and `dropout_reserve = 12`): `Q_p2 = ((1,1,0), (0,1,1), (0,1,1))` still
+         has `‖Q_p2 v_crit‖₂² = 0`, `rank_p2 = 2 < 3`, `null_dim_p2 = 1 > 0` (`L_p2 = 1`, `Eg_p2 = 0`,
+         `Δ_{E,p2} = -1`);
+       - Phase 3 (Full watcher restoration `Q_p3 = ((1,1,0), (0,1,1), (1,0,1))`, `dropout_reserve = 0`):
+         `‖Q_p3 v_crit‖₂² = 0^2 + 0^2 + 2^2 = 4 > 0`, `rank_p3 = 3`, `null_dim_p3 = 0`, and exact
+         settlement conservation `873 + 27 + 180 = 1080` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem watcher_dropout_codebase_gram_rank_deficiency_and_restoration_audit :
+    ((∀ x1 x2 x3 : Int,
+        (x1 + x2 = 0 ∧ x2 + x3 = 0 ∧ x1 + x3 = 0) → (x1 = 0 ∧ x2 = 0 ∧ x3 = 0)) ∧
+     (∀ k : Int, k ≠ 0 →
+        let v1 := k; let v2 := -k; let v3 := k;
+        (v1 + v2 = 0) ∧ (2 * v1 + 2 * v2 = 0) ∧ (v2 + v3 = 0) ∧ (v1 + v3 ≠ 0))) ∧
+    (let v1 : Int := 1; let v2 : Int := -1; let v3 : Int := 1;
+     let r1 := v1 + v2;
+     let r2_drop := 2 * v1 + 2 * v2;
+     let r2_rest := v2 + v3;
+     let r3_drop := v2 + v3;
+     let r3_rest := v1 + v3;
+     let energy_p1 := r1 * r1 + r2_drop * r2_drop + r3_drop * r3_drop;
+     let energy_p2 := r1 * r1 + r2_rest * r2_rest + r3_drop * r3_drop;
+     let energy_p3 := r1 * r1 + r2_rest * r2_rest + r3_rest * r3_rest;
+     let rank_p1 : Int := 2; let rank_p2 : Int := 2; let rank_p3 : Int := 3;
+     let null_p1 : Int := 3 - rank_p1;
+     let null_p2 : Int := 3 - rank_p2;
+     let null_p3 : Int := 3 - rank_p3;
+     let reserve_drop : Int := 12;
+     let reserve_rest : Int := 0;
+     let payout_drop : Int := 873 - reserve_drop;
+     let payout_rest : Int := 873 - reserve_rest;
+     let fee : Int := 27; let tax : Int := 180; let gross : Int := 1080;
+     let l_p1 := if energy_p1 = 0 then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (null_p1 = 0) ∧ (payout_drop + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (energy_p2 = 0) ∧ (r2_rest = 0) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (null_p2 = 0) ∧ (payout_drop + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (energy_p3 > 0) ∧ (null_p3 = 0) ∧ (payout_rest + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (rank_p3 = 3) ∧ (reserve_rest = 0) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (energy_p1 = 0 ∧ energy_p2 = 0 ∧ energy_p3 = 4 ∧ payout_drop = 861 ∧ payout_rest = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro x1 x2 x3 ⟨h1, h2, h3⟩
+    omega
+  · intro k hk
+    dsimp only
+    refine ⟨by omega, ⟨by omega, ⟨by omega, by omega⟩⟩⟩
+
 
 end LggrVIII

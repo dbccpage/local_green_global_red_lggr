@@ -1,0 +1,126 @@
+{
+  "schema": "lggr.watcher_dropout_code_engineering_swarm.v1",
+  "topology": "gram_dropout",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 10700,
+      "kind": "repairable_watcher_dropout_seed_10700",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_gram_rank": 2,
+          "final_nullspace_dim": 1,
+          "final_crit_norm_squared": 0,
+          "final_dropout_reserve_cents": 12,
+          "final_status": "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0062276303"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_gram_rank": 2,
+          "final_nullspace_dim": 1,
+          "final_crit_norm_squared": 0,
+          "final_dropout_reserve_cents": 12,
+          "final_status": "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0059933584"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_gram_rank": 3,
+          "final_nullspace_dim": 0,
+          "final_crit_norm_squared": 4,
+          "final_dropout_reserve_cents": 0,
+          "final_status": "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0064133766"
+        }
+      ]
+    },
+    {
+      "seed": 10701,
+      "kind": "infeasible_watcher_dropout_lock_seed_10701",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_gram_rank": 2,
+          "final_nullspace_dim": 1,
+          "final_crit_norm_squared": 0,
+          "final_dropout_reserve_cents": 12,
+          "final_status": "INFEASIBLE_WATCHER_DROPOUT_LOCK",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 8,
+          "cost_usd": "0.0066652115"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_gram_rank": 2,
+          "final_nullspace_dim": 1,
+          "final_crit_norm_squared": 0,
+          "final_dropout_reserve_cents": 12,
+          "final_status": "INFEASIBLE_WATCHER_DROPOUT_LOCK",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 8,
+          "cost_usd": "0.0075349076"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_gram_rank": 2,
+          "final_nullspace_dim": 1,
+          "final_crit_norm_squared": 0,
+          "final_dropout_reserve_cents": 12,
+          "final_status": "INFEASIBLE_WATCHER_DROPOUT_LOCK",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 8,
+          "cost_usd": "0.0069285186"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 42,
+  "charged_or_reserved_usd": "0.0397630030",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 15,
+  "scope": "Concurrent 3-agent watcher-dropout Gram Python code-engineering swarm (`pricing_gram` -> `tax_gram` -> `settlement_gram`) comparing isolated non-zero watcher-row gating (A), partial tax watcher-row update (B), and explicit LGGR full-rank Gram restoration directives (C) with full cryptographic receipts retained in the host audit log."
+}

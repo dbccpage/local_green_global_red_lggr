@@ -50,6 +50,7 @@ from lggr.streaming import (
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
@@ -5673,6 +5674,44 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_watcher_dropout_codebase_gram_rank_deficiency_and_restoration_audit(self) -> None:
+        """Verify Theorem 110: Watcher-dropout and Gram rank-deficiency vs. full-rank critical watcher restoration."""
+        mon = StreamingCodebaseWatcherDropoutMonitor(
+            scope_id="unit-codebase-watcher-dropout-scope",
+        )
+        obs = mon.evaluate_three_phase_gram_audit(
+            "codebase-gram-eval-01",
+        )
+        self.assertEqual(obs["phase_1_gram_rank"], 2)
+        self.assertEqual(obs["phase_1_nullspace_dim"], 1)
+        self.assertEqual(obs["phase_1_crit_norm_squared"], 0)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "WATCHER_DROPOUT_GRAM_BLINDSPOT_NGD_LGGR")
+
+        self.assertEqual(obs["phase_2_gram_rank"], 2)
+        self.assertEqual(obs["phase_2_nullspace_dim"], 1)
+        self.assertEqual(obs["phase_2_crit_norm_squared"], 0)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "WATCHER_DROPOUT_PARTIAL_ROW_COLLISION_LGGR")
+
+        self.assertEqual(obs["phase_3_gram_rank"], 3)
+        self.assertEqual(obs["phase_3_nullspace_dim"], 0)
+        self.assertEqual(obs["phase_3_crit_norm_squared"], 4)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
