@@ -1,0 +1,2270 @@
+{
+  "schema": "lggr.codebase_poe_veto_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_poe_veto_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_bilateral_veto_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_unilateral_veto_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_compromise_mass_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_poe_veto_codebase_coherence_rate": "0",
+  "compromise_mass_poe_codebase_coherence_rate": "1",
+  "codebase_poe_veto_coherence_gain": "1",
+  "codebase_poe_veto_receipt": {
+    "schema": "lggr.online_codebase_poe_veto.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_poe_veto",
+    "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "product_of_experts_receipt": {
+      "schema": "lggr.online_product_of_experts.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_poe_veto:poe",
+      "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "round_count": 15,
+      "poe_collapsed_round_ids": [
+        "openai/gpt-4o-mini_poe_veto_p1:poe",
+        "openai/gpt-4o-mini_poe_veto_p2:poe",
+        "google/gemini-2.5-flash-lite_poe_veto_p1:poe",
+        "google/gemini-2.5-flash-lite_poe_veto_p2:poe",
+        "meta-llama/llama-3.3-70b-instruct_poe_veto_p1:poe",
+        "meta-llama/llama-3.3-70b-instruct_poe_veto_p2:poe",
+        "deepseek/deepseek-chat_poe_veto_p1:poe",
+        "deepseek/deepseek-chat_poe_veto_p2:poe",
+        "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p1:poe",
+        "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p2:poe"
+      ],
+      "rejected_round_ids": [],
+      "rounds": [
+        {
+          "round_id": "openai/gpt-4o-mini_poe_veto_p1:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "openai/gpt-4o-mini_poe_veto_p2:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "openai/gpt-4o-mini_poe_veto_p3:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "0",
+            "1/16",
+            "0"
+          ],
+          "poe_partition_sum": "1/16",
+          "poe_normalized_distribution": [
+            "0",
+            "1",
+            "0"
+          ],
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "google/gemini-2.5-flash-lite_poe_veto_p1:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "google/gemini-2.5-flash-lite_poe_veto_p2:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "google/gemini-2.5-flash-lite_poe_veto_p3:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "0",
+            "1/16",
+            "0"
+          ],
+          "poe_partition_sum": "1/16",
+          "poe_normalized_distribution": [
+            "0",
+            "1",
+            "0"
+          ],
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "meta-llama/llama-3.3-70b-instruct_poe_veto_p1:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "meta-llama/llama-3.3-70b-instruct_poe_veto_p2:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "meta-llama/llama-3.3-70b-instruct_poe_veto_p3:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "0",
+            "1/16",
+            "0"
+          ],
+          "poe_partition_sum": "1/16",
+          "poe_normalized_distribution": [
+            "0",
+            "1",
+            "0"
+          ],
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "deepseek/deepseek-chat_poe_veto_p1:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "deepseek/deepseek-chat_poe_veto_p2:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "deepseek/deepseek-chat_poe_veto_p3:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "0",
+            "1/16",
+            "0"
+          ],
+          "poe_partition_sum": "1/16",
+          "poe_normalized_distribution": [
+            "0",
+            "1",
+            "0"
+          ],
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        },
+        {
+          "round_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p1:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "0",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p2:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/8",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        {
+          "round_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p3:poe",
+          "expert_count": 2,
+          "candidate_count": 3,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "0",
+            "1/16",
+            "0"
+          ],
+          "poe_partition_sum": "1/16",
+          "poe_normalized_distribution": [
+            "0",
+            "1",
+            "0"
+          ],
+          "moe_unnormalized_vector": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "3/8",
+            "1/4",
+            "3/8"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      ],
+      "receipt_sha256": "9361e733a5437c0f1bca56ef39bbb20eba7b4ad7c7357b8605d7e893237d6777"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini_poe_veto_p1_openai/gpt-4o-mini",
+          "report": {
+            "local_green": 1,
+            "moe_partition_sum": "1"
+          },
+          "query": "LGGR",
+          "metadata": {
+            "poe_partition_sixteenths": 0,
+            "poe_surcharge_cents": 12,
+            "pricing_compromise_fourths": 0,
+            "tax_compromise_fourths": 0,
+            "veto_expert_count": 2
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini_poe_veto_p3_openai/gpt-4o-mini",
+          "report": {
+            "local_green": 1,
+            "moe_partition_sum": "1"
+          },
+          "query": "LGGG",
+          "metadata": {
+            "poe_partition_sixteenths": 1,
+            "poe_surcharge_cents": 0,
+            "pricing_compromise_fourths": 1,
+            "tax_compromise_fourths": 1,
+            "veto_expert_count": 0
+          }
+        }
+      },
+      "input_sha256": "a866794c3d9c046583f8e6b2a246f292776254c49b3ba837270246ce529ffc80",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "8149e9553854576ccff2d94c11c1f1aed1ce407f656bddadfc80e03e3e8af49c"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_poe_veto",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_1_poe_partition_sixteenths": 0,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_veto_expert_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_2_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_2_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_2_poe_partition_sixteenths": 0,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_veto_expert_count": 1,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_3_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_3_expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "phase_3_poe_partition_sixteenths": 1,
+        "phase_3_poe_partition_sum": "1/16",
+        "phase_3_veto_expert_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_poe_veto",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_1_poe_partition_sixteenths": 0,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_veto_expert_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_2_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_2_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_2_poe_partition_sixteenths": 0,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_veto_expert_count": 1,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_3_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_3_expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "phase_3_poe_partition_sixteenths": 1,
+        "phase_3_poe_partition_sum": "1/16",
+        "phase_3_veto_expert_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_poe_veto",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_1_poe_partition_sixteenths": 0,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_veto_expert_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_2_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_2_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_2_poe_partition_sixteenths": 0,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_veto_expert_count": 1,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_3_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_3_expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "phase_3_poe_partition_sixteenths": 1,
+        "phase_3_poe_partition_sum": "1/16",
+        "phase_3_veto_expert_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_poe_veto",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_1_poe_partition_sixteenths": 0,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_veto_expert_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_2_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_2_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_2_poe_partition_sixteenths": 0,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_veto_expert_count": 1,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_3_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_3_expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "phase_3_poe_partition_sixteenths": 1,
+        "phase_3_poe_partition_sum": "1/16",
+        "phase_3_veto_expert_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_1_poe_partition_sixteenths": 0,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_veto_expert_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_2_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_2_expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "phase_2_poe_partition_sixteenths": 0,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_veto_expert_count": 1,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "phase_3_expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "phase_3_expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "phase_3_poe_partition_sixteenths": 1,
+        "phase_3_poe_partition_sum": "1/16",
+        "phase_3_veto_expert_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_poe_veto_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "pricing_compromise_fourths": 0,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 2,
+        "poe_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_poe_veto_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 1,
+        "poe_surcharge_cents": 7,
+        "merchant_payout_cents": 866,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_poe_veto_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 1,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "poe_partition_sixteenths": 1,
+        "poe_partition_sum": "1/16",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [
+          1
+        ],
+        "veto_expert_count": 0,
+        "poe_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_poe_veto_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "pricing_compromise_fourths": 0,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 2,
+        "poe_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_poe_veto_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 1,
+        "poe_surcharge_cents": 7,
+        "merchant_payout_cents": 866,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_poe_veto_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 1,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "poe_partition_sixteenths": 1,
+        "poe_partition_sum": "1/16",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [
+          1
+        ],
+        "veto_expert_count": 0,
+        "poe_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_poe_veto_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "pricing_compromise_fourths": 0,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 2,
+        "poe_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_poe_veto_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 1,
+        "poe_surcharge_cents": 7,
+        "merchant_payout_cents": 866,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_poe_veto_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 1,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "poe_partition_sixteenths": 1,
+        "poe_partition_sum": "1/16",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [
+          1
+        ],
+        "veto_expert_count": 0,
+        "poe_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_poe_veto_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "pricing_compromise_fourths": 0,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 2,
+        "poe_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_poe_veto_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 1,
+        "poe_surcharge_cents": 7,
+        "merchant_payout_cents": 866,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_poe_veto_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 1,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "poe_partition_sixteenths": 1,
+        "poe_partition_sum": "1/16",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [
+          1
+        ],
+        "veto_expert_count": 0,
+        "poe_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "pricing_compromise_fourths": 0,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          4,
+          0,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 2,
+        "poe_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 0,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          0,
+          4
+        ],
+        "poe_partition_sixteenths": 0,
+        "poe_partition_sum": "0",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [],
+        "veto_expert_count": 1,
+        "poe_surcharge_cents": 7,
+        "merchant_payout_cents": 866,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "pricing_compromise_fourths": 1,
+        "tax_compromise_fourths": 1,
+        "expert_1_fourths": [
+          3,
+          1,
+          0
+        ],
+        "expert_2_fourths": [
+          0,
+          1,
+          3
+        ],
+        "poe_partition_sixteenths": 1,
+        "poe_partition_sum": "1/16",
+        "moe_partition_sum": "1",
+        "joint_support_indices": [
+          1
+        ],
+        "veto_expert_count": 0,
+        "poe_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_poe",
+            "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+            "target_pricing_compromise_fourths": 1,
+            "target_expert_1_fourths": [
+              3,
+              1,
+              0
+            ]
+          },
+          "worker-1": {
+            "module": "tax_poe",
+            "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+            "target_tax_compromise_fourths": 1,
+            "target_expert_2_fourths": [
+              0,
+              1,
+              3
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_poe",
+            "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+            "target_poe_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "b4cf1bef74b38655bd37937002b9a9242510390919643be757bcd769405598fd"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_poe_veto",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_expert_1_fourths": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_1_poe_partition_sixteenths": 0,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_veto_expert_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_2_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_2_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_2_poe_partition_sixteenths": 0,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_veto_expert_count": 1,
+      "phase_2_surcharge_cents": 7,
+      "phase_2_payout_cents": 866,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_3_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_3_expert_2_fourths": [
+        0,
+        1,
+        3
+      ],
+      "phase_3_poe_partition_sixteenths": 1,
+      "phase_3_poe_partition_sum": "1/16",
+      "phase_3_veto_expert_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 7,\n  \"phase_2_payout_cents\": 866,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_poe_veto",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_expert_1_fourths": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_1_poe_partition_sixteenths": 0,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_veto_expert_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_2_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_2_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_2_poe_partition_sixteenths": 0,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_veto_expert_count": 1,
+      "phase_2_surcharge_cents": 7,
+      "phase_2_payout_cents": 866,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_3_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_3_expert_2_fourths": [
+        0,
+        1,
+        3
+      ],
+      "phase_3_poe_partition_sixteenths": 1,
+      "phase_3_poe_partition_sum": "1/16",
+      "phase_3_veto_expert_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 7,\n  \"phase_2_payout_cents\": 866,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_poe_veto",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_expert_1_fourths": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_1_poe_partition_sixteenths": 0,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_veto_expert_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_2_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_2_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_2_poe_partition_sixteenths": 0,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_veto_expert_count": 1,
+      "phase_2_surcharge_cents": 7,
+      "phase_2_payout_cents": 866,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_3_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_3_expert_2_fourths": [
+        0,
+        1,
+        3
+      ],
+      "phase_3_poe_partition_sixteenths": 1,
+      "phase_3_poe_partition_sum": "1/16",
+      "phase_3_veto_expert_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 7,\n  \"phase_2_payout_cents\": 866,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_poe_veto",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_expert_1_fourths": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_1_poe_partition_sixteenths": 0,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_veto_expert_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_2_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_2_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_2_poe_partition_sixteenths": 0,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_veto_expert_count": 1,
+      "phase_2_surcharge_cents": 7,
+      "phase_2_payout_cents": 866,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_3_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_3_expert_2_fourths": [
+        0,
+        1,
+        3
+      ],
+      "phase_3_poe_partition_sixteenths": 1,
+      "phase_3_poe_partition_sum": "1/16",
+      "phase_3_veto_expert_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 7,\n  \"phase_2_payout_cents\": 866,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_poe_veto",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_expert_1_fourths": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_1_poe_partition_sixteenths": 0,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_veto_expert_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_2_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_2_expert_2_fourths": [
+        0,
+        0,
+        4
+      ],
+      "phase_2_poe_partition_sixteenths": 0,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_veto_expert_count": 1,
+      "phase_2_surcharge_cents": 7,
+      "phase_2_payout_cents": 866,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+      "phase_3_expert_1_fourths": [
+        3,
+        1,
+        0
+      ],
+      "phase_3_expert_2_fourths": [
+        0,
+        1,
+        3
+      ],
+      "phase_3_poe_partition_sixteenths": 1,
+      "phase_3_poe_partition_sum": "1/16",
+      "phase_3_veto_expert_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 7,
+        "phase_2_payout_cents": 866,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 7,\n  \"phase_2_payout_cents\": 866,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Product-of-Experts (PoE) vs. Mixture-of-Experts (MoE) zero-veto collapse and compromise mass codebase benchmark across 5 model families (Theorem 129): Phase 1 separates bilateral zero-veto support collapse (`c_1 = 0, c_2 = 0, p_1 = [1, 0, 0], p_2 = [0, 0, 1], poe_partition_sixteenths = 0, veto_expert_count = 2, surcharge = 12, payout = 861 != 873, Delta_E = -1`); Phase 2 separates unilateral zero-veto support collapse (`c_1 = 1, c_2 = 0, p_1 = [3/4, 1/4, 0], p_2 = [0, 0, 1], poe_partition_sixteenths = 0, veto_expert_count = 1, surcharge = 7, payout = 866 != 873, Delta_E = -1`); Phase 3 verifies shared-carrier compromise mass allocation (`c_1 = 1, c_2 = 1, p_1 = [3/4, 1/4, 0], p_2 = [0, 1/4, 3/4], poe_partition_sixteenths = 1 >= 1, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "e5f9e9fbc9bf4974f15cb434f0c328052e7c9b6e0051e8494935634ff1fc3955"
+}

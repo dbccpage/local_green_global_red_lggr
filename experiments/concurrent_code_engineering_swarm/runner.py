@@ -49,6 +49,7 @@ from lggr.streaming import (
     StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
+    StreamingCodebaseProductOfExpertsMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
@@ -83,6 +84,7 @@ from .domain import (
     NON_ABELIAN_BRAID_WORKER_MODULES,
     OBLIGATION_MIGRATION_WORKER_MODULES,
     PATH_KERNEL_WORKER_MODULES,
+    POE_VETO_WORKER_MODULES,
     POLICY_RATCHET_WORKER_MODULES,
     POLICY_WORKER_MODULES,
     QUORUM_WORKER_MODULES,
@@ -124,6 +126,7 @@ from .domain import (
     PathKernelDashboardCodeWorkspace,
     PolicyRatchetCodeWorkspace,
     PolicyReversalCodeWorkspace,
+    ProductOfExpertsCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
@@ -154,6 +157,7 @@ from .domain import (
     non_abelian_braid_fixture,
     obligation_migration_fixture,
     path_kernel_fixture,
+    poe_veto_fixture,
     policy_fixture,
     policy_ratchet_fixture,
     quorum_fixture,
@@ -163,6 +167,7 @@ from .domain import (
     run_governed_relaxation_local_unit_tests,
     run_multi_loop_hodge_local_unit_tests,
     run_non_abelian_braid_local_unit_tests,
+    run_poe_veto_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
     run_skew_repair_local_unit_tests,
@@ -8284,6 +8289,274 @@ def skew_repair_campaign(
     return summary
 
 
+def poe_veto_system_prompt(worker: str, arm: str) -> str:
+    mod_name = POE_VETO_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible exclusively for `{mod_name}.py` in a 3-module "
+        "Product-of-Experts (PoE) zero-veto collapse and compromise mass settlement codebase "
+        "(`pricing_poe.py` -> `tax_poe.py` -> `settlement_poe.py`) over K = 2 experts scoring "
+        "m = 3 candidate actions W = {w_0, w_1, w_2} in fourths (`M_1 = M_2 = 1`, `D_MoE = 1`).\n"
+        "Always call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`bilateral_zero_veto_collapse_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_BILATERAL_ZERO_VETO`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`unilateral_compromise_allocation_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseProductOfExpertsMonitor.PHASE_2_PRICING_POE_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`unilateral_compromise_allocation_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_shared_compromise_mass_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseProductOfExpertsMonitor.PHASE_3_PRICING_POE_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_shared_compromise_mass_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseProductOfExpertsMonitor.PHASE_3_TAX_POE_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_shared_compromise_mass_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseProductOfExpertsMonitor.PHASE_3_SETTLEMENT_POE_SOURCE
+        + "```\n"
+    )
+
+
+def poe_veto_merge_gate(
+    events: Events,
+    ws: ProductOfExpertsCodeWorkspace,
+    monitor: StreamingCodebaseProductOfExpertsMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_poe_veto_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_poe", "tax_poe", "settlement_poe")
+    }
+    eval_res = monitor.evaluate_poe_veto_modules(
+        f"{arm}-{wave_label}",
+        pricing_poe_source=sources["pricing_poe"],
+        tax_poe_source=sources["tax_poe"],
+        settlement_poe_source=sources["settlement_poe"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "pricing_compromise_fourths": eval_res["pricing_compromise_fourths"],
+            "tax_compromise_fourths": eval_res["tax_compromise_fourths"],
+            "expert_1_fourths": eval_res["expert_1_fourths"],
+            "expert_2_fourths": eval_res["expert_2_fourths"],
+            "poe_partition_sixteenths": eval_res["poe_partition_sixteenths"],
+            "poe_partition_sum": eval_res["poe_partition_sum"],
+            "veto_expert_count": eval_res["veto_expert_count"],
+            "poe_surcharge_cents": eval_res["poe_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in POE_VETO_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_BILATERAL_ZERO_VETO",
+                "note": "Local unit test and Mixture-of-Experts partition sum D_MoE = 1 pass under c_1 = 0, c_2 = 0.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "UNILATERAL_EXPERT_1_COMPROMISE",
+                "poe_partition_sixteenths": eval_res["poe_partition_sixteenths"],
+                "veto_expert_count": eval_res["veto_expert_count"],
+                "poe_surcharge_cents": eval_res["poe_surcharge_cents"],
+                "note": "Allocating compromise c_1 = 1 on Expert 1 while Expert 2 keeps c_2 = 0 still collapses D_PoE = 0 (surcharge 7).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "pricing_compromise_fourths": eval_res["pricing_compromise_fourths"],
+                "tax_compromise_fourths": eval_res["tax_compromise_fourths"],
+                "poe_partition_sixteenths": eval_res["poe_partition_sixteenths"],
+                "veto_expert_count": eval_res["veto_expert_count"],
+                "poe_surcharge_cents": eval_res["poe_surcharge_cents"],
+                "action_required": "ALLOCATE_SHARED_COMPROMISE_MASS_BOTH_EXPERTS",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def poe_veto_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(POE_VETO_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = poe_veto_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = ProductOfExpertsCodeWorkspace(base_state)
+            monitor = StreamingCodebaseProductOfExpertsMonitor(
+                scope_id=f"poe-veto-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = poe_veto_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": poe_veto_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{POE_VETO_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = poe_veto_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_pricing_compromise_fourths": eval_res["pricing_compromise_fourths"],
+                "final_tax_compromise_fourths": eval_res["tax_compromise_fourths"],
+                "final_expert_1_fourths": eval_res["expert_1_fourths"],
+                "final_expert_2_fourths": eval_res["expert_2_fourths"],
+                "final_poe_partition_sixteenths": eval_res["poe_partition_sixteenths"],
+                "final_poe_partition_sum": eval_res["poe_partition_sum"],
+                "final_veto_expert_count": eval_res["veto_expert_count"],
+                "final_poe_surcharge_cents": eval_res["poe_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.poe_veto_code_engineering_swarm.v1",
+        "topology": "poe_veto",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent Product-of-Experts (PoE) zero-veto collapse & compromise mass "
+            "Python code-engineering swarm (`pricing_poe` -> `tax_poe` -> `settlement_poe`) comparing "
+            "bilateral zero-veto collapse c_1 = 0, c_2 = 0 (A), unilateral compromise c_1 = 1, c_2 = 0 (B), "
+            "and shared-carrier compromise mass allocation c_1 = 1, c_2 = 1 (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -8362,6 +8635,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = policy_ratchet_campaign(client, events, config)
         elif config.get("topology") == "skew_repair":
             summary = skew_repair_campaign(client, events, config)
+        elif config.get("topology") == "poe_veto":
+            summary = poe_veto_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -8421,6 +8696,7 @@ def main() -> None:
             "subgradient_pivot",
             "policy_ratchet",
             "skew_repair",
+            "poe_veto",
         ],
         default="linear",
     )
@@ -8514,6 +8790,8 @@ def main() -> None:
         seeds = [12400, 12401, 12402]
     elif args.topology == "skew_repair":
         seeds = [12500, 12501, 12502]
+    elif args.topology == "poe_veto":
+        seeds = [12600, 12601, 12602]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -8891,6 +9169,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = skew_repair_campaign(client, events, config)
+    elif args.topology == "poe_veto":
+        config = {
+            "topology": "poe_veto",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = poe_veto_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

@@ -67,6 +67,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_MIG_P1_P2_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
+    INITIAL_PRICING_POE_P1_PY,
+    INITIAL_PRICING_POE_P2_P3_PY,
     INITIAL_PRICING_RATCHET_P1_PY,
     INITIAL_PRICING_RATCHET_P2_P3_PY,
     INITIAL_PRICING_RELAX_COHERENT_PY,
@@ -90,6 +92,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_MIG_P1_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
+    INITIAL_SETTLEMENT_POE_P1_PY,
+    INITIAL_SETTLEMENT_POE_P2_PY,
+    INITIAL_SETTLEMENT_POE_P3_PY,
     INITIAL_SETTLEMENT_RATCHET_P1_PY,
     INITIAL_SETTLEMENT_RATCHET_P2_PY,
     INITIAL_SETTLEMENT_RATCHET_P3_PY,
@@ -112,6 +117,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
+    INITIAL_TAX_POE_P1_PY,
+    INITIAL_TAX_POE_P2_PY,
+    INITIAL_TAX_POE_P3_PY,
     INITIAL_TAX_RATCHET_P1_PY,
     INITIAL_TAX_RATCHET_P2_PY,
     INITIAL_TAX_RATCHET_P3_PY,
@@ -201,6 +209,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
+    PoeVetoCodeWorkspace,
     PolicyRatchetCodeWorkspace,
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
@@ -233,6 +242,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     non_abelian_braid_fixture,
     obligation_migration_fixture,
     path_kernel_fixture,
+    poe_veto_fixture,
     policy_fixture,
     policy_ratchet_fixture,
     quorum_fixture,
@@ -257,6 +267,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_non_abelian_braid_local_unit_tests,
     run_obligation_migration_local_unit_tests,
     run_path_kernel_local_unit_tests,
+    run_poe_veto_local_unit_tests,
     run_policy_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
     run_quorum_local_unit_tests,
@@ -305,6 +316,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     non_abelian_braid_campaign,
     obligation_migration_campaign,
     path_kernel_campaign,
+    poe_veto_campaign,
     policy_campaign,
     policy_ratchet_campaign,
     quorum_campaign,
@@ -7432,6 +7444,214 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12500_arms["B"]["final_skew_surcharge_cents"], 6)
             self.assertEqual(seed_12500_arms["C"]["final_skew_surcharge_cents"], 0)
             self.assertEqual(seed_12500_arms["C"]["status"], "completed")
+
+    def test_poe_veto_workspace_and_unit_tests(self) -> None:
+        """Verify PoeVetoCodeWorkspace and local unit tests across all 3 phases."""
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("pricing_poe", INITIAL_PRICING_POE_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("pricing_poe", INITIAL_PRICING_POE_P2_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("tax_poe", INITIAL_TAX_POE_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("tax_poe", INITIAL_TAX_POE_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("tax_poe", INITIAL_TAX_POE_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("settlement_poe", INITIAL_SETTLEMENT_POE_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("settlement_poe", INITIAL_SETTLEMENT_POE_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_poe_veto_local_unit_tests("settlement_poe", INITIAL_SETTLEMENT_POE_P3_PY)["passed"]
+        )
+
+        ws = PoeVetoCodeWorkspace(poe_veto_fixture(12600))
+        inspected = ws.tool("worker-1", "inspect_workspace", {})
+        self.assertEqual(inspected["owned_module"], "tax_poe.py")
+        self.assertTrue(inspected["local_unit_test"]["passed"])
+        no_esc = ws.tool("worker-1", "escalate", {"reason": "Premature escalation"})
+        self.assertFalse(no_esc["accepted"])
+
+        ws_locked = PoeVetoCodeWorkspace(poe_veto_fixture(12601))
+        denied = ws_locked.tool(
+            "worker-0",
+            "submit_module_patch",
+            {"source_code": INITIAL_PRICING_POE_P2_P3_PY},
+        )
+        self.assertFalse(denied["accepted"])
+        esc = ws_locked.tool("worker-0", "escalate", {"reason": "ROM lock on pricing_poe.py"})
+        self.assertTrue(esc["escalated"])
+
+    def test_concurrent_poe_veto_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-agent poe_veto campaign waves and offline replay."""
+
+        def stub_poe_veto_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            model = payload["model"]
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked pricing_poe.py has c_1=0 and collapses PoE partition sum."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    patch_map_b = {
+                        "worker-0": INITIAL_PRICING_POE_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_POE_P2_PY,
+                        "worker-2": INITIAL_SETTLEMENT_POE_P2_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map_b[worker]}),
+                        },
+                    }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_POE_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_POE_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_POE_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "poe_veto",
+                "seeds": [12600, 12601],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_poe_veto_transport)
+            summary = poe_veto_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.poe_veto_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["poe_surcharge_cents"] = int(gate_rec["poe_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_poe_veto_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live poe_veto pilot evidence offline if present."""
+        poe_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "poe_veto_pilot_run"
+            / "events.jsonl"
+        )
+        poe_summary = poe_events.with_name("summary.json")
+        if poe_events.exists() and poe_summary.exists():
+            replayed = replay(poe_events)
+            self.assertEqual(replayed["schema"], "lggr.poe_veto_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_12600_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12600_arms["A"]["final_poe_surcharge_cents"], 12)
+            self.assertEqual(seed_12600_arms["B"]["final_poe_surcharge_cents"], 7)
+            self.assertEqual(seed_12600_arms["C"]["final_poe_surcharge_cents"], 0)
+            self.assertEqual(seed_12600_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

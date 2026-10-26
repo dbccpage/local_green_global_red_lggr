@@ -145,6 +145,7 @@ import LggrVIII
 #print axioms LggrVIII.subgradient_pivot_codebase_weight_sensitivity_and_bottleneck_audit
 #print axioms LggrVIII.policy_ratchet_codebase_cumulative_drift_and_sunset_revocation_audit
 #print axioms LggrVIII.skew_repair_codebase_norm_attainment_divergence_audit
+#print axioms LggrVIII.poe_veto_codebase_zero_collapse_and_compromise_mass_audit
 
 
 
