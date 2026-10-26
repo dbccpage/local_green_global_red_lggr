@@ -152,6 +152,8 @@ import LggrVIII
 #print axioms LggrVIII.deadline_bin_packing_codebase_edf_and_overload_admission_audit
 #print axioms LggrVIII.projective_tower_codebase_r1_limit_and_integral_lift_audit
 #print axioms LggrVIII.bell_polytope_codebase_chsh_violation_and_lhv_audit
+#print axioms LggrVIII.weighted_relaxation_codebase_pareto_tie_and_minimum_weighted_slack_audit
+
 
 
 

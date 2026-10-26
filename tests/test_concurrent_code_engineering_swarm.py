@@ -77,6 +77,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_BELL_P1_PY,
     INITIAL_PRICING_BELL_P2_PY,
     INITIAL_PRICING_BELL_P3_PY,
+    INITIAL_PRICING_WREL_P1_P2_PY,
+    INITIAL_PRICING_WREL_P3_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_POE_P1_PY,
@@ -114,6 +116,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_TOWER_P3_PY,
     INITIAL_SETTLEMENT_BELL_P1_P2_PY,
     INITIAL_SETTLEMENT_BELL_P3_PY,
+    INITIAL_SETTLEMENT_WREL_P1_P2_PY,
+    INITIAL_SETTLEMENT_WREL_P3_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_POE_P1_PY,
@@ -154,6 +158,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_BELL_P1_PY,
     INITIAL_TAX_BELL_P2_PY,
     INITIAL_TAX_BELL_P3_PY,
+    INITIAL_TAX_WREL_P1_PY,
+    INITIAL_TAX_WREL_P2_PY,
+    INITIAL_TAX_WREL_P3_PY,
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
@@ -269,6 +276,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     SubgradientPivotCodeWorkspace,
     ThreePartyC3CodeWorkspace,
     WatcherDropoutCodeWorkspace,
+    WeightedRelaxationCodeWorkspace,
     WindowedDriftCodeWorkspace,
     adversarial_schema_fixture,
     bell_polytope_fixture,
@@ -340,6 +348,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_stop_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
+    run_weighted_relaxation_local_unit_tests,
     run_win_local_unit_tests,
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
@@ -352,6 +361,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     stop_fixture,
     subgradient_pivot_fixture,
     three_party_c3_fixture,
+    weighted_relaxation_fixture,
     win_fixture,
 )
 from experiments.concurrent_code_engineering_swarm.runner import (
@@ -398,6 +408,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     stop_campaign,
     subgradient_pivot_campaign,
     three_party_c3_campaign,
+    weighted_relaxation_campaign,
     win_campaign,
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
@@ -426,6 +437,7 @@ from lggr.streaming import (
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
+    StreamingCodebaseWeightedRelaxationMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
@@ -9141,6 +9153,274 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_13200_arms["B"]["final_bell_surcharge_cents"], 8)
             self.assertEqual(seed_13200_arms["C"]["final_bell_surcharge_cents"], 0)
             self.assertEqual(seed_13200_arms["C"]["status"], "completed")
+
+    def test_weighted_relaxation_workspace_and_unit_tests(self) -> None:
+        """Verify WeightedRelaxationCodeWorkspace and local unit tests across all 3 phases."""
+        mon = StreamingCodebaseWeightedRelaxationMonitor(scope_id="test-weighted-relaxation-ws")
+        p1 = mon.evaluate_weighted_relaxation_modules(
+            "p1",
+            pricing_wrel_source=INITIAL_PRICING_WREL_P1_P2_PY,
+            tax_wrel_source=INITIAL_TAX_WREL_P1_PY,
+            settlement_wrel_source=INITIAL_SETTLEMENT_WREL_P1_P2_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["policy_vector"], [2, 2])
+        self.assertEqual(p1["unweighted_l1_slack"], 4)
+        self.assertEqual(p1["weighted_l1_slack"], 8)
+        self.assertEqual(p1["unweighted_excess_slack"], 2)
+        self.assertEqual(p1["weighted_excess_slack"], 6)
+        self.assertEqual(p1["wrel_surcharge_cents"], 10)
+        self.assertEqual(p1["merchant_payout_cents"], 863)
+
+        p2 = mon.evaluate_weighted_relaxation_modules(
+            "p2",
+            pricing_wrel_source=INITIAL_PRICING_WREL_P1_P2_PY,
+            tax_wrel_source=INITIAL_TAX_WREL_P2_PY,
+            settlement_wrel_source=INITIAL_SETTLEMENT_WREL_P1_P2_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["policy_vector"], [2, 0])
+        self.assertEqual(p2["unweighted_l1_slack"], 2)
+        self.assertEqual(p2["weighted_l1_slack"], 6)
+        self.assertEqual(p2["unweighted_excess_slack"], 0)
+        self.assertEqual(p2["weighted_excess_slack"], 4)
+        self.assertEqual(p2["wrel_surcharge_cents"], 4)
+        self.assertEqual(p2["merchant_payout_cents"], 869)
+
+        p3 = mon.evaluate_weighted_relaxation_modules(
+            "p3",
+            pricing_wrel_source=INITIAL_PRICING_WREL_P3_PY,
+            tax_wrel_source=INITIAL_TAX_WREL_P3_PY,
+            settlement_wrel_source=INITIAL_SETTLEMENT_WREL_P3_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["policy_vector"], [0, 2])
+        self.assertEqual(p3["unweighted_l1_slack"], 2)
+        self.assertEqual(p3["weighted_l1_slack"], 2)
+        self.assertEqual(p3["unweighted_excess_slack"], 0)
+        self.assertEqual(p3["weighted_excess_slack"], 0)
+        self.assertEqual(p3["wrel_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_weighted_relaxation_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent weighted_relaxation campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_weighted_relaxation_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked high-risk coordinate p1=2 on w1=3 incurs weighted_l1_slack=6 > 2."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    if worker == "worker-0":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_PRICING_WREL_P1_P2_PY}),
+                            },
+                        }
+                    elif worker == "worker-1":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_TAX_WREL_P2_PY}),
+                            },
+                        }
+                    else:
+                        return {
+                            "response": {
+                                "id": f"stub-hold-b-{worker}",
+                                "model": model,
+                                "usage": {
+                                    "prompt_tokens": 100,
+                                    "completion_tokens": 20,
+                                    "cost": "0.000100",
+                                },
+                                "choices": [
+                                    {
+                                        "index": 0,
+                                        "finish_reason": "stop",
+                                        "message": {"role": "assistant", "content": "Done."},
+                                    }
+                                ],
+                            },
+                            "started_ns": 10,
+                            "finished_ns": 20,
+                        }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_WREL_P3_PY,
+                        "worker-1": INITIAL_TAX_WREL_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_WREL_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "weighted_relaxation",
+                "seeds": [13300, 13301],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_weighted_relaxation_transport)
+            summary = weighted_relaxation_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.weighted_relaxation_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["wrel_surcharge_cents"] = int(gate_rec["wrel_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_weighted_relaxation_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live weighted_relaxation pilot evidence offline if present."""
+        wrel_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "weighted_relaxation_pilot_run"
+            / "events.jsonl"
+        )
+        wrel_summary = wrel_events.with_name("summary.json")
+        if wrel_events.exists() and wrel_summary.exists():
+            replayed = replay(wrel_events)
+            self.assertEqual(replayed["schema"], "lggr.weighted_relaxation_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_13300_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_13300_arms["A"]["final_wrel_surcharge_cents"], 10)
+            self.assertEqual(seed_13300_arms["B"]["final_wrel_surcharge_cents"], 4)
+            self.assertEqual(seed_13300_arms["C"]["final_wrel_surcharge_cents"], 0)
+            self.assertEqual(seed_13300_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

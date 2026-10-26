@@ -1,0 +1,2953 @@
+{
+  "schema": "lggr.codebase_weighted_relaxation_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_weighted_relaxation_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_over_permissive_slack_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_unweighted_tie_high_risk_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_weighted_minimum_slack_coherence_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_weighted_relaxation_codebase_coherence_rate": "0",
+  "reconciled_weighted_relaxation_codebase_coherence_rate": "1",
+  "codebase_weighted_relaxation_coherence_gain": "1",
+  "codebase_weighted_relaxation_receipt": {
+    "schema": "lggr.online_codebase_weighted_relaxation.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_weighted_relaxation",
+    "status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "weighted_policy_relaxation_receipt": {
+      "schema": "lggr.online_weighted_policy_relaxation.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_weighted_relaxation:wrel",
+      "status": "UNWEIGHTED_TIE_OR_UNCONVERGED_WEIGHTED_RELAXATION_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "evaluation_count": 15,
+      "single_round_weighted_converged_count": 5,
+      "multi_round_weighted_converged_count": 5,
+      "round_1_unweighted_tie_high_risk_breach_count": 5,
+      "single_round_weighted_convergence_rate": "1/3",
+      "multi_round_weighted_convergence_rate": "1/3",
+      "multi_round_weighted_convergence_gain": "0",
+      "round_1_unweighted_tie_high_risk_breach_rate": "1/3",
+      "monotonic_convergence_verified": true,
+      "round_1_unweighted_tie_high_risk_evaluation_ids": [
+        "openai/gpt-4o-mini_weighted_relaxation_p2:openai/gpt-4o-mini",
+        "google/gemini-2.5-flash-lite_weighted_relaxation_p2:google/gemini-2.5-flash-lite",
+        "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p2:meta-llama/llama-3.3-70b-instruct",
+        "deepseek/deepseek-chat_weighted_relaxation_p2:deepseek/deepseek-chat",
+        "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p2:mistralai/mistral-small-3.2-24b-instruct"
+      ],
+      "unconverged_evaluation_ids": [
+        "openai/gpt-4o-mini_weighted_relaxation_p1:openai/gpt-4o-mini",
+        "openai/gpt-4o-mini_weighted_relaxation_p2:openai/gpt-4o-mini",
+        "google/gemini-2.5-flash-lite_weighted_relaxation_p1:google/gemini-2.5-flash-lite",
+        "google/gemini-2.5-flash-lite_weighted_relaxation_p2:google/gemini-2.5-flash-lite",
+        "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p1:meta-llama/llama-3.3-70b-instruct",
+        "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p2:meta-llama/llama-3.3-70b-instruct",
+        "deepseek/deepseek-chat_weighted_relaxation_p1:deepseek/deepseek-chat",
+        "deepseek/deepseek-chat_weighted_relaxation_p2:deepseek/deepseek-chat",
+        "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p1:mistralai/mistral-small-3.2-24b-instruct",
+        "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p2:mistralai/mistral-small-3.2-24b-instruct"
+      ],
+      "evaluations": [
+        {
+          "evaluation_id": "openai/gpt-4o-mini_weighted_relaxation_p1:openai/gpt-4o-mini",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "openai/gpt-4o-mini",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_over_2_2",
+              "selected_policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "4",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "2",
+              "selected_weighted_l1_slack": "8",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": false,
+              "global_pass": false,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+        },
+        {
+          "evaluation_id": "openai/gpt-4o-mini_weighted_relaxation_p2:openai/gpt-4o-mini",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "openai/gpt-4o-mini",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_high_risk_tie_2_0",
+              "selected_policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "6",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": false,
+              "defect": -1,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+        },
+        {
+          "evaluation_id": "openai/gpt-4o-mini_weighted_relaxation_p3:openai/gpt-4o-mini",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "openai/gpt-4o-mini",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_low_risk_opt_0_2",
+              "selected_policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "2",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": true,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "evaluation_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_weighted_relaxation_p1:google/gemini-2.5-flash-lite",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "google/gemini-2.5-flash-lite",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_over_2_2",
+              "selected_policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "4",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "2",
+              "selected_weighted_l1_slack": "8",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": false,
+              "global_pass": false,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_weighted_relaxation_p2:google/gemini-2.5-flash-lite",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "google/gemini-2.5-flash-lite",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_high_risk_tie_2_0",
+              "selected_policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "6",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": false,
+              "defect": -1,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_weighted_relaxation_p3:google/gemini-2.5-flash-lite",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "google/gemini-2.5-flash-lite",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_low_risk_opt_0_2",
+              "selected_policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "2",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": true,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "evaluation_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p1:meta-llama/llama-3.3-70b-instruct",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "meta-llama/llama-3.3-70b-instruct",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_over_2_2",
+              "selected_policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "4",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "2",
+              "selected_weighted_l1_slack": "8",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": false,
+              "global_pass": false,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p2:meta-llama/llama-3.3-70b-instruct",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "meta-llama/llama-3.3-70b-instruct",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_high_risk_tie_2_0",
+              "selected_policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "6",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": false,
+              "defect": -1,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p3:meta-llama/llama-3.3-70b-instruct",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "meta-llama/llama-3.3-70b-instruct",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_low_risk_opt_0_2",
+              "selected_policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "2",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": true,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "evaluation_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_weighted_relaxation_p1:deepseek/deepseek-chat",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "deepseek/deepseek-chat",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_over_2_2",
+              "selected_policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "4",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "2",
+              "selected_weighted_l1_slack": "8",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": false,
+              "global_pass": false,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_weighted_relaxation_p2:deepseek/deepseek-chat",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "deepseek/deepseek-chat",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_high_risk_tie_2_0",
+              "selected_policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "6",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": false,
+              "defect": -1,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_weighted_relaxation_p3:deepseek/deepseek-chat",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "deepseek/deepseek-chat",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_low_risk_opt_0_2",
+              "selected_policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "2",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": true,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "evaluation_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p1:mistralai/mistral-small-3.2-24b-instruct",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_over_2_2",
+              "selected_policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "4",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "2",
+              "selected_weighted_l1_slack": "8",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": false,
+              "global_pass": false,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "OVER_PERMISSIVE_UNWEIGHTED_SLACK_BREACH_LGGR"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p2:mistralai/mistral-small-3.2-24b-instruct",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_high_risk_tie_2_0",
+              "selected_policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "6",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": false,
+              "defect": -1,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "evaluation_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p3:mistralai/mistral-small-3.2-24b-instruct",
+          "pair_name": "pricing_wrel_and_tax_wrel",
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+          "prior_escalation_receipt_sha256": "441fbd52dc6c8c59aac10495d46f6df47bd4f4da75ae552ff6af2c2e16cb8cb3",
+          "prior_policy_sha256": "aea43388fe22b6f5adbbfd4aa1494a5a7f5d7a731fe0380c80dfc47432e6f3d9",
+          "prior_policy_vector": [
+            "0",
+            "0"
+          ],
+          "risk_weight_vector": [
+            "3",
+            "1"
+          ],
+          "minimum_unweighted_l1_slack": "2",
+          "unweighted_minimum_tie_policy_ids": [
+            "P_high_risk_tie_2_0",
+            "P_low_risk_opt_0_2"
+          ],
+          "minimum_weighted_l1_slack": "2",
+          "optimal_weighted_policy_ids": [
+            "P_low_risk_opt_0_2"
+          ],
+          "candidate_policies": [
+            {
+              "policy_id": "P_over_2_2",
+              "policy_sha256": "3b429c3d73a7298bc3166e2d221aff01a256f414b71cb953dece296230ade4c9",
+              "policy_vector": [
+                "2",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "4",
+              "weighted_l1_slack": "8",
+              "unweighted_excess_slack_l1": "2",
+              "weighted_excess_slack_l1": "6",
+              "is_unweighted_minimum_slack": false,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_high_risk_tie_2_0",
+              "policy_sha256": "d775e28883617a01cea3be1eb3292044d1740aec3b4dab8e27864a14948be0e7",
+              "policy_vector": [
+                "2",
+                "0"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "6",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "4",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": false
+            },
+            {
+              "policy_id": "P_low_risk_opt_0_2",
+              "policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "policy_vector": [
+                "0",
+                "2"
+              ],
+              "restores_pareto_intersection": true,
+              "unweighted_l1_slack": "2",
+              "weighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true
+            }
+          ],
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "codebase_eval",
+              "selected_policy_id": "P_low_risk_opt_0_2",
+              "selected_policy_sha256": "f96842c487949c5ce77e22bc396bef6ae1bd14204658cdb47d3e0ecc3903b7d4",
+              "authority_grant_verified": true,
+              "restores_pareto_intersection": true,
+              "selected_unweighted_l1_slack": "2",
+              "minimum_unweighted_l1_slack": "2",
+              "unweighted_excess_slack_l1": "0",
+              "selected_weighted_l1_slack": "2",
+              "minimum_weighted_l1_slack": "2",
+              "weighted_excess_slack_l1": "0",
+              "is_unweighted_minimum_slack": true,
+              "is_weighted_minimum_slack": true,
+              "local_a_pass": true,
+              "global_a_pass": true,
+              "local_b_pass": true,
+              "global_b_pass": true,
+              "local_pass": true,
+              "global_pass": true,
+              "defect": 0,
+              "status_a": "",
+              "status_b": "",
+              "round_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+            }
+          ],
+          "round_1_unweighted_tie_high_risk_breach": false,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "evaluation_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+        }
+      ],
+      "receipt_sha256": "510a6cdca6b120146dbf2affd5e4b109e107435e343f562c89af390c978f8c17"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini_weighted_relaxation_p1_openai/gpt-4o-mini",
+          "report": {
+            "local_green": 1,
+            "pareto_feasible": true
+          },
+          "query": "LGGR",
+          "metadata": {
+            "policy_vector": [
+              2,
+              2
+            ],
+            "unweighted_excess_slack": 2,
+            "weighted_excess_slack": 6,
+            "wrel_surcharge_cents": 10
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini_weighted_relaxation_p3_openai/gpt-4o-mini",
+          "report": {
+            "local_green": 1,
+            "pareto_feasible": true
+          },
+          "query": "LGGG",
+          "metadata": {
+            "policy_vector": [
+              0,
+              2
+            ],
+            "unweighted_excess_slack": 0,
+            "weighted_excess_slack": 0,
+            "wrel_surcharge_cents": 0
+          }
+        }
+      },
+      "input_sha256": "67ce919d2aae2b8c88c322840f7ee2db172253484394677b27694272c973fd5e",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "6e845172b82c32950d75090c4833260076940db4239937f36ff83c168a04b1e6"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_weighted_relaxation",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_policy_vector": [
+          2,
+          2
+        ],
+        "phase_1_unweighted_l1_slack": 4,
+        "phase_1_weighted_l1_slack": 8,
+        "phase_1_unweighted_excess_slack": 2,
+        "phase_1_weighted_excess_slack": 6,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "phase_2_policy_vector": [
+          2,
+          0
+        ],
+        "phase_2_unweighted_l1_slack": 2,
+        "phase_2_weighted_l1_slack": 6,
+        "phase_2_unweighted_excess_slack": 0,
+        "phase_2_weighted_excess_slack": 4,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "phase_3_policy_vector": [
+          0,
+          2
+        ],
+        "phase_3_unweighted_l1_slack": 2,
+        "phase_3_weighted_l1_slack": 2,
+        "phase_3_unweighted_excess_slack": 0,
+        "phase_3_weighted_excess_slack": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_weighted_relaxation",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_policy_vector": [
+          2,
+          2
+        ],
+        "phase_1_unweighted_l1_slack": 4,
+        "phase_1_weighted_l1_slack": 8,
+        "phase_1_unweighted_excess_slack": 2,
+        "phase_1_weighted_excess_slack": 6,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "phase_2_policy_vector": [
+          2,
+          0
+        ],
+        "phase_2_unweighted_l1_slack": 2,
+        "phase_2_weighted_l1_slack": 6,
+        "phase_2_unweighted_excess_slack": 0,
+        "phase_2_weighted_excess_slack": 4,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "phase_3_policy_vector": [
+          0,
+          2
+        ],
+        "phase_3_unweighted_l1_slack": 2,
+        "phase_3_weighted_l1_slack": 2,
+        "phase_3_unweighted_excess_slack": 0,
+        "phase_3_weighted_excess_slack": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_policy_vector": [
+          2,
+          2
+        ],
+        "phase_1_unweighted_l1_slack": 4,
+        "phase_1_weighted_l1_slack": 8,
+        "phase_1_unweighted_excess_slack": 2,
+        "phase_1_weighted_excess_slack": 6,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "phase_2_policy_vector": [
+          2,
+          0
+        ],
+        "phase_2_unweighted_l1_slack": 2,
+        "phase_2_weighted_l1_slack": 6,
+        "phase_2_unweighted_excess_slack": 0,
+        "phase_2_weighted_excess_slack": 4,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "phase_3_policy_vector": [
+          0,
+          2
+        ],
+        "phase_3_unweighted_l1_slack": 2,
+        "phase_3_weighted_l1_slack": 2,
+        "phase_3_unweighted_excess_slack": 0,
+        "phase_3_weighted_excess_slack": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_weighted_relaxation",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_policy_vector": [
+          2,
+          2
+        ],
+        "phase_1_unweighted_l1_slack": 4,
+        "phase_1_weighted_l1_slack": 8,
+        "phase_1_unweighted_excess_slack": 2,
+        "phase_1_weighted_excess_slack": 6,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "phase_2_policy_vector": [
+          2,
+          0
+        ],
+        "phase_2_unweighted_l1_slack": 2,
+        "phase_2_weighted_l1_slack": 6,
+        "phase_2_unweighted_excess_slack": 0,
+        "phase_2_weighted_excess_slack": 4,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "phase_3_policy_vector": [
+          0,
+          2
+        ],
+        "phase_3_unweighted_l1_slack": 2,
+        "phase_3_weighted_l1_slack": 2,
+        "phase_3_unweighted_excess_slack": 0,
+        "phase_3_weighted_excess_slack": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_policy_vector": [
+          2,
+          2
+        ],
+        "phase_1_unweighted_l1_slack": 4,
+        "phase_1_weighted_l1_slack": 8,
+        "phase_1_unweighted_excess_slack": 2,
+        "phase_1_weighted_excess_slack": 6,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "phase_2_policy_vector": [
+          2,
+          0
+        ],
+        "phase_2_unweighted_l1_slack": 2,
+        "phase_2_weighted_l1_slack": 6,
+        "phase_2_unweighted_excess_slack": 0,
+        "phase_2_weighted_excess_slack": 4,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "phase_3_policy_vector": [
+          0,
+          2
+        ],
+        "phase_3_unweighted_l1_slack": 2,
+        "phase_3_weighted_l1_slack": 2,
+        "phase_3_unweighted_excess_slack": 0,
+        "phase_3_weighted_excess_slack": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_weighted_relaxation_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "selected_policy_id": "P_over_2_2",
+        "policy_vector": [
+          2,
+          2
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 4,
+        "weighted_l1_slack": 8,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 2,
+        "weighted_excess_slack": 6,
+        "wrel_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_weighted_relaxation_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "selected_policy_id": "P_high_risk_tie_2_0",
+        "policy_vector": [
+          2,
+          0
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 0,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 6,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 4,
+        "wrel_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "ALLOCATE_LOW_RISK_SLACK_P2_TO_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_weighted_relaxation_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "selected_policy_id": "P_low_risk_opt_0_2",
+        "policy_vector": [
+          0,
+          2
+        ],
+        "high_risk_slack_p1": 0,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 2,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 0,
+        "wrel_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "HOLD_ZERO_HIGH_RISK_SLACK_P1",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "HOLD_WEIGHTED_RELAXATION_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_weighted_relaxation_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "selected_policy_id": "P_over_2_2",
+        "policy_vector": [
+          2,
+          2
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 4,
+        "weighted_l1_slack": 8,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 2,
+        "weighted_excess_slack": 6,
+        "wrel_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_weighted_relaxation_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "selected_policy_id": "P_high_risk_tie_2_0",
+        "policy_vector": [
+          2,
+          0
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 0,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 6,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 4,
+        "wrel_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "ALLOCATE_LOW_RISK_SLACK_P2_TO_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_weighted_relaxation_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "selected_policy_id": "P_low_risk_opt_0_2",
+        "policy_vector": [
+          0,
+          2
+        ],
+        "high_risk_slack_p1": 0,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 2,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 0,
+        "wrel_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "HOLD_ZERO_HIGH_RISK_SLACK_P1",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "HOLD_WEIGHTED_RELAXATION_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "selected_policy_id": "P_over_2_2",
+        "policy_vector": [
+          2,
+          2
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 4,
+        "weighted_l1_slack": 8,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 2,
+        "weighted_excess_slack": 6,
+        "wrel_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "selected_policy_id": "P_high_risk_tie_2_0",
+        "policy_vector": [
+          2,
+          0
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 0,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 6,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 4,
+        "wrel_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "ALLOCATE_LOW_RISK_SLACK_P2_TO_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "selected_policy_id": "P_low_risk_opt_0_2",
+        "policy_vector": [
+          0,
+          2
+        ],
+        "high_risk_slack_p1": 0,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 2,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 0,
+        "wrel_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "HOLD_ZERO_HIGH_RISK_SLACK_P1",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "HOLD_WEIGHTED_RELAXATION_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_weighted_relaxation_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "selected_policy_id": "P_over_2_2",
+        "policy_vector": [
+          2,
+          2
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 4,
+        "weighted_l1_slack": 8,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 2,
+        "weighted_excess_slack": 6,
+        "wrel_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_weighted_relaxation_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "selected_policy_id": "P_high_risk_tie_2_0",
+        "policy_vector": [
+          2,
+          0
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 0,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 6,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 4,
+        "wrel_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "ALLOCATE_LOW_RISK_SLACK_P2_TO_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_weighted_relaxation_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "selected_policy_id": "P_low_risk_opt_0_2",
+        "policy_vector": [
+          0,
+          2
+        ],
+        "high_risk_slack_p1": 0,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 2,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 0,
+        "wrel_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "HOLD_ZERO_HIGH_RISK_SLACK_P1",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "HOLD_WEIGHTED_RELAXATION_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "selected_policy_id": "P_over_2_2",
+        "policy_vector": [
+          2,
+          2
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 4,
+        "weighted_l1_slack": 8,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 2,
+        "weighted_excess_slack": 6,
+        "wrel_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "selected_policy_id": "P_high_risk_tie_2_0",
+        "policy_vector": [
+          2,
+          0
+        ],
+        "high_risk_slack_p1": 2,
+        "low_risk_slack_p2": 0,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 6,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 4,
+        "wrel_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "SHIFT_HIGH_RISK_SLACK_P1_TO_ZERO",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "ALLOCATE_LOW_RISK_SLACK_P2_TO_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "ENFORCE_RISK_WEIGHTED_MINIMUM_SLACK_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "selected_policy_id": "P_low_risk_opt_0_2",
+        "policy_vector": [
+          0,
+          2
+        ],
+        "high_risk_slack_p1": 0,
+        "low_risk_slack_p2": 2,
+        "risk_weights": [
+          3,
+          1
+        ],
+        "unweighted_l1_slack": 2,
+        "weighted_l1_slack": 2,
+        "minimum_unweighted_l1_slack": 2,
+        "minimum_weighted_l1_slack": 2,
+        "unweighted_excess_slack": 0,
+        "weighted_excess_slack": 0,
+        "wrel_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_wrel",
+            "action": "HOLD_ZERO_HIGH_RISK_SLACK_P1",
+            "target_high_risk_slack_p1": 0
+          },
+          "worker-1": {
+            "module": "tax_wrel",
+            "action": "HOLD_LOW_RISK_SLACK_P2_TWO",
+            "target_low_risk_slack_p2": 2
+          },
+          "worker-2": {
+            "module": "settlement_wrel",
+            "action": "HOLD_WEIGHTED_RELAXATION_GUARD",
+            "target_wrel_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "7d8cb1911a51823b14995fdf69f24a27e2fa349e766af2d9c058141d98bbd4ea"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_weighted_relaxation",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_policy_vector": [
+        2,
+        2
+      ],
+      "phase_1_unweighted_l1_slack": 4,
+      "phase_1_weighted_l1_slack": 8,
+      "phase_1_unweighted_excess_slack": 2,
+      "phase_1_weighted_excess_slack": 6,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+      "phase_2_policy_vector": [
+        2,
+        0
+      ],
+      "phase_2_unweighted_l1_slack": 2,
+      "phase_2_weighted_l1_slack": 6,
+      "phase_2_unweighted_excess_slack": 0,
+      "phase_2_weighted_excess_slack": 4,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+      "phase_3_policy_vector": [
+        0,
+        2
+      ],
+      "phase_3_unweighted_l1_slack": 2,
+      "phase_3_weighted_l1_slack": 2,
+      "phase_3_unweighted_excess_slack": 0,
+      "phase_3_weighted_excess_slack": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_weighted_relaxation",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_policy_vector": [
+        2,
+        2
+      ],
+      "phase_1_unweighted_l1_slack": 4,
+      "phase_1_weighted_l1_slack": 8,
+      "phase_1_unweighted_excess_slack": 2,
+      "phase_1_weighted_excess_slack": 6,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+      "phase_2_policy_vector": [
+        2,
+        0
+      ],
+      "phase_2_unweighted_l1_slack": 2,
+      "phase_2_weighted_l1_slack": 6,
+      "phase_2_unweighted_excess_slack": 0,
+      "phase_2_weighted_excess_slack": 4,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+      "phase_3_policy_vector": [
+        0,
+        2
+      ],
+      "phase_3_unweighted_l1_slack": 2,
+      "phase_3_weighted_l1_slack": 2,
+      "phase_3_unweighted_excess_slack": 0,
+      "phase_3_weighted_excess_slack": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_weighted_relaxation",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_policy_vector": [
+        2,
+        2
+      ],
+      "phase_1_unweighted_l1_slack": 4,
+      "phase_1_weighted_l1_slack": 8,
+      "phase_1_unweighted_excess_slack": 2,
+      "phase_1_weighted_excess_slack": 6,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+      "phase_2_policy_vector": [
+        2,
+        0
+      ],
+      "phase_2_unweighted_l1_slack": 2,
+      "phase_2_weighted_l1_slack": 6,
+      "phase_2_unweighted_excess_slack": 0,
+      "phase_2_weighted_excess_slack": 4,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+      "phase_3_policy_vector": [
+        0,
+        2
+      ],
+      "phase_3_unweighted_l1_slack": 2,
+      "phase_3_weighted_l1_slack": 2,
+      "phase_3_unweighted_excess_slack": 0,
+      "phase_3_weighted_excess_slack": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_weighted_relaxation",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_policy_vector": [
+        2,
+        2
+      ],
+      "phase_1_unweighted_l1_slack": 4,
+      "phase_1_weighted_l1_slack": 8,
+      "phase_1_unweighted_excess_slack": 2,
+      "phase_1_weighted_excess_slack": 6,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+      "phase_2_policy_vector": [
+        2,
+        0
+      ],
+      "phase_2_unweighted_l1_slack": 2,
+      "phase_2_weighted_l1_slack": 6,
+      "phase_2_unweighted_excess_slack": 0,
+      "phase_2_weighted_excess_slack": 4,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+      "phase_3_policy_vector": [
+        0,
+        2
+      ],
+      "phase_3_unweighted_l1_slack": 2,
+      "phase_3_weighted_l1_slack": 2,
+      "phase_3_unweighted_excess_slack": 0,
+      "phase_3_weighted_excess_slack": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_weighted_relaxation",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_policy_vector": [
+        2,
+        2
+      ],
+      "phase_1_unweighted_l1_slack": 4,
+      "phase_1_weighted_l1_slack": 8,
+      "phase_1_unweighted_excess_slack": 2,
+      "phase_1_weighted_excess_slack": 6,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OVER_PERMISSIVE_UNWEIGHTED_AND_WEIGHTED_SLACK_LGGR",
+      "phase_2_policy_vector": [
+        2,
+        0
+      ],
+      "phase_2_unweighted_l1_slack": 2,
+      "phase_2_weighted_l1_slack": 6,
+      "phase_2_unweighted_excess_slack": 0,
+      "phase_2_weighted_excess_slack": 4,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "UNWEIGHTED_TIE_HIGH_RISK_RELAXATION_REJECTED_LGGR",
+      "phase_3_policy_vector": [
+        0,
+        2
+      ],
+      "phase_3_unweighted_l1_slack": 2,
+      "phase_3_weighted_l1_slack": 2,
+      "phase_3_unweighted_excess_slack": 0,
+      "phase_3_weighted_excess_slack": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "RISK_WEIGHTED_MINIMUM_SLACK_PARETO_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Risk-weighted policy relaxation Pareto tie and minimum weighted slack codebase benchmark across 5 model families (Theorem 136): Phase 1 separates over-permissive slack (`policy_vector = [2, 2], unweighted_l1_slack = 4 > 2, weighted_l1_slack = 8 > 2, surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates unweighted-tie high-risk relaxation (`policy_vector = [2, 0], unweighted_l1_slack = 2 == 2, unweighted_excess = 0, weighted_l1_slack = 6 > 2, weighted_excess = 4 on w_1 = 3, surcharge = 4, payout = 869 != 873, Delta_E = -1`); Phase 3 verifies risk-weighted minimum-slack Pareto relaxation (`policy_vector = [0, 2], unweighted_l1_slack = 2 == 2, weighted_l1_slack = 2 == 2, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "e8bc152da1f7c3db413ec8256626d165feb532a5fe174579bc92f7b25b164294"
+}
