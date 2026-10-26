@@ -7,9 +7,9 @@
    "settled": "0.396884395"
   },
   "evaluation": {
-   "requests": 0,
-   "retained": "0",
-   "settled": "0"
+   "requests": 28892,
+   "retained": "0.003298",
+   "settled": "20.611455165"
   }
  },
  "schema": "lggr.rsi_swarm.ledger.v1"
