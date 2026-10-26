@@ -63,6 +63,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_HODGE_COHERENT_PY,
     INITIAL_PRICING_HODGE_P1_PY,
     INITIAL_PRICING_MIG_P1_P2_PY,
+    INITIAL_PRICING_RELAX_COHERENT_PY,
+    INITIAL_PRICING_RELAX_P1_PY,
+    INITIAL_PRICING_RELAX_P2_PY,
     INITIAL_PRICING_SLA_PY,
     INITIAL_PRICING_WEDGE_COHERENT_PY,
     INITIAL_PRICING_WEDGE_P1_PY,
@@ -74,6 +77,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_HODGE_COHERENT_PY,
     INITIAL_SETTLEMENT_HODGE_P1_P2_PY,
     INITIAL_SETTLEMENT_MIG_P1_PY,
+    INITIAL_SETTLEMENT_RELAX_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
     INITIAL_SETTLEMENT_WEDGE_PY,
     INITIAL_TAX_C3_COHERENT_PY,
@@ -84,6 +88,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_HODGE_COHERENT_PY,
     INITIAL_TAX_HODGE_P1_PY,
     INITIAL_TAX_MIG_MIGRATION_PY,
+    INITIAL_TAX_RELAX_COHERENT_PY,
+    INITIAL_TAX_RELAX_P1_P3_PY,
+    INITIAL_TAX_RELAX_P2_PY,
     INITIAL_TAX_SLA_DEFERRED_PY,
     INITIAL_TAX_WEDGE_COHERENT_PY,
     INITIAL_TAX_WEDGE_P1_P2_PY,
@@ -153,6 +160,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     DynamicSchemaCodeWorkspace,
     FiberSplittingCodeWorkspace,
     FigureEightWedgeCodeWorkspace,
+    GovernedRelaxationCodeWorkspace,
     GracefulSheddingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
@@ -180,6 +188,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     diamond_fixture,
     figure_eight_wedge_fixture,
     fixture,
+    governed_relaxation_fixture,
     graceful_shedding_fixture,
     gram_fixture,
     jacobian_fixture,
@@ -200,6 +209,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
     run_figure_eight_wedge_local_unit_tests,
+    run_governed_relaxation_local_unit_tests,
     run_graceful_shedding_local_unit_tests,
     run_gram_local_unit_tests,
     run_jacobian_local_unit_tests,
@@ -242,6 +252,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     dfa_campaign,
     diamond_campaign,
     figure_eight_wedge_campaign,
+    governed_relaxation_campaign,
     graceful_shedding_campaign,
     gram_campaign,
     jacobian_campaign,
@@ -6234,6 +6245,249 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12000_arms["B"]["final_chord_surcharge_cents"], 25)
             self.assertEqual(seed_12000_arms["C"]["final_chord_surcharge_cents"], 0)
             self.assertEqual(seed_12000_arms["C"]["status"], "completed")
+
+    def test_governed_relaxation_workspace_and_unit_tests(self) -> None:
+        """Verify GovernedRelaxationCodeWorkspace and local unit tests across all 3 phases."""
+        from lggr.streaming import StreamingCodebaseGovernedRelaxationMonitor
+
+        mon = StreamingCodebaseGovernedRelaxationMonitor(scope_id="test-governed-relaxation-ws")
+        p1 = mon.evaluate_governed_relaxation_modules(
+            "p1",
+            pricing_relax_source=INITIAL_PRICING_RELAX_P1_PY,
+            tax_relax_source=INITIAL_TAX_RELAX_P1_P3_PY,
+            settlement_relax_source=INITIAL_SETTLEMENT_RELAX_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["authority_grant_verified"], False)
+        self.assertEqual(p1["selected_policy_id"], "P_star")
+        self.assertEqual(p1["l1_policy_slack"], 2)
+        self.assertEqual(p1["excess_l1_slack"], 0)
+        self.assertEqual(p1["unauthorized_penalty_cents"], 10)
+        self.assertEqual(p1["relaxation_surcharge_cents"], 10)
+        self.assertEqual(p1["merchant_payout_cents"], 863)
+
+        p2 = mon.evaluate_governed_relaxation_modules(
+            "p2",
+            pricing_relax_source=INITIAL_PRICING_RELAX_P2_PY,
+            tax_relax_source=INITIAL_TAX_RELAX_P2_PY,
+            settlement_relax_source=INITIAL_SETTLEMENT_RELAX_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["authority_grant_verified"], True)
+        self.assertEqual(p2["selected_policy_id"], "P_over")
+        self.assertEqual(p2["l1_policy_slack"], 5)
+        self.assertEqual(p2["excess_l1_slack"], 3)
+        self.assertEqual(p2["unauthorized_penalty_cents"], 0)
+        self.assertEqual(p2["relaxation_surcharge_cents"], 6)
+        self.assertEqual(p2["merchant_payout_cents"], 867)
+
+        p3 = mon.evaluate_governed_relaxation_modules(
+            "p3",
+            pricing_relax_source=INITIAL_PRICING_RELAX_COHERENT_PY,
+            tax_relax_source=INITIAL_TAX_RELAX_COHERENT_PY,
+            settlement_relax_source=INITIAL_SETTLEMENT_RELAX_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["authority_grant_verified"], True)
+        self.assertEqual(p3["selected_policy_id"], "P_star")
+        self.assertEqual(p3["l1_policy_slack"], 2)
+        self.assertEqual(p3["excess_l1_slack"], 0)
+        self.assertEqual(p3["unauthorized_penalty_cents"], 0)
+        self.assertEqual(p3["relaxation_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_governed_relaxation_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent governed_relaxation campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_governed_relaxation_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked pricing_relax.py has authority_grant_verified=False and cannot satisfy governed relaxation."
+                                }
+                            ),
+                        },
+                    }
+                elif (
+                    "Arm A" in sys_prompt
+                    or ("Arm B" in sys_prompt and worker == "worker-2")
+                    or ("Arm C" in sys_prompt and worker in ("worker-1", "worker-2"))
+                ):
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    patch_src = (
+                        INITIAL_PRICING_RELAX_P2_PY
+                        if worker == "worker-0"
+                        else INITIAL_TAX_RELAX_P2_PY
+                    )
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_src}),
+                        },
+                    }
+                else:
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": INITIAL_PRICING_RELAX_COHERENT_PY}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "governed_relaxation",
+                "seeds": [12100, 12101],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_governed_relaxation_transport)
+            summary = governed_relaxation_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.governed_relaxation_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["relaxation_surcharge_cents"] = int(gate_rec["relaxation_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_governed_relaxation_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live governed_relaxation pilot evidence offline if present."""
+        relax_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "governed_relaxation_pilot_run"
+            / "events.jsonl"
+        )
+        relax_summary = relax_events.with_name("summary.json")
+        if relax_events.exists() and relax_summary.exists():
+            replayed = replay(relax_events)
+            self.assertEqual(replayed["schema"], "lggr.governed_relaxation_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+            seed_12100_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12100_arms["A"]["final_relaxation_surcharge_cents"], 10)
+            self.assertEqual(seed_12100_arms["B"]["final_relaxation_surcharge_cents"], 6)
+            self.assertEqual(seed_12100_arms["C"]["final_relaxation_surcharge_cents"], 0)
+            self.assertEqual(seed_12100_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

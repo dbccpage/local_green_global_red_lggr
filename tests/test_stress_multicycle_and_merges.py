@@ -47,6 +47,7 @@ from lggr.streaming import (
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseFigureEightWedgeMonitor,
+    StreamingCodebaseGovernedRelaxationMonitor,
     StreamingCodebaseGracefulSheddingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -6295,6 +6296,56 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "DIAMOND_CHORD_GLUED_EXACT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_governed_relaxation_codebase_authority_gate_and_minimum_slack_audit(self) -> None:
+        """Verify Theorem 124: Governed policy relaxation & minimum-slack authority gate codebase audit."""
+        mon = StreamingCodebaseGovernedRelaxationMonitor(
+            scope_id="unit-codebase-governed-relaxation-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-governed-relaxation-eval-01",
+        )
+        self.assertEqual(obs["phase_1_authority_grant_verified"], False)
+        self.assertEqual(obs["phase_1_selected_policy_id"], "P_star")
+        self.assertEqual(obs["phase_1_l1_policy_slack"], 2)
+        self.assertEqual(obs["phase_1_excess_l1_slack"], 0)
+        self.assertEqual(obs["phase_1_unauthorized_penalty_cents"], 10)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "UNAUTHORIZED_SELF_RELAXATION_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_2_authority_grant_verified"], True)
+        self.assertEqual(obs["phase_2_selected_policy_id"], "P_over")
+        self.assertEqual(obs["phase_2_l1_policy_slack"], 5)
+        self.assertEqual(obs["phase_2_excess_l1_slack"], 3)
+        self.assertEqual(obs["phase_2_unauthorized_penalty_cents"], 0)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_2_payout_cents"], 867)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "OVER_PERMISSIVE_SLACK_BREACH_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_3_authority_grant_verified"], True)
+        self.assertEqual(obs["phase_3_selected_policy_id"], "P_star")
+        self.assertEqual(obs["phase_3_l1_policy_slack"], 2)
+        self.assertEqual(obs["phase_3_excess_l1_slack"], 0)
+        self.assertEqual(obs["phase_3_unauthorized_penalty_cents"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "GOVERNED_MINIMUM_SLACK_RELAXATION_CODEBASE_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "GOVERNED_MINIMUM_SLACK_RELAXATION_CODEBASE_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
