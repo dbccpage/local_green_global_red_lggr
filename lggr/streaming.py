@@ -29024,6 +29024,472 @@ class StreamingCodebaseDynamicSchemaMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseAdversarialSchemaMonitor:
+    """Online codebase adversarial prompt-injection schema & side-channel monitor (Theorem 117).
+
+    Composes ``StreamingAdversarialSchemaSideChannelMonitor``,
+    ``StreamingSideInformationCapacityMonitor``, ``StreamingCodebaseInterfaceMergeMonitor``,
+    and ``StreamingFiberMonitor`` across a 3-module financial pipeline
+    (``pricing_adv.py``, ``tax_adv.py``, ``settlement_adv.py``) over a 4-state injection stream
+    ``X = {s00, s01, s10, s11}`` with ``K = 4`` injection classes
+    (``benign_exec``, ``prompt_override``, ``tool_hijack``, ``exfil_payload``), safety query
+    ``q = (1, 0, 0, 0)``, spoofed agent-writable key ``k_agent_self_report = (1, 1, 0, 0)``,
+    and host-authenticated provenance keys ``("k_host_1", "k_host_2")``:
+      1. Phase 1 (Unauthenticated ``k_agent_self_report`` trusted + 1-bit side-channel ``S = 2 < 4``):
+         All 3 modules pass isolated AST/unit tests (``L = 1``), yet ``tax_adv`` trusts
+         ``trust_agent_self_report = True`` (``active_schema_keys = ["k_agent_self_report"]``) and
+         ``settlement_adv`` allocates only ``side_channel_bits = 1`` (``S = 2 < 4``), causing
+         ``spoofed_safety_collisions = 1`` and ``side_channel_collision_floor = 2`` with a 15-cent
+         surcharge (``payout = 858 != 873``, ``Eg = 0``, ``defect = -1``,
+         ``SPOOFED_METADATA_CODEBASE_LGGR``).
+      2. Phase 2 (Host-authenticated ``["k_host_1", "k_host_2"]`` + 1-bit side-channel ``S = 2 < 4``):
+         ``tax_adv`` sets ``trust_agent_self_report = False`` and uses host provenance keys
+         ``["k_host_1", "k_host_2"]`` (``spoofed_safety_collisions = 0``), yet ``settlement_adv``
+         retains ``side_channel_bits = 1`` (``S = 2 < 4``), leaving ``side_channel_collision_floor = 2``
+         and a 10-cent surcharge (``payout = 863 != 873``, ``Eg = 0``, ``defect = -1``,
+         ``UNDERALLOCATED_SIDE_CHANNEL_CODEBASE_LGGR``).
+      3. Phase 3 (Host-authenticated ``["k_host_1", "k_host_2"]`` + 2-bit side-channel ``S = 4 = K``):
+         ``tax_adv`` enforces host provenance keys ``["k_host_1", "k_host_2"]`` and
+         ``settlement_adv`` allocates ``side_channel_bits = 2`` (``S = 4 = K``), achieving
+         ``spoofed_safety_collisions = 0``, ``side_channel_collision_floor = 0``, and zero surcharge
+         (``payout = 873``, ``900 + 90 = 873 + 27 + 90 = 990``, ``L = 1``, ``Eg = 1``, ``defect = 0``,
+         ``CODEBASE_ADVERSARIAL_SCHEMA_AUTHENTICATED_LGGG``).
+    """
+
+    MODULE_NAMES: tuple[str, ...] = ("pricing_adv", "tax_adv", "settlement_adv")
+    WORKER_ROLES: dict[str, str] = {
+        "worker-0": "pricing_adv",
+        "worker-1": "tax_adv",
+        "worker-2": "settlement_adv",
+    }
+
+    DEFAULT_PRICING_SOURCE: str = (
+        "def compute_pricing_adv(gross_cents: int, discount_cents: int) -> dict[str, object]:\n"
+        "    net_cents = gross_cents - discount_cents\n"
+        "    return {\n"
+        "        'net_cents': net_cents,\n"
+        "        'host_candidate_keys': ['k_host_1', 'k_host_2'],\n"
+        "        'injection_classes': ['benign_exec', 'prompt_override', 'tool_hijack', 'exfil_payload'],\n"
+        "        'safety_queries': [1, 0, 0, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_SPOOFED_SOURCE: str = (
+        "def compute_tax_adv(net_cents: int, rate_bps: int) -> dict[str, object]:\n"
+        "    tax_cents = (net_cents * rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'trust_agent_self_report': True,\n"
+        "        'active_schema_keys': ['k_agent_self_report'],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_AUTHENTICATED_SOURCE: str = (
+        "def compute_tax_adv(net_cents: int, rate_bps: int) -> dict[str, object]:\n"
+        "    tax_cents = (net_cents * rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'trust_agent_self_report': False,\n"
+        "        'active_schema_keys': ['k_host_1', 'k_host_2'],\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_SPOOFED_1BIT_SOURCE: str = (
+        "def compute_settlement_adv(net_cents: int, tax_cents: int, fee_bps: int) -> dict[str, object]:\n"
+        "    fee_cents = (net_cents * fee_bps) // 10000\n"
+        "    adversarial_surcharge_cents = 15\n"
+        "    merchant_payout_cents = net_cents - fee_cents - adversarial_surcharge_cents\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'adversarial_surcharge_cents': adversarial_surcharge_cents,\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'side_channel_bits': 1,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_HOST_1BIT_SOURCE: str = (
+        "def compute_settlement_adv(net_cents: int, tax_cents: int, fee_bps: int) -> dict[str, object]:\n"
+        "    fee_cents = (net_cents * fee_bps) // 10000\n"
+        "    adversarial_surcharge_cents = 10\n"
+        "    merchant_payout_cents = net_cents - fee_cents - adversarial_surcharge_cents\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'adversarial_surcharge_cents': adversarial_surcharge_cents,\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'side_channel_bits': 1,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_AUTHENTICATED_2BIT_SOURCE: str = (
+        "def compute_settlement_adv(net_cents: int, tax_cents: int, fee_bps: int) -> dict[str, object]:\n"
+        "    fee_cents = (net_cents * fee_bps) // 10000\n"
+        "    adversarial_surcharge_cents = 0\n"
+        "    merchant_payout_cents = net_cents - fee_cents\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'adversarial_surcharge_cents': adversarial_surcharge_cents,\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'side_channel_bits': 2,\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-adversarial-schema-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.adversarial_monitor = StreamingAdversarialSchemaSideChannelMonitor(
+            scope_id=f"{self.scope_id}:adversarial-schema"
+        )
+        self.capacity_monitor = StreamingSideInformationCapacityMonitor(
+            scope_id=f"{self.scope_id}:side-capacity"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(
+            scope_id=f"{self.scope_id}:fiber",
+        )
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _exec_func(mod_name: str, source: str, func_name: str) -> Callable[..., Any]:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(mod_name, source)
+        fn = ns.get(func_name)
+        if not callable(fn):
+            raise ValidationError(f"missing callable {func_name}")
+        return fn
+
+    def evaluate_adversarial_schema_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        if not isinstance(module_sources, Mapping):
+            raise ValidationError("module_sources must be a mapping")
+        if not isinstance(local_test_results, Mapping):
+            raise ValidationError("local_test_results must be a mapping")
+
+        for mod_name in self.MODULE_NAMES:
+            if mod_name not in module_sources:
+                raise ValidationError(f"missing module source for {mod_name}")
+            if mod_name not in local_test_results:
+                raise ValidationError(f"missing local test result for {mod_name}")
+
+        local_all_green = all(bool(local_test_results[m]) for m in self.MODULE_NAMES)
+
+        fn_pricing = self._exec_func("pricing_adv", str(module_sources["pricing_adv"]), "compute_pricing_adv")
+        fn_tax = self._exec_func("tax_adv", str(module_sources["tax_adv"]), "compute_tax_adv")
+        fn_settlement = self._exec_func("settlement_adv", str(module_sources["settlement_adv"]), "compute_settlement_adv")
+
+        p_res = fn_pricing(1000, 100)
+        net_cents = int(p_res.get("net_cents", 0))
+        host_cand_keys = [str(k) for k in list(p_res.get("host_candidate_keys", ["k_host_1", "k_host_2"]))]
+        inj_classes = [
+            str(c)
+            for c in list(
+                p_res.get(
+                    "injection_classes",
+                    ["benign_exec", "prompt_override", "tool_hijack", "exfil_payload"],
+                )
+            )
+        ]
+        safety_queries = [int(v) for v in list(p_res.get("safety_queries", [1, 0, 0, 0]))]
+
+        t_res = fn_tax(net_cents, 1000)
+        tax_cents = int(t_res.get("tax_cents", 0))
+        trust_agent_self_report = bool(t_res.get("trust_agent_self_report", False))
+        active_keys = [str(k) for k in list(t_res.get("active_schema_keys", []))]
+
+        s_res = fn_settlement(net_cents, tax_cents, 300)
+        fee_cents = int(s_res.get("fee_cents", 0))
+        surcharge_cents = int(s_res.get("adversarial_surcharge_cents", 0))
+        payout_cents = int(s_res.get("merchant_payout_cents", 0))
+        side_channel_bits = int(s_res.get("side_channel_bits", 1))
+        side_channel_capacity_s = 1 << max(side_channel_bits, 0)
+
+        states = [
+            ("s00", {"status": "pass"}, safety_queries[0] if len(safety_queries) == 4 else 1, {"k_agent_self_report": 1, "k_host_1": 0, "k_host_2": 0}),
+            ("s01", {"status": "pass"}, safety_queries[1] if len(safety_queries) == 4 else 0, {"k_agent_self_report": 1, "k_host_1": 0, "k_host_2": 1}),
+            ("s10", {"status": "pass"}, safety_queries[2] if len(safety_queries) == 4 else 0, {"k_agent_self_report": 0, "k_host_1": 1, "k_host_2": 0}),
+            ("s11", {"status": "pass"}, safety_queries[3] if len(safety_queries) == 4 else 0, {"k_agent_self_report": 0, "k_host_1": 1, "k_host_2": 1}),
+        ]
+
+        mon_safety = StreamingFiberMonitor(scope_id=f"{self.scope_id}:{eval_id}:safety")
+        for sid, rep, qry, meta in states:
+            proj_rep = {"base": rep, "features": {k: meta.get(k) for k in active_keys}}
+            mon_safety.observe(sid, proj_rep, qry, metadata=meta)
+        rec_safety = mon_safety.get_receipt()
+
+        spoofed_safety_collisions = (
+            1
+            if (
+                trust_agent_self_report
+                or "k_agent_self_report" in active_keys
+                or mon_safety.is_obstructed
+            )
+            else 0
+        )
+
+        cap_states = [
+            {
+                "state_id": states[i][0],
+                "query_value": inj_classes[i],
+                "side_symbol": i % side_channel_capacity_s,
+            }
+            for i in range(4)
+        ]
+        cap_rec = self.capacity_monitor.record_fiber_channel(
+            f"{eval_id}::side_channel",
+            cap_states,
+            channel_capacity_s=side_channel_capacity_s,
+            error_budget=0,
+        )
+        side_channel_collision_floor = int(cap_rec["realized_subfiber_error_floor"])
+
+        adv_rec = self.adversarial_monitor.evaluate_adversarial_injection(
+            f"{eval_id}::adv",
+            host_candidate_keys=host_cand_keys,
+            injection_classes=inj_classes,
+        )
+
+        gross_collected = net_cents + tax_cents
+        total_accounted = payout_cents + fee_cents + tax_cents
+        expected_payout = 873
+        settlement_conserved = (
+            net_cents == 900
+            and tax_cents == 90
+            and fee_cents == 27
+            and surcharge_cents == 0
+            and payout_cents == expected_payout
+            and gross_collected == total_accounted
+        )
+
+        local_green = 1 if local_all_green else 0
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and infeasible_constraint is None
+                and not trust_agent_self_report
+                and active_keys == ["k_host_1", "k_host_2"]
+                and spoofed_safety_collisions == 0
+                and side_channel_bits == 2
+                and side_channel_capacity_s >= len(inj_classes)
+                and side_channel_collision_floor == 0
+                and settlement_conserved
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        mismatches: list[str] = []
+        if infeasible_constraint is not None:
+            mismatches.append(f"infeasible_constraint:{infeasible_constraint}")
+        if trust_agent_self_report or spoofed_safety_collisions > 0:
+            mismatches.append(
+                f"spoofed_agent_metadata_trusted:trust_agent_self_report={trust_agent_self_report}:active_keys={active_keys}"
+            )
+        if side_channel_collision_floor > 0 or side_channel_bits < 2:
+            mismatches.append(
+                f"side_channel_underallocation:bits={side_channel_bits}:capacity_s={side_channel_capacity_s}:collision_floor={side_channel_collision_floor}"
+            )
+        if surcharge_cents != 0 or not settlement_conserved:
+            mismatches.append(
+                f"adversarial_surcharge_or_conservation_breach:surcharge={surcharge_cents}:payout={payout_cents}:expected={expected_payout}"
+            )
+
+        if global_green == 1:
+            status = "CODEBASE_ADVERSARIAL_SCHEMA_AUTHENTICATED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_ADVERSARIAL_SCHEMA_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif spoofed_safety_collisions == 0 and side_channel_collision_floor > 0:
+            status = "UNDERALLOCATED_SIDE_CHANNEL_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SPOOFED_METADATA_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, str] = {}
+        for worker, mod_name in self.WORKER_ROLES.items():
+            if global_green == 1:
+                directives[worker] = f"HOLD_{mod_name.upper()}_CANONICAL"
+            elif infeasible_constraint is not None:
+                directives[worker] = (
+                    f"ESCALATE_INFEASIBLE_CONSTRAINT:{infeasible_constraint}"
+                )
+            elif mod_name == "pricing_adv":
+                directives[worker] = (
+                    "ANCHOR_PRICING_ADV:preserve net_cents=900, host_candidate_keys=['k_host_1', 'k_host_2'], and safety_queries=[1, 0, 0, 0]"
+                )
+            elif mod_name == "tax_adv":
+                directives[worker] = (
+                    "REPAIR_TAX_ADV:set trust_agent_self_report=False and active_schema_keys=['k_host_1', 'k_host_2']"
+                )
+            else:
+                directives[worker] = (
+                    "REPAIR_SETTLEMENT_ADV:set side_channel_bits=2 and adversarial_surcharge_cents=0 so merchant_payout_cents=873"
+                )
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_green": local_green,
+                "spoofed_safety_collisions": spoofed_safety_collisions,
+                "side_channel_collision_floor": side_channel_collision_floor,
+            },
+            {
+                "global_green": global_green,
+                "settlement_conserved": settlement_conserved,
+                "status": status,
+            },
+        )
+
+        rec: dict[str, Any] = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "trust_agent_self_report": trust_agent_self_report,
+                "active_schema_keys": active_keys,
+                "spoofed_safety_collisions": spoofed_safety_collisions,
+                "side_channel_bits": side_channel_bits,
+                "side_channel_capacity_s": side_channel_capacity_s,
+                "side_channel_collision_floor": side_channel_collision_floor,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "merchant_payout_cents": payout_cents,
+                "adversarial_surcharge_cents": surcharge_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "safety_fiber_receipt": rec_safety,
+                "side_channel_capacity_receipt": cap_rec,
+                "adversarial_injection_receipt": adv_rec,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def evaluate_three_phase_adversarial_schema_audit(
+        self,
+        audit_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Run the canonical 3-phase codebase adversarial schema & side-channel audit (Theorem 117)."""
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {m: True for m in self.MODULE_NAMES}
+
+        p1 = self.evaluate_adversarial_schema_merge(
+            f"{aid}::phase1_spoofed_1bit",
+            module_sources={
+                "pricing_adv": self.DEFAULT_PRICING_SOURCE,
+                "tax_adv": self.DEFAULT_TAX_SPOOFED_SOURCE,
+                "settlement_adv": self.DEFAULT_SETTLEMENT_SPOOFED_1BIT_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_adversarial_schema_merge(
+            f"{aid}::phase2_host_1bit_underallocated",
+            module_sources={
+                "pricing_adv": self.DEFAULT_PRICING_SOURCE,
+                "tax_adv": self.DEFAULT_TAX_AUTHENTICATED_SOURCE,
+                "settlement_adv": self.DEFAULT_SETTLEMENT_HOST_1BIT_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_adversarial_schema_merge(
+            f"{aid}::phase3_authenticated_2bit",
+            module_sources={
+                "pricing_adv": self.DEFAULT_PRICING_SOURCE,
+                "tax_adv": self.DEFAULT_TAX_AUTHENTICATED_SOURCE,
+                "settlement_adv": self.DEFAULT_SETTLEMENT_AUTHENTICATED_2BIT_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_spoofed_collisions": p1["spoofed_safety_collisions"],
+                "phase_1_side_channel_floor": p1["side_channel_collision_floor"],
+                "phase_1_surcharge_cents": p1["adversarial_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_spoofed_collisions": p2["spoofed_safety_collisions"],
+                "phase_2_side_channel_floor": p2["side_channel_collision_floor"],
+                "phase_2_surcharge_cents": p2["adversarial_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_spoofed_collisions": p3["spoofed_safety_collisions"],
+                "phase_3_side_channel_floor": p3["side_channel_collision_floor"],
+                "phase_3_surcharge_cents": p3["adversarial_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase adversarial schema evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_adversarial_schema.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "adversarial_schema_receipt": (
+                self.adversarial_monitor.current_receipt()
+                if self.adversarial_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

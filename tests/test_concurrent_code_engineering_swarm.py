@@ -8,6 +8,10 @@ import tempfile
 import unittest
 
 from experiments.concurrent_code_engineering_swarm.domain import (
+    ADV_PRICING_ANCHOR_SRC,
+    ADV_SETTLEMENT_AUTHENTICATED_2BIT_SRC,
+    ADV_SETTLEMENT_HOST_1BIT_SRC,
+    ADV_TAX_AUTHENTICATED_SRC,
     CANONICAL_DIAMOND_AGGREGATOR_SOURCE,
     CANONICAL_FEE_BRANCH_SOURCE,
     CANONICAL_PRICING_CHANNEL_SOURCE,
@@ -97,6 +101,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     SPLIT_PRICING_ANCHOR_SRC,
     SPLIT_SETTLEMENT_FULL_SRC,
     SPLIT_TAX_1BIT_SRC,
+    AdversarialSchemaCodeWorkspace,
     BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
@@ -120,6 +125,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     StatefulDFACodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
+    adversarial_schema_fixture,
     catalyst_fixture,
     coalitional_fixture,
     council_fixture,
@@ -137,6 +143,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     quorum_fixture,
     regge_fixture,
     replay_fixture,
+    run_adversarial_schema_local_unit_tests,
     run_coalitional_local_unit_tests,
     run_council_local_unit_tests,
     run_cptp_local_unit_tests,
@@ -168,6 +175,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
 )
 from experiments.concurrent_code_engineering_swarm.runner import (
     CodeBatchClient,
+    adversarial_schema_campaign,
     campaign,
     catalyst_campaign,
     coalitional_campaign,
@@ -195,6 +203,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
 from lggr.streaming import (
+    StreamingCodebaseAdversarialSchemaMonitor,
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
@@ -4474,6 +4483,240 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if ss_events.exists() and ss_summary.exists():
             replayed = replay(ss_events)
             self.assertEqual(replayed["schema"], "lggr.dynamic_schema_synthesis_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    # ------------------------------------------------------------------
+    # Adversarial Prompt Injection Schema & Side-Channel Swarm Tests (Test 52, Theorem 117)
+    # ------------------------------------------------------------------
+
+    def test_adversarial_schema_local_unit_tests_and_merge_gate_repair(self) -> None:
+        """Verify adversarial-schema local unit tests pass while merge gate separates spoofed 1-bit, host 1-bit, and authenticated 2-bit."""
+        ws = AdversarialSchemaCodeWorkspace(adversarial_schema_fixture(11400))
+        verdicts = ws.local_test_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_adv": True, "tax_adv": True, "settlement_adv": True},
+        )
+
+        monitor = StreamingCodebaseAdversarialSchemaMonitor(scope_id="test-adversarial-schema-gate")
+        res0 = monitor.evaluate_adversarial_schema_merge(
+            "wave-0",
+            module_sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(res0["local_green"], 1)
+        self.assertEqual(res0["global_green"], 0)
+        self.assertEqual(res0["defect"], -1)
+        self.assertEqual(res0["spoofed_safety_collisions"], 1)
+        self.assertEqual(res0["side_channel_collision_floor"], 2)
+        self.assertEqual(res0["adversarial_surcharge_cents"], 15)
+        self.assertEqual(res0["merchant_payout_cents"], 858)
+        self.assertEqual(res0["status"], "SPOOFED_METADATA_CODEBASE_LGGR")
+
+        # Partial repair: authenticate host keys in tax_adv while keeping 1-bit side-channel in settlement_adv
+        p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": ADV_TAX_AUTHENTICATED_SRC})
+        self.assertTrue(p1["accepted"])
+        p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": ADV_SETTLEMENT_HOST_1BIT_SRC})
+        self.assertTrue(p2["accepted"])
+        res1 = monitor.evaluate_adversarial_schema_merge(
+            "wave-1-host-1bit",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res1["local_green"], 1)
+        self.assertEqual(res1["global_green"], 0)
+        self.assertEqual(res1["defect"], -1)
+        self.assertEqual(res1["spoofed_safety_collisions"], 0)
+        self.assertEqual(res1["side_channel_collision_floor"], 2)
+        self.assertEqual(res1["adversarial_surcharge_cents"], 10)
+        self.assertEqual(res1["merchant_payout_cents"], 863)
+        self.assertEqual(res1["status"], "UNDERALLOCATED_SIDE_CHANNEL_CODEBASE_LGGR")
+
+        # Full repair: allocate 2-bit side-channel in settlement_adv (S = 4 = K)
+        p3 = ws.tool("worker-2", "submit_module_patch", {"source_code": ADV_SETTLEMENT_AUTHENTICATED_2BIT_SRC})
+        self.assertTrue(p3["accepted"])
+        res2 = monitor.evaluate_adversarial_schema_merge(
+            "wave-1-authenticated-2bit",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res2["local_green"], 1)
+        self.assertEqual(res2["global_green"], 1)
+        self.assertEqual(res2["defect"], 0)
+        self.assertEqual(res2["spoofed_safety_collisions"], 0)
+        self.assertEqual(res2["side_channel_collision_floor"], 0)
+        self.assertEqual(res2["adversarial_surcharge_cents"], 0)
+        self.assertEqual(res2["merchant_payout_cents"], 873)
+        self.assertEqual(res2["status"], "CODEBASE_ADVERSARIAL_SCHEMA_AUTHENTICATED_LGGG")
+
+    def test_adversarial_schema_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        """Verify adversarial-schema sandbox rejects forbidden imports and hardware-locked patches."""
+        bad_import = run_adversarial_schema_local_unit_tests(
+            "tax_adv",
+            "import os\ndef compute_tax_adv(net_cents: int, rate_bps: int) -> dict:\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = AdversarialSchemaCodeWorkspace(adversarial_schema_fixture(11401))
+        locked_res = ws.tool("worker-1", "submit_module_patch", {"source_code": ADV_TAX_AUTHENTICATED_SRC})
+        self.assertFalse(locked_res["accepted"])
+        self.assertIn("locked", locked_res["error"])
+
+    def test_adversarial_schema_concurrent_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-arm adversarial_schema concurrent campaign, deterministic replay, and tamper detection."""
+        def stub_adversarial_schema_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msg = next(m for m in reversed(messages) if m.get("role") == "tool")
+                inspected = json.loads(tool_msg["content"])
+                fb = inspected.get("merge_gate_feedback", {})
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Tax and Settlement modules are hardware-locked to unauthenticated 1-bit side-channel schema."}
+                            ),
+                        },
+                    }
+                elif fb.get("arm") == "A":
+                    tool_call = {
+                        "id": f"call_hold_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif fb.get("arm") == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": ADV_TAX_AUTHENTICATED_SRC}),
+                            },
+                        }
+                    elif worker == "worker-2":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": ADV_SETTLEMENT_HOST_1BIT_SRC}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_hold_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": ADV_PRICING_ANCHOR_SRC,
+                        "worker-1": ADV_TAX_AUTHENTICATED_SRC,
+                        "worker-2": ADV_SETTLEMENT_AUTHENTICATED_2BIT_SRC,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "adversarial_schema",
+                "seeds": [11400, 11401],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_adversarial_schema_transport)
+            summary = adversarial_schema_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.adversarial_schema_side_channel_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["spoofed_safety_collisions"] = int(gate_rec["spoofed_safety_collisions"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_adversarial_schema_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live adversarial_schema pilot evidence offline if present."""
+        adv_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "adversarial_schema_pilot_run"
+            / "events.jsonl"
+        )
+        adv_summary = adv_events.with_name("summary.json")
+        if adv_events.exists() and adv_summary.exists():
+            replayed = replay(adv_events)
+            self.assertEqual(replayed["schema"], "lggr.adversarial_schema_side_channel_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 
