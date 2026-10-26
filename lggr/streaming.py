@@ -27056,3 +27056,539 @@ class StreamingCodebaseFiberSplittingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseDisagreementCouncilMonitor:
+    """Online Volume VIII disagreement-preserving side-channel council vs. collapsing consensus codebase monitor (Theorem 113).
+
+    Composes:
+      - StreamingDisagreementPreservingCouncilMonitor (side-channel capacity S vs. K root causes & PoE support)
+      - StreamingSideInformationCapacityMonitor (realized subfiber collision floor)
+      - StreamingProductOfExpertsMonitor (disjoint vs. shared specialist remediation support)
+      - StreamingCodebaseInterfaceMergeMonitor (sandboxed AST execution of 3 Python modules)
+      - StreamingFiberMonitor (module-to-merge verdict fiber tracking)
+
+    Audits a 3-module settlement codebase (`pricing_council.py`, `tax_council.py`,
+    `settlement_council.py`) over K = 3 distinct latent root causes
+    (`rebate_drift`, `jurisdiction_mismatch`, `fee_tier_overflow`, 5 cents surcharge per collided cause):
+      - Phase 1 (Collapsing Consensus Tag S = 1 & Disjoint PoE Specialist Supports):
+        `tax_council.py` emits `tax_council_symbols = [0, 0, 0]` (`S_cons = 1`) and
+        `settlement_council.py` emits `settle_council_symbols = [0, 0, 0]`,
+        `shared_remediation_support = False` (`D_PoE = 0`), and `council_collision_surcharge_cents = 10`
+        (`5 * (K - 1) = 10`, `payout = 873 - 10 = 863 != 873`, `local_green = 1`, `global_green = 0`,
+        `defect = -1`, `COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR`).
+      - Phase 2 (Partial Binary Escalation Tag S = 2 < K = 3):
+        `tax_council.py` expands its side-channel tag to `tax_council_symbols = [0, 0, 1]` (`S_bin = 2`),
+        reducing collision floor from `2` to `1 < 2`, yet `settlement_council.py` still emits
+        `settle_council_symbols = [0, 0, 1]` with `council_collision_surcharge_cents = 5`
+        (`payout = 873 - 5 = 868 != 873`, `local_green = 1`, `global_green = 0`, `defect = -1`,
+        `BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR`).
+      - Phase 3 (Disagreement-Preserving Side-Channel Council S = 3 >= K = 3 with Shared Support):
+        `tax_council.py` emits `[0, 0, 1]` and `settlement_council.py` upgrades to
+        `settle_council_symbols = [0, 1, 2]` (`S_council = 3 = K`), `shared_remediation_support = True`
+        (`D_PoE = 3/8 > 0`), and `council_collision_surcharge_cents = 0`, resolving all 3 root causes
+        (`collision_floor = 0`, `873 + 27 + 180 = 1080`, `local_green = 1`, `global_green = 1`,
+        `defect = 0`, `CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG`).
+
+    AuthorityEffect: None.
+    """
+
+    MODULE_NAMES: tuple[str, ...] = ("pricing_council", "tax_council", "settlement_council")
+    ROOT_CAUSES: tuple[str, ...] = ("rebate_drift", "jurisdiction_mismatch", "fee_tier_overflow")
+
+    DEFAULT_PRICING_SOURCE: str = (
+        "def pricing_council(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+        "    discount_cents = (gross_cents * discount_bps) // 10000\n"
+        "    net_cents = gross_cents - discount_cents - rebate_cents\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'discount_cents': discount_cents,\n"
+        "        'rebate_cents': rebate_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'root_causes': ['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow'],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_COLLAPSING_SOURCE: str = (
+        "def tax_council(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * tax_rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'tax_council_symbols': [0, 0, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_BINARY_SOURCE: str = (
+        "def tax_council(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * tax_rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'tax_council_symbols': [0, 0, 1],\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_COLLAPSING_SOURCE: str = (
+        "def settlement_council(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    settle_council_symbols = [0, 0, 0]\n"
+        "    shared_remediation_support = False\n"
+        "    surcharge = 10\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'council_collision_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'settle_council_symbols': settle_council_symbols,\n"
+        "        'shared_remediation_support': shared_remediation_support,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_BINARY_SOURCE: str = (
+        "def settlement_council(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    settle_council_symbols = list(tax_quote['tax_council_symbols'])\n"
+        "    shared_remediation_support = False\n"
+        "    surcharge = 5\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'council_collision_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'settle_council_symbols': settle_council_symbols,\n"
+        "        'shared_remediation_support': shared_remediation_support,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_COUNCIL_SOURCE: str = (
+        "def settlement_council(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    settle_council_symbols = [0, 1, 2]\n"
+        "    shared_remediation_support = True\n"
+        "    surcharge = 0\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'council_collision_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'settle_council_symbols': settle_council_symbols,\n"
+        "        'shared_remediation_support': shared_remediation_support,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-disagreement-council-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.council_monitor = StreamingDisagreementPreservingCouncilMonitor(
+            scope_id=f"{self.scope_id}::council"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}::fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def _exec_council_modules(self, module_sources: Mapping[str, str]) -> dict[str, Callable[..., Any]]:
+        funcs: dict[str, Callable[..., Any]] = {}
+        for mod_name in self.MODULE_NAMES:
+            if mod_name not in module_sources:
+                raise ValidationError(f"Missing module source for {mod_name}")
+            src = text(module_sources[mod_name], f"module_sources[{mod_name}]")
+            ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(mod_name, src)
+            fn = ns.get(mod_name)
+            if not callable(fn):
+                raise ValidationError(f"Module {mod_name} does not define callable {mod_name}(...)")
+            funcs[mod_name] = fn
+        return funcs
+
+    def evaluate_council_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        gross_cents: int = 1000,
+        discount_bps: int = 500,
+        rebate_cents: int = 50,
+        tax_rate_bps: int = 2000,
+        fee_bps: int = 300,
+        infeasible_constraint: str | None = None,
+        model_id: str = "deterministic-fixture",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        ns = self._exec_council_modules(module_sources)
+
+        p_out = ns["pricing_council"](gross_cents, discount_bps, rebate_cents)
+        t_out = ns["tax_council"](p_out, tax_rate_bps)
+        s_out = ns["settlement_council"](p_out, t_out, fee_bps)
+
+        if (
+            not isinstance(p_out, dict)
+            or not all(k in p_out for k in ("net_cents", "root_causes"))
+            or not isinstance(t_out, dict)
+            or not all(k in t_out for k in ("tax_cents", "tax_council_symbols"))
+            or not isinstance(s_out, dict)
+            or not all(
+                k in s_out
+                for k in (
+                    "fee_cents",
+                    "merchant_payout_cents",
+                    "gross_collected_cents",
+                    "total_accounted_cents",
+                    "settle_council_symbols",
+                    "shared_remediation_support",
+                    "council_collision_surcharge_cents",
+                )
+            )
+        ):
+            raise ValidationError(
+                "Module outputs must contain net_cents, root_causes, tax_cents, tax_council_symbols, fee_cents, merchant_payout_cents, gross_collected_cents, total_accounted_cents, settle_council_symbols, shared_remediation_support, and council_collision_surcharge_cents"
+            )
+
+        causes = [str(c) for c in p_out["root_causes"]]
+        tax_syms = [int(v) for v in t_out["tax_council_symbols"]]
+        settle_syms = [int(v) for v in s_out["settle_council_symbols"]]
+        shared_support = bool(s_out["shared_remediation_support"])
+        if len(causes) != 3 or len(tax_syms) != 3 or len(settle_syms) != 3:
+            raise ValidationError("root_causes, tax_council_symbols, and settle_council_symbols must have length 3")
+
+        cap_mon = StreamingSideInformationCapacityMonitor(scope_id=f"{self.scope_id}::{eval_id}::cap")
+        poe_mon = StreamingProductOfExpertsMonitor(scope_id=f"{self.scope_id}::{eval_id}::poe")
+        active_cap_s = max(1, len(set(settle_syms)))
+        cap_rec = cap_mon.record_fiber_channel(
+            f"{eval_id}::cap",
+            [
+                {"state_id": f"patch_{i}", "query_value": causes[i], "side_symbol": settle_syms[i]}
+                for i in range(3)
+            ],
+            channel_capacity_s=active_cap_s,
+            error_budget=0,
+        )
+        expert_scores = (
+            (("3/4", "1/4"), ("1/4", "3/4"))
+            if shared_support
+            else (("1", "0"), ("0", "1"))
+        )
+        poe_rec = poe_mon.record_expert_scores(f"{eval_id}::poe", expert_scores)
+
+        active_collision_floor = int(cap_rec["realized_subfiber_error_floor"])
+        poe_partition_sum = rational(poe_rec["poe_partition_sum"])
+        tax_distinct_symbols = len(set(tax_syms))
+
+        surcharge_cents = int(s_out["council_collision_surcharge_cents"])
+        net_cents = int(p_out["net_cents"])
+        tax_cents = int(t_out["tax_cents"])
+        fee_cents = int(s_out["fee_cents"])
+        payout_cents = int(s_out["merchant_payout_cents"])
+        gross_collected = int(s_out["gross_collected_cents"])
+        total_accounted = int(s_out["total_accounted_cents"])
+
+        expected_discount = (gross_cents * discount_bps) // 10000
+        expected_net = gross_cents - expected_discount - rebate_cents
+        expected_tax = (expected_net * tax_rate_bps) // 10000
+        expected_fee = (expected_net * fee_bps) // 10000
+        expected_payout = expected_net - expected_fee
+        expected_gross = expected_net + expected_tax
+
+        settlement_conserved = (
+            net_cents == expected_net
+            and tax_cents == expected_tax
+            and fee_cents == expected_fee
+            and payout_cents == expected_payout
+            and surcharge_cents == 0
+            and gross_collected == expected_gross
+            and total_accounted == expected_gross
+            and payout_cents + fee_cents + tax_cents == expected_gross
+        )
+
+        all_local_pass = all(bool(local_test_results.get(m, False)) for m in self.MODULE_NAMES)
+        local_green = 1 if all_local_pass else 0
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and infeasible_constraint is None
+                and tax_syms == [0, 0, 1]
+                and settle_syms == [0, 1, 2]
+                and active_collision_floor == 0
+                and shared_support
+                and poe_partition_sum > Fraction(0)
+                and settlement_conserved
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        mismatches: list[str] = []
+        if infeasible_constraint is not None:
+            mismatches.append(f"infeasible_constraint:{infeasible_constraint}")
+        if tax_syms != [0, 0, 1]:
+            mismatches.append(
+                f"tax_council_symbol_mismatch:tax_council_symbols={tax_syms}!=expected_[0, 0, 1]"
+            )
+        if active_collision_floor > 0 or settle_syms != [0, 1, 2]:
+            mismatches.append(
+                f"council_side_channel_collision:settle_council_symbols={settle_syms}:collision_floor={active_collision_floor}>0"
+            )
+        if not shared_support or poe_partition_sum == Fraction(0):
+            mismatches.append(
+                f"disjoint_poe_remediation_support:shared_remediation_support={shared_support}:poe_sum={poe_partition_sum}"
+            )
+        if surcharge_cents != 0 or not settlement_conserved:
+            mismatches.append(
+                f"council_surcharge_or_conservation_breach:surcharge={surcharge_cents}:payout={payout_cents}:expected={expected_payout}"
+            )
+
+        if global_green == 1:
+            status = "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_COUNCIL_CAPACITY_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif tax_distinct_symbols >= 2 and active_collision_floor == 1:
+            status = "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_green": local_green,
+                "active_channel_capacity_s": active_cap_s,
+            },
+            {
+                "global_green": global_green,
+                "active_collision_floor": active_collision_floor,
+                "shared_remediation_support": shared_support,
+                "settlement_conserved": settlement_conserved,
+            },
+        )
+
+        directives = self._build_role_directives(
+            tax_syms=tax_syms,
+            settle_syms=settle_syms,
+            active_collision_floor=active_collision_floor,
+            shared_support=shared_support,
+            surcharge_cents=surcharge_cents,
+            settlement_conserved=settlement_conserved,
+            infeasible_constraint=infeasible_constraint,
+        )
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "root_causes": causes,
+                "tax_council_symbols": tax_syms,
+                "settle_council_symbols": settle_syms,
+                "active_channel_capacity_s": active_cap_s,
+                "active_collision_floor": active_collision_floor,
+                "shared_remediation_support": shared_support,
+                "poe_partition_sum": poe_partition_sum,
+                "council_collision_surcharge_cents": surcharge_cents,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "merchant_payout_cents": payout_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    @staticmethod
+    def _build_role_directives(
+        *,
+        tax_syms: list[int],
+        settle_syms: list[int],
+        active_collision_floor: int,
+        shared_support: bool,
+        surcharge_cents: int,
+        settlement_conserved: bool,
+        infeasible_constraint: str | None,
+    ) -> dict[str, str]:
+        if infeasible_constraint is not None:
+            msg = (
+                f"INFEASIBLE CONTRACT: {infeasible_constraint}. "
+                "Call escalate(reason=...) immediately; no module patch can satisfy this contradiction."
+            )
+            return {"worker-0": msg, "worker-1": msg, "worker-2": msg}
+
+        if (
+            tax_syms == [0, 0, 1]
+            and settle_syms == [0, 1, 2]
+            and active_collision_floor == 0
+            and shared_support
+            and surcharge_cents == 0
+            and settlement_conserved
+        ):
+            ok = (
+                "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], "
+                "settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, "
+                "873 + 27 + 180 = 1080)."
+            )
+            return {"worker-0": ok, "worker-1": ok, "worker-2": ok}
+
+        d0 = (
+            "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. "
+            "Submit your current pricing_council.py source_code unchanged via submit_module_patch."
+        )
+        if tax_syms != [0, 0, 1]:
+            d1 = (
+                f"REPAIR TAX_COUNCIL: tax_council.py emitted collapsing tax_council_symbols={tax_syms}. "
+                "Set 'tax_council_symbols': [0, 0, 1] to separate fee_tier_overflow from rebate/jurisdiction causes."
+            )
+        else:
+            d1 = "HOLD TAX_COUNCIL: tax_council.py emits binary diagnostic tax_council_symbols=[0, 0, 1]."
+
+        if (
+            settle_syms != [0, 1, 2]
+            or not shared_support
+            or surcharge_cents != 0
+            or not settlement_conserved
+        ):
+            d2 = (
+                f"REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols={settle_syms}, "
+                f"shared_remediation_support={shared_support}, surcharge={surcharge_cents} (collision_floor={active_collision_floor}). "
+                "Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 "
+                "so merchant_payout_cents = 873."
+            )
+        else:
+            d2 = "HOLD SETTLEMENT_COUNCIL: settlement_council.py emits settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0."
+
+        return {"worker-0": d0, "worker-1": d1, "worker-2": d2}
+
+    def evaluate_three_phase_council_audit(
+        self,
+        audit_id: str = "codebase-disagreement-council-3phase",
+        *,
+        model_id: str = "deterministic-fixture",
+    ) -> dict[str, Any]:
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {"pricing_council": True, "tax_council": True, "settlement_council": True}
+
+        p1 = self.evaluate_council_merge(
+            f"{aid}::phase1_collapsing_consensus",
+            module_sources={
+                "pricing_council": self.DEFAULT_PRICING_SOURCE,
+                "tax_council": self.DEFAULT_TAX_COLLAPSING_SOURCE,
+                "settlement_council": self.DEFAULT_SETTLEMENT_COLLAPSING_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_council_merge(
+            f"{aid}::phase2_binary_escalation_tag",
+            module_sources={
+                "pricing_council": self.DEFAULT_PRICING_SOURCE,
+                "tax_council": self.DEFAULT_TAX_BINARY_SOURCE,
+                "settlement_council": self.DEFAULT_SETTLEMENT_BINARY_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_council_merge(
+            f"{aid}::phase3_disagreement_council",
+            module_sources={
+                "pricing_council": self.DEFAULT_PRICING_SOURCE,
+                "tax_council": self.DEFAULT_TAX_BINARY_SOURCE,
+                "settlement_council": self.DEFAULT_SETTLEMENT_COUNCIL_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        council_rec = self.council_monitor.evaluate_council(
+            f"{aid}::council",
+            self.ROOT_CAUSES,
+            binary_symbols=(0, 0, 1),
+            council_symbols=(0, 1, 2),
+            council_capacity_s=3,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_collision_floor": p1["active_collision_floor"],
+                "phase_1_poe_partition_sum": p1["poe_partition_sum"],
+                "phase_1_surcharge_cents": p1["council_collision_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_collision_floor": p2["active_collision_floor"],
+                "phase_2_poe_partition_sum": p2["poe_partition_sum"],
+                "phase_2_surcharge_cents": p2["council_collision_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_collision_floor": p3["active_collision_floor"],
+                "phase_3_poe_partition_sum": p3["poe_partition_sum"],
+                "phase_3_surcharge_cents": p3["council_collision_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "council_audit": council_rec,
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase disagreement-council evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_disagreement_council.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "council_receipt": (
+                self.council_monitor.current_receipt()
+                if self.council_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+

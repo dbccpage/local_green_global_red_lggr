@@ -40,6 +40,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_TAX_TX_SOURCE,
     CANONICAL_TAX_WIN_SOURCE,
     CODE_SWARM_MODELS,
+    COUNCIL_PRICING_ANCHOR_SRC,
+    COUNCIL_SETTLEMENT_FULL_SRC,
+    COUNCIL_TAX_BINARY_SRC,
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKTREE_BRANCHES,
     GRAM_PRICING_SOURCE,
@@ -87,6 +90,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CodeWorkspace,
     ContextualSheafCodeWorkspace,
     DiamondCodeWorkspace,
+    DisagreementCouncilCodeWorkspace,
     FiberSplittingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
@@ -101,6 +105,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     WindowedDriftCodeWorkspace,
     catalyst_fixture,
     coalitional_fixture,
+    council_fixture,
     cptp_fixture,
     dfa_fixture,
     diamond_fixture,
@@ -115,6 +120,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     regge_fixture,
     replay_fixture,
     run_coalitional_local_unit_tests,
+    run_council_local_unit_tests,
     run_cptp_local_unit_tests,
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
@@ -142,6 +148,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     campaign,
     catalyst_campaign,
     coalitional_campaign,
+    council_campaign,
     cptp_campaign,
     dfa_campaign,
     diamond_campaign,
@@ -167,6 +174,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -3522,6 +3530,215 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if split_events.exists() and split_summary.exists():
             replayed = replay(split_events)
             self.assertEqual(replayed["schema"], "lggr.fiber_splitting_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_disagreement_council_initial_fixture_is_local_green_global_red(self) -> None:
+        state = council_fixture(11000)
+        ws = DisagreementCouncilCodeWorkspace(state)
+        verdicts = ws.local_test_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_council": True, "tax_council": True, "settlement_council": True},
+        )
+
+        mon = StreamingCodebaseDisagreementCouncilMonitor(scope_id="test-council-swarm")
+        res0 = mon.evaluate_council_merge(
+            "wave-0",
+            module_sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(res0["local_green"], 1)
+        self.assertEqual(res0["global_green"], 0)
+        self.assertEqual(res0["defect"], -1)
+        self.assertEqual(res0["active_collision_floor"], 2)
+        self.assertEqual(res0["poe_partition_sum"], "0")
+        self.assertEqual(res0["council_collision_surcharge_cents"], 10)
+        self.assertEqual(res0["merchant_payout_cents"], 863)
+
+        # Partial repair: tax_council emits binary symbols [0, 0, 1], settlement_council still collapsing
+        p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": COUNCIL_TAX_BINARY_SRC})
+        self.assertTrue(p1["accepted"])
+        res1 = mon.evaluate_council_merge(
+            "wave-1-partial",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res1["local_green"], 1)
+        self.assertEqual(res1["global_green"], 0)
+        self.assertEqual(res1["defect"], -1)
+
+        # Full repair: settlement_council emits S=3 disagreement-preserving council symbols [0, 1, 2]
+        p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": COUNCIL_SETTLEMENT_FULL_SRC})
+        self.assertTrue(p2["accepted"])
+        res2 = mon.evaluate_council_merge(
+            "wave-1-repaired",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res2["local_green"], 1)
+        self.assertEqual(res2["global_green"], 1)
+        self.assertEqual(res2["defect"], 0)
+        self.assertEqual(res2["active_collision_floor"], 0)
+        self.assertEqual(res2["poe_partition_sum"], "3/8")
+        self.assertEqual(res2["council_collision_surcharge_cents"], 0)
+        self.assertEqual(res2["merchant_payout_cents"], 873)
+
+    def test_disagreement_council_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        bad_import = run_council_local_unit_tests(
+            "tax_council",
+            "import os\ndef tax_council(pricing_quote: dict, tax_rate_bps: int) -> dict:\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = DisagreementCouncilCodeWorkspace(council_fixture(11001))
+        locked_res = ws.tool("worker-1", "submit_module_patch", {"source_code": COUNCIL_TAX_BINARY_SRC})
+        self.assertFalse(locked_res["accepted"])
+        self.assertIn("locked", locked_res["error"])
+
+    def test_disagreement_council_concurrent_campaign_and_tamper_evident_replay(self) -> None:
+        def stub_council_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msg = next(m for m in reversed(messages) if m.get("role") == "tool")
+                inspected = json.loads(tool_msg["content"])
+                fb = inspected.get("merge_gate_feedback", {})
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Tax and Settlement council modules are hardware-locked to collapsing scalar consensus [0, 0, 0]."}
+                            ),
+                        },
+                    }
+                elif fb.get("arm") == "A":
+                    tool_call = {
+                        "id": f"call_hold_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif fb.get("arm") == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": COUNCIL_TAX_BINARY_SRC}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_hold_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": COUNCIL_PRICING_ANCHOR_SRC,
+                        "worker-1": COUNCIL_TAX_BINARY_SRC,
+                        "worker-2": COUNCIL_SETTLEMENT_FULL_SRC,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "council",
+                "seeds": [11000, 11001],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_council_transport)
+            summary = council_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.disagreement_council_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["active_collision_floor"] = int(gate_rec["active_collision_floor"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_disagreement_council_pilot_evidence_replay_if_present(self) -> None:
+        council_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "council_pilot_run"
+            / "events.jsonl"
+        )
+        council_summary = council_events.with_name("summary.json")
+        if council_events.exists() and council_summary.exists():
+            replayed = replay(council_events)
+            self.assertEqual(replayed["schema"], "lggr.disagreement_council_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

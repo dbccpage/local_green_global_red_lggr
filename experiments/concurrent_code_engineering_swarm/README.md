@@ -332,13 +332,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `43
 | `10900` | `repairable_fiber_splitting_defect` | **C** | `explicit_lggr_2bit_tool_fiber_splitting_directive` | **`completed`** | **`0`** | **`0`** | **`0`** | **1** | **7** | **`$0.007524`** |
 | `10901` | `infeasible_fiber_splitting_lock` | **A / B / C** | All policies | `safe_escalated` | `12` | `6` | `6` | 1 | 23 | `$0.020311` |
 
+## 20. 3-Agent Disagreement-Preserving Side-Channel Council $S \ge K > 2$ vs. Collapsing Consensus Campaign (`--topology council`)
+
+In `--topology council`, 3 concurrent LLM workers edit `pricing_council.py`, `tax_council.py`, and `settlement_council.py` over $K = 3$ distinct latent root causes (`rebate_drift`, `jurisdiction_mismatch`, `fee_tier_overflow`, 5 cents surcharge per collided cause):
+- On `seed 11000` (`repairable_council_capacity_defect`), `tax_council.py` and `settlement_council.py` initially emit collapsing scalar consensus symbols `[0, 0, 0]` (`S_cons = 1 < K = 3`, `active_collision_floor = 2`, `shared_remediation_support = False`, `poe_partition_sum = 0`, `council_collision_surcharge_cents = 10`, `payout = 863 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 11001` (`infeasible_council_capacity_lock`), legacy constraints lock `tax_council.py` and `settlement_council.py` to `[0, 0, 0]` while requiring $S \ge 3$ and zero collision surcharge, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `41` live API attempts, `$0.038325` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `collision_floor` | `poe_sum` | `surcharge` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `11000` | `repairable_council_capacity_defect` | **A** | `collapsing_scalar_consensus_gate` | `blocked_unresolved` | `2` | `0` | `10` | 1 | 6 | `$0.005613` |
+| `11000` | `repairable_council_capacity_defect` | **B** | `partial_binary_escalation_tag_split` | `blocked_unresolved` | `1` | `0` | `5` | 1 | 6 | `$0.006173` |
+| `11000` | `repairable_council_capacity_defect` | **C** | `explicit_lggr_disagreement_council_directive` | **`completed`** | **`0`** | **`3/8`** | **`0`** | **1** | **6** | **`$0.006739`** |
+| `11001` | `infeasible_council_capacity_lock` | **A / B / C** | All policies | `safe_escalated` | `2` | `0` | `10` | 1 | 23 | `$0.019800` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, and 3-agent fiber-splitting evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, and 3-agent disagreement-council evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -358,4 +373,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/gram_dropout_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_reversal_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/fiber_splitting_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/council_pilot_run/events.jsonl
 ```

@@ -1,0 +1,120 @@
+{
+  "schema": "lggr.disagreement_council_code_engineering_swarm.v1",
+  "topology": "council",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 11000,
+      "kind": "repairable_council_capacity_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_collision_floor": 2,
+          "final_poe_partition_sum": "0",
+          "final_council_collision_surcharge_cents": 10,
+          "final_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0056128035"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_collision_floor": 1,
+          "final_poe_partition_sum": "0",
+          "final_council_collision_surcharge_cents": 5,
+          "final_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0061734852"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_active_collision_floor": 0,
+          "final_poe_partition_sum": "3/8",
+          "final_council_collision_surcharge_cents": 0,
+          "final_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0067386811"
+        }
+      ]
+    },
+    {
+      "seed": 11001,
+      "kind": "infeasible_council_capacity_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_collision_floor": 2,
+          "final_poe_partition_sum": "0",
+          "final_council_collision_surcharge_cents": 10,
+          "final_status": "INFEASIBLE_COUNCIL_CAPACITY_SPECIFICATION_LGGR",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 8,
+          "cost_usd": "0.0064317323"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_collision_floor": 2,
+          "final_poe_partition_sum": "0",
+          "final_council_collision_surcharge_cents": 10,
+          "final_status": "INFEASIBLE_COUNCIL_CAPACITY_SPECIFICATION_LGGR",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 8,
+          "cost_usd": "0.0065267323"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_collision_floor": 2,
+          "final_poe_partition_sum": "0",
+          "final_council_collision_surcharge_cents": 10,
+          "final_status": "INFEASIBLE_COUNCIL_CAPACITY_SPECIFICATION_LGGR",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 7,
+          "cost_usd": "0.0068419513"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 41,
+  "charged_or_reserved_usd": "0.0383253857",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 14,
+  "scope": "Concurrent 3-agent disagreement-council Python code-engineering swarm (`pricing_council` -> `tax_council` -> `settlement_council`) comparing collapsing scalar consensus (A), partial binary escalation tags (B), and explicit LGGR S=3 disagreement-preserving side-channel council directives (C) with full cryptographic receipts retained in the host audit log."
+}

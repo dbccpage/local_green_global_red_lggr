@@ -5321,4 +5321,285 @@ class FiberSplittingCodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
+COUNCIL_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_council",
+    "worker-1": "tax_council",
+    "worker-2": "settlement_council",
+}
+
+COUNCIL_PRICING_ANCHOR_SRC = (
+    "def pricing_council(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+    "    discount_cents = (gross_cents * discount_bps) // 10000\n"
+    "    net_cents = gross_cents - discount_cents - rebate_cents\n"
+    "    return {\n"
+    "        'gross_cents': gross_cents,\n"
+    "        'discount_cents': discount_cents,\n"
+    "        'rebate_cents': rebate_cents,\n"
+    "        'net_cents': net_cents,\n"
+    "        'root_causes': ['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow'],\n"
+    "    }\n"
+)
+
+COUNCIL_TAX_COLLAPSING_SRC = (
+    "def tax_council(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax_cents = (net * tax_rate_bps) // 10000\n"
+    "    return {\n"
+    "        'tax_cents': tax_cents,\n"
+    "        'gross_after_tax_cents': net + tax_cents,\n"
+    "        'tax_council_symbols': [0, 0, 0],\n"
+    "    }\n"
+)
+
+COUNCIL_TAX_BINARY_SRC = (
+    "def tax_council(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax_cents = (net * tax_rate_bps) // 10000\n"
+    "    return {\n"
+    "        'tax_cents': tax_cents,\n"
+    "        'gross_after_tax_cents': net + tax_cents,\n"
+    "        'tax_council_symbols': [0, 0, 1],\n"
+    "    }\n"
+)
+
+COUNCIL_SETTLEMENT_COLLAPSING_SRC = (
+    "def settlement_council(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax = int(tax_quote['tax_cents'])\n"
+    "    fee_cents = (net * fee_bps) // 10000\n"
+    "    settle_council_symbols = [0, 0, 0]\n"
+    "    shared_remediation_support = False\n"
+    "    surcharge = 10\n"
+    "    payout = net - fee_cents - surcharge\n"
+    "    return {\n"
+    "        'fee_cents': fee_cents,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        'council_collision_surcharge_cents': surcharge,\n"
+    "        'gross_collected_cents': net + tax,\n"
+    "        'total_accounted_cents': payout + fee_cents + tax,\n"
+    "        'settle_council_symbols': settle_council_symbols,\n"
+    "        'shared_remediation_support': shared_remediation_support,\n"
+    "    }\n"
+)
+
+COUNCIL_SETTLEMENT_FULL_SRC = (
+    "def settlement_council(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+    "    net = int(pricing_quote['net_cents'])\n"
+    "    tax = int(tax_quote['tax_cents'])\n"
+    "    fee_cents = (net * fee_bps) // 10000\n"
+    "    settle_council_symbols = [0, 1, 2]\n"
+    "    shared_remediation_support = True\n"
+    "    surcharge = 0\n"
+    "    payout = net - fee_cents - surcharge\n"
+    "    return {\n"
+    "        'fee_cents': fee_cents,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        'council_collision_surcharge_cents': surcharge,\n"
+    "        'gross_collected_cents': net + tax,\n"
+    "        'total_accounted_cents': payout + fee_cents + tax,\n"
+    "        'settle_council_symbols': settle_council_symbols,\n"
+    "        'shared_remediation_support': shared_remediation_support,\n"
+    "    }\n"
+)
+
+
+def run_council_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": f"{type(exc).__name__}: {exc}"}
+
+    fn = ns.get(module_name)
+    if not callable(fn):
+        return {"passed": False, "module": module_name, "error": f"Missing callable {module_name}"}
+
+    try:
+        if module_name == "pricing_council":
+            res = fn(1000, 500, 50)
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "pricing_council must return a dict"}
+            if res.get("net_cents") != 900 or res.get("discount_cents") != 50:
+                return {"passed": False, "module": module_name, "error": "pricing_council net_cents must equal 900"}
+            if res.get("root_causes") != ["rebate_drift", "jurisdiction_mismatch", "fee_tier_overflow"]:
+                return {"passed": False, "module": module_name, "error": "pricing_council must emit root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']"}
+            return {"passed": True, "module": module_name, "isolated_scope": "pricing_council isolated unit test"}
+
+        if module_name == "tax_council":
+            res = fn({"net_cents": 900}, 2000)
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "tax_council must return a dict"}
+            if res.get("tax_cents") != 180 or res.get("gross_after_tax_cents") != 1080:
+                return {"passed": False, "module": module_name, "error": "tax_council tax_cents must equal 180"}
+            syms = res.get("tax_council_symbols")
+            if (
+                not isinstance(syms, list)
+                or len(syms) != 3
+                or any(isinstance(b, bool) or b not in (0, 1, 2) for b in syms)
+            ):
+                return {"passed": False, "module": module_name, "error": "tax_council_symbols must be a 3-element integer list in {0, 1, 2}"}
+            return {"passed": True, "module": module_name, "isolated_scope": "tax_council isolated unit test"}
+
+        if module_name == "settlement_council":
+            res = fn(
+                {"net_cents": 900, "root_causes": ["rebate_drift", "jurisdiction_mismatch", "fee_tier_overflow"]},
+                {"tax_cents": 180, "tax_council_symbols": [0, 0, 0]},
+                300,
+            )
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "settlement_council must return a dict"}
+            if res.get("fee_cents") != 27:
+                return {"passed": False, "module": module_name, "error": "settlement_council fee_cents must equal 27"}
+            s_syms = res.get("settle_council_symbols")
+            shared = res.get("shared_remediation_support")
+            if (
+                not isinstance(s_syms, list)
+                or len(s_syms) != 3
+                or any(isinstance(b, bool) or b not in (0, 1, 2) for b in s_syms)
+            ):
+                return {"passed": False, "module": module_name, "error": "settle_council_symbols must be a 3-element integer list in {0, 1, 2}"}
+            if not isinstance(shared, bool):
+                return {"passed": False, "module": module_name, "error": "shared_remediation_support must be a boolean"}
+            payout = res.get("merchant_payout_cents")
+            surcharge = res.get("council_collision_surcharge_cents")
+            gross_val = res.get("gross_collected_cents")
+            total_val = res.get("total_accounted_cents")
+            if (
+                not isinstance(payout, int)
+                or isinstance(payout, bool)
+                or not isinstance(surcharge, int)
+                or isinstance(surcharge, bool)
+                or not isinstance(gross_val, int)
+                or isinstance(gross_val, bool)
+                or not isinstance(total_val, int)
+                or isinstance(total_val, bool)
+            ):
+                return {
+                    "passed": False,
+                    "module": module_name,
+                    "error": "merchant_payout_cents, council_collision_surcharge_cents, gross_collected_cents, and total_accounted_cents must be integers",
+                }
+            if payout + surcharge != 873:
+                return {"passed": False, "module": module_name, "error": "merchant_payout_cents + surcharge must equal 873"}
+            return {"passed": True, "module": module_name, "isolated_scope": "settlement_council isolated unit test"}
+
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": f"{type(exc).__name__}: {exc}"}
+
+    return {"passed": False, "module": module_name, "error": f"Unknown module {module_name}"}
+
+
+def council_fixture(seed: int) -> dict[str, Any]:
+    idx = seed % 3
+    if idx == 0:
+        return {
+            "seed": seed,
+            "kind": "infeasible_council_capacity_lock",
+            "sources": {
+                "pricing_council": COUNCIL_PRICING_ANCHOR_SRC,
+                "tax_council": COUNCIL_TAX_COLLAPSING_SRC,
+                "settlement_council": COUNCIL_SETTLEMENT_COLLAPSING_SRC,
+            },
+            "locked_workers": ["worker-1", "worker-2"],
+            "infeasible_constraint": (
+                "Tax and Settlement council modules are hardware-locked to collapsing scalar consensus "
+                "symbols [0, 0, 0] (S = 1 < K = 3, collision floor 2) and disjoint PoE specialist supports "
+                "while global integration requires S >= 3 side-channel capacity and zero collision surcharge."
+            ),
+        }
+    return {
+        "seed": seed,
+        "kind": "repairable_council_capacity_defect",
+        "sources": {
+            "pricing_council": COUNCIL_PRICING_ANCHOR_SRC,
+            "tax_council": COUNCIL_TAX_COLLAPSING_SRC,
+            "settlement_council": COUNCIL_SETTLEMENT_COLLAPSING_SRC,
+        },
+        "locked_workers": [],
+        "infeasible_constraint": None,
+    }
+
+
+class DisagreementCouncilCodeWorkspace:
+    """Concurrent 3-module workspace for disagreement-preserving side-channel council vs. collapsing consensus code-engineering swarms."""
+
+    def __init__(self, initial: dict[str, Any]) -> None:
+        self.state = deepcopy(initial)
+        self.state.setdefault("escalations", {})
+
+    def local_test_verdicts(self) -> dict[str, bool]:
+        out: dict[str, bool] = {}
+        for m, src in self.state["sources"].items():
+            res = run_council_local_unit_tests(m, src)
+            out[m] = bool(res.get("passed"))
+        return out
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        if worker not in COUNCIL_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = COUNCIL_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_council_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_council.py": "def pricing_council(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict",
+                    "tax_council.py": "def tax_council(pricing_quote: dict, tax_rate_bps: int) -> dict",
+                    "settlement_council.py": "def settlement_council(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_council_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_council_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; S=3 disagreement-preserving side-channel capacity and zero-surcharge conservation are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
 
