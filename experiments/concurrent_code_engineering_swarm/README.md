@@ -302,13 +302,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `42
 | `10700` | `repairable_watcher_dropout_seed_10700` | **C** | `explicit_lggr_watcher_gram_restoration_directive` | **`completed`** | **`3`** | **`0`** | **`4`** | **1** | **6** | **`$0.006413`** |
 | `10701` | `infeasible_watcher_dropout_lock_seed_10701` | **A / B / C** | All policies | `safe_escalated` | `2` | `1` | `0` | 1 | 24 | `$0.021129` |
 
+## 18. 3-Agent Multi-Evaluator Policy Ranking $CF(p)$ vs. $N_{\min}(p)$ Order Reversal Campaign (`--topology policy_reversal`)
+
+In `--topology policy_reversal`, 3 concurrent LLM workers edit `pricing_policy.py`, `tax_policy.py`, and `settlement_policy.py` over $m = 8$ evaluation contexts with common denominator $D = 768$ comparing Policy A (`Q_5_8`: $CF_A = 192, N_{\min,A} = 96$) and Policy B (`p_star`: $CF_B = 228, N_{\min,B} = 75$) under signed violation ceiling $\tau_n = 80$:
+- On `seed 10800` (`repairable_policy_reversal_defect`), `tax_policy.py` assumes the false surrogate bound $CF \le 2 N_{\min}$ (`surrogate_two_bound_assumed = True`, failing on Policy B since $228 > 150 = 2 \cdot 75$, excess $78$) and `settlement_policy.py` ranks by coarse fallback frequency $CF$ alone (`192 < 228`), selecting Policy A (`Q_5_8`, `selected_neg_num = 96 > 80 = tau_n`, `surcharge = 16`, `payout = 857 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 10801` (`infeasible_policy_reversal_lock`), legacy constraints lock `tax_policy.py` and `settlement_policy.py` to their CF-only ranking and surrogate settings while requiring $N_{\min} \le 80$, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `42` live API attempts, `$0.037957` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `selected_policy` | `selected_neg` | `surcharge` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10800` | `repairable_policy_reversal_defect` | **A** | `coarse_cf_only_ranking_gate` | `blocked_unresolved` | `Q_5_8` | `96` | `16` | 1 | 6 | `$0.005663` |
+| `10800` | `repairable_policy_reversal_defect` | **B** | `partial_m_context_bound_update` | `blocked_unresolved` | `Q_5_8` | `96` | `16` | 1 | 6 | `$0.006202` |
+| `10800` | `repairable_policy_reversal_defect` | **C** | `explicit_lggr_dual_metric_policy_reversal_directive` | **`completed`** | **`p_star`** | **`75`** | **`0`** | **1** | **6** | **`$0.007074`** |
+| `10801` | `infeasible_policy_reversal_lock` | **A / B / C** | All policies | `safe_escalated` | `Q_5_8` | `96` | `16` | 1 | 24 | `$0.019018` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, and 3-agent watcher-dropout evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, and 3-agent policy-reversal evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -326,4 +341,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/lease_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/contextuality_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/gram_dropout_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_reversal_pilot_run/events.jsonl
 ```

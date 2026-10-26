@@ -48,6 +48,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
@@ -5712,6 +5713,51 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_WATCHER_GRAM_FULL_RANK_RESTORED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_policy_reversal_codebase_cf_vs_neg_mass_ranking_audit(self) -> None:
+        """Verify Theorem 111: Multi-evaluator policy ranking CF(p) vs. N_min(p) order reversal in codebase swarms."""
+        mon = StreamingCodebasePolicyReversalMonitor(
+            scope_id="unit-codebase-policy-reversal-scope",
+        )
+        obs = mon.evaluate_three_phase_policy_reversal_audit(
+            "codebase-policy-eval-01",
+        )
+        self.assertEqual(obs["phase_1_selected_policy_id"], "Q_5_8")
+        self.assertEqual(obs["phase_1_selected_neg_num"], 96)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 16)
+        self.assertTrue(obs["phase_1_surrogate_assumed"])
+        self.assertEqual(obs["phase_1_excess_two_b_num"], 78)
+        self.assertEqual(obs["phase_1_payout_cents"], 857)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CF_ONLY_POLICY_RANKING_ORDER_REVERSAL_LGGR")
+
+        self.assertEqual(obs["phase_2_selected_policy_id"], "Q_5_8")
+        self.assertEqual(obs["phase_2_selected_neg_num"], 96)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 16)
+        self.assertFalse(obs["phase_2_surrogate_assumed"])
+        self.assertEqual(obs["phase_2_payout_cents"], 857)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "CF_ONLY_POLICY_RANKING_ORDER_REVERSAL_LGGR")
+
+        self.assertEqual(obs["phase_3_selected_policy_id"], "p_star")
+        self.assertEqual(obs["phase_3_selected_neg_num"], 75)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertFalse(obs["phase_3_surrogate_assumed"])
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_POLICY_REVERSAL_DUAL_METRIC_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_POLICY_REVERSAL_DUAL_METRIC_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

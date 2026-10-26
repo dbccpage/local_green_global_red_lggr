@@ -26006,3 +26006,512 @@ class StreamingCodebaseWatcherDropoutMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebasePolicyReversalMonitor:
+    """Online 3-module codebase multi-evaluator policy ranking CF(p) vs. N_min(p) order-reversal monitor (Theorem 111).
+
+    Composes ``StreamingPositiveExtensionMonitor``, ``StreamingPolicyRankingOrderReversalMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` to audit a 3-module
+    fallback-routing financial settlement codebase (``pricing_policy.py``, ``tax_policy.py``,
+    ``settlement_policy.py``) over ``m = 8`` evaluation contexts with common denominator ``D = 768``:
+      - ``pricing_policy`` (worker-0) emits candidate Policy A (``Q_5_8``) with contextual fallback
+        fraction ``CF_A = 192 / 768`` (local packing mass ``576 / 768``) and signed violation mass
+        ``N_min_A = 96 / 768``;
+      - ``tax_policy`` (worker-1) emits candidate Policy B (``p_star``) with ``CF_B = 228 / 768``
+        (local packing mass ``540 / 768``), ``N_min_B = 75 / 768``, signed violation ceiling
+        ``tau_n = 80 / 768``, and ``surrogate_two_bound_assumed``;
+      - ``settlement_policy`` (worker-2) selects the active settlement policy between ``Q_5_8`` and
+        ``p_star``. Ranking by coarse fallback frequency ``CF`` alone selects ``Q_5_8`` (``192 < 228``),
+        breaching ``N_min_A = 96 > 80 = tau_n`` and incurring a ``16``-cent violation surcharge
+        (``857 != 873``), until dual-metric ``(CF, N_min)`` order-reversal auditing selects ``p_star``
+        (``N_min_B = 75 <= 80 = tau_n``, zero surcharge, ``873 + 27 + 180 = 1080``).
+    """
+
+    DEFAULT_PRICING_SOURCE = (
+        "def pricing_policy(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+        "    discount_cents = (gross_cents * discount_bps) // 10000\n"
+        "    net_cents = gross_cents - discount_cents - rebate_cents\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'discount_cents': discount_cents,\n"
+        "        'rebate_cents': rebate_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'num_contexts': 8,\n"
+        "        'common_denom': 768,\n"
+        "        'policy_a_id': 'Q_5_8',\n"
+        "        'policy_a_cf_num': 192,\n"
+        "        'policy_a_neg_num': 96,\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_SURROGATE_SOURCE = (
+        "def tax_policy(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * tax_rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'policy_b_id': 'p_star',\n"
+        "        'policy_b_cf_num': 228,\n"
+        "        'policy_b_neg_num': 75,\n"
+        "        'neg_ceiling_num': 80,\n"
+        "        'surrogate_two_bound_assumed': True,\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_M_CONTEXT_SOURCE = (
+        "def tax_policy(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * tax_rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'policy_b_id': 'p_star',\n"
+        "        'policy_b_cf_num': 228,\n"
+        "        'policy_b_neg_num': 75,\n"
+        "        'neg_ceiling_num': 80,\n"
+        "        'surrogate_two_bound_assumed': False,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_CF_ONLY_SOURCE = (
+        "def settlement_policy(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    selected_policy_id = 'Q_5_8'\n"
+        "    surcharge = 16\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'policy_violation_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'selected_policy_id': selected_policy_id,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_DUAL_METRIC_SOURCE = (
+        "def settlement_policy(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    selected_policy_id = 'p_star'\n"
+        "    surcharge = 0\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'policy_violation_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'selected_policy_id': selected_policy_id,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-policy-reversal-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.policy_reversal_monitor = StreamingPolicyRankingOrderReversalMonitor(
+            scope_id=f"{self.scope_id}::policy_reversal",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _exec_policy_modules(module_sources: Mapping[str, str]) -> dict[str, Any]:
+        req = ("pricing_policy", "tax_policy", "settlement_policy")
+        ns: dict[str, Any] = {}
+        for m in req:
+            if m not in module_sources:
+                raise ValidationError(f"Missing required policy-reversal module: {m}")
+            src = text(module_sources[m], f"module_sources[{m}]")
+            mod_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(m, src)
+            if m not in mod_ns or not callable(mod_ns[m]):
+                raise ValidationError(f"Module {m} did not define callable '{m}'")
+            ns[m] = mod_ns[m]
+        return ns
+
+    def evaluate_policy_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        gross_cents: int = 1000,
+        discount_bps: int = 500,
+        rebate_cents: int = 50,
+        tax_rate_bps: int = 2000,
+        fee_bps: int = 300,
+        model_id: str = "deterministic-fixture",
+        infeasible_constraint: str | None = None,
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        ns = self._exec_policy_modules(module_sources)
+
+        p_out = ns["pricing_policy"](gross_cents, discount_bps, rebate_cents)
+        t_out = ns["tax_policy"](p_out, tax_rate_bps)
+        s_out = ns["settlement_policy"](p_out, t_out, fee_bps)
+
+        if (
+            not isinstance(p_out, dict)
+            or not all(k in p_out for k in ("policy_a_id", "policy_a_cf_num", "policy_a_neg_num", "num_contexts", "common_denom"))
+            or not isinstance(t_out, dict)
+            or not all(k in t_out for k in ("policy_b_id", "policy_b_cf_num", "policy_b_neg_num", "neg_ceiling_num", "surrogate_two_bound_assumed"))
+            or not isinstance(s_out, dict)
+            or not all(k in s_out for k in ("selected_policy_id", "policy_violation_surcharge_cents"))
+        ):
+            raise ValidationError(
+                "Module outputs must contain required policy_a_*, policy_b_*, and selected_policy_id keys"
+            )
+
+        m_ctx = int(p_out["num_contexts"])
+        denom = int(p_out["common_denom"])
+        if m_ctx < 2 or denom <= 0:
+            raise ValidationError("num_contexts must be >= 2 and common_denom must be > 0")
+
+        pa_id = str(p_out["policy_a_id"])
+        cf_a_num = int(p_out["policy_a_cf_num"])
+        n_a_num = int(p_out["policy_a_neg_num"])
+
+        pb_id = str(t_out["policy_b_id"])
+        cf_b_num = int(t_out["policy_b_cf_num"])
+        n_b_num = int(t_out["policy_b_neg_num"])
+        tau_n_num = int(t_out["neg_ceiling_num"])
+        surrogate_assumed = bool(t_out["surrogate_two_bound_assumed"])
+
+        sel_id = str(s_out["selected_policy_id"])
+        surcharge_cents = int(s_out["policy_violation_surcharge_cents"])
+
+        pair_obs = self.policy_reversal_monitor.observe_policy_pair(
+            evaluation_id=f"{eval_id}::pair",
+            num_contexts=m_ctx,
+            policy_a_id=pa_id,
+            policy_a_packing_mass=Fraction(denom - cf_a_num, denom),
+            policy_a_negative_mass=Fraction(n_a_num, denom),
+            policy_b_id=pb_id,
+            policy_b_packing_mass=Fraction(denom - cf_b_num, denom),
+            policy_b_negative_mass=Fraction(n_b_num, denom),
+            negative_mass_ceiling=Fraction(tau_n_num, denom),
+            phase_3_selected_policy_id=sel_id,
+        )
+
+        order_rev = bool(pair_obs["order_reversal_detected"])
+        m_bound_ok = bool(pair_obs["m_context_bound_verified"])
+        exceeds_two_b = bool(pair_obs["policy_b_exceeds_two_negative_mass"])
+        excess_two_b_num = cf_b_num - 2 * n_b_num
+        selected_neg_num = n_b_num if sel_id == pb_id else n_a_num
+
+        net_cents = int(p_out["net_cents"])
+        tax_cents = int(t_out["tax_cents"])
+        fee_cents = int(s_out["fee_cents"])
+        payout_cents = int(s_out["merchant_payout_cents"])
+        gross_collected = int(s_out["gross_collected_cents"])
+        total_accounted = int(s_out["total_accounted_cents"])
+
+        expected_discount = (gross_cents * discount_bps) // 10000
+        expected_net = gross_cents - expected_discount - rebate_cents
+        expected_tax = (expected_net * tax_rate_bps) // 10000
+        expected_fee = (expected_net * fee_bps) // 10000
+        expected_payout = expected_net - expected_fee
+        expected_gross_collected = expected_net + expected_tax
+
+        all_local_pass = all(
+            bool(local_test_results.get(m, False))
+            for m in ("pricing_policy", "tax_policy", "settlement_policy")
+        )
+        local_green = 1 if (all_local_pass and cf_a_num < cf_b_num) else 0
+
+        settlement_conserved = (
+            net_cents == expected_net
+            and tax_cents == expected_tax
+            and fee_cents == expected_fee
+            and payout_cents == expected_payout
+            and surcharge_cents == 0
+            and gross_collected == expected_gross_collected
+            and total_accounted == expected_gross_collected
+            and payout_cents + fee_cents + tax_cents == expected_gross_collected
+        )
+
+        global_green = 1 if (
+            local_green == 1
+            and order_rev
+            and m_bound_ok
+            and not surrogate_assumed
+            and sel_id == pb_id
+            and selected_neg_num <= tau_n_num
+            and settlement_conserved
+            and infeasible_constraint is None
+        ) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_green": local_green,
+                "cf_a_lt_cf_b": cf_a_num < cf_b_num,
+            },
+            {
+                "global_green": global_green,
+                "selected_policy_id": sel_id,
+                "selected_neg_num": selected_neg_num,
+                "surrogate_two_bound_assumed": surrogate_assumed,
+                "settlement_conserved": settlement_conserved,
+            },
+        )
+
+        mismatches: list[dict[str, Any]] = []
+        if surrogate_assumed:
+            mismatches.append(
+                {
+                    "worker": "worker-1",
+                    "module": "tax_policy",
+                    "issue": (
+                        f"tax_policy assumes false surrogate bound CF <= 2*N_min (surrogate_two_bound_assumed=True), "
+                        f"which fails on Policy B (CF_B={cf_b_num} > 2*N_min_B={2 * n_b_num}, excess={excess_two_b_num}); "
+                        f"set surrogate_two_bound_assumed=False to enforce constructive m-context bound CF <= 7*N_min"
+                    ),
+                }
+            )
+        if sel_id != pb_id or selected_neg_num > tau_n_num or surcharge_cents != 0 or not settlement_conserved:
+            mismatches.append(
+                {
+                    "worker": "worker-2",
+                    "module": "settlement_policy",
+                    "issue": (
+                        f"settlement_policy selected {sel_id} (N_min={selected_neg_num} vs ceiling tau_n={tau_n_num}, "
+                        f"surcharge={surcharge_cents}, payout={payout_cents} != {expected_payout}); "
+                        f"select Policy B ('{pb_id}') via dual-metric (CF, N_min) audit with N_min_B={n_b_num} <= {tau_n_num}"
+                    ),
+                }
+            )
+        if infeasible_constraint is not None:
+            mismatches.append(
+                {
+                    "worker": "all",
+                    "module": "global_contract",
+                    "issue": infeasible_constraint,
+                }
+            )
+
+        directives = self._build_role_directives(
+            cf_a_num=cf_a_num,
+            n_a_num=n_a_num,
+            cf_b_num=cf_b_num,
+            n_b_num=n_b_num,
+            tau_n_num=tau_n_num,
+            surrogate_assumed=surrogate_assumed,
+            sel_id=sel_id,
+            surcharge_cents=surcharge_cents,
+            settlement_conserved=settlement_conserved,
+            infeasible_constraint=infeasible_constraint,
+        )
+
+        if global_green == 1:
+            status = "CODEBASE_POLICY_REVERSAL_DUAL_METRIC_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_POLICY_REVERSAL_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CF_ONLY_POLICY_RANKING_ORDER_REVERSAL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "num_contexts": m_ctx,
+                "common_denom": denom,
+                "policy_a_id": pa_id,
+                "policy_a_cf_num": cf_a_num,
+                "policy_a_neg_num": n_a_num,
+                "policy_b_id": pb_id,
+                "policy_b_cf_num": cf_b_num,
+                "policy_b_neg_num": n_b_num,
+                "neg_ceiling_num": tau_n_num,
+                "surrogate_two_bound_assumed": surrogate_assumed,
+                "policy_b_exceeds_two_neg_num": excess_two_b_num,
+                "policy_b_exceeds_two_negative_mass": exceeds_two_b,
+                "m_context_bound_verified": m_bound_ok,
+                "order_reversal_detected": order_rev,
+                "selected_policy_id": sel_id,
+                "selected_neg_num": selected_neg_num,
+                "policy_violation_surcharge_cents": surcharge_cents,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "merchant_payout_cents": payout_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    @staticmethod
+    def _build_role_directives(
+        *,
+        cf_a_num: int,
+        n_a_num: int,
+        cf_b_num: int,
+        n_b_num: int,
+        tau_n_num: int,
+        surrogate_assumed: bool,
+        sel_id: str,
+        surcharge_cents: int,
+        settlement_conserved: bool,
+        infeasible_constraint: str | None,
+    ) -> dict[str, str]:
+        if infeasible_constraint is not None:
+            msg = (
+                f"INFEASIBLE CONTRACT: {infeasible_constraint}. "
+                "Call escalate(reason=...) immediately; no module patch can satisfy this contradiction."
+            )
+            return {"worker-0": msg, "worker-1": msg, "worker-2": msg}
+
+        if not surrogate_assumed and sel_id == "p_star" and n_b_num <= tau_n_num and settlement_conserved:
+            ok = (
+                f"COHERENT LGGG: order reversal detected (CF_A={cf_a_num} < CF_B={cf_b_num}, "
+                f"N_min_A={n_a_num} > tau_n={tau_n_num} >= N_min_B={n_b_num}), Policy B ('p_star') selected, "
+                "and 873 + 27 + 180 = 1080 conserved."
+            )
+            return {"worker-0": ok, "worker-1": ok, "worker-2": ok}
+
+        d0 = (
+            f"HOLD ANCHOR: pricing_policy.py is fixed at Policy A ('Q_5_8', CF_A={cf_a_num}, N_min_A={n_a_num}). "
+            "Submit your current pricing_policy.py source_code unchanged via submit_module_patch."
+        )
+        if surrogate_assumed:
+            d1 = (
+                f"REPAIR TAX_POLICY: tax_policy.py sets surrogate_two_bound_assumed=True, which fails on Policy B "
+                f"since CF_B={cf_b_num} > 2*N_min_B={2 * n_b_num} (excess={cf_b_num - 2 * n_b_num}). "
+                "Set 'surrogate_two_bound_assumed': False to use the constructive m-context bound CF <= 7*N_min."
+            )
+        else:
+            d1 = "HOLD TAX_POLICY: tax_policy.py enforces constructive m-context bound (surrogate_two_bound_assumed=False)."
+
+        if sel_id != "p_star" or surcharge_cents != 0 or not settlement_conserved:
+            d2 = (
+                f"REPAIR SETTLEMENT_POLICY: settlement_policy.py selected '{sel_id}' with N_min={n_a_num if sel_id != 'p_star' else n_b_num} "
+                f"and surcharge={surcharge_cents} (breaching tau_n={tau_n_num}). "
+                "Update settlement_policy to select Policy B ('p_star') via dual-metric (CF, N_min) audit so "
+                "selected_neg = n_b = 75 <= 80, surcharge = 0, and merchant_payout_cents = 873."
+            )
+        else:
+            d2 = "HOLD SETTLEMENT_POLICY: settlement_policy.py selects Policy B ('p_star') with zero surcharge and payout 873."
+
+        return {"worker-0": d0, "worker-1": d1, "worker-2": d2}
+
+    def evaluate_three_phase_policy_reversal_audit(
+        self,
+        audit_id: str = "codebase-policy-reversal-3phase",
+        *,
+        model_id: str = "deterministic-fixture",
+    ) -> dict[str, Any]:
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {"pricing_policy": True, "tax_policy": True, "settlement_policy": True}
+
+        p1 = self.evaluate_policy_merge(
+            f"{aid}::phase1_cf_only_and_surrogate_breach",
+            module_sources={
+                "pricing_policy": self.DEFAULT_PRICING_SOURCE,
+                "tax_policy": self.DEFAULT_TAX_SURROGATE_SOURCE,
+                "settlement_policy": self.DEFAULT_SETTLEMENT_CF_ONLY_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_policy_merge(
+            f"{aid}::phase2_partial_m_context_bound_cf_only",
+            module_sources={
+                "pricing_policy": self.DEFAULT_PRICING_SOURCE,
+                "tax_policy": self.DEFAULT_TAX_M_CONTEXT_SOURCE,
+                "settlement_policy": self.DEFAULT_SETTLEMENT_CF_ONLY_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_policy_merge(
+            f"{aid}::phase3_dual_metric_reconciled",
+            module_sources={
+                "pricing_policy": self.DEFAULT_PRICING_SOURCE,
+                "tax_policy": self.DEFAULT_TAX_M_CONTEXT_SOURCE,
+                "settlement_policy": self.DEFAULT_SETTLEMENT_DUAL_METRIC_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_selected_policy_id": p1["selected_policy_id"],
+                "phase_1_selected_neg_num": p1["selected_neg_num"],
+                "phase_1_surcharge_cents": p1["policy_violation_surcharge_cents"],
+                "phase_1_surrogate_assumed": p1["surrogate_two_bound_assumed"],
+                "phase_1_excess_two_b_num": p1["policy_b_exceeds_two_neg_num"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_selected_policy_id": p2["selected_policy_id"],
+                "phase_2_selected_neg_num": p2["selected_neg_num"],
+                "phase_2_surcharge_cents": p2["policy_violation_surcharge_cents"],
+                "phase_2_surrogate_assumed": p2["surrogate_two_bound_assumed"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_selected_policy_id": p3["selected_policy_id"],
+                "phase_3_selected_neg_num": p3["selected_neg_num"],
+                "phase_3_surcharge_cents": p3["policy_violation_surcharge_cents"],
+                "phase_3_surrogate_assumed": p3["surrogate_two_bound_assumed"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase policy-reversal evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_policy_reversal.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "policy_reversal_receipt": self.policy_reversal_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+

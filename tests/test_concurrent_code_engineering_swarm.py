@@ -62,6 +62,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     LEASE_SETTLEMENT_SERIALIZED_SOURCE,
     LEASE_TAX_OVERLAP_SOURCE,
     LEASE_TAX_SERIALIZED_SOURCE,
+    POLICY_PRICING_ANCHOR_SRC,
+    POLICY_SETTLEMENT_CF_ONLY_SRC,
+    POLICY_SETTLEMENT_DUAL_METRIC_SRC,
+    POLICY_TAX_M_CONTEXT_SRC,
+    POLICY_TAX_SURROGATE_SRC,
     QUORUM_PRICING_SOURCE,
     QUORUM_SETTLEMENT_QUORUM_SOURCE,
     QUORUM_SETTLEMENT_STRICT_SOURCE,
@@ -84,6 +89,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
+    PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
@@ -100,6 +106,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     kinduction_fixture,
     lease_fixture,
     mv_fixture,
+    policy_fixture,
     quorum_fixture,
     regge_fixture,
     replay_fixture,
@@ -113,6 +120,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_lease_local_unit_tests,
     run_local_unit_tests,
     run_mv_local_unit_tests,
+    run_policy_local_unit_tests,
     run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
@@ -136,6 +144,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     kinduction_campaign,
     lease_campaign,
     mv_campaign,
+    policy_campaign,
     quorum_campaign,
     regge_campaign,
     replay,
@@ -157,6 +166,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
@@ -3081,6 +3091,216 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if gram_events.exists() and gram_summary.exists():
             replayed = replay(gram_events)
             self.assertEqual(replayed["schema"], "lggr.watcher_dropout_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_policy_reversal_local_green_global_red_and_dual_metric_repair(self) -> None:
+        ws = PolicyReversalCodeWorkspace(policy_fixture(10800))
+        verdicts = ws.local_test_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_policy": True, "tax_policy": True, "settlement_policy": True},
+        )
+
+        mon = StreamingCodebasePolicyReversalMonitor(scope_id="test-policy-swarm")
+        res0 = mon.evaluate_policy_merge(
+            "wave-0",
+            module_sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(res0["local_green"], 1)
+        self.assertEqual(res0["global_green"], 0)
+        self.assertEqual(res0["defect"], -1)
+        self.assertEqual(res0["selected_policy_id"], "Q_5_8")
+        self.assertEqual(res0["selected_neg_num"], 96)
+        self.assertEqual(res0["policy_violation_surcharge_cents"], 16)
+        self.assertTrue(res0["surrogate_two_bound_assumed"])
+
+        # Partial repair: tax_policy enforces m-context bound, settlement_policy still CF-only
+        p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": POLICY_TAX_M_CONTEXT_SRC})
+        self.assertTrue(p1["accepted"])
+        res1 = mon.evaluate_policy_merge(
+            "wave-1-partial",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res1["local_green"], 1)
+        self.assertEqual(res1["global_green"], 0)
+        self.assertEqual(res1["defect"], -1)
+        self.assertFalse(res1["surrogate_two_bound_assumed"])
+        self.assertEqual(res1["selected_policy_id"], "Q_5_8")
+
+        # Full repair: settlement_policy selects Policy B ('p_star') via dual-metric (CF, N_min) audit
+        p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": POLICY_SETTLEMENT_DUAL_METRIC_SRC})
+        self.assertTrue(p2["accepted"])
+        res2 = mon.evaluate_policy_merge(
+            "wave-1-repaired",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res2["local_green"], 1)
+        self.assertEqual(res2["global_green"], 1)
+        self.assertEqual(res2["defect"], 0)
+        self.assertEqual(res2["selected_policy_id"], "p_star")
+        self.assertEqual(res2["selected_neg_num"], 75)
+        self.assertEqual(res2["policy_violation_surcharge_cents"], 0)
+        self.assertEqual(res2["merchant_payout_cents"], 873)
+
+    def test_policy_reversal_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        bad_import = run_policy_local_unit_tests(
+            "tax_policy",
+            "import os\ndef tax_policy(pricing_quote: dict, tax_rate_bps: int) -> dict:\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = PolicyReversalCodeWorkspace(policy_fixture(10801))
+        locked_res = ws.tool("worker-1", "submit_module_patch", {"source_code": POLICY_TAX_M_CONTEXT_SRC})
+        self.assertFalse(locked_res["accepted"])
+        self.assertIn("locked", locked_res["error"])
+
+    def test_policy_reversal_concurrent_campaign_and_tamper_evident_replay(self) -> None:
+        def stub_policy_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msg = next(m for m in reversed(messages) if m.get("role") == "tool")
+                inspected = json.loads(tool_msg["content"])
+                fb = inspected.get("merge_gate_feedback", {})
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Tax and Settlement policy modules are hardware-locked under contradictory CF-only vs N_min ceiling constraints."}
+                            ),
+                        },
+                    }
+                elif fb.get("arm") == "A":
+                    tool_call = {
+                        "id": f"call_hold_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif fb.get("arm") == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": POLICY_TAX_M_CONTEXT_SRC}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_hold_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": POLICY_PRICING_ANCHOR_SRC,
+                        "worker-1": POLICY_TAX_M_CONTEXT_SRC,
+                        "worker-2": POLICY_SETTLEMENT_DUAL_METRIC_SRC,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "policy_reversal",
+                "seeds": [10800, 10801],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_policy_transport)
+            summary = policy_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.policy_reversal_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["selected_neg_num"] = int(gate_rec["selected_neg_num"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_policy_reversal_pilot_evidence_replay_if_present(self) -> None:
+        policy_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "policy_reversal_pilot_run"
+            / "events.jsonl"
+        )
+        policy_summary = policy_events.with_name("summary.json")
+        if policy_events.exists() and policy_summary.exists():
+            replayed = replay(policy_events)
+            self.assertEqual(replayed["schema"], "lggr.policy_reversal_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 
