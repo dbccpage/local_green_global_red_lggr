@@ -1,4 +1,4 @@
-"""Recipe: checked memory (guide 04). Pattern under evaluation.
+"""Recipe: checked memory (guide 04).
 
 Each record is bound to the hash of the source it was read from and the hash of
 the contract it was written under. Recall recomputes both and labels every
@@ -7,8 +7,9 @@ recall. A changed representation is a migration, not a reread.
 
 This applies the audit monitor's manifest pin (POLICY_MANIFEST_CHANGED,
 REPRESENTATION_TRANSPORT_REQUIRED) to memory. It mirrors backend D of the
-LGGR/RSI swarm experiment's RSI battery, whose result is not yet in. This
-recipe makes no performance claim.
+LGGR/RSI swarm experiment's RSI battery (experiments/lggr_rsi_swarm/REPORT.md).
+There it was inconclusive: 40/90 versus 36/90 passes after a contract change,
+p = 0.29. This recipe makes no performance claim.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.
