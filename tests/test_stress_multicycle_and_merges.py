@@ -38,6 +38,7 @@ from lggr.streaming import (
     StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
     StreamingCodebaseAdversarialSchemaMonitor,
+    StreamingCodebaseBellPolytopeMonitor,
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
@@ -7007,6 +7008,68 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_tower_source="def quote_tower_pricing(g):\n    return 123\n",
                 tax_tower_source=mon.PHASE_1_TAX_TOWER_SOURCE,
                 settlement_tower_source=mon.PHASE_1_SETTLEMENT_TOWER_SOURCE,
+            )
+
+    def test_bell_polytope_codebase_chsh_violation_and_lhv_audit(self) -> None:
+        """Verify Theorem 135: Bell polytope CHSH PR-box violation vs. classical LHV factorization codebase audit."""
+        mon = StreamingCodebaseBellPolytopeMonitor(
+            scope_id="unit-codebase-bell-polytope-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-bell-polytope-eval-01",
+        )
+        self.assertEqual(obs["phase_1_correlator_fourths"], [4, 4, 4, -4])
+        self.assertEqual(obs["phase_1_max_chsh_s_fourths"], 16)
+        self.assertEqual(obs["phase_1_violation_fourths"], 8)
+        self.assertEqual(obs["phase_1_min_negative_mass_n_min"], "1/2")
+        self.assertEqual(obs["phase_1_contextual_fraction_cf"], "1")
+        self.assertEqual(obs["phase_1_isotropic_visibility"], "1")
+        self.assertEqual(obs["phase_1_surcharge_cents"], 16)
+        self.assertEqual(obs["phase_1_payout_cents"], 857)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR")
+
+        self.assertEqual(obs["phase_2_correlator_fourths"], [3, 3, 3, -3])
+        self.assertEqual(obs["phase_2_max_chsh_s_fourths"], 12)
+        self.assertEqual(obs["phase_2_violation_fourths"], 4)
+        self.assertEqual(obs["phase_2_min_negative_mass_n_min"], "1/4")
+        self.assertEqual(obs["phase_2_contextual_fraction_cf"], "1/2")
+        self.assertEqual(obs["phase_2_isotropic_visibility"], "3/4")
+        self.assertEqual(obs["phase_2_surcharge_cents"], 8)
+        self.assertEqual(obs["phase_2_payout_cents"], 865)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR")
+
+        self.assertEqual(obs["phase_3_correlator_fourths"], [2, 2, 2, -2])
+        self.assertEqual(obs["phase_3_max_chsh_s_fourths"], 8)
+        self.assertEqual(obs["phase_3_violation_fourths"], 0)
+        self.assertEqual(obs["phase_3_min_negative_mass_n_min"], "0")
+        self.assertEqual(obs["phase_3_contextual_fraction_cf"], "0")
+        self.assertEqual(obs["phase_3_isotropic_visibility"], "1/2")
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["bell_polytope_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_bell_polytope_modules(
+                "bad-return",
+                pricing_bell_source="def quote_bell_pricing(g):\n    return 123\n",
+                tax_bell_source=mon.PHASE_1_TAX_BELL_SOURCE,
+                settlement_bell_source=mon.PHASE_1_SETTLEMENT_BELL_SOURCE,
             )
 
 

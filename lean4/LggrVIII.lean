@@ -6139,4 +6139,69 @@ theorem projective_tower_codebase_r1_limit_and_integral_lift_audit :
   intro mismatches r1_obst h1
   omega
 
+/-- **Theorem 135 (Bell Polytope CHSH Non-Signalling PR-Box Violation vs. Classical LHV Factorization Codebase Audit).**
+    In a 3-module Bell polytope settlement codebase (`pricing_bell.py`, `tax_bell.py`,
+    `settlement_bell.py`) auditing 4-context CHSH correlator fourths `(c_00, c_01, c_10, c_11)` in
+    `[-4, 4]^4` where `E_xy = c_xy / 4 ∈ [-1, 1]`, canonical CHSH fourths
+    `chsh_s_fourths = c_00 + c_01 + c_10 - c_11`, and Bell polytope violation fourths
+    `violation_fourths = max(0, chsh_s_fourths - 8)` against the classical LHV bound `S ≤ 2`
+    (`chsh_s_fourths ≤ 8`, critical isotropic PR-box visibility `v_crit = 1/2`):
+    1. Whenever `chsh_s_fourths ≥ 12` and `violation_fourths = chsh_s_fourths - 8`, the net
+       settlement payout `873 - 2 * violation_fourths` is at most `865 < 873`.
+    2. For the 3-phase Bell polytope codebase audit:
+       - Phase 1 (Maximal PR-box non-signalling correlators `(4, 4, 4, -4)` at visibility `v = 1`):
+         every single-context correlator satisfies `|c_xy| = 4 ≤ 4`, yet `chsh_p1 = 16 > 8`
+         (`S = 4 > 2`), `violation_p1 = 8` (`N_min = 1/2`, `CF = 1`), incurring
+         `surcharge_p1 = 2 * 8 = 16` and `payout_p1 = 873 - 16 = 857 ≠ 873`
+         (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Isotropic PR-box mixture `(3, 3, 3, -3)` at visibility `v = 3/4 > v_crit = 1/2`):
+         attenuating correlators to `3/4` reduces `chsh_p2` from `16` to `12` (`S = 3`), yet
+         `12 > 8` still violates the classical LHV polytope bound with `violation_p2 = 4`
+         (`N_min = 1/4`, `CF = 1/2`), incurring `surcharge_p2 = 2 * 4 = 8` and
+         `payout_p2 = 873 - 8 = 865 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Classical LHV critical-visibility correlators `(2, 2, 2, -2)` at `v = 1/2 ≤ v_crit`):
+         `chsh_p3 = 8 ≤ 8` (`S = 2 ≤ 2`), `violation_p3 = 0` (`N_min = 0`, `CF = 0`),
+         `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem bell_polytope_codebase_chsh_violation_and_lhv_audit :
+    (∀ chsh_s_fourths violation_fourths : Int,
+      (chsh_s_fourths ≥ 12) →
+      (violation_fourths = chsh_s_fourths - 8) →
+      (873 - 2 * violation_fourths ≤ 865)) ∧
+    (let c00_p1 : Int := 4; let c01_p1 : Int := 4; let c10_p1 : Int := 4; let c11_p1 : Int := -4;
+     let c00_p2 : Int := 3; let c01_p2 : Int := 3; let c10_p2 : Int := 3; let c11_p2 : Int := -3;
+     let c00_p3 : Int := 2; let c01_p3 : Int := 2; let c10_p3 : Int := 2; let c11_p3 : Int := -2;
+     let chsh_p1 : Int := c00_p1 + c01_p1 + c10_p1 - c11_p1;
+     let chsh_p2 : Int := c00_p2 + c01_p2 + c10_p2 - c11_p2;
+     let chsh_p3 : Int := c00_p3 + c01_p3 + c10_p3 - c11_p3;
+     let violation_p1 : Int := chsh_p1 - 8;
+     let violation_p2 : Int := chsh_p2 - 8;
+     let violation_p3 : Int := chsh_p3 - 8;
+     let surcharge_p1 : Int := 2 * violation_p1;
+     let surcharge_p2 : Int := 2 * violation_p2;
+     let surcharge_p3 : Int := 2 * violation_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (chsh_p1 = 16) ∧ (violation_p1 = 8) ∧ (surcharge_p1 = 16) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (violation_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (chsh_p2 = 12) ∧ (violation_p2 = 4) ∧ (surcharge_p2 = 8) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (violation_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (chsh_p3 = 8) ∧ (violation_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (chsh_p1 = 16 ∧ chsh_p2 = 12 ∧ chsh_p3 = 8 ∧
+      violation_p1 = 8 ∧ violation_p2 = 4 ∧ violation_p3 = 0 ∧
+      surcharge_p1 = 16 ∧ surcharge_p2 = 8 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 857 ∧ payout_p2 = 865 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro chsh_s_fourths violation_fourths h1 h2
+  omega
+
 end LggrVIII

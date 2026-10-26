@@ -26,6 +26,7 @@ from experiments.live_five_agent_swarm.client import (
 )
 from lggr.streaming import (
     StreamingCodebaseAdversarialSchemaMonitor,
+    StreamingCodebaseBellPolytopeMonitor,
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
@@ -69,6 +70,7 @@ from lggr.streaming import (
 )
 from .domain import (
     ADVERSARIAL_SCHEMA_WORKER_MODULES,
+    BELL_POLYTOPE_WORKER_MODULES,
     COALITIONAL_WORKER_MODULES,
     CODE_SWARM_MODELS,
     COUNCIL_WORKER_MODULES,
@@ -112,6 +114,7 @@ from .domain import (
     WIN_WORKER_MODULES,
     WORKER_MODULES,
     AdversarialSchemaCodeWorkspace,
+    BellPolytopeCodeWorkspace,
     BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
@@ -153,6 +156,7 @@ from .domain import (
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
     adversarial_schema_fixture,
+    bell_polytope_fixture,
     catalyst_fixture,
     coalitional_fixture,
     council_fixture,
@@ -181,6 +185,7 @@ from .domain import (
     quorum_fixture,
     regge_fixture,
     replay_fixture,
+    run_bell_polytope_local_unit_tests,
     run_deadline_bin_packing_local_unit_tests,
     run_figure_eight_wedge_local_unit_tests,
     run_governed_relaxation_local_unit_tests,
@@ -9977,6 +9982,286 @@ def projective_tower_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Bell Polytope CHSH Violation & LHV Factorization Campaign (Test 70, Theorem 135)
+# ---------------------------------------------------------------------------
+
+
+def bell_polytope_system_prompt(worker: str, arm: str) -> str:
+    mod_name = BELL_POLYTOPE_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "Bell polytope CHSH violation & LHV factorization settlement pipeline "
+        "(`pricing_bell.py` -> `tax_bell.py` -> `settlement_bell.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`single_context_marginal_correlator_only_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_LOCAL_MARGINAL_CORRELATORS`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`isotropic_visibility_v_three_fourths_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseBellPolytopeMonitor.PHASE_2_PRICING_BELL_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`isotropic_visibility_v_three_fourths_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseBellPolytopeMonitor.PHASE_2_TAX_BELL_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`isotropic_visibility_v_three_fourths_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_lhv_critical_visibility_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseBellPolytopeMonitor.PHASE_3_PRICING_BELL_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_lhv_critical_visibility_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseBellPolytopeMonitor.PHASE_3_TAX_BELL_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_lhv_critical_visibility_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseBellPolytopeMonitor.PHASE_3_SETTLEMENT_BELL_SOURCE
+        + "```\n"
+    )
+
+
+def bell_polytope_merge_gate(
+    events: Events,
+    ws: BellPolytopeCodeWorkspace,
+    monitor: StreamingCodebaseBellPolytopeMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_bell_polytope_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_bell", "tax_bell", "settlement_bell")
+    }
+    eval_res = monitor.evaluate_bell_polytope_modules(
+        f"{arm}-{wave_label}",
+        pricing_bell_source=sources["pricing_bell"],
+        tax_bell_source=sources["tax_bell"],
+        settlement_bell_source=sources["settlement_bell"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "correlator_fourths": eval_res["correlator_fourths"],
+            "max_chsh_s_fourths": eval_res["max_chsh_s_fourths"],
+            "violation_fourths": eval_res["violation_fourths"],
+            "min_negative_mass_n_min": eval_res["min_negative_mass_n_min"],
+            "contextual_fraction_cf": eval_res["contextual_fraction_cf"],
+            "isotropic_visibility": eval_res["isotropic_visibility"],
+            "bell_surcharge_cents": eval_res["bell_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in BELL_POLYTOPE_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_LOCAL_MARGINAL_CORRELATORS",
+                "note": "Every single-context correlator satisfies |E_xy| <= 1 locally across all 4 measurement contexts.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "ATTENUATE_ISOTROPIC_VISIBILITY_TO_THREE_FOURTHS",
+                "max_chsh_s_fourths": eval_res["max_chsh_s_fourths"],
+                "violation_fourths": eval_res["violation_fourths"],
+                "min_negative_mass_n_min": eval_res["min_negative_mass_n_min"],
+                "bell_surcharge_cents": eval_res["bell_surcharge_cents"],
+                "note": "Attenuating correlator fourths to (3, 3, 3, -3) (v = 3/4 > v_crit = 1/2) reduces S from 4 to 3 > 2 (surcharge=8).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "correlator_fourths": eval_res["correlator_fourths"],
+                "max_chsh_s_fourths": eval_res["max_chsh_s_fourths"],
+                "violation_fourths": eval_res["violation_fourths"],
+                "min_negative_mass_n_min": eval_res["min_negative_mass_n_min"],
+                "contextual_fraction_cf": eval_res["contextual_fraction_cf"],
+                "bell_surcharge_cents": eval_res["bell_surcharge_cents"],
+                "action_required": "ENFORCE_LHV_CRITICAL_VISIBILITY_CORRELATORS",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def bell_polytope_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(BELL_POLYTOPE_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = bell_polytope_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = BellPolytopeCodeWorkspace(base_state)
+            monitor = StreamingCodebaseBellPolytopeMonitor(
+                scope_id=f"bell-polytope-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = bell_polytope_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": bell_polytope_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{BELL_POLYTOPE_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = bell_polytope_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_correlator_fourths": eval_res["correlator_fourths"],
+                "final_max_chsh_s_fourths": eval_res["max_chsh_s_fourths"],
+                "final_violation_fourths": eval_res["violation_fourths"],
+                "final_min_negative_mass_n_min": eval_res["min_negative_mass_n_min"],
+                "final_contextual_fraction_cf": eval_res["contextual_fraction_cf"],
+                "final_isotropic_visibility": eval_res["isotropic_visibility"],
+                "final_bell_surcharge_cents": eval_res["bell_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.bell_polytope_code_engineering_swarm.v1",
+        "topology": "bell_polytope",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent Bell polytope CHSH violation & LHV factorization "
+            "Python code-engineering swarm (`pricing_bell` -> `tax_bell` -> `settlement_bell`) comparing "
+            "maximal PR-box non-signalling correlators (4, 4, 4, -4) at v = 1 (A), "
+            "isotropic PR-box mixture (3, 3, 3, -3) at v = 3/4 > v_crit = 1/2 (B), "
+            "and classical LHV critical-visibility correlators (2, 2, 2, -2) at v = 1/2 <= v_crit (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -10067,6 +10352,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = deadline_bin_packing_campaign(client, events, config)
         elif config.get("topology") == "projective_tower":
             summary = projective_tower_campaign(client, events, config)
+        elif config.get("topology") == "bell_polytope":
+            summary = bell_polytope_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -10132,6 +10419,7 @@ def main() -> None:
             "side_info_capacity",
             "deadline_bin_packing",
             "projective_tower",
+            "bell_polytope",
         ],
         default="linear",
     )
@@ -10237,6 +10525,8 @@ def main() -> None:
         seeds = [13000, 13001, 13002]
     elif args.topology == "projective_tower":
         seeds = [13100, 13101, 13102]
+    elif args.topology == "bell_polytope":
+        seeds = [13200, 13201, 13202]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -10680,6 +10970,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = projective_tower_campaign(client, events, config)
+    elif args.topology == "bell_polytope":
+        config = {
+            "topology": "bell_polytope",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = bell_polytope_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

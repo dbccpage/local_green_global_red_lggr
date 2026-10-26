@@ -1,0 +1,2104 @@
+{
+  "schema": "lggr.bell_polytope_code_engineering_swarm.v1",
+  "topology": "bell_polytope",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 13200,
+      "kind": "repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correlator_fourths": [
+            4,
+            4,
+            4,
+            -4
+          ],
+          "final_max_chsh_s_fourths": 16,
+          "final_violation_fourths": 8,
+          "final_min_negative_mass_n_min": "1/2",
+          "final_contextual_fraction_cf": "1",
+          "final_isotropic_visibility": "1",
+          "final_bell_surcharge_cents": 16,
+          "final_merchant_payout_cents": 857,
+          "final_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+          "final_receipt_sha256": "fd6eeca1363cafeabdb21f21744ff173c27fc3b2f7d09c22544460a6b5609704",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13200-arm-A",
+            "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13200-arm-A:A-wave-2",
+              "status": "BELL_NONLOCAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "observed_models_count": 1,
+              "local_lhv_models": [],
+              "nonlocal_obstructed_models": [
+                "A-wave-2:deterministic"
+              ],
+              "max_chsh_s_observed": "4",
+              "max_negative_mass_n_min": "1/2",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "4261f4f0f0e0e49d8b7d01c5f74ec0f6d5d7a9826215a6ac3693d79ea1f81a3e"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "f2aa2e525aa22a6ca5ebc6b5b73b8ef12ea4dff1c67e58050bff380931e9321a",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "9eca2cf77ea1eeb6d63881ba6122cbd8d163bb690ae7529aff43f4afc8bbe709"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "fd6eeca1363cafeabdb21f21744ff173c27fc3b2f7d09c22544460a6b5609704"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0133560684"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correlator_fourths": [
+            3,
+            3,
+            3,
+            -3
+          ],
+          "final_max_chsh_s_fourths": 12,
+          "final_violation_fourths": 4,
+          "final_min_negative_mass_n_min": "1/4",
+          "final_contextual_fraction_cf": "1/2",
+          "final_isotropic_visibility": "3/4",
+          "final_bell_surcharge_cents": 8,
+          "final_merchant_payout_cents": 865,
+          "final_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+          "final_receipt_sha256": "aecb8f368dfc205a863a8ebd85a01d33df13438eb119184243b660e7d8e0bace",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13200-arm-B",
+            "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13200-arm-B:B-wave-2",
+              "status": "BELL_NONLOCAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "observed_models_count": 1,
+              "local_lhv_models": [],
+              "nonlocal_obstructed_models": [
+                "B-wave-2:deterministic"
+              ],
+              "max_chsh_s_observed": "3",
+              "max_negative_mass_n_min": "1/4",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "44c342d1ddf18275faca0dd3c6b3532c3e6af822397e7b57e86a11317ce961e8"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "dcce16653ebadab911b01f9bc1dffcb7974d1b3d6490d30502def814b4f72c03",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "3171a540da08030f358c4b5a3691a8cdd3c305025a84320b4cbcbb429adecbf4"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  3,
+                  3,
+                  3,
+                  -3
+                ],
+                "pricing_correlator_fourths": [
+                  3,
+                  3,
+                  3
+                ],
+                "tax_c11_fourth": -3,
+                "canonical_chsh_s_fourths": 12,
+                "max_chsh_s_fourths": 12,
+                "violation_fourths": 4,
+                "canonical_chsh_s": "3",
+                "max_chsh_facet_s": "3",
+                "min_negative_mass_n_min": "1/4",
+                "contextual_fraction_cf": "1/2",
+                "local_packing_fraction": "1/2",
+                "isotropic_visibility": "3/4",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  3,
+                  3,
+                  3,
+                  -3
+                ],
+                "pricing_correlator_fourths": [
+                  3,
+                  3,
+                  3
+                ],
+                "tax_c11_fourth": -3,
+                "canonical_chsh_s_fourths": 12,
+                "max_chsh_s_fourths": 12,
+                "violation_fourths": 4,
+                "canonical_chsh_s": "3",
+                "max_chsh_facet_s": "3",
+                "min_negative_mass_n_min": "1/4",
+                "contextual_fraction_cf": "1/2",
+                "local_packing_fraction": "1/2",
+                "isotropic_visibility": "3/4",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "aecb8f368dfc205a863a8ebd85a01d33df13438eb119184243b660e7d8e0bace"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0110123995"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_correlator_fourths": [
+            2,
+            2,
+            2,
+            -2
+          ],
+          "final_max_chsh_s_fourths": 8,
+          "final_violation_fourths": 0,
+          "final_min_negative_mass_n_min": "0",
+          "final_contextual_fraction_cf": "0",
+          "final_isotropic_visibility": "1/2",
+          "final_bell_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+          "final_receipt_sha256": "351fbda664b374dfda0cca6c451ac25ef359f307d6bba6b9aea7bab7b27c4363",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13200-arm-C",
+            "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13200-arm-C:C-wave-1",
+              "status": "LOCAL_LHV_EXTENSION_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "observed_models_count": 1,
+              "local_lhv_models": [
+                "C-wave-1:deterministic"
+              ],
+              "nonlocal_obstructed_models": [],
+              "max_chsh_s_observed": "2",
+              "max_negative_mass_n_min": "0",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "b0c42c92e90716057f8a6ba2c0f246368685a3c2513d186166a98e9f5e2ed99d"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "bell_surcharge_cents": 16,
+                    "correlator_fourths": [
+                      4,
+                      4,
+                      4,
+                      -4
+                    ],
+                    "max_chsh_s_fourths": 16,
+                    "violation_fourths": 8
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "bell_surcharge_cents": 0,
+                    "correlator_fourths": [
+                      2,
+                      2,
+                      2,
+                      -2
+                    ],
+                    "max_chsh_s_fourths": 8,
+                    "violation_fourths": 0
+                  }
+                }
+              },
+              "input_sha256": "175eae954ba89d31396fd7645a0dae7508d84e0531763e17a0cda2a51e9c551c",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "1ccaad55a4e2fb49fd6f95a03aa9055eb48d16f4bbf6577c3e01799372a40f6e"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  2,
+                  2,
+                  2,
+                  -2
+                ],
+                "pricing_correlator_fourths": [
+                  2,
+                  2,
+                  2
+                ],
+                "tax_c11_fourth": -2,
+                "canonical_chsh_s_fourths": 8,
+                "max_chsh_s_fourths": 8,
+                "violation_fourths": 0,
+                "canonical_chsh_s": "2",
+                "max_chsh_facet_s": "2",
+                "min_negative_mass_n_min": "0",
+                "contextual_fraction_cf": "0",
+                "local_packing_fraction": "1",
+                "isotropic_visibility": "1/2",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "351fbda664b374dfda0cca6c451ac25ef359f307d6bba6b9aea7bab7b27c4363"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0056493135"
+        }
+      ]
+    },
+    {
+      "seed": 13201,
+      "kind": "infeasible_hardware_locked_pr_box_anti_correlator_c11_minus_four",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_correlator_fourths": [
+            4,
+            4,
+            4,
+            -4
+          ],
+          "final_max_chsh_s_fourths": 16,
+          "final_violation_fourths": 8,
+          "final_min_negative_mass_n_min": "1/2",
+          "final_contextual_fraction_cf": "1",
+          "final_isotropic_visibility": "1",
+          "final_bell_surcharge_cents": 16,
+          "final_merchant_payout_cents": 857,
+          "final_status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "339e51bcb861146e231f975328c70e6e07415f871536c409ade22a46702644c2",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13201-arm-A",
+            "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13201-arm-A:A-wave-1",
+              "status": "BELL_NONLOCAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "observed_models_count": 1,
+              "local_lhv_models": [],
+              "nonlocal_obstructed_models": [
+                "A-wave-1:deterministic"
+              ],
+              "max_chsh_s_observed": "4",
+              "max_negative_mass_n_min": "1/2",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "67cd368303cce74b8358b38a96aca921cdbf4aaa5df4e98ed861ac2449df1c61"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "89384ce4e6e78571b29c967a03fe00877f0739d416c966658baee0f699988b4f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "1ac01177f7c27fbb4c1128b5ae723a1b98feda4720732282f8f6dfc4ac045c44"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "339e51bcb861146e231f975328c70e6e07415f871536c409ade22a46702644c2"
+          },
+          "escalations": {
+            "worker-0": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0061017321"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_correlator_fourths": [
+            4,
+            4,
+            4,
+            -4
+          ],
+          "final_max_chsh_s_fourths": 16,
+          "final_violation_fourths": 8,
+          "final_min_negative_mass_n_min": "1/2",
+          "final_contextual_fraction_cf": "1",
+          "final_isotropic_visibility": "1",
+          "final_bell_surcharge_cents": 16,
+          "final_merchant_payout_cents": 857,
+          "final_status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "e13b579682e571594327d23d123e09a37e538167c361981eb4ba8bad919556a8",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13201-arm-B",
+            "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13201-arm-B:B-wave-1",
+              "status": "BELL_NONLOCAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "observed_models_count": 1,
+              "local_lhv_models": [],
+              "nonlocal_obstructed_models": [
+                "B-wave-1:deterministic"
+              ],
+              "max_chsh_s_observed": "4",
+              "max_negative_mass_n_min": "1/2",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "e45003581734ecac33d669363fd51c4b79b378d2ca8729cfdd77c68634b74f67"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "a1b1aa2d78482b6e278f3b74b1808982e7dc6c241f4b6345f6651366b2f38fed",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "e7839579d4fdf2f87f05df81bcfefc1165fc644f1b14f00f4460cc4bffc0f40f"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "e13b579682e571594327d23d123e09a37e538167c361981eb4ba8bad919556a8"
+          },
+          "escalations": {
+            "worker-0": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0069255179"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_correlator_fourths": [
+            4,
+            4,
+            4,
+            -4
+          ],
+          "final_max_chsh_s_fourths": 16,
+          "final_violation_fourths": 8,
+          "final_min_negative_mass_n_min": "1/2",
+          "final_contextual_fraction_cf": "1",
+          "final_isotropic_visibility": "1",
+          "final_bell_surcharge_cents": 16,
+          "final_merchant_payout_cents": 857,
+          "final_status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "791ae6de71a09a7b65af7542ba6827470fac454f7b6738666a01f7b25be7c481",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13201-arm-C",
+            "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13201-arm-C:C-wave-1",
+              "status": "BELL_NONLOCAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "observed_models_count": 1,
+              "local_lhv_models": [],
+              "nonlocal_obstructed_models": [
+                "C-wave-1:deterministic"
+              ],
+              "max_chsh_s_observed": "4",
+              "max_negative_mass_n_min": "1/2",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "9c54190c3462c35c6499393ae65c075b20cf862b56d248264213034dd3075e00"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "4155ecd8e0a5309e74b4f0082b96b29d1c9343bdb0ad98c5462a4b8940deda2d",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "ebe9e6fc9a645247cd4307f3cb98dc9a2c4c8adb74b1f9fb570f38e75f01dbeb"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_BELL_POLYTOPE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "791ae6de71a09a7b65af7542ba6827470fac454f7b6738666a01f7b25be7c481"
+          },
+          "escalations": {
+            "worker-0": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), while the LGGR Bell polytope merge gate requires classical LHV critical-visibility correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` (`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). ROM lock prevents patch submission despite Arm C directive. Requires human architecture review to unlock module or override ROM constraint."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0105039773"
+        }
+      ]
+    },
+    {
+      "seed": 13202,
+      "kind": "repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correlator_fourths": [
+            4,
+            4,
+            4,
+            -4
+          ],
+          "final_max_chsh_s_fourths": 16,
+          "final_violation_fourths": 8,
+          "final_min_negative_mass_n_min": "1/2",
+          "final_contextual_fraction_cf": "1",
+          "final_isotropic_visibility": "1",
+          "final_bell_surcharge_cents": 16,
+          "final_merchant_payout_cents": 857,
+          "final_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+          "final_receipt_sha256": "9edd6cd423f6c9412e8f42cb301ed60d93ed2260fa8009ab766efba4d6ccddab",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13202-arm-A",
+            "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13202-arm-A:A-wave-2",
+              "status": "BELL_NONLOCAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "observed_models_count": 1,
+              "local_lhv_models": [],
+              "nonlocal_obstructed_models": [
+                "A-wave-2:deterministic"
+              ],
+              "max_chsh_s_observed": "4",
+              "max_negative_mass_n_min": "1/2",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "4fcfc1df039d52548ce966d17a8415f576c137e070378fd84e1bc3e1bbf231b6"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "f2aa2e525aa22a6ca5ebc6b5b73b8ef12ea4dff1c67e58050bff380931e9321a",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "9eca2cf77ea1eeb6d63881ba6122cbd8d163bb690ae7529aff43f4afc8bbe709"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "9edd6cd423f6c9412e8f42cb301ed60d93ed2260fa8009ab766efba4d6ccddab"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0133468092"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correlator_fourths": [
+            3,
+            3,
+            3,
+            -3
+          ],
+          "final_max_chsh_s_fourths": 12,
+          "final_violation_fourths": 4,
+          "final_min_negative_mass_n_min": "1/4",
+          "final_contextual_fraction_cf": "1/2",
+          "final_isotropic_visibility": "3/4",
+          "final_bell_surcharge_cents": 8,
+          "final_merchant_payout_cents": 865,
+          "final_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+          "final_receipt_sha256": "72350d76d5f879a9aec62de16311ae34795ba2f8e3694bfc6f430263d8cc071a",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13202-arm-B",
+            "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13202-arm-B:B-wave-2",
+              "status": "BELL_NONLOCAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "observed_models_count": 1,
+              "local_lhv_models": [],
+              "nonlocal_obstructed_models": [
+                "B-wave-2:deterministic"
+              ],
+              "max_chsh_s_observed": "3",
+              "max_negative_mass_n_min": "1/4",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "c09b06488a96009d474c19e16e1ab52d9c4a7e59a3d8587039d87a83285b0710"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "dcce16653ebadab911b01f9bc1dffcb7974d1b3d6490d30502def814b4f72c03",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "3171a540da08030f358c4b5a3691a8cdd3c305025a84320b4cbcbb429adecbf4"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  3,
+                  3,
+                  3,
+                  -3
+                ],
+                "pricing_correlator_fourths": [
+                  3,
+                  3,
+                  3
+                ],
+                "tax_c11_fourth": -3,
+                "canonical_chsh_s_fourths": 12,
+                "max_chsh_s_fourths": 12,
+                "violation_fourths": 4,
+                "canonical_chsh_s": "3",
+                "max_chsh_facet_s": "3",
+                "min_negative_mass_n_min": "1/4",
+                "contextual_fraction_cf": "1/2",
+                "local_packing_fraction": "1/2",
+                "isotropic_visibility": "3/4",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  3,
+                  3,
+                  3,
+                  -3
+                ],
+                "pricing_correlator_fourths": [
+                  3,
+                  3,
+                  3
+                ],
+                "tax_c11_fourth": -3,
+                "canonical_chsh_s_fourths": 12,
+                "max_chsh_s_fourths": 12,
+                "violation_fourths": 4,
+                "canonical_chsh_s": "3",
+                "max_chsh_facet_s": "3",
+                "min_negative_mass_n_min": "1/4",
+                "contextual_fraction_cf": "1/2",
+                "local_packing_fraction": "1/2",
+                "isotropic_visibility": "3/4",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "72350d76d5f879a9aec62de16311ae34795ba2f8e3694bfc6f430263d8cc071a"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0114031412"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_correlator_fourths": [
+            2,
+            2,
+            2,
+            -2
+          ],
+          "final_max_chsh_s_fourths": 8,
+          "final_violation_fourths": 0,
+          "final_min_negative_mass_n_min": "0",
+          "final_contextual_fraction_cf": "0",
+          "final_isotropic_visibility": "1/2",
+          "final_bell_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+          "final_receipt_sha256": "2a7de85b8907cca8888574d350d53189c1fab1948b4ba82c75ab384b277106c7",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_bell_polytope.v1",
+            "authority_effect": "None",
+            "scope_id": "bell-polytope-seed-13202-arm-C",
+            "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "bell_polytope_receipt": {
+              "schema": "lggr.online_bell_polytope.v1",
+              "authority_effect": "None",
+              "scope_id": "bell-polytope-seed-13202-arm-C:C-wave-1",
+              "status": "LOCAL_LHV_EXTENSION_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "observed_models_count": 1,
+              "local_lhv_models": [
+                "C-wave-1:deterministic"
+              ],
+              "nonlocal_obstructed_models": [],
+              "max_chsh_s_observed": "2",
+              "max_negative_mass_n_min": "0",
+              "critical_visibility_threshold": "1/2",
+              "all_16_lhv_vertices_bounded_by_2": true,
+              "all_packing_identities_verified": true,
+              "receipt_sha256": "7dca5c2d835a2c6c2abc17cef189a98c24eda9041425096282b853d2ec7c569f"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "bell_surcharge_cents": 16,
+                    "correlator_fourths": [
+                      4,
+                      4,
+                      4,
+                      -4
+                    ],
+                    "max_chsh_s_fourths": 16,
+                    "violation_fourths": 8
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "single_context_correlators_bounded": true
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "bell_surcharge_cents": 0,
+                    "correlator_fourths": [
+                      2,
+                      2,
+                      2,
+                      -2
+                    ],
+                    "max_chsh_s_fourths": 8,
+                    "violation_fourths": 0
+                  }
+                }
+              },
+              "input_sha256": "175eae954ba89d31396fd7645a0dae7508d84e0531763e17a0cda2a51e9c551c",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "1ccaad55a4e2fb49fd6f95a03aa9055eb48d16f4bbf6577c3e01799372a40f6e"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  4,
+                  4,
+                  4,
+                  -4
+                ],
+                "pricing_correlator_fourths": [
+                  4,
+                  4,
+                  4
+                ],
+                "tax_c11_fourth": -4,
+                "canonical_chsh_s_fourths": 16,
+                "max_chsh_s_fourths": 16,
+                "violation_fourths": 8,
+                "canonical_chsh_s": "4",
+                "max_chsh_facet_s": "4",
+                "min_negative_mass_n_min": "1/2",
+                "contextual_fraction_cf": "1",
+                "local_packing_fraction": "0",
+                "isotropic_visibility": "1",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 16,
+                "merchant_payout_cents": 857,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "correlator_fourths": [
+                  2,
+                  2,
+                  2,
+                  -2
+                ],
+                "pricing_correlator_fourths": [
+                  2,
+                  2,
+                  2
+                ],
+                "tax_c11_fourth": -2,
+                "canonical_chsh_s_fourths": 8,
+                "max_chsh_s_fourths": 8,
+                "violation_fourths": 0,
+                "canonical_chsh_s": "2",
+                "max_chsh_facet_s": "2",
+                "min_negative_mass_n_min": "0",
+                "contextual_fraction_cf": "0",
+                "local_packing_fraction": "1",
+                "isotropic_visibility": "1/2",
+                "all_16_lhv_vertices_bounded_by_2": true,
+                "packing_identity_verified": true,
+                "bell_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_bell",
+                    "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+                    "target_pricing_correlator_fourths": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_bell",
+                    "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+                    "target_tax_c11_fourth": -2
+                  },
+                  "worker-2": {
+                    "module": "settlement_bell",
+                    "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+                    "target_bell_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "2a7de85b8907cca8888574d350d53189c1fab1948b4ba82c75ab384b277106c7"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0056493135"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 96,
+  "charged_or_reserved_usd": "0.0839482726",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 30,
+  "scope": "Concurrent 3-agent Bell polytope CHSH violation & LHV factorization Python code-engineering swarm (`pricing_bell` -> `tax_bell` -> `settlement_bell`) comparing maximal PR-box non-signalling correlators (4, 4, 4, -4) at v = 1 (A), isotropic PR-box mixture (3, 3, 3, -3) at v = 3/4 > v_crit = 1/2 (B), and classical LHV critical-visibility correlators (2, 2, 2, -2) at v = 1/2 <= v_crit (C) with full cryptographic receipts."
+}

@@ -1,0 +1,1632 @@
+{
+  "schema": "lggr.codebase_bell_polytope_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_bell_polytope_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_pr_box_chsh_violation_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_isotropic_visibility_violation_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_lhv_factorization_coherence_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_bell_polytope_codebase_coherence_rate": "0",
+  "reconciled_bell_polytope_codebase_coherence_rate": "1",
+  "codebase_bell_polytope_coherence_gain": "1",
+  "codebase_bell_polytope_receipt": {
+    "schema": "lggr.online_codebase_bell_polytope.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_bell_polytope",
+    "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "bell_polytope_receipt": {
+      "schema": "lggr.online_bell_polytope.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_bell_polytope:mistralai/mistral-small-3.2-24b-instruct_bell_polytope_p3",
+      "status": "LOCAL_LHV_EXTENSION_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "observed_models_count": 1,
+      "local_lhv_models": [
+        "mistralai/mistral-small-3.2-24b-instruct_bell_polytope_p3:mistralai/mistral-small-3.2-24b-instruct"
+      ],
+      "nonlocal_obstructed_models": [],
+      "max_chsh_s_observed": "2",
+      "max_negative_mass_n_min": "0",
+      "critical_visibility_threshold": "1/2",
+      "all_16_lhv_vertices_bounded_by_2": true,
+      "all_packing_identities_verified": true,
+      "receipt_sha256": "96eb4f8c902f8ce945278655b3ca36d8ddea766837fe165eaeb8426247e19cfb"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini_bell_polytope_p1_openai/gpt-4o-mini",
+          "report": {
+            "local_green": 1,
+            "single_context_correlators_bounded": true
+          },
+          "query": "LGGR",
+          "metadata": {
+            "bell_surcharge_cents": 16,
+            "correlator_fourths": [
+              4,
+              4,
+              4,
+              -4
+            ],
+            "max_chsh_s_fourths": 16,
+            "violation_fourths": 8
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini_bell_polytope_p3_openai/gpt-4o-mini",
+          "report": {
+            "local_green": 1,
+            "single_context_correlators_bounded": true
+          },
+          "query": "LGGG",
+          "metadata": {
+            "bell_surcharge_cents": 0,
+            "correlator_fourths": [
+              2,
+              2,
+              2,
+              -2
+            ],
+            "max_chsh_s_fourths": 8,
+            "violation_fourths": 0
+          }
+        }
+      },
+      "input_sha256": "9549dc4b32bad6cc608e78c46b479bad5d0e9b8fd8fdea653eea8d450dfe68fc",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "7c3ab4306d6792256203762374bb55ea04f9ccd51e05de312c57de5645188b73"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_bell_polytope",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "phase_1_max_chsh_s_fourths": 16,
+        "phase_1_violation_fourths": 8,
+        "phase_1_min_negative_mass_n_min": "1/2",
+        "phase_1_contextual_fraction_cf": "1",
+        "phase_1_isotropic_visibility": "1",
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "phase_2_correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "phase_2_max_chsh_s_fourths": 12,
+        "phase_2_violation_fourths": 4,
+        "phase_2_min_negative_mass_n_min": "1/4",
+        "phase_2_contextual_fraction_cf": "1/2",
+        "phase_2_isotropic_visibility": "3/4",
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "phase_3_correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "phase_3_max_chsh_s_fourths": 8,
+        "phase_3_violation_fourths": 0,
+        "phase_3_min_negative_mass_n_min": "0",
+        "phase_3_contextual_fraction_cf": "0",
+        "phase_3_isotropic_visibility": "1/2",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_bell_polytope",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "phase_1_max_chsh_s_fourths": 16,
+        "phase_1_violation_fourths": 8,
+        "phase_1_min_negative_mass_n_min": "1/2",
+        "phase_1_contextual_fraction_cf": "1",
+        "phase_1_isotropic_visibility": "1",
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "phase_2_correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "phase_2_max_chsh_s_fourths": 12,
+        "phase_2_violation_fourths": 4,
+        "phase_2_min_negative_mass_n_min": "1/4",
+        "phase_2_contextual_fraction_cf": "1/2",
+        "phase_2_isotropic_visibility": "3/4",
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "phase_3_correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "phase_3_max_chsh_s_fourths": 8,
+        "phase_3_violation_fourths": 0,
+        "phase_3_min_negative_mass_n_min": "0",
+        "phase_3_contextual_fraction_cf": "0",
+        "phase_3_isotropic_visibility": "1/2",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_bell_polytope",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "phase_1_max_chsh_s_fourths": 16,
+        "phase_1_violation_fourths": 8,
+        "phase_1_min_negative_mass_n_min": "1/2",
+        "phase_1_contextual_fraction_cf": "1",
+        "phase_1_isotropic_visibility": "1",
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "phase_2_correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "phase_2_max_chsh_s_fourths": 12,
+        "phase_2_violation_fourths": 4,
+        "phase_2_min_negative_mass_n_min": "1/4",
+        "phase_2_contextual_fraction_cf": "1/2",
+        "phase_2_isotropic_visibility": "3/4",
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "phase_3_correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "phase_3_max_chsh_s_fourths": 8,
+        "phase_3_violation_fourths": 0,
+        "phase_3_min_negative_mass_n_min": "0",
+        "phase_3_contextual_fraction_cf": "0",
+        "phase_3_isotropic_visibility": "1/2",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_bell_polytope",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "phase_1_max_chsh_s_fourths": 16,
+        "phase_1_violation_fourths": 8,
+        "phase_1_min_negative_mass_n_min": "1/2",
+        "phase_1_contextual_fraction_cf": "1",
+        "phase_1_isotropic_visibility": "1",
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "phase_2_correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "phase_2_max_chsh_s_fourths": 12,
+        "phase_2_violation_fourths": 4,
+        "phase_2_min_negative_mass_n_min": "1/4",
+        "phase_2_contextual_fraction_cf": "1/2",
+        "phase_2_isotropic_visibility": "3/4",
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "phase_3_correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "phase_3_max_chsh_s_fourths": 8,
+        "phase_3_violation_fourths": 0,
+        "phase_3_min_negative_mass_n_min": "0",
+        "phase_3_contextual_fraction_cf": "0",
+        "phase_3_isotropic_visibility": "1/2",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_bell_polytope",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "phase_1_max_chsh_s_fourths": 16,
+        "phase_1_violation_fourths": 8,
+        "phase_1_min_negative_mass_n_min": "1/2",
+        "phase_1_contextual_fraction_cf": "1",
+        "phase_1_isotropic_visibility": "1",
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "phase_2_correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "phase_2_max_chsh_s_fourths": 12,
+        "phase_2_violation_fourths": 4,
+        "phase_2_min_negative_mass_n_min": "1/4",
+        "phase_2_contextual_fraction_cf": "1/2",
+        "phase_2_isotropic_visibility": "3/4",
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "phase_3_correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "phase_3_max_chsh_s_fourths": 8,
+        "phase_3_violation_fourths": 0,
+        "phase_3_min_negative_mass_n_min": "0",
+        "phase_3_contextual_fraction_cf": "0",
+        "phase_3_isotropic_visibility": "1/2",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_bell_polytope_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "pricing_correlator_fourths": [
+          4,
+          4,
+          4
+        ],
+        "tax_c11_fourth": -4,
+        "canonical_chsh_s_fourths": 16,
+        "max_chsh_s_fourths": 16,
+        "violation_fourths": 8,
+        "canonical_chsh_s": "4",
+        "max_chsh_facet_s": "4",
+        "min_negative_mass_n_min": "1/2",
+        "contextual_fraction_cf": "1",
+        "local_packing_fraction": "0",
+        "isotropic_visibility": "1",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 16,
+        "merchant_payout_cents": 857,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_bell_polytope_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "pricing_correlator_fourths": [
+          3,
+          3,
+          3
+        ],
+        "tax_c11_fourth": -3,
+        "canonical_chsh_s_fourths": 12,
+        "max_chsh_s_fourths": 12,
+        "violation_fourths": 4,
+        "canonical_chsh_s": "3",
+        "max_chsh_facet_s": "3",
+        "min_negative_mass_n_min": "1/4",
+        "contextual_fraction_cf": "1/2",
+        "local_packing_fraction": "1/2",
+        "isotropic_visibility": "3/4",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_bell_polytope_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "pricing_correlator_fourths": [
+          2,
+          2,
+          2
+        ],
+        "tax_c11_fourth": -2,
+        "canonical_chsh_s_fourths": 8,
+        "max_chsh_s_fourths": 8,
+        "violation_fourths": 0,
+        "canonical_chsh_s": "2",
+        "max_chsh_facet_s": "2",
+        "min_negative_mass_n_min": "0",
+        "contextual_fraction_cf": "0",
+        "local_packing_fraction": "1",
+        "isotropic_visibility": "1/2",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_bell_polytope_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "pricing_correlator_fourths": [
+          4,
+          4,
+          4
+        ],
+        "tax_c11_fourth": -4,
+        "canonical_chsh_s_fourths": 16,
+        "max_chsh_s_fourths": 16,
+        "violation_fourths": 8,
+        "canonical_chsh_s": "4",
+        "max_chsh_facet_s": "4",
+        "min_negative_mass_n_min": "1/2",
+        "contextual_fraction_cf": "1",
+        "local_packing_fraction": "0",
+        "isotropic_visibility": "1",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 16,
+        "merchant_payout_cents": 857,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_bell_polytope_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "pricing_correlator_fourths": [
+          3,
+          3,
+          3
+        ],
+        "tax_c11_fourth": -3,
+        "canonical_chsh_s_fourths": 12,
+        "max_chsh_s_fourths": 12,
+        "violation_fourths": 4,
+        "canonical_chsh_s": "3",
+        "max_chsh_facet_s": "3",
+        "min_negative_mass_n_min": "1/4",
+        "contextual_fraction_cf": "1/2",
+        "local_packing_fraction": "1/2",
+        "isotropic_visibility": "3/4",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_bell_polytope_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "pricing_correlator_fourths": [
+          2,
+          2,
+          2
+        ],
+        "tax_c11_fourth": -2,
+        "canonical_chsh_s_fourths": 8,
+        "max_chsh_s_fourths": 8,
+        "violation_fourths": 0,
+        "canonical_chsh_s": "2",
+        "max_chsh_facet_s": "2",
+        "min_negative_mass_n_min": "0",
+        "contextual_fraction_cf": "0",
+        "local_packing_fraction": "1",
+        "isotropic_visibility": "1/2",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_bell_polytope_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "pricing_correlator_fourths": [
+          4,
+          4,
+          4
+        ],
+        "tax_c11_fourth": -4,
+        "canonical_chsh_s_fourths": 16,
+        "max_chsh_s_fourths": 16,
+        "violation_fourths": 8,
+        "canonical_chsh_s": "4",
+        "max_chsh_facet_s": "4",
+        "min_negative_mass_n_min": "1/2",
+        "contextual_fraction_cf": "1",
+        "local_packing_fraction": "0",
+        "isotropic_visibility": "1",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 16,
+        "merchant_payout_cents": 857,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_bell_polytope_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "pricing_correlator_fourths": [
+          3,
+          3,
+          3
+        ],
+        "tax_c11_fourth": -3,
+        "canonical_chsh_s_fourths": 12,
+        "max_chsh_s_fourths": 12,
+        "violation_fourths": 4,
+        "canonical_chsh_s": "3",
+        "max_chsh_facet_s": "3",
+        "min_negative_mass_n_min": "1/4",
+        "contextual_fraction_cf": "1/2",
+        "local_packing_fraction": "1/2",
+        "isotropic_visibility": "3/4",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_bell_polytope_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "pricing_correlator_fourths": [
+          2,
+          2,
+          2
+        ],
+        "tax_c11_fourth": -2,
+        "canonical_chsh_s_fourths": 8,
+        "max_chsh_s_fourths": 8,
+        "violation_fourths": 0,
+        "canonical_chsh_s": "2",
+        "max_chsh_facet_s": "2",
+        "min_negative_mass_n_min": "0",
+        "contextual_fraction_cf": "0",
+        "local_packing_fraction": "1",
+        "isotropic_visibility": "1/2",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_bell_polytope_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "pricing_correlator_fourths": [
+          4,
+          4,
+          4
+        ],
+        "tax_c11_fourth": -4,
+        "canonical_chsh_s_fourths": 16,
+        "max_chsh_s_fourths": 16,
+        "violation_fourths": 8,
+        "canonical_chsh_s": "4",
+        "max_chsh_facet_s": "4",
+        "min_negative_mass_n_min": "1/2",
+        "contextual_fraction_cf": "1",
+        "local_packing_fraction": "0",
+        "isotropic_visibility": "1",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 16,
+        "merchant_payout_cents": 857,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_bell_polytope_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "pricing_correlator_fourths": [
+          3,
+          3,
+          3
+        ],
+        "tax_c11_fourth": -3,
+        "canonical_chsh_s_fourths": 12,
+        "max_chsh_s_fourths": 12,
+        "violation_fourths": 4,
+        "canonical_chsh_s": "3",
+        "max_chsh_facet_s": "3",
+        "min_negative_mass_n_min": "1/4",
+        "contextual_fraction_cf": "1/2",
+        "local_packing_fraction": "1/2",
+        "isotropic_visibility": "3/4",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_bell_polytope_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "pricing_correlator_fourths": [
+          2,
+          2,
+          2
+        ],
+        "tax_c11_fourth": -2,
+        "canonical_chsh_s_fourths": 8,
+        "max_chsh_s_fourths": 8,
+        "violation_fourths": 0,
+        "canonical_chsh_s": "2",
+        "max_chsh_facet_s": "2",
+        "min_negative_mass_n_min": "0",
+        "contextual_fraction_cf": "0",
+        "local_packing_fraction": "1",
+        "isotropic_visibility": "1/2",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_bell_polytope_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "correlator_fourths": [
+          4,
+          4,
+          4,
+          -4
+        ],
+        "pricing_correlator_fourths": [
+          4,
+          4,
+          4
+        ],
+        "tax_c11_fourth": -4,
+        "canonical_chsh_s_fourths": 16,
+        "max_chsh_s_fourths": 16,
+        "violation_fourths": 8,
+        "canonical_chsh_s": "4",
+        "max_chsh_facet_s": "4",
+        "min_negative_mass_n_min": "1/2",
+        "contextual_fraction_cf": "1",
+        "local_packing_fraction": "0",
+        "isotropic_visibility": "1",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 16,
+        "merchant_payout_cents": 857,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_bell_polytope_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "correlator_fourths": [
+          3,
+          3,
+          3,
+          -3
+        ],
+        "pricing_correlator_fourths": [
+          3,
+          3,
+          3
+        ],
+        "tax_c11_fourth": -3,
+        "canonical_chsh_s_fourths": 12,
+        "max_chsh_s_fourths": 12,
+        "violation_fourths": 4,
+        "canonical_chsh_s": "3",
+        "max_chsh_facet_s": "3",
+        "min_negative_mass_n_min": "1/4",
+        "contextual_fraction_cf": "1/2",
+        "local_packing_fraction": "1/2",
+        "isotropic_visibility": "3/4",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "ATTENUATE_PRICING_CORRELATOR_FOURTHS_TO_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "SET_TAX_C11_FOURTH_TO_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "ENFORCE_BELL_POLYTOPE_LHV_FACTORIZATION_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_bell_polytope_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "correlator_fourths": [
+          2,
+          2,
+          2,
+          -2
+        ],
+        "pricing_correlator_fourths": [
+          2,
+          2,
+          2
+        ],
+        "tax_c11_fourth": -2,
+        "canonical_chsh_s_fourths": 8,
+        "max_chsh_s_fourths": 8,
+        "violation_fourths": 0,
+        "canonical_chsh_s": "2",
+        "max_chsh_facet_s": "2",
+        "min_negative_mass_n_min": "0",
+        "contextual_fraction_cf": "0",
+        "local_packing_fraction": "1",
+        "isotropic_visibility": "1/2",
+        "all_16_lhv_vertices_bounded_by_2": true,
+        "packing_identity_verified": true,
+        "bell_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_PRICING_FOURTHS_2_2_2",
+            "target_pricing_correlator_fourths": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_bell",
+            "action": "HOLD_LHV_CRITICAL_VISIBILITY_TAX_C11_MINUS_TWO",
+            "target_tax_c11_fourth": -2
+          },
+          "worker-2": {
+            "module": "settlement_bell",
+            "action": "HOLD_BELL_POLYTOPE_LHV_GUARD",
+            "target_bell_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "590ed63fca130f6f56d4d8b5aadb19dec16183fccd9e7cff90d41790b515fa26"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_bell_polytope",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_correlator_fourths": [
+        4,
+        4,
+        4,
+        -4
+      ],
+      "phase_1_max_chsh_s_fourths": 16,
+      "phase_1_violation_fourths": 8,
+      "phase_1_min_negative_mass_n_min": "1/2",
+      "phase_1_contextual_fraction_cf": "1",
+      "phase_1_isotropic_visibility": "1",
+      "phase_1_surcharge_cents": 16,
+      "phase_1_payout_cents": 857,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+      "phase_2_correlator_fourths": [
+        3,
+        3,
+        3,
+        -3
+      ],
+      "phase_2_max_chsh_s_fourths": 12,
+      "phase_2_violation_fourths": 4,
+      "phase_2_min_negative_mass_n_min": "1/4",
+      "phase_2_contextual_fraction_cf": "1/2",
+      "phase_2_isotropic_visibility": "3/4",
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+      "phase_3_correlator_fourths": [
+        2,
+        2,
+        2,
+        -2
+      ],
+      "phase_3_max_chsh_s_fourths": 8,
+      "phase_3_violation_fourths": 0,
+      "phase_3_min_negative_mass_n_min": "0",
+      "phase_3_contextual_fraction_cf": "0",
+      "phase_3_isotropic_visibility": "1/2",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 16,\n  \"phase_1_payout_cents\": 857,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_bell_polytope",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_correlator_fourths": [
+        4,
+        4,
+        4,
+        -4
+      ],
+      "phase_1_max_chsh_s_fourths": 16,
+      "phase_1_violation_fourths": 8,
+      "phase_1_min_negative_mass_n_min": "1/2",
+      "phase_1_contextual_fraction_cf": "1",
+      "phase_1_isotropic_visibility": "1",
+      "phase_1_surcharge_cents": 16,
+      "phase_1_payout_cents": 857,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+      "phase_2_correlator_fourths": [
+        3,
+        3,
+        3,
+        -3
+      ],
+      "phase_2_max_chsh_s_fourths": 12,
+      "phase_2_violation_fourths": 4,
+      "phase_2_min_negative_mass_n_min": "1/4",
+      "phase_2_contextual_fraction_cf": "1/2",
+      "phase_2_isotropic_visibility": "3/4",
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+      "phase_3_correlator_fourths": [
+        2,
+        2,
+        2,
+        -2
+      ],
+      "phase_3_max_chsh_s_fourths": 8,
+      "phase_3_violation_fourths": 0,
+      "phase_3_min_negative_mass_n_min": "0",
+      "phase_3_contextual_fraction_cf": "0",
+      "phase_3_isotropic_visibility": "1/2",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 16,\n  \"phase_1_payout_cents\": 857,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_bell_polytope",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_correlator_fourths": [
+        4,
+        4,
+        4,
+        -4
+      ],
+      "phase_1_max_chsh_s_fourths": 16,
+      "phase_1_violation_fourths": 8,
+      "phase_1_min_negative_mass_n_min": "1/2",
+      "phase_1_contextual_fraction_cf": "1",
+      "phase_1_isotropic_visibility": "1",
+      "phase_1_surcharge_cents": 16,
+      "phase_1_payout_cents": 857,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+      "phase_2_correlator_fourths": [
+        3,
+        3,
+        3,
+        -3
+      ],
+      "phase_2_max_chsh_s_fourths": 12,
+      "phase_2_violation_fourths": 4,
+      "phase_2_min_negative_mass_n_min": "1/4",
+      "phase_2_contextual_fraction_cf": "1/2",
+      "phase_2_isotropic_visibility": "3/4",
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+      "phase_3_correlator_fourths": [
+        2,
+        2,
+        2,
+        -2
+      ],
+      "phase_3_max_chsh_s_fourths": 8,
+      "phase_3_violation_fourths": 0,
+      "phase_3_min_negative_mass_n_min": "0",
+      "phase_3_contextual_fraction_cf": "0",
+      "phase_3_isotropic_visibility": "1/2",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 16,\n  \"phase_1_payout_cents\": 857,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_bell_polytope",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_correlator_fourths": [
+        4,
+        4,
+        4,
+        -4
+      ],
+      "phase_1_max_chsh_s_fourths": 16,
+      "phase_1_violation_fourths": 8,
+      "phase_1_min_negative_mass_n_min": "1/2",
+      "phase_1_contextual_fraction_cf": "1",
+      "phase_1_isotropic_visibility": "1",
+      "phase_1_surcharge_cents": 16,
+      "phase_1_payout_cents": 857,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+      "phase_2_correlator_fourths": [
+        3,
+        3,
+        3,
+        -3
+      ],
+      "phase_2_max_chsh_s_fourths": 12,
+      "phase_2_violation_fourths": 4,
+      "phase_2_min_negative_mass_n_min": "1/4",
+      "phase_2_contextual_fraction_cf": "1/2",
+      "phase_2_isotropic_visibility": "3/4",
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+      "phase_3_correlator_fourths": [
+        2,
+        2,
+        2,
+        -2
+      ],
+      "phase_3_max_chsh_s_fourths": 8,
+      "phase_3_violation_fourths": 0,
+      "phase_3_min_negative_mass_n_min": "0",
+      "phase_3_contextual_fraction_cf": "0",
+      "phase_3_isotropic_visibility": "1/2",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 16,\n  \"phase_1_payout_cents\": 857,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_bell_polytope",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_correlator_fourths": [
+        4,
+        4,
+        4,
+        -4
+      ],
+      "phase_1_max_chsh_s_fourths": 16,
+      "phase_1_violation_fourths": 8,
+      "phase_1_min_negative_mass_n_min": "1/2",
+      "phase_1_contextual_fraction_cf": "1",
+      "phase_1_isotropic_visibility": "1",
+      "phase_1_surcharge_cents": 16,
+      "phase_1_payout_cents": 857,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PR_BOX_MAXIMAL_CHSH_VIOLATION_LGGR",
+      "phase_2_correlator_fourths": [
+        3,
+        3,
+        3,
+        -3
+      ],
+      "phase_2_max_chsh_s_fourths": 12,
+      "phase_2_violation_fourths": 4,
+      "phase_2_min_negative_mass_n_min": "1/4",
+      "phase_2_contextual_fraction_cf": "1/2",
+      "phase_2_isotropic_visibility": "3/4",
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "ISOTROPIC_VISIBILITY_ABOVE_CHSH_BOUND_LGGR",
+      "phase_3_correlator_fourths": [
+        2,
+        2,
+        2,
+        -2
+      ],
+      "phase_3_max_chsh_s_fourths": 8,
+      "phase_3_violation_fourths": 0,
+      "phase_3_min_negative_mass_n_min": "0",
+      "phase_3_contextual_fraction_cf": "0",
+      "phase_3_isotropic_visibility": "1/2",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BELL_POLYTOPE_LHV_FACTORIZATION_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 16,
+        "phase_1_payout_cents": 857,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 16,\n  \"phase_1_payout_cents\": 857,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Bell polytope CHSH non-signalling PR-box violation and classical LHV factorization codebase benchmark across 5 model families (Theorem 135): Phase 1 separates maximal PR-box correlators (`correlator_fourths = [4, 4, 4, -4], v = 1, max_chsh_s_fourths = 16 > 8, violation_fourths = 8, N_min = '1/2', CF = '1', surcharge = 16, payout = 857 != 873, Delta_E = -1`); Phase 2 separates isotropic PR-box visibility above the classical bound (`correlator_fourths = [3, 3, 3, -3], v = '3/4' > v_crit = '1/2', max_chsh_s_fourths = 12 > 8, violation_fourths = 4, N_min = '1/4', CF = '1/2', surcharge = 8, payout = 865 != 873, Delta_E = -1`); Phase 3 verifies classical LHV critical-visibility factorization (`correlator_fourths = [2, 2, 2, -2], v = '1/2' <= v_crit, max_chsh_s_fourths = 8 <= 8, violation_fourths = 0, N_min = '0', CF = '0', surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "ca11f73a5bb5e79feb1af515571d3e67535c9ecf96753fb8d0f19557561a6bea"
+}

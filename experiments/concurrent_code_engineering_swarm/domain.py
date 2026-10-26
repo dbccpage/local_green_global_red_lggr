@@ -5,6 +5,7 @@ from copy import deepcopy
 from typing import Any
 
 from lggr.streaming import (
+    StreamingCodebaseBellPolytopeMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseDeadlineBinPackingMonitor,
@@ -10535,6 +10536,219 @@ class ProjectiveTowerCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+BELL_POLYTOPE_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_bell",
+    "worker-1": "tax_bell",
+    "worker-2": "settlement_bell",
+}
+
+INITIAL_PRICING_BELL_P1_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_1_PRICING_BELL_SOURCE
+INITIAL_PRICING_BELL_P2_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_2_PRICING_BELL_SOURCE
+INITIAL_PRICING_BELL_P3_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_3_PRICING_BELL_SOURCE
+
+INITIAL_TAX_BELL_P1_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_1_TAX_BELL_SOURCE
+INITIAL_TAX_BELL_P2_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_2_TAX_BELL_SOURCE
+INITIAL_TAX_BELL_P3_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_3_TAX_BELL_SOURCE
+
+INITIAL_SETTLEMENT_BELL_P1_P2_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_1_SETTLEMENT_BELL_SOURCE
+INITIAL_SETTLEMENT_BELL_P3_PY = StreamingCodebaseBellPolytopeMonitor.PHASE_3_SETTLEMENT_BELL_SOURCE
+
+
+def run_bell_polytope_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_bell`, `tax_bell`, or `settlement_bell`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_bell":
+            fn = ns.get("quote_bell_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_bell_pricing"}
+            res = fn(990)
+            fourths = res.get("pricing_correlator_fourths") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and fourths in ([4, 4, 4], [3, 3, 3], [2, 2, 2])
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_bell":
+            fn = ns.get("compute_bell_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_bell_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "pricing_correlator_fourths": [2, 2, 2],
+                }
+            )
+            c11 = res.get("tax_c11_fourth") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and res.get("pricing_correlator_fourths") == [2, 2, 2]
+                and c11 in (-4, -3, -2)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_bell":
+            fn = ns.get("settle_bell_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_bell_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "pricing_correlator_fourths": [2, 2, 2],
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "pricing_correlator_fourths": [2, 2, 2],
+                    "tax_c11_fourth": -2,
+                },
+            )
+            surcharge = res.get("bell_surcharge_cents") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and surcharge == 0
+                and res.get("max_chsh_s_fourths") == 8
+                and res.get("violation_fourths") == 0
+                and res.get("merchant_payout_cents") == 873
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def bell_polytope_fixture(seed: int) -> dict[str, Any]:
+    if seed in (13200, 13202):
+        return {
+            "seed": seed,
+            "kind": "repairable_bell_polytope_chsh_violation_and_lhv_visibility_alignment",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_bell": INITIAL_PRICING_BELL_P1_PY,
+                "tax_bell": INITIAL_TAX_BELL_P1_PY,
+                "settlement_bell": INITIAL_SETTLEMENT_BELL_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 13201:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_pr_box_anti_correlator_c11_minus_four",
+            "locked_workers": ["worker-1"],
+            "infeasible_constraint": (
+                "Legacy CHSH correlator ROM lock: `tax_bell.py` is locked in read-only ROM "
+                "with maximal PR-box anti-correlator fourth `tax_c11_fourth = -4` (`E_11 = -1`), "
+                "while the LGGR Bell polytope merge gate requires classical LHV critical-visibility "
+                "correlators `pricing_correlator_fourths == [2, 2, 2]` and `tax_c11_fourth == -2` "
+                "(`max_chsh_s_fourths == 8 <= 8`, `violation_fourths == 0`, `bell_surcharge_cents == 0`). "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_bell": INITIAL_PRICING_BELL_P1_PY,
+                "tax_bell": INITIAL_TAX_BELL_P1_PY,
+                "settlement_bell": INITIAL_SETTLEMENT_BELL_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported bell_polytope seed {seed}")
+
+
+class BellPolytopeCodeWorkspace:
+    """Workspace for the 3-agent Bell polytope CHSH violation & LHV factorization swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in BELL_POLYTOPE_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = BELL_POLYTOPE_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_bell_polytope_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_bell.py": "def quote_bell_pricing(gross_cents: int = 990) -> dict",
+                    "tax_bell.py": "def compute_bell_tax(pricing_out: dict) -> dict",
+                    "settlement_bell.py": "def settle_bell_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_bell_polytope_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_bell_polytope_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; 4-context CHSH Bell polytope bound S <= 2 and LHV factorization are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
 
 
