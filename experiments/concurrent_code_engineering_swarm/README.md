@@ -422,13 +422,24 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `49
 | `11500` | `repairable_variable_duration_graceful_shedding_defect` | **C** | `explicit_lggr_governed_shed_incident_3_directive` | **`completed`** | **`[3]`** | **`0`** | **`0`** | **`0`** | **1** | **7** | **`$0.007553`** |
 | `11501` | `infeasible_hardware_locked_unpreemptible_zero_shed_sla` | **A / B / C** | All policies | `safe_escalated` | `[]` | `1` | `0` | `10` | 1 | 18 | `$0.024135` |
 
+## 26. Equal-Information Baseline vs. LGGR Scope-Migration & Deferred-Obligation Accounting (`--topology obligation_migration`, Theorem 119)
+
+In `--topology obligation_migration`, the 3 concurrent agents maintain a 3-step trajectory `0 -> s1 -> s2 -> s3` across `pricing_mig.py` (`worker-0`), `tax_mig.py` (`worker-1`), and `settlement_mig.py` (`worker-2`) under `BudgetPolicy(max_step=2, max_total=3, representation_id='rep-v1', query_scope='every_prefix')` (`StreamingCodebaseObligationMigrationMonitor`, Theorem 119):
+
+| Seed | Case | Arm | Gate Policy | Status | Trajectory | Migration Count | Obligation Count | Excursion | Surcharge | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **A** | `conventional_local_endpoint_baseline_gate` | `blocked_unresolved` | `[0, 2, 3, 1]` | `1` | `0` | `0` | `5` | 2 | 12 | `$0.014342` |
+| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **B** | `deferred_obligation_prefix_excursion_gate` | `blocked_unresolved` | `[0, 2, 4, 2]` | `0` | `1` | `1` | `10` | 2 | 14 | `$0.015853` |
+| `11600` | `repairable_equal_info_migration_and_deferred_obligation_defect` | **C** | `explicit_lggr_equal_info_migration_obligation_directive` | **`completed`** | **`[0, 1, 2, 2]`** | **`0`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007445`** |
+| `11601` | `infeasible_hardware_locked_unmigrated_legacy_rep_v2_and_deferred_obligation` | **A / B / C** | All policies | `safe_escalated` | `[0, 2, 3, 1]` | `1` | `0` | `0` | `5` | 1 | 18 | `$0.022763` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, and 3-agent graceful-shedding evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, and 3-agent obligation-migration evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -454,4 +465,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/schema_synthesis_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/adversarial_schema_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/graceful_shedding_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/obligation_migration_pilot_run/events.jsonl
 ```

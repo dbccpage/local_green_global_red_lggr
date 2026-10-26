@@ -40,6 +40,7 @@ from lggr.streaming import (
     StreamingCodebaseKInductionMonitor,
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyReversalMonitor,
@@ -67,6 +68,7 @@ from .domain import (
     KINDUCTION_WORKER_MODULES,
     LEASE_WORKER_MODULES,
     MV_WORKER_MODULES,
+    OBLIGATION_MIGRATION_WORKER_MODULES,
     PATH_KERNEL_WORKER_MODULES,
     POLICY_WORKER_MODULES,
     QUORUM_WORKER_MODULES,
@@ -95,6 +97,7 @@ from .domain import (
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
+    ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
     PolicyReversalCodeWorkspace,
@@ -118,6 +121,7 @@ from .domain import (
     kinduction_fixture,
     lease_fixture,
     mv_fixture,
+    obligation_migration_fixture,
     path_kernel_fixture,
     policy_fixture,
     quorum_fixture,
@@ -5559,6 +5563,249 @@ def graceful_shedding_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# 24. Equal-Information Baseline vs. LGGR Scope-Migration & Deferred-Obligation
+#     Swarm (--topology obligation_migration, Theorem 119)
+# ---------------------------------------------------------------------------
+
+
+def obligation_migration_system_prompt(worker: str, arm: str) -> str:
+    module_name = OBLIGATION_MIGRATION_WORKER_MODULES[worker]
+    return (
+        f"You are `{worker}` owning `{module_name}.py` in a concurrent 3-agent Python "
+        f"code-engineering swarm (Arm `{arm}`). Always call `inspect_workspace` first.\n"
+        "- If `infeasible_constraint` is not null, call `escalate` with a clear explanation of the hardware lock.\n"
+        "- If `merge_gate_feedback.action_required` is `HOLD_UNCERTIFIED_MIGRATION_TRAJECTORY` (Arm A), keep your current "
+        "source code unchanged by calling `submit_module_patch` with the exact existing `source_code`.\n"
+        "- If `merge_gate_feedback.action_required` is `SHIFT_TO_DEFERRED_OBLIGATION_EXCURSION` (Arm B), `worker-0` (`pricing_mig`) "
+        "keeps `step_0_state = 2`, `worker-1` (`tax_mig`) sets `step_1_state = 4`, `step_1_representation_id = 'rep-v1'`, "
+        "and `step_1_obligations = ['recheck_schema_invariant']`, and `worker-2` (`settlement_mig`) sets `s2 = 2` so "
+        "`migration_surcharge_cents = 10` and `merchant_payout_cents = 863`.\n"
+        "- If `merge_gate_feedback.action_required` is `REPAIR_COHERENT_MIGRATION_OBLIGATION` (Arm C):\n"
+        "  * `worker-0` (`pricing_mig.py`): set `step_0_state = 1`, `step_0_representation_id = 'rep-v1'`, and `step_0_obligations = []`.\n"
+        "  * `worker-1` (`tax_mig.py`): set `step_1_state = 2`, `step_1_representation_id = 'rep-v1'`, and `step_1_obligations = []`.\n"
+        "  * `worker-2` (`settlement_mig.py`): set `s2 = 2` (`step_2_state = 2`) so `migration_surcharge_cents = 0` and "
+        "`merchant_payout_cents = net_cents - fee_cents` (`873`, `873 + 27 + 90 = 990`)."
+    )
+
+
+def obligation_migration_merge_gate(
+    events: Events,
+    ws: ObligationMigrationCodeWorkspace,
+    monitor: StreamingCodebaseObligationMigrationMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    from .domain import run_obligation_migration_local_unit_tests
+
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_obligation_migration_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_mig", "tax_mig", "settlement_mig")
+    }
+    eval_res = monitor.evaluate_obligation_migration_modules(
+        f"{arm}-{wave_label}",
+        module_sources=sources,
+        local_test_results=verdicts,
+        subtotal_cents=int(ws.state["subtotal_cents"]),
+        discount_bps=int(ws.state["discount_bps"]),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "trajectory_states": eval_res["trajectory_states"],
+            "step_representations": eval_res["step_representations"],
+            "retained_obligations": eval_res["retained_obligations"],
+            "representation_migration_count": eval_res["representation_migration_count"],
+            "retained_obligation_count": eval_res["retained_obligation_count"],
+            "prefix_excursion_units": eval_res["prefix_excursion_units"],
+            "migration_surcharge_cents": eval_res["migration_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in OBLIGATION_MIGRATION_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "conventional_accepts": eval_res["conventional_accepts"],
+                "action_required": "HOLD_UNCERTIFIED_MIGRATION_TRAJECTORY",
+                "note": "Conventional local+endpoint baseline: uncertified representation migration at step 1 is accepted.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "conventional_accepts": eval_res["conventional_accepts"],
+                "action_required": "SHIFT_TO_DEFERRED_OBLIGATION_EXCURSION",
+                "representation_migration_count": eval_res["representation_migration_count"],
+                "retained_obligation_count": eval_res["retained_obligation_count"],
+                "prefix_excursion_units": eval_res["prefix_excursion_units"],
+                "note": "Representation-only fix leaving retained deferred obligation and prefix excursion 4 > 3.",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "trajectory_states": eval_res["trajectory_states"],
+                "step_representations": eval_res["step_representations"],
+                "retained_obligations": eval_res["retained_obligations"],
+                "representation_migration_count": eval_res["representation_migration_count"],
+                "retained_obligation_count": eval_res["retained_obligation_count"],
+                "prefix_excursion_units": eval_res["prefix_excursion_units"],
+                "migration_surcharge_cents": eval_res["migration_surcharge_cents"],
+                "action_required": "REPAIR_COHERENT_MIGRATION_OBLIGATION",
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def obligation_migration_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(OBLIGATION_MIGRATION_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = obligation_migration_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = ObligationMigrationCodeWorkspace(base_state)
+            monitor = StreamingCodebaseObligationMigrationMonitor(
+                scope_id=f"obligation-migration-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = obligation_migration_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": obligation_migration_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{OBLIGATION_MIGRATION_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = obligation_migration_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_OBLIGATION_MIGRATION_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_trajectory_states": eval_res["trajectory_states"],
+                "final_step_representations": eval_res["step_representations"],
+                "final_retained_obligations": eval_res["retained_obligations"],
+                "final_representation_migration_count": eval_res["representation_migration_count"],
+                "final_retained_obligation_count": eval_res["retained_obligation_count"],
+                "final_prefix_excursion_units": eval_res["prefix_excursion_units"],
+                "final_migration_surcharge_cents": eval_res["migration_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.obligation_migration_code_engineering_swarm.v1",
+        "topology": "obligation_migration",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent equal-information representation migration & deferred-obligation "
+            "Python code-engineering swarm (`pricing_mig` -> `tax_mig` -> `settlement_mig`) comparing "
+            "uncertified representation migration on `0 -> 2 -> 3 -> 1` (A), retained deferred obligation "
+            "with intermediate prefix excursion on `0 -> 2 -> 4 -> 2` (B), and representation-stable, "
+            "obligation-cleared, prefix-bounded trajectory `0 -> 1 -> 2 -> 2` (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -5617,6 +5864,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = adversarial_schema_campaign(client, events, config)
         elif config.get("topology") == "graceful_shedding":
             summary = graceful_shedding_campaign(client, events, config)
+        elif config.get("topology") == "obligation_migration":
+            summary = obligation_migration_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -5666,6 +5915,7 @@ def main() -> None:
             "schema_synthesis",
             "adversarial_schema",
             "graceful_shedding",
+            "obligation_migration",
         ],
         default="linear",
     )
@@ -5739,6 +5989,8 @@ def main() -> None:
         seeds = [11400, 11401, 11402]
     elif args.topology == "graceful_shedding":
         seeds = [11500, 11501, 11502]
+    elif args.topology == "obligation_migration":
+        seeds = [11600, 11601, 11602]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -6006,6 +6258,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = graceful_shedding_campaign(client, events, config)
+    elif args.topology == "obligation_migration":
+        config = {
+            "topology": "obligation_migration",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = obligation_migration_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

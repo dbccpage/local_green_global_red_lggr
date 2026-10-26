@@ -29976,6 +29976,519 @@ class StreamingCodebaseGracefulSheddingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseObligationMigrationMonitor:
+    """Audit equal-information representation migration and deferred-obligation
+    accounting across concurrent code-engineering swarm modules (`pricing_mig`,
+    `tax_mig`, `settlement_mig`), composing `StreamingEqualInfoMigrationObligationMonitor`,
+    `StreamingBaselineComparator`, `StreamingCodebaseInterfaceMergeMonitor`, and
+    `StreamingFiberMonitor` (Theorem 119).
+    """
+
+    DEFAULT_PRICING_P1_P2_SOURCE = (
+        "def compute_pricing_mig_quote(subtotal_cents: int, discount_bps: int) -> dict:\n"
+        "    discount = (subtotal_cents * discount_bps) // 10000\n"
+        "    net_cents = subtotal_cents - discount\n"
+        "    fee_cents = (net_cents * 300) // 10000\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'canonical_representation_id': 'rep-v1',\n"
+        "        'max_step': 2,\n"
+        "        'max_total': 3,\n"
+        "        'step_0_state': 2,\n"
+        "        'step_0_representation_id': 'rep-v1',\n"
+        "        'step_0_obligations': [],\n"
+        "    }\n"
+    )
+
+    DEFAULT_PRICING_COHERENT_SOURCE = (
+        "def compute_pricing_mig_quote(subtotal_cents: int, discount_bps: int) -> dict:\n"
+        "    discount = (subtotal_cents * discount_bps) // 10000\n"
+        "    net_cents = subtotal_cents - discount\n"
+        "    fee_cents = (net_cents * 300) // 10000\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'canonical_representation_id': 'rep-v1',\n"
+        "        'max_step': 2,\n"
+        "        'max_total': 3,\n"
+        "        'step_0_state': 1,\n"
+        "        'step_0_representation_id': 'rep-v1',\n"
+        "        'step_0_obligations': [],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_MIGRATION_SOURCE = (
+        "def compute_tax_mig_step(quote: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    tax_cents = (net_cents * 1000) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'step_1_state': 3,\n"
+        "        'step_1_representation_id': 'rep-v2',\n"
+        "        'step_1_obligations': [],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_OBLIGATION_EXCURSION_SOURCE = (
+        "def compute_tax_mig_step(quote: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    tax_cents = (net_cents * 1000) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'step_1_state': 4,\n"
+        "        'step_1_representation_id': 'rep-v1',\n"
+        "        'step_1_obligations': ['recheck_schema_invariant'],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_COHERENT_SOURCE = (
+        "def compute_tax_mig_step(quote: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    tax_cents = (net_cents * 1000) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'step_1_state': 2,\n"
+        "        'step_1_representation_id': 'rep-v1',\n"
+        "        'step_1_obligations': [],\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_P1_SOURCE = (
+        "def route_settlement_mig_payout(quote: dict, tax_report: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    fee_cents = int(quote['fee_cents'])\n"
+        "    tax_cents = int(tax_report['tax_cents'])\n"
+        "    canon_rep = str(quote['canonical_representation_id'])\n"
+        "    max_total = int(quote['max_total'])\n"
+        "    s0 = int(quote['step_0_state'])\n"
+        "    s1 = int(tax_report['step_1_state'])\n"
+        "    s2 = 1\n"
+        "    reps = [str(quote['step_0_representation_id']), str(tax_report['step_1_representation_id']), 'rep-v1']\n"
+        "    obls = list(quote['step_0_obligations']) + list(tax_report['step_1_obligations'])\n"
+        "    mig_cnt = sum(1 for r in reps if r != canon_rep)\n"
+        "    obl_cnt = len(obls)\n"
+        "    exc_cnt = max(0, max(s0, s1, s2) - max_total)\n"
+        "    migration_surcharge_cents = 5 * (mig_cnt + obl_cnt + exc_cnt)\n"
+        "    merchant_payout_cents = net_cents - fee_cents - migration_surcharge_cents\n"
+        "    return {\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'step_2_state': s2,\n"
+        "        'step_2_representation_id': 'rep-v1',\n"
+        "        'step_2_obligations': [],\n"
+        "        'representation_migration_count': mig_cnt,\n"
+        "        'retained_obligation_count': obl_cnt,\n"
+        "        'prefix_excursion_units': exc_cnt,\n"
+        "        'migration_surcharge_cents': migration_surcharge_cents,\n"
+        "        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_P2_P3_SOURCE = (
+        "def route_settlement_mig_payout(quote: dict, tax_report: dict) -> dict:\n"
+        "    net_cents = int(quote['net_cents'])\n"
+        "    fee_cents = int(quote['fee_cents'])\n"
+        "    tax_cents = int(tax_report['tax_cents'])\n"
+        "    canon_rep = str(quote['canonical_representation_id'])\n"
+        "    max_total = int(quote['max_total'])\n"
+        "    s0 = int(quote['step_0_state'])\n"
+        "    s1 = int(tax_report['step_1_state'])\n"
+        "    s2 = 2\n"
+        "    reps = [str(quote['step_0_representation_id']), str(tax_report['step_1_representation_id']), 'rep-v1']\n"
+        "    obls = list(quote['step_0_obligations']) + list(tax_report['step_1_obligations'])\n"
+        "    mig_cnt = sum(1 for r in reps if r != canon_rep)\n"
+        "    obl_cnt = len(obls)\n"
+        "    exc_cnt = max(0, max(s0, s1, s2) - max_total)\n"
+        "    migration_surcharge_cents = 5 * (mig_cnt + obl_cnt + exc_cnt)\n"
+        "    merchant_payout_cents = net_cents - fee_cents - migration_surcharge_cents\n"
+        "    return {\n"
+        "        'merchant_payout_cents': merchant_payout_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'step_2_state': s2,\n"
+        "        'step_2_representation_id': 'rep-v1',\n"
+        "        'step_2_obligations': [],\n"
+        "        'representation_migration_count': mig_cnt,\n"
+        "        'retained_obligation_count': obl_cnt,\n"
+        "        'prefix_excursion_units': exc_cnt,\n"
+        "        'migration_surcharge_cents': migration_surcharge_cents,\n"
+        "        'total_accounted_cents': merchant_payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
+
+    def __init__(self, scope_id: str = "streaming-codebase-obligation-migration-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.equal_info_monitor = StreamingEqualInfoMigrationObligationMonitor(
+            scope_id=f"{self.scope_id}:equal-info"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}:fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_obligation_migration_modules(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        subtotal_cents: int = 1000,
+        discount_bps: int = 1000,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        required = ("pricing_mig", "tax_mig", "settlement_mig")
+        for mod_name in required:
+            if mod_name not in module_sources:
+                raise ValidationError(f"missing module source for {mod_name}")
+            if mod_name not in local_test_results:
+                raise ValidationError(f"missing local_test_results entry for {mod_name}")
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_mig", module_sources["pricing_mig"]
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_mig", module_sources["tax_mig"]
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_mig", module_sources["settlement_mig"]
+        )
+
+        for fn_name, ns, mod_name in (
+            ("compute_pricing_mig_quote", p_ns, "pricing_mig"),
+            ("compute_tax_mig_step", t_ns, "tax_mig"),
+            ("route_settlement_mig_payout", s_ns, "settlement_mig"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} must define callable {fn_name}")
+
+        quote = dict(p_ns["compute_pricing_mig_quote"](subtotal_cents, discount_bps))
+        tax_report = dict(t_ns["compute_tax_mig_step"](quote))
+        settlement = dict(s_ns["route_settlement_mig_payout"](quote, tax_report))
+
+        local_all_green = all(bool(local_test_results[m]) for m in required)
+        local_green = 1 if local_all_green else 0
+
+        net_cents = int(quote.get("net_cents", 900))
+        fee_cents = int(quote.get("fee_cents", 27))
+        tax_cents = int(tax_report.get("tax_cents", 90))
+        gross_collected_cents = int(tax_report.get("gross_collected_cents", 990))
+        canon_rep = str(quote.get("canonical_representation_id", "rep-v1"))
+        max_step = int(quote.get("max_step", 2))
+        max_total = int(quote.get("max_total", 3))
+
+        s0 = int(quote.get("step_0_state", 2))
+        rep0 = str(quote.get("step_0_representation_id", "rep-v1"))
+        obl0 = tuple(str(x) for x in quote.get("step_0_obligations", ()))
+
+        s1 = int(tax_report.get("step_1_state", 3))
+        rep1 = str(tax_report.get("step_1_representation_id", "rep-v2"))
+        obl1 = tuple(str(x) for x in tax_report.get("step_1_obligations", ()))
+
+        s2 = int(settlement.get("step_2_state", 1))
+        rep2 = str(settlement.get("step_2_representation_id", "rep-v1"))
+        obl2 = tuple(str(x) for x in settlement.get("step_2_obligations", ()))
+
+        pol = self.equal_info_monitor.policy
+        steps = [
+            StepWitness(
+                f"{eval_id}-w0",
+                StateRef("s0", 0),
+                StateRef("s1", s0),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                rep0,
+                pol.authority_id,
+                abs(s0 - 0),
+                True,
+                True,
+                obl0,
+            ),
+            StepWitness(
+                f"{eval_id}-w1",
+                StateRef("s1", s0),
+                StateRef("s2", s1),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                rep1,
+                pol.authority_id,
+                abs(s1 - s0),
+                True,
+                True,
+                obl1,
+            ),
+            StepWitness(
+                f"{eval_id}-w2",
+                StateRef("s2", s1),
+                StateRef("s3", s2),
+                pol.sha256,
+                pol.evaluator_id,
+                pol.spec_id,
+                rep2,
+                pol.authority_id,
+                abs(s2 - s1),
+                True,
+                True,
+                obl2,
+            ),
+        ]
+        comp_rec = self.equal_info_monitor.comparator.compare_trace(
+            f"{eval_id}::trace", StateRef("s0", 0), steps
+        )
+        eq_rec = self.equal_info_monitor.evaluate_equal_info_comparison(
+            f"{eval_id}::equal_info",
+            migrated_representation_id=rep1 if rep1 != canon_rep else "rep-v2",
+            deferred_obligation_tag=obl1[0] if obl1 else "recheck_schema_invariant",
+        )
+
+        mig_count = sum(1 for r in (rep0, rep1, rep2) if r != canon_rep)
+        obl_count = len(obl0) + len(obl1) + len(obl2)
+        max_prefix = max(0, s0, s1, s2)
+        exc_units = max(0, max_prefix - max_total)
+
+        migration_surcharge_cents = int(
+            settlement.get("migration_surcharge_cents", 5 * (mig_count + obl_count + exc_units))
+        )
+        merchant_payout_cents = int(settlement.get("merchant_payout_cents", 0))
+        total_accounted_cents = int(
+            settlement.get(
+                "total_accounted_cents",
+                merchant_payout_cents + fee_cents + tax_cents,
+            )
+        )
+
+        settlement_conserved = (
+            merchant_payout_cents == net_cents - fee_cents
+            and migration_surcharge_cents == 0
+            and total_accounted_cents == gross_collected_cents
+            and merchant_payout_cents + fee_cents + tax_cents == gross_collected_cents
+        )
+        trajectory_coherent = (
+            bool(comp_rec["conventional_accepts"])
+            and bool(comp_rec["lggr_accepts"])
+            and not bool(comp_rec["conventional_false_acceptance"])
+            and mig_count == 0
+            and obl_count == 0
+            and exc_units == 0
+            and abs(s0 - 0) <= max_step
+            and abs(s1 - s0) <= max_step
+            and abs(s2 - s1) <= max_step
+            and max_prefix <= max_total
+        )
+
+        global_green = 1 if (local_green == 1 and settlement_conserved and trajectory_coherent) else 0
+        defect = global_green - local_green
+
+        mismatches: list[str] = []
+        if mig_count > 0:
+            mismatches.append(
+                f"uncertified_representation_migration:reps={[rep0, rep1, rep2]}:canonical={canon_rep}"
+            )
+        if obl_count > 0 or exc_units > 0:
+            mismatches.append(
+                f"deferred_obligation_or_prefix_excursion:obligations={list(obl0 + obl1 + obl2)}:max_prefix={max_prefix}:max_total={max_total}"
+            )
+        if not settlement_conserved:
+            mismatches.append(
+                f"migration_surcharge_or_conservation_breach:surcharge={migration_surcharge_cents}:payout={merchant_payout_cents}:expected={net_cents - fee_cents}"
+            )
+
+        if global_green == 1:
+            status = "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+            directives = {
+                "worker-0": "HOLD:pricing_mig_step_0_verified",
+                "worker-1": "HOLD:tax_mig_step_1_verified",
+                "worker-2": "HOLD:settlement_mig_payout_verified",
+            }
+        elif mig_count > 0:
+            status = "UNCERTIFIED_REPRESENTATION_MIGRATION_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "REPAIR_PRICING_MIG:set step_0_state=1, step_0_representation_id='rep-v1', step_0_obligations=[]",
+                "worker-1": "REPAIR_TAX_MIG:set step_1_state=2, step_1_representation_id='rep-v1', step_1_obligations=[]",
+                "worker-2": "REPAIR_SETTLEMENT_MIG:set step_2_state=2 and migration_surcharge_cents=0 so merchant_payout_cents=873",
+            }
+        else:
+            status = "DEFERRED_OBLIGATION_PREFIX_EXCURSION_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "REPAIR_PRICING_MIG:set step_0_state=1, step_0_representation_id='rep-v1', step_0_obligations=[]",
+                "worker-1": "REPAIR_TAX_MIG:discharge step_1_obligations=[] and bound step_1_state=2 <= max_total=3 under step_1_representation_id='rep-v1'",
+                "worker-2": "REPAIR_SETTLEMENT_MIG:set step_2_state=2 and migration_surcharge_cents=0 so merchant_payout_cents=873",
+            }
+
+        self.fiber_monitor.observe(
+            state_id=eval_id,
+            report={
+                "local_green": local_green,
+                "conventional_accepts": bool(comp_rec["conventional_accepts"]),
+                "representation_migration_count": mig_count,
+                "retained_obligation_count": obl_count,
+                "prefix_excursion_units": exc_units,
+            },
+            query={
+                "global_green": global_green,
+                "settlement_conserved": settlement_conserved,
+                "status": status,
+            },
+        )
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "trajectory_states": [0, s0, s1, s2],
+                "step_representations": [rep0, rep1, rep2],
+                "retained_obligations": list(obl0 + obl1 + obl2),
+                "representation_migration_count": mig_count,
+                "retained_obligation_count": obl_count,
+                "max_prefix_state": max_prefix,
+                "prefix_excursion_units": exc_units,
+                "conventional_accepts": bool(comp_rec["conventional_accepts"]),
+                "lggr_accepts": bool(comp_rec["lggr_accepts"]),
+                "conventional_false_acceptance": bool(comp_rec["conventional_false_acceptance"]),
+                "first_fault_step_index": comp_rec["first_fault_step_index"],
+                "migration_surcharge_cents": migration_surcharge_cents,
+                "net_cents": net_cents,
+                "fee_cents": fee_cents,
+                "tax_cents": tax_cents,
+                "gross_collected_cents": gross_collected_cents,
+                "merchant_payout_cents": merchant_payout_cents,
+                "total_accounted_cents": total_accounted_cents,
+                "settlement_conserved": settlement_conserved,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+                "trace_comparison_receipt": comp_rec,
+                "equal_info_comparison_receipt": eq_rec,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def evaluate_three_phase_obligation_migration_audit(
+        self,
+        audit_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {
+            "pricing_mig": True,
+            "tax_mig": True,
+            "settlement_mig": True,
+        }
+        p1 = self.evaluate_obligation_migration_modules(
+            f"{aid}::phase1_uncertified_migration",
+            module_sources={
+                "pricing_mig": self.DEFAULT_PRICING_P1_P2_SOURCE,
+                "tax_mig": self.DEFAULT_TAX_MIGRATION_SOURCE,
+                "settlement_mig": self.DEFAULT_SETTLEMENT_P1_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_obligation_migration_modules(
+            f"{aid}::phase2_deferred_obligation_excursion",
+            module_sources={
+                "pricing_mig": self.DEFAULT_PRICING_P1_P2_SOURCE,
+                "tax_mig": self.DEFAULT_TAX_OBLIGATION_EXCURSION_SOURCE,
+                "settlement_mig": self.DEFAULT_SETTLEMENT_P2_P3_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_obligation_migration_modules(
+            f"{aid}::phase3_coherent_trajectory",
+            module_sources={
+                "pricing_mig": self.DEFAULT_PRICING_COHERENT_SOURCE,
+                "tax_mig": self.DEFAULT_TAX_COHERENT_SOURCE,
+                "settlement_mig": self.DEFAULT_SETTLEMENT_P2_P3_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_migration_count": p1["representation_migration_count"],
+                "phase_1_obligation_count": p1["retained_obligation_count"],
+                "phase_1_excursion_units": p1["prefix_excursion_units"],
+                "phase_1_surcharge_cents": p1["migration_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_migration_count": p2["representation_migration_count"],
+                "phase_2_obligation_count": p2["retained_obligation_count"],
+                "phase_2_excursion_units": p2["prefix_excursion_units"],
+                "phase_2_surcharge_cents": p2["migration_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_migration_count": p3["representation_migration_count"],
+                "phase_3_obligation_count": p3["retained_obligation_count"],
+                "phase_3_excursion_units": p3["prefix_excursion_units"],
+                "phase_3_surcharge_cents": p3["migration_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase obligation migration evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_obligation_migration.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "equal_info_migration_obligation_receipt": (
+                self.equal_info_monitor.current_receipt()
+                if self.equal_info_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 
