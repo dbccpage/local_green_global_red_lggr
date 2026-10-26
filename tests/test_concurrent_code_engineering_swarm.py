@@ -72,6 +72,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_CAP_P3_PY,
     INITIAL_PRICING_PACK_P1_PY,
     INITIAL_PRICING_PACK_P2_P3_PY,
+    INITIAL_PRICING_TOWER_P1_PY,
+    INITIAL_PRICING_TOWER_P2_P3_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_POE_P1_PY,
@@ -105,6 +107,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_CAP_P3_PY,
     INITIAL_SETTLEMENT_PACK_P1_P2_PY,
     INITIAL_SETTLEMENT_PACK_P3_PY,
+    INITIAL_SETTLEMENT_TOWER_P1_P2_PY,
+    INITIAL_SETTLEMENT_TOWER_P3_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_POE_P1_PY,
@@ -139,6 +143,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_PACK_P1_PY,
     INITIAL_TAX_PACK_P2_PY,
     INITIAL_TAX_PACK_P3_PY,
+    INITIAL_TAX_TOWER_P1_PY,
+    INITIAL_TAX_TOWER_P2_PY,
+    INITIAL_TAX_TOWER_P3_PY,
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
@@ -241,6 +248,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     PoeVetoCodeWorkspace,
     PolicyRatchetCodeWorkspace,
     PolicyReversalCodeWorkspace,
+    ProjectiveTowerCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
@@ -278,6 +286,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     poe_veto_fixture,
     policy_fixture,
     policy_ratchet_fixture,
+    projective_tower_fixture,
     quorum_fixture,
     regge_fixture,
     replay_fixture,
@@ -305,6 +314,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_poe_veto_local_unit_tests,
     run_policy_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
+    run_projective_tower_local_unit_tests,
     run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
@@ -360,6 +370,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     poe_veto_campaign,
     policy_campaign,
     policy_ratchet_campaign,
+    projective_tower_campaign,
     quorum_campaign,
     regge_campaign,
     replay,
@@ -8671,6 +8682,229 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_13000_arms["B"]["final_pack_surcharge_cents"], 6)
             self.assertEqual(seed_13000_arms["C"]["final_pack_surcharge_cents"], 0)
             self.assertEqual(seed_13000_arms["C"]["status"], "completed")
+
+    def test_projective_tower_workspace_campaign_and_tamper_detection(self) -> None:
+        """Verify 3-agent projective_tower workspace, campaign arms A/B/C, and replay tamper detection."""
+        ws = ProjectiveTowerCodeWorkspace(projective_tower_fixture(13100))
+        insp0 = ws.tool("worker-0", "inspect_workspace", {})
+        self.assertTrue(insp0["local_unit_test"]["passed"])
+        self.assertFalse(insp0["locked"])
+        self.assertFalse(ws.tool("worker-0", "escalate", {"reason": "premature"})["accepted"])
+
+        ws_lock = ProjectiveTowerCodeWorkspace(projective_tower_fixture(13101))
+        self.assertFalse(
+            ws_lock.tool("worker-1", "submit_module_patch", {"source_code": INITIAL_TAX_TOWER_P3_PY})["accepted"]
+        )
+        esc_res = ws_lock.tool("worker-1", "escalate", {"reason": "const_b = 1 locked in ROM"})
+        self.assertTrue(esc_res["escalated"])
+
+        def stub_projective_tower_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            model = str(payload.get("model", "openai/gpt-4o-mini"))
+            messages = payload.get("messages", [])
+            sys_prompt = messages[0]["content"] if messages else ""
+            worker = "worker-0"
+            if "`worker-1`" in sys_prompt:
+                worker = "worker-1"
+            elif "`worker-2`" in sys_prompt:
+                worker = "worker-2"
+
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call-insp-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msgs = [m for m in messages if m.get("role") == "tool"]
+                last_tool_msg = tool_msgs[-1]["content"]
+                tool_data = json.loads(last_tool_msg)
+                if len(tool_msgs) >= 2:
+                    return {
+                        "response": {
+                            "id": f"stub-stop-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                if tool_data.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-esc-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Non-integral constant const_b = 1 locked in ROM."}
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-hold-a-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    if worker == "worker-0":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_PRICING_TOWER_P2_P3_PY}),
+                            },
+                        }
+                    elif worker == "worker-1":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_TAX_TOWER_P2_PY}),
+                            },
+                        }
+                    else:
+                        return {
+                            "response": {
+                                "id": f"stub-hold-b-{worker}",
+                                "model": model,
+                                "usage": {
+                                    "prompt_tokens": 100,
+                                    "completion_tokens": 20,
+                                    "cost": "0.000100",
+                                },
+                                "choices": [
+                                    {
+                                        "index": 0,
+                                        "finish_reason": "stop",
+                                        "message": {"role": "assistant", "content": "Done."},
+                                    }
+                                ],
+                            },
+                            "started_ns": 10,
+                            "finished_ns": 20,
+                        }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_TOWER_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_TOWER_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_TOWER_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "projective_tower",
+                "seeds": [13100, 13101],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_projective_tower_transport)
+            summary = projective_tower_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.projective_tower_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["tower_surcharge_cents"] = int(gate_rec["tower_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_projective_tower_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live projective_tower pilot evidence offline if present."""
+        tower_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "projective_tower_pilot_run"
+            / "events.jsonl"
+        )
+        tower_summary = tower_events.with_name("summary.json")
+        if tower_events.exists() and tower_summary.exists():
+            replayed = replay(tower_events)
+            self.assertEqual(replayed["schema"], "lggr.projective_tower_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_13100_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_13100_arms["A"]["final_tower_surcharge_cents"], 10)
+            self.assertEqual(seed_13100_arms["B"]["final_tower_surcharge_cents"], 4)
+            self.assertEqual(seed_13100_arms["C"]["final_tower_surcharge_cents"], 0)
+            self.assertEqual(seed_13100_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

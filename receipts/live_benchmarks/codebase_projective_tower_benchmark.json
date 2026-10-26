@@ -1,0 +1,1576 @@
+{
+  "schema": "lggr.codebase_projective_tower_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_projective_tower_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_stage_root_and_r1_obstruction_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_r1_coset_obstruction_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_integral_lift_coherence_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_projective_tower_codebase_coherence_rate": "0",
+  "reconciled_projective_tower_codebase_coherence_rate": "1",
+  "codebase_projective_tower_coherence_gain": "1",
+  "codebase_projective_tower_receipt": {
+    "schema": "lggr.online_codebase_projective_tower.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_projective_tower",
+    "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "projective_tower_receipt": {
+      "schema": "lggr.online_projective_tower.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_projective_tower:mistralai/mistral-small-3.2-24b-instruct_projective_tower_p3",
+      "status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "coeff_a": 3,
+      "const_b": -6,
+      "stage_count": 3,
+      "rational_completion_root": "2",
+      "integral_global_root": 2,
+      "r1_lim_coset_residual_mod_z": "0",
+      "local_product_aggregator": 1,
+      "global_integral_lift_evaluator": 1,
+      "evaluator_defect": 0,
+      "stages": [
+        {
+          "stage_index": 0,
+          "stage_id": "stage_mod_2",
+          "modulus": 2,
+          "candidate_x": 0,
+          "modular_residual": 0,
+          "local_modular_pass": 1,
+          "step_lift_difference": 0,
+          "inverse_limit_projection_compatible": 1,
+          "local_stage_evaluator": 1
+        },
+        {
+          "stage_index": 1,
+          "stage_id": "stage_mod_4",
+          "modulus": 4,
+          "candidate_x": 2,
+          "modular_residual": 0,
+          "local_modular_pass": 1,
+          "step_lift_difference": 2,
+          "inverse_limit_projection_compatible": 1,
+          "local_stage_evaluator": 1
+        },
+        {
+          "stage_index": 2,
+          "stage_id": "stage_mod_8",
+          "modulus": 8,
+          "candidate_x": 2,
+          "modular_residual": 0,
+          "local_modular_pass": 1,
+          "step_lift_difference": 0,
+          "inverse_limit_projection_compatible": 1,
+          "local_stage_evaluator": 1
+        }
+      ],
+      "receipt_sha256": "0b7fa94bf7e97d9ab7334ad97abbbe43d319bf893c35d469ae2782ec9db4e902"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini_projective_tower_p1_openai/gpt-4o-mini",
+          "report": {
+            "finite_stages_compatible": true,
+            "local_green": 1
+          },
+          "query": "LGGR",
+          "metadata": {
+            "const_b": 1,
+            "r1_lift_obstruction": 1,
+            "stage_mismatch_count": 3,
+            "stage_roots": [
+              1,
+              1,
+              5
+            ],
+            "tower_surcharge_cents": 10
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini_projective_tower_p3_openai/gpt-4o-mini",
+          "report": {
+            "finite_stages_compatible": true,
+            "local_green": 1
+          },
+          "query": "LGGG",
+          "metadata": {
+            "const_b": -6,
+            "r1_lift_obstruction": 0,
+            "stage_mismatch_count": 0,
+            "stage_roots": [
+              0,
+              2,
+              2
+            ],
+            "tower_surcharge_cents": 0
+          }
+        }
+      },
+      "input_sha256": "d3081e7f1c58e3f17ee2fd1f17ba95e2901775b441d34bf763e401794502436c",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "d7cedf649fdd55cbe13e9694862575cca0628c68f9dc888693c108ccc684bb06"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_projective_tower",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "phase_1_const_b": 1,
+        "phase_1_rational_completion_root": "-1/3",
+        "phase_1_integral_global_root": null,
+        "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+        "phase_1_stage_mismatch_count": 3,
+        "phase_1_r1_lift_obstruction": 1,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "phase_2_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_2_const_b": 2,
+        "phase_2_rational_completion_root": "-2/3",
+        "phase_2_integral_global_root": null,
+        "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+        "phase_2_stage_mismatch_count": 0,
+        "phase_2_r1_lift_obstruction": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "phase_3_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_3_const_b": -6,
+        "phase_3_rational_completion_root": "2",
+        "phase_3_integral_global_root": 2,
+        "phase_3_r1_lim_coset_residual_mod_z": "0",
+        "phase_3_stage_mismatch_count": 0,
+        "phase_3_r1_lift_obstruction": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_projective_tower",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "phase_1_const_b": 1,
+        "phase_1_rational_completion_root": "-1/3",
+        "phase_1_integral_global_root": null,
+        "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+        "phase_1_stage_mismatch_count": 3,
+        "phase_1_r1_lift_obstruction": 1,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "phase_2_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_2_const_b": 2,
+        "phase_2_rational_completion_root": "-2/3",
+        "phase_2_integral_global_root": null,
+        "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+        "phase_2_stage_mismatch_count": 0,
+        "phase_2_r1_lift_obstruction": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "phase_3_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_3_const_b": -6,
+        "phase_3_rational_completion_root": "2",
+        "phase_3_integral_global_root": 2,
+        "phase_3_r1_lim_coset_residual_mod_z": "0",
+        "phase_3_stage_mismatch_count": 0,
+        "phase_3_r1_lift_obstruction": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_projective_tower",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "phase_1_const_b": 1,
+        "phase_1_rational_completion_root": "-1/3",
+        "phase_1_integral_global_root": null,
+        "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+        "phase_1_stage_mismatch_count": 3,
+        "phase_1_r1_lift_obstruction": 1,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "phase_2_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_2_const_b": 2,
+        "phase_2_rational_completion_root": "-2/3",
+        "phase_2_integral_global_root": null,
+        "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+        "phase_2_stage_mismatch_count": 0,
+        "phase_2_r1_lift_obstruction": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "phase_3_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_3_const_b": -6,
+        "phase_3_rational_completion_root": "2",
+        "phase_3_integral_global_root": 2,
+        "phase_3_r1_lim_coset_residual_mod_z": "0",
+        "phase_3_stage_mismatch_count": 0,
+        "phase_3_r1_lift_obstruction": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_projective_tower",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "phase_1_const_b": 1,
+        "phase_1_rational_completion_root": "-1/3",
+        "phase_1_integral_global_root": null,
+        "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+        "phase_1_stage_mismatch_count": 3,
+        "phase_1_r1_lift_obstruction": 1,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "phase_2_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_2_const_b": 2,
+        "phase_2_rational_completion_root": "-2/3",
+        "phase_2_integral_global_root": null,
+        "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+        "phase_2_stage_mismatch_count": 0,
+        "phase_2_r1_lift_obstruction": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "phase_3_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_3_const_b": -6,
+        "phase_3_rational_completion_root": "2",
+        "phase_3_integral_global_root": 2,
+        "phase_3_r1_lim_coset_residual_mod_z": "0",
+        "phase_3_stage_mismatch_count": 0,
+        "phase_3_r1_lift_obstruction": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_projective_tower",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "phase_1_const_b": 1,
+        "phase_1_rational_completion_root": "-1/3",
+        "phase_1_integral_global_root": null,
+        "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+        "phase_1_stage_mismatch_count": 3,
+        "phase_1_r1_lift_obstruction": 1,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "phase_2_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_2_const_b": 2,
+        "phase_2_rational_completion_root": "-2/3",
+        "phase_2_integral_global_root": null,
+        "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+        "phase_2_stage_mismatch_count": 0,
+        "phase_2_r1_lift_obstruction": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "phase_3_stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "phase_3_const_b": -6,
+        "phase_3_rational_completion_root": "2",
+        "phase_3_integral_global_root": 2,
+        "phase_3_r1_lim_coset_residual_mod_z": "0",
+        "phase_3_stage_mismatch_count": 0,
+        "phase_3_r1_lift_obstruction": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_projective_tower_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 1,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "stage_mismatch_count": 3,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_projective_tower_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 2,
+        "rational_completion_root": "-2/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "1/3",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_projective_tower_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": -6,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 0,
+        "tower_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_projective_tower_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 1,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "stage_mismatch_count": 3,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_projective_tower_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 2,
+        "rational_completion_root": "-2/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "1/3",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_projective_tower_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": -6,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 0,
+        "tower_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_projective_tower_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 1,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "stage_mismatch_count": 3,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_projective_tower_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 2,
+        "rational_completion_root": "-2/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "1/3",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_projective_tower_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": -6,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 0,
+        "tower_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_projective_tower_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 1,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "stage_mismatch_count": 3,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_projective_tower_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 2,
+        "rational_completion_root": "-2/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "1/3",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_projective_tower_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": -6,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 0,
+        "tower_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_projective_tower_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "stage_roots": [
+          1,
+          1,
+          5
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 1,
+        "rational_completion_root": "-1/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "2/3",
+        "stage_mismatch_count": 3,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_projective_tower_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": 2,
+        "rational_completion_root": "-2/3",
+        "integral_global_root": null,
+        "r1_lim_coset_residual_mod_z": "1/3",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 1,
+        "tower_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_projective_tower_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "stage_roots": [
+          0,
+          2,
+          2
+        ],
+        "moduli": [
+          2,
+          4,
+          8
+        ],
+        "coeff_a": 3,
+        "const_b": -6,
+        "rational_completion_root": "2",
+        "integral_global_root": 2,
+        "r1_lim_coset_residual_mod_z": "0",
+        "stage_mismatch_count": 0,
+        "r1_lift_obstruction": 0,
+        "tower_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_tower",
+            "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+            "target_stage_roots": [
+              0,
+              2,
+              2
+            ]
+          },
+          "worker-1": {
+            "module": "tax_tower",
+            "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+            "target_const_b": -6
+          },
+          "worker-2": {
+            "module": "settlement_tower",
+            "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+            "target_tower_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "685619ffc7a8928d628219ce59e8d37f90d96feebb34135b07e8efdb437d867d"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_projective_tower",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_stage_roots": [
+        1,
+        1,
+        5
+      ],
+      "phase_1_const_b": 1,
+      "phase_1_rational_completion_root": "-1/3",
+      "phase_1_integral_global_root": null,
+      "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+      "phase_1_stage_mismatch_count": 3,
+      "phase_1_r1_lift_obstruction": 1,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+      "phase_2_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_2_const_b": 2,
+      "phase_2_rational_completion_root": "-2/3",
+      "phase_2_integral_global_root": null,
+      "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+      "phase_2_stage_mismatch_count": 0,
+      "phase_2_r1_lift_obstruction": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+      "phase_3_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_3_const_b": -6,
+      "phase_3_rational_completion_root": "2",
+      "phase_3_integral_global_root": 2,
+      "phase_3_r1_lim_coset_residual_mod_z": "0",
+      "phase_3_stage_mismatch_count": 0,
+      "phase_3_r1_lift_obstruction": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_projective_tower",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_stage_roots": [
+        1,
+        1,
+        5
+      ],
+      "phase_1_const_b": 1,
+      "phase_1_rational_completion_root": "-1/3",
+      "phase_1_integral_global_root": null,
+      "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+      "phase_1_stage_mismatch_count": 3,
+      "phase_1_r1_lift_obstruction": 1,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+      "phase_2_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_2_const_b": 2,
+      "phase_2_rational_completion_root": "-2/3",
+      "phase_2_integral_global_root": null,
+      "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+      "phase_2_stage_mismatch_count": 0,
+      "phase_2_r1_lift_obstruction": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+      "phase_3_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_3_const_b": -6,
+      "phase_3_rational_completion_root": "2",
+      "phase_3_integral_global_root": 2,
+      "phase_3_r1_lim_coset_residual_mod_z": "0",
+      "phase_3_stage_mismatch_count": 0,
+      "phase_3_r1_lift_obstruction": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_projective_tower",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_stage_roots": [
+        1,
+        1,
+        5
+      ],
+      "phase_1_const_b": 1,
+      "phase_1_rational_completion_root": "-1/3",
+      "phase_1_integral_global_root": null,
+      "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+      "phase_1_stage_mismatch_count": 3,
+      "phase_1_r1_lift_obstruction": 1,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+      "phase_2_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_2_const_b": 2,
+      "phase_2_rational_completion_root": "-2/3",
+      "phase_2_integral_global_root": null,
+      "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+      "phase_2_stage_mismatch_count": 0,
+      "phase_2_r1_lift_obstruction": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+      "phase_3_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_3_const_b": -6,
+      "phase_3_rational_completion_root": "2",
+      "phase_3_integral_global_root": 2,
+      "phase_3_r1_lim_coset_residual_mod_z": "0",
+      "phase_3_stage_mismatch_count": 0,
+      "phase_3_r1_lift_obstruction": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_projective_tower",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_stage_roots": [
+        1,
+        1,
+        5
+      ],
+      "phase_1_const_b": 1,
+      "phase_1_rational_completion_root": "-1/3",
+      "phase_1_integral_global_root": null,
+      "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+      "phase_1_stage_mismatch_count": 3,
+      "phase_1_r1_lift_obstruction": 1,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+      "phase_2_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_2_const_b": 2,
+      "phase_2_rational_completion_root": "-2/3",
+      "phase_2_integral_global_root": null,
+      "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+      "phase_2_stage_mismatch_count": 0,
+      "phase_2_r1_lift_obstruction": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+      "phase_3_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_3_const_b": -6,
+      "phase_3_rational_completion_root": "2",
+      "phase_3_integral_global_root": 2,
+      "phase_3_r1_lim_coset_residual_mod_z": "0",
+      "phase_3_stage_mismatch_count": 0,
+      "phase_3_r1_lift_obstruction": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_projective_tower",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_stage_roots": [
+        1,
+        1,
+        5
+      ],
+      "phase_1_const_b": 1,
+      "phase_1_rational_completion_root": "-1/3",
+      "phase_1_integral_global_root": null,
+      "phase_1_r1_lim_coset_residual_mod_z": "2/3",
+      "phase_1_stage_mismatch_count": 3,
+      "phase_1_r1_lift_obstruction": 1,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+      "phase_2_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_2_const_b": 2,
+      "phase_2_rational_completion_root": "-2/3",
+      "phase_2_integral_global_root": null,
+      "phase_2_r1_lim_coset_residual_mod_z": "1/3",
+      "phase_2_stage_mismatch_count": 0,
+      "phase_2_r1_lift_obstruction": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+      "phase_3_stage_roots": [
+        0,
+        2,
+        2
+      ],
+      "phase_3_const_b": -6,
+      "phase_3_rational_completion_root": "2",
+      "phase_3_integral_global_root": 2,
+      "phase_3_r1_lim_coset_residual_mod_z": "0",
+      "phase_3_stage_mismatch_count": 0,
+      "phase_3_r1_lift_obstruction": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Projective tower R^1 lim^1 obstruction and Hensel integral lift codebase benchmark across 5 model families (Theorem 134): Phase 1 separates finite modular stage roots and non-integral limit coset (`stage_roots = [1, 1, 5], const_b = 1, stage_mismatch_count = 3, r1_lift_obstruction = 1, r1_lim_coset_residual_mod_z = '2/3', surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates aligned finite stage roots under a non-integral coset (`stage_roots = [0, 2, 2], const_b = 2, stage_mismatch_count = 0, r1_lift_obstruction = 1, r1_lim_coset_residual_mod_z = '1/3', surcharge = 4, payout = 869 != 873, Delta_E = -1`); Phase 3 verifies Hensel-compatible global integer lift (`stage_roots = [0, 2, 2], const_b = -6, integral_global_root = 2, r1_lim_coset_residual_mod_z = '0', stage_mismatch_count = 0, r1_lift_obstruction = 0, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "d8e7c16a7214dc29a26c763378036d7c0cb4fcc4380ae83c9410569926c9e510"
+}

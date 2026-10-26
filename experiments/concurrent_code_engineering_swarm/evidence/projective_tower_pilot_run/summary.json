@@ -1,0 +1,2269 @@
+{
+  "schema": "lggr.projective_tower_code_engineering_swarm.v1",
+  "topology": "projective_tower",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 13100,
+      "kind": "repairable_projective_tower_r1_lim_obstruction_and_integral_lift_alignment",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_stage_roots": [
+            1,
+            1,
+            5
+          ],
+          "final_const_b": 1,
+          "final_stage_mismatch_count": 3,
+          "final_r1_lift_obstruction": 1,
+          "final_integral_global_root": null,
+          "final_r1_lim_coset_residual_mod_z": "2/3",
+          "final_tower_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+          "final_receipt_sha256": "1416fb17651490859a2f11abd390cba322b67fbdbba920ab02466146e23cfbe6",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13100-arm-A",
+            "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13100-arm-A:A-wave-2",
+              "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "coeff_a": 3,
+              "const_b": 1,
+              "stage_count": 3,
+              "rational_completion_root": "-1/3",
+              "integral_global_root": null,
+              "r1_lim_coset_residual_mod_z": "2/3",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 0,
+              "evaluator_defect": -1,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 5,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 4,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "4e68b8972968d0056dc554e0b4b34b9727128dcf5805169795c73d995b486a0b"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "2396f512d61f41a30dd425b1619cc50fc298de14c66efef31536b82463795073",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "afbb35b1a1a33dd29f005b7d0eb9e8bc691a45dfc56d5a1f98a3475c69da1d49"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "1416fb17651490859a2f11abd390cba322b67fbdbba920ab02466146e23cfbe6"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0138809203"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_stage_roots": [
+            0,
+            2,
+            2
+          ],
+          "final_const_b": 2,
+          "final_stage_mismatch_count": 0,
+          "final_r1_lift_obstruction": 1,
+          "final_integral_global_root": null,
+          "final_r1_lim_coset_residual_mod_z": "1/3",
+          "final_tower_surcharge_cents": 4,
+          "final_merchant_payout_cents": 869,
+          "final_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+          "final_receipt_sha256": "6ebcc038344c5160c0577ecb702944d80d09e001d00e6880ff8f097ef4532268",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13100-arm-B",
+            "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13100-arm-B:B-wave-2",
+              "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "coeff_a": 3,
+              "const_b": 2,
+              "stage_count": 3,
+              "rational_completion_root": "-2/3",
+              "integral_global_root": null,
+              "r1_lim_coset_residual_mod_z": "1/3",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 0,
+              "evaluator_defect": -1,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 0,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 2,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "efeccea7b16c3d3cc6c344a244f10d2f1f8299e9baa78c4ff03b1afdcc61a754"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "e2146adeb326106243f627fb50a360bee415f0267ec3db388bee71e2f0e9763f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "c53251e79709e69a2543cdf6edd83d7f7c0bd181c9eea3777174cc846084894e"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  0,
+                  2,
+                  2
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 2,
+                "rational_completion_root": "-2/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "1/3",
+                "stage_mismatch_count": 0,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  0,
+                  2,
+                  2
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 2,
+                "rational_completion_root": "-2/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "1/3",
+                "stage_mismatch_count": 0,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "6ebcc038344c5160c0577ecb702944d80d09e001d00e6880ff8f097ef4532268"
+          },
+          "escalations": {},
+          "api_attempts": 15,
+          "cost_usd": "0.0120689403"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_stage_roots": [
+            0,
+            2,
+            2
+          ],
+          "final_const_b": -6,
+          "final_stage_mismatch_count": 0,
+          "final_r1_lift_obstruction": 0,
+          "final_integral_global_root": 2,
+          "final_r1_lim_coset_residual_mod_z": "0",
+          "final_tower_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+          "final_receipt_sha256": "816b7646f4dec60ce36afe94c7df99eac5f50a5e3fbad40a1c598546bb62f7a6",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13100-arm-C",
+            "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13100-arm-C:C-wave-1",
+              "status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "coeff_a": 3,
+              "const_b": -6,
+              "stage_count": 3,
+              "rational_completion_root": "2",
+              "integral_global_root": 2,
+              "r1_lim_coset_residual_mod_z": "0",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 1,
+              "evaluator_defect": 0,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 0,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 2,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "a6e95dff6e6b6f615ddea97294132f8ccc7c34e81651e0e9985ffb4688e96d37"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "const_b": 1,
+                    "r1_lift_obstruction": 1,
+                    "stage_mismatch_count": 3,
+                    "stage_roots": [
+                      1,
+                      1,
+                      5
+                    ],
+                    "tower_surcharge_cents": 10
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "const_b": -6,
+                    "r1_lift_obstruction": 0,
+                    "stage_mismatch_count": 0,
+                    "stage_roots": [
+                      0,
+                      2,
+                      2
+                    ],
+                    "tower_surcharge_cents": 0
+                  }
+                }
+              },
+              "input_sha256": "00f42a17d28810735ee4ebd47372224f93a853f66e736ce7c5e69f7f0013fbf1",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "776a69af99a3668567a996ae31c738f96bb187eaa88e84019de7ddc327cd2e7e"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  0,
+                  2,
+                  2
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": -6,
+                "rational_completion_root": "2",
+                "integral_global_root": 2,
+                "r1_lim_coset_residual_mod_z": "0",
+                "stage_mismatch_count": 0,
+                "r1_lift_obstruction": 0,
+                "tower_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "816b7646f4dec60ce36afe94c7df99eac5f50a5e3fbad40a1c598546bb62f7a6"
+          },
+          "escalations": {},
+          "api_attempts": 7,
+          "cost_usd": "0.0064572926"
+        }
+      ]
+    },
+    {
+      "seed": 13101,
+      "kind": "infeasible_hardware_locked_non_integral_p_adic_constant_b_not_divisible_by_three",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_stage_roots": [
+            1,
+            1,
+            5
+          ],
+          "final_const_b": 1,
+          "final_stage_mismatch_count": 3,
+          "final_r1_lift_obstruction": 1,
+          "final_integral_global_root": null,
+          "final_r1_lim_coset_residual_mod_z": "2/3",
+          "final_tower_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "335b3223ff498d354017b6dec91720dc0cfff139c73fdca6012a8ef2b1f54788",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13101-arm-A",
+            "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13101-arm-A:A-wave-1",
+              "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "coeff_a": 3,
+              "const_b": 1,
+              "stage_count": 3,
+              "rational_completion_root": "-1/3",
+              "integral_global_root": null,
+              "r1_lim_coset_residual_mod_z": "2/3",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 0,
+              "evaluator_defect": -1,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 5,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 4,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "34ef2bf53c33279766f6bc45ce4c7c0503b8e0050f4547de8886c37e230efd29"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "0e56c0181b2bf25399a1f3b4b3e50eb8480d99dd2fdf8cf2b45a887dd486a883",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "219ab870046ba2d1fb2d8a5c3bfbf2a8393b4fc6f8dc8370da7a1fad3dc3dd10"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "335b3223ff498d354017b6dec91720dc0cfff139c73fdca6012a8ef2b1f54788"
+          },
+          "escalations": {
+            "worker-0": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0. Escalate to human architecture review.",
+            "worker-1": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0`. Escalate to human architecture review.",
+            "worker-2": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0`. Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0072047908"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_stage_roots": [
+            1,
+            1,
+            5
+          ],
+          "final_const_b": 1,
+          "final_stage_mismatch_count": 3,
+          "final_r1_lift_obstruction": 1,
+          "final_integral_global_root": null,
+          "final_r1_lim_coset_residual_mod_z": "2/3",
+          "final_tower_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "b35feea45aad05d2de96927a273d417813bfb30d3f972179dd91f86283cb4780",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13101-arm-B",
+            "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13101-arm-B:B-wave-1",
+              "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "coeff_a": 3,
+              "const_b": 1,
+              "stage_count": 3,
+              "rational_completion_root": "-1/3",
+              "integral_global_root": null,
+              "r1_lim_coset_residual_mod_z": "2/3",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 0,
+              "evaluator_defect": -1,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 5,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 4,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "dea9e174185f776a1910e69274181b971367018025d5fb1d5c68f23842c5f64b"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1190f55a24a49a70511e72d2f3310231d3c9dff05a4c19b062ec458382bc86be",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "04a2fbf6b483dc2dd5ea93e35ec92a576801316a235f62dae26e746650c957be"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "b35feea45aad05d2de96927a273d417813bfb30d3f972179dd91f86283cb4780"
+          },
+          "escalations": {
+            "worker-0": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0.",
+            "worker-1": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0`. Escalate to human architecture review.",
+            "worker-2": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0`. Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0070555339"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_stage_roots": [
+            1,
+            1,
+            5
+          ],
+          "final_const_b": 1,
+          "final_stage_mismatch_count": 3,
+          "final_r1_lift_obstruction": 1,
+          "final_integral_global_root": null,
+          "final_r1_lim_coset_residual_mod_z": "2/3",
+          "final_tower_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "e0d1e96c9d1dfa1a74d7afa384cd8a07a42473a039ef57377be8d35d33ba798e",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13101-arm-C",
+            "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13101-arm-C:C-wave-1",
+              "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "coeff_a": 3,
+              "const_b": 1,
+              "stage_count": 3,
+              "rational_completion_root": "-1/3",
+              "integral_global_root": null,
+              "r1_lim_coset_residual_mod_z": "2/3",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 0,
+              "evaluator_defect": -1,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 5,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 4,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "f549fe604641f347d3b9b98ed3edb7a2bc00c4052691a292c789039b00b0897a"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "acd16e4448e62f9f594781060e77e9b3e3a1fcf9280a1a2eea46eeec1ce757c3",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "84019287ec20e4b1e6fbb1595d2a1911ed52d711eb8d9be2c49f9c91abb8b9fd"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "e0d1e96c9d1dfa1a74d7afa384cd8a07a42473a039ef57377be8d35d33ba798e"
+          },
+          "escalations": {
+            "worker-0": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0.",
+            "worker-2": "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has 2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, `r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires `stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, `r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0`. Escalate to human architecture review.",
+            "worker-1": "Legacy modular congruence ROM lock prevents patch submission. Current `const_b = 1` violates LGGR projective tower merge gate requirements (`const_b == -6` required). Module is locked in read-only ROM; human architecture review required to unlock and apply integral lift correction: `const_b: 1 \u2192 -6`, `stage_roots: [1, 1, 5] \u2192 [0, 2, 2]`, resolving 2-adic obstruction (`r1_lift_obstruction = 1 \u2192 0`)."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0098354937"
+        }
+      ]
+    },
+    {
+      "seed": 13102,
+      "kind": "repairable_projective_tower_r1_lim_obstruction_and_integral_lift_alignment",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_stage_roots": [
+            1,
+            1,
+            5
+          ],
+          "final_const_b": 1,
+          "final_stage_mismatch_count": 3,
+          "final_r1_lift_obstruction": 1,
+          "final_integral_global_root": null,
+          "final_r1_lim_coset_residual_mod_z": "2/3",
+          "final_tower_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+          "final_receipt_sha256": "cd2c7c64680196b551b9bc4e0df40d14cd87dfd31497e51c780b75567a55a67e",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13102-arm-A",
+            "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13102-arm-A:A-wave-2",
+              "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "coeff_a": 3,
+              "const_b": 1,
+              "stage_count": 3,
+              "rational_completion_root": "-1/3",
+              "integral_global_root": null,
+              "r1_lim_coset_residual_mod_z": "2/3",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 0,
+              "evaluator_defect": -1,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 1,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 5,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 4,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "050e1511b592a7d6ef829329d9f85a1f6842ef004920496791d17130796b0e9b"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "2396f512d61f41a30dd425b1619cc50fc298de14c66efef31536b82463795073",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "afbb35b1a1a33dd29f005b7d0eb9e8bc691a45dfc56d5a1f98a3475c69da1d49"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "cd2c7c64680196b551b9bc4e0df40d14cd87dfd31497e51c780b75567a55a67e"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0139016620"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_stage_roots": [
+            0,
+            2,
+            2
+          ],
+          "final_const_b": 2,
+          "final_stage_mismatch_count": 0,
+          "final_r1_lift_obstruction": 1,
+          "final_integral_global_root": null,
+          "final_r1_lim_coset_residual_mod_z": "1/3",
+          "final_tower_surcharge_cents": 4,
+          "final_merchant_payout_cents": 869,
+          "final_status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+          "final_receipt_sha256": "2c6ba2026defdf35b3248b2c8d07b8c279d567e99f21f62f4bda8d05a184428e",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13102-arm-B",
+            "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13102-arm-B:B-wave-2",
+              "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_NGD_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "coeff_a": 3,
+              "const_b": 2,
+              "stage_count": 3,
+              "rational_completion_root": "-2/3",
+              "integral_global_root": null,
+              "r1_lim_coset_residual_mod_z": "1/3",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 0,
+              "evaluator_defect": -1,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 0,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 2,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "8ed8e285704425e2913a4d1d851ab1a9053069a15ae5c7f954deb648713f3cb4"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "e2146adeb326106243f627fb50a360bee415f0267ec3db388bee71e2f0e9763f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "c53251e79709e69a2543cdf6edd83d7f7c0bd181c9eea3777174cc846084894e"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  0,
+                  2,
+                  2
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 2,
+                "rational_completion_root": "-2/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "1/3",
+                "stage_mismatch_count": 0,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  0,
+                  2,
+                  2
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 2,
+                "rational_completion_root": "-2/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "1/3",
+                "stage_mismatch_count": 0,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "2c6ba2026defdf35b3248b2c8d07b8c279d567e99f21f62f4bda8d05a184428e"
+          },
+          "escalations": {},
+          "api_attempts": 15,
+          "cost_usd": "0.0120258228"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_stage_roots": [
+            0,
+            2,
+            2
+          ],
+          "final_const_b": -6,
+          "final_stage_mismatch_count": 0,
+          "final_r1_lift_obstruction": 0,
+          "final_integral_global_root": 2,
+          "final_r1_lim_coset_residual_mod_z": "0",
+          "final_tower_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+          "final_receipt_sha256": "df9497f8305198acc59bd560c52368ac159abb5fe6439d3807e62b01fea621e7",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": "projective-tower-seed-13102-arm-C",
+            "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "projective_tower_receipt": {
+              "schema": "lggr.online_projective_tower.v1",
+              "authority_effect": "None",
+              "scope_id": "projective-tower-seed-13102-arm-C:C-wave-1",
+              "status": "INTEGRAL_GLOBAL_LIFT_COHERENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "coeff_a": 3,
+              "const_b": -6,
+              "stage_count": 3,
+              "rational_completion_root": "2",
+              "integral_global_root": 2,
+              "r1_lim_coset_residual_mod_z": "0",
+              "local_product_aggregator": 1,
+              "global_integral_lift_evaluator": 1,
+              "evaluator_defect": 0,
+              "stages": [
+                {
+                  "stage_index": 0,
+                  "stage_id": "stage_mod_2",
+                  "modulus": 2,
+                  "candidate_x": 0,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 1,
+                  "stage_id": "stage_mod_4",
+                  "modulus": 4,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 2,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                },
+                {
+                  "stage_index": 2,
+                  "stage_id": "stage_mod_8",
+                  "modulus": 8,
+                  "candidate_x": 2,
+                  "modular_residual": 0,
+                  "local_modular_pass": 1,
+                  "step_lift_difference": 0,
+                  "inverse_limit_projection_compatible": 1,
+                  "local_stage_evaluator": 1
+                }
+              ],
+              "receipt_sha256": "77820b591f94a0f6aa21baafa2dad160d5544bc09fbcd5cff17da7445698f74f"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "const_b": 1,
+                    "r1_lift_obstruction": 1,
+                    "stage_mismatch_count": 3,
+                    "stage_roots": [
+                      1,
+                      1,
+                      5
+                    ],
+                    "tower_surcharge_cents": 10
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "finite_stages_compatible": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "const_b": -6,
+                    "r1_lift_obstruction": 0,
+                    "stage_mismatch_count": 0,
+                    "stage_roots": [
+                      0,
+                      2,
+                      2
+                    ],
+                    "tower_surcharge_cents": 0
+                  }
+                }
+              },
+              "input_sha256": "00f42a17d28810735ee4ebd47372224f93a853f66e736ce7c5e69f7f0013fbf1",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "776a69af99a3668567a996ae31c738f96bb187eaa88e84019de7ddc327cd2e7e"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  1,
+                  1,
+                  5
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": 1,
+                "rational_completion_root": "-1/3",
+                "integral_global_root": null,
+                "r1_lim_coset_residual_mod_z": "2/3",
+                "stage_mismatch_count": 3,
+                "r1_lift_obstruction": 1,
+                "tower_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "stage_roots": [
+                  0,
+                  2,
+                  2
+                ],
+                "moduli": [
+                  2,
+                  4,
+                  8
+                ],
+                "coeff_a": 3,
+                "const_b": -6,
+                "rational_completion_root": "2",
+                "integral_global_root": 2,
+                "r1_lim_coset_residual_mod_z": "0",
+                "stage_mismatch_count": 0,
+                "r1_lift_obstruction": 0,
+                "tower_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+                    "target_stage_roots": [
+                      0,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_tower",
+                    "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+                    "target_const_b": -6
+                  },
+                  "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "df9497f8305198acc59bd560c52368ac159abb5fe6439d3807e62b01fea621e7"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0057907428"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 100,
+  "charged_or_reserved_usd": "0.0882211992",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 32,
+  "scope": "Concurrent 3-agent projective tower R^1 lim^1 obstruction & integral lift Python code-engineering swarm (`pricing_tower` -> `tax_tower` -> `settlement_tower`) comparing finite stage congruences stage_roots = [1, 1, 5] under const_b = 1 (A), stage-root alignment stage_roots = [0, 2, 2] under non-integral coset const_b = 2 (B), and integral global lift stage_roots = [0, 2, 2] under const_b = -6 with x = 2 in Z (C) with full cryptographic receipts."
+}

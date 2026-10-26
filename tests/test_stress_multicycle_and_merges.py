@@ -64,6 +64,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseProductOfExpertsMonitor,
+    StreamingCodebaseProjectiveTowerMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
@@ -6941,6 +6942,71 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_pack_source="def quote_pack_pricing(g):\n    return 123\n",
                 tax_pack_source=mon.PHASE_1_TAX_PACK_SOURCE,
                 settlement_pack_source=mon.PHASE_1_SETTLEMENT_PACK_SOURCE,
+            )
+
+    def test_projective_tower_codebase_r1_limit_and_integral_lift_audit(self) -> None:
+        """Verify Theorem 134: projective tower R^1 lim^1 obstruction & Hensel integral lift codebase audit."""
+        mon = StreamingCodebaseProjectiveTowerMonitor(
+            scope_id="unit-codebase-projective-tower-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-projective-tower-eval-01",
+        )
+        self.assertEqual(obs["phase_1_stage_roots"], [1, 1, 5])
+        self.assertEqual(obs["phase_1_const_b"], 1)
+        self.assertEqual(obs["phase_1_rational_completion_root"], "-1/3")
+        self.assertIsNone(obs["phase_1_integral_global_root"])
+        self.assertEqual(obs["phase_1_r1_lim_coset_residual_mod_z"], "2/3")
+        self.assertEqual(obs["phase_1_stage_mismatch_count"], 3)
+        self.assertEqual(obs["phase_1_r1_lift_obstruction"], 1)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_2_stage_roots"], [0, 2, 2])
+        self.assertEqual(obs["phase_2_const_b"], 2)
+        self.assertEqual(obs["phase_2_rational_completion_root"], "-2/3")
+        self.assertIsNone(obs["phase_2_integral_global_root"])
+        self.assertEqual(obs["phase_2_r1_lim_coset_residual_mod_z"], "1/3")
+        self.assertEqual(obs["phase_2_stage_mismatch_count"], 0)
+        self.assertEqual(obs["phase_2_r1_lift_obstruction"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 4)
+        self.assertEqual(obs["phase_2_payout_cents"], 869)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_3_stage_roots"], [0, 2, 2])
+        self.assertEqual(obs["phase_3_const_b"], -6)
+        self.assertEqual(obs["phase_3_rational_completion_root"], "2")
+        self.assertEqual(obs["phase_3_integral_global_root"], 2)
+        self.assertEqual(obs["phase_3_r1_lim_coset_residual_mod_z"], "0")
+        self.assertEqual(obs["phase_3_stage_mismatch_count"], 0)
+        self.assertEqual(obs["phase_3_r1_lift_obstruction"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["projective_tower_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_projective_tower_modules(
+                "bad-return",
+                pricing_tower_source="def quote_tower_pricing(g):\n    return 123\n",
+                tax_tower_source=mon.PHASE_1_TAX_TOWER_SOURCE,
+                settlement_tower_source=mon.PHASE_1_SETTLEMENT_TOWER_SOURCE,
             )
 
 

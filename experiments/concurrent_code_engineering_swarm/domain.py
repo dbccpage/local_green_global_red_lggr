@@ -15,6 +15,7 @@ from lggr.streaming import (
     StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebaseProductOfExpertsMonitor,
+    StreamingCodebaseProjectiveTowerMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSideInfoCapacityMonitor,
@@ -10322,6 +10323,219 @@ class DeadlineBinPackingCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+PROJECTIVE_TOWER_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_tower",
+    "worker-1": "tax_tower",
+    "worker-2": "settlement_tower",
+}
+
+INITIAL_PRICING_TOWER_P1_PY = StreamingCodebaseProjectiveTowerMonitor.PHASE_1_PRICING_TOWER_SOURCE
+INITIAL_PRICING_TOWER_P2_P3_PY = StreamingCodebaseProjectiveTowerMonitor.PHASE_2_PRICING_TOWER_SOURCE
+
+INITIAL_TAX_TOWER_P1_PY = StreamingCodebaseProjectiveTowerMonitor.PHASE_1_TAX_TOWER_SOURCE
+INITIAL_TAX_TOWER_P2_PY = StreamingCodebaseProjectiveTowerMonitor.PHASE_2_TAX_TOWER_SOURCE
+INITIAL_TAX_TOWER_P3_PY = StreamingCodebaseProjectiveTowerMonitor.PHASE_3_TAX_TOWER_SOURCE
+
+INITIAL_SETTLEMENT_TOWER_P1_P2_PY = StreamingCodebaseProjectiveTowerMonitor.PHASE_1_SETTLEMENT_TOWER_SOURCE
+INITIAL_SETTLEMENT_TOWER_P3_PY = StreamingCodebaseProjectiveTowerMonitor.PHASE_3_SETTLEMENT_TOWER_SOURCE
+
+
+def run_projective_tower_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_tower`, `tax_tower`, or `settlement_tower`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_tower":
+            fn = ns.get("quote_tower_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_tower_pricing"}
+            res = fn(990)
+            roots = res.get("stage_roots") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and roots in ([1, 1, 5], [0, 2, 2])
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_tower":
+            fn = ns.get("compute_tower_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_tower_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "stage_roots": [0, 2, 2],
+                }
+            )
+            const_b = res.get("const_b") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and res.get("stage_roots") == [0, 2, 2]
+                and const_b in (1, 2, -6)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_tower":
+            fn = ns.get("settle_tower_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_tower_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "stage_roots": [0, 2, 2],
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "stage_roots": [0, 2, 2],
+                    "const_b": -6,
+                },
+            )
+            surcharge = res.get("tower_surcharge_cents") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and surcharge == 0
+                and res.get("stage_mismatch_count") == 0
+                and res.get("r1_lift_obstruction") == 0
+                and res.get("merchant_payout_cents") == 873
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def projective_tower_fixture(seed: int) -> dict[str, Any]:
+    if seed in (13100, 13102):
+        return {
+            "seed": seed,
+            "kind": "repairable_projective_tower_r1_lim_obstruction_and_integral_lift_alignment",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_tower": INITIAL_PRICING_TOWER_P1_PY,
+                "tax_tower": INITIAL_TAX_TOWER_P1_PY,
+                "settlement_tower": INITIAL_SETTLEMENT_TOWER_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 13101:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_non_integral_p_adic_constant_b_not_divisible_by_three",
+            "locked_workers": ["worker-1"],
+            "infeasible_constraint": (
+                "Legacy modular congruence ROM lock: `tax_tower.py` is locked in read-only ROM "
+                "with non-divisible constant `const_b = 1` (`1 % 3 != 0`), so `3 x + 1 = 0` has "
+                "2-adic limit `x_inf = -1/3 not in Z` (`r1_lim_coset_residual_mod_z = '2/3'`, "
+                "`r1_lift_obstruction = 1`), while the LGGR projective tower merge gate requires "
+                "`stage_roots == [0, 2, 2]`, `const_b == -6`, `integral_global_root == 2`, "
+                "`r1_lim_coset_residual_mod_z == '0'`, and `tower_surcharge_cents == 0`. "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_tower": INITIAL_PRICING_TOWER_P1_PY,
+                "tax_tower": INITIAL_TAX_TOWER_P1_PY,
+                "settlement_tower": INITIAL_SETTLEMENT_TOWER_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported projective_tower seed {seed}")
+
+
+class ProjectiveTowerCodeWorkspace:
+    """Workspace for the 3-agent projective tower R^1 lim^1 obstruction & integral lift swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in PROJECTIVE_TOWER_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = PROJECTIVE_TOWER_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_projective_tower_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_tower.py": "def quote_tower_pricing(gross_cents: int = 990) -> dict",
+                    "tax_tower.py": "def compute_tower_tax(pricing_out: dict) -> dict",
+                    "settlement_tower.py": "def settle_tower_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_projective_tower_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_projective_tower_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; projective tower R^1 lim^1 obstruction and integral global lift are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
 
 
