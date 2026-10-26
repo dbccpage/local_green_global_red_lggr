@@ -44,6 +44,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
+    StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
@@ -5574,6 +5575,56 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_BOUNDARY_PRODUCT_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_lease_overlap_codebase_split_brain_and_fencing_token_audit(self) -> None:
+        """Verify Theorem 108: Concurrent resource lease overlap and split-brain fencing-token synthesis."""
+        mon = StreamingCodebaseLeaseOverlapMonitor(
+            scope_id="unit-codebase-lease-overlap-scope",
+        )
+        obs = mon.record_three_phase_codebase_lease_audit(
+            "codebase-lease-eval-01",
+        )
+        self.assertEqual(obs["phase_1_lease_windows"], [[0, 1], [0, 3], [0, 3]])
+        self.assertEqual(obs["phase_1_fencing_tokens"], [1, 1, 1])
+        self.assertEqual(obs["phase_1_peak_concurrent_drift"], 11)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "LEASE_OVERLAP_SPLIT_BRAIN_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_ANCHOR_PRICING_LEASE_WINDOW",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "SERIALIZE_TAX_LEASE_WINDOW_AND_TOKEN",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "SERIALIZE_SETTLEMENT_LEASE_AND_FENCING_TOKEN",
+        )
+
+        self.assertEqual(obs["phase_2_lease_windows"], [[0, 1], [1, 2], [1, 4]])
+        self.assertEqual(obs["phase_2_fencing_tokens"], [1, 2, 2])
+        self.assertEqual(obs["phase_2_peak_concurrent_drift"], 7)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "LEASE_PARTIAL_FENCING_COLLISION_LGGR")
+
+        self.assertEqual(obs["phase_3_lease_windows"], [[0, 1], [1, 2], [2, 3]])
+        self.assertEqual(obs["phase_3_fencing_tokens"], [1, 2, 3])
+        self.assertEqual(obs["phase_3_peak_concurrent_drift"], 4)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_LEASE_FENCING_SERIALIZED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_LEASE_FENCING_SERIALIZED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

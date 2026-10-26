@@ -32,6 +32,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
+    StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
@@ -50,6 +51,7 @@ from .domain import (
     DIAMOND_WORKTREE_BRANCHES,
     JACOBIAN_WORKER_MODULES,
     KINDUCTION_WORKER_MODULES,
+    LEASE_WORKER_MODULES,
     MV_WORKER_MODULES,
     QUORUM_WORKER_MODULES,
     REGGE_WORKER_MODULES,
@@ -65,6 +67,7 @@ from .domain import (
     DiamondCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
+    LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
@@ -79,6 +82,7 @@ from .domain import (
     fixture,
     jacobian_fixture,
     kinduction_fixture,
+    lease_fixture,
     mv_fixture,
     quorum_fixture,
     regge_fixture,
@@ -3127,6 +3131,214 @@ def quorum_campaign(
     return summary
 
 
+def lease_system_prompt(worker: str, arm: str) -> str:
+    module_name = LEASE_WORKER_MODULES[worker]
+    return (
+        f"You are concurrent software engineering agent {worker}, owner of `{module_name}.py` "
+        f"(Arm {arm}) in a 3-module lease-holding ledger pipeline (`pricing_lease.py` -> "
+        "`tax_lease.py` -> `settlement_lease.py`) audited under `StreamingConcurrentLeaseOverlapMonitor` "
+        "for non-overlapping lease windows and monotonic fencing tokens.\n"
+        "Always start by calling `inspect_workspace` with `{}`. Then call `submit_module_patch` with "
+        "valid Python source code for your owned module, or call `escalate` if `infeasible_constraint` "
+        "is non-null and locks overlapping lease windows. Output ONLY tool calls with zero prose."
+    )
+
+
+def lease_merge_gate(
+    events: Events,
+    workspace: LeaseOverlapCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseLeaseOverlapMonitor(
+        scope_id=f"swarm-lease-{workspace.state['seed']}-{arm}-{step_tag}"
+    )
+    local_results = workspace.local_verdicts()
+    eval_rec = monitor.evaluate_codebase_lease(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    events.emit(
+        "gate",
+        {
+            "seed": workspace.state["seed"],
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "lease_windows": eval_rec["lease_windows"],
+            "fencing_tokens": eval_rec["fencing_tokens"],
+            "fencing_monotonic": eval_rec["fencing_monotonic"],
+            "windows_disjoint_serialized": eval_rec["windows_disjoint_serialized"],
+            "max_concurrent_leases": eval_rec["max_concurrent_leases"],
+            "peak_concurrent_drift": eval_rec["peak_concurrent_drift"],
+            "split_brain_reserve_cents": eval_rec["split_brain_reserve_cents"],
+            "status": eval_rec["status"],
+            "receipt_sha256": eval_rec["receipt_sha256"],
+        },
+    )
+    return eval_rec, eval_rec["compact_role_directives"]
+
+
+def lease_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(LEASE_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = lease_fixture(seed)
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = LeaseOverlapCodeWorkspace(base_state)
+            start_calls = client.calls
+            start_cost = client.spent
+            eval_rec, directives = lease_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+
+            histories: dict[str, list[dict[str, Any]]] = {
+                w: [{"role": "system", "content": lease_system_prompt(w, arm)}]
+                for w in workers
+            }
+
+            waves_run = 0
+            for wave_idx in (1, 2):
+                if eval_rec["global_green"] == 1 or len(ws.state["escalations"]) > 0:
+                    break
+                waves_run = wave_idx
+                per_worker_fb: dict[str, str] = {}
+                for w in workers:
+                    mname = LEASE_WORKER_MODULES[w]
+                    if ws.state["infeasible_constraint"] is not None:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "infeasible_constraint": ws.state["infeasible_constraint"],
+                                "instruction": "Call `inspect_workspace` then `escalate` with a clear explanation.",
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "A":
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "A",
+                                "owned_module": mname,
+                                "local_unit_test_passed": True,
+                                "individual_lease_duration_within_bound": True,
+                                "instruction": (
+                                    "Your isolated unit tests and per-module lease duration check "
+                                    "`e_i - s_i <= 3` passed. Call `inspect_workspace` and submit "
+                                    "your current source code unchanged."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "B":
+                        if w in ("worker-0", "worker-2"):
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        f"Call `inspect_workspace` and keep `{mname}.py` unchanged by "
+                                        "submitting its existing source code."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                        else:
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        "Update `tax_lease.py` via `submit_module_patch` so "
+                                        "`'tax_lease_window': [1, 2]` and `'tax_fencing_token': 2` "
+                                        "(while keeping `tax_cents = 180` and `gross_cents = 1080`)."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                    else:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "C",
+                                "owned_module": mname,
+                                "lggr_lease_role_directive": directives[w],
+                                "instruction": (
+                                    "Follow `lggr_lease_role_directive` for your module and call "
+                                    "`submit_module_patch` with the updated Python implementation."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+
+                round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, directives = lease_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+                if arm in ("A", "B"):
+                    break
+
+            escalations = len(ws.state["escalations"])
+            if ws.state["infeasible_constraint"] is not None and escalations > 0:
+                outcome = "safe_escalated"
+            elif eval_rec["global_green"] == 1:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_lease_windows": eval_rec["lease_windows"],
+                "final_fencing_tokens": eval_rec["fencing_tokens"],
+                "final_max_concurrent_leases": eval_rec["max_concurrent_leases"],
+                "final_peak_concurrent_drift": eval_rec["peak_concurrent_drift"],
+                "final_split_brain_reserve_cents": eval_rec["split_brain_reserve_cents"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.lease_overlap_code_engineering_swarm.v1",
+        "topology": "lease",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent lease-overlap Python code-engineering swarm (`pricing_lease` -> "
+            "`tax_lease` -> `settlement_lease`) comparing isolated lease-duration gating (A), "
+            "partial tax lease serialization under concurrent settlement overlap (B), and explicit LGGR "
+            "fencing-token & disjoint lease serialization directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -3163,6 +3375,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = jacobian_campaign(client, events, config)
         elif config.get("topology") == "quorum":
             summary = quorum_campaign(client, events, config)
+        elif config.get("topology") == "lease":
+            summary = lease_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -3201,6 +3415,7 @@ def main() -> None:
             "kinduction",
             "jacobian",
             "quorum",
+            "lease",
         ],
         default="linear",
     )
@@ -3252,6 +3467,8 @@ def main() -> None:
         seeds = [10300, 10301, 10302]
     elif args.topology == "quorum":
         seeds = [10400, 10401, 10402]
+    elif args.topology == "lease":
+        seeds = [10500, 10501, 10502]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -3398,6 +3615,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = quorum_campaign(client, events, config)
+    elif args.topology == "lease":
+        config = {
+            "topology": "lease",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = lease_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
