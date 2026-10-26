@@ -64,6 +64,7 @@ from lggr.streaming import (
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
+    StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
@@ -115,6 +116,7 @@ from lggr.streaming import (
     StreamingSixRoleOverlayMonitor,
     StreamingStageVsE2EIntegrationMonitor,
     StreamingStatefulCodebaseDFAMonitor,
+    StreamingSubgradientSensitivityMonitor,
     StreamingThreePartyConstantBoundMonitor,
     StreamingThresholdGovernanceMonitor,
     StreamingToolAssistedFiberSplittingMonitor,
@@ -6428,6 +6430,85 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_braid_source="def quote_braid_pricing(g):\n    return 123\n",
                 tax_braid_source=mon.PHASE_1_TAX_BRAID_SOURCE,
                 settlement_braid_source=mon.PHASE_1_SETTLEMENT_BRAID_SOURCE,
+            )
+
+    def test_subgradient_pivot_codebase_weight_sensitivity_and_bottleneck_audit(self) -> None:
+        """Verify Theorem 126: Subgradient weight sensitivity & bottleneck pivot threshold codebase audit."""
+        sub_mon = StreamingSubgradientSensitivityMonitor(
+            scope_id="unit-subgradient-sensitivity-scope"
+        )
+        p1_sub = sub_mon.record_subgradient_pivot(
+            "p1",
+            repair_vector=[4, 0, 0],
+            edge_weights=[5, 4, 2],
+            initial_edge_weights=[1, 4, 2],
+            cycle_discrepancy=4,
+        )
+        self.assertEqual(p1_sub["pre_pivot_bottleneck_edge"], 0)
+        self.assertEqual(p1_sub["post_pivot_bottleneck_edge"], 2)
+        self.assertEqual(p1_sub["critical_pivot_threshold_e0"], 2)
+        self.assertEqual(p1_sub["optimal_weighted_l1_cost"], 8)
+        self.assertEqual(p1_sub["weighted_l1_cost"], 20)
+        self.assertEqual(p1_sub["excess_subgradient_cost"], 12)
+        self.assertEqual(p1_sub["remaining_holonomy"], 0)
+        self.assertEqual(p1_sub["pivot_surcharge_cents"], 12)
+        self.assertEqual(p1_sub["status"], "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR")
+
+        mon = StreamingCodebaseSubgradientPivotMonitor(
+            scope_id="unit-codebase-subgradient-pivot-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-subgradient-pivot-eval-01",
+        )
+        self.assertEqual(obs["phase_1_repair_vector"], [4, 0, 0])
+        self.assertEqual(obs["phase_1_weighted_l1_cost"], 20)
+        self.assertEqual(obs["phase_1_excess_subgradient_cost"], 12)
+        self.assertEqual(obs["phase_1_remaining_holonomy"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 12)
+        self.assertEqual(obs["phase_1_payout_cents"], 861)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR")
+
+        self.assertEqual(obs["phase_2_repair_vector"], [0, 4, 0])
+        self.assertEqual(obs["phase_2_weighted_l1_cost"], 16)
+        self.assertEqual(obs["phase_2_excess_subgradient_cost"], 8)
+        self.assertEqual(obs["phase_2_remaining_holonomy"], 0)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 8)
+        self.assertEqual(obs["phase_2_payout_cents"], 865)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR")
+
+        self.assertEqual(obs["phase_3_repair_vector"], [0, 0, 4])
+        self.assertEqual(obs["phase_3_weighted_l1_cost"], 8)
+        self.assertEqual(obs["phase_3_excess_subgradient_cost"], 0)
+        self.assertEqual(obs["phase_3_remaining_holonomy"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+        with self.assertRaises(ValidationError):
+            sub_mon.record_subgradient_pivot("bad-bytes", repair_vector=b"\x00\x00\x04")
+        with self.assertRaises(ValidationError):
+            sub_mon.record_subgradient_pivot("bad-len", repair_vector=[0, 4])
+        with self.assertRaises(ValidationError):
+            mon.evaluate_subgradient_pivot_modules(
+                "bad-return",
+                pricing_pivot_source="def quote_pivot_pricing(g):\n    return 123\n",
+                tax_pivot_source=mon.PHASE_1_TAX_PIVOT_SOURCE,
+                settlement_pivot_source=mon.PHASE_1_SETTLEMENT_PIVOT_SOURCE,
             )
 
 

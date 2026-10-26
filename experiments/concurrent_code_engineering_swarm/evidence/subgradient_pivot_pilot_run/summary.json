@@ -1,0 +1,2991 @@
+{
+  "schema": "lggr.subgradient_pivot_code_engineering_swarm.v1",
+  "topology": "subgradient_pivot",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 12300,
+      "kind": "repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "final_weighted_l1_cost": 20,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 12,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+          "final_receipt_sha256": "bed215238bb6cfde456fae8f78f8ef6bcdccd173f3ac0a17018b6a99b706b6b4",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12300-arm-A",
+            "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12300-arm-A:subgradient",
+              "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 3,
+              "lggr_obstruction_count": 3,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "A-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-2:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "0cabe8ee0863c3f3adcc23a969b60cff5d56b3918d42d1e3fefeebcab8d02bbc"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "9e711f0d9826eff66837515ac2f072a0e65a02473cbc48790c0992247ef516ee",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "b4f0fdff16b721ee78bd199362232221ee0f38693af2c5d79c45666179438de3"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "bed215238bb6cfde456fae8f78f8ef6bcdccd173f3ac0a17018b6a99b706b6b4"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0174140431"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_repair_vector": [
+            0,
+            4,
+            0
+          ],
+          "final_weighted_l1_cost": 16,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 8,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 8,
+          "final_merchant_payout_cents": 865,
+          "final_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+          "final_receipt_sha256": "24826a31ebed036b305abc22c5cff902fc61c2988f7c647a9da0e9f13892d170",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12300-arm-B",
+            "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12300-arm-B:subgradient",
+              "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 3,
+              "lggr_obstruction_count": 3,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "B-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    0,
+                    4,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 16,
+                  "excess_subgradient_cost": 8,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 8,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-2:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    0,
+                    4,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 16,
+                  "excess_subgradient_cost": 8,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 8,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "7c023af0611f197e9f8fab151a50171b57d50eefa5d8ea04023d6c009987f44f"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "67adf34a95432384bcdeb98f3e9c11cd53eb3f3afe263c02eb72eaa2056357f5",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "72d27ae8088174d7153889d83a2f8060537837a75e020748a0b53637d7bb5184"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  0,
+                  4,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 16,
+                "excess_subgradient_cost": 8,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  0,
+                  4,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 16,
+                "excess_subgradient_cost": 8,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "24826a31ebed036b305abc22c5cff902fc61c2988f7c647a9da0e9f13892d170"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0146086683"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_repair_vector": [
+            0,
+            0,
+            4
+          ],
+          "final_weighted_l1_cost": 8,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 0,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+          "final_receipt_sha256": "8f48701977a0f7cfacd147aacbf035a444a262e9dd833303e9fb14da7bcfecf3",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12300-arm-C",
+            "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12300-arm-C:subgradient",
+              "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 1,
+              "lggg_coherent_count": 1,
+              "evaluations": [
+                {
+                  "evaluation_id": "C-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "C-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    0,
+                    0,
+                    4
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 8,
+                  "excess_subgradient_cost": 0,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": true,
+                  "pivot_surcharge_cents": 0,
+                  "local_green": 1,
+                  "global_green": 1,
+                  "defect": 0,
+                  "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+                  "contract_status": "COMPOSABLE_LGGG"
+                }
+              ],
+              "receipt_sha256": "cbd7401911df9646a668b0039be1836726be781e7abe5b86b9be474ebc736e79"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "excess_subgradient_cost": 12,
+                    "pivot_surcharge_cents": 12,
+                    "repair_vector": [
+                      4,
+                      0,
+                      0
+                    ],
+                    "weighted_l1_cost": 20
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "excess_subgradient_cost": 0,
+                    "pivot_surcharge_cents": 0,
+                    "repair_vector": [
+                      0,
+                      0,
+                      4
+                    ],
+                    "weighted_l1_cost": 8
+                  }
+                }
+              },
+              "input_sha256": "f63b14e82f937db4862107a98268af22b5445d1e8f1ef5a872fdc5bef345eaef",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "017a88505c15a3386baed916b20ec0ba40f6d396f273a27099a87719334e874d"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  0,
+                  0,
+                  4
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 8,
+                "excess_subgradient_cost": 0,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "8f48701977a0f7cfacd147aacbf035a444a262e9dd833303e9fb14da7bcfecf3"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0077319881"
+        }
+      ]
+    },
+    {
+      "seed": 12301,
+      "kind": "infeasible_hardware_locked_stale_pre_pivot_repair_edge",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "final_weighted_l1_cost": 20,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 12,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "aac60f793fa4a1c58aa089fa1e1525ea7e7ae7ca22aa1555db9aeb3ccfafb457",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12301-arm-A",
+            "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12301-arm-A:subgradient",
+              "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 2,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "A-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "4c3cc5d8d34436ae2d89692605facf97b3f61656077eafd87dcc10eb8cb06d4b"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 0,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1377915b26973c635d418eb5e124fc9d98b80f506158d82e994ea0582b04dcf3",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "b7fd18e02526d0ead81cb1f575b7724806b641a25f870d9f03ab8f480c3dfdbe"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "aac60f793fa4a1c58aa089fa1e1525ea7e7ae7ca22aa1555db9aeb3ccfafb457"
+          },
+          "escalations": {
+            "worker-0": "Legacy cycle-chord ROM lock: `pricing_pivot.py` is locked in read-only ROM with `r0_repair = 4` on edge `e_0` (`w_0 = 5 > w_0^crit = 2`, weighted L1 cost `20 > opt_cost = 8`), while the LGGR subgradient pivot merge gate requires `repair_vector = [0, 0, 4]` on bottleneck edge `e_2` (`w_2 = 2 = w_min`, `excess_subgradient_cost == 0`, `pivot_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy cycle-chord ROM lock in `pricing_pivot.py` conflicts with LGGR subgradient pivot merge gate requirements. The repair vector `[0, 0, 4]` on bottleneck edge `e_2` cannot be satisfied due to the locked `r0_repair = 4` on edge `e_0`."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0077016993"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "final_weighted_l1_cost": 20,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 12,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "8a4e3974d3a84c52e78fafd57a889e7573ecff712ff39336fdf2093c16166e0c",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12301-arm-B",
+            "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12301-arm-B:subgradient",
+              "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 2,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "B-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "de0e9ed22943dc5fb11519c89b1517f5c4210cadf40042e4fefe546b4643ad76"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 0,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "4372ad164b9657fd0df877244526d778878dc3668019fa61ea98c8655b8d3e1f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "14e2ce8241de02261b387e8a05bd2d5055057569ba6b8163da76aa833e4c0a9d"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "8a4e3974d3a84c52e78fafd57a889e7573ecff712ff39336fdf2093c16166e0c"
+          },
+          "escalations": {
+            "worker-0": "Legacy cycle-chord ROM lock: `pricing_pivot.py` is locked in read-only ROM with `r0_repair = 4` on edge `e_0` (`w_0 = 5 > w_0^crit = 2`, weighted L1 cost `20 > opt_cost = 8`), while the LGGR subgradient pivot merge gate requires `repair_vector = [0, 0, 4]` on bottleneck edge `e_2` (`w_2 = 2 = w_min`, `excess_subgradient_cost == 0`, `pivot_surcharge_cents == 0`).",
+            "worker-2": "Legacy cycle-chord ROM lock in `pricing_pivot.py` conflicts with the required repair vector on the bottleneck edge `e_2`. The current repair vector `[4, 0, 0]` results in a weighted L1 cost of 20, exceeding the optimal cost of 8. Human intervention is required to resolve this conflict."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0079137822"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "final_weighted_l1_cost": 20,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 12,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "b48182272eb38a948c3fc3c723c179d5ea70be70d1c6f586b38bd14d18b7c3c5",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12301-arm-C",
+            "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12301-arm-C:subgradient",
+              "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 2,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "C-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "C-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "90e92a67e9020ef15e0a25e8dca33bd93cde5d38efa16c92c3f49e754f8f75b7"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 0,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "f06c4cdb1b36bdf14e714fcbb34f02c102360314b69556fb10ee2a3cfcaaeb7e",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "34daa2d06243e20fb27b170e70aad3cc3cc37cb33358f1d32d9c9aa9a3f83784"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "b48182272eb38a948c3fc3c723c179d5ea70be70d1c6f586b38bd14d18b7c3c5"
+          },
+          "escalations": {
+            "worker-0": "Legacy cycle-chord ROM lock: `pricing_pivot.py` is locked in read-only ROM with `r0_repair = 4` on edge `e_0` (`w_0 = 5 > w_0^crit = 2`, weighted L1 cost `20 > opt_cost = 8`), while the LGGR subgradient pivot merge gate requires `repair_vector = [0, 0, 4]` on bottleneck edge `e_2` (`w_2 = 2 = w_min`, `excess_subgradient_cost == 0`, `pivot_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy cycle-chord ROM lock: `pricing_pivot.py` is locked in read-only ROM with `r0_repair = 4` on edge `e_0` (`w_0 = 5 > w_0^crit = 2`, weighted L1 cost `20 > opt_cost = 8`), while the LGGR subgradient pivot merge gate requires `repair_vector = [0, 0, 4]` on bottleneck edge `e_2` (`w_2 = 2 = w_min`, `excess_subgradient_cost == 0`, `pivot_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0082310196"
+        }
+      ]
+    },
+    {
+      "seed": 12302,
+      "kind": "repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "final_weighted_l1_cost": 20,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 12,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+          "final_receipt_sha256": "0bc3c69a7d59a0e6ffb56a73d5391d10cf3d3fdd9964aac546b4b7ce1693ed32",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12302-arm-A",
+            "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12302-arm-A:subgradient",
+              "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 3,
+              "lggr_obstruction_count": 3,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "A-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "A-wave-2:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "7f05e0951463f8bad8bb4f9588a9ddab540f906ad8bd80520d68080b6fcbb52b"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "9e711f0d9826eff66837515ac2f072a0e65a02473cbc48790c0992247ef516ee",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "b4f0fdff16b721ee78bd199362232221ee0f38693af2c5d79c45666179438de3"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "0bc3c69a7d59a0e6ffb56a73d5391d10cf3d3fdd9964aac546b4b7ce1693ed32"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0174137193"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_repair_vector": [
+            0,
+            4,
+            0
+          ],
+          "final_weighted_l1_cost": 16,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 8,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 8,
+          "final_merchant_payout_cents": 865,
+          "final_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+          "final_receipt_sha256": "9b82a907f98ba338b842fe6918feb7f16b3c4b0ac8627ba9619cef73c8c6bd56",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12302-arm-B",
+            "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12302-arm-B:subgradient",
+              "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "evaluation_count": 3,
+              "lggr_obstruction_count": 3,
+              "lggg_coherent_count": 0,
+              "evaluations": [
+                {
+                  "evaluation_id": "B-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    0,
+                    4,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 16,
+                  "excess_subgradient_cost": 8,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 8,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "B-wave-2:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    0,
+                    4,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 16,
+                  "excess_subgradient_cost": 8,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 8,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                }
+              ],
+              "receipt_sha256": "320971ce43b4ac1e4f7120cfeb3533e242bdd39c35a7367543ddd2bfd862793a"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "67adf34a95432384bcdeb98f3e9c11cd53eb3f3afe263c02eb72eaa2056357f5",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "72d27ae8088174d7153889d83a2f8060537837a75e020748a0b53637d7bb5184"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  0,
+                  4,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 16,
+                "excess_subgradient_cost": 8,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  0,
+                  4,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 16,
+                "excess_subgradient_cost": 8,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "9b82a907f98ba338b842fe6918feb7f16b3c4b0ac8627ba9619cef73c8c6bd56"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0145968907"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_repair_vector": [
+            0,
+            0,
+            4
+          ],
+          "final_weighted_l1_cost": 8,
+          "final_optimal_weighted_l1_cost": 8,
+          "final_excess_subgradient_cost": 0,
+          "final_remaining_holonomy": 0,
+          "final_pivot_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+          "final_receipt_sha256": "52da03acbd298bec4b0d813960a704acaf7aaed9622c14047511f657ad752608",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": "subgradient-pivot-seed-12302-arm-C",
+            "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "subgradient_sensitivity_receipt": {
+              "schema": "lggr.online_subgradient_sensitivity.v1",
+              "authority_effect": "None",
+              "scope_id": "subgradient-pivot-seed-12302-arm-C:subgradient",
+              "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "evaluation_count": 2,
+              "lggr_obstruction_count": 1,
+              "lggg_coherent_count": 1,
+              "evaluations": [
+                {
+                  "evaluation_id": "C-wave-0:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    4,
+                    0,
+                    0
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 20,
+                  "excess_subgradient_cost": 12,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": false,
+                  "pivot_surcharge_cents": 12,
+                  "local_green": 1,
+                  "global_green": 0,
+                  "defect": -1,
+                  "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR"
+                },
+                {
+                  "evaluation_id": "C-wave-1:subgradient",
+                  "initial_edge_weights": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "edge_weights": [
+                    5,
+                    4,
+                    2
+                  ],
+                  "cycle_discrepancy": 4,
+                  "repair_vector": [
+                    0,
+                    0,
+                    4
+                  ],
+                  "dual_witness": [
+                    2,
+                    2,
+                    2
+                  ],
+                  "pre_pivot_bottleneck_edge": 0,
+                  "post_pivot_bottleneck_edge": 2,
+                  "critical_pivot_threshold_e0": 2,
+                  "optimal_weighted_l1_cost": 8,
+                  "weighted_l1_cost": 8,
+                  "excess_subgradient_cost": 0,
+                  "remaining_holonomy": 0,
+                  "dual_feasible": true,
+                  "complementary_slackness_ok": true,
+                  "pivot_surcharge_cents": 0,
+                  "local_green": 1,
+                  "global_green": 1,
+                  "defect": 0,
+                  "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+                  "contract_status": "COMPOSABLE_LGGG"
+                }
+              ],
+              "receipt_sha256": "ca5a66d430e809495e8c9b55e3be6ae576f7d031ed1837e52b7ec205492d84cf"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "excess_subgradient_cost": 12,
+                    "pivot_surcharge_cents": 12,
+                    "repair_vector": [
+                      4,
+                      0,
+                      0
+                    ],
+                    "weighted_l1_cost": 20
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "cycle_discrepancy": 4,
+                    "local_green": 1,
+                    "remaining_holonomy": 0
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "excess_subgradient_cost": 0,
+                    "pivot_surcharge_cents": 0,
+                    "repair_vector": [
+                      0,
+                      0,
+                      4
+                    ],
+                    "weighted_l1_cost": 8
+                  }
+                }
+              },
+              "input_sha256": "f63b14e82f937db4862107a98268af22b5445d1e8f1ef5a872fdc5bef345eaef",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "017a88505c15a3386baed916b20ec0ba40f6d396f273a27099a87719334e874d"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  4,
+                  0,
+                  0
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 20,
+                "excess_subgradient_cost": 12,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "initial_edge_weights": [
+                  1,
+                  4,
+                  2
+                ],
+                "edge_weights": [
+                  5,
+                  4,
+                  2
+                ],
+                "cycle_discrepancy": 4,
+                "repair_vector": [
+                  0,
+                  0,
+                  4
+                ],
+                "dual_witness": [
+                  2,
+                  2,
+                  2
+                ],
+                "optimal_weighted_l1_cost": 8,
+                "weighted_l1_cost": 8,
+                "excess_subgradient_cost": 0,
+                "remaining_holonomy": 0,
+                "pivot_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+                    "target_r0_repair": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [
+                      2,
+                      2,
+                      2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "52da03acbd298bec4b0d813960a704acaf7aaed9622c14047511f657ad752608"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0076322993"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 94,
+  "charged_or_reserved_usd": "0.1032441099",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 30,
+  "scope": "Concurrent 3-agent subgradient weight sensitivity & bottleneck pivot threshold Python code-engineering swarm (`pricing_pivot` -> `tax_pivot` -> `settlement_pivot`) comparing stale pre-pivot edge e_0 repair [4, 0, 0] (A), intermediate non-bottleneck edge e_1 pivot [0, 4, 0] (B), and bottleneck dual-witness edge e_2 pivot [0, 0, 4] (C) with full cryptographic receipts."
+}

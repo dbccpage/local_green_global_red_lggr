@@ -5571,4 +5571,69 @@ theorem non_abelian_braid_codebase_word_ordering_and_yang_baxter_audit :
   intro u_yb v_yb hol ⟨hc1, hc2, hc3, hc4⟩
   omega
 
+/-- Theorem 126 (Subgradient Weight Sensitivity & Bottleneck Pivot Threshold Audit
+    in Code-Engineering Swarms):
+    1. Post-perturbation bottleneck L1 duality, subgradient excess cost & surcharge floor law:
+       - On a 3-edge settlement cycle with cycle holonomy discrepancy `d = 4` and post-perturbation
+         edge weights `w = (5, 4, 2)` (after edge `e_0` shifts from `w_0^(0) = 1` to `w_0 = 5` across
+         the critical pivot threshold `w_crit = 2`), any non-negative cycle repair `(r0, r1, r2)`
+         with `r0 + r1 + r2 = 4` has weighted L1 cost `5 * r0 + 4 * r1 + 2 * r2 = 8 + 3 * r0 + 2 * r1 ≥ 8`,
+         certified by dual witness `z* = (2, 2, 2)` (`|z_i*| ≤ w_i`), with excess subgradient cost
+         `excess_cost = 3 * r0 + 2 * r1 ≥ 0`; whenever `excess_cost + 4 * hol_rem ≥ 1`, the audit
+         surcharge `surcharge = excess_cost + 4 * hol_rem ≥ 1` strictly reduces merchant payout below `873`.
+    2. Concrete 3-phase codebase subgradient pivot audit across `pricing_pivot`, `tax_pivot`,
+       and `settlement_pivot` (`w = [5, 4, 2]`, `d = 4`, optimal weighted L1 cost `opt_cost = 8`
+       on bottleneck edge `e_2`):
+       - Phase 1 (Stale pre-pivot repair on edge `e_0`, `r^(1) = [4, 0, 0]` with `w_0 = 5`):
+         `cost_p1 = 20`, `excess_p1 = 20 - 8 = 12`, `hol_rem_p1 = 0`,
+         `surcharge_p1 = 12`, `payout_p1 = 873 - 12 = 861 ≠ 873`
+         (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Intermediate non-bottleneck pivot to edge `e_1`, `r^(2) = [0, 4, 0]` with `w_1 = 4`):
+         `cost_p2 = 16`, `excess_p2 = 16 - 8 = 8`, `hol_rem_p2 = 0`,
+         `surcharge_p2 = 8`, `payout_p2 = 873 - 8 = 865 ≠ 873`
+         (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Bottleneck dual-witness pivot to minimum-weight edge `e_2`, `r^(3) = [0, 0, 4]`
+         with `w_2 = 2 = w_min` and complementary slackness `z_2* = 2 = w_2`):
+         `cost_p3 = 8`, `excess_p3 = 8 - 8 = 0`, `hol_rem_p3 = 0`,
+         `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem subgradient_pivot_codebase_weight_sensitivity_and_bottleneck_audit :
+    (∀ r0 r1 r2 hol_rem : Int,
+      (0 ≤ r0 ∧ 0 ≤ r1 ∧ 0 ≤ r2 ∧ r0 + r1 + r2 = 4 ∧ 0 ≤ hol_rem ∧
+       (5 * r0 + 4 * r1 + 2 * r2 - 8) + 4 * hol_rem ≥ 1) →
+      (5 * r0 + 4 * r1 + 2 * r2 - 8 = 3 * r0 + 2 * r1 ∧
+       0 ≤ 5 * r0 + 4 * r1 + 2 * r2 - 8 ∧
+       873 - ((5 * r0 + 4 * r1 + 2 * r2 - 8) + 4 * hol_rem) ≤ 872)) ∧
+    (let opt_cost : Int := 8;
+     let cost_p1 : Int := 20; let excess_p1 : Int := cost_p1 - opt_cost; let hol_rem_p1 : Int := 0;
+     let cost_p2 : Int := 16; let excess_p2 : Int := cost_p2 - opt_cost; let hol_rem_p2 : Int := 0;
+     let cost_p3 : Int := 8;  let excess_p3 : Int := cost_p3 - opt_cost; let hol_rem_p3 : Int := 0;
+     let surcharge_p1 := excess_p1 + 4 * hol_rem_p1;
+     let surcharge_p2 := excess_p2 + 4 * hol_rem_p2;
+     let surcharge_p3 := excess_p3 + 4 * hol_rem_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (cost_p1 = 20) ∧ (excess_p1 = 12) ∧ (hol_rem_p1 = 0) ∧ (surcharge_p1 = 12) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (excess_p1 = 0) ∧ (hol_rem_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (cost_p2 = 16) ∧ (excess_p2 = 8) ∧ (hol_rem_p2 = 0) ∧ (surcharge_p2 = 8) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (excess_p2 = 0) ∧ (hol_rem_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (cost_p3 = 8) ∧ (excess_p3 = 0) ∧ (hol_rem_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (cost_p1 = 20 ∧ cost_p2 = 16 ∧ cost_p3 = 8 ∧
+      excess_p1 = 12 ∧ excess_p2 = 8 ∧ excess_p3 = 0 ∧
+      hol_rem_p1 = 0 ∧ hol_rem_p2 = 0 ∧ hol_rem_p3 = 0 ∧
+      surcharge_p1 = 12 ∧ surcharge_p2 = 8 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 861 ∧ payout_p2 = 865 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro r0 r1 r2 hol_rem ⟨hc1, hc2, hc3, hc4, hc5, hc6⟩
+  omega
+
 end LggrVIII

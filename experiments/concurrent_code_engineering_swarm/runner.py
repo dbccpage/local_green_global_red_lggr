@@ -52,6 +52,7 @@ from lggr.streaming import (
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
+    StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
@@ -90,6 +91,7 @@ from .domain import (
     SIX_ROLE_WORKER_MODULES,
     SPLIT_WORKER_MODULES,
     STOP_WORKER_MODULES,
+    SUBGRADIENT_PIVOT_WORKER_MODULES,
     THREE_PARTY_C3_WORKER_MODULES,
     WIN_WORKER_MODULES,
     WORKER_MODULES,
@@ -122,6 +124,7 @@ from .domain import (
     SharedChordDiamondCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     StatefulDFACodeWorkspace,
+    SubgradientPivotCodeWorkspace,
     ThreePartyC3CodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -154,6 +157,7 @@ from .domain import (
     run_multi_loop_hodge_local_unit_tests,
     run_non_abelian_braid_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
+    run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
@@ -161,6 +165,7 @@ from .domain import (
     six_role_fixture,
     split_fixture,
     stop_fixture,
+    subgradient_pivot_fixture,
     three_party_c3_fixture,
     win_fixture,
 )
@@ -7442,6 +7447,282 @@ def non_abelian_braid_campaign(
     return summary
 
 
+def subgradient_pivot_system_prompt(worker: str, arm: str) -> str:
+    mod_name = SUBGRADIENT_PIVOT_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible exclusively for `{mod_name}.py` in a 3-module "
+        "weighted-edge subgradient sensitivity and bottleneck pivot settlement codebase "
+        "(`pricing_pivot.py` -> `tax_pivot.py` -> `settlement_pivot.py`) on a 3-edge cycle with "
+        "discrepancy `d = 4` and post-perturbation weights `w = [5, 4, 2]` (shifted from "
+        "`w^(0) = [1, 4, 2]` across `w_0^crit = 2` so the minimum-weight bottleneck shifts to "
+        "edge `e_2` with `w_2 = 2` and optimal weighted L1 cost `opt_cost = 8`).\n"
+        "Always call `inspect_workspace` first.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`stale_pre_pivot_edge_repair_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_STALE_PRE_PIVOT_EDGE_E0`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`intermediate_non_bottleneck_pivot_gate`): Call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseSubgradientPivotMonitor.PHASE_2_PRICING_PIVOT_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`intermediate_non_bottleneck_pivot_gate`): Call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseSubgradientPivotMonitor.PHASE_2_TAX_PIVOT_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`intermediate_non_bottleneck_pivot_gate`): Do NOT call `submit_module_patch`; "
+            "keep your module unchanged and reply concisely."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_bottleneck_dual_witness_pivot_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSubgradientPivotMonitor.PHASE_3_PRICING_PIVOT_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_bottleneck_dual_witness_pivot_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSubgradientPivotMonitor.PHASE_3_TAX_PIVOT_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_bottleneck_dual_witness_pivot_directive`): Follow `compact_role_directive` "
+        "and call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseSubgradientPivotMonitor.PHASE_3_SETTLEMENT_PIVOT_SOURCE
+        + "```\n"
+    )
+
+
+def subgradient_pivot_merge_gate(
+    events: Events,
+    ws: SubgradientPivotCodeWorkspace,
+    monitor: StreamingCodebaseSubgradientPivotMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_subgradient_pivot_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_pivot", "tax_pivot", "settlement_pivot")
+    }
+    eval_res = monitor.evaluate_subgradient_pivot_modules(
+        f"{arm}-{wave_label}",
+        pricing_pivot_source=sources["pricing_pivot"],
+        tax_pivot_source=sources["tax_pivot"],
+        settlement_pivot_source=sources["settlement_pivot"],
+        infeasible_constraint=(
+            {"reason": ws.state["infeasible_constraint"]}
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "repair_vector": eval_res["repair_vector"],
+            "weighted_l1_cost": eval_res["weighted_l1_cost"],
+            "optimal_weighted_l1_cost": eval_res["optimal_weighted_l1_cost"],
+            "excess_subgradient_cost": eval_res["excess_subgradient_cost"],
+            "remaining_holonomy": eval_res["remaining_holonomy"],
+            "pivot_surcharge_cents": eval_res["pivot_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in SUBGRADIENT_PIVOT_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_STALE_PRE_PIVOT_EDGE_E0",
+                "note": "Local unit test and cycle holonomy closure pass under stale pre-pivot repair [4, 0, 0].",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "PIVOT_TO_INTERMEDIATE_EDGE_E1",
+                "repair_vector": eval_res["repair_vector"],
+                "weighted_l1_cost": eval_res["weighted_l1_cost"],
+                "pivot_surcharge_cents": eval_res["pivot_surcharge_cents"],
+                "note": "Pivoting off edge e_0 to intermediate edge e_1 ([0, 4, 0], w_1 = 4) leaves excess subgradient cost 8.",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "repair_vector": eval_res["repair_vector"],
+                "weighted_l1_cost": eval_res["weighted_l1_cost"],
+                "optimal_weighted_l1_cost": eval_res["optimal_weighted_l1_cost"],
+                "excess_subgradient_cost": eval_res["excess_subgradient_cost"],
+                "remaining_holonomy": eval_res["remaining_holonomy"],
+                "pivot_surcharge_cents": eval_res["pivot_surcharge_cents"],
+                "action_required": "PIVOT_TO_BOTTLENECK_EDGE_E2_COHERENT",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def subgradient_pivot_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(SUBGRADIENT_PIVOT_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = subgradient_pivot_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = SubgradientPivotCodeWorkspace(base_state)
+            monitor = StreamingCodebaseSubgradientPivotMonitor(
+                scope_id=f"subgradient-pivot-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = subgradient_pivot_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": subgradient_pivot_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{SUBGRADIENT_PIVOT_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = subgradient_pivot_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_repair_vector": eval_res["repair_vector"],
+                "final_weighted_l1_cost": eval_res["weighted_l1_cost"],
+                "final_optimal_weighted_l1_cost": eval_res["optimal_weighted_l1_cost"],
+                "final_excess_subgradient_cost": eval_res["excess_subgradient_cost"],
+                "final_remaining_holonomy": eval_res["remaining_holonomy"],
+                "final_pivot_surcharge_cents": eval_res["pivot_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.subgradient_pivot_code_engineering_swarm.v1",
+        "topology": "subgradient_pivot",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent subgradient weight sensitivity & bottleneck pivot threshold "
+            "Python code-engineering swarm (`pricing_pivot` -> `tax_pivot` -> `settlement_pivot`) comparing "
+            "stale pre-pivot edge e_0 repair [4, 0, 0] (A), intermediate non-bottleneck edge e_1 pivot [0, 4, 0] (B), "
+            "and bottleneck dual-witness edge e_2 pivot [0, 0, 4] (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -7514,6 +7795,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = governed_relaxation_campaign(client, events, config)
         elif config.get("topology") == "non_abelian_braid":
             summary = non_abelian_braid_campaign(client, events, config)
+        elif config.get("topology") == "subgradient_pivot":
+            summary = subgradient_pivot_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -7570,6 +7853,7 @@ def main() -> None:
             "shared_chord_diamond",
             "governed_relaxation",
             "non_abelian_braid",
+            "subgradient_pivot",
         ],
         default="linear",
     )
@@ -7657,6 +7941,8 @@ def main() -> None:
         seeds = [12100, 12101, 12102]
     elif args.topology == "non_abelian_braid":
         seeds = [12200, 12201, 12202]
+    elif args.topology == "subgradient_pivot":
+        seeds = [12300, 12301, 12302]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -8001,6 +8287,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = non_abelian_braid_campaign(client, events, config)
+    elif args.topology == "subgradient_pivot":
+        config = {
+            "topology": "subgradient_pivot",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = subgradient_pivot_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

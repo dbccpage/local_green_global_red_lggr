@@ -1,0 +1,2182 @@
+{
+  "schema": "lggr.codebase_subgradient_pivot_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_subgradient_pivot_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_stale_pre_pivot_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_intermediate_non_bottleneck_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_bottleneck_dual_witness_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_subgradient_pivot_codebase_coherence_rate": "0",
+  "bottleneck_subgradient_pivot_codebase_coherence_rate": "1",
+  "codebase_subgradient_pivot_coherence_gain": "1",
+  "codebase_subgradient_pivot_receipt": {
+    "schema": "lggr.online_codebase_subgradient_pivot.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_subgradient_pivot",
+    "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "subgradient_sensitivity_receipt": {
+      "schema": "lggr.online_subgradient_sensitivity.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_subgradient_pivot:subgradient",
+      "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "evaluation_count": 15,
+      "lggr_obstruction_count": 10,
+      "lggg_coherent_count": 5,
+      "evaluations": [
+        {
+          "evaluation_id": "openai/gpt-4o-mini_subgradient_pivot_p1:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 20,
+          "excess_subgradient_cost": 12,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 12,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "openai/gpt-4o-mini_subgradient_pivot_p2:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            4,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 16,
+          "excess_subgradient_cost": 8,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 8,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "openai/gpt-4o-mini_subgradient_pivot_p3:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            0,
+            4
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 8,
+          "excess_subgradient_cost": 0,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": true,
+          "pivot_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_subgradient_pivot_p1:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 20,
+          "excess_subgradient_cost": 12,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 12,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_subgradient_pivot_p2:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            4,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 16,
+          "excess_subgradient_cost": 8,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 8,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "google/gemini-2.5-flash-lite_subgradient_pivot_p3:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            0,
+            4
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 8,
+          "excess_subgradient_cost": 0,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": true,
+          "pivot_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot_p1:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 20,
+          "excess_subgradient_cost": 12,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 12,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot_p2:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            4,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 16,
+          "excess_subgradient_cost": 8,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 8,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot_p3:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            0,
+            4
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 8,
+          "excess_subgradient_cost": 0,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": true,
+          "pivot_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_subgradient_pivot_p1:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 20,
+          "excess_subgradient_cost": 12,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 12,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_subgradient_pivot_p2:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            4,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 16,
+          "excess_subgradient_cost": 8,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 8,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "deepseek/deepseek-chat_subgradient_pivot_p3:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            0,
+            4
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 8,
+          "excess_subgradient_cost": 0,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": true,
+          "pivot_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot_p1:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            4,
+            0,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 20,
+          "excess_subgradient_cost": 12,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 12,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot_p2:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            4,
+            0
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 16,
+          "excess_subgradient_cost": 8,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": false,
+          "pivot_surcharge_cents": 8,
+          "local_green": 1,
+          "global_green": 0,
+          "defect": -1,
+          "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot_p3:subgradient",
+          "initial_edge_weights": [
+            1,
+            4,
+            2
+          ],
+          "edge_weights": [
+            5,
+            4,
+            2
+          ],
+          "cycle_discrepancy": 4,
+          "repair_vector": [
+            0,
+            0,
+            4
+          ],
+          "dual_witness": [
+            2,
+            2,
+            2
+          ],
+          "pre_pivot_bottleneck_edge": 0,
+          "post_pivot_bottleneck_edge": 2,
+          "critical_pivot_threshold_e0": 2,
+          "optimal_weighted_l1_cost": 8,
+          "weighted_l1_cost": 8,
+          "excess_subgradient_cost": 0,
+          "remaining_holonomy": 0,
+          "dual_feasible": true,
+          "complementary_slackness_ok": true,
+          "pivot_surcharge_cents": 0,
+          "local_green": 1,
+          "global_green": 1,
+          "defect": 0,
+          "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      ],
+      "receipt_sha256": "852e35b4025fb39b6fa8159984f88a9e2bc6bf7c193c01340929d5786cd77489"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini_subgradient_pivot_p1_openai/gpt-4o-mini",
+          "report": {
+            "cycle_discrepancy": 4,
+            "local_green": 1,
+            "remaining_holonomy": 0
+          },
+          "query": "LGGR",
+          "metadata": {
+            "excess_subgradient_cost": 12,
+            "pivot_surcharge_cents": 12,
+            "repair_vector": [
+              4,
+              0,
+              0
+            ],
+            "weighted_l1_cost": 20
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini_subgradient_pivot_p3_openai/gpt-4o-mini",
+          "report": {
+            "cycle_discrepancy": 4,
+            "local_green": 1,
+            "remaining_holonomy": 0
+          },
+          "query": "LGGG",
+          "metadata": {
+            "excess_subgradient_cost": 0,
+            "pivot_surcharge_cents": 0,
+            "repair_vector": [
+              0,
+              0,
+              4
+            ],
+            "weighted_l1_cost": 8
+          }
+        }
+      },
+      "input_sha256": "97d3a46b46c103554530f56d40ee60433f6d21c0abd32606737367e4b9533292",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "0e63473aec6e55a40b7ab3b6f708fd59515d5be3a9fe2c62943a9fed71a1e7a1"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_subgradient_pivot",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_weighted_l1_cost": 20,
+        "phase_1_excess_subgradient_cost": 12,
+        "phase_1_remaining_holonomy": 0,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "phase_2_repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "phase_2_weighted_l1_cost": 16,
+        "phase_2_excess_subgradient_cost": 8,
+        "phase_2_remaining_holonomy": 0,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "phase_3_repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "phase_3_weighted_l1_cost": 8,
+        "phase_3_excess_subgradient_cost": 0,
+        "phase_3_remaining_holonomy": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_subgradient_pivot",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_weighted_l1_cost": 20,
+        "phase_1_excess_subgradient_cost": 12,
+        "phase_1_remaining_holonomy": 0,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "phase_2_repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "phase_2_weighted_l1_cost": 16,
+        "phase_2_excess_subgradient_cost": 8,
+        "phase_2_remaining_holonomy": 0,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "phase_3_repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "phase_3_weighted_l1_cost": 8,
+        "phase_3_excess_subgradient_cost": 0,
+        "phase_3_remaining_holonomy": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_weighted_l1_cost": 20,
+        "phase_1_excess_subgradient_cost": 12,
+        "phase_1_remaining_holonomy": 0,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "phase_2_repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "phase_2_weighted_l1_cost": 16,
+        "phase_2_excess_subgradient_cost": 8,
+        "phase_2_remaining_holonomy": 0,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "phase_3_repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "phase_3_weighted_l1_cost": 8,
+        "phase_3_excess_subgradient_cost": 0,
+        "phase_3_remaining_holonomy": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_subgradient_pivot",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_weighted_l1_cost": 20,
+        "phase_1_excess_subgradient_cost": 12,
+        "phase_1_remaining_holonomy": 0,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "phase_2_repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "phase_2_weighted_l1_cost": 16,
+        "phase_2_excess_subgradient_cost": 8,
+        "phase_2_remaining_holonomy": 0,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "phase_3_repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "phase_3_weighted_l1_cost": 8,
+        "phase_3_excess_subgradient_cost": 0,
+        "phase_3_remaining_holonomy": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "phase_1_weighted_l1_cost": 20,
+        "phase_1_excess_subgradient_cost": 12,
+        "phase_1_remaining_holonomy": 0,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "phase_2_repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "phase_2_weighted_l1_cost": 16,
+        "phase_2_excess_subgradient_cost": 8,
+        "phase_2_remaining_holonomy": 0,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "phase_3_repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "phase_3_weighted_l1_cost": 8,
+        "phase_3_excess_subgradient_cost": 0,
+        "phase_3_remaining_holonomy": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_subgradient_pivot_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 20,
+        "excess_subgradient_cost": 12,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_subgradient_pivot_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 16,
+        "excess_subgradient_cost": 8,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_subgradient_pivot_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 8,
+        "excess_subgradient_cost": 0,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_subgradient_pivot_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 20,
+        "excess_subgradient_cost": 12,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_subgradient_pivot_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 16,
+        "excess_subgradient_cost": 8,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_subgradient_pivot_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 8,
+        "excess_subgradient_cost": 0,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 20,
+        "excess_subgradient_cost": 12,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 16,
+        "excess_subgradient_cost": 8,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 8,
+        "excess_subgradient_cost": 0,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_subgradient_pivot_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 20,
+        "excess_subgradient_cost": 12,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_subgradient_pivot_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 16,
+        "excess_subgradient_cost": 8,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_subgradient_pivot_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 8,
+        "excess_subgradient_cost": 0,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          4,
+          0,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 20,
+        "excess_subgradient_cost": 12,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          4,
+          0
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 16,
+        "excess_subgradient_cost": 8,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "initial_edge_weights": [
+          1,
+          4,
+          2
+        ],
+        "edge_weights": [
+          5,
+          4,
+          2
+        ],
+        "cycle_discrepancy": 4,
+        "repair_vector": [
+          0,
+          0,
+          4
+        ],
+        "dual_witness": [
+          2,
+          2,
+          2
+        ],
+        "optimal_weighted_l1_cost": 8,
+        "weighted_l1_cost": 8,
+        "excess_subgradient_cost": 0,
+        "remaining_holonomy": 0,
+        "pivot_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_pivot",
+            "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+            "target_r0_repair": 0
+          },
+          "worker-1": {
+            "module": "tax_pivot",
+            "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+            "target_r1_repair": 0,
+            "target_r2_repair": 4,
+            "target_dual_witness": [
+              2,
+              2,
+              2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_pivot",
+            "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+            "target_pivot_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "72146c50056db70e12fbf61d9510c389dbd792ec0d2abc72211d10e2f9a45f92"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_subgradient_pivot",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_repair_vector": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_weighted_l1_cost": 20,
+      "phase_1_excess_subgradient_cost": 12,
+      "phase_1_remaining_holonomy": 0,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+      "phase_2_repair_vector": [
+        0,
+        4,
+        0
+      ],
+      "phase_2_weighted_l1_cost": 16,
+      "phase_2_excess_subgradient_cost": 8,
+      "phase_2_remaining_holonomy": 0,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+      "phase_3_repair_vector": [
+        0,
+        0,
+        4
+      ],
+      "phase_3_weighted_l1_cost": 8,
+      "phase_3_excess_subgradient_cost": 0,
+      "phase_3_remaining_holonomy": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_subgradient_pivot",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_repair_vector": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_weighted_l1_cost": 20,
+      "phase_1_excess_subgradient_cost": 12,
+      "phase_1_remaining_holonomy": 0,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+      "phase_2_repair_vector": [
+        0,
+        4,
+        0
+      ],
+      "phase_2_weighted_l1_cost": 16,
+      "phase_2_excess_subgradient_cost": 8,
+      "phase_2_remaining_holonomy": 0,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+      "phase_3_repair_vector": [
+        0,
+        0,
+        4
+      ],
+      "phase_3_weighted_l1_cost": 8,
+      "phase_3_excess_subgradient_cost": 0,
+      "phase_3_remaining_holonomy": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_subgradient_pivot",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_repair_vector": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_weighted_l1_cost": 20,
+      "phase_1_excess_subgradient_cost": 12,
+      "phase_1_remaining_holonomy": 0,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+      "phase_2_repair_vector": [
+        0,
+        4,
+        0
+      ],
+      "phase_2_weighted_l1_cost": 16,
+      "phase_2_excess_subgradient_cost": 8,
+      "phase_2_remaining_holonomy": 0,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+      "phase_3_repair_vector": [
+        0,
+        0,
+        4
+      ],
+      "phase_3_weighted_l1_cost": 8,
+      "phase_3_excess_subgradient_cost": 0,
+      "phase_3_remaining_holonomy": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_subgradient_pivot",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_repair_vector": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_weighted_l1_cost": 20,
+      "phase_1_excess_subgradient_cost": 12,
+      "phase_1_remaining_holonomy": 0,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+      "phase_2_repair_vector": [
+        0,
+        4,
+        0
+      ],
+      "phase_2_weighted_l1_cost": 16,
+      "phase_2_excess_subgradient_cost": 8,
+      "phase_2_remaining_holonomy": 0,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+      "phase_3_repair_vector": [
+        0,
+        0,
+        4
+      ],
+      "phase_3_weighted_l1_cost": 8,
+      "phase_3_excess_subgradient_cost": 0,
+      "phase_3_remaining_holonomy": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_subgradient_pivot",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_repair_vector": [
+        4,
+        0,
+        0
+      ],
+      "phase_1_weighted_l1_cost": 20,
+      "phase_1_excess_subgradient_cost": 12,
+      "phase_1_remaining_holonomy": 0,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR",
+      "phase_2_repair_vector": [
+        0,
+        4,
+        0
+      ],
+      "phase_2_weighted_l1_cost": 16,
+      "phase_2_excess_subgradient_cost": 8,
+      "phase_2_remaining_holonomy": 0,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR",
+      "phase_3_repair_vector": [
+        0,
+        0,
+        4
+      ],
+      "phase_3_weighted_l1_cost": 8,
+      "phase_3_excess_subgradient_cost": 0,
+      "phase_3_remaining_holonomy": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Subgradient weight sensitivity and bottleneck pivot threshold codebase benchmark across 5 model families (Theorem 126): Phase 1 separates stale pre-pivot repair `[4, 0, 0]` on edge `e_0` (`w_0 = 5`) (`weighted_l1_cost = 20, excess_subgradient_cost = 12, surcharge = 12, payout = 861 != 873, Delta_E = -1`); Phase 2 separates intermediate non-bottleneck pivot `[0, 4, 0]` on edge `e_1` (`w_1 = 4`) (`weighted_l1_cost = 16, excess_subgradient_cost = 8, surcharge = 8, payout = 865 != 873, Delta_E = -1`); Phase 3 verifies bottleneck dual-witness pivot `[0, 0, 4]` on minimum-weight edge `e_2` (`w_2 = 2 = w_min`) (`weighted_l1_cost = 8 = opt_cost, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "69bb0529010165669b892084cd0a654e8d30bb854f2956f3965dcc807abb442c"
+}

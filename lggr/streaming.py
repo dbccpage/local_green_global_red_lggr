@@ -33437,6 +33437,672 @@ class StreamingCodebaseNonAbelianBraidMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingSubgradientSensitivityMonitor:
+    """Online weighted-edge L1 subgradient sensitivity and bottleneck pivot threshold monitor.
+
+    Audits 3-edge oriented cycle repair vectors r = [r0, r1, r2] under an edge-weight
+    perturbation from initial_edge_weights = [1, 4, 2] to edge_weights = [5, 4, 2]
+    across the critical bottleneck pivot threshold w0_crit = min(w1, w2) = 2 for a
+    cycle holonomy discrepancy d = 4:
+      - Computes the minimum post-perturbation edge weight w_min = min(edge_weights) = 2
+        at bottleneck_edge = 2, and the optimal weighted L1 repair cost
+        opt_cost = w_min * |d| = 2 * 4 = 8, certified by dual witness z* = [2, 2, 2]
+        (|z_i*| <= w_i for all i).
+      - Evaluates the weighted L1 cost c_w(r) = sum(w_i * |r_i|), the remaining cycle
+        holonomy hol_rem = |d - (r0 + r1 + r2)|, the excess subgradient cost
+        excess_cost = max(0, c_w(r) - opt_cost), and complementary slackness
+        (for each i, r_i == 0 or z_i == w_i * sgn(r_i)).
+      - Computes the subgradient pivot surcharge:
+          surcharge = excess_cost + 4 * hol_rem
+      - Classifies:
+          * STALE_PRE_PIVOT_EDGE_REPAIR_LGGR (repair remains on pre-pivot edge e_0
+            with r = [4, 0, 0], incurring c_w = 20, excess_cost = 12, surcharge = 12),
+          * NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR (repair pivots to non-bottleneck
+            edge e_1 with r = [0, 4, 0], incurring c_w = 16, excess_cost = 8, surcharge = 8),
+          * BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG (repair pivots to post-perturbation
+            bottleneck edge e_2 with r = [0, 0, 4], achieving c_w = 8 = opt_cost,
+            excess_cost = 0, hol_rem = 0, surcharge = 0).
+    """
+
+    DEFAULT_INITIAL_WEIGHTS: tuple[int, int, int] = (1, 4, 2)
+    DEFAULT_ACTIVE_WEIGHTS: tuple[int, int, int] = (5, 4, 2)
+    DEFAULT_CYCLE_DISCREPANCY: int = 4
+
+    def __init__(self, *, scope_id: str = "streaming-subgradient-sensitivity") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.evaluations: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _validate_int_triple(seq: Sequence[int], name: str, *, minimum: int | None = None) -> list[int]:
+        if not isinstance(seq, Sequence) or isinstance(seq, (str, bytes)):
+            raise ValidationError(f"{name} must be a 3-element integer sequence")
+        items = [
+            exact_int(x, name, minimum=minimum) if minimum is not None else exact_int(x, name)
+            for x in seq
+        ]
+        if len(items) != 3:
+            raise ValidationError(f"{name} must have length 3, got {len(items)}")
+        return items
+
+    def record_subgradient_pivot(
+        self,
+        evaluation_id: str,
+        *,
+        repair_vector: Sequence[int],
+        edge_weights: Sequence[int] = DEFAULT_ACTIVE_WEIGHTS,
+        initial_edge_weights: Sequence[int] = DEFAULT_INITIAL_WEIGHTS,
+        cycle_discrepancy: int = DEFAULT_CYCLE_DISCREPANCY,
+        dual_witness: Sequence[int] | None = None,
+        local_ok: bool = True,
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        boolean(local_ok, "local_ok")
+        r_vec = self._validate_int_triple(repair_vector, "repair_vector")
+        w_vec = self._validate_int_triple(edge_weights, "edge_weights", minimum=1)
+        w0_vec = self._validate_int_triple(initial_edge_weights, "initial_edge_weights", minimum=1)
+        disc = exact_int(cycle_discrepancy, "cycle_discrepancy", minimum=1)
+
+        min_w = min(w_vec)
+        if dual_witness is None:
+            z_vec = [min_w, min_w, min_w]
+        else:
+            z_vec = self._validate_int_triple(dual_witness, "dual_witness")
+
+        pre_pivot_bottleneck_edge = min(range(3), key=lambda i: w0_vec[i])
+        post_pivot_bottleneck_edge = min(range(3), key=lambda i: w_vec[i])
+        critical_pivot_threshold_e0 = min(w_vec[1], w_vec[2])
+
+        opt_cost = min_w * abs(disc)
+        weighted_cost = sum(w_vec[i] * abs(r_vec[i]) for i in range(3))
+        repaired_sum = sum(r_vec)
+        hol_rem = abs(disc - repaired_sum)
+        excess_cost = max(0, weighted_cost - opt_cost)
+        surcharge = excess_cost + 4 * hol_rem
+
+        dual_feasible = all(abs(z_vec[i]) <= w_vec[i] for i in range(3))
+        complementary_slackness_ok = dual_feasible and all(
+            (r_vec[i] == 0) or (z_vec[i] == w_vec[i] * (1 if r_vec[i] > 0 else -1))
+            for i in range(3)
+        )
+
+        local_green = 1 if (local_ok and dual_feasible and all(x >= 0 for x in r_vec)) else 0
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and surcharge == 0
+                and hol_rem == 0
+                and excess_cost == 0
+                and complementary_slackness_ok
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        if local_green == 0:
+            status = "LOCAL_SUBGRADIENT_REPAIR_CONTRACT_REJECTED"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif hol_rem > 0:
+            status = "UNREPAIRED_CYCLE_HOLONOMY_RESIDUAL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif excess_cost > 0 and r_vec[pre_pivot_bottleneck_edge] != 0:
+            status = "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif surcharge > 0 or not complementary_slackness_ok:
+            status = "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "initial_edge_weights": w0_vec,
+                "edge_weights": w_vec,
+                "cycle_discrepancy": disc,
+                "repair_vector": r_vec,
+                "dual_witness": z_vec,
+                "pre_pivot_bottleneck_edge": pre_pivot_bottleneck_edge,
+                "post_pivot_bottleneck_edge": post_pivot_bottleneck_edge,
+                "critical_pivot_threshold_e0": critical_pivot_threshold_e0,
+                "optimal_weighted_l1_cost": opt_cost,
+                "weighted_l1_cost": weighted_cost,
+                "excess_subgradient_cost": excess_cost,
+                "remaining_holonomy": hol_rem,
+                "dual_feasible": dual_feasible,
+                "complementary_slackness_ok": complementary_slackness_ok,
+                "pivot_surcharge_cents": surcharge,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def emit_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one subgradient sensitivity evaluation must be recorded")
+        last = self.evaluations[-1]
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        body = {
+            "schema": "lggr.online_subgradient_sensitivity.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": len(self.evaluations),
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+class StreamingCodebaseSubgradientPivotMonitor:
+    """Online 3-module codebase subgradient weight-sensitivity and bottleneck pivot monitor (Theorem 126).
+
+    Composes `StreamingSubgradientSensitivityMonitor`, `StreamingCodebaseInterfaceMergeMonitor`,
+    and `StreamingFiberMonitor` across 3 Python modules (`pricing_pivot.py`, `tax_pivot.py`,
+    `settlement_pivot.py`) on a 3-edge settlement cycle with cycle discrepancy `d = 4` and
+    post-perturbation weights `w = [5, 4, 2]` (shifted from `w^(0) = [1, 4, 2]` across
+    `w_0^crit = 2` so the bottleneck shifts from `e_0` to `e_2`, `opt_cost = 2 * 4 = 8`):
+      - Phase 1 (`STALE_PRE_PIVOT_EDGE_REPAIR_LGGR`):
+        `pricing_pivot.py` applies stale pre-pivot repair `r0_repair = 4` on edge `e_0` (`w_0 = 5`),
+        while `tax_pivot.py` keeps `r1_repair = 0, r2_repair = 0`, giving `repair_vector = [4, 0, 0]`,
+        `weighted_l1_cost = 20`, `excess_subgradient_cost = 12`, `pivot_surcharge_cents = 12`,
+        and `payout = 861 != 873` (`local_green = 1, global_green = 0, defect = -1`).
+      - Phase 2 (`NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR`):
+        `pricing_pivot.py` releases `r0_repair = 0`, while `tax_pivot.py` pivots to non-bottleneck
+        intermediate edge `e_1` (`r1_repair = 4, r2_repair = 0` with `w_1 = 4 > w_min = 2`),
+        giving `repair_vector = [0, 4, 0]`, `weighted_l1_cost = 16`, `excess_subgradient_cost = 8`,
+        `pivot_surcharge_cents = 8`, and `payout = 865 != 873`
+        (`local_green = 1, global_green = 0, defect = -1`).
+      - Phase 3 (`BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG`):
+        `pricing_pivot.py` holds `r0_repair = 0` and `tax_pivot.py` pivots repair to minimum-weight
+        bottleneck edge `e_2` (`r1_repair = 0, r2_repair = 4` with `w_2 = 2 = w_min` and dual
+        witness `z* = [2, 2, 2]`), achieving `weighted_l1_cost = 8 = opt_cost`,
+        `excess_subgradient_cost = 0`, `pivot_surcharge_cents = 0`, and `settlement_pivot.py`
+        verifies `873 + 27 + 90 = 990` (`local_green = 1, global_green = 1, defect = 0`).
+    """
+
+    PHASE_1_PRICING_PIVOT_SOURCE = (
+        "def quote_pivot_pricing(gross_cents: int) -> dict:\n"
+        "    # Phase 1: stale pre-pivot repair r0_repair = 4 on edge e_0 after w_0 shifted 1 -> 5\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    fee_cents = (net_cents * 3) // 100\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'initial_edge_weights': [1, 4, 2],\n"
+        "        'edge_weights': [5, 4, 2],\n"
+        "        'cycle_discrepancy': 4,\n"
+        "        'r0_repair': 4,\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_PIVOT_SOURCE = (
+        "def quote_pivot_tax(gross_cents: int) -> dict:\n"
+        "    # Phase 1: r1_repair = 0, r2_repair = 0 leaving repair on stale edge e_0\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    tax_cents = (net_cents * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_cents,\n"
+        "        'r1_repair': 0,\n"
+        "        'r2_repair': 0,\n"
+        "        'dual_witness': [2, 2, 2],\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_PIVOT_SOURCE = (
+        "def settle_pivot_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    w = pricing['edge_weights']\n"
+        "    d = pricing['cycle_discrepancy']\n"
+        "    r = [pricing['r0_repair'], tax['r1_repair'], tax['r2_repair']]\n"
+        "    opt_cost = min(w) * abs(d)\n"
+        "    weighted_cost = w[0] * abs(r[0]) + w[1] * abs(r[1]) + w[2] * abs(r[2])\n"
+        "    hol_rem = abs(d - (r[0] + r[1] + r[2]))\n"
+        "    excess_cost = max(0, weighted_cost - opt_cost)\n"
+        "    surcharge = excess_cost + 4 * hol_rem\n"
+        "    payout = pricing['net_after_fee_cents'] - tax['tax_reserve_cents'] - surcharge\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': pricing['platform_fee_cents'],\n"
+        "        'tax_reserve_cents': tax['tax_reserve_cents'],\n"
+        "        'weighted_l1_cost': weighted_cost,\n"
+        "        'optimal_weighted_l1_cost': opt_cost,\n"
+        "        'excess_subgradient_cost': excess_cost,\n"
+        "        'remaining_holonomy': hol_rem,\n"
+        "        'pivot_surcharge_cents': surcharge,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_PIVOT_SOURCE = (
+        "def quote_pivot_pricing(gross_cents: int) -> dict:\n"
+        "    # Phase 2: pricing releases stale edge e_0 repair (r0_repair = 0)\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    fee_cents = (net_cents * 3) // 100\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'initial_edge_weights': [1, 4, 2],\n"
+        "        'edge_weights': [5, 4, 2],\n"
+        "        'cycle_discrepancy': 4,\n"
+        "        'r0_repair': 0,\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_PIVOT_SOURCE = (
+        "def quote_pivot_tax(gross_cents: int) -> dict:\n"
+        "    # Phase 2: intermediate pivot to non-bottleneck edge e_1 (w_1 = 4 > w_min = 2)\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    tax_cents = (net_cents * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_cents,\n"
+        "        'r1_repair': 4,\n"
+        "        'r2_repair': 0,\n"
+        "        'dual_witness': [2, 2, 2],\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_PIVOT_SOURCE = PHASE_1_SETTLEMENT_PIVOT_SOURCE
+
+    PHASE_3_PRICING_PIVOT_SOURCE = PHASE_2_PRICING_PIVOT_SOURCE
+
+    PHASE_3_TAX_PIVOT_SOURCE = (
+        "def quote_pivot_tax(gross_cents: int) -> dict:\n"
+        "    # Phase 3: bottleneck dual-witness pivot to minimum-weight edge e_2 (w_2 = 2 = w_min)\n"
+        "    net_cents = (gross_cents * 10) // 11\n"
+        "    tax_cents = (net_cents * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_cents,\n"
+        "        'r1_repair': 0,\n"
+        "        'r2_repair': 4,\n"
+        "        'dual_witness': [2, 2, 2],\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_PIVOT_SOURCE = (
+        "def settle_pivot_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    w = pricing['edge_weights']\n"
+        "    d = pricing['cycle_discrepancy']\n"
+        "    r = [pricing['r0_repair'], tax['r1_repair'], tax['r2_repair']]\n"
+        "    opt_cost = min(w) * abs(d)\n"
+        "    weighted_cost = w[0] * abs(r[0]) + w[1] * abs(r[1]) + w[2] * abs(r[2])\n"
+        "    hol_rem = abs(d - (r[0] + r[1] + r[2]))\n"
+        "    excess_cost = max(0, weighted_cost - opt_cost)\n"
+        "    surcharge = excess_cost + 4 * hol_rem\n"
+        "    if surcharge != 0:\n"
+        "        raise ValueError(f'non-zero subgradient pivot surcharge {surcharge}')\n"
+        "    payout = pricing['net_after_fee_cents'] - tax['tax_reserve_cents']\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': pricing['platform_fee_cents'],\n"
+        "        'tax_reserve_cents': tax['tax_reserve_cents'],\n"
+        "        'weighted_l1_cost': weighted_cost,\n"
+        "        'optimal_weighted_l1_cost': opt_cost,\n"
+        "        'excess_subgradient_cost': excess_cost,\n"
+        "        'remaining_holonomy': hol_rem,\n"
+        "        'pivot_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-subgradient-pivot") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.subgradient_monitor = StreamingSubgradientSensitivityMonitor(
+            scope_id=f"{self.scope_id}:subgradient"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_subgradient_pivot_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_pivot_source: str,
+        tax_pivot_source: str,
+        settlement_pivot_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_pivot", pricing_pivot_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_pivot", tax_pivot_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_pivot", settlement_pivot_source
+        )
+        for mod_name, ns, fn_name in (
+            ("pricing_pivot", p_ns, "quote_pivot_pricing"),
+            ("tax_pivot", t_ns, "quote_pivot_tax"),
+            ("settlement_pivot", s_ns, "settle_pivot_invoice"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} missing callable {fn_name}")
+
+        pricing_out = p_ns["quote_pivot_pricing"](gross)
+        tax_out = t_ns["quote_pivot_tax"](gross)
+        if not isinstance(pricing_out, Mapping) or not isinstance(tax_out, Mapping):
+            raise ValidationError("quote_pivot_pricing and quote_pivot_tax must return mappings")
+        try:
+            settlement_out = s_ns["settle_pivot_invoice"](pricing_out, tax_out)
+            if not isinstance(settlement_out, Mapping):
+                raise ValidationError("settle_pivot_invoice must return a mapping")
+            settlement_raised = False
+        except ValidationError:
+            raise
+        except Exception:
+            settlement_raised = True
+            settlement_out = {}
+
+        w0_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            pricing_out.get("initial_edge_weights", [1, 4, 2]),
+            "initial_edge_weights",
+            minimum=1,
+        )
+        w_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            pricing_out.get("edge_weights", [5, 4, 2]),
+            "edge_weights",
+            minimum=1,
+        )
+        disc = exact_int(pricing_out.get("cycle_discrepancy", 4), "cycle_discrepancy", minimum=1)
+        r0 = exact_int(pricing_out.get("r0_repair", 0), "r0_repair")
+        r1 = exact_int(tax_out.get("r1_repair", 0), "r1_repair")
+        r2 = exact_int(tax_out.get("r2_repair", 0), "r2_repair")
+        r_vec = [r0, r1, r2]
+        z_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            tax_out.get("dual_witness", [2, 2, 2]),
+            "dual_witness",
+        )
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+        net_base = (gross * 10) // 11
+
+        local_p_ok = (
+            (fee == (net_base * 3) // 100)
+            and (net == gross - fee)
+            and (w0_vec == [1, 4, 2])
+            and (w_vec == [5, 4, 2])
+            and (disc == 4)
+            and (r0 >= 0)
+        )
+        local_t_ok = (
+            (tax == (net_base * 10) // 100)
+            and (r1 >= 0)
+            and (r2 >= 0)
+            and (z_vec == [2, 2, 2])
+        )
+
+        sub_rec = self.subgradient_monitor.record_subgradient_pivot(
+            f"{eval_id}:subgradient",
+            repair_vector=r_vec,
+            edge_weights=w_vec,
+            initial_edge_weights=w0_vec,
+            cycle_discrepancy=disc,
+            dual_witness=z_vec,
+            local_ok=bool(local_p_ok and local_t_ok),
+        )
+        opt_cost = sub_rec["optimal_weighted_l1_cost"]
+        weighted_cost = sub_rec["weighted_l1_cost"]
+        excess_cost = sub_rec["excess_subgradient_cost"]
+        hol_rem = sub_rec["remaining_holonomy"]
+        surcharge = sub_rec["pivot_surcharge_cents"]
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents")
+            reported_surcharge = exact_int(
+                settlement_out.get("pivot_surcharge_cents", surcharge),
+                "pivot_surcharge_cents",
+            )
+            local_s_ok = (reported_surcharge == surcharge) and (payout == net - tax - surcharge)
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = 1 if (local_p_ok and local_t_ok and local_s_ok and not infeasible_spec_contradiction) else 0
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and r_vec == [0, 0, 4]
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "cycle_discrepancy": disc,
+                "remaining_holonomy": hol_rem,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "repair_vector": r_vec,
+                "weighted_l1_cost": weighted_cost,
+                "excess_subgradient_cost": excess_cost,
+                "pivot_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_SUBGRADIENT_PIVOT_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_PIVOT_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif hol_rem > 0:
+            status = "UNREPAIRED_CYCLE_HOLONOMY_RESIDUAL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif excess_cost > 0 and r0 != 0:
+            status = "STALE_PRE_PIVOT_EDGE_REPAIR_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "NON_BOTTLENECK_INTERMEDIATE_PIVOT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "BOTTLENECK_DUAL_WITNESS_PIVOT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR",
+                    "target_r0_repair": 0,
+                },
+                "worker-1": {
+                    "module": "tax_pivot",
+                    "action": "HOLD_BOTTLENECK_EDGE_E2_REPAIR",
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [2, 2, 2],
+                },
+                "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE",
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_pivot",
+                    "action": (
+                        "RELEASE_STALE_PRE_PIVOT_EDGE_E0_REPAIR"
+                        if (r0 != 0 or not local_p_ok)
+                        else "HOLD_ZERO_PRE_PIVOT_EDGE_REPAIR"
+                    ),
+                    "target_r0_repair": 0,
+                },
+                "worker-1": {
+                    "module": "tax_pivot",
+                    "action": (
+                        "PIVOT_REPAIR_TO_BOTTLENECK_EDGE_E2"
+                        if (r1 != 0 or r2 != 4 or not local_t_ok)
+                        else "HOLD_BOTTLENECK_EDGE_E2_REPAIR"
+                    ),
+                    "target_r1_repair": 0,
+                    "target_r2_repair": 4,
+                    "target_dual_witness": [2, 2, 2],
+                },
+                "worker-2": {
+                    "module": "settlement_pivot",
+                    "action": (
+                        "REPAIR_SETTLEMENT_SUBGRADIENT_PIVOT_GATE"
+                        if not conservation_ok
+                        else "HOLD_ZERO_SUBGRADIENT_PIVOT_SURCHARGE"
+                    ),
+                    "target_pivot_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "initial_edge_weights": w0_vec,
+                "edge_weights": w_vec,
+                "cycle_discrepancy": disc,
+                "repair_vector": r_vec,
+                "dual_witness": z_vec,
+                "optimal_weighted_l1_cost": opt_cost,
+                "weighted_l1_cost": weighted_cost,
+                "excess_subgradient_cost": excess_cost,
+                "remaining_holonomy": hol_rem,
+                "pivot_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_subgradient_pivot_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_subgradient_pivot_modules(
+            f"{audit_id}_p1",
+            pricing_pivot_source=self.PHASE_1_PRICING_PIVOT_SOURCE,
+            tax_pivot_source=self.PHASE_1_TAX_PIVOT_SOURCE,
+            settlement_pivot_source=self.PHASE_1_SETTLEMENT_PIVOT_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_subgradient_pivot_modules(
+            f"{audit_id}_p2",
+            pricing_pivot_source=self.PHASE_2_PRICING_PIVOT_SOURCE,
+            tax_pivot_source=self.PHASE_2_TAX_PIVOT_SOURCE,
+            settlement_pivot_source=self.PHASE_2_SETTLEMENT_PIVOT_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_subgradient_pivot_modules(
+            f"{audit_id}_p3",
+            pricing_pivot_source=self.PHASE_3_PRICING_PIVOT_SOURCE,
+            tax_pivot_source=self.PHASE_3_TAX_PIVOT_SOURCE,
+            settlement_pivot_source=self.PHASE_3_SETTLEMENT_PIVOT_SOURCE,
+            model_id=mid,
+        )
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_repair_vector": p1["repair_vector"],
+                "phase_1_weighted_l1_cost": p1["weighted_l1_cost"],
+                "phase_1_excess_subgradient_cost": p1["excess_subgradient_cost"],
+                "phase_1_remaining_holonomy": p1["remaining_holonomy"],
+                "phase_1_surcharge_cents": p1["pivot_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_repair_vector": p2["repair_vector"],
+                "phase_2_weighted_l1_cost": p2["weighted_l1_cost"],
+                "phase_2_excess_subgradient_cost": p2["excess_subgradient_cost"],
+                "phase_2_remaining_holonomy": p2["remaining_holonomy"],
+                "phase_2_surcharge_cents": p2["pivot_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_repair_vector": p3["repair_vector"],
+                "phase_3_weighted_l1_cost": p3["weighted_l1_cost"],
+                "phase_3_excess_subgradient_cost": p3["excess_subgradient_cost"],
+                "phase_3_remaining_holonomy": p3["remaining_holonomy"],
+                "phase_3_surcharge_cents": p3["pivot_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase subgradient pivot evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_subgradient_pivot.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "subgradient_sensitivity_receipt": (
+                self.subgradient_monitor.emit_receipt()
+                if self.subgradient_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

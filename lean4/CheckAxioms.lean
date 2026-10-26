@@ -142,6 +142,8 @@ import LggrVIII
 #print axioms LggrVIII.shared_chord_diamond_codebase_hodge_and_mayer_vietoris_audit
 #print axioms LggrVIII.governed_relaxation_codebase_authority_gate_and_minimum_slack_audit
 #print axioms LggrVIII.non_abelian_braid_codebase_word_ordering_and_yang_baxter_audit
+#print axioms LggrVIII.subgradient_pivot_codebase_weight_sensitivity_and_bottleneck_audit
+
 
 
 
