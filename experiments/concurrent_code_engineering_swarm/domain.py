@@ -4449,14 +4449,3 @@ class ContextualSheafCodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
-
-
-
-
-
-
-
-
-
-
-

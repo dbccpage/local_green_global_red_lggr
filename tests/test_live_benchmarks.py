@@ -40,6 +40,7 @@ from lggr.streaming import (
     StreamingAuditMonitor,
     StreamingClosedLoopRepairMonitor,
     StreamingCochainMonitor,
+    StreamingCodebaseContextualSheafMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingDeadlinePriorityQueueMonitor,
     StreamingFiberMonitor,
@@ -2323,6 +2324,22 @@ class TestOfflineTraceReplay(unittest.TestCase):
         self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
         self.assertEqual(mon_rec["status"], "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG")
         self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
+        replay_mon = StreamingCodebaseContextualSheafMonitor(
+            scope_id="live-codebase-contextual-sheaf-benchmark"
+        )
+        for idx, ev in enumerate(data["evaluations"], start=1):
+            parsed = ev["model_parsed_json"]
+            self.assertEqual(int(parsed["phase1_scaled_gap_m4"]), 2)
+            self.assertEqual(int(parsed["phase2_scaled_gap_m4"]), 1)
+            self.assertEqual(int(parsed["phase3_scaled_gap_m4"]), 0)
+            obs = replay_mon.evaluate_three_phase_sheaf_audit(
+                f"codebase_sheaf_eval_{idx}_{ev['model_id'].replace('/', '_')}",
+                model_id=ev["model_id"],
+            )
+            obs["model_raw_response"] = ev["model_raw_response"]
+            obs["model_parsed_json"] = ev["model_parsed_json"]
+        self.assertEqual(replay_mon.current_receipt(), mon_rec)
 
 
 if __name__ == "__main__":

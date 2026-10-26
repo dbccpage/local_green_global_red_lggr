@@ -3375,9 +3375,8 @@ def sheaf_merge_gate(
         f"eval-{arm}-{step_tag}",
         module_sources=workspace.state["sources"],
         local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
     )
-    if workspace.state["infeasible_constraint"] is not None:
-        eval_rec["status"] = "INFEASIBLE_CONTEXTUAL_SHEAF_LOCK"
     events.emit(
         "gate",
         {

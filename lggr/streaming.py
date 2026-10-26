@@ -25144,12 +25144,6 @@ class StreamingCodebaseContextualSheafMonitor:
     AuthorityEffect: None.
     """
 
-    MODULE_TO_WORKER: dict[str, str] = {
-        "pricing_sheaf": "worker-0",
-        "tax_sheaf": "worker-1",
-        "settlement_sheaf": "worker-2",
-    }
-
     DEFAULT_PRICING_SOURCE: str = (
         "def pricing_sheaf(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
         "    discount_cents = (gross_cents * discount_bps) // 10_000\n"
@@ -25238,9 +25232,6 @@ class StreamingCodebaseContextualSheafMonitor:
         self.transcript_monitor = StreamingMultiTurnPairwiseTranscriptMonitor(
             scope_id=f"{self.scope_id}-transcript"
         )
-        self.merge_monitor = StreamingCodebaseInterfaceMergeMonitor(
-            scope_id=f"{self.scope_id}-merge"
-        )
         self.fiber_monitor = StreamingFiberMonitor(
             scope_id=f"{self.scope_id}-fiber"
         )
@@ -25274,6 +25265,7 @@ class StreamingCodebaseContextualSheafMonitor:
         tax_rate_bps: int = 2000,
         fee_bps: int = 300,
         model_id: str = "deterministic-fixture",
+        infeasible_constraint: str | None = None,
     ) -> dict[str, Any]:
         eval_id = text(evaluation_id, "evaluation_id")
         mid = text(model_id, "model_id")
@@ -25298,6 +25290,15 @@ class StreamingCodebaseContextualSheafMonitor:
             table_ca,
         )
 
+        q_table_consistent = (
+            len(table_ab) == 4
+            and len(table_bc) == 4
+            and len(table_ca) == 4
+            and q_ab_num == int(rational(table_ab[3]) * Fraction(4))
+            and q_bc_num == int(rational(table_bc[3]) * Fraction(4))
+            and q_ca_num == int(rational(table_ca[3]) * Fraction(4))
+        )
+
         no_signaling_ok = bool(sheaf_rec["no_signaling_verified"])
         global_section_exists = bool(sheaf_rec["global_section_exists"])
         infeasibility_gap = rational(sheaf_rec["infeasibility_gap"])
@@ -25318,7 +25319,7 @@ class StreamingCodebaseContextualSheafMonitor:
         expected_gross_collected = 1080
 
         all_local_pass = all(bool(local_test_results.get(m, False)) for m in ("pricing_sheaf", "tax_sheaf", "settlement_sheaf"))
-        local_green = 1 if (all_local_pass and no_signaling_ok) else 0
+        local_green = 1 if (all_local_pass and no_signaling_ok and q_table_consistent) else 0
 
         settlement_conserved = (
             net_cents == expected_net
@@ -25337,6 +25338,7 @@ class StreamingCodebaseContextualSheafMonitor:
             and scaled_gap_m4 == 0
             and (q_bc_num + q_ca_num == 2)
             and settlement_conserved
+            and infeasible_constraint is None
         ) else 0
         defect = global_green - local_green
 
@@ -25391,7 +25393,10 @@ class StreamingCodebaseContextualSheafMonitor:
                 "target": "Keep table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0.",
             }
 
-        if global_green == 1:
+        if infeasible_constraint is not None and global_green == 0:
+            status = "INFEASIBLE_CONTEXTUAL_SHEAF_LOCK"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 1:
             status = "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG"
             contract_status = "COMPOSABLE_LGGG"
         elif local_green == 1 and q_bc_num == 1 and (q_ca_num != 1 or reserve_cents != 0):
@@ -25550,35 +25555,4 @@ class StreamingCodebaseContextualSheafMonitor:
             "evaluations": self.evaluations,
         }
         return json_value({**body, "receipt_sha256": digest(body)})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
