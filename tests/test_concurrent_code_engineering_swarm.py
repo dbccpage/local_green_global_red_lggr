@@ -61,6 +61,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_HODGE_P1_PY,
     INITIAL_PRICING_MIG_P1_P2_PY,
     INITIAL_PRICING_SLA_PY,
+    INITIAL_PRICING_WEDGE_COHERENT_PY,
+    INITIAL_PRICING_WEDGE_P1_PY,
+    INITIAL_PRICING_WEDGE_P2_PY,
     INITIAL_SETTLEMENT_C3_COHERENT_PY,
     INITIAL_SETTLEMENT_C3_P1_PY,
     INITIAL_SETTLEMENT_C3_P2_PY,
@@ -68,6 +71,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_HODGE_P1_P2_PY,
     INITIAL_SETTLEMENT_MIG_P1_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
+    INITIAL_SETTLEMENT_WEDGE_PY,
     INITIAL_TAX_C3_COHERENT_PY,
     INITIAL_TAX_C3_P1_PY,
     INITIAL_TAX_C3_P2_PY,
@@ -75,6 +79,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_HODGE_P1_PY,
     INITIAL_TAX_MIG_MIGRATION_PY,
     INITIAL_TAX_SLA_DEFERRED_PY,
+    INITIAL_TAX_WEDGE_COHERENT_PY,
+    INITIAL_TAX_WEDGE_P1_P2_PY,
     JACOBIAN_PRICING_SOURCE,
     JACOBIAN_SETTLEMENT_BLIND_SOURCE,
     JACOBIAN_SETTLEMENT_OBSERVABLE_SOURCE,
@@ -140,6 +146,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     DisagreementCouncilCodeWorkspace,
     DynamicSchemaCodeWorkspace,
     FiberSplittingCodeWorkspace,
+    FigureEightWedgeCodeWorkspace,
     GracefulSheddingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
@@ -164,6 +171,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     cptp_fixture,
     dfa_fixture,
     diamond_fixture,
+    figure_eight_wedge_fixture,
     fixture,
     graceful_shedding_fixture,
     gram_fixture,
@@ -184,6 +192,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_cptp_local_unit_tests,
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
+    run_figure_eight_wedge_local_unit_tests,
     run_graceful_shedding_local_unit_tests,
     run_gram_local_unit_tests,
     run_jacobian_local_unit_tests,
@@ -223,6 +232,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     cptp_campaign,
     dfa_campaign,
     diamond_campaign,
+    figure_eight_wedge_campaign,
     graceful_shedding_campaign,
     gram_campaign,
     jacobian_campaign,
@@ -5734,6 +5744,246 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_11800_arms["B"]["final_hodge_surcharge_cents"], 3)
             self.assertEqual(seed_11800_arms["C"]["final_hodge_surcharge_cents"], 0)
             self.assertEqual(seed_11800_arms["C"]["status"], "completed")
+
+    def test_figure_eight_wedge_workspace_and_unit_tests(self) -> None:
+        """Verify FigureEightWedgeCodeWorkspace and local unit tests across all 3 phases."""
+        from lggr.streaming import StreamingCodebaseFigureEightWedgeMonitor
+
+        mon = StreamingCodebaseFigureEightWedgeMonitor(scope_id="test-figure-eight-wedge-ws")
+        p1 = mon.evaluate_figure_eight_wedge_modules(
+            "p1",
+            pricing_wedge_source=INITIAL_PRICING_WEDGE_P1_PY,
+            tax_wedge_source=INITIAL_TAX_WEDGE_P1_P2_PY,
+            settlement_wedge_source=INITIAL_SETTLEMENT_WEDGE_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["norm2_exact"], 6)
+        self.assertEqual(p1["norm2_coexact"], 3)
+        self.assertEqual(p1["norm2_harmonic"], 3)
+        self.assertEqual(p1["junction_gauge_mismatch_cents"], 0)
+        self.assertEqual(p1["wedge_surcharge_cents"], 6)
+        self.assertEqual(p1["merchant_payout_cents"], 867)
+
+        p2 = mon.evaluate_figure_eight_wedge_modules(
+            "p2",
+            pricing_wedge_source=INITIAL_PRICING_WEDGE_P2_PY,
+            tax_wedge_source=INITIAL_TAX_WEDGE_P1_P2_PY,
+            settlement_wedge_source=INITIAL_SETTLEMENT_WEDGE_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["norm2_exact"], 2)
+        self.assertEqual(p2["norm2_coexact"], 0)
+        self.assertEqual(p2["norm2_harmonic"], 3)
+        self.assertEqual(p2["junction_gauge_mismatch_cents"], 1)
+        self.assertEqual(p2["wedge_surcharge_cents"], 4)
+        self.assertEqual(p2["merchant_payout_cents"], 869)
+
+        p3 = mon.evaluate_figure_eight_wedge_modules(
+            "p3",
+            pricing_wedge_source=INITIAL_PRICING_WEDGE_COHERENT_PY,
+            tax_wedge_source=INITIAL_TAX_WEDGE_COHERENT_PY,
+            settlement_wedge_source=INITIAL_SETTLEMENT_WEDGE_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["norm2_exact"], 20)
+        self.assertEqual(p3["norm2_coexact"], 0)
+        self.assertEqual(p3["norm2_harmonic"], 0)
+        self.assertEqual(p3["junction_gauge_mismatch_cents"], 0)
+        self.assertEqual(p3["wedge_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_figure_eight_wedge_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent figure_eight_wedge campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_figure_eight_wedge_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked tax_wedge.py has unfilled_loop_edges=[1, 1, 1] and cannot satisfy e_harm=0."
+                                }
+                            ),
+                        },
+                    }
+                elif (
+                    "Arm A" in sys_prompt
+                    or ("Arm B" in sys_prompt and worker in ("worker-1", "worker-2"))
+                    or ("Arm C" in sys_prompt and worker == "worker-2")
+                ):
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": INITIAL_PRICING_WEDGE_P2_PY}),
+                        },
+                    }
+                else:
+                    patch_src = (
+                        INITIAL_PRICING_WEDGE_COHERENT_PY
+                        if worker == "worker-0"
+                        else INITIAL_TAX_WEDGE_COHERENT_PY
+                    )
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_src}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "figure_eight_wedge",
+                "seeds": [11900, 11901],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_figure_eight_wedge_transport)
+            summary = figure_eight_wedge_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.figure_eight_wedge_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["norm2_harmonic"] = int(gate_rec["norm2_harmonic"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_figure_eight_wedge_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live figure_eight_wedge pilot evidence offline if present."""
+        wedge_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "figure_eight_wedge_pilot_run"
+            / "events.jsonl"
+        )
+        wedge_summary = wedge_events.with_name("summary.json")
+        if wedge_events.exists() and wedge_summary.exists():
+            replayed = replay(wedge_events)
+            self.assertEqual(replayed["schema"], "lggr.figure_eight_wedge_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+            seed_11900_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_11900_arms["A"]["final_wedge_surcharge_cents"], 6)
+            self.assertEqual(seed_11900_arms["B"]["final_wedge_surcharge_cents"], 4)
+            self.assertEqual(seed_11900_arms["C"]["final_wedge_surcharge_cents"], 0)
+            self.assertEqual(seed_11900_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":
