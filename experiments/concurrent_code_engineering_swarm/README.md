@@ -407,13 +407,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `48
 | `11400` | `repairable_adversarial_schema_side_channel_defect` | **C** | `explicit_lggr_host_authenticated_2bit_directive` | **`completed`** | **`['k_host_1', 'k_host_2']`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007360`** |
 | `11401` | `infeasible_hardware_locked_spoofed_1bit_schema` | **A / B / C** | All policies | `safe_escalated` | `['k_agent_self_report']` | `1` | `2` | `15` | 1 | 18 | `$0.018838` |
 
+## 25. 3-Agent Variable-Duration Incident Burst & Graceful-Degradation Shedding Campaign (`--topology graceful_shedding`)
+
+In `--topology graceful_shedding`, 3 concurrent LLM workers edit `pricing_sla.py`, `tax_sla.py`, and `settlement_sla.py` over a simultaneous 3-incident burst (durations $p = (2, 1, 1)$, deadlines $D = (2, 1, 2)$, Pareto floors $f = (4, 3, 4)$, criticalities $\kappa = (10, 8, 3)$) under fixed horizon ceiling $\tau_{\mathrm{horizon}} = 7$ (with 10 cents surcharge per missed deadline and 1 cent per unit of excess criticality loss):
+- On `seed 11500` (`repairable_variable_duration_graceful_shedding_defect`), `tax_sla.py` initially defers Incident 3 without shedding (`shed_incident_indices = []`, `start_ticks = [0, 0, 2]`, `missed_deadline_count = 1`, `shedding_surcharge_cents = 10`, `payout = 863 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 11501` (`infeasible_hardware_locked_unpreemptible_zero_shed_sla`), legacy constraints lock `tax_sla.py` and `settlement_sla.py` to zero shedding under $\tau_{\mathrm{horizon}} = 7$ while requiring zero deadline misses across all 3 incidents, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `49` live API attempts, `$0.059779` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `shed_indices` | `missed` | `excess_loss` | `surcharge` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `11500` | `repairable_variable_duration_graceful_shedding_defect` | **A** | `deferred_overload_no_shedding_gate` | `blocked_unresolved` | `[]` | `1` | `0` | `10` | 2 | 12 | `$0.013791` |
+| `11500` | `repairable_variable_duration_graceful_shedding_defect` | **B** | `priority_inverted_shed_incident_1` | `blocked_unresolved` | `[1]` | `0` | `7` | `7` | 2 | 12 | `$0.014301` |
+| `11500` | `repairable_variable_duration_graceful_shedding_defect` | **C** | `explicit_lggr_governed_shed_incident_3_directive` | **`completed`** | **`[3]`** | **`0`** | **`0`** | **`0`** | **1** | **7** | **`$0.007553`** |
+| `11501` | `infeasible_hardware_locked_unpreemptible_zero_shed_sla` | **A / B / C** | All policies | `safe_escalated` | `[]` | `1` | `0` | `10` | 1 | 18 | `$0.024135` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, and 3-agent adversarial-schema side-channel evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, and 3-agent graceful-shedding evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -438,4 +453,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/path_kernel_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/schema_synthesis_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/adversarial_schema_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/graceful_shedding_pilot_run/events.jsonl
 ```

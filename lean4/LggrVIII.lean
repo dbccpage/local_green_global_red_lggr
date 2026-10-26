@@ -5039,4 +5039,80 @@ theorem adversarial_schema_codebase_spoofed_metadata_and_side_channel_audit :
   · intro k_classes cap_s hlt
     omega
 
+/-- Theorem 118 (Variable-Duration Incident Burst & Graceful-Degradation Shedding in
+    Code-Engineering Swarms):
+    1. Multi-tick variable-duration overlap and minimum-criticality shedding law under fixed
+       horizon ceiling `tau_h`:
+       - When Incident 1 has duration `p1 = 2` and deadline `D1 = 2` (occupying ticks `0` and `1`
+         with load `f1`), Incident 2 has duration `p2 = 1` and deadline `D2 = 1` (occupying tick `0`
+         with load `f2`), and Incident 3 has duration `p3 = 1` and deadline `D3 = 2` (load `f3`),
+         whenever `f1 + f2 = tau_h` and `f1 + f3 > tau_h` (`f1, f2, f3 > 0`), Incident 3 cannot
+         co-execute in tick `0` (`f1 + f2 + f3 > tau_h`) nor in tick `1` (`f1 + f3 > tau_h`);
+       - For criticality weights `k3 < k2` and `k3 < k1`, shedding Incident 3 incurs strictly
+         smaller criticality loss than shedding Incident 1 or Incident 2 (`k1 - k3 ≥ 1` and `k2 - k3 ≥ 1`).
+    2. Concrete 3-phase codebase graceful-degradation shedding audit across `pricing_sla`,
+       `tax_sla`, and `settlement_sla` (`10` cents surcharge per missed SLA deadline plus
+       `1` cent per unit of excess criticality loss `shed_loss - min_loss`):
+       - Phase 1 (Multi-tick deferral without shedding `shed = []`, `starts = [0, 0, 2]`):
+         each module passes its isolated unit test (`L_p1 = 1`), yet Incident 3 completes at
+         `C3 = 2 + 1 = 3 > D3 = 2` (`missed_p1 = 1`, `shed_loss_p1 = 0`, `excess_p1 = 0`,
+         `surcharge_p1 = 10`, `payout_p1 = 873 - 10 = 863 ≠ 873`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Priority-inverted shedding `shed = [1]`, `starts = [0, 0, 0]`):
+         sheds high-criticality Incident 1 (`k1 = 10`) so retained `{2, 3}` complete by `D2 = 1, D3 = 2`
+         with tick-0 load `3 + 4 = 7 ≤ 7` (`missed_p2 = 0`, `L_p2 = 1`), yet `shed_loss_p2 = 10 > 3 = k3`
+         (`excess_p2 = 7 > 0`, `surcharge_p2 = 7`, `payout_p2 = 873 - 7 = 866 ≠ 873`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Governed minimum-criticality shedding `shed = [3]`, `starts = [0, 0, 0]`):
+         sheds lowest-criticality Incident 3 (`k3 = 3 = min_loss`), retaining `{1, 2}` (`retained_crit = 18`)
+         with `missed_p3 = 0`, `excess_p3 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`, and
+         `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem graceful_shedding_codebase_variable_duration_burst_audit :
+    (∀ f1 f2 f3 tau_h k1 k2 k3 : Int,
+      (f1 > 0 ∧ f2 > 0 ∧ f3 > 0 ∧ f1 + f2 = tau_h ∧ f1 + f3 > tau_h ∧ k3 < k2 ∧ k3 < k1) →
+      (¬ (f1 + f2 + f3 ≤ tau_h) ∧ ¬ (f1 + f3 ≤ tau_h) ∧ (f1 + f2 ≤ tau_h) ∧ (f1 ≤ tau_h) ∧
+       (k1 - k3 ≥ 1) ∧ (k2 - k3 ≥ 1))) ∧
+    (let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let p1 : Int := 2; let p2 : Int := 1; let p3 : Int := 1;
+     let d1 : Int := 2; let d2 : Int := 1; let d3 : Int := 2;
+     let k1 : Int := 10; let k2 : Int := 8; let k3 : Int := 3;
+     let tau_h : Int := 7;
+     let min_loss : Int := k3;
+     let c3_p1 : Int := 2 + p3;
+     let missed_p1 : Int := 1;
+     let shed_loss_p1 : Int := 0;
+     let excess_p1 : Int := shed_loss_p1;
+     let missed_p2 : Int := 0;
+     let shed_loss_p2 : Int := k1;
+     let excess_p2 : Int := shed_loss_p2 - min_loss;
+     let missed_p3 : Int := 0;
+     let shed_loss_p3 : Int := k3;
+     let excess_p3 : Int := shed_loss_p3 - min_loss;
+     let retained_crit_p3 : Int := k1 + k2;
+     let surcharge_p1 := 10 * missed_p1 + excess_p1;
+     let surcharge_p2 := 10 * missed_p2 + excess_p2;
+     let surcharge_p3 := 10 * missed_p3 + excess_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (f1 + f2 ≤ tau_h) ∧ (f1 ≤ tau_h) ∧ (f3 ≤ tau_h) ∧ (c3_p1 > d3) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (missed_p1 = 0) ∧ (excess_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (f2 + f3 ≤ tau_h) ∧ (missed_p2 = 0) ∧ (surcharge_p2 = 7) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (excess_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (f1 + f2 ≤ tau_h) ∧ (f1 ≤ tau_h) ∧ (0 + p1 ≤ d1) ∧ (0 + p2 ≤ d2) ∧ (missed_p3 = 0) ∧ (excess_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (shed_loss_p3 < shed_loss_p2) ∧ (surcharge_p3 < surcharge_p2) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (missed_p1 = 1 ∧ missed_p2 = 0 ∧ missed_p3 = 0 ∧
+      excess_p1 = 0 ∧ excess_p2 = 7 ∧ excess_p3 = 0 ∧
+      retained_crit_p3 = 18 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 7 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 866 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro f1 f2 f3 tau_h k1 k2 k3 ⟨h1, h2, h3, h4, h5, h6, h7⟩
+  omega
+
 end LggrVIII
