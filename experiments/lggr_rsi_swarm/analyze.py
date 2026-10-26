@@ -245,13 +245,71 @@ def power(dev_dir=None, sims=400, seed=11):
                                         "within-instance correlation 0.5."}
 
 
+def category(key):
+    if "/rsi-" in key:
+        return "rsi"
+    if "/rep" in key:
+        return "repair-controller" if "/ctl/" in key else "repair-wave"
+    if "/ctl-" in key:
+        return "controller"
+    return "proposal"
+
+
+def devstats(paths):
+    """Measured per-request cost, tokens, cache use and failures by request category."""
+    stats = defaultdict(lambda: Counter())
+    failures = Counter()
+    for path in paths:
+        for r in load_events(path):
+            if r["kind"] == "request":
+                stats[category(r["data"]["key"])]["max_count"] = max(stats[category(r["data"]["key"])]["max_count"], r["data"]["count"] or 0)
+            if r["kind"] != "response":
+                continue
+            d = r["data"]
+            s = stats[category(d["key"])]
+            s["requests"] += 1
+            s["usd_micro"] += int(Decimal(d["charged_usd"]) * 10 ** 6)
+            if d["failure"]:
+                failures[(category(d["key"]), d["failure"].get("kind"))] += 1
+            if d["body"]:
+                u = d["body"]["usage"]
+                for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens"):
+                    s[k] += u.get(k) or 0
+    out = {}
+    for cat, s in stats.items():
+        n = s["requests"]
+        inp = s["input_tokens"] + s["cache_creation_input_tokens"] + s["cache_read_input_tokens"]
+        out[cat] = {"requests": n, "usd": s["usd_micro"] / 1e6, "usd_per_request": s["usd_micro"] / 1e6 / n if n else None,
+                    "mean_prompt_tokens": inp / n if n else None, "mean_output_tokens": s["output_tokens"] / n if n else None,
+                    "cache_read_share": s["cache_read_input_tokens"] / inp if inp else None, "max_counted_input": s["max_count"]}
+    return {"by_category": out, "failures": {f"{a}:{b}": v for (a, b), v in failures.items()}}
+
+
+def project(dev, turns=None):
+    """Project evaluation spend from measured per-request costs and the frozen design's request counts."""
+    c = dev["by_category"]
+    per = {k: v["usd_per_request"] for k, v in c.items()}
+    ctl_turns = turns or 4.0
+    counts = {"proposal": 400 * 3 * 5 * 2,
+              "controller": (400 * 3 * 2 + 100 * 3) * ctl_turns,
+              "repair-wave": 60 * 3 * 2 * 5 * 2,
+              "repair-controller": 60 * 3 * 2 * ctl_turns,
+              "rsi": 30 * 3 * 2 * 3 * 2 * 5}
+    usd = {k: counts[k] * (per.get(k) or per.get("controller") or max(p for p in per.values() if p)) for k in counts}
+    return {"requests": counts, "usd": usd, "total_usd": sum(usd.values())}
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=["results", "power"])
+    parser.add_argument("mode", choices=["results", "power", "devstats"])
     parser.add_argument("path", nargs="?")
     parser.add_argument("--out")
     args = parser.parse_args()
-    out = power(args.path) if args.mode == "power" else results(args.path)
+    if args.mode == "devstats":
+        stats = devstats(sorted(Path(args.path).glob("*/events.jsonl*")))
+        out = {"dev": stats, "projection": project(stats)}
+    else:
+        out = power(args.path) if args.mode == "power" else results(args.path)
     text = json.dumps(out, indent=1, sort_keys=True)
     if args.out:
         Path(args.out).write_text(text + "\n", encoding="utf-8", newline="\n")

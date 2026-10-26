@@ -80,7 +80,6 @@ class FakeModel:
             return {"__failure__": {"stage": "create", "kind": "InternalServerError", "http_status": 500}}
         inst_id = key.split("/")[0]
         inst = self.instances[inst_id]
-        agent = next(a for a in runner.AGENTS if f"/{a}" in key)
         if "/ctl" in key:
             text = last_text(payload)
             ids = re.findall(r"K\d\d", text.split("advisor note:")[-1]) if "advisor note:" in text else []
@@ -90,6 +89,7 @@ class FakeModel:
             if turn == 2:
                 return self.body(key, [("run_check", {"check_id": "K99"})])
             return self.body(key, [("submit_verdict", {"verdict": "reject", "explanation": "fake", "cited_check_ids": ids[:1]})])
+        agent = next(a for a in runner.AGENTS if f"/{a}" in key)
         owned = next((m for m in inst["modules"] if m["owner"] == agent), None)
         if "/rsi-" in key:
             calls = [("memory_recall", {"query": ""}), ("memory_append", {"key": "cap", "content": "lesson", "source_ref": "contract:global"})]

@@ -121,7 +121,7 @@ Agents: five persistent sessions per (instance, draw): `impl-0`, `impl-1`,
      (checks involving the most hidden parameters and modules first).
    Ties broken by lowest check id. Budgets 1, 2, 4, 8; primary 4.
 
-3. Live controller arms (forks of the challenger session) at budget 4: tools
+3. Live controller arms (new challenger-role sessions, see R2) at budget 4: tools
    `run_check(check_id)` (priced; over budget, unknown, or repeated ids return
    `is_error` and charge nothing) and `submit_verdict(verdict in
    accept|reject|defer|model_mismatch, explanation, cited_check_ids)`. Turn cap 6;
@@ -204,3 +204,12 @@ host-rule verdict and charge. API keys never enter evidence.
   the value is never logged or recorded. The L-C advisor's example pair takes the first passing
   hypothesis separated by C's top-ranked check and the failing hypothesis nearest to it in Hamming
   distance (ties by index), so that the listed separating checks are informative.
+- R2 (2026-10-26, after development run `swarm-dev1`, before evaluation): in swarm-dev1 the controller
+  sessions forked from the challenger's full proposal history (which carries long thinking blocks), and
+  9/64 controller and 2/2 repair-controller requests exceeded the 10,000-token input cap and were refused.
+  Controller and repair-controller sessions are therefore new sessions in the challenger role (the
+  challenger's system prompt and the same fixed tool list), opened with the global contract, frozen
+  files, local-test status, the full team board, the check catalog and the advisor note (repair
+  controllers also get the first verification's checks and verdict). They remain byte-identical across
+  arms except the advisor note. In repair, all five agents (including the challenger) continue their own
+  proposal histories. swarm-dev1 evidence is kept and is not evaluation evidence.

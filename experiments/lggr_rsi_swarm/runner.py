@@ -83,6 +83,10 @@ def board_text(ws, since_wave, phase):
     return "Team board:\n" + "\n".join(f"  [{n['agent']}] ({n['status']}) {n['text']}" for n in notes)
 
 
+def board_lines(ws):
+    return "\n".join(f"  [{n['agent']}] ({n['phase']}, {n['status']}) {n['text']}" for n in ws.board) or "  (no notes)"
+
+
 def files_text(ws):
     return "\n".join(f"--- {m['file']}\n{ws.files[m['file']]}" for m in ws.instance["modules"])
 
@@ -302,8 +306,12 @@ class Campaign:
                 "cited": [], "turns": 0, "denied": 0, "errors": 0, "failure": False, "first_check": None,
                 "initial_note": note_text, "recommended": recommended}
 
-    def controller_text(self, inst, files, turns, header):
-        lines = [header,
+    def controller_session(self, sid, inst):
+        """A new controller session in the challenger role (its system prompt), one tool call per turn."""
+        return Session(sid, system_text("challenger", inst), "swarm", parallel=False)
+
+    def controller_text(self, inst, files, turns, header, board, extra=None):
+        lines = [header, global_contract_text(inst),
                  f"You may buy evidence with run_check (one call per turn) from a budget of {PRIMARY_BUDGET} units, then call "
                  "submit_verdict with: accept (the frozen system satisfies all local and global constraints under the TRUE hidden "
                  "values), reject (it does not), model_mismatch (the observations are inconsistent with every listed combination "
@@ -311,7 +319,8 @@ class Campaign:
                  "Check results are exact and deterministic; a result marked MALFORMED carries no information.",
                  "Frozen files:\n" + files_text_from(inst, files),
                  "Local tests: " + ", ".join(f"{m['name']} {'pass' if local_report(inst, m, files)['pass'] else 'FAIL'}" for m in inst["modules"]),
-                 "Candidate checks:\n" + catalog_text(inst)]
+                 "Team board from the build phases:\n" + board,
+                 "Candidate checks:\n" + catalog_text(inst)] + ([extra] if extra else [])
         return "\n\n".join(lines)
 
     def controller_result(self, c, st, wanted, phase):
@@ -336,17 +345,15 @@ class Campaign:
     def live_controllers(self, state, l0_ids):
         specs = []
         for st in state.values():
-            inst, files, chal = st["inst"], st["snapshot"], st["sessions"]["challenger"]
+            inst, files = st["inst"], st["snapshot"]
             arms = ["L-B", "L-C"] + (["L-0"] if inst["id"] in l0_ids else [])
             st["controllers"] = {}
             for arm in self.arm_order(inst, arms):
-                session = chal.fork(f"{chal.sid}/ctl-{arm}")
-                session.parallel = False
-                c = self.controller_spec(f"{session.sid}", arm, session, st["ws"].fork(), inst, files, st["space"], PRIMARY_BUDGET)
-                if not chal.dead:
-                    session.user(session.pending + [text(self.controller_text(inst, files, CONTROLLER_TURNS,
-                                 "CONTROLLER PHASE. The proposal waves are over and the module files are frozen. You are now the "
-                                 "verification controller for this snapshot.")), text(c["initial_note"])])
+                session = self.controller_session(f"{inst['id']}/d{st['draw']}/ctl-{arm}", inst)
+                c = self.controller_spec(session.sid, arm, session, st["ws"].fork(), inst, files, st["space"], PRIMARY_BUDGET)
+                session.user([text(self.controller_text(inst, files, CONTROLLER_TURNS,
+                              "CONTROLLER PHASE. The proposal waves are over and the module files are frozen. You are the "
+                              "verification controller for this snapshot.", board_lines(st["ws"]))), text(c["initial_note"])])
                 st["controllers"][arm] = c
                 specs.append(c)
         self.controllers(specs, "controller", CONTROLLER_TURNS)
@@ -367,8 +374,7 @@ class Campaign:
             for arm in self.arm_order(inst, ["L-B", "L-C"]):
                 ctl = st["controllers"][arm]
                 ws = st["ws"].fork()
-                sessions = {a: st["sessions"][a].fork(f"{st['sessions'][a].sid}/rep-{arm}") for a in AGENTS if a != "challenger"}
-                sessions["challenger"] = ctl["session"].fork(f"{ctl['session'].sid}/rep")
+                sessions = {a: st["sessions"][a].fork(f"{st['sessions'][a].sid}/rep-{arm}") for a in AGENTS}
                 checks = "; ".join(f"{e['check']} -> {e['result']}" for e in ctl["gateway"].log) or "none"
                 report = (f"REPAIR PHASE, wave 1 of 2. The controller verified the frozen snapshot. Checks run: {checks}. "
                           f"Controller verdict: {ctl['verdict']}"
@@ -401,14 +407,16 @@ class Campaign:
             space = Space(inst, files)
             old = b["ctl"]["prior"] + b["ctl"]["gateway"].observations()
             carried = [(cid, r) for cid, r in old if space.checks[cid]["kind"] in ("probe", "sum_probe", "measure")]
-            chal = b["sessions"]["challenger"]
-            c = self.controller_spec(f"{chal.sid}/ctl", b["arm"], chal, b["ws"], inst, files, space, PRIMARY_BUDGET,
+            ctl = self.controller_session(f"{inst['id']}/d{st['draw']}/rep-{b['arm']}/ctl", inst)
+            c = self.controller_spec(ctl.sid, b["arm"], ctl, b["ws"], inst, files, space, PRIMARY_BUDGET,
                                      prior=carried, carried_ids=[cid for cid, _ in carried])
-            if not chal.dead:
-                chal.user(chal.pending + [text(self.controller_text(inst, files, REPAIR_CONTROLLER_TURNS,
-                          "REPAIR VERIFICATION. The repaired files are frozen. You are again the verification controller, with 4 new "
-                          "budget units. Earlier probe/measure results about hidden parameters remain valid; earlier integration and "
-                          "local-test results referred to the old files.")), text(c["initial_note"])])
+            earlier = "; ".join(f"{e['check']} -> {e['result']}" for e in b["ctl"]["gateway"].log) or "none"
+            ctl.user([text(self.controller_text(inst, files, REPAIR_CONTROLLER_TURNS,
+                      "REPAIR VERIFICATION. After a first verification the team repaired the files, which are frozen again. You "
+                      "are the verification controller for the repaired snapshot, with 4 new budget units.", board_lines(b["ws"]),
+                      f"First verification (old files): checks {earlier}; verdict {b['ctl']['verdict']}. Probe/measure results "
+                      "about hidden parameters remain valid; integration and local-test results referred to the old files.")),
+                      text(c["initial_note"])])
             b["spec"] = c
             specs.append(c)
         self.controllers(specs, "repair-controller", REPAIR_CONTROLLER_TURNS)
