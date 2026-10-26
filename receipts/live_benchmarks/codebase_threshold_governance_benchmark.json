@@ -1,0 +1,1773 @@
+{
+  "schema": "lggr.codebase_threshold_governance_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_threshold_governance_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_fine_and_coarsened_excursion_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_coarsened_masked_odd_prefix_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_every_prefix_threshold_coherence_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_threshold_governance_codebase_coherence_rate": "0",
+  "reconciled_threshold_governance_codebase_coherence_rate": "1",
+  "codebase_threshold_governance_coherence_gain": "1",
+  "codebase_threshold_governance_receipt": {
+    "schema": "lggr.online_codebase_threshold_governance.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_threshold_governance",
+    "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "threshold_governance_receipt": {
+      "schema": "lggr.online_threshold_governance.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_threshold_governance:thresh",
+      "status": "QUORUM_MASKED_DEFECT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "n_validators": 4,
+      "quorum_k": 2,
+      "observed_traces_count": 15,
+      "unanimous_ngd_count": 0,
+      "quorum_masked_ngd_count": 10,
+      "quorum_recovered_pgd_count": 0,
+      "coherent_count": 5,
+      "all_monotonicity_verified": true,
+      "all_defect_difference_identities_verified": true,
+      "latest_trace": {
+        "trace_id": "mistralai/mistral-small-3.2-24b-instruct_threshold_governance_phase_3:mistralai/mistral-small-3.2-24b-instruct",
+        "local_verdicts": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "vote_sum": 4,
+        "eg": 1,
+        "product_aggregator_l": 1,
+        "quorum_aggregator_m": 1,
+        "delta_product": 0,
+        "delta_quorum": 0,
+        "quorum_inflation_gap": 0,
+        "trace_status": "THRESHOLD_GOVERNANCE_COHERENT_LGGG",
+        "monotonicity_l_le_quorum_verified": true,
+        "defect_difference_identity_verified": true
+      },
+      "receipt_sha256": "bb1e885b9c59a760cf15372b00d9cc53ddba5107543987a5de1b5343f8c19daa"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "live_codebase_threshold_governance:openai/gpt-4o-mini_threshold_governance_phase_1",
+          "report": {
+            "endpoint_cancelled": true,
+            "local_green": 1
+          },
+          "query": "LGGR"
+        },
+        "right": {
+          "state_id": "live_codebase_threshold_governance:openai/gpt-4o-mini_threshold_governance_phase_3",
+          "report": {
+            "endpoint_cancelled": true,
+            "local_green": 1
+          },
+          "query": "LGGG"
+        }
+      },
+      "input_sha256": "4285388ab9e0f48357662b46e507659e75c108daa69c27461beeafb6f4ce21a4",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "70ed21ef6d3d1dc0970d0eaee7c604c1542c82d196ca6db31cbebee054637916"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_threshold_governance",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "phase_1_prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "phase_1_max_prefix_abs": 6,
+        "phase_1_max_coarse_abs": 6,
+        "phase_1_prefix_excess": 4,
+        "phase_1_coarse_excess": 4,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "phase_2_step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "phase_2_prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "phase_2_max_prefix_abs": 3,
+        "phase_2_max_coarse_abs": 0,
+        "phase_2_prefix_excess": 1,
+        "phase_2_coarse_excess": 0,
+        "phase_2_hidden_excursion_masked": true,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "phase_3_step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "phase_3_prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "phase_3_max_prefix_abs": 2,
+        "phase_3_max_coarse_abs": 0,
+        "phase_3_prefix_excess": 0,
+        "phase_3_coarse_excess": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_threshold_governance",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "phase_1_prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "phase_1_max_prefix_abs": 6,
+        "phase_1_max_coarse_abs": 6,
+        "phase_1_prefix_excess": 4,
+        "phase_1_coarse_excess": 4,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "phase_2_step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "phase_2_prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "phase_2_max_prefix_abs": 3,
+        "phase_2_max_coarse_abs": 0,
+        "phase_2_prefix_excess": 1,
+        "phase_2_coarse_excess": 0,
+        "phase_2_hidden_excursion_masked": true,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "phase_3_step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "phase_3_prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "phase_3_max_prefix_abs": 2,
+        "phase_3_max_coarse_abs": 0,
+        "phase_3_prefix_excess": 0,
+        "phase_3_coarse_excess": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_threshold_governance",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "phase_1_prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "phase_1_max_prefix_abs": 6,
+        "phase_1_max_coarse_abs": 6,
+        "phase_1_prefix_excess": 4,
+        "phase_1_coarse_excess": 4,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "phase_2_step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "phase_2_prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "phase_2_max_prefix_abs": 3,
+        "phase_2_max_coarse_abs": 0,
+        "phase_2_prefix_excess": 1,
+        "phase_2_coarse_excess": 0,
+        "phase_2_hidden_excursion_masked": true,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "phase_3_step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "phase_3_prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "phase_3_max_prefix_abs": 2,
+        "phase_3_max_coarse_abs": 0,
+        "phase_3_prefix_excess": 0,
+        "phase_3_coarse_excess": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_threshold_governance",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "phase_1_prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "phase_1_max_prefix_abs": 6,
+        "phase_1_max_coarse_abs": 6,
+        "phase_1_prefix_excess": 4,
+        "phase_1_coarse_excess": 4,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "phase_2_step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "phase_2_prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "phase_2_max_prefix_abs": 3,
+        "phase_2_max_coarse_abs": 0,
+        "phase_2_prefix_excess": 1,
+        "phase_2_coarse_excess": 0,
+        "phase_2_hidden_excursion_masked": true,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "phase_3_step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "phase_3_prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "phase_3_max_prefix_abs": 2,
+        "phase_3_max_coarse_abs": 0,
+        "phase_3_prefix_excess": 0,
+        "phase_3_coarse_excess": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_threshold_governance",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "phase_1_prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "phase_1_max_prefix_abs": 6,
+        "phase_1_max_coarse_abs": 6,
+        "phase_1_prefix_excess": 4,
+        "phase_1_coarse_excess": 4,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "phase_2_step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "phase_2_prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "phase_2_max_prefix_abs": 3,
+        "phase_2_max_coarse_abs": 0,
+        "phase_2_prefix_excess": 1,
+        "phase_2_coarse_excess": 0,
+        "phase_2_hidden_excursion_masked": true,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "phase_3_step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "phase_3_prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "phase_3_max_prefix_abs": 2,
+        "phase_3_max_coarse_abs": 0,
+        "phase_3_prefix_excess": 0,
+        "phase_3_coarse_excess": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_threshold_governance_phase_1",
+        "model_id": "openai/gpt-4o-mini",
+        "step_amplitude_a": 3,
+        "pairing_mode": "block_cancel",
+        "step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "max_prefix_abs": 6,
+        "max_coarse_abs": 6,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 4,
+        "coarse_excess": 4,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_threshold_governance_phase_2",
+        "model_id": "openai/gpt-4o-mini",
+        "step_amplitude_a": 3,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "max_prefix_abs": 3,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 1,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": true,
+        "thresh_surcharge_cents": 2,
+        "merchant_payout_cents": 871,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_threshold_governance_phase_3",
+        "model_id": "openai/gpt-4o-mini",
+        "step_amplitude_a": 2,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "max_prefix_abs": 2,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 0,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "HOLD_STEP_AMPLITUDE_A_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "HOLD_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_threshold_governance_phase_1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "step_amplitude_a": 3,
+        "pairing_mode": "block_cancel",
+        "step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "max_prefix_abs": 6,
+        "max_coarse_abs": 6,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 4,
+        "coarse_excess": 4,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_threshold_governance_phase_2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "step_amplitude_a": 3,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "max_prefix_abs": 3,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 1,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": true,
+        "thresh_surcharge_cents": 2,
+        "merchant_payout_cents": 871,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_threshold_governance_phase_3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "step_amplitude_a": 2,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "max_prefix_abs": 2,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 0,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "HOLD_STEP_AMPLITUDE_A_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "HOLD_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_threshold_governance_phase_1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "step_amplitude_a": 3,
+        "pairing_mode": "block_cancel",
+        "step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "max_prefix_abs": 6,
+        "max_coarse_abs": 6,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 4,
+        "coarse_excess": 4,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_threshold_governance_phase_2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "step_amplitude_a": 3,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "max_prefix_abs": 3,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 1,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": true,
+        "thresh_surcharge_cents": 2,
+        "merchant_payout_cents": 871,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_threshold_governance_phase_3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "step_amplitude_a": 2,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "max_prefix_abs": 2,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 0,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "HOLD_STEP_AMPLITUDE_A_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "HOLD_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_threshold_governance_phase_1",
+        "model_id": "deepseek/deepseek-chat",
+        "step_amplitude_a": 3,
+        "pairing_mode": "block_cancel",
+        "step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "max_prefix_abs": 6,
+        "max_coarse_abs": 6,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 4,
+        "coarse_excess": 4,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_threshold_governance_phase_2",
+        "model_id": "deepseek/deepseek-chat",
+        "step_amplitude_a": 3,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "max_prefix_abs": 3,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 1,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": true,
+        "thresh_surcharge_cents": 2,
+        "merchant_payout_cents": 871,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_threshold_governance_phase_3",
+        "model_id": "deepseek/deepseek-chat",
+        "step_amplitude_a": 2,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "max_prefix_abs": 2,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 0,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "HOLD_STEP_AMPLITUDE_A_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "HOLD_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_threshold_governance_phase_1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "step_amplitude_a": 3,
+        "pairing_mode": "block_cancel",
+        "step_deltas": [
+          3,
+          3,
+          -3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          6,
+          3,
+          0
+        ],
+        "max_prefix_abs": 6,
+        "max_coarse_abs": 6,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 4,
+        "coarse_excess": 4,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_threshold_governance_phase_2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "step_amplitude_a": 3,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          3,
+          -3,
+          3,
+          -3
+        ],
+        "prefix_sums": [
+          3,
+          0,
+          3,
+          0
+        ],
+        "max_prefix_abs": 3,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 1,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": true,
+        "thresh_surcharge_cents": 2,
+        "merchant_payout_cents": 871,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_threshold_governance_phase_3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "step_amplitude_a": 2,
+        "pairing_mode": "alternating_cancel",
+        "step_deltas": [
+          2,
+          -2,
+          2,
+          -2
+        ],
+        "prefix_sums": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "max_prefix_abs": 2,
+        "max_coarse_abs": 0,
+        "endpoint_drift_abs": 0,
+        "prefix_excess": 0,
+        "coarse_excess": 0,
+        "hidden_excursion_masked": false,
+        "thresh_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_thresh",
+            "action": "HOLD_STEP_AMPLITUDE_A_TWO",
+            "target_step_amplitude_a": 2
+          },
+          "worker-1": {
+            "module": "tax_thresh",
+            "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+            "target_pairing_mode": "alternating_cancel",
+            "target_step_deltas": [
+              2,
+              -2,
+              2,
+              -2
+            ]
+          },
+          "worker-2": {
+            "module": "settlement_thresh",
+            "action": "HOLD_THRESHOLD_GOVERNANCE_GUARD",
+            "target_thresh_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "9fac15e11b707837dc460623ebc77805f29214a3dc667f4bfb61a4af12753d70"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_threshold_governance",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_step_deltas": [
+        3,
+        3,
+        -3,
+        -3
+      ],
+      "phase_1_prefix_sums": [
+        3,
+        6,
+        3,
+        0
+      ],
+      "phase_1_max_prefix_abs": 6,
+      "phase_1_max_coarse_abs": 6,
+      "phase_1_prefix_excess": 4,
+      "phase_1_coarse_excess": 4,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+      "phase_2_step_deltas": [
+        3,
+        -3,
+        3,
+        -3
+      ],
+      "phase_2_prefix_sums": [
+        3,
+        0,
+        3,
+        0
+      ],
+      "phase_2_max_prefix_abs": 3,
+      "phase_2_max_coarse_abs": 0,
+      "phase_2_prefix_excess": 1,
+      "phase_2_coarse_excess": 0,
+      "phase_2_hidden_excursion_masked": true,
+      "phase_2_surcharge_cents": 2,
+      "phase_2_payout_cents": 871,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+      "phase_3_step_deltas": [
+        2,
+        -2,
+        2,
+        -2
+      ],
+      "phase_3_prefix_sums": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "phase_3_max_prefix_abs": 2,
+      "phase_3_max_coarse_abs": 0,
+      "phase_3_prefix_excess": 0,
+      "phase_3_coarse_excess": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 2,\n  \"phase_2_payout_cents\": 871,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_threshold_governance",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_step_deltas": [
+        3,
+        3,
+        -3,
+        -3
+      ],
+      "phase_1_prefix_sums": [
+        3,
+        6,
+        3,
+        0
+      ],
+      "phase_1_max_prefix_abs": 6,
+      "phase_1_max_coarse_abs": 6,
+      "phase_1_prefix_excess": 4,
+      "phase_1_coarse_excess": 4,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+      "phase_2_step_deltas": [
+        3,
+        -3,
+        3,
+        -3
+      ],
+      "phase_2_prefix_sums": [
+        3,
+        0,
+        3,
+        0
+      ],
+      "phase_2_max_prefix_abs": 3,
+      "phase_2_max_coarse_abs": 0,
+      "phase_2_prefix_excess": 1,
+      "phase_2_coarse_excess": 0,
+      "phase_2_hidden_excursion_masked": true,
+      "phase_2_surcharge_cents": 2,
+      "phase_2_payout_cents": 871,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+      "phase_3_step_deltas": [
+        2,
+        -2,
+        2,
+        -2
+      ],
+      "phase_3_prefix_sums": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "phase_3_max_prefix_abs": 2,
+      "phase_3_max_coarse_abs": 0,
+      "phase_3_prefix_excess": 0,
+      "phase_3_coarse_excess": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 2,\n  \"phase_2_payout_cents\": 871,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_threshold_governance",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_step_deltas": [
+        3,
+        3,
+        -3,
+        -3
+      ],
+      "phase_1_prefix_sums": [
+        3,
+        6,
+        3,
+        0
+      ],
+      "phase_1_max_prefix_abs": 6,
+      "phase_1_max_coarse_abs": 6,
+      "phase_1_prefix_excess": 4,
+      "phase_1_coarse_excess": 4,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+      "phase_2_step_deltas": [
+        3,
+        -3,
+        3,
+        -3
+      ],
+      "phase_2_prefix_sums": [
+        3,
+        0,
+        3,
+        0
+      ],
+      "phase_2_max_prefix_abs": 3,
+      "phase_2_max_coarse_abs": 0,
+      "phase_2_prefix_excess": 1,
+      "phase_2_coarse_excess": 0,
+      "phase_2_hidden_excursion_masked": true,
+      "phase_2_surcharge_cents": 2,
+      "phase_2_payout_cents": 871,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+      "phase_3_step_deltas": [
+        2,
+        -2,
+        2,
+        -2
+      ],
+      "phase_3_prefix_sums": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "phase_3_max_prefix_abs": 2,
+      "phase_3_max_coarse_abs": 0,
+      "phase_3_prefix_excess": 0,
+      "phase_3_coarse_excess": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 2,\n  \"phase_2_payout_cents\": 871,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_threshold_governance",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_step_deltas": [
+        3,
+        3,
+        -3,
+        -3
+      ],
+      "phase_1_prefix_sums": [
+        3,
+        6,
+        3,
+        0
+      ],
+      "phase_1_max_prefix_abs": 6,
+      "phase_1_max_coarse_abs": 6,
+      "phase_1_prefix_excess": 4,
+      "phase_1_coarse_excess": 4,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+      "phase_2_step_deltas": [
+        3,
+        -3,
+        3,
+        -3
+      ],
+      "phase_2_prefix_sums": [
+        3,
+        0,
+        3,
+        0
+      ],
+      "phase_2_max_prefix_abs": 3,
+      "phase_2_max_coarse_abs": 0,
+      "phase_2_prefix_excess": 1,
+      "phase_2_coarse_excess": 0,
+      "phase_2_hidden_excursion_masked": true,
+      "phase_2_surcharge_cents": 2,
+      "phase_2_payout_cents": 871,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+      "phase_3_step_deltas": [
+        2,
+        -2,
+        2,
+        -2
+      ],
+      "phase_3_prefix_sums": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "phase_3_max_prefix_abs": 2,
+      "phase_3_max_coarse_abs": 0,
+      "phase_3_prefix_excess": 0,
+      "phase_3_coarse_excess": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 2,\n  \"phase_2_payout_cents\": 871,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_threshold_governance",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_step_deltas": [
+        3,
+        3,
+        -3,
+        -3
+      ],
+      "phase_1_prefix_sums": [
+        3,
+        6,
+        3,
+        0
+      ],
+      "phase_1_max_prefix_abs": 6,
+      "phase_1_max_coarse_abs": 6,
+      "phase_1_prefix_excess": 4,
+      "phase_1_coarse_excess": 4,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+      "phase_2_step_deltas": [
+        3,
+        -3,
+        3,
+        -3
+      ],
+      "phase_2_prefix_sums": [
+        3,
+        0,
+        3,
+        0
+      ],
+      "phase_2_max_prefix_abs": 3,
+      "phase_2_max_coarse_abs": 0,
+      "phase_2_prefix_excess": 1,
+      "phase_2_coarse_excess": 0,
+      "phase_2_hidden_excursion_masked": true,
+      "phase_2_surcharge_cents": 2,
+      "phase_2_payout_cents": 871,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+      "phase_3_step_deltas": [
+        2,
+        -2,
+        2,
+        -2
+      ],
+      "phase_3_prefix_sums": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "phase_3_max_prefix_abs": 2,
+      "phase_3_max_coarse_abs": 0,
+      "phase_3_prefix_excess": 0,
+      "phase_3_coarse_excess": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 2,
+        "phase_2_payout_cents": 871,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 2,\n  \"phase_2_payout_cents\": 871,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Threshold governance prefix excursion and endpoint drift audit codebase benchmark across 5 model families (Theorem 137): Phase 1 separates fine and coarsened prefix excursion (`step_deltas = [3, 3, -3, -3], prefix_sums = [3, 6, 3, 0], max_prefix_abs = 6 > 2, max_coarse_abs = 6 > 2, surcharge = 12, payout = 861 != 873, Delta_E = -1`); Phase 2 separates coarsened-masked odd prefix excursion (`step_deltas = [3, -3, 3, -3], prefix_sums = [3, 0, 3, 0], max_coarse_abs = 0 <= 2, coarse_excess = 0, max_prefix_abs = 3 > 2, prefix_excess = 1, surcharge = 2, payout = 871 != 873, Delta_E = -1`); Phase 3 verifies every-prefix threshold governance (`step_deltas = [2, -2, 2, -2], prefix_sums = [2, 0, 2, 0], max_prefix_abs = 2 <= 2, max_coarse_abs = 0 <= 2, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "f1ac88c6542faf6567c09215cc43c0d303e3559a8e5476f305ea9bd7bfad3fab"
+}

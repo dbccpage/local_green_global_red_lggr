@@ -23,6 +23,7 @@ from lggr.streaming import (
     StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
+    StreamingCodebaseThresholdGovernanceMonitor,
     StreamingCodebaseWeightedRelaxationMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingNonAbelianBraidHolonomyMonitor,
@@ -10958,6 +10959,224 @@ class WeightedRelaxationCodeWorkspace:
                 "module": module_name,
                 "local_unit_test_result": local_res,
                 "scope": "isolated module unit tests passed; risk-weighted minimum-slack Pareto relaxation (0, 2) under w = (3, 1) is checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+# ---------------------------------------------------------------------------
+# Threshold Governance Prefix Excursion vs. Endpoint Cancellation Workspace (Test 72, Theorem 137)
+# ---------------------------------------------------------------------------
+
+THRESHOLD_GOVERNANCE_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_thresh",
+    "worker-1": "tax_thresh",
+    "worker-2": "settlement_thresh",
+}
+
+INITIAL_PRICING_THRESH_P1_P2_PY = StreamingCodebaseThresholdGovernanceMonitor.PHASE_1_PRICING_THRESH_SOURCE
+INITIAL_PRICING_THRESH_P3_PY = StreamingCodebaseThresholdGovernanceMonitor.PHASE_3_PRICING_THRESH_SOURCE
+
+INITIAL_TAX_THRESH_P1_PY = StreamingCodebaseThresholdGovernanceMonitor.PHASE_1_TAX_THRESH_SOURCE
+INITIAL_TAX_THRESH_P2_P3_PY = StreamingCodebaseThresholdGovernanceMonitor.PHASE_2_TAX_THRESH_SOURCE
+INITIAL_TAX_THRESH_P2_PY = INITIAL_TAX_THRESH_P2_P3_PY
+INITIAL_TAX_THRESH_P3_PY = INITIAL_TAX_THRESH_P2_P3_PY
+
+INITIAL_SETTLEMENT_THRESH_P1_P2_PY = StreamingCodebaseThresholdGovernanceMonitor.PHASE_1_SETTLEMENT_THRESH_SOURCE
+INITIAL_SETTLEMENT_THRESH_P3_PY = StreamingCodebaseThresholdGovernanceMonitor.PHASE_3_SETTLEMENT_THRESH_SOURCE
+
+
+def run_threshold_governance_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_thresh`, `tax_thresh`, or `settlement_thresh`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_thresh":
+            fn = ns.get("quote_thresh_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_thresh_pricing"}
+            res = fn(990)
+            amp = res.get("step_amplitude_a") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and amp in (2, 3)
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+
+        if module_name == "tax_thresh":
+            fn = ns.get("compute_thresh_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_thresh_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "step_amplitude_a": 2,
+                }
+            )
+            deltas = res.get("step_deltas") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and res.get("pairing_mode") in ("block_cancel", "alternating_cancel")
+                and isinstance(deltas, list)
+                and len(deltas) == 4
+                and sum(int(x) for x in deltas) == 0
+                and all(abs(int(x)) <= 3 for x in deltas)
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_thresh":
+            fn = ns.get("settle_thresh_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_thresh_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "step_amplitude_a": 2,
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "step_amplitude_a": 2,
+                    "pairing_mode": "alternating_cancel",
+                    "step_deltas": [2, -2, 2, -2],
+                    "prefix_threshold_tau": 2,
+                    "max_step_budget": 3,
+                },
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and res.get("thresh_surcharge_cents") == 0
+                and res.get("merchant_payout_cents") == 873
+                and res.get("prefix_excess") == 0
+                and res.get("coarse_excess") == 0
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def threshold_governance_fixture(seed: int) -> dict[str, Any]:
+    """Build initial 3-module workspace state for threshold governance swarm (seeds 13400, 13401, 13402)."""
+    infeasible = seed == 13401
+    return {
+        "seed": seed,
+        "kind": (
+            "infeasible_hardware_locked_step_amplitude_a_three"
+            if infeasible
+            else "repairable_prefix_threshold_excursion_and_every_prefix_scheduling"
+        ),
+        "sources": {
+            "pricing_thresh": INITIAL_PRICING_THRESH_P1_P2_PY,
+            "tax_thresh": INITIAL_TAX_THRESH_P1_PY,
+            "settlement_thresh": INITIAL_SETTLEMENT_THRESH_P1_P2_PY,
+        },
+        "locked_workers": ["worker-0"] if infeasible else [],
+        "infeasible_constraint": (
+            "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; "
+            "even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` "
+            "exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`). "
+            "Escalate with reason."
+            if infeasible
+            else None
+        ),
+        "escalations": {},
+    }
+
+
+class ThresholdGovernanceCodeWorkspace:
+    """Role-scoped tool dispatch for the 3-agent threshold governance code-engineering swarm."""
+
+    def __init__(self, state: dict[str, Any] | int) -> None:
+        if isinstance(state, int):
+            self.state = threshold_governance_fixture(state)
+        else:
+            self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in THRESHOLD_GOVERNANCE_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = THRESHOLD_GOVERNANCE_WORKER_MODULES[worker]
+
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_threshold_governance_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_thresh.py": "def quote_thresh_pricing(gross_cents: int = 990) -> dict",
+                    "tax_thresh.py": "def compute_thresh_tax(pricing_out: dict) -> dict",
+                    "settlement_thresh.py": "def settle_thresh_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_threshold_governance_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_threshold_governance_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; every-prefix threshold governance (|S_k| <= 2) is checked at merge gate",
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}

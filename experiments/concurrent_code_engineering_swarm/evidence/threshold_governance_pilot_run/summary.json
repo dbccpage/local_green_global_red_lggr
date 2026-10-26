@@ -1,0 +1,2244 @@
+{
+  "schema": "lggr.threshold_governance_code_engineering_swarm.v1",
+  "topology": "threshold_governance",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 13400,
+      "kind": "repairable_prefix_threshold_excursion_and_every_prefix_scheduling",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_step_deltas": [
+            3,
+            3,
+            -3,
+            -3
+          ],
+          "final_prefix_sums": [
+            3,
+            6,
+            3,
+            0
+          ],
+          "final_max_prefix_abs": 6,
+          "final_max_coarse_abs": 6,
+          "final_prefix_excess": 4,
+          "final_coarse_excess": 4,
+          "final_thresh_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+          "final_receipt_sha256": "0c3c3c191f6d0358e3d37676111126ed666b98f259ec2b0b6fa655aa97036625",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13400-arm-A",
+            "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13400-arm-A:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 3,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 3,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 0,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "A-wave-2:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "vote_sum": 2,
+                "eg": 0,
+                "product_aggregator_l": 0,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": -1,
+                "quorum_inflation_gap": 1,
+                "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "b2d5cfb87e390381f5e9f34e60f89fc2877db497551e435753fdfde6cce9be6c"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "90cb686103fe8daf62db683e27a923f917c667828648ac6e723f2f6bba1aa606",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "0675b499a8599e74666a97589da05ed95615b66d7d27087c40738f9329cfeb5b"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "0c3c3c191f6d0358e3d37676111126ed666b98f259ec2b0b6fa655aa97036625"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0134900552"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_step_deltas": [
+            3,
+            -3,
+            3,
+            -3
+          ],
+          "final_prefix_sums": [
+            3,
+            0,
+            3,
+            0
+          ],
+          "final_max_prefix_abs": 3,
+          "final_max_coarse_abs": 0,
+          "final_prefix_excess": 1,
+          "final_coarse_excess": 0,
+          "final_thresh_surcharge_cents": 2,
+          "final_merchant_payout_cents": 871,
+          "final_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+          "final_receipt_sha256": "f8fa67380e292c82b2c521b64c3342db64466814a91df3c6e47c59b76365328d",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13400-arm-B",
+            "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13400-arm-B:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 3,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 3,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 0,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "B-wave-2:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                "vote_sum": 3,
+                "eg": 0,
+                "product_aggregator_l": 0,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": -1,
+                "quorum_inflation_gap": 1,
+                "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "a8cea13808b3bde61312c331fabadfdc9d66afd76c522002b4a23a0ee53f542e"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "dd2593e58f057fc711d515aca00403ac37782da926233e37247463f4dfd1bc4f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "6cc4836f1c9f7af6f00fc123175895765e94a114dd020c46f582c196b0888df5"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "alternating_cancel",
+                "step_deltas": [
+                  3,
+                  -3,
+                  3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  0,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 3,
+                "max_coarse_abs": 0,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 1,
+                "coarse_excess": 0,
+                "hidden_excursion_masked": true,
+                "thresh_surcharge_cents": 2,
+                "merchant_payout_cents": 871,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "alternating_cancel",
+                "step_deltas": [
+                  3,
+                  -3,
+                  3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  0,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 3,
+                "max_coarse_abs": 0,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 1,
+                "coarse_excess": 0,
+                "hidden_excursion_masked": true,
+                "thresh_surcharge_cents": 2,
+                "merchant_payout_cents": 871,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "f8fa67380e292c82b2c521b64c3342db64466814a91df3c6e47c59b76365328d"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0129826740"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_step_deltas": [
+            2,
+            -2,
+            2,
+            -2
+          ],
+          "final_prefix_sums": [
+            2,
+            0,
+            2,
+            0
+          ],
+          "final_max_prefix_abs": 2,
+          "final_max_coarse_abs": 0,
+          "final_prefix_excess": 0,
+          "final_coarse_excess": 0,
+          "final_thresh_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+          "final_receipt_sha256": "043eef34821adeda954a77750d7a3e382a2f51c4d766a991990e48e8bd968421",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13400-arm-C",
+            "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13400-arm-C:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 2,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 1,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 1,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "C-wave-1:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "vote_sum": 4,
+                "eg": 1,
+                "product_aggregator_l": 1,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": 0,
+                "quorum_inflation_gap": 0,
+                "trace_status": "THRESHOLD_GOVERNANCE_COHERENT_LGGG",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "170ec09aa2cdd7d074f7da602f507f863fadd2766f7f43c483cb54e4be9406df"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "threshold-governance-seed-13400-arm-C:C-wave-0",
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                },
+                "right": {
+                  "state_id": "threshold-governance-seed-13400-arm-C:C-wave-1",
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG"
+                }
+              },
+              "input_sha256": "3da7219c93aaa7a338f270561b318115eb321a30cd01a0a6e9a895d317044161",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "650a289500957e514b914d7a9ef5a25c4669fd9b4355b60179dd1f24100538c8"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 2,
+                "pairing_mode": "alternating_cancel",
+                "step_deltas": [
+                  2,
+                  -2,
+                  2,
+                  -2
+                ],
+                "prefix_sums": [
+                  2,
+                  0,
+                  2,
+                  0
+                ],
+                "max_prefix_abs": 2,
+                "max_coarse_abs": 0,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 0,
+                "coarse_excess": 0,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "HOLD_STEP_AMPLITUDE_A_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "HOLD_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "043eef34821adeda954a77750d7a3e382a2f51c4d766a991990e48e8bd968421"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0069200182"
+        }
+      ]
+    },
+    {
+      "seed": 13401,
+      "kind": "infeasible_hardware_locked_step_amplitude_a_three",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_step_deltas": [
+            3,
+            3,
+            -3,
+            -3
+          ],
+          "final_prefix_sums": [
+            3,
+            6,
+            3,
+            0
+          ],
+          "final_max_prefix_abs": 6,
+          "final_max_coarse_abs": 6,
+          "final_prefix_excess": 4,
+          "final_coarse_excess": 4,
+          "final_thresh_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "912c1984ec0b5b0f6524dbc59743b47df6d98636016740d4386513183c1a6e11",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13401-arm-A",
+            "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13401-arm-A:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 2,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 2,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 0,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "A-wave-1:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "vote_sum": 2,
+                "eg": 0,
+                "product_aggregator_l": 0,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": -1,
+                "quorum_inflation_gap": 1,
+                "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "fa380275ae2960081873808d0e17785d3bc4a446359020662c9e908c898a75fa"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "b63a2d57ed4e22d066cf5e7c43d32258f9334078bf26ce3d7f25b85a0b32d473",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "ca15c407151907af0e642f89b85fdc09a823626f1490e42cf8321c6e83ec11ef"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "912c1984ec0b5b0f6524dbc59743b47df6d98636016740d4386513183c1a6e11"
+          },
+          "escalations": {
+            "worker-0": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`).",
+            "worker-1": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`). This constraint violation cannot be resolved within `tax_thresh.py`'s module scope and requires upstream intervention at `pricing_thresh.py` to reduce `step_amplitude_a` below 3."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0062150170"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_step_deltas": [
+            3,
+            3,
+            -3,
+            -3
+          ],
+          "final_prefix_sums": [
+            3,
+            6,
+            3,
+            0
+          ],
+          "final_max_prefix_abs": 6,
+          "final_max_coarse_abs": 6,
+          "final_prefix_excess": 4,
+          "final_coarse_excess": 4,
+          "final_thresh_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "cc38d476b7849c690a0b83d5e80bb6d6cbe04228735cbae9ab5af10ad550a812",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13401-arm-B",
+            "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13401-arm-B:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 2,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 2,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 0,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "B-wave-1:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "vote_sum": 2,
+                "eg": 0,
+                "product_aggregator_l": 0,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": -1,
+                "quorum_inflation_gap": 1,
+                "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "9394c7e81b000734c5f0ebcf06c04a43e6dfc2ab4fbd5073913f6c7c2d6606f0"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "d445581f1aab248331ce22b80d3d4ecbd5caa0a4e40de8a617dc95bf558e5450",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "b88cb219aebaf6503c724cf2fa2568baa5bb952aa7b2e78e78040bfff36840af"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "cc38d476b7849c690a0b83d5e80bb6d6cbe04228735cbae9ab5af10ad550a812"
+          },
+          "escalations": {
+            "worker-0": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`).",
+            "worker-1": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`). Cross-module constraint violation: `tax_thresh.py` cannot satisfy both the alternating_cancel pairing mode requirement and the immutable upstream amplitude without violating prefix threshold governance.",
+            "worker-2": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`). Escalate with reason."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0069660109"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_step_deltas": [
+            3,
+            3,
+            -3,
+            -3
+          ],
+          "final_prefix_sums": [
+            3,
+            6,
+            3,
+            0
+          ],
+          "final_max_prefix_abs": 6,
+          "final_max_coarse_abs": 6,
+          "final_prefix_excess": 4,
+          "final_coarse_excess": 4,
+          "final_thresh_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "eb6d6e963f179b81c75d7b2fc8a7f6ca7e209e96b3577a482b84c5b9757d55bd",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13401-arm-C",
+            "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13401-arm-C:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 2,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 2,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 0,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "C-wave-1:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "vote_sum": 2,
+                "eg": 0,
+                "product_aggregator_l": 0,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": -1,
+                "quorum_inflation_gap": 1,
+                "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "5fb8ea1b70b6ad3ece624018b54f3d48ad59c07f57f19ab99875c5a58d97f55c"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "91b19df622c2bd89c5ed76169af9eab5c06e2c1ff5efb367452f54f3da209a69",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "b459e935ac535d8c1982f989de2ff08833efe9f08037fae4eb0eb845f95f7cd3"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "eb6d6e963f179b81c75d7b2fc8a7f6ca7e209e96b3577a482b84c5b9757d55bd"
+          },
+          "escalations": {
+            "worker-0": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`).",
+            "worker-1": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`). This is an upstream specification contradiction that cannot be resolved within `tax_thresh.py` module permissions.",
+            "worker-2": "Hardware ROM locks `pricing_thresh.py` (`worker-0`) to `step_amplitude_a = 3`; even under alternating cancellation `[3, -3, 3, -3]`, odd prefixes `S_1 = 3` and `S_3 = 3` exceed the protected prefix threshold `prefix_threshold_tau = 2` (`prefix_excess = 1 > 0`). Escalate with reason."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0060617988"
+        }
+      ]
+    },
+    {
+      "seed": 13402,
+      "kind": "repairable_prefix_threshold_excursion_and_every_prefix_scheduling",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_step_deltas": [
+            3,
+            3,
+            -3,
+            -3
+          ],
+          "final_prefix_sums": [
+            3,
+            6,
+            3,
+            0
+          ],
+          "final_max_prefix_abs": 6,
+          "final_max_coarse_abs": 6,
+          "final_prefix_excess": 4,
+          "final_coarse_excess": 4,
+          "final_thresh_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+          "final_receipt_sha256": "c42b1c06fd299ba97ddaf9ef8ab224a9bba1d65ea18f787baf078bf651a46301",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13402-arm-A",
+            "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13402-arm-A:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 3,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 3,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 0,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "A-wave-2:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "vote_sum": 2,
+                "eg": 0,
+                "product_aggregator_l": 0,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": -1,
+                "quorum_inflation_gap": 1,
+                "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "c26fc6671f6339c9f05a071eaed4e5db97ceb09de16c310e38c7affdd62ccda2"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "cfe4006c96e2010d19a24d2a4e736d07157d1fc81c45da976b8156c4530702bf",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "bae83dd5b4a6989d63c0f9e93f4b3049df126e91d2a651b7dcd915bcaa3a4c48"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "c42b1c06fd299ba97ddaf9ef8ab224a9bba1d65ea18f787baf078bf651a46301"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0136876208"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_step_deltas": [
+            3,
+            -3,
+            3,
+            -3
+          ],
+          "final_prefix_sums": [
+            3,
+            0,
+            3,
+            0
+          ],
+          "final_max_prefix_abs": 3,
+          "final_max_coarse_abs": 0,
+          "final_prefix_excess": 1,
+          "final_coarse_excess": 0,
+          "final_thresh_surcharge_cents": 2,
+          "final_merchant_payout_cents": 871,
+          "final_status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+          "final_receipt_sha256": "a6460ca7d5a09ab6d33e23028a9b36dedc80a34310fff25871fa6fd99eeab25e",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13402-arm-B",
+            "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13402-arm-B:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 3,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 3,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 0,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "B-wave-2:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                "vote_sum": 3,
+                "eg": 0,
+                "product_aggregator_l": 0,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": -1,
+                "quorum_inflation_gap": 1,
+                "trace_status": "QUORUM_MASKED_DEFECT_LGGR",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "28e3af767572399d4804e2d935c20e8b542e281a3eb735aec259ee8d0d999ac1"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "f78b5b7e954ca06ab5f4fc0b42ffd7815c34e29e5edf19f54eb0b06e701cd27f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "47cc2af789a5a401755e8bc5bad98c3a59e61df7f0e2dae1342d325e74e3560d"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "alternating_cancel",
+                "step_deltas": [
+                  3,
+                  -3,
+                  3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  0,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 3,
+                "max_coarse_abs": 0,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 1,
+                "coarse_excess": 0,
+                "hidden_excursion_masked": true,
+                "thresh_surcharge_cents": 2,
+                "merchant_payout_cents": 871,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "alternating_cancel",
+                "step_deltas": [
+                  3,
+                  -3,
+                  3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  0,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 3,
+                "max_coarse_abs": 0,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 1,
+                "coarse_excess": 0,
+                "hidden_excursion_masked": true,
+                "thresh_surcharge_cents": 2,
+                "merchant_payout_cents": 871,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "a6460ca7d5a09ab6d33e23028a9b36dedc80a34310fff25871fa6fd99eeab25e"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0129912426"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_step_deltas": [
+            2,
+            -2,
+            2,
+            -2
+          ],
+          "final_prefix_sums": [
+            2,
+            0,
+            2,
+            0
+          ],
+          "final_max_prefix_abs": 2,
+          "final_max_coarse_abs": 0,
+          "final_prefix_excess": 0,
+          "final_coarse_excess": 0,
+          "final_thresh_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+          "final_receipt_sha256": "433d97414fb46883481a49f0f8a71a1d989688f146f44597d60f13e0442782f6",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": "threshold-governance-seed-13402-arm-C",
+            "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "threshold_governance_receipt": {
+              "schema": "lggr.online_threshold_governance.v1",
+              "authority_effect": "None",
+              "scope_id": "threshold-governance-seed-13402-arm-C:thresh",
+              "status": "QUORUM_MASKED_DEFECT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "n_validators": 4,
+              "quorum_k": 2,
+              "observed_traces_count": 2,
+              "unanimous_ngd_count": 0,
+              "quorum_masked_ngd_count": 1,
+              "quorum_recovered_pgd_count": 0,
+              "coherent_count": 1,
+              "all_monotonicity_verified": true,
+              "all_defect_difference_identities_verified": true,
+              "latest_trace": {
+                "trace_id": "C-wave-1:deterministic",
+                "local_verdicts": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "vote_sum": 4,
+                "eg": 1,
+                "product_aggregator_l": 1,
+                "quorum_aggregator_m": 1,
+                "delta_product": 0,
+                "delta_quorum": 0,
+                "quorum_inflation_gap": 0,
+                "trace_status": "THRESHOLD_GOVERNANCE_COHERENT_LGGG",
+                "monotonicity_l_le_quorum_verified": true,
+                "defect_difference_identity_verified": true
+              },
+              "receipt_sha256": "3b9e142ae286f9f11b1e0755f1cedf14b6195cae9a9fbeb599115dea43d455c1"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "threshold-governance-seed-13402-arm-C:C-wave-0",
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                },
+                "right": {
+                  "state_id": "threshold-governance-seed-13402-arm-C:C-wave-1",
+                  "report": {
+                    "endpoint_cancelled": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG"
+                }
+              },
+              "input_sha256": "9db9c4e0e7a2c17b5b4b69e9cfc554c47a74eef63232a2afebced1681f30ea5d",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "ab0d5c65cd9272f139fee5b766368067d7dc51edc84379b83da34f9f90e9bd92"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "step_amplitude_a": 3,
+                "pairing_mode": "block_cancel",
+                "step_deltas": [
+                  3,
+                  3,
+                  -3,
+                  -3
+                ],
+                "prefix_sums": [
+                  3,
+                  6,
+                  3,
+                  0
+                ],
+                "max_prefix_abs": 6,
+                "max_coarse_abs": 6,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 4,
+                "coarse_excess": 4,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "REDUCE_STEP_AMPLITUDE_A_TO_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "SWITCH_TO_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "step_amplitude_a": 2,
+                "pairing_mode": "alternating_cancel",
+                "step_deltas": [
+                  2,
+                  -2,
+                  2,
+                  -2
+                ],
+                "prefix_sums": [
+                  2,
+                  0,
+                  2,
+                  0
+                ],
+                "max_prefix_abs": 2,
+                "max_coarse_abs": 0,
+                "endpoint_drift_abs": 0,
+                "prefix_excess": 0,
+                "coarse_excess": 0,
+                "hidden_excursion_masked": false,
+                "thresh_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_thresh",
+                    "action": "HOLD_STEP_AMPLITUDE_A_TWO",
+                    "target_step_amplitude_a": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_thresh",
+                    "action": "HOLD_ALTERNATING_CANCEL_PAIRING",
+                    "target_pairing_mode": "alternating_cancel",
+                    "target_step_deltas": [
+                      2,
+                      -2,
+                      2,
+                      -2
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_thresh",
+                    "action": "HOLD_THRESHOLD_GOVERNANCE_GUARD",
+                    "target_thresh_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "433d97414fb46883481a49f0f8a71a1d989688f146f44597d60f13e0442782f6"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0062806182"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 96,
+  "charged_or_reserved_usd": "0.0855950557",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 30,
+  "scope": "Concurrent 3-agent threshold governance prefix excursion & endpoint drift audit Python code-engineering swarm (`pricing_thresh` -> `tax_thresh` -> `settlement_thresh`) comparing block-cancel trajectory [3, 3, -3, -3] with S_2 = 6 > 2 (A), alternating-cancel trajectory [3, -3, 3, -3] with coarsened S_2 = S_4 = 0 masking odd prefixes S_1 = S_3 = 3 > 2 (B), and threshold-governed trajectory [2, -2, 2, -2] with every prefix |S_k| <= 2 (C) with full cryptographic receipts."
+}

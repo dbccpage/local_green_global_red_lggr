@@ -39769,6 +39769,567 @@ class StreamingCodebaseWeightedRelaxationMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseThresholdGovernanceMonitor:
+    """Streaming monitor for 3-module threshold governance prefix excursion vs. endpoint cancellation codebase audits (Theorem 137).
+
+    AuthorityEffect: None.
+    Composes `StreamingThresholdGovernanceMonitor`, `StreamingAuditMonitor`,
+    `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor` to audit a 3-module
+    financial settlement codebase (`pricing_thresh.py`, `tax_thresh.py`, `settlement_thresh.py`)
+    across 3 phases:
+    - Phase 1 (Block-cancelling trajectory `step_deltas = [3, 3, -3, -3]`):
+      `prefix_sums = [3, 6, 3, 0]`, `max_prefix_abs = 6 > 2` (`prefix_excess = 4`),
+      `max_coarse_abs = 6 > 2` (`coarse_excess = 4`), `thresh_surcharge_cents = 2 * 4 + 4 = 12`,
+      `merchant_payout_cents = 873 - 12 = 861 != 873` (`L = 1, Eg = 0, defect = -1`).
+    - Phase 2 (Alternating trajectory `step_deltas = [3, -3, 3, -3]` masking 2-step coarsened boundaries):
+      `prefix_sums = [3, 0, 3, 0]`, `max_coarse_abs = 0 <= 2` (`coarse_excess = 0`),
+      yet `max_prefix_abs = 3 > 2` (`prefix_excess = 1`), `thresh_surcharge_cents = 2 * 1 + 0 = 2`,
+      `merchant_payout_cents = 873 - 2 = 871 != 873` (`L = 1, Eg = 0, defect = -1`).
+    - Phase 3 (Prefix-bounded alternating trajectory `step_deltas = [2, -2, 2, -2]`):
+      `prefix_sums = [2, 0, 2, 0]`, `max_prefix_abs = 2 <= 2` (`prefix_excess = 0`),
+      `max_coarse_abs = 0 <= 2` (`coarse_excess = 0`), `thresh_surcharge_cents = 0`,
+      `merchant_payout_cents = 873`, and `873 + 27 + 90 = 990` (`L = 1, Eg = 1, defect = 0`).
+    """
+
+    PHASE_1_PRICING_THRESH_SOURCE = (
+        "def quote_thresh_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'step_amplitude_a': 3,\n"
+        "    }\n"
+    )
+    PHASE_1_TAX_THRESH_SOURCE = (
+        "def compute_thresh_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    a = int(pricing_out.get('step_amplitude_a', 3))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'step_amplitude_a': a,\n"
+        "        'pairing_mode': 'block_cancel',\n"
+        "        'step_deltas': [a, a, -a, -a],\n"
+        "        'prefix_threshold_tau': 2,\n"
+        "        'max_step_budget': 3,\n"
+        "    }\n"
+    )
+    PHASE_1_SETTLEMENT_THRESH_SOURCE = (
+        "def settle_thresh_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    deltas = list(tax_out.get('step_deltas', [3, 3, -3, -3]))\n"
+        "    s1 = int(deltas[0])\n"
+        "    s2 = s1 + int(deltas[1])\n"
+        "    s3 = s2 + int(deltas[2])\n"
+        "    s4 = s3 + int(deltas[3])\n"
+        "    prefix_sums = [s1, s2, s3, s4]\n"
+        "    max_prefix_abs = max(abs(x) for x in prefix_sums)\n"
+        "    max_coarse_abs = max(abs(s2), abs(s4))\n"
+        "    prefix_excess = max(0, max_prefix_abs - 2)\n"
+        "    coarse_excess = max(0, max_coarse_abs - 2)\n"
+        "    surcharge = 2 * prefix_excess + coarse_excess\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'thresh_surcharge_cents': surcharge,\n"
+        "        'prefix_sums': prefix_sums,\n"
+        "        'max_prefix_abs': max_prefix_abs,\n"
+        "        'max_coarse_abs': max_coarse_abs,\n"
+        "        'prefix_excess': prefix_excess,\n"
+        "        'coarse_excess': coarse_excess,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_THRESH_SOURCE = PHASE_1_PRICING_THRESH_SOURCE
+    PHASE_2_TAX_THRESH_SOURCE = (
+        "def compute_thresh_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    a = int(pricing_out.get('step_amplitude_a', 3))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'step_amplitude_a': a,\n"
+        "        'pairing_mode': 'alternating_cancel',\n"
+        "        'step_deltas': [a, -a, a, -a],\n"
+        "        'prefix_threshold_tau': 2,\n"
+        "        'max_step_budget': 3,\n"
+        "    }\n"
+    )
+    PHASE_2_SETTLEMENT_THRESH_SOURCE = PHASE_1_SETTLEMENT_THRESH_SOURCE
+
+    PHASE_3_PRICING_THRESH_SOURCE = (
+        "def quote_thresh_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'step_amplitude_a': 2,\n"
+        "    }\n"
+    )
+    PHASE_3_TAX_THRESH_SOURCE = PHASE_2_TAX_THRESH_SOURCE
+    PHASE_3_SETTLEMENT_THRESH_SOURCE = (
+        "def settle_thresh_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    deltas = list(tax_out.get('step_deltas', [2, -2, 2, -2]))\n"
+        "    s1 = int(deltas[0])\n"
+        "    s2 = s1 + int(deltas[1])\n"
+        "    s3 = s2 + int(deltas[2])\n"
+        "    s4 = s3 + int(deltas[3])\n"
+        "    prefix_sums = [s1, s2, s3, s4]\n"
+        "    max_prefix_abs = max(abs(x) for x in prefix_sums)\n"
+        "    max_coarse_abs = max(abs(s2), abs(s4))\n"
+        "    prefix_excess = max(0, max_prefix_abs - 2)\n"
+        "    coarse_excess = max(0, max_coarse_abs - 2)\n"
+        "    surcharge = 2 * prefix_excess + coarse_excess\n"
+        "    if prefix_excess != 0 or coarse_excess != 0 or surcharge != 0:\n"
+        "        raise ValueError('Prefix threshold governance guard rejected intermediate prefix excursion')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'thresh_surcharge_cents': 0,\n"
+        "        'prefix_sums': prefix_sums,\n"
+        "        'max_prefix_abs': max_prefix_abs,\n"
+        "        'max_coarse_abs': max_coarse_abs,\n"
+        "        'prefix_excess': 0,\n"
+        "        'coarse_excess': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "codebase-threshold-governance-scope",
+        gross_cents: int = 990,
+        expected_fee_cents: int = 27,
+        expected_tax_cents: int = 90,
+        expected_payout_cents: int = 873,
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.gross_cents = exact_int(gross_cents, "gross_cents", minimum=1)
+        self.expected_fee_cents = exact_int(expected_fee_cents, "expected_fee_cents", minimum=0)
+        self.expected_tax_cents = exact_int(expected_tax_cents, "expected_tax_cents", minimum=0)
+        self.expected_payout_cents = exact_int(
+            expected_payout_cents, "expected_payout_cents", minimum=0
+        )
+        if (
+            self.expected_fee_cents + self.expected_tax_cents + self.expected_payout_cents
+            != self.gross_cents
+        ):
+            raise ValidationError("expected fee + tax + payout must equal gross_cents")
+
+        self.threshold_monitor = StreamingThresholdGovernanceMonitor(
+            scope_id=f"{self.scope_id}:thresh",
+            n_validators=4,
+            quorum_k=2,
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+        self.last_thresh_receipt: dict[str, Any] | None = None
+
+    def _audit_step_trajectory(
+        self,
+        ev_id: str,
+        step_deltas: Sequence[int],
+    ) -> dict[str, Any]:
+        policy = BudgetPolicy(
+            evaluator_id="bounded-step/v1",
+            spec_id="cumulative-budget/v1",
+            representation_id="integer-state/v1",
+            authority_id="external-owner/v1",
+            max_step=3,
+            max_total=2,
+            allowed_states=tuple(range(-12, 13)),
+            query_scope="every_prefix",
+        )
+        baseline = StateRef("s_0", 0)
+        audit_mon = StreamingAuditMonitor(policy, baseline=baseline)
+        cur_val = 0
+        prefix_sums: list[int] = []
+        for idx, d in enumerate(step_deltas):
+            nxt_val = cur_val + d
+            prefix_sums.append(nxt_val)
+            w = StepWitness(
+                witness_id=f"{ev_id}_w_{idx + 1}",
+                source=StateRef(f"s_{idx}", cur_val),
+                target=StateRef(f"s_{idx + 1}", nxt_val),
+                observed_magnitude=abs(d),
+                local_accepted=abs(d) <= 3,
+                smoke_passed=True,
+                policy_sha256=policy.sha256,
+            )
+            audit_mon.step(w)
+            cur_val = nxt_val
+
+        audit_rec = audit_mon.get_receipt()
+        coarsened_rec = audit_mon.audit_coarsened_partition([2, 2])
+
+        max_step_abs = max(abs(d) for d in step_deltas)
+        max_prefix_abs = max(abs(s) for s in prefix_sums)
+        max_coarse_abs = max(abs(prefix_sums[1]), abs(prefix_sums[3]))
+        endpoint_drift_abs = abs(prefix_sums[3])
+        prefix_excess = max(0, max_prefix_abs - 2)
+        coarse_excess = max(0, max_coarse_abs - 2)
+
+        step_bound_ok = max_step_abs <= 3
+        endpoint_cancelled = endpoint_drift_abs == 0
+        coarse_bound_ok = coarse_excess == 0
+        prefix_bound_ok = prefix_excess == 0
+
+        self.last_thresh_receipt = self.threshold_monitor.record_vote(
+            ev_id,
+            [
+                1 if step_bound_ok else 0,
+                1 if endpoint_cancelled else 0,
+                1 if coarse_bound_ok else 0,
+                1 if prefix_bound_ok else 0,
+            ],
+            1 if (step_bound_ok and endpoint_cancelled and coarse_bound_ok and prefix_bound_ok) else 0,
+        )
+        return {
+            "prefix_sums": prefix_sums,
+            "max_prefix_abs": max_prefix_abs,
+            "max_coarse_abs": max_coarse_abs,
+            "endpoint_drift_abs": endpoint_drift_abs,
+            "prefix_excess": prefix_excess,
+            "coarse_excess": coarse_excess,
+            "hidden_excursion_masked": bool(coarsened_rec["hidden_excursion_masked"]),
+            "audit_receipt": audit_rec,
+            "coarsened_partition_receipt": coarsened_rec,
+        }
+
+    def evaluate_threshold_governance_modules(
+        self,
+        evaluation_id: str,
+        pricing_thresh_source: str,
+        tax_thresh_source: str,
+        settlement_thresh_source: str,
+        *,
+        model_id: str = "deterministic",
+        infeasible_constraint: str | None = None,
+        local_pricing_thresh_passed: bool = True,
+        local_tax_thresh_passed: bool = True,
+        local_settlement_thresh_passed: bool = True,
+    ) -> dict[str, Any]:
+        """Execute and audit `pricing_thresh.py`, `tax_thresh.py`, and `settlement_thresh.py`."""
+        ev_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        lp = boolean(local_pricing_thresh_passed, "local_pricing_thresh_passed")
+        lt = boolean(local_tax_thresh_passed, "local_tax_thresh_passed")
+        ls = boolean(local_settlement_thresh_passed, "local_settlement_thresh_passed")
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_thresh", pricing_thresh_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_thresh", tax_thresh_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_thresh", settlement_thresh_source
+        )
+
+        quote_fn = p_ns.get("quote_thresh_pricing")
+        tax_fn = t_ns.get("compute_thresh_tax")
+        settle_fn = s_ns.get("settle_thresh_payout")
+        if not callable(quote_fn):
+            raise ValidationError("pricing_thresh.py must define callable quote_thresh_pricing")
+        if not callable(tax_fn):
+            raise ValidationError("tax_thresh.py must define callable compute_thresh_tax")
+        if not callable(settle_fn):
+            raise ValidationError("settlement_thresh.py must define callable settle_thresh_payout")
+
+        pricing_out = quote_fn(self.gross_cents)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_thresh_pricing must return a dict")
+        tax_out = tax_fn(pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_thresh_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = settle_fn(pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_thresh_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        amp_a = exact_int(pricing_out.get("step_amplitude_a", 3), "step_amplitude_a")
+        if amp_a not in (2, 3):
+            raise ValidationError(f"step_amplitude_a must be in {{2, 3}}, got {amp_a}")
+        pairing_mode = text(tax_out.get("pairing_mode", "block_cancel"), "pairing_mode")
+        if pairing_mode not in ("block_cancel", "alternating_cancel"):
+            raise ValidationError(
+                f"pairing_mode must be 'block_cancel' or 'alternating_cancel', got {pairing_mode}"
+            )
+        raw_deltas = list(sequence(tax_out.get("step_deltas", []), "step_deltas"))
+        step_deltas = [exact_int(d, f"step_deltas[{i}]") for i, d in enumerate(raw_deltas)]
+        if step_deltas not in ([3, 3, -3, -3], [3, -3, 3, -3], [2, 2, -2, -2], [2, -2, 2, -2]):
+            raise ValidationError(
+                f"step_deltas must be in {{[3, 3, -3, -3], [3, -3, 3, -3], [2, 2, -2, -2], [2, -2, 2, -2]}}, got {step_deltas}"
+            )
+
+        thresh_eval = self._audit_step_trajectory(
+            f"{ev_id}:{mod_id}",
+            step_deltas,
+        )
+
+        prefix_sums = list(thresh_eval["prefix_sums"])
+        max_prefix_abs = int(thresh_eval["max_prefix_abs"])
+        max_coarse_abs = int(thresh_eval["max_coarse_abs"])
+        endpoint_drift_abs = int(thresh_eval["endpoint_drift_abs"])
+        prefix_excess = int(thresh_eval["prefix_excess"])
+        coarse_excess = int(thresh_eval["coarse_excess"])
+        expected_surcharge = 2 * prefix_excess + coarse_excess
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", self.expected_fee_cents), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", self.gross_cents - fee), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", self.expected_tax_cents), "tax_reserve_cents")
+        if settlement_raised:
+            surcharge = expected_surcharge
+            payout = net - tax - surcharge
+        else:
+            surcharge = exact_int(settlement_out.get("thresh_surcharge_cents"), "thresh_surcharge_cents")
+            payout = exact_int(settlement_out.get("merchant_payout_cents"), "merchant_payout_cents")
+
+        infeasible_spec_contradiction = bool(infeasible_constraint)
+        local_green = (
+            1
+            if (
+                lp
+                and lt
+                and ls
+                and fee == self.expected_fee_cents
+                and tax == self.expected_tax_cents
+                and endpoint_drift_abs == 0
+                and surcharge == expected_surcharge
+                and payout == self.expected_payout_cents - expected_surcharge
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+
+        conservation_ok = (
+            not settlement_raised
+            and (payout + fee + tax == self.gross_cents)
+            and (payout == self.expected_payout_cents)
+        )
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and prefix_excess == 0
+                and coarse_excess == 0
+                and surcharge == 0
+                and conservation_ok
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_THRESHOLD_GOVERNANCE_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_UNIT_TEST_FAILED_LGLR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif step_deltas in ([3, 3, -3, -3], [2, 2, -2, -2]):
+            status = "FINE_AND_COARSENED_PREFIX_EXCURSION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif step_deltas == [3, -3, 3, -3]:
+            status = "COARSENED_MASKED_ODD_PREFIX_EXCURSION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "EVERY_PREFIX_THRESHOLD_GOVERNANCE_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        self.fiber_monitor.observe(
+            state_id=f"{self.scope_id}:{ev_id}",
+            report={"local_green": local_green, "endpoint_cancelled": endpoint_drift_abs == 0},
+            query="LGGG" if global_green == 1 else "LGGR",
+        )
+
+        directives = {
+            "worker-0": {
+                "module": "pricing_thresh",
+                "action": (
+                    "REDUCE_STEP_AMPLITUDE_A_TO_TWO"
+                    if amp_a != 2
+                    else "HOLD_STEP_AMPLITUDE_A_TWO"
+                ),
+                "target_step_amplitude_a": 2,
+            },
+            "worker-1": {
+                "module": "tax_thresh",
+                "action": (
+                    "SWITCH_TO_ALTERNATING_CANCEL_PAIRING"
+                    if pairing_mode != "alternating_cancel"
+                    else "HOLD_ALTERNATING_CANCEL_PAIRING"
+                ),
+                "target_pairing_mode": "alternating_cancel",
+                "target_step_deltas": [2, -2, 2, -2],
+            },
+            "worker-2": {
+                "module": "settlement_thresh",
+                "action": (
+                    "ENFORCE_EVERY_PREFIX_THRESHOLD_GOVERNANCE_GUARD"
+                    if global_green == 0
+                    else "HOLD_THRESHOLD_GOVERNANCE_GUARD"
+                ),
+                "target_thresh_surcharge_cents": 0,
+                "target_payout_cents": self.expected_payout_cents,
+            },
+        }
+
+        entry: dict[str, Any] = json_value(
+            {
+                "evaluation_id": ev_id,
+                "model_id": mod_id,
+                "step_amplitude_a": amp_a,
+                "pairing_mode": pairing_mode,
+                "step_deltas": step_deltas,
+                "prefix_sums": prefix_sums,
+                "max_prefix_abs": max_prefix_abs,
+                "max_coarse_abs": max_coarse_abs,
+                "endpoint_drift_abs": endpoint_drift_abs,
+                "prefix_excess": prefix_excess,
+                "coarse_excess": coarse_excess,
+                "hidden_excursion_masked": bool(thresh_eval["hidden_excursion_masked"]),
+                "thresh_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": self.gross_cents,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(entry)
+        return entry
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record all 3 phases (block-cancelling `[3, 3, -3, -3]`, alternating `[3, -3, 3, -3]`, and prefix-bounded `[2, -2, 2, -2]`)."""
+        aid = text(
+            audit_id or f"audit_{len(self.three_phase_audits) + 1}",
+            "audit_id",
+        )
+        p1 = self.evaluate_threshold_governance_modules(
+            f"{aid}_phase_1",
+            self.PHASE_1_PRICING_THRESH_SOURCE,
+            self.PHASE_1_TAX_THRESH_SOURCE,
+            self.PHASE_1_SETTLEMENT_THRESH_SOURCE,
+            model_id=model_id,
+        )
+        p2 = self.evaluate_threshold_governance_modules(
+            f"{aid}_phase_2",
+            self.PHASE_2_PRICING_THRESH_SOURCE,
+            self.PHASE_2_TAX_THRESH_SOURCE,
+            self.PHASE_2_SETTLEMENT_THRESH_SOURCE,
+            model_id=model_id,
+        )
+        p3 = self.evaluate_threshold_governance_modules(
+            f"{aid}_phase_3",
+            self.PHASE_3_PRICING_THRESH_SOURCE,
+            self.PHASE_3_TAX_THRESH_SOURCE,
+            self.PHASE_3_SETTLEMENT_THRESH_SOURCE,
+            model_id=model_id,
+        )
+
+        audit_rec: dict[str, Any] = json_value(
+            {
+                "audit_id": aid,
+                "model_id": text(model_id, "model_id"),
+                "phase_1_step_deltas": p1["step_deltas"],
+                "phase_1_prefix_sums": p1["prefix_sums"],
+                "phase_1_max_prefix_abs": p1["max_prefix_abs"],
+                "phase_1_max_coarse_abs": p1["max_coarse_abs"],
+                "phase_1_prefix_excess": p1["prefix_excess"],
+                "phase_1_coarse_excess": p1["coarse_excess"],
+                "phase_1_surcharge_cents": p1["thresh_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_step_deltas": p2["step_deltas"],
+                "phase_2_prefix_sums": p2["prefix_sums"],
+                "phase_2_max_prefix_abs": p2["max_prefix_abs"],
+                "phase_2_max_coarse_abs": p2["max_coarse_abs"],
+                "phase_2_prefix_excess": p2["prefix_excess"],
+                "phase_2_coarse_excess": p2["coarse_excess"],
+                "phase_2_hidden_excursion_masked": p2["hidden_excursion_masked"],
+                "phase_2_surcharge_cents": p2["thresh_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_step_deltas": p3["step_deltas"],
+                "phase_3_prefix_sums": p3["prefix_sums"],
+                "phase_3_max_prefix_abs": p3["max_prefix_abs"],
+                "phase_3_max_coarse_abs": p3["max_coarse_abs"],
+                "phase_3_prefix_excess": p3["prefix_excess"],
+                "phase_3_coarse_excess": p3["coarse_excess"],
+                "phase_3_surcharge_cents": p3["thresh_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    evaluate_three_phase_threshold_governance_audit = record_three_phase_codebase_audit
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module threshold governance audit."""
+        if not self.evaluations:
+            raise ValidationError(
+                "at least one codebase threshold governance evaluation must be recorded"
+            )
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_threshold_governance.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "threshold_governance_receipt": self.last_thresh_receipt,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
 
 
 
