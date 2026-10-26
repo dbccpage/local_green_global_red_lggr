@@ -30409,6 +30409,453 @@ class StreamingCodebaseObligationMigrationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseThreePartyConstantMonitor:
+    """Online three-party no-signalling constant c_3 in [228/75, 7] family audit monitor for concurrent code-engineering swarms (Theorem 120).
+
+    Composes ``StreamingThreePartyConstantBoundMonitor``, ``StreamingPositiveExtensionMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across a 3-module
+    settlement codebase (``pricing_c3.py``, ``tax_c3.py``, ``settlement_c3.py``) over the 5-point
+    parameterized 8-context slice k in {0, 1, 2, 3, 4} (CF_k = (768 + 36*k)/3072,
+    N_k = (384 - 21*k)/3072) with 5 cents surcharge per violated slice checkpoint at k = 2
+    and k = 4:
+      - Phase 1 (Bipartite c = 2/1 surrogate ceiling):
+        Passes at k = 0 (768/384 = 2 <= 2, L_p1 = 1), yet fails at both interior k = 2
+        (840/342 = 140/57 > 2, interior_k2_violation = 1) and endpoint k = 4
+        (912/300 = 228/75 > 2, endpoint_k4_violation = 1, uncertified_point_count = 4,
+        c3_surcharge_cents = 10, payout = 863 != 873, Eg_p1 = 0, defect_p1 = -1).
+      - Phase 2 (Conjectured integer c = 3/1 ceiling):
+        Passes at interior k = 2 (140/57 <= 3, interior_k2_violation = 0, L_p2 = 1), yet fails at
+        endpoint k = 4 (p_*, 228/75 = 76/25 > 3, endpoint_k4_violation = 1,
+        uncertified_point_count = 1, c3_surcharge_cents = 5, payout = 868 != 873,
+        Eg_p2 = 0, defect_p2 = -1).
+      - Phase 3 (Certified rational bracket c_3 in [228/75, 7] across all k in {0..4}):
+        ``StreamingCodebaseThreePartyConstantMonitor`` issues role-scoped directives aligning
+        ``candidate_c3_num = 228, candidate_c3_den = 75`` and ``enforced_lower_num = 228,
+        enforced_lower_den = 75, enforced_upper_bound = 7``, certifying all 5 slice points
+        (interior_k2_violation = 0, endpoint_k4_violation = 0, uncertified_point_count = 0,
+        c3_surcharge_cents = 0, payout = 873, 873 + 27 + 90 = 990, L_p3 = 1, Eg_p3 = 1,
+        defect_p3 = 0).
+    """
+
+    PHASE_1_PRICING_C3_SOURCE = (
+        "def compute_pricing_c3_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict:\n"
+        "    net = int(subtotal_cents) - int(discount_cents)\n"
+        "    return {'subtotal_cents': int(subtotal_cents), 'discount_cents': int(discount_cents), 'net_cents': net, 'num_contexts': 8, 'interior_step_k': 2}\n"
+    )
+
+    PHASE_1_TAX_C3_SOURCE = (
+        "def compute_tax_c3_slice(quote: dict) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'endpoint_step_k': 4, 'candidate_c3_num': 2, 'candidate_c3_den': 1}\n"
+    )
+
+    PHASE_1_SETTLEMENT_C3_SOURCE = (
+        "def route_settlement_c3_payout(taxed_quote: dict) -> dict:\n"
+        "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * 3) // 100\n"
+        "    c_num, c_den = int(taxed_quote.get('candidate_c3_num', 2)), int(taxed_quote.get('candidate_c3_den', 1))\n"
+        "    v2 = 1 if 840 * c_den > c_num * 342 else 0\n"
+        "    v4 = 1 if 912 * c_den > c_num * 300 else 0\n"
+        "    surcharge = 5 * (v2 + v4)\n"
+        "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'enforced_lower_num': 2, 'enforced_lower_den': 1, 'enforced_upper_bound': 2, 'c3_surcharge_cents': surcharge}\n"
+    )
+
+    PHASE_2_PRICING_C3_SOURCE = PHASE_1_PRICING_C3_SOURCE
+
+    PHASE_2_TAX_C3_SOURCE = (
+        "def compute_tax_c3_slice(quote: dict) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'endpoint_step_k': 4, 'candidate_c3_num': 3, 'candidate_c3_den': 1}\n"
+    )
+
+    PHASE_2_SETTLEMENT_C3_SOURCE = (
+        "def route_settlement_c3_payout(taxed_quote: dict) -> dict:\n"
+        "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * 3) // 100\n"
+        "    c_num, c_den = int(taxed_quote.get('candidate_c3_num', 3)), int(taxed_quote.get('candidate_c3_den', 1))\n"
+        "    v2 = 1 if 840 * c_den > c_num * 342 else 0\n"
+        "    v4 = 1 if 912 * c_den > c_num * 300 else 0\n"
+        "    surcharge = 5 * (v2 + v4)\n"
+        "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'enforced_lower_num': 3, 'enforced_lower_den': 1, 'enforced_upper_bound': 7, 'c3_surcharge_cents': surcharge}\n"
+    )
+
+    PHASE_3_PRICING_C3_SOURCE = PHASE_1_PRICING_C3_SOURCE
+
+    PHASE_3_TAX_C3_SOURCE = (
+        "def compute_tax_c3_slice(quote: dict) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'endpoint_step_k': 4, 'candidate_c3_num': 228, 'candidate_c3_den': 75}\n"
+    )
+
+    PHASE_3_SETTLEMENT_C3_SOURCE = (
+        "def route_settlement_c3_payout(taxed_quote: dict) -> dict:\n"
+        "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * 3) // 100\n"
+        "    c_num, c_den = int(taxed_quote.get('candidate_c3_num', 228)), int(taxed_quote.get('candidate_c3_den', 75))\n"
+        "    v2 = 1 if 840 * c_den > c_num * 342 else 0\n"
+        "    v4 = 1 if 912 * c_den > c_num * 300 else 0\n"
+        "    surcharge = 5 * (v2 + v4)\n"
+        "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'enforced_lower_num': 228, 'enforced_lower_den': 75, 'enforced_upper_bound': 7, 'c3_surcharge_cents': surcharge}\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-three-party-c3-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.c3_monitor = StreamingThreePartyConstantBoundMonitor(
+            scope_id=f"{self.scope_id}-c3"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_three_party_c3_modules(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str] | None = None,
+        local_test_results: Mapping[str, bool] | None = None,
+        pricing_c3_source: str | None = None,
+        tax_c3_source: str | None = None,
+        settlement_c3_source: str | None = None,
+        subtotal_cents: int = 1000,
+        discount_cents: int = 100,
+        expected_gross_cents: int = 990,
+        expected_payout_cents: int = 873,
+        expected_fee_cents: int = 27,
+        expected_tax_cents: int = 90,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Compile and evaluate a 3-module three-party c_3 settlement codebase."""
+        eid = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        sub = exact_int(subtotal_cents, "subtotal_cents")
+        disc = exact_int(discount_cents, "discount_cents")
+        exp_gross = exact_int(expected_gross_cents, "expected_gross_cents")
+        exp_payout = exact_int(expected_payout_cents, "expected_payout_cents")
+        exp_fee = exact_int(expected_fee_cents, "expected_fee_cents")
+        exp_tax = exact_int(expected_tax_cents, "expected_tax_cents")
+
+        if module_sources is not None:
+            for mod_name in ("pricing_c3", "tax_c3", "settlement_c3"):
+                if mod_name not in module_sources:
+                    raise ValidationError(f"missing module source for {mod_name}")
+            p_src = module_sources["pricing_c3"]
+            t_src = module_sources["tax_c3"]
+            s_src = module_sources["settlement_c3"]
+        else:
+            if pricing_c3_source is None or tax_c3_source is None or settlement_c3_source is None:
+                raise ValidationError("either module_sources or all three *_c3_source strings must be provided")
+            p_src = pricing_c3_source
+            t_src = tax_c3_source
+            s_src = settlement_c3_source
+
+        if local_test_results is not None:
+            for mod_name in ("pricing_c3", "tax_c3", "settlement_c3"):
+                if mod_name not in local_test_results:
+                    raise ValidationError(f"missing local_test_results entry for {mod_name}")
+            unit_tests_pass = all(bool(local_test_results[m]) for m in ("pricing_c3", "tax_c3", "settlement_c3"))
+        else:
+            unit_tests_pass = True
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_c3", p_src
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_c3", t_src
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_c3", s_src
+        )
+
+        p_fn = p_ns.get("compute_pricing_c3_quote")
+        t_fn = t_ns.get("compute_tax_c3_slice")
+        s_fn = s_ns.get("route_settlement_c3_payout")
+        if not callable(p_fn) or not callable(t_fn) or not callable(s_fn):
+            raise ValidationError(
+                "modules must define compute_pricing_c3_quote, compute_tax_c3_slice, and route_settlement_c3_payout"
+            )
+
+        try:
+            p_out = p_fn(sub, disc)
+            t_out = t_fn(p_out)
+            s_out = s_fn(t_out)
+            if not isinstance(p_out, dict) or not isinstance(t_out, dict) or not isinstance(s_out, dict):
+                raise TypeError("module outputs must be dicts")
+        except Exception as exc:
+            err_rec: dict[str, Any] = {
+                "evaluation_id": eid,
+                "num_contexts": 8,
+                "interior_step_k": 2,
+                "endpoint_step_k": 4,
+                "candidate_c3_bound": Fraction(0),
+                "enforced_c3_lower_bound": Fraction(0),
+                "effective_c3_bound": Fraction(0),
+                "enforced_upper_bound": 0,
+                "interior_k2_violation": 1,
+                "endpoint_k4_violation": 1,
+                "uncertified_point_count": 5,
+                "c3_surcharge_cents": 10,
+                "merchant_payout_cents": 0,
+                "platform_fee_cents": 0,
+                "tax_reserve_cents": 0,
+                "total_settled_cents": 0,
+                "conservation_holds": False,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "RUNTIME_EXECUTION_ERROR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "runtime_error": str(exc),
+                "compact_role_directives": {
+                    "worker-0": "HOLD_ANCHOR: keep compute_pricing_c3_quote returning num_contexts=8 and interior_step_k=2.",
+                    "worker-1": "REPAIR_TAX_C3: ensure compute_tax_c3_slice returns candidate_c3_num=228 and candidate_c3_den=75.",
+                    "worker-2": "REPAIR_SETTLEMENT_C3: ensure route_settlement_c3_payout sets enforced_lower_num=228, enforced_lower_den=75, enforced_upper_bound=7.",
+                },
+            }
+            self.evaluations.append(err_rec)
+            return json_value(err_rec)
+
+        num_contexts = int(p_out.get("num_contexts", 8))
+        interior_k = int(p_out.get("interior_step_k", 2))
+        endpoint_k = int(t_out.get("endpoint_step_k", 4))
+        cand_num = int(t_out.get("candidate_c3_num", 2))
+        cand_den = max(1, int(t_out.get("candidate_c3_den", 1)))
+        enf_num = int(s_out.get("enforced_lower_num", 2))
+        enf_den = max(1, int(s_out.get("enforced_lower_den", 1)))
+        enf_upper = int(s_out.get("enforced_upper_bound", 2))
+
+        cand_bound = Fraction(cand_num, cand_den)
+        enf_bound = Fraction(enf_num, enf_den)
+        eff_bound = min(cand_bound, enf_bound)
+
+        slice_eval = self.c3_monitor.evaluate_parameterized_slice(f"{eid}::slice")
+        uncertified_count = 0
+        for k in range(5):
+            cf_num = 768 + 36 * k
+            n_num = 384 - 21 * k
+            ratio_k = Fraction(cf_num, n_num)
+            if ratio_k > eff_bound or eff_bound > Fraction(enf_upper):
+                uncertified_count += 1
+
+        v2 = 1 if Fraction(840, 342) > eff_bound else 0
+        v4 = 1 if Fraction(912, 300) > eff_bound else 0
+        surcharge_cents = 5 * (v2 + v4)
+
+        payout = int(s_out.get("merchant_payout_cents", 0))
+        fee = int(s_out.get("platform_fee_cents", 0))
+        tax = int(s_out.get("tax_reserve_cents", 0))
+        total_settled = int(s_out.get("total_settled_cents", 0))
+
+        local_pass = (
+            unit_tests_pass
+            and int(p_out.get("net_cents", 0)) == sub - disc
+            and int(t_out.get("tax_cents", 0)) == exp_tax
+            and int(t_out.get("gross_cents", 0)) == exp_gross
+            and num_contexts == 8
+            and interior_k == 2
+            and endpoint_k == 4
+            and Fraction(768, 384) <= eff_bound
+        )
+
+        conservation_holds = (
+            payout == exp_payout
+            and fee == exp_fee
+            and tax == exp_tax
+            and total_settled == exp_gross
+            and payout + fee + tax == exp_gross
+        )
+        c3_coherent = (
+            cand_bound == Fraction(228, 75)
+            and enf_bound == Fraction(228, 75)
+            and eff_bound == Fraction(228, 75)
+            and enf_upper == 7
+            and v2 == 0
+            and v4 == 0
+            and uncertified_count == 0
+            and surcharge_cents == 0
+        )
+
+        local_green = 1 if local_pass else 0
+        global_green = 1 if (local_green == 1 and c3_coherent and conservation_holds) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            f"{eid}::three_party_c3",
+            {"local_unit_tests": "pass" if local_green == 1 else "fail"},
+            global_green,
+            metadata={
+                "interior_k2_violation": v2,
+                "endpoint_k4_violation": v4,
+                "uncertified_point_count": uncertified_count,
+                "c3_surcharge_cents": surcharge_cents,
+            },
+        )
+
+        if global_green == 1:
+            status = "CODEBASE_THREE_PARTY_C3_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+            directives = {
+                "worker-0": "HOLD: pricing_c3 8-context interior_step_k=2 anchor verified.",
+                "worker-1": "HOLD: tax_c3 candidate_c3 = 228/75 slice verified.",
+                "worker-2": "HOLD: settlement_c3 enforced bracket [228/75, 7] and payout=873 verified.",
+            }
+        elif v2 > 0:
+            status = "BIPARTITE_C2_SURROGATE_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "HOLD_ANCHOR: keep compute_pricing_c3_quote returning num_contexts=8 and interior_step_k=2.",
+                "worker-1": (
+                    f"REPAIR_TAX_C3: interior k=2 ratio 140/57 exceeds effective bound {eff_bound}; "
+                    "set candidate_c3_num=228 and candidate_c3_den=75."
+                ),
+                "worker-2": (
+                    "REPAIR_SETTLEMENT_C3: set enforced_lower_num=228, enforced_lower_den=75, "
+                    "and enforced_upper_bound=7 so c3_surcharge_cents == 0 and payout == 873."
+                ),
+            }
+        elif v4 > 0 or uncertified_count > 0:
+            status = "C3_INTEGER_THREE_CEILING_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "HOLD_ANCHOR: keep compute_pricing_c3_quote returning num_contexts=8 and interior_step_k=2.",
+                "worker-1": (
+                    f"REPAIR_TAX_C3: endpoint k=4 ratio 228/75 exceeds effective bound {eff_bound}; "
+                    "set candidate_c3_num=228 and candidate_c3_den=75."
+                ),
+                "worker-2": (
+                    "REPAIR_SETTLEMENT_C3: set enforced_lower_num=228, enforced_lower_den=75, "
+                    "and enforced_upper_bound=7 so c3_surcharge_cents == 0 and payout == 873."
+                ),
+            }
+        else:
+            status = "THREE_PARTY_C3_SETTLEMENT_INVARIANT_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "HOLD_ANCHOR: keep compute_pricing_c3_quote returning num_contexts=8 and interior_step_k=2.",
+                "worker-1": "REPAIR_TAX_C3: set candidate_c3_num=228 and candidate_c3_den=75.",
+                "worker-2": "REPAIR_SETTLEMENT_C3: set enforced_lower_num=228, enforced_lower_den=75, enforced_upper_bound=7, and restore payout=873.",
+            }
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "model_id": mid,
+            "num_contexts": num_contexts,
+            "interior_step_k": interior_k,
+            "endpoint_step_k": endpoint_k,
+            "candidate_c3_bound": cand_bound,
+            "enforced_c3_lower_bound": enf_bound,
+            "effective_c3_bound": eff_bound,
+            "enforced_upper_bound": enf_upper,
+            "interior_k2_violation": v2,
+            "endpoint_k4_violation": v4,
+            "uncertified_point_count": uncertified_count,
+            "c3_surcharge_cents": surcharge_cents,
+            "merchant_payout_cents": payout,
+            "platform_fee_cents": fee,
+            "tax_reserve_cents": tax,
+            "total_settled_cents": total_settled,
+            "conservation_holds": conservation_holds,
+            "local_green": local_green,
+            "global_green": global_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "compact_role_directives": directives,
+            "c3_slice_evaluation": slice_eval,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def evaluate_three_phase_three_party_c3_audit(
+        self,
+        model_id: str,
+    ) -> dict[str, Any]:
+        """Run the 3-phase codebase three-party c_3 audit for a model or benchmark trial."""
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_three_party_c3_modules(
+            f"{mid}::phase_1_bipartite_c2_surrogate",
+            pricing_c3_source=self.PHASE_1_PRICING_C3_SOURCE,
+            tax_c3_source=self.PHASE_1_TAX_C3_SOURCE,
+            settlement_c3_source=self.PHASE_1_SETTLEMENT_C3_SOURCE,
+        )
+        p2 = self.evaluate_three_party_c3_modules(
+            f"{mid}::phase_2_conjectured_c3_integer_ceiling",
+            pricing_c3_source=self.PHASE_2_PRICING_C3_SOURCE,
+            tax_c3_source=self.PHASE_2_TAX_C3_SOURCE,
+            settlement_c3_source=self.PHASE_2_SETTLEMENT_C3_SOURCE,
+        )
+        p3 = self.evaluate_three_party_c3_modules(
+            f"{mid}::phase_3_certified_c3_bracket_228_over_75",
+            pricing_c3_source=self.PHASE_3_PRICING_C3_SOURCE,
+            tax_c3_source=self.PHASE_3_TAX_C3_SOURCE,
+            settlement_c3_source=self.PHASE_3_SETTLEMENT_C3_SOURCE,
+        )
+
+        audit_rec = json_value(
+            {
+                "model_id": mid,
+                "phase_1_interior_k2_violation": p1["interior_k2_violation"],
+                "phase_1_endpoint_k4_violation": p1["endpoint_k4_violation"],
+                "phase_1_uncertified_count": p1["uncertified_point_count"],
+                "phase_1_surcharge_cents": p1["c3_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_interior_k2_violation": p2["interior_k2_violation"],
+                "phase_2_endpoint_k4_violation": p2["endpoint_k4_violation"],
+                "phase_2_uncertified_count": p2["uncertified_point_count"],
+                "phase_2_surcharge_cents": p2["c3_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_interior_k2_violation": p3["interior_k2_violation"],
+                "phase_3_endpoint_k4_violation": p3["endpoint_k4_violation"],
+                "phase_3_uncertified_count": p3["uncertified_point_count"],
+                "phase_3_surcharge_cents": p3["c3_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase three-party c_3 evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_three_party_c3.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "c3_certified_lower_bound": Fraction(228, 75),
+            "c3_constructive_upper_bound": Fraction(7),
+            "three_party_c3_slice_receipt": (
+                self.c3_monitor.current_receipt()
+                if self.c3_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 

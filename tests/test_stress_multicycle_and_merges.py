@@ -59,6 +59,7 @@ from lggr.streaming import (
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
+    StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
@@ -6106,6 +6107,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_three_party_c3_codebase_constant_bound_audit(self) -> None:
+        """Verify Theorem 120: Three-party no-signalling constant c_3 in [228/75, 7] codebase audit."""
+        mon = StreamingCodebaseThreePartyConstantMonitor(
+            scope_id="unit-codebase-three-party-c3-scope",
+        )
+        obs = mon.evaluate_three_phase_three_party_c3_audit(
+            "codebase-three-party-c3-eval-01",
+        )
+        self.assertEqual(obs["phase_1_interior_k2_violation"], 1)
+        self.assertEqual(obs["phase_1_endpoint_k4_violation"], 1)
+        self.assertEqual(obs["phase_1_uncertified_count"], 4)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "BIPARTITE_C2_SURROGATE_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_2_interior_k2_violation"], 0)
+        self.assertEqual(obs["phase_2_endpoint_k4_violation"], 1)
+        self.assertEqual(obs["phase_2_uncertified_count"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 5)
+        self.assertEqual(obs["phase_2_payout_cents"], 868)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "C3_INTEGER_THREE_CEILING_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_3_interior_k2_violation"], 0)
+        self.assertEqual(obs["phase_3_endpoint_k4_violation"], 0)
+        self.assertEqual(obs["phase_3_uncertified_count"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_THREE_PARTY_C3_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_THREE_PARTY_C3_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

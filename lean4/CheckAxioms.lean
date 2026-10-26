@@ -136,6 +136,7 @@ import LggrVIII
 #print axioms LggrVIII.adversarial_schema_codebase_spoofed_metadata_and_side_channel_audit
 #print axioms LggrVIII.graceful_shedding_codebase_variable_duration_burst_audit
 #print axioms LggrVIII.obligation_migration_codebase_equal_info_audit
+#print axioms LggrVIII.three_party_c3_codebase_constant_bound_audit
 
 
 
