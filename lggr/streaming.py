@@ -40880,6 +40880,519 @@ class StreamingCodebaseClosedLoopRepairMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseProductRetractionMonitor:
+    """Audit a 3-module product-retraction non-injective projection vs. section-retraction lift settlement codebase (Theorem 139).
+
+    AuthorityEffect: None.
+    Composes `StreamingProductRetractionMonitor`, `StreamingCodebaseInterfaceMergeMonitor`,
+    and `StreamingFiberMonitor` over `pricing_ret.py`, `tax_ret.py`, and `settlement_ret.py`
+    auditing a 4-state joint settlement fiber `|X| = 4` with product-retraction residual
+    quarter-units `product_residual_fourths in {0, 4}` (`4 * ||p - p_A x p_B||_1` on 2x2 table
+    `p = [[(4+c)/16, (4-c)/16], [(4-c)/16, (4+c)/16]]`), retracted fiber rank
+    `retracted_fiber_rank in {2, 4}` (`collapsed_fiber_deficit = 4 - retracted_fiber_rank in {0, 2}`),
+    and `ret_surcharge_cents = product_residual_fourths + 2 * collapsed_fiber_deficit`:
+      - Phase 1 (Correlated Table with Non-Injective 2-Fiber Projection, `product_residual_fourths = 4`, `retracted_fiber_rank = 2`):
+        Each module passes its isolated unit test (`0 <= product_residual_fourths <= 4` and
+        `2 <= retracted_fiber_rank <= 4`, `L_p1 = 1`), yet `product_residual_fourths = 4 > 0`
+        (`||F_p||_1 = 1`) and `collapsed_fiber_deficit = 4 - 2 = 2 > 0`, incurring
+        `ret_surcharge_cents = 4 + 2 * 2 = 8` and `merchant_payout_cents = 865 != 873`
+        (`NON_INJECTIVE_PROJECTION_AND_RESIDUAL_LGGR`, `E_{g,p1} = 0`, `Delta_{E,p1} = -1`).
+      - Phase 2 (Marginal Product Retraction without Left-Inverse Section Lift, `product_residual_fourths = 0`, `retracted_fiber_rank = 2`):
+        `pricing_ret.py` retracts the 2x2 table to the product state `Pi(p) = p_A x p_B = [[1/4, 1/4], [1/4, 1/4]]`
+        (`product_residual_fourths = 0`, `||F_{Pi(p)}||_1 = 0`), while `tax_ret.py` retains the non-injective
+        2-fiber projection (`retracted_fiber_rank = 2 < 4`, `collapsed_fiber_deficit = 2 > 0`,
+        `left_inverse_verified = False`), incurring `ret_surcharge_cents = 0 + 2 * 2 = 4` and
+        `merchant_payout_cents = 869 != 873` (`NON_INJECTIVE_FIBER_COLLAPSE_RESIDUAL_LGGR`,
+        `L_p2 = 1`, `E_{g,p2} = 0`, `Delta_{E,p2} = -1`).
+      - Phase 3 (Product Retraction with Full Left-Inverse Section-Retraction Lift, `product_residual_fourths = 0`, `retracted_fiber_rank = 4`):
+        `StreamingCodebaseProductRetractionMonitor` issues role-scoped directives restoring the
+        4-fiber left-inverse section-retraction lift (`retracted_fiber_rank = 4`, `collapsed_fiber_deficit = 0`,
+        `left_inverse_verified = True`) alongside `product_residual_fourths = 0`, yielding
+        `ret_surcharge_cents = 0` and `merchant_payout_cents = 873` (`873 + 27 + 90 = 990`,
+        `LEFT_INVERSE_SECTION_RETRACTION_VERIFIED_LGGG`, `L_p3 = 1`, `E_{g,p3} = 1`, `Delta_{E,p3} = 0`).
+    """
+
+    CARRIER_SIZE = 4
+
+    PHASE_1_PRICING_RET_SOURCE = (
+        "def quote_ret_pricing(gross_cents: int = 990) -> dict:\n"
+        "    platform_fee_cents = (gross_cents * 27) // 990\n"
+        "    net_after_fee_cents = gross_cents - platform_fee_cents\n"
+        "    # Phase 1: correlated 2x2 table [[1/2, 0], [0, 1/2]] with product_residual_fourths = 4\n"
+        "    product_residual_fourths = 4\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': platform_fee_cents,\n"
+        "        'net_after_fee_cents': net_after_fee_cents,\n"
+        "        'carrier_size': 4,\n"
+        "        'product_residual_fourths': product_residual_fourths,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_RET_SOURCE = (
+        "def quote_ret_pricing(gross_cents: int = 990) -> dict:\n"
+        "    platform_fee_cents = (gross_cents * 27) // 990\n"
+        "    net_after_fee_cents = gross_cents - platform_fee_cents\n"
+        "    # Phase 2 & 3: product-retracted 2x2 table [[1/4, 1/4], [1/4, 1/4]] with product_residual_fourths = 0\n"
+        "    product_residual_fourths = 0\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': platform_fee_cents,\n"
+        "        'net_after_fee_cents': net_after_fee_cents,\n"
+        "        'carrier_size': 4,\n"
+        "        'product_residual_fourths': product_residual_fourths,\n"
+        "    }\n"
+    )
+
+    PHASE_3_PRICING_RET_SOURCE = PHASE_2_PRICING_RET_SOURCE
+
+    PHASE_1_TAX_RET_SOURCE = (
+        "def compute_ret_tax(pricing_out: dict) -> dict:\n"
+        "    gross_cents = int(pricing_out['gross_cents'])\n"
+        "    tax_reserve_cents = (gross_cents * 90) // 990\n"
+        "    prod_res = int(pricing_out.get('product_residual_fourths', 4))\n"
+        "    # Phase 1: non-injective 2-fiber marginal projection (retracted_fiber_rank = 2 < 4)\n"
+        "    retracted_fiber_rank = 2\n"
+        "    collapsed_fiber_deficit = 4 - retracted_fiber_rank\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_reserve_cents,\n"
+        "        'product_residual_fourths': prod_res,\n"
+        "        'retracted_fiber_rank': retracted_fiber_rank,\n"
+        "        'collapsed_fiber_deficit': collapsed_fiber_deficit,\n"
+        "        'left_inverse_verified': (retracted_fiber_rank == 4),\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_RET_SOURCE = (
+        "def compute_ret_tax(pricing_out: dict) -> dict:\n"
+        "    gross_cents = int(pricing_out['gross_cents'])\n"
+        "    tax_reserve_cents = (gross_cents * 90) // 990\n"
+        "    prod_res = int(pricing_out.get('product_residual_fourths', 0))\n"
+        "    # Phase 2: product residual cleared, but non-injective 2-fiber projection persists (rank = 2 < 4)\n"
+        "    retracted_fiber_rank = 2\n"
+        "    collapsed_fiber_deficit = 4 - retracted_fiber_rank\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_reserve_cents,\n"
+        "        'product_residual_fourths': prod_res,\n"
+        "        'retracted_fiber_rank': retracted_fiber_rank,\n"
+        "        'collapsed_fiber_deficit': collapsed_fiber_deficit,\n"
+        "        'left_inverse_verified': (retracted_fiber_rank == 4),\n"
+        "    }\n"
+    )
+
+    PHASE_3_TAX_RET_SOURCE = (
+        "def compute_ret_tax(pricing_out: dict) -> dict:\n"
+        "    gross_cents = int(pricing_out['gross_cents'])\n"
+        "    tax_reserve_cents = (gross_cents * 90) // 990\n"
+        "    prod_res = int(pricing_out.get('product_residual_fourths', 0))\n"
+        "    # Phase 3: full 4-fiber left-inverse section-retraction lift (retracted_fiber_rank = 4)\n"
+        "    retracted_fiber_rank = 4\n"
+        "    collapsed_fiber_deficit = 4 - retracted_fiber_rank\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_reserve_cents,\n"
+        "        'product_residual_fourths': prod_res,\n"
+        "        'retracted_fiber_rank': retracted_fiber_rank,\n"
+        "        'collapsed_fiber_deficit': collapsed_fiber_deficit,\n"
+        "        'left_inverse_verified': (retracted_fiber_rank == 4),\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_RET_SOURCE = (
+        "def settle_ret_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    prod_res = int(tax_out['product_residual_fourths'])\n"
+        "    collapsed = int(tax_out['collapsed_fiber_deficit'])\n"
+        "    surcharge = prod_res + 2 * collapsed\n"
+        "    payout = net - tax - surcharge\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'product_residual_fourths': prod_res,\n"
+        "        'collapsed_fiber_deficit': collapsed,\n"
+        "        'ret_surcharge_cents': surcharge,\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_RET_SOURCE = PHASE_1_SETTLEMENT_RET_SOURCE
+
+    PHASE_3_SETTLEMENT_RET_SOURCE = (
+        "def settle_ret_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    prod_res = int(tax_out['product_residual_fourths'])\n"
+        "    collapsed = int(tax_out['collapsed_fiber_deficit'])\n"
+        "    surcharge = prod_res + 2 * collapsed\n"
+        "    if prod_res > 0 or collapsed > 0 or surcharge > 0:\n"
+        "        raise ValueError('Non-injective projection or product residual requires prod_res=0, rank=4')\n"
+        "    payout = net - tax\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'product_residual_fourths': 0,\n"
+        "        'collapsed_fiber_deficit': 0,\n"
+        "        'ret_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-product-retraction-scope",
+        gross_cents: int = 990,
+        expected_fee_cents: int = 27,
+        expected_tax_cents: int = 90,
+        expected_payout_cents: int = 873,
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.gross_cents = exact_int(gross_cents, "gross_cents", minimum=1)
+        self.expected_fee_cents = exact_int(expected_fee_cents, "expected_fee_cents", minimum=0)
+        self.expected_tax_cents = exact_int(expected_tax_cents, "expected_tax_cents", minimum=0)
+        self.expected_payout_cents = exact_int(expected_payout_cents, "expected_payout_cents", minimum=0)
+        if self.expected_fee_cents + self.expected_tax_cents + self.expected_payout_cents != self.gross_cents:
+            raise ValidationError("expected fee + tax + payout must equal gross_cents")
+
+        self.retraction_monitor = StreamingProductRetractionMonitor(
+            scope_id=f"{self.scope_id}:product-retraction"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+        self.last_retraction_receipt: dict[str, Any] | None = None
+
+    def evaluate_product_retraction_modules(
+        self,
+        evaluation_id: str,
+        pricing_ret_source: str,
+        tax_ret_source: str,
+        settlement_ret_source: str,
+        *,
+        model_id: str = "deterministic",
+        infeasible_constraint: str | None = None,
+        local_pricing_ret_passed: bool = True,
+        local_tax_ret_passed: bool = True,
+        local_settlement_ret_passed: bool = True,
+    ) -> dict[str, Any]:
+        """Execute and audit `pricing_ret.py`, `tax_ret.py`, and `settlement_ret.py`."""
+        ev_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        lp = boolean(local_pricing_ret_passed, "local_pricing_ret_passed")
+        lt = boolean(local_tax_ret_passed, "local_tax_ret_passed")
+        ls = boolean(local_settlement_ret_passed, "local_settlement_ret_passed")
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_ret", pricing_ret_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_ret", tax_ret_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_ret", settlement_ret_source
+        )
+
+        quote_fn = p_ns.get("quote_ret_pricing")
+        tax_fn = t_ns.get("compute_ret_tax")
+        settle_fn = s_ns.get("settle_ret_payout")
+        if not callable(quote_fn):
+            raise ValidationError("pricing_ret.py must define callable quote_ret_pricing")
+        if not callable(tax_fn):
+            raise ValidationError("tax_ret.py must define callable compute_ret_tax")
+        if not callable(settle_fn):
+            raise ValidationError("settlement_ret.py must define callable settle_ret_payout")
+
+        pricing_out = quote_fn(self.gross_cents)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_ret_pricing must return a dict")
+        tax_out = tax_fn(pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_ret_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = settle_fn(pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_ret_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        prod_res = exact_int(
+            pricing_out.get("product_residual_fourths", 4), "product_residual_fourths"
+        )
+        rank = exact_int(tax_out.get("retracted_fiber_rank", 2), "retracted_fiber_rank")
+        if prod_res not in (0, 2, 4) or rank not in (1, 2, 4):
+            raise ValidationError(
+                f"(product_residual_fourths, retracted_fiber_rank) must be in {{0,2,4}} x {{1,2,4}}, got ({prod_res}, {rank})"
+            )
+
+        collapsed_deficit = 4 - rank
+        left_inverse_verified = bool(rank == 4)
+        expected_surcharge = prod_res + 2 * collapsed_deficit
+
+        # Audit corresponding 2x2 bivariate probability table in StreamingProductRetractionMonitor
+        p00 = Fraction(4 + prod_res, 16)
+        p01 = Fraction(4 - prod_res, 16)
+        p10 = Fraction(4 - prod_res, 16)
+        p11 = Fraction(4 + prod_res, 16)
+        table_rec = self.retraction_monitor.observe_bivariate_table(
+            f"{ev_id}:{mod_id}",
+            p00,
+            p01,
+            p10,
+            p11,
+        )
+        self.last_retraction_receipt = self.retraction_monitor.get_receipt()
+
+        fee = exact_int(
+            pricing_out.get("platform_fee_cents", self.expected_fee_cents), "platform_fee_cents"
+        )
+        net = exact_int(
+            pricing_out.get("net_after_fee_cents", self.gross_cents - fee), "net_after_fee_cents"
+        )
+        tax = exact_int(
+            tax_out.get("tax_reserve_cents", self.expected_tax_cents), "tax_reserve_cents"
+        )
+        if settlement_raised:
+            surcharge = expected_surcharge
+            payout = net - tax - surcharge
+        else:
+            surcharge = exact_int(
+                settlement_out.get("ret_surcharge_cents"), "ret_surcharge_cents"
+            )
+            payout = exact_int(
+                settlement_out.get("merchant_payout_cents"), "merchant_payout_cents"
+            )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint)
+        local_green = (
+            1
+            if (
+                lp
+                and lt
+                and ls
+                and fee == self.expected_fee_cents
+                and tax == self.expected_tax_cents
+                and 0 <= prod_res <= 4
+                and 2 <= rank <= 4
+                and surcharge == expected_surcharge
+                and payout == self.expected_payout_cents - expected_surcharge
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+
+        conservation_ok = (
+            not settlement_raised
+            and (payout + fee + tax == self.gross_cents)
+            and (payout == self.expected_payout_cents)
+        )
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and prod_res == 0
+                and rank == 4
+                and collapsed_deficit == 0
+                and left_inverse_verified
+                and surcharge == 0
+                and conservation_ok
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_PRODUCT_RETRACTION_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_UNIT_TEST_FAILED_LGLR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif prod_res > 0 and collapsed_deficit > 0:
+            status = "NON_INJECTIVE_PROJECTION_AND_RESIDUAL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif collapsed_deficit > 0 or prod_res > 0:
+            status = "NON_INJECTIVE_FIBER_COLLAPSE_RESIDUAL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LEFT_INVERSE_SECTION_RETRACTION_VERIFIED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        self.fiber_monitor.observe(
+            state_id=f"{self.scope_id}:{ev_id}",
+            report={"local_green": local_green, "retracted_fiber_rank_ge_two": (rank >= 2)},
+            query="LGGG" if global_green == 1 else "LGGR",
+        )
+
+        directives = {
+            "worker-0": {
+                "module": "pricing_ret",
+                "action": (
+                    "APPLY_PRODUCT_RETRACTION_TABLE"
+                    if prod_res != 0
+                    else "HOLD_PRODUCT_RETRACTED_TABLE"
+                ),
+                "target_product_residual_fourths": 0,
+            },
+            "worker-1": {
+                "module": "tax_ret",
+                "action": (
+                    "RESTORE_LEFT_INVERSE_SECTION_RANK_FOUR"
+                    if rank != 4
+                    else "HOLD_LEFT_INVERSE_SECTION_RANK_FOUR"
+                ),
+                "target_retracted_fiber_rank": 4,
+            },
+            "worker-2": {
+                "module": "settlement_ret",
+                "action": (
+                    "ENFORCE_LEFT_INVERSE_RETRACTION_GUARD"
+                    if global_green == 0
+                    else "HOLD_ZERO_DEFICIT_RETRACTION_SETTLEMENT"
+                ),
+                "target_ret_surcharge_cents": 0,
+                "target_payout_cents": self.expected_payout_cents,
+            },
+        }
+
+        eval_rec = json_value(
+            {
+                "evaluation_id": ev_id,
+                "model_id": mod_id,
+                "carrier_size": self.CARRIER_SIZE,
+                "product_residual_fourths": prod_res,
+                "retracted_fiber_rank": rank,
+                "collapsed_fiber_deficit": collapsed_deficit,
+                "left_inverse_verified": left_inverse_verified,
+                "l1_product_residual": str(table_rec["l1_product_residual"]),
+                "retraction_idempotence_verified": bool(
+                    table_rec["retraction_idempotence_verified"]
+                ),
+                "ret_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": self.gross_cents,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(eval_rec)
+        return eval_rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        audit_id: str = "product-retraction-3phase",
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Run the canonical 3-phase product-retraction codebase audit (Theorem 139)."""
+        aid = text(audit_id, "audit_id")
+        mod_id = text(model_id, "model_id")
+
+        p1 = self.evaluate_product_retraction_modules(
+            f"{aid}:phase-1",
+            self.PHASE_1_PRICING_RET_SOURCE,
+            self.PHASE_1_TAX_RET_SOURCE,
+            self.PHASE_1_SETTLEMENT_RET_SOURCE,
+            model_id=mod_id,
+        )
+        p2 = self.evaluate_product_retraction_modules(
+            f"{aid}:phase-2",
+            self.PHASE_2_PRICING_RET_SOURCE,
+            self.PHASE_2_TAX_RET_SOURCE,
+            self.PHASE_2_SETTLEMENT_RET_SOURCE,
+            model_id=mod_id,
+        )
+        p3 = self.evaluate_product_retraction_modules(
+            f"{aid}:phase-3",
+            self.PHASE_3_PRICING_RET_SOURCE,
+            self.PHASE_3_TAX_RET_SOURCE,
+            self.PHASE_3_SETTLEMENT_RET_SOURCE,
+            model_id=mod_id,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mod_id,
+                "phase_1_product_residual_fourths": p1["product_residual_fourths"],
+                "phase_1_retracted_fiber_rank": p1["retracted_fiber_rank"],
+                "phase_1_collapsed_fiber_deficit": p1["collapsed_fiber_deficit"],
+                "phase_1_left_inverse_verified": p1["left_inverse_verified"],
+                "phase_1_surcharge_cents": p1["ret_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_product_residual_fourths": p2["product_residual_fourths"],
+                "phase_2_retracted_fiber_rank": p2["retracted_fiber_rank"],
+                "phase_2_collapsed_fiber_deficit": p2["collapsed_fiber_deficit"],
+                "phase_2_left_inverse_verified": p2["left_inverse_verified"],
+                "phase_2_surcharge_cents": p2["ret_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_product_residual_fourths": p3["product_residual_fourths"],
+                "phase_3_retracted_fiber_rank": p3["retracted_fiber_rank"],
+                "phase_3_collapsed_fiber_deficit": p3["collapsed_fiber_deficit"],
+                "phase_3_left_inverse_verified": p3["left_inverse_verified"],
+                "phase_3_surcharge_cents": p3["ret_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    evaluate_three_phase_product_retraction_audit = record_three_phase_codebase_audit
+    record_three_phase_audit = record_three_phase_codebase_audit
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module product-retraction audit."""
+        if not self.evaluations:
+            raise ValidationError(
+                "at least one codebase product-retraction evaluation must be recorded"
+            )
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_product_retraction.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "product_retraction_receipt": self.last_retraction_receipt,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
 
 
 

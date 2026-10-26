@@ -83,6 +83,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_THRESH_P3_PY,
     INITIAL_PRICING_LOOP_P1_PY,
     INITIAL_PRICING_LOOP_P2_P3_PY,
+    INITIAL_PRICING_RET_P1_PY,
+    INITIAL_PRICING_RET_P2_P3_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_POE_P1_PY,
@@ -126,6 +128,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_THRESH_P3_PY,
     INITIAL_SETTLEMENT_LOOP_P1_P2_PY,
     INITIAL_SETTLEMENT_LOOP_P3_PY,
+    INITIAL_SETTLEMENT_RET_P1_P2_PY,
+    INITIAL_SETTLEMENT_RET_P3_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_POE_P1_PY,
@@ -175,6 +179,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_LOOP_P1_PY,
     INITIAL_TAX_LOOP_P2_PY,
     INITIAL_TAX_LOOP_P3_PY,
+    INITIAL_TAX_RET_P1_P2_PY,
+    INITIAL_TAX_RET_P3_PY,
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
@@ -279,6 +285,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     PoeVetoCodeWorkspace,
     PolicyRatchetCodeWorkspace,
     PolicyReversalCodeWorkspace,
+    ProductRetractionCodeWorkspace,
     ProjectiveTowerCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
@@ -321,6 +328,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     poe_veto_fixture,
     policy_fixture,
     policy_ratchet_fixture,
+    product_retraction_fixture,
     projective_tower_fixture,
     quorum_fixture,
     regge_fixture,
@@ -351,6 +359,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_poe_veto_local_unit_tests,
     run_policy_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
+    run_product_retraction_local_unit_tests,
     run_projective_tower_local_unit_tests,
     run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
@@ -413,6 +422,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     poe_veto_campaign,
     policy_campaign,
     policy_ratchet_campaign,
+    product_retraction_campaign,
     projective_tower_campaign,
     quorum_campaign,
     regge_campaign,
@@ -456,6 +466,7 @@ from lggr.streaming import (
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyReversalMonitor,
+    StreamingCodebaseProductRetractionMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
@@ -9986,6 +9997,267 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_13500_arms["B"]["final_loop_surcharge_cents"], 4)
             self.assertEqual(seed_13500_arms["C"]["final_loop_surcharge_cents"], 0)
             self.assertEqual(seed_13500_arms["C"]["status"], "completed")
+
+    def test_product_retraction_workspace_and_unit_tests(self) -> None:
+        """Verify ProductRetractionCodeWorkspace and local unit tests across all 3 phases."""
+        ws = ProductRetractionCodeWorkspace(product_retraction_fixture(13600))
+        for w in ("worker-0", "worker-1", "worker-2"):
+            insp = ws.tool(w, "inspect_workspace", {})
+            self.assertTrue(insp["local_unit_test"]["passed"])
+
+        mon = StreamingCodebaseProductRetractionMonitor(scope_id="test-product-retraction-ws")
+        p1 = mon.evaluate_product_retraction_modules(
+            "p1",
+            pricing_ret_source=INITIAL_PRICING_RET_P1_PY,
+            tax_ret_source=INITIAL_TAX_RET_P1_P2_PY,
+            settlement_ret_source=INITIAL_SETTLEMENT_RET_P1_P2_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["product_residual_fourths"], 4)
+        self.assertEqual(p1["retracted_fiber_rank"], 2)
+        self.assertEqual(p1["collapsed_fiber_deficit"], 2)
+        self.assertFalse(p1["left_inverse_verified"])
+        self.assertEqual(p1["ret_surcharge_cents"], 8)
+        self.assertEqual(p1["merchant_payout_cents"], 865)
+
+        p2 = mon.evaluate_product_retraction_modules(
+            "p2",
+            pricing_ret_source=INITIAL_PRICING_RET_P2_P3_PY,
+            tax_ret_source=INITIAL_TAX_RET_P1_P2_PY,
+            settlement_ret_source=INITIAL_SETTLEMENT_RET_P1_P2_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["product_residual_fourths"], 0)
+        self.assertEqual(p2["retracted_fiber_rank"], 2)
+        self.assertEqual(p2["collapsed_fiber_deficit"], 2)
+        self.assertFalse(p2["left_inverse_verified"])
+        self.assertEqual(p2["ret_surcharge_cents"], 4)
+        self.assertEqual(p2["merchant_payout_cents"], 869)
+
+        p3 = mon.evaluate_product_retraction_modules(
+            "p3",
+            pricing_ret_source=INITIAL_PRICING_RET_P2_P3_PY,
+            tax_ret_source=INITIAL_TAX_RET_P3_PY,
+            settlement_ret_source=INITIAL_SETTLEMENT_RET_P3_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["product_residual_fourths"], 0)
+        self.assertEqual(p3["retracted_fiber_rank"], 4)
+        self.assertEqual(p3["collapsed_fiber_deficit"], 0)
+        self.assertTrue(p3["left_inverse_verified"])
+        self.assertEqual(p3["ret_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_product_retraction_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent product_retraction campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_product_retraction_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked 2-fiber projection retracted_fiber_rank=2 leaves collapsed_fiber_deficit=2 > 0."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    if worker == "worker-0":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_PRICING_RET_P2_P3_PY}),
+                            },
+                        }
+                    else:
+                        return {
+                            "response": {
+                                "id": f"stub-hold-b-{worker}",
+                                "model": model,
+                                "usage": {
+                                    "prompt_tokens": 100,
+                                    "completion_tokens": 20,
+                                    "cost": "0.000100",
+                                },
+                                "choices": [
+                                    {
+                                        "index": 0,
+                                        "finish_reason": "stop",
+                                        "message": {"role": "assistant", "content": "Done."},
+                                    }
+                                ],
+                            },
+                            "started_ns": 10,
+                            "finished_ns": 20,
+                        }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_RET_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_RET_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_RET_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "product_retraction",
+                "seeds": [13600, 13601],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_product_retraction_transport)
+            summary = product_retraction_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.product_retraction_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["ret_surcharge_cents"] = int(gate_rec["ret_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_product_retraction_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live product_retraction pilot evidence offline if present."""
+        ret_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "product_retraction_pilot_run"
+            / "events.jsonl"
+        )
+        ret_summary = ret_events.with_name("summary.json")
+        if ret_events.exists() and ret_summary.exists():
+            replayed = replay(ret_events)
+            self.assertEqual(replayed["schema"], "lggr.product_retraction_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_13600_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_13600_arms["A"]["final_ret_surcharge_cents"], 8)
+            self.assertEqual(seed_13600_arms["B"]["final_ret_surcharge_cents"], 4)
+            self.assertEqual(seed_13600_arms["C"]["final_ret_surcharge_cents"], 0)
+            self.assertEqual(seed_13600_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

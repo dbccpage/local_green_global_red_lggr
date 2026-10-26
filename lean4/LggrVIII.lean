@@ -6396,4 +6396,63 @@ theorem closed_loop_repair_codebase_open_loop_residual_and_witness_convergence_a
   intro total_res unrep h1
   omega
 
+/-- **Theorem 139 (Product Retraction Non-Injective Projection vs. Section-Retraction Lift Codebase Audit).**
+    In a 3-module transport-projected settlement codebase (`pricing_ret.py`, `tax_ret.py`,
+    `settlement_ret.py`) over a 4-state joint settlement fiber `|X| = 4` with product-retraction
+    residual quarter-units `prod_res ∈ {0, 4}` (`4 * ‖p - p_A ⊗ p_B‖_1`) and retracted fiber
+    rank `rank ∈ {2, 4}` (`collapsed_deficit = 4 - rank ∈ {0, 2}`), where
+    `surcharge = prod_res + 2 * collapsed_deficit`:
+    1. Whenever `prod_res + 2 * collapsed_deficit ≥ 4`, the net settlement payout
+       `873 - (prod_res + 2 * collapsed_deficit)` is at most `869 < 873`.
+    2. Across the 3-phase product-retraction codebase audit:
+       - Phase 1 (Correlated table with non-injective 2-fiber projection, `prod_res = 4`, `rank = 2`):
+         passes isolated per-module bounds (`0 ≤ prod_res ≤ 4` and `2 ≤ rank ≤ 4`, `L_p1 = 1`),
+         yet `collapsed_p1 = 4 - 2 = 2 > 0` and `prod_res_p1 = 4 > 0`, incurring
+         `surcharge_p1 = 4 + 2 * 2 = 8` and `payout_p1 = 873 - 8 = 865 ≠ 873`
+         (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Marginal product retraction without left-inverse section lift, `prod_res = 0`, `rank = 2`):
+         clears the product residual (`prod_res_p2 = 0`), yet the non-injective projection retains
+         only `rank = 2 < 4` fibers (`collapsed_p2 = 4 - 2 = 2 > 0`), incurring
+         `surcharge_p2 = 0 + 2 * 2 = 4` and `payout_p2 = 873 - 4 = 869 ≠ 873`
+         (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Product retraction with full left-inverse section-retraction lift, `prod_res = 0`, `rank = 4`):
+         restores `rank = 4` (`collapsed_p3 = 0`) with `prod_res_p3 = 0`, yielding `surcharge_p3 = 0`,
+         `payout_p3 = 873`, and `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem product_retraction_codebase_non_injective_projection_and_section_lift_audit :
+    (∀ prod_res collapsed : Int,
+      (prod_res + 2 * collapsed ≥ 4) →
+      (873 - (prod_res + 2 * collapsed) ≤ 869)) ∧
+    (let prod_res_p1 : Int := 4; let rank_p1 : Int := 2;
+     let prod_res_p2 : Int := 0; let rank_p2 : Int := 2;
+     let prod_res_p3 : Int := 0; let rank_p3 : Int := 4;
+     let collapsed_p1 : Int := 4 - rank_p1;
+     let collapsed_p2 : Int := 4 - rank_p2;
+     let collapsed_p3 : Int := 4 - rank_p3;
+     let surcharge_p1 : Int := prod_res_p1 + 2 * collapsed_p1;
+     let surcharge_p2 : Int := prod_res_p2 + 2 * collapsed_p2;
+     let surcharge_p3 : Int := prod_res_p3 + 2 * collapsed_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (prod_res_p1 ≤ 4) ∧ (rank_p1 ≥ 2) ∧ (collapsed_p1 = 2) ∧ (surcharge_p1 = 8) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (prod_res_p1 = 0) ∧ (collapsed_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (prod_res_p2 ≤ 4) ∧ (rank_p2 ≥ 2) ∧ (collapsed_p2 = 2) ∧ (surcharge_p2 = 4) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (prod_res_p2 = 0) ∧ (collapsed_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (prod_res_p3 = 0) ∧ (rank_p3 = 4) ∧ (collapsed_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (prod_res_p1 = 4 ∧ prod_res_p2 = 0 ∧ prod_res_p3 = 0 ∧
+      collapsed_p1 = 2 ∧ collapsed_p2 = 2 ∧ collapsed_p3 = 0 ∧
+      surcharge_p1 = 8 ∧ surcharge_p2 = 4 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 865 ∧ payout_p2 = 869 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro prod_res collapsed h1
+  omega
+
 end LggrVIII

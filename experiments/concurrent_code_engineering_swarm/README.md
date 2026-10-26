@@ -738,6 +738,22 @@ In the `weighted_relaxation` topology (`StreamingCodebaseWeightedRelaxationMonit
 | `13502` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **B** | `single_shot_partial_repair_gate` | `blocked_unresolved` | `[4, 2]` | `[0, 2]` | `2` | `1` | `4` | `869` | 2 | 14 | `$0.013760` |
 | `13502` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **C** | `explicit_lggr_closed_loop_witness_repair_directive` | **`completed`** | **`[4, 4]`** | **`[0, 0]`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.006751`** |
 
+## 46. Live 3-Agent Product Retraction Non-Injective Projection & Section-Retraction Lift Campaign Results (`--topology product_retraction`, Theorem 139)
+
+Executed across `3` concurrent LLM workers (`openai/gpt-4o-mini`, `anthropic/claude-haiku-4.5`, `deepseek/deepseek-chat`) over `pricing_ret.py -> tax_ret.py -> settlement_ret.py` (`99` live API calls, `$0.0878384252` total cost, `max_inflight_requests = 3`, `31` concurrent waves):
+
+| Seed | Scenario | Arm | Gate Policy | Status | `prod_res_4` | `fiber_rank` | `deficit` | `left_inv` | `surcharge` | `payout` | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `13600` | `repairable_non_injective_projection_and_section_retraction_lift` | **A** | `non_injective_projection_baseline_gate` | `blocked_unresolved` | `4` | `2` | `2` | `false` | `8` | `865` | 2 | 18 | `$0.014093` |
+| `13600` | `repairable_non_injective_projection_and_section_retraction_lift` | **B** | `marginal_product_retraction_only_gate` | `blocked_unresolved` | `0` | `2` | `2` | `false` | `4` | `869` | 2 | 14 | `$0.013483` |
+| `13600` | `repairable_non_injective_projection_and_section_retraction_lift` | **C** | `explicit_lggr_section_retraction_lift_directive` | **`completed`** | **`0`** | **`4`** | **`0`** | **`true`** | **`0`** | **`873`** | **1** | **7** | **`$0.007259`** |
+| `13601` | `infeasible_hardware_locked_non_injective_rank_two` | **A** | `non_injective_projection_baseline_gate` | `safe_escalated` | `4` | `2` | `2` | `false` | `8` | `865` | 1 | 7 | `$0.006059` |
+| `13601` | `infeasible_hardware_locked_non_injective_rank_two` | **B** | `marginal_product_retraction_only_gate` | `safe_escalated` | `4` | `2` | `2` | `false` | `8` | `865` | 1 | 8 | `$0.006794` |
+| `13601` | `infeasible_hardware_locked_non_injective_rank_two` | **C** | `explicit_lggr_section_retraction_lift_directive` | `safe_escalated` | `4` | `2` | `2` | `false` | `8` | `865` | 1 | 7 | `$0.006186` |
+| `13602` | `repairable_non_injective_projection_and_section_retraction_lift` | **A** | `non_injective_projection_baseline_gate` | `blocked_unresolved` | `4` | `2` | `2` | `false` | `8` | `865` | 2 | 18 | `$0.014342` |
+| `13602` | `repairable_non_injective_projection_and_section_retraction_lift` | **B** | `marginal_product_retraction_only_gate` | `blocked_unresolved` | `0` | `2` | `2` | `false` | `4` | `869` | 2 | 14 | `$0.013074` |
+| `13602` | `repairable_non_injective_projection_and_section_retraction_lift` | **C** | `explicit_lggr_section_retraction_lift_directive` | **`completed`** | **`0`** | **`4`** | **`0`** | **`true`** | **`0`** | **`873`** | **1** | **6** | **`$0.006549`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
@@ -790,4 +806,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/weighted_relaxation_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/closed_loop_repair_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/product_retraction_pilot_run/events.jsonl
 ```

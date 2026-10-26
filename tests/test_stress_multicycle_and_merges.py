@@ -66,6 +66,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseProductOfExpertsMonitor,
+    StreamingCodebaseProductRetractionMonitor,
     StreamingCodebaseProjectiveTowerMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
@@ -7253,6 +7254,63 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_loop_source="def quote_loop_pricing(g):\n    return 123\n",
                 tax_loop_source=mon.PHASE_1_TAX_LOOP_SOURCE,
                 settlement_loop_source=mon.PHASE_1_SETTLEMENT_LOOP_SOURCE,
+            )
+
+    def test_product_retraction_codebase_non_injective_projection_and_section_lift_audit(self) -> None:
+        """Verify Theorem 139: non-injective projection and left-inverse section-retraction codebase audit."""
+        mon = StreamingCodebaseProductRetractionMonitor(
+            scope_id="unit-codebase-product-retraction-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-product-retraction-eval-01",
+        )
+        self.assertEqual(obs["phase_1_product_residual_fourths"], 4)
+        self.assertEqual(obs["phase_1_retracted_fiber_rank"], 2)
+        self.assertEqual(obs["phase_1_collapsed_fiber_deficit"], 2)
+        self.assertFalse(obs["phase_1_left_inverse_verified"])
+        self.assertEqual(obs["phase_1_surcharge_cents"], 8)
+        self.assertEqual(obs["phase_1_payout_cents"], 865)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "NON_INJECTIVE_PROJECTION_AND_RESIDUAL_LGGR")
+
+        self.assertEqual(obs["phase_2_product_residual_fourths"], 0)
+        self.assertEqual(obs["phase_2_retracted_fiber_rank"], 2)
+        self.assertEqual(obs["phase_2_collapsed_fiber_deficit"], 2)
+        self.assertFalse(obs["phase_2_left_inverse_verified"])
+        self.assertEqual(obs["phase_2_surcharge_cents"], 4)
+        self.assertEqual(obs["phase_2_payout_cents"], 869)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "NON_INJECTIVE_FIBER_COLLAPSE_RESIDUAL_LGGR")
+
+        self.assertEqual(obs["phase_3_product_residual_fourths"], 0)
+        self.assertEqual(obs["phase_3_retracted_fiber_rank"], 4)
+        self.assertEqual(obs["phase_3_collapsed_fiber_deficit"], 0)
+        self.assertTrue(obs["phase_3_left_inverse_verified"])
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "LEFT_INVERSE_SECTION_RETRACTION_VERIFIED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "LEFT_INVERSE_SECTION_RETRACTION_VERIFIED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["product_retraction_receipt"])
+        self.assertIsNotNone(receipt["fiber_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_product_retraction_modules(
+                "bad-return",
+                pricing_ret_source="def quote_ret_pricing(g):\n    return 123\n",
+                tax_ret_source=mon.PHASE_1_TAX_RET_SOURCE,
+                settlement_ret_source=mon.PHASE_1_SETTLEMENT_RET_SOURCE,
             )
 
 
