@@ -199,4 +199,8 @@ host-rule verdict and charge. API keys never enter evidence.
 
 ## Revisions
 
-(none yet)
+- R1 (2026-10-26, before any paid call): `ANTHROPIC_API_KEY` is read from the process environment, the
+  Windows user environment, or the repository's git-ignored `.env` (only that one variable is parsed);
+  the value is never logged or recorded. The L-C advisor's example pair takes the first passing
+  hypothesis separated by C's top-ranked check and the failing hypothesis nearest to it in Hamming
+  distance (ties by index), so that the listed separating checks are informative.

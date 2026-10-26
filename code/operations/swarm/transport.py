@@ -25,8 +25,21 @@ class HaltRun(Exception):
     pass
 
 
+def _dotenv_key():
+    """ANTHROPIC_API_KEY from the repository's git-ignored .env (only that variable is read)."""
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[3] / ".env"
+    if not path.is_file():
+        return None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        name, sep, value = line.strip().partition("=")
+        if sep and name.strip().removeprefix("export ").strip() == "ANTHROPIC_API_KEY":
+            return value.strip().strip('"').strip("'") or None
+    return None
+
+
 def api_key():
-    key = os.environ.get("ANTHROPIC_API_KEY")
+    key = os.environ.get("ANTHROPIC_API_KEY") or _dotenv_key()
     if not key and os.name == "nt":
         import winreg
         try:
