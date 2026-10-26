@@ -43,6 +43,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
@@ -5375,6 +5376,54 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_regge_codebase_hinge_deficit_and_gauss_bonnet_holonomy_audit(self) -> None:
+        """Verify Theorem 104: Simplicial mesh Regge hinge-deficit curvature & boundary Gauss-Bonnet holonomy."""
+        mon = StreamingCodebaseReggeHolonomyMonitor(
+            scope_id="unit-codebase-regge-holonomy-scope",
+        )
+        obs = mon.record_three_phase_codebase_regge_audit(
+            "codebase-regge-eval-01",
+        )
+        self.assertEqual(obs["phase_1_apex_deficit_units"], 12)
+        self.assertEqual(obs["phase_1_boundary_turn_sum_units"], 24)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_FLAT_PRICING_SECTOR",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "FLATTEN_TAX_SECTOR_HINGE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "FLATTEN_SETTLEMENT_SECTOR_HINGE",
+        )
+
+        self.assertEqual(obs["phase_2_apex_deficit_units"], 6)
+        self.assertEqual(obs["phase_2_boundary_turn_sum_units"], 30)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR")
+
+        self.assertEqual(obs["phase_3_apex_deficit_units"], 0)
+        self.assertEqual(obs["phase_3_boundary_turn_sum_units"], 36)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_REGGE_HOLONOMY_FLAT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_REGGE_HOLONOMY_FLAT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
 
 
 

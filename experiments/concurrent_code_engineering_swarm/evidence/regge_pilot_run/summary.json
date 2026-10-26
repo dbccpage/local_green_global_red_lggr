@@ -1,0 +1,204 @@
+{
+  "schema": "lggr.regge_holonomy_code_engineering_swarm.v1",
+  "topology": "regge",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 10100,
+      "kind": "conical_hinge_deficit_star",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_t0_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t1_angles_units": [
+            6,
+            6,
+            6
+          ],
+          "final_t2_angles_units": [
+            6,
+            6,
+            6
+          ],
+          "final_apex_deficit_units": 12,
+          "final_boundary_turn_sum_units": 24,
+          "final_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0056459303"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_t0_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t1_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t2_angles_units": [
+            6,
+            6,
+            6
+          ],
+          "final_apex_deficit_units": 6,
+          "final_boundary_turn_sum_units": 30,
+          "final_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0063649658"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_t0_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t1_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t2_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_apex_deficit_units": 0,
+          "final_boundary_turn_sum_units": 36,
+          "final_status": "CODEBASE_REGGE_HOLONOMY_FLAT_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0076369678"
+        }
+      ]
+    },
+    {
+      "seed": 10101,
+      "kind": "conical_hinge_deficit_star",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_t0_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t1_angles_units": [
+            6,
+            6,
+            6
+          ],
+          "final_t2_angles_units": [
+            6,
+            6,
+            6
+          ],
+          "final_apex_deficit_units": 12,
+          "final_boundary_turn_sum_units": 24,
+          "final_status": "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0056243276"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_t0_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t1_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t2_angles_units": [
+            6,
+            6,
+            6
+          ],
+          "final_apex_deficit_units": 6,
+          "final_boundary_turn_sum_units": 30,
+          "final_status": "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0064040564"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_t0_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t1_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_t2_angles_units": [
+            12,
+            3,
+            3
+          ],
+          "final_apex_deficit_units": 0,
+          "final_boundary_turn_sum_units": 36,
+          "final_status": "CODEBASE_REGGE_HOLONOMY_FLAT_LGGG",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 12,
+          "cost_usd": "0.0183208848"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 42,
+  "charged_or_reserved_usd": "0.0499971327",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 14,
+  "scope": "Concurrent 3-agent Regge holonomy Python code-engineering swarm (`pricing_mesh` -> `tax_mesh` -> `settlement_mesh`) comparing isolated Euclidean triangle-closure gating (A), partial sector-1 hinge flattening (B), and explicit LGGR Gauss-Bonnet holonomy flattening directives (C) with full cryptographic receipts retained in the host audit log."
+}

@@ -13,6 +13,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_PRICING_CHANNEL_SOURCE,
     CANONICAL_PRICING_COALITION_SOURCE,
     CANONICAL_PRICING_EVENTS_SOURCE,
+    CANONICAL_PRICING_MESH_SOURCE,
     CANONICAL_PRICING_MV_SOURCE,
     CANONICAL_PRICING_SOURCE,
     CANONICAL_PRICING_STOP_SOURCE,
@@ -22,6 +23,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_SETTLEMENT_CHANNEL_SOURCE,
     CANONICAL_SETTLEMENT_COALITION_SOURCE,
     CANONICAL_SETTLEMENT_EVENTS_SOURCE,
+    CANONICAL_SETTLEMENT_MESH_SOURCE,
     CANONICAL_SETTLEMENT_MV_SOURCE,
     CANONICAL_SETTLEMENT_SOURCE,
     CANONICAL_SETTLEMENT_STOP_SOURCE,
@@ -31,6 +33,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_TAX_CHANNEL_SOURCE,
     CANONICAL_TAX_COALITION_SOURCE,
     CANONICAL_TAX_EVENTS_SOURCE,
+    CANONICAL_TAX_MESH_SOURCE,
     CANONICAL_TAX_MV_SOURCE,
     CANONICAL_TAX_SOURCE,
     CANONICAL_TAX_STOP_SOURCE,
@@ -46,6 +49,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     DiamondCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
+    ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -56,6 +60,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     diamond_fixture,
     fixture,
     mv_fixture,
+    regge_fixture,
     replay_fixture,
     run_coalitional_local_unit_tests,
     run_cptp_local_unit_tests,
@@ -63,6 +68,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_diamond_local_unit_tests,
     run_local_unit_tests,
     run_mv_local_unit_tests,
+    run_regge_local_unit_tests,
     run_replay_local_unit_tests,
     run_stop_local_unit_tests,
     run_win_local_unit_tests,
@@ -78,6 +84,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     dfa_campaign,
     diamond_campaign,
     mv_campaign,
+    regge_campaign,
     replay,
     replay_campaign,
     stop_campaign,
@@ -91,6 +98,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -1528,6 +1536,188 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if cptp_events.exists() and cptp_summary.exists():
             replayed = replay(cptp_events)
             self.assertEqual(replayed["schema"], "lggr.cptp_channel_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_regge_holonomy_workspace_and_monitor_detects_hinge_deficit_and_flattens_star(self) -> None:
+        state = regge_fixture(10100)
+        ws = ReggeHolonomyCodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_mesh": True, "tax_mesh": True, "settlement_mesh": True},
+        )
+
+        mon = StreamingCodebaseReggeHolonomyMonitor(scope_id="unit-regge-gate")
+        rec = mon.evaluate_codebase_regge_holonomy(
+            "eval-10100-wave0",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec["local_green"], 1)
+        self.assertEqual(rec["global_green"], 0)
+        self.assertEqual(rec["defect"], -1)
+        self.assertEqual(rec["t0_angles_units"], [12, 3, 3])
+        self.assertEqual(rec["t1_angles_units"], [6, 6, 6])
+        self.assertEqual(rec["t2_angles_units"], [6, 6, 6])
+        self.assertEqual(rec["apex_deficit_units"], 12)
+        self.assertEqual(rec["boundary_turn_sum_units"], 24)
+        self.assertTrue(rec["gauss_bonnet_equals_euler"])
+        self.assertEqual(rec["status"], "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR")
+
+        audit = mon.record_three_phase_codebase_regge_audit("regge-3phase-unit")
+        self.assertEqual(audit["phase_1_defect"], -1)
+        self.assertEqual(audit["phase_2_defect"], -1)
+        self.assertEqual(audit["phase_3_defect"], 0)
+        self.assertEqual(audit["phase_3_status"], "CODEBASE_REGGE_HOLONOMY_FLAT_LGGG")
+
+    def test_regge_holonomy_campaign_and_deterministic_replay(self) -> None:
+        def stub_regge_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_text = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"agent {w}" in sys_text:
+                    worker = w
+                    break
+            arm = "A"
+            if "Arm B" in sys_text:
+                arm = "B"
+            elif "Arm C" in sys_text:
+                arm = "C"
+
+            has_tool_result = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_result:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                user_msgs = [m["content"] for m in messages if m.get("role") == "user"]
+                last_user = json.loads(user_msgs[-1])
+                if last_user.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Infeasible Regge hinge-deficit curvature lock."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    tool_Result_msg = [m for m in messages if m.get("role") == "tool"][-1]
+                    inspected = json.loads(tool_Result_msg["content"])
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif arm == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": CANONICAL_TAX_MESH_SOURCE}),
+                            },
+                        }
+                    else:
+                        tool_Result_msg = [m for m in messages if m.get("role") == "tool"][-1]
+                        inspected = json.loads(tool_Result_msg["content"])
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": CANONICAL_PRICING_MESH_SOURCE,
+                        "worker-1": CANONICAL_TAX_MESH_SOURCE,
+                        "worker-2": CANONICAL_SETTLEMENT_MESH_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {"cost": "0.0001"},
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "regge",
+                "seeds": [10100, 10101],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_regge_transport)
+            summary = regge_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.regge_holonomy_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on Regge gate apex_deficit_units field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["apex_deficit_units"] = int(gate_rec["apex_deficit_units"]) + 6
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_regge_pilot_evidence_replay_if_present(self) -> None:
+        regge_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "regge_pilot_run"
+            / "events.jsonl"
+        )
+        regge_summary = regge_events.with_name("summary.json")
+        if regge_events.exists() and regge_summary.exists():
+            replayed = replay(regge_events)
+            self.assertEqual(replayed["schema"], "lggr.regge_holonomy_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

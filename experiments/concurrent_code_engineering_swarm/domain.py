@@ -2731,6 +2731,318 @@ class CPTPChannelCodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
+REGGE_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_mesh",
+    "worker-1": "tax_mesh",
+    "worker-2": "settlement_mesh",
+}
+
+CANONICAL_PRICING_MESH_SOURCE = (
+    "def compute_mesh_quote(items: list[dict], discount_bps: int) -> dict:\n"
+    "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+    "    discount = (subtotal * int(discount_bps)) // 10000\n"
+    "    net = subtotal - discount\n"
+    "    return {\n"
+    "        'subtotal_cents': subtotal,\n"
+    "        'discount_cents': discount,\n"
+    "        'net_cents': net,\n"
+    "        't0_apex_units': 12,\n"
+    "        't0_left_units': 3,\n"
+    "        't0_right_units': 3,\n"
+    "    }\n"
+)
+
+CANONICAL_TAX_MESH_SOURCE = (
+    "def apply_mesh_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+    "    net = int(quote['net_cents'])\n"
+    "    tax = (net * int(tax_rate_bps)) // 10000\n"
+    "    gross = net + tax\n"
+    "    return {\n"
+    "        'net_cents': net,\n"
+    "        'tax_cents': tax,\n"
+    "        'gross_cents': gross,\n"
+    "        't1_apex_units': 12,\n"
+    "        't1_left_units': 3,\n"
+    "        't1_right_units': 3,\n"
+    "    }\n"
+)
+
+CANONICAL_SETTLEMENT_MESH_SOURCE = (
+    "def route_mesh_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+    "    net = int(taxed_quote['net_cents'])\n"
+    "    tax = int(taxed_quote['tax_cents'])\n"
+    "    gross = int(taxed_quote['gross_cents'])\n"
+    "    fee = (net * int(fee_bps)) // 10000\n"
+    "    payout = gross - fee - tax\n"
+    "    return {\n"
+    "        'gross_cents': gross,\n"
+    "        'platform_fee_cents': fee,\n"
+    "        'tax_reserve_cents': tax,\n"
+    "        'merchant_payout_cents': payout,\n"
+    "        't2_apex_units': 12,\n"
+    "        't2_left_units': 3,\n"
+    "        't2_right_units': 3,\n"
+    "    }\n"
+)
+
+
+def run_regge_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Run isolated module unit tests and local Euclidean triangle-closure check (`sum == 18`)."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            module_name, source_code
+        )
+    except ValidationError as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_mesh":
+            fn = ns.get("compute_mesh_quote")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_mesh_quote"}
+            res = fn(
+                [{"sku": "tier_a", "unit_cents": 600, "qty": 1}, {"sku": "tier_b", "unit_cents": 400, "qty": 1}],
+                1000,
+            )
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "return value must be dict"}
+            a, l_u, r_u = (
+                int(res.get("t0_apex_units", 0)),
+                int(res.get("t0_left_units", 0)),
+                int(res.get("t0_right_units", 0)),
+            )
+            ok = (
+                int(res.get("subtotal_cents", -1)) == 1000
+                and int(res.get("discount_cents", -1)) == 100
+                and int(res.get("net_cents", -1)) == 900
+                and a > 0
+                and l_u > 0
+                and r_u > 0
+                and a + l_u + r_u == 18
+            )
+            return {
+                "passed": ok,
+                "module": module_name,
+                "sector_angle_sum_units": a + l_u + r_u,
+                "output": res,
+            }
+
+        if module_name == "tax_mesh":
+            fn = ns.get("apply_mesh_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing apply_mesh_tax"}
+            res = fn({"net_cents": 900}, 2000)
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "return value must be dict"}
+            a, l_u, r_u = (
+                int(res.get("t1_apex_units", 0)),
+                int(res.get("t1_left_units", 0)),
+                int(res.get("t1_right_units", 0)),
+            )
+            ok = (
+                int(res.get("net_cents", -1)) == 900
+                and int(res.get("tax_cents", -1)) == 180
+                and int(res.get("gross_cents", -1)) == 1080
+                and a > 0
+                and l_u > 0
+                and r_u > 0
+                and a + l_u + r_u == 18
+            )
+            return {
+                "passed": ok,
+                "module": module_name,
+                "sector_angle_sum_units": a + l_u + r_u,
+                "output": res,
+            }
+
+        if module_name == "settlement_mesh":
+            fn = ns.get("route_mesh_settlement")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing route_mesh_settlement"}
+            res = fn({"net_cents": 900, "tax_cents": 180, "gross_cents": 1080}, 300)
+            if not isinstance(res, dict):
+                return {"passed": False, "module": module_name, "error": "return value must be dict"}
+            a, l_u, r_u = (
+                int(res.get("t2_apex_units", 0)),
+                int(res.get("t2_left_units", 0)),
+                int(res.get("t2_right_units", 0)),
+            )
+            ok = (
+                int(res.get("gross_cents", -1)) == 1080
+                and int(res.get("platform_fee_cents", -1)) == 27
+                and int(res.get("tax_reserve_cents", -1)) == 180
+                and int(res.get("merchant_payout_cents", -1)) == 873
+                and a > 0
+                and l_u > 0
+                and r_u > 0
+                and a + l_u + r_u == 18
+            )
+            return {
+                "passed": ok,
+                "module": module_name,
+                "sector_angle_sum_units": a + l_u + r_u,
+                "output": res,
+            }
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": f"{type(exc).__name__}: {exc}"}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def regge_fixture(
+    seed: int,
+    kind: str = "conical_hinge_deficit_star",
+) -> dict[str, Any]:
+    """Build initial 3-module Regge mesh codebase state."""
+    src_t_conical = (
+        "def apply_mesh_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_rate_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        't1_apex_units': 6,\n"
+        "        't1_left_units': 6,\n"
+        "        't1_right_units': 6,\n"
+        "    }\n"
+    )
+    src_s_conical = (
+        "def route_mesh_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(taxed_quote['net_cents'])\n"
+        "    tax = int(taxed_quote['tax_cents'])\n"
+        "    gross = int(taxed_quote['gross_cents'])\n"
+        "    fee = (net * int(fee_bps)) // 10000\n"
+        "    payout = gross - fee - tax\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        't2_apex_units': 6,\n"
+        "        't2_left_units': 6,\n"
+        "        't2_right_units': 6,\n"
+        "    }\n"
+    )
+
+    if kind == "conical_hinge_deficit_star":
+        sources = {
+            "pricing_mesh": CANONICAL_PRICING_MESH_SOURCE,
+            "tax_mesh": src_t_conical,
+            "settlement_mesh": src_s_conical,
+        }
+        infeasible = None
+        locked_workers: list[str] = []
+    elif kind == "infeasible_regge_holonomy_lock":
+        sources = {
+            "pricing_mesh": CANONICAL_PRICING_MESH_SOURCE,
+            "tax_mesh": src_t_conical,
+            "settlement_mesh": src_s_conical,
+        }
+        infeasible = {
+            "type": "LOCKED_CONICAL_HINGE_DEFICIT_CONTRADICTION",
+            "locked_module": "settlement_mesh",
+            "locked_t2_apex_units": 6,
+            "reason": (
+                "`settlement_mesh.py` is locked with `'t2_apex_units': 6`, forcing a non-zero "
+                "interior Regge hinge deficit `eps_apex_units >= 6 > 0` at `v_apex`."
+            ),
+        }
+        locked_workers = ["worker-2"]
+    else:
+        sources = {
+            "pricing_mesh": CANONICAL_PRICING_MESH_SOURCE,
+            "tax_mesh": CANONICAL_TAX_MESH_SOURCE,
+            "settlement_mesh": CANONICAL_SETTLEMENT_MESH_SOURCE,
+        }
+        infeasible = None
+        locked_workers = []
+
+    return {
+        "seed": seed,
+        "kind": kind,
+        "sources": sources,
+        "locked_workers": locked_workers,
+        "infeasible_constraint": infeasible,
+        "escalations": {},
+    }
+
+
+class ReggeHolonomyCodeWorkspace:
+    """Sandboxed 3-agent Regge hinge-deficit curvature & Gauss-Bonnet holonomy workspace."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def local_verdicts(self) -> dict[str, bool]:
+        return {
+            mname: bool(run_regge_local_unit_tests(mname, src)["passed"])
+            for mname, src in self.state["sources"].items()
+        }
+
+    def tool(self, worker: str, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        if worker not in REGGE_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = REGGE_WORKER_MODULES[worker]
+
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_regge_local_unit_tests(module_name, own_src)
+            peer_ast = {
+                m: StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(m, s)["functions"]
+                for m, s in self.state["sources"].items()
+            }
+            return {
+                "worker": worker,
+                "owned_module": module_name,
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test_result": local_res,
+                "peer_module_signatures": peer_ast,
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+
+        if name == "run_local_tests" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_regge_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_regge_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated Euclidean triangle closure unit tests passed; interior Regge hinge deficit is checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+
 
 
 

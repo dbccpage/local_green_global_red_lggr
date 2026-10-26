@@ -195,13 +195,29 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50
 | `10001` | `incomplete_kraus_ground_state_blindspot` | **B** | `partial_sector1_kraus_completion` | `blocked_unresolved` | `(1, 1, 0)` | `1` | 1 | 6 | `$0.005855` |
 | `10001` | `incomplete_kraus_ground_state_blindspot` | **C** | `explicit_lggr_cptp_operator_completion_directive` | **`completed`** | **`(1, 1, 1)`** | **`0`** | **2** | **13** | **`$0.019904`** |
 
+## 11. 3-Agent Simplicial Mesh Regge Hinge-Deficit Curvature & Gauss-Bonnet Holonomy Campaign (`--topology regge`)
+
+In `--topology regge`, 3 concurrent LLM workers edit `pricing_mesh.py`, `tax_mesh.py`, and `settlement_mesh.py` forming a 3-triangle star $K$ around interior vertex `v_apex` with boundary vertices $\{b_0, b_1, b_2\}$ (where angles are expressed in $1/36$-turn units: $18$ units $= 1/2$ turn per Euclidean triangle, $36$ units $= 1$ full turn around `v_apex`):
+- On `seeds 10100, 10101` (`conical_hinge_deficit_star`), `pricing_mesh.py` has flat sector angles `(12, 3, 3)` while `tax_mesh.py` and `settlement_mesh.py` have equilateral sector angles `(6, 6, 6)`. Every module's triangle closes locally ($12+3+3 = 18$, $6+6+6 = 18$, `local_green = 1`), yet the interior hinge deficit at `v_apex` is $\epsilon_{\mathrm{apex}} = 36 - (12 + 6 + 6) = 12$ units ($= 1/3$ turn $\ne 0$) and boundary geodesic turn sum is $24 < 36$ (`global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `42` live API attempts, `$0.049997` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | $\epsilon_{\mathrm{apex}}$ (units) | $\sum \kappa_{\mathrm{bnd}}$ (units) | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| `10100` | `conical_hinge_deficit_star` | **A** | `local_triangle_closure_gate` | `blocked_unresolved` | `12` | `24` | 1 | 6 | `$0.005646` |
+| `10100` | `conical_hinge_deficit_star` | **B** | `partial_sector1_hinge_flattening` | `blocked_unresolved` | `6` | `30` | 1 | 6 | `$0.006365` |
+| `10100` | `conical_hinge_deficit_star` | **C** | `explicit_lggr_regge_holonomy_flattening_directive` | **`completed`** | **`0`** | **`36`** | **1** | **6** | **`$0.007637`** |
+| `10101` | `conical_hinge_deficit_star` | **A** | `local_triangle_closure_gate` | `blocked_unresolved` | `12` | `24` | 1 | 6 | `$0.005624` |
+| `10101` | `conical_hinge_deficit_star` | **B** | `partial_sector1_hinge_flattening` | `blocked_unresolved` | `6` | `30` | 1 | 6 | `$0.006404` |
+| `10101` | `conical_hinge_deficit_star` | **C** | `explicit_lggr_regge_holonomy_flattening_directive` | **`completed`** | **`0`** | **`36`** | **2** | **12** | **`$0.018321`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, and 3-agent CPTP channel evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, and 3-agent Regge holonomy evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -212,4 +228,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/windowed_drift_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/optional_stopping_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/cptp_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/regge_pilot_run/events.jsonl
 ```
