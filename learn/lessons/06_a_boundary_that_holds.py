@@ -7,6 +7,7 @@ See cookbooks/04_swarm_runtime_guard.py for the same shape as a demo.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.
+Used by learn/guides/01_report_collision.md.
 
 Artifact Summary:
 1. What it supports: DECODER_VERIFIED on the enriched rows, and COMPOSITION_VERIFIED with contract_status COMPOSABLE_LGGG on the stage trace.

@@ -11,6 +11,7 @@ grant. AuthorityEffect remains the string None.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.
+Used by learn/guides/02_authority_firewall.md.
 
 Artifact Summary:
 1. What it supports: Rejection of a proposer-supplied global sample, the authority fixture, and the open-obligation fixture.

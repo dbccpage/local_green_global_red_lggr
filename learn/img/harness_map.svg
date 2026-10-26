@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400" role="img" aria-labelledby="t d">
+<title id="t">Where LGGR taps a harness</title>
+<desc id="d">A generic agent loop from task to merge gate, with four taps: step events to the audit monitor, handoffs to the fiber monitor, review edges to the cochain monitor, and generations to the RSI ceiling monitor. The global sample comes from an external check.</desc>
+<style>
+  .bg{fill:#ffffff} .panel{fill:#f6f8fa;stroke:#d0d7de} .ink{fill:#1f2328} .muted{fill:#59636e}
+  .g{fill:#dafbe1;stroke:#1a7f37} .gt{fill:#1a7f37} .r{fill:#ffebe9;stroke:#cf222e} .rt{fill:#cf222e}
+  .b{fill:#ddf4ff;stroke:#0969da} .bt{fill:#0969da} .a{fill:#fff8c5;stroke:#9a6700} .at{fill:#9a6700}
+  .line{stroke:#59636e;fill:none} .al{stroke:#9a6700;fill:none} .gl{stroke:#1a7f37;fill:none} .rl{stroke:#cf222e;fill:none} .bl{stroke:#0969da;fill:none}
+  .head{fill:#59636e} .ghead{fill:#1a7f37} .rhead{fill:#cf222e} .bhead{fill:#0969da}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:14px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+  .h{font-size:15px;font-weight:600} .s{font-size:12.5px} .cap{font-size:13px}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#0d1117} .panel{fill:#151b23;stroke:#3d444d} .ink{fill:#e6edf3} .muted{fill:#9198a1}
+    .g{fill:#0f2a1a;stroke:#3fb950} .gt{fill:#3fb950} .r{fill:#3a1418;stroke:#f85149} .rt{fill:#f85149}
+    .b{fill:#0c2340;stroke:#4493f8} .bt{fill:#4493f8} .a{fill:#2e2405;stroke:#d29922} .at{fill:#d29922}
+    .line{stroke:#9198a1} .al{stroke:#d29922} .gl{stroke:#3fb950} .rl{stroke:#f85149} .bl{stroke:#4493f8}
+    .head{fill:#9198a1} .ghead{fill:#3fb950} .rhead{fill:#f85149} .bhead{fill:#4493f8}
+  }
+</style>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker><marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ghead"/></marker><marker id="mr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="rhead"/></marker><marker id="mb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="bhead"/></marker></defs>
+<rect class="bg" width="800" height="400" rx="8"/>
+<rect x="20" y="70" width="110" height="50" rx="8" class="panel" stroke-width="1.5"/>
+<text x="75" y="100" class="ink h" text-anchor="middle">Task</text>
+<rect x="150" y="70" width="110" height="50" rx="8" class="panel" stroke-width="1.5"/>
+<text x="205" y="100" class="ink h" text-anchor="middle">Planner</text>
+<rect x="290" y="70" width="110" height="50" rx="8" class="panel" stroke-width="1.5"/>
+<text x="345" y="100" class="ink h" text-anchor="middle">Tools</text>
+<rect x="430" y="70" width="110" height="50" rx="8" class="panel" stroke-width="1.5"/>
+<text x="485" y="100" class="ink h" text-anchor="middle">Implementer</text>
+<rect x="570" y="70" width="110" height="50" rx="8" class="panel" stroke-width="1.5"/>
+<text x="625" y="100" class="ink h" text-anchor="middle">Verifier</text>
+<line x1="130" y1="95" x2="148" y2="95" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<line x1="260" y1="95" x2="288" y2="95" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<line x1="400" y1="95" x2="428" y2="95" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<line x1="540" y1="95" x2="568" y2="95" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<rect x="710" y="70" width="80" height="50" rx="8" class="a" stroke-width="1.5"/>
+<text x="750" y="91" class="at s" text-anchor="middle">merge</text>
+<text x="750" y="108" class="at s" text-anchor="middle">gate</text>
+<line x1="680" y1="95" x2="708" y2="95" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<path d="M 205 122 C 205 155, 105 150, 105 186" class="bl" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mb)"/>
+<rect x="20" y="188" width="170" height="66" rx="8" class="b" stroke-width="1.5"/>
+<text x="105" y="208" class="bt mono" text-anchor="middle">generation</text>
+<text x="105" y="225" class="ink s" text-anchor="middle">RSI ceiling</text>
+<text x="105" y="242" class="muted s" text-anchor="middle">lesson 07</text>
+<path d="M 345 122 C 345 155, 300 150, 300 186" class="bl" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mb)"/>
+<rect x="215" y="188" width="170" height="66" rx="8" class="b" stroke-width="1.5"/>
+<text x="300" y="208" class="bt mono" text-anchor="middle">step</text>
+<text x="300" y="225" class="ink s" text-anchor="middle">audit monitor</text>
+<text x="300" y="242" class="muted s" text-anchor="middle">guide 02</text>
+<path d="M 485 122 C 485 155, 495 150, 495 186" class="bl" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mb)"/>
+<rect x="410" y="188" width="170" height="66" rx="8" class="b" stroke-width="1.5"/>
+<text x="495" y="208" class="bt mono" text-anchor="middle">handoff</text>
+<text x="495" y="225" class="ink s" text-anchor="middle">fiber monitor</text>
+<text x="495" y="242" class="muted s" text-anchor="middle">guide 01</text>
+<path d="M 625 122 C 625 155, 690 150, 690 186" class="bl" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mb)"/>
+<rect x="605" y="188" width="170" height="66" rx="8" class="b" stroke-width="1.5"/>
+<text x="690" y="208" class="bt mono" text-anchor="middle">review_edge</text>
+<text x="690" y="225" class="ink s" text-anchor="middle">cochain monitor</text>
+<text x="690" y="242" class="muted s" text-anchor="middle">lesson 04</text>
+<rect x="215" y="296" width="170" height="56" rx="8" class="a" stroke-width="1.5"/>
+<text x="300" y="318" class="ink s" text-anchor="middle">External check</text>
+<text x="300" y="336" class="at s" text-anchor="middle">supplies global sample</text>
+<line x1="300" y1="296" x2="300" y2="256" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<rect x="420" y="296" width="360" height="56" rx="8" class="panel" stroke-width="1.5"/>
+<text x="600" y="318" class="ink s" text-anchor="middle">Receipts are evidence. The merge gate stays</text>
+<text x="600" y="336" class="ink s" text-anchor="middle">with the host and an external admission.</text>
+<text x="400" y="384" class="muted cap" text-anchor="middle">Each tap emits one event from learn/HARNESS_CONTRACT.md. The proposer never feeds the external check.</text>
+</svg>

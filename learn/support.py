@@ -33,6 +33,8 @@ LESSONS: tuple[tuple[str, str], ...] = (
     ("09", "09_the_pass_comes_from_outside"),
 )
 STEM_BY_ID = {lesson_id: stem for lesson_id, stem in LESSONS}
+RECIPE_DIR = LEARN / "recipes"
+RECIPES: tuple[str, ...] = ("collision_guard", "authority_firewall", "check_selector", "checked_memory")
 
 
 def load_json(name: str) -> Any:
@@ -58,6 +60,16 @@ def load_lesson(stem: str):
     spec = importlib.util.spec_from_file_location(f"learn_lesson_{stem}", path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Cannot load lesson {stem}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_recipe(name: str):
+    path = RECIPE_DIR / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(f"learn_recipe_{name}", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Cannot load recipe {name}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

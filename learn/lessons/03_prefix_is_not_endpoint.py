@@ -6,6 +6,7 @@ BudgetPolicy defaults to endpoint because that is the source report's question.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.
+Used by learn/guides/02_authority_firewall.md.
 See also cookbooks/02_streaming_budget_audit.py.
 
 Artifact Summary:

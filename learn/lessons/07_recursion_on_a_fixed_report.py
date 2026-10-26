@@ -12,6 +12,7 @@ StreamingRSIFiberCeilingMonitor.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.
+Used by learn/guides/03_collision_guided_checks.md.
 
 Artifact Summary:
 1. What it supports: Three evidence-preserving generations and one refined generation on the supplied pair.

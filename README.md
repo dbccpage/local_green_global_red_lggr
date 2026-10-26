@@ -10,7 +10,7 @@ This is a standalone, tested adapter. It does **not** modify the Omega Engine or
 
 ## Wiring a harness
 
-If you are adding these checks to your own agent loop or swarm, start with [`learn/README.md`](learn/README.md). Ten lessons show which object is the report, which is the query, and which extra generation cannot shrink a fiber. From the repository root:
+If you are adding these checks to your own agent loop or swarm, start with [`learn/README.md`](learn/README.md). Four step-by-step guides (report collision guard, authority firewall, collision-guided checks, checked memory) show where each check goes in your loop; ten lessons explain why. From the repository root:
 
 ```console
 python learn/check.py
