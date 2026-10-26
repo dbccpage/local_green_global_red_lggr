@@ -23629,6 +23629,484 @@ class StreamingCodebaseKInductionMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseJacobianSoundnessMonitor:
+    """Online LGGR VIII monitor for linearized pipeline Jacobian stealth blindspots and observability in code-engineering swarms.
+
+    Audits a 3-module codebase (`pricing_jac`, `tax_jac`, `settlement_jac`) modeled on a 3-stage
+    linearized handoff Jacobian `D` in Q^{3 x 3} mapping state perturbations `s = (s1, s2, s3)` to
+    pairwise interface handoff defects `omega = D s = (s1 - s2, s2 - s3, s1 - s3)`:
+      - `pricing_jac.py` (`worker-0`): sets anchor state `pricing_state_s1 = 1` and row 0 of the
+        measurement matrix `pricing_telemetry_row = [1, 1, 0]` (measuring `omega_1 + omega_2 = s1 - s3`).
+      - `tax_jac.py` (`worker-1`): sets intermediate stage state `tax_state_s2` (`0` under internal
+        stage-2 drift, producing `omega = (1, -1, 0)` with `||omega||_1 = 2 > 0` yet `omega_1 + omega_2 = 0`;
+        or `1` when aligned with `s1 = s3 = 1`).
+      - `settlement_jac.py` (`worker-2`): sets endpoint state `settle_state_s3 = 1`, row 1 of the
+        measurement matrix `settle_telemetry_row` (`[1, 1, 0]` when redundant/rank-deficient so
+        `rank(Q D) = 1 < 2 = rank(D)` and `dim(im(D) cap ker(Q)) = 1 > 0`, vs. `[0, 1, 0]` when
+        augmented to full observability rank `rank(Q D) = 2 = rank(D)` and `im(D) cap ker(Q) == {0}`),
+        and `unobserved_blindspot_reserve_cents = 8 * blindspot_dim`.
+      - Composes `StreamingDefectSoundnessMonitor`, `StreamingLinearizedPipelineJacobianMonitor`,
+        `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor`.
+
+    AuthorityEffect: None.
+    """
+
+    DEFECT_JACOBIAN_D: tuple[tuple[int, int, int], ...] = (
+        (1, -1, 0),
+        (0, 1, -1),
+        (1, 0, -1),
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-jacobian-soundness-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.pipeline_jacobian_monitor = StreamingLinearizedPipelineJacobianMonitor(
+            defect_matrix=self.DEFECT_JACOBIAN_D,
+            blind_measurement_matrix=[[1, 1, 0], [1, 1, 0]],
+            coupled_measurement_matrix=[[1, 1, 0], [0, 1, 0]],
+            full_measurement_matrix=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+            scope_id=f"{self.scope_id}-pipeline-jac",
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_jacobian(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        for req_mod in ("pricing_jac", "tax_jac", "settlement_jac"):
+            if req_mod not in sources:
+                raise ValidationError(f"missing required Jacobian module '{req_mod}'")
+
+        ast_summaries = {
+            m: StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(m, src)
+            for m, src in sources.items()
+        }
+        all_syntax_ok = all(s["syntax_ok"] for s in ast_summaries.values())
+        l_green = 1 if (all_syntax_ok and all(bool(local_test_results.get(m, False)) for m in ("pricing_jac", "tax_jac", "settlement_jac"))) else 0
+
+        runtime_error: str | None = None
+        s1_val = 1
+        s2_val = 0
+        s3_val = 1
+        row0: list[int] = [1, 1, 0]
+        row1: list[int] = [1, 1, 0]
+        reserve_cents = 8
+        conservation_ok = False
+
+        if all_syntax_ok:
+            try:
+                ns_p = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("pricing_jac", sources["pricing_jac"])
+                ns_t = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("tax_jac", sources["tax_jac"])
+                ns_s = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("settlement_jac", sources["settlement_jac"])
+
+                fn_p = ns_p.get("compute_jac_quote")
+                fn_t = ns_t.get("apply_jac_tax")
+                fn_s = ns_s.get("route_jac_settlement")
+                if not (callable(fn_p) and callable(fn_t) and callable(fn_s)):
+                    raise ValueError("missing required callable entrypoints compute_jac_quote / apply_jac_tax / route_jac_settlement")
+
+                q_out = fn_p([{"sku": "JAC-1", "unit_cents": 500, "qty": 2}], 1000)
+                t_out = fn_t(q_out, 2000)
+                s_out = fn_s(t_out, 300)
+
+                s1_val = int(q_out.get("pricing_state_s1", 1))
+                r0_raw = q_out.get("pricing_telemetry_row", [1, 1, 0])
+                if isinstance(r0_raw, (list, tuple)) and len(r0_raw) == 3:
+                    row0 = [int(x) for x in r0_raw]
+
+                s2_val = int(t_out.get("tax_state_s2", 0))
+                s3_val = int(s_out.get("settle_state_s3", 1))
+                r1_raw = s_out.get("settle_telemetry_row", [1, 1, 0])
+                if isinstance(r1_raw, (list, tuple)) and len(r1_raw) == 3:
+                    row1 = [int(x) for x in r1_raw]
+
+                gross = int(s_out.get("gross_cents", -1))
+                fee = int(s_out.get("platform_fee_cents", -1))
+                tax_res = int(s_out.get("tax_reserve_cents", -1))
+                payout = int(s_out.get("merchant_payout_cents", -1))
+                reserve_cents = 873 - payout
+                conservation_ok = (
+                    gross == 1080
+                    and fee == 27
+                    and tax_res == 180
+                    and payout == 873
+                    and (payout + fee + tax_res == gross)
+                )
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+
+        q_matrix = [row0, row1]
+        soundness_mon = StreamingDefectSoundnessMonitor(
+            self.DEFECT_JACOBIAN_D,
+            q_matrix,
+            scope_id=f"{self.scope_id}-{eval_id}-soundness",
+        )
+        sound_audit = soundness_mon.audit_soundness(target_severity=2)
+        blindspot_dim = int(sound_audit["realizable_blindspot_dimension"])
+        rank_d = int(sound_audit["rank_d"])
+        rank_qd = int(sound_audit["rank_qd"])
+
+        w1 = s1_val - s2_val
+        w2 = s2_val - s3_val
+        w3 = s1_val - s3_val
+        omega = [w1, w2, w3]
+        true_l1_defect = abs(w1) + abs(w2) + abs(w3)
+        y0 = row0[0] * w1 + row0[1] * w2 + row0[2] * w3
+        y1 = row1[0] * w1 + row1[1] * w2 + row1[2] * w3
+        measured_l1_score = abs(y0) + abs(y1)
+
+        pipeline_obs = self.pipeline_jacobian_monitor.observe_pipeline_perturbation(
+            evaluation_id=f"{eval_id}-pipeline-jac",
+            state_perturbation=[s1_val, s2_val, s3_val],
+            blind_claimed_sound=True,
+            coupled_verified_sound=True,
+            full_verified_sound=True,
+        )
+
+        jacobian_sound_ok = (
+            s1_val == 1
+            and s2_val == 1
+            and s3_val == 1
+            and true_l1_defect == 0
+            and blindspot_dim == 0
+            and rank_qd == rank_d
+            and reserve_cents == 0
+        )
+
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and runtime_error is None
+                and jacobian_sound_ok
+                and conservation_ok
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_jacobian_state",
+            report={
+                "pricing_unit_pass": bool(local_test_results.get("pricing_jac", False)),
+                "tax_unit_pass": bool(local_test_results.get("tax_jac", False)),
+                "settlement_unit_pass": bool(local_test_results.get("settlement_jac", False)),
+                "endpoint_sum_drift_zero": (w1 + w2 == 0),
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "state_vector": [s1_val, s2_val, s3_val],
+                "interface_defect_omega": omega,
+                "realizable_blindspot_dim": blindspot_dim,
+            },
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_JACOBIAN_BLINDSPOT_LOCK"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif l_green == 1 and eg_green == 1:
+            status = "CODEBASE_JACOBIAN_OBSERVABLE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l_green == 1 and eg_green == 0:
+            if true_l1_defect > 0 and measured_l1_score == 0:
+                status = "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR"
+            else:
+                status = "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_UNIT_TEST_RED_LRLR"
+            contract_status = "REJECTED_LRLR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if infeasible_constraint is not None:
+            for w_id, m_name in (
+                ("worker-0", "pricing_jac"),
+                ("worker-1", "tax_jac"),
+                ("worker-2", "settlement_jac"),
+            ):
+                directives[w_id] = {
+                    "module": m_name,
+                    "action": "HALT_AND_ESCALATE_INFEASIBLE_JACOBIAN_LOCK",
+                    "infeasible_constraint": dict(infeasible_constraint),
+                    "reason": "Incompatible Jacobian telemetry contract locks redundant observer rows while requiring rank(Q D) = rank(D).",
+                }
+        elif eg_green == 1:
+            for w_id, m_name in (
+                ("worker-0", "pricing_jac"),
+                ("worker-1", "tax_jac"),
+                ("worker-2", "settlement_jac"),
+            ):
+                directives[w_id] = {
+                    "module": m_name,
+                    "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+                    "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`).",
+                }
+        else:
+            directives["worker-0"] = {
+                "module": "pricing_jac",
+                "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+                "target_state": {
+                    "pricing_state_s1": 1,
+                    "pricing_telemetry_row": [1, 1, 0],
+                },
+                "reason": (
+                    "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and "
+                    "`'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+                ),
+            }
+            directives["worker-1"] = {
+                "module": "tax_jac",
+                "action": (
+                    "ALIGN_TAX_STAGE_STATE_S2"
+                    if s2_val != 1
+                    else "HOLD_ALIGNED_TAX_STAGE_STATE"
+                ),
+                "current_state_s2": s2_val,
+                "target_state_s2": 1,
+                "reason": (
+                    f"Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = {s2_val}` "
+                    f"(handoff defect `omega = {omega}`, `true_l1_defect = {true_l1_defect}`). "
+                    "Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+                ),
+            }
+            directives["worker-2"] = {
+                "module": "settlement_jac",
+                "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+                "current_telemetry_row": row1,
+                "current_blindspot_dim": blindspot_dim,
+                "target_telemetry": {
+                    "settle_state_s3": 1,
+                    "settle_telemetry_row": [0, 1, 0],
+                    "unobserved_blindspot_reserve_cents": 0,
+                },
+                "reason": (
+                    f"Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected "
+                    f"`settle_telemetry_row = {row1}` (`rank(Q D) = {rank_qd} < {rank_d} = rank(D)`, "
+                    f"`realizable_blindspot_dim = {blindspot_dim} > 0`, `reserve_cents = {reserve_cents}`). "
+                    "Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and "
+                    "`merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+                ),
+            }
+
+        rec_body: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "state_vector": [s1_val, s2_val, s3_val],
+            "interface_defect_omega": omega,
+            "true_l1_defect": true_l1_defect,
+            "measured_l1_score": measured_l1_score,
+            "telemetry_matrix_q": q_matrix,
+            "rank_d": rank_d,
+            "rank_qd": rank_qd,
+            "realizable_blindspot_dim": blindspot_dim,
+            "unobserved_blindspot_reserve_cents": reserve_cents,
+            "conservation_ok": conservation_ok,
+            "runtime_error": runtime_error,
+            "ast_summaries": ast_summaries,
+            "compact_role_directives": directives,
+            "soundness_audit": sound_audit,
+            "pipeline_jacobian_observation": pipeline_obs,
+        }
+        signed_rec = json_value({**rec_body, "receipt_sha256": digest(rec_body)})
+        self.evaluations.append(signed_rec)
+        return signed_rec
+
+    def record_three_phase_codebase_jacobian_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record the 3-phase linearized Jacobian stealth blindspot vs. full-rank observability codebase audit (Theorem 106)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p = (
+            "def compute_jac_quote(items: list[dict], discount_bps: int) -> dict:\n"
+            "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'pricing_state_s1': 1,\n"
+            "        'pricing_telemetry_row': [1, 1, 0],\n"
+            "    }\n"
+        )
+        src_t_drift = (
+            "def apply_jac_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'tax_state_s2': 0,\n"
+            "    }\n"
+        )
+        src_t_aligned = (
+            "def apply_jac_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'tax_state_s2': 1,\n"
+            "    }\n"
+        )
+        src_s_blind = (
+            "def route_jac_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    telemetry_row = [1, 1, 0]\n"
+            "    unobserved_blindspot_reserve_cents = 8 if telemetry_row == [1, 1, 0] else 0\n"
+            "    payout = gross - fee - tax - unobserved_blindspot_reserve_cents\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_state_s3': 1,\n"
+            "        'settle_telemetry_row': telemetry_row,\n"
+            "    }\n"
+        )
+        src_s_obs = (
+            "def route_jac_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    telemetry_row = [0, 1, 0]\n"
+            "    unobserved_blindspot_reserve_cents = 8 if telemetry_row == [1, 1, 0] else 0\n"
+            "    payout = gross - fee - tax - unobserved_blindspot_reserve_cents\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_state_s3': 1,\n"
+            "        'settle_telemetry_row': telemetry_row,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_jac": True,
+            "tax_jac": True,
+            "settlement_jac": True,
+        }
+
+        p1 = self.evaluate_codebase_jacobian(
+            f"{eval_id}_phase1_stealth_blindspot",
+            sources={
+                "pricing_jac": src_p,
+                "tax_jac": src_t_drift,
+                "settlement_jac": src_s_blind,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_jacobian(
+            f"{eval_id}_phase2_rank_deficient_observer",
+            sources={
+                "pricing_jac": src_p,
+                "tax_jac": src_t_aligned,
+                "settlement_jac": src_s_blind,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_jacobian(
+            f"{eval_id}_phase3_full_rank_observable",
+            sources={
+                "pricing_jac": src_p,
+                "tax_jac": src_t_aligned,
+                "settlement_jac": src_s_obs,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_true_l1_defect": p1["true_l1_defect"],
+                "phase_1_measured_l1_score": p1["measured_l1_score"],
+                "phase_1_realizable_blindspot_dim": p1["realizable_blindspot_dim"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_true_l1_defect": p2["true_l1_defect"],
+                "phase_2_measured_l1_score": p2["measured_l1_score"],
+                "phase_2_realizable_blindspot_dim": p2["realizable_blindspot_dim"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_true_l1_defect": p3["true_l1_defect"],
+                "phase_3_measured_l1_score": p3["measured_l1_score"],
+                "phase_3_realizable_blindspot_dim": p3["realizable_blindspot_dim"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase Jacobian evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_jacobian_soundness.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "pipeline_jacobian_receipt": self.pipeline_jacobian_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

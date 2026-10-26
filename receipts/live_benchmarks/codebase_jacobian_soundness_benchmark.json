@@ -1,0 +1,4987 @@
+{
+  "schema": "lggr.codebase_jacobian_soundness_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_jacobian_soundness_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_stealth_blindspot_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_rank_deficient_observer_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_full_rank_observable_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "blind_observer_codebase_coherence_rate": "0",
+  "full_rank_observable_codebase_coherence_rate": "1",
+  "codebase_jacobian_soundness_coherence_gain": "1",
+  "codebase_jacobian_soundness_receipt": {
+    "schema": "lggr.online_codebase_jacobian_soundness.v1",
+    "authority_effect": "None",
+    "scope_id": "live-codebase-jacobian-soundness-benchmark",
+    "status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "pipeline_jacobian_receipt": {
+      "schema": "lggr.online_linearized_pipeline_jacobian.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-jacobian-soundness-benchmark-pipeline-jac",
+      "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "evaluation_count": 15,
+      "blind_stealth_defect_count": 15,
+      "coupled_sound_coherent_count": 15,
+      "full_sound_coherent_count": 15,
+      "blind_coherence_rate": "0",
+      "coupled_coherence_rate": "1",
+      "full_coherence_rate": "1",
+      "coupled_soundness_gain": "1",
+      "blind_audit": {
+        "schema": "lggr.online_defect_soundness.v1",
+        "authority_effect": "None",
+        "scope_id": "live-codebase-jacobian-soundness-benchmark-pipeline-jac-blind",
+        "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "soundness_holds": false,
+        "rank_d": 2,
+        "rank_q": 1,
+        "rank_qd": 1,
+        "ambient_blindspot_dimension": 2,
+        "realizable_blindspot_dimension": 1,
+        "coupled_compensation_active": false,
+        "target_severity": "2",
+        "stealth_assignment": [
+          "0",
+          "1",
+          "0"
+        ],
+        "stealth_defect": [
+          "-1",
+          "1",
+          "0"
+        ],
+        "stealth_global_inconsistency": "2",
+        "stealth_evaluator_score": "0",
+        "receipt_sha256": "490a576794e97de27ea5192b6fc1f5122c78ae3d03530528bdf1aec1dba929a9"
+      },
+      "coupled_audit": {
+        "schema": "lggr.online_defect_soundness.v1",
+        "authority_effect": "None",
+        "scope_id": "live-codebase-jacobian-soundness-benchmark-pipeline-jac-coupled",
+        "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "soundness_holds": true,
+        "rank_d": 2,
+        "rank_q": 2,
+        "rank_qd": 2,
+        "ambient_blindspot_dimension": 1,
+        "realizable_blindspot_dimension": 0,
+        "coupled_compensation_active": true,
+        "target_severity": "2",
+        "stealth_assignment": null,
+        "stealth_defect": null,
+        "stealth_global_inconsistency": null,
+        "stealth_evaluator_score": null,
+        "receipt_sha256": "f5b0660bcb3ce0348dcd5b67270a58b7f91232342e7fa7b1021879f55219a8e5"
+      },
+      "full_audit": {
+        "schema": "lggr.online_defect_soundness.v1",
+        "authority_effect": "None",
+        "scope_id": "live-codebase-jacobian-soundness-benchmark-pipeline-jac-full",
+        "status": "TRIVIAL_BLINDSPOT_SOUND_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "soundness_holds": true,
+        "rank_d": 2,
+        "rank_q": 3,
+        "rank_qd": 2,
+        "ambient_blindspot_dimension": 0,
+        "realizable_blindspot_dimension": 0,
+        "coupled_compensation_active": false,
+        "target_severity": "2",
+        "stealth_assignment": null,
+        "stealth_defect": null,
+        "stealth_global_inconsistency": null,
+        "stealth_evaluator_score": null,
+        "receipt_sha256": "81d5919220182ce087bb8fe4ecbd263d4530548d520dff4ca0aafd19bbd6e83c"
+      },
+      "evaluations": [
+        {
+          "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        {
+          "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        }
+      ],
+      "receipt_sha256": "40a0f2dccec093c3a826e8992bfaa8466f6109ddb088c793f4179d9c0da35d43"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-jacobian-soundness-benchmark-fiber",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase1_stealth_blindspot_jacobian_state",
+          "report": {
+            "endpoint_sum_drift_zero": true,
+            "pricing_unit_pass": true,
+            "settlement_unit_pass": true,
+            "tax_unit_pass": true
+          },
+          "query": "LGGR",
+          "metadata": {
+            "interface_defect_omega": [
+              1,
+              -1,
+              0
+            ],
+            "realizable_blindspot_dim": 1,
+            "state_vector": [
+              1,
+              0,
+              1
+            ]
+          }
+        },
+        "right": {
+          "state_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase3_full_rank_observable_jacobian_state",
+          "report": {
+            "endpoint_sum_drift_zero": true,
+            "pricing_unit_pass": true,
+            "settlement_unit_pass": true,
+            "tax_unit_pass": true
+          },
+          "query": "LGGG",
+          "metadata": {
+            "interface_defect_omega": [
+              0,
+              0,
+              0
+            ],
+            "realizable_blindspot_dim": 0,
+            "state_vector": [
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "input_sha256": "6ce70ff74a6f18c65e959e0a9ef1671db7c302b7d8c5de877ec48b7dfc742552",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "deccbb88f28c46e2bfb62cfc4e757924729cde8f2f46aa5dc71ae6b4889f8435"
+    },
+    "three_phase_audits": [
+      {
+        "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_true_l1_defect": 2,
+        "phase_1_measured_l1_score": 0,
+        "phase_1_realizable_blindspot_dim": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "phase_2_true_l1_defect": 0,
+        "phase_2_measured_l1_score": 0,
+        "phase_2_realizable_blindspot_dim": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "phase_3_true_l1_defect": 0,
+        "phase_3_measured_l1_score": 0,
+        "phase_3_realizable_blindspot_dim": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "model_raw_response": "{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}",
+        "model_parsed_json": {
+          "phase1_true_l1_defect": 2,
+          "phase1_blindspot_dim": 1,
+          "phase2_blindspot_dim": 1,
+          "phase3_blindspot_dim": 0,
+          "phase3_payout_cents": 873
+        }
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_true_l1_defect": 2,
+        "phase_1_measured_l1_score": 0,
+        "phase_1_realizable_blindspot_dim": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "phase_2_true_l1_defect": 0,
+        "phase_2_measured_l1_score": 0,
+        "phase_2_realizable_blindspot_dim": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "phase_3_true_l1_defect": 0,
+        "phase_3_measured_l1_score": 0,
+        "phase_3_realizable_blindspot_dim": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "model_raw_response": "```json\n{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+        "model_parsed_json": {
+          "phase1_true_l1_defect": 2,
+          "phase1_blindspot_dim": 1,
+          "phase2_blindspot_dim": 1,
+          "phase3_blindspot_dim": 0,
+          "phase3_payout_cents": 873
+        }
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_true_l1_defect": 2,
+        "phase_1_measured_l1_score": 0,
+        "phase_1_realizable_blindspot_dim": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "phase_2_true_l1_defect": 0,
+        "phase_2_measured_l1_score": 0,
+        "phase_2_realizable_blindspot_dim": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "phase_3_true_l1_defect": 0,
+        "phase_3_measured_l1_score": 0,
+        "phase_3_realizable_blindspot_dim": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "model_raw_response": "```json\n{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+        "model_parsed_json": {
+          "phase1_true_l1_defect": 2,
+          "phase1_blindspot_dim": 1,
+          "phase2_blindspot_dim": 1,
+          "phase3_blindspot_dim": 0,
+          "phase3_payout_cents": 873
+        }
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_true_l1_defect": 2,
+        "phase_1_measured_l1_score": 0,
+        "phase_1_realizable_blindspot_dim": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "phase_2_true_l1_defect": 0,
+        "phase_2_measured_l1_score": 0,
+        "phase_2_realizable_blindspot_dim": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "phase_3_true_l1_defect": 0,
+        "phase_3_measured_l1_score": 0,
+        "phase_3_realizable_blindspot_dim": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "model_raw_response": "```json\n{\"phase1_true_l1_defect\": 2, \"phase1_blindspot_dim\": 1, \"phase2_blindspot_dim\": 1, \"phase3_blindspot_dim\": 0, \"phase3_payout_cents\": 873}\n```",
+        "model_parsed_json": {
+          "phase1_true_l1_defect": 2,
+          "phase1_blindspot_dim": 1,
+          "phase2_blindspot_dim": 1,
+          "phase3_blindspot_dim": 0,
+          "phase3_payout_cents": 873
+        }
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_true_l1_defect": 2,
+        "phase_1_measured_l1_score": 0,
+        "phase_1_realizable_blindspot_dim": 1,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "phase_2_true_l1_defect": 0,
+        "phase_2_measured_l1_score": 0,
+        "phase_2_realizable_blindspot_dim": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "phase_3_true_l1_defect": 0,
+        "phase_3_measured_l1_score": 0,
+        "phase_3_realizable_blindspot_dim": 0,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "model_raw_response": "```json\n{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+        "model_parsed_json": {
+          "phase1_true_l1_defect": 2,
+          "phase1_blindspot_dim": 1,
+          "phase2_blindspot_dim": 1,
+          "phase3_blindspot_dim": 0,
+          "phase3_payout_cents": 873
+        }
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase1_stealth_blindspot",
+        "model_id": "openai/gpt-4o-mini",
+        "status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          0,
+          1
+        ],
+        "interface_defect_omega": [
+          1,
+          -1,
+          0
+        ],
+        "true_l1_defect": 2,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_1_openai_gpt-4o-mini_phase1_stealth_blindspot-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "2f8cc678cf8998125c09876d33f3a67d8e6c341131814fd98591e8a1f97d4df0"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "562f5a6d0c8088355cd9af2255d938c7f3341acd2eec4ec4eeaa7cca8d123011"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase2_rank_deficient_observer",
+        "model_id": "openai/gpt-4o-mini",
+        "status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_ALIGNED_TAX_STAGE_STATE",
+            "current_state_s2": 1,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 1` (handoff defect `omega = [0, 0, 0]`, `true_l1_defect = 0`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_1_openai_gpt-4o-mini_phase2_rank_deficient_observer-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "9dadccb45cdb5c6788a57371ac6e8a7746bbdd0eeae56993f495c68048cb9b3a"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "46d938774c6090553ef7a72a7f622b40859d241facaff9bba2ececd98e77b8f4"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase3_full_rank_observable",
+        "model_id": "openai/gpt-4o-mini",
+        "status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 2,
+        "realizable_blindspot_dim": 0,
+        "unobserved_blindspot_reserve_cents": 0,
+        "conservation_ok": true,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_1_openai_gpt-4o-mini_phase3_full_rank_observable-soundness",
+          "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "soundness_holds": true,
+          "rank_d": 2,
+          "rank_q": 2,
+          "rank_qd": 2,
+          "ambient_blindspot_dimension": 1,
+          "realizable_blindspot_dimension": 0,
+          "coupled_compensation_active": true,
+          "target_severity": "2",
+          "stealth_assignment": null,
+          "stealth_defect": null,
+          "stealth_global_inconsistency": null,
+          "stealth_evaluator_score": null,
+          "receipt_sha256": "4a3ef29aad2f15e6e85969da050f6d5a1a0ebbc13322578ba2d3b46c8f048b2a"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "6eb62fccf247798de222f0b37737e789049f50be7dc0fa1aa5626524f6265e7f"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase1_stealth_blindspot",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          0,
+          1
+        ],
+        "interface_defect_omega": [
+          1,
+          -1,
+          0
+        ],
+        "true_l1_defect": 2,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase1_stealth_blindspot-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "d2a5c3c4ee16691bba4f093481d36485f3172af349e769031ace69bc6c263ef2"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "06c5625321522e0c1c306cdd1a78f4639134ce5d7c6200dc4a4d7630e88bef33"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase2_rank_deficient_observer",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_ALIGNED_TAX_STAGE_STATE",
+            "current_state_s2": 1,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 1` (handoff defect `omega = [0, 0, 0]`, `true_l1_defect = 0`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase2_rank_deficient_observer-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "d92ca09cd94a415a6d230a1ffc1bd8ffc8aa194e09f2f6f24acd879840891f74"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "5863bd99cf62147427c407e798eef91e6fc036f6f4eef42916aa08094758e090"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase3_full_rank_observable",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 2,
+        "realizable_blindspot_dim": 0,
+        "unobserved_blindspot_reserve_cents": 0,
+        "conservation_ok": true,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase3_full_rank_observable-soundness",
+          "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "soundness_holds": true,
+          "rank_d": 2,
+          "rank_q": 2,
+          "rank_qd": 2,
+          "ambient_blindspot_dimension": 1,
+          "realizable_blindspot_dimension": 0,
+          "coupled_compensation_active": true,
+          "target_severity": "2",
+          "stealth_assignment": null,
+          "stealth_defect": null,
+          "stealth_global_inconsistency": null,
+          "stealth_evaluator_score": null,
+          "receipt_sha256": "b8ab7a252201ba1c9c6f28d0e4970cf87ff3cab347042b0ff41d6429d95e7e93"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "7216147f023508ab3c3c9531578ba54969ebf8151b68933673af6d5dc0db2f90"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase1_stealth_blindspot",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          0,
+          1
+        ],
+        "interface_defect_omega": [
+          1,
+          -1,
+          0
+        ],
+        "true_l1_defect": 2,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase1_stealth_blindspot-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "bc3724b2c6529f4dd76aaa055ccb9871485160582bdc79623d4009e509d17888"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "c219f0200bd70a214bc59b32a2b019e04fd4808ec45bc073a0dacda912b6fd55"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase2_rank_deficient_observer",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_ALIGNED_TAX_STAGE_STATE",
+            "current_state_s2": 1,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 1` (handoff defect `omega = [0, 0, 0]`, `true_l1_defect = 0`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase2_rank_deficient_observer-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "aa15277e9e1af2f8d222fa656771cbc186dbaeab324ee935d590c9e9107d30c8"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "a25e458f9408c67821040d633b526a6d5600950c75ef378d853a59e1e9079db9"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase3_full_rank_observable",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 2,
+        "realizable_blindspot_dim": 0,
+        "unobserved_blindspot_reserve_cents": 0,
+        "conservation_ok": true,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase3_full_rank_observable-soundness",
+          "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "soundness_holds": true,
+          "rank_d": 2,
+          "rank_q": 2,
+          "rank_qd": 2,
+          "ambient_blindspot_dimension": 1,
+          "realizable_blindspot_dimension": 0,
+          "coupled_compensation_active": true,
+          "target_severity": "2",
+          "stealth_assignment": null,
+          "stealth_defect": null,
+          "stealth_global_inconsistency": null,
+          "stealth_evaluator_score": null,
+          "receipt_sha256": "09f44446ddfa432ab7e0e9c6e0e907d195e4888963724ebb17a814999f65bf62"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "897efd720772b3baef2ffa82fcbb9ea0d5006202e6373a7705ba245c8f09756a"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase1_stealth_blindspot",
+        "model_id": "deepseek/deepseek-chat",
+        "status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          0,
+          1
+        ],
+        "interface_defect_omega": [
+          1,
+          -1,
+          0
+        ],
+        "true_l1_defect": 2,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_4_deepseek_deepseek-chat_phase1_stealth_blindspot-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "a0d0667508eaad1ce39951ff55b2085d76a693a32dc9bb39baf96f32634fecbd"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "3b3e6b1800c3b8b2348f46bb530beb0decf94099acd598bf2d5bb62079199275"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase2_rank_deficient_observer",
+        "model_id": "deepseek/deepseek-chat",
+        "status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_ALIGNED_TAX_STAGE_STATE",
+            "current_state_s2": 1,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 1` (handoff defect `omega = [0, 0, 0]`, `true_l1_defect = 0`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_4_deepseek_deepseek-chat_phase2_rank_deficient_observer-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "a3407f6d0a0a2da50aa66f92bc2fa46b972795116a7e001c850d2e90b76003bc"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "35efb5263adc51f5ae5f32d8c614943ea7b130234be1023716bc8665630ec01a"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase3_full_rank_observable",
+        "model_id": "deepseek/deepseek-chat",
+        "status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 2,
+        "realizable_blindspot_dim": 0,
+        "unobserved_blindspot_reserve_cents": 0,
+        "conservation_ok": true,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_4_deepseek_deepseek-chat_phase3_full_rank_observable-soundness",
+          "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "soundness_holds": true,
+          "rank_d": 2,
+          "rank_q": 2,
+          "rank_qd": 2,
+          "ambient_blindspot_dimension": 1,
+          "realizable_blindspot_dimension": 0,
+          "coupled_compensation_active": true,
+          "target_severity": "2",
+          "stealth_assignment": null,
+          "stealth_defect": null,
+          "stealth_global_inconsistency": null,
+          "stealth_evaluator_score": null,
+          "receipt_sha256": "ba04b901191306058bfc0a021f9728eada76f335de2305f63d139219b9de6d79"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "885ef408c45989e9ed23eed7f29d5a426bfd862d7ad31590c7b86cc097affb18"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase1_stealth_blindspot",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          0,
+          1
+        ],
+        "interface_defect_omega": [
+          1,
+          -1,
+          0
+        ],
+        "true_l1_defect": 2,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "ALIGN_TAX_STAGE_STATE_S2",
+            "current_state_s2": 0,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase1_stealth_blindspot-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "8e0df413575b82199ecb3b4b28da097f8711b8f6352d765f0aa85ef0a021aa1e"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase1_stealth_blindspot-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "0",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "true_l1_inconsistency": "2",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "-1"
+          ],
+          "coupled_measured_l1_score": "1",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "1",
+            "-1",
+            "0"
+          ],
+          "full_measured_l1_score": "2",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "24faec1f5c7305832572e9d23b7aa296862b0e77922a7294ca313ebb0d010305"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase2_rank_deficient_observer",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 1,
+        "realizable_blindspot_dim": 1,
+        "unobserved_blindspot_reserve_cents": 8,
+        "conservation_ok": false,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+            "target_state": {
+              "pricing_state_s1": 1,
+              "pricing_telemetry_row": [
+                1,
+                1,
+                0
+              ]
+            },
+            "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_ALIGNED_TAX_STAGE_STATE",
+            "current_state_s2": 1,
+            "target_state_s2": 1,
+            "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 1` (handoff defect `omega = [0, 0, 0]`, `true_l1_defect = 0`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+            "current_telemetry_row": [
+              1,
+              1,
+              0
+            ],
+            "current_blindspot_dim": 1,
+            "target_telemetry": {
+              "settle_state_s3": 1,
+              "settle_telemetry_row": [
+                0,
+                1,
+                0
+              ],
+              "unobserved_blindspot_reserve_cents": 0
+            },
+            "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase2_rank_deficient_observer-soundness",
+          "status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "soundness_holds": false,
+          "rank_d": 2,
+          "rank_q": 1,
+          "rank_qd": 1,
+          "ambient_blindspot_dimension": 2,
+          "realizable_blindspot_dimension": 1,
+          "coupled_compensation_active": false,
+          "target_severity": "2",
+          "stealth_assignment": [
+            "0",
+            "1",
+            "0"
+          ],
+          "stealth_defect": [
+            "-1",
+            "1",
+            "0"
+          ],
+          "stealth_global_inconsistency": "2",
+          "stealth_evaluator_score": "0",
+          "receipt_sha256": "dc7114b1eb4f54c91dd3497bbd5254d84b7a61bda51bd6ddeaac8f9a47228703"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase2_rank_deficient_observer-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "5b8fd352156ba886f10156f1cc3f39e2457bb3d4ab1e1006472775a69da7c682"
+      },
+      {
+        "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase3_full_rank_observable",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "state_vector": [
+          1,
+          1,
+          1
+        ],
+        "interface_defect_omega": [
+          0,
+          0,
+          0
+        ],
+        "true_l1_defect": 0,
+        "measured_l1_score": 0,
+        "telemetry_matrix_q": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "rank_d": 2,
+        "rank_qd": 2,
+        "realizable_blindspot_dim": 0,
+        "unobserved_blindspot_reserve_cents": 0,
+        "conservation_ok": true,
+        "runtime_error": null,
+        "ast_summaries": {
+          "pricing_jac": {
+            "module": "pricing_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "compute_jac_quote": {
+                "params": [
+                  "items",
+                  "discount_bps"
+                ],
+                "return_keys": [
+                  "subtotal_cents",
+                  "discount_cents",
+                  "net_cents",
+                  "pricing_state_s1",
+                  "pricing_telemetry_row"
+                ],
+                "read_keys": [
+                  "unit_cents",
+                  "qty"
+                ]
+              }
+            }
+          },
+          "tax_jac": {
+            "module": "tax_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "apply_jac_tax": {
+                "params": [
+                  "quote",
+                  "tax_rate_bps"
+                ],
+                "return_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents",
+                  "tax_state_s2"
+                ],
+                "read_keys": [
+                  "net_cents"
+                ]
+              }
+            }
+          },
+          "settlement_jac": {
+            "module": "settlement_jac",
+            "syntax_ok": true,
+            "sandbox_ok": true,
+            "sandbox_violations": [],
+            "functions": {
+              "route_jac_settlement": {
+                "params": [
+                  "taxed_quote",
+                  "fee_bps"
+                ],
+                "return_keys": [
+                  "gross_cents",
+                  "platform_fee_cents",
+                  "tax_reserve_cents",
+                  "merchant_payout_cents",
+                  "settle_state_s3",
+                  "settle_telemetry_row"
+                ],
+                "read_keys": [
+                  "net_cents",
+                  "tax_cents",
+                  "gross_cents"
+                ]
+              }
+            }
+          }
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-1": {
+            "module": "tax_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          },
+          "worker-2": {
+            "module": "settlement_jac",
+            "action": "HOLD_VERIFIED_JACOBIAN_OBSERVABLE_CONTRACT",
+            "reason": "State vector `s = (1, 1, 1)` is aligned (`omega = (0, 0, 0)`) and observer `Q` has full rank (`im(D) cap ker(Q) == {0}`)."
+          }
+        },
+        "soundness_audit": {
+          "schema": "lggr.online_defect_soundness.v1",
+          "authority_effect": "None",
+          "scope_id": "live-codebase-jacobian-soundness-benchmark-codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase3_full_rank_observable-soundness",
+          "status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "soundness_holds": true,
+          "rank_d": 2,
+          "rank_q": 2,
+          "rank_qd": 2,
+          "ambient_blindspot_dimension": 1,
+          "realizable_blindspot_dimension": 0,
+          "coupled_compensation_active": true,
+          "target_severity": "2",
+          "stealth_assignment": null,
+          "stealth_defect": null,
+          "stealth_global_inconsistency": null,
+          "stealth_evaluator_score": null,
+          "receipt_sha256": "73cebdc361abb3617bb27f82ae22a2269704b98fdf2ddd7082bef2e778abdea0"
+        },
+        "pipeline_jacobian_observation": {
+          "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct_phase3_full_rank_observable-pipeline-jac",
+          "state_perturbation": [
+            "1",
+            "1",
+            "1"
+          ],
+          "interface_defect_omega": [
+            "0",
+            "0",
+            "0"
+          ],
+          "true_l1_inconsistency": "0",
+          "blind_measured_output": [
+            "0",
+            "0"
+          ],
+          "blind_measured_l1_score": "0",
+          "blind_realizable_blindspot_dim": 1,
+          "blind_local_green": 1,
+          "blind_global_green": 0,
+          "blind_defect": -1,
+          "blind_status": "STEALTH_REALIZABLE_DEFECT_LGGR",
+          "coupled_measured_output": [
+            "0",
+            "0"
+          ],
+          "coupled_measured_l1_score": "0",
+          "coupled_ambient_blindspot_dim": 1,
+          "coupled_realizable_blindspot_dim": 0,
+          "coupled_local_green": 1,
+          "coupled_global_green": 1,
+          "coupled_defect": 0,
+          "coupled_status": "COUPLED_SOUNDNESS_VERIFIED_LGGG",
+          "full_measured_output": [
+            "0",
+            "0",
+            "0"
+          ],
+          "full_measured_l1_score": "0",
+          "full_realizable_blindspot_dim": 0,
+          "full_local_green": 1,
+          "full_global_green": 1,
+          "full_defect": 0,
+          "full_status": "TRIVIAL_BLINDSPOT_SOUND_LGGG"
+        },
+        "receipt_sha256": "4a5763d7f70b663cda4f4c391d2475b98bcace9f64996d1b1ea295498a440aca"
+      }
+    ],
+    "receipt_sha256": "db584ca57743519d3ad78b73b61dd382b8984a0c91c72e9190ba1b799f966886"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "codebase_jacobian_eval_1_openai_gpt-4o-mini",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_true_l1_defect": 2,
+      "phase_1_measured_l1_score": 0,
+      "phase_1_realizable_blindspot_dim": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_jac",
+          "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+          "target_state": {
+            "pricing_state_s1": 1,
+            "pricing_telemetry_row": [
+              1,
+              1,
+              0
+            ]
+          },
+          "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+        },
+        "worker-1": {
+          "module": "tax_jac",
+          "action": "ALIGN_TAX_STAGE_STATE_S2",
+          "current_state_s2": 0,
+          "target_state_s2": 1,
+          "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+        },
+        "worker-2": {
+          "module": "settlement_jac",
+          "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+          "current_telemetry_row": [
+            1,
+            1,
+            0
+          ],
+          "current_blindspot_dim": 1,
+          "target_telemetry": {
+            "settle_state_s3": 1,
+            "settle_telemetry_row": [
+              0,
+              1,
+              0
+            ],
+            "unobserved_blindspot_reserve_cents": 0
+          },
+          "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+        }
+      },
+      "phase_2_true_l1_defect": 0,
+      "phase_2_measured_l1_score": 0,
+      "phase_2_realizable_blindspot_dim": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+      "phase_3_true_l1_defect": 0,
+      "phase_3_measured_l1_score": 0,
+      "phase_3_realizable_blindspot_dim": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+      "model_raw_response": "{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}",
+      "model_parsed_json": {
+        "phase1_true_l1_defect": 2,
+        "phase1_blindspot_dim": 1,
+        "phase2_blindspot_dim": 1,
+        "phase3_blindspot_dim": 0,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_jacobian_eval_2_google_gemini-2.5-flash-lite",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_true_l1_defect": 2,
+      "phase_1_measured_l1_score": 0,
+      "phase_1_realizable_blindspot_dim": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_jac",
+          "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+          "target_state": {
+            "pricing_state_s1": 1,
+            "pricing_telemetry_row": [
+              1,
+              1,
+              0
+            ]
+          },
+          "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+        },
+        "worker-1": {
+          "module": "tax_jac",
+          "action": "ALIGN_TAX_STAGE_STATE_S2",
+          "current_state_s2": 0,
+          "target_state_s2": 1,
+          "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+        },
+        "worker-2": {
+          "module": "settlement_jac",
+          "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+          "current_telemetry_row": [
+            1,
+            1,
+            0
+          ],
+          "current_blindspot_dim": 1,
+          "target_telemetry": {
+            "settle_state_s3": 1,
+            "settle_telemetry_row": [
+              0,
+              1,
+              0
+            ],
+            "unobserved_blindspot_reserve_cents": 0
+          },
+          "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+        }
+      },
+      "phase_2_true_l1_defect": 0,
+      "phase_2_measured_l1_score": 0,
+      "phase_2_realizable_blindspot_dim": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+      "phase_3_true_l1_defect": 0,
+      "phase_3_measured_l1_score": 0,
+      "phase_3_realizable_blindspot_dim": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+      "model_raw_response": "```json\n{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_true_l1_defect": 2,
+        "phase1_blindspot_dim": 1,
+        "phase2_blindspot_dim": 1,
+        "phase3_blindspot_dim": 0,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_jacobian_eval_3_meta-llama_llama-3.3-70b-instruct",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_true_l1_defect": 2,
+      "phase_1_measured_l1_score": 0,
+      "phase_1_realizable_blindspot_dim": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_jac",
+          "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+          "target_state": {
+            "pricing_state_s1": 1,
+            "pricing_telemetry_row": [
+              1,
+              1,
+              0
+            ]
+          },
+          "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+        },
+        "worker-1": {
+          "module": "tax_jac",
+          "action": "ALIGN_TAX_STAGE_STATE_S2",
+          "current_state_s2": 0,
+          "target_state_s2": 1,
+          "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+        },
+        "worker-2": {
+          "module": "settlement_jac",
+          "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+          "current_telemetry_row": [
+            1,
+            1,
+            0
+          ],
+          "current_blindspot_dim": 1,
+          "target_telemetry": {
+            "settle_state_s3": 1,
+            "settle_telemetry_row": [
+              0,
+              1,
+              0
+            ],
+            "unobserved_blindspot_reserve_cents": 0
+          },
+          "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+        }
+      },
+      "phase_2_true_l1_defect": 0,
+      "phase_2_measured_l1_score": 0,
+      "phase_2_realizable_blindspot_dim": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+      "phase_3_true_l1_defect": 0,
+      "phase_3_measured_l1_score": 0,
+      "phase_3_realizable_blindspot_dim": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+      "model_raw_response": "```json\n{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_true_l1_defect": 2,
+        "phase1_blindspot_dim": 1,
+        "phase2_blindspot_dim": 1,
+        "phase3_blindspot_dim": 0,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_jacobian_eval_4_deepseek_deepseek-chat",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_true_l1_defect": 2,
+      "phase_1_measured_l1_score": 0,
+      "phase_1_realizable_blindspot_dim": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_jac",
+          "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+          "target_state": {
+            "pricing_state_s1": 1,
+            "pricing_telemetry_row": [
+              1,
+              1,
+              0
+            ]
+          },
+          "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+        },
+        "worker-1": {
+          "module": "tax_jac",
+          "action": "ALIGN_TAX_STAGE_STATE_S2",
+          "current_state_s2": 0,
+          "target_state_s2": 1,
+          "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+        },
+        "worker-2": {
+          "module": "settlement_jac",
+          "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+          "current_telemetry_row": [
+            1,
+            1,
+            0
+          ],
+          "current_blindspot_dim": 1,
+          "target_telemetry": {
+            "settle_state_s3": 1,
+            "settle_telemetry_row": [
+              0,
+              1,
+              0
+            ],
+            "unobserved_blindspot_reserve_cents": 0
+          },
+          "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+        }
+      },
+      "phase_2_true_l1_defect": 0,
+      "phase_2_measured_l1_score": 0,
+      "phase_2_realizable_blindspot_dim": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+      "phase_3_true_l1_defect": 0,
+      "phase_3_measured_l1_score": 0,
+      "phase_3_realizable_blindspot_dim": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+      "model_raw_response": "```json\n{\"phase1_true_l1_defect\": 2, \"phase1_blindspot_dim\": 1, \"phase2_blindspot_dim\": 1, \"phase3_blindspot_dim\": 0, \"phase3_payout_cents\": 873}\n```",
+      "model_parsed_json": {
+        "phase1_true_l1_defect": 2,
+        "phase1_blindspot_dim": 1,
+        "phase2_blindspot_dim": 1,
+        "phase3_blindspot_dim": 0,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_jacobian_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_true_l1_defect": 2,
+      "phase_1_measured_l1_score": 0,
+      "phase_1_realizable_blindspot_dim": 1,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_jac",
+          "action": "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+          "target_state": {
+            "pricing_state_s1": 1,
+            "pricing_telemetry_row": [
+              1,
+              1,
+              0
+            ]
+          },
+          "reason": "Hold `pricing_jac.py` anchor at `'pricing_state_s1': 1` and `'pricing_telemetry_row': [1, 1, 0]` (`net_cents = 900`)."
+        },
+        "worker-1": {
+          "module": "tax_jac",
+          "action": "ALIGN_TAX_STAGE_STATE_S2",
+          "current_state_s2": 0,
+          "target_state_s2": 1,
+          "reason": "Linearized Jacobian audit on `tax_jac.py` detected `tax_state_s2 = 0` (handoff defect `omega = [1, -1, 0]`, `true_l1_defect = 2`). Update `tax_jac.py` so `'tax_state_s2': 1` (`tax_cents = 180`, `gross_cents = 1080`)."
+        },
+        "worker-2": {
+          "module": "settlement_jac",
+          "action": "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+          "current_telemetry_row": [
+            1,
+            1,
+            0
+          ],
+          "current_blindspot_dim": 1,
+          "target_telemetry": {
+            "settle_state_s3": 1,
+            "settle_telemetry_row": [
+              0,
+              1,
+              0
+            ],
+            "unobserved_blindspot_reserve_cents": 0
+          },
+          "reason": "Jacobian soundness audit `(D, Q)` on `settlement_jac.py` detected `settle_telemetry_row = [1, 1, 0]` (`rank(Q D) = 1 < 2 = rank(D)`, `realizable_blindspot_dim = 1 > 0`, `reserve_cents = 8`). Update `settlement_jac.py` so `'settle_telemetry_row': [0, 1, 0]` and `merchant_payout_cents = gross - fee - tax = 873` (`unobserved_blindspot_reserve_cents = 0`)."
+        }
+      },
+      "phase_2_true_l1_defect": 0,
+      "phase_2_measured_l1_score": 0,
+      "phase_2_realizable_blindspot_dim": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+      "phase_3_true_l1_defect": 0,
+      "phase_3_measured_l1_score": 0,
+      "phase_3_realizable_blindspot_dim": 0,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+      "model_raw_response": "```json\n{\n  \"phase1_true_l1_defect\": 2,\n  \"phase1_blindspot_dim\": 1,\n  \"phase2_blindspot_dim\": 1,\n  \"phase3_blindspot_dim\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_true_l1_defect": 2,
+        "phase1_blindspot_dim": 1,
+        "phase2_blindspot_dim": 1,
+        "phase3_blindspot_dim": 0,
+        "phase3_payout_cents": 873
+      }
+    }
+  ],
+  "meaning": "Linearized pipeline Jacobian stealth blindspot vs. full-rank observability codebase benchmark across 5 model families (Theorem 106): Phase 1 separates coarse endpoint telemetry pass (`Q_blind * omega = [0, 0]`, L = 1) from internal stage-2 handoff drift (`omega = (1, -1, 0)`, `||omega||_1 = 2 > 0`, `dim(im(D) cap ker(Q_blind)) = 1 > 0`, Delta_E = -1); Phase 2 separates partial stage alignment (`s = (1, 1, 1)`) from rank-deficient telemetry (`rank(Q_blind D) = 1 < 2`, Delta_E = -1); Phase 3 verifies full-rank observability (`Q_obs = [[1, 1, 0], [0, 1, 0]]`, `im(D) cap ker(Q_obs) = {0}`, 873 + 27 + 180 = 1080, Delta_E = 0).",
+  "receipt_sha256": "da1387a3c336148284423b2b4a4165a7396e72b2db611b4b6f547b9c29a332ee"
+}

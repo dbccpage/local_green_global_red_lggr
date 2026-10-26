@@ -29,6 +29,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
@@ -46,6 +47,7 @@ from .domain import (
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
+    JACOBIAN_WORKER_MODULES,
     KINDUCTION_WORKER_MODULES,
     MV_WORKER_MODULES,
     REGGE_WORKER_MODULES,
@@ -58,6 +60,7 @@ from .domain import (
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    JacobianCodeWorkspace,
     KInductionCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
@@ -71,6 +74,7 @@ from .domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    jacobian_fixture,
     kinduction_fixture,
     mv_fixture,
     regge_fixture,
@@ -2699,6 +2703,216 @@ def kinduction_campaign(
     return summary
 
 
+def jacobian_system_prompt(worker: str, arm: str) -> str:
+    module_name = JACOBIAN_WORKER_MODULES[worker]
+    return (
+        f"You are concurrent software engineering agent {worker}, owner of `{module_name}.py` "
+        f"(Arm {arm}) in a 3-module linearized settlement pipeline (`pricing_jac.py` -> "
+        "`tax_jac.py` -> `settlement_jac.py`) audited under `StreamingDefectSoundnessMonitor` "
+        "and `StreamingLinearizedPipelineJacobianMonitor` for `im(D) cap ker(Q) == {0}`.\n"
+        "Always start by calling `inspect_workspace` with `{}`. Then call `submit_module_patch` with "
+        "valid Python source code for your owned module, or call `escalate` if `infeasible_constraint` "
+        "is non-null and locks a rank-deficient Jacobian observer."
+    )
+
+
+def jacobian_merge_gate(
+    events: Events,
+    workspace: JacobianCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseJacobianSoundnessMonitor(
+        scope_id=f"swarm-jacobian-{workspace.state['seed']}-{arm}-{step_tag}"
+    )
+    local_results = workspace.local_verdicts()
+    eval_rec = monitor.evaluate_codebase_jacobian(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    events.emit(
+        "gate",
+        {
+            "seed": workspace.state["seed"],
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "state_vector": eval_rec["state_vector"],
+            "interface_defect_omega": eval_rec["interface_defect_omega"],
+            "true_l1_defect": eval_rec["true_l1_defect"],
+            "measured_l1_score": eval_rec["measured_l1_score"],
+            "rank_d": eval_rec["rank_d"],
+            "rank_qd": eval_rec["rank_qd"],
+            "realizable_blindspot_dim": eval_rec["realizable_blindspot_dim"],
+            "unobserved_blindspot_reserve_cents": eval_rec["unobserved_blindspot_reserve_cents"],
+            "status": eval_rec["status"],
+            "receipt_sha256": eval_rec["receipt_sha256"],
+        },
+    )
+    return eval_rec, eval_rec["compact_role_directives"]
+
+
+def jacobian_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(JACOBIAN_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = jacobian_fixture(seed)
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = JacobianCodeWorkspace(base_state)
+            start_calls = client.calls
+            start_cost = client.spent
+            eval_rec, directives = jacobian_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+
+            histories: dict[str, list[dict[str, Any]]] = {
+                w: [{"role": "system", "content": jacobian_system_prompt(w, arm)}]
+                for w in workers
+            }
+
+            waves_run = 0
+            for wave_idx in (1, 2):
+                if eval_rec["global_green"] == 1 or len(ws.state["escalations"]) > 0:
+                    break
+                waves_run = wave_idx
+                per_worker_fb: dict[str, str] = {}
+                for w in workers:
+                    mname = JACOBIAN_WORKER_MODULES[w]
+                    if ws.state["infeasible_constraint"] is not None:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "infeasible_constraint": ws.state["infeasible_constraint"],
+                                "instruction": "Call `inspect_workspace` then `escalate` with a clear explanation.",
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "A":
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "A",
+                                "owned_module": mname,
+                                "local_unit_test_passed": True,
+                                "coarse_endpoint_telemetry_score": 0,
+                                "instruction": (
+                                    "Your isolated unit tests and coarse endpoint telemetry check "
+                                    "`Q_blind(omega) = 0` passed. Call `inspect_workspace` and submit "
+                                    "your current source code unchanged."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "B":
+                        if w in ("worker-0", "worker-2"):
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        f"Call `inspect_workspace` and keep `{mname}.py` unchanged by "
+                                        "submitting its existing source code."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                        else:
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        "Update `tax_jac.py` via `submit_module_patch` so "
+                                        "`'tax_state_s2': 1` (while keeping `tax_cents = 180` "
+                                        "and `gross_cents = 1080`)."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                    else:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "C",
+                                "owned_module": mname,
+                                "lggr_jacobian_role_directive": directives[w],
+                                "instruction": (
+                                    "Follow `lggr_jacobian_role_directive` for your module and call "
+                                    "`submit_module_patch` with the updated Python implementation."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+
+                round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, directives = jacobian_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+                if arm in ("A", "B"):
+                    break
+
+            escalations = len(ws.state["escalations"])
+            if ws.state["infeasible_constraint"] is not None and escalations > 0:
+                outcome = "safe_escalated"
+            elif eval_rec["global_green"] == 1:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_state_vector": eval_rec["state_vector"],
+                "final_true_l1_defect": eval_rec["true_l1_defect"],
+                "final_measured_l1_score": eval_rec["measured_l1_score"],
+                "final_rank_qd": eval_rec["rank_qd"],
+                "final_realizable_blindspot_dim": eval_rec["realizable_blindspot_dim"],
+                "final_unobserved_blindspot_reserve_cents": eval_rec["unobserved_blindspot_reserve_cents"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.jacobian_soundness_code_engineering_swarm.v1",
+        "topology": "jacobian",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent linearized Jacobian Python code-engineering swarm (`pricing_jac` -> "
+            "`tax_jac` -> `settlement_jac`) comparing coarse endpoint telemetry gating (A), "
+            "partial tax stage alignment under rank-deficient telemetry (B), and explicit LGGR "
+            "Jacobian full-rank observability directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -2731,6 +2945,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = regge_campaign(client, events, config)
         elif config.get("topology") == "kinduction":
             summary = kinduction_campaign(client, events, config)
+        elif config.get("topology") == "jacobian":
+            summary = jacobian_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -2767,6 +2983,7 @@ def main() -> None:
             "cptp",
             "regge",
             "kinduction",
+            "jacobian",
         ],
         default="linear",
     )
@@ -2814,6 +3031,8 @@ def main() -> None:
         seeds = [10100, 10101, 10102]
     elif args.topology == "kinduction":
         seeds = [10200, 10201, 10202]
+    elif args.topology == "jacobian":
+        seeds = [10300, 10301, 10302]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -2938,6 +3157,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = kinduction_campaign(client, events, config)
+    elif args.topology == "jacobian":
+        config = {
+            "topology": "jacobian",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = jacobian_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

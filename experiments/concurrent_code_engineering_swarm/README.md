@@ -227,13 +227,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `47
 | `10201` | `repairable_k_induction_escape_seed_10201` | **B** | `partial_tax_tower_strengthening` | `blocked_unresolved` | `2` | `-1` | `8` | 1 | 6 | `$0.006055` |
 | `10201` | `repairable_k_induction_escape_seed_10201` | **C** | `explicit_lggr_kinduction_carrier_directive` | **`completed`** | **`2`** | **`2`** | **`0`** | **2** | **12** | **`$0.018364`** |
 
+## 13. 3-Agent Linearized Pipeline Jacobian Stealth Blindspot vs. Full-Rank Observability Campaign (`--topology jacobian`)
+
+In `--topology jacobian`, 3 concurrent LLM workers edit `pricing_jac.py`, `tax_jac.py`, and `settlement_jac.py` with stage state vector $s = (s_1, s_2, s_3)$ and interface handoff defect Jacobian $D(s) = (s_1 - s_2, s_2 - s_3, s_1 - s_3)$ ($\mathrm{rank}(D) = 2$):
+- On `seed 10300` (`repairable_jacobian_blindspot_seed_10300`), `tax_jac.py` sets `tax_state_s2 = 0` ($s = (1, 0, 1)$, $\omega = D(s) = (1, -1, 0)$, $\|\omega\|_1 = 2 > 0$) and `settlement_jac.py` sets redundant telemetry row `settle_telemetry_row = [1, 1, 0]` so $Q_{\mathrm{blind}} = \begin{pmatrix} 1 & 1 & 0 \\ 1 & 1 & 0 \end{pmatrix}$ has $Q_{\mathrm{blind}} \omega = (0, 0)^\top$ (`measured_l1_score = 0`), $\mathrm{rank}(Q_{\mathrm{blind}} D) = 1 < 2 = \mathrm{rank}(D)$, $\dim(\mathrm{im}(D) \cap \ker(Q_{\mathrm{blind}})) = 1 > 0$, and `unobserved_blindspot_reserve_cents = 8` (`payout = 865 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 10301` (`infeasible_jacobian_blindspot_lock`), legacy constraints lock `tax_jac.py` and `settlement_jac.py` to their rank-deficient telemetry configuration while requiring $\mathrm{im}(D) \cap \ker(Q) = \{0\}$, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `37` live API attempts, `$0.038575` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `state_vector` | `rank_qd` | `blindspot_dim` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10300` | `repairable_jacobian_blindspot_seed_10300` | **A** | `coarse_endpoint_telemetry_gate` | `blocked_unresolved` | `(1, 0, 1)` | `1` | `1` | 1 | 6 | `$0.005468` |
+| `10300` | `repairable_jacobian_blindspot_seed_10300` | **B** | `partial_tax_stage_alignment` | `blocked_unresolved` | `(1, 1, 1)` | `1` | `1` | 1 | 7 | `$0.006524` |
+| `10300` | `repairable_jacobian_blindspot_seed_10300` | **C** | `explicit_lggr_jacobian_observability_directive` | **`completed`** | **`(1, 1, 1)`** | **`2`** | **`0`** | **1** | **6** | **`$0.005970`** |
+| `10301` | `infeasible_jacobian_blindspot_lock` | **A / B / C** | All policies | `safe_escalated` | `(1, 0, 1)` | `1` | `1` | 1 | 18 | `$0.020613` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, and 3-agent k-induction evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, and 3-agent Jacobian evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -246,4 +261,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/cptp_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/regge_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/kinduction_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/jacobian_pilot_run/events.jsonl
 ```
