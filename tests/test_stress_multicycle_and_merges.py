@@ -53,6 +53,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
@@ -5845,6 +5846,49 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_six_role_codebase_schema_validation_and_double_count_deduplication_audit(self) -> None:
+        """Verify Theorem 114: Cross-role six-role schema validation & double-count deduplication."""
+        mon = StreamingCodebaseSixRoleDeduplicationMonitor(
+            scope_id="unit-codebase-six-role-deduplication-scope",
+        )
+        obs = mon.evaluate_three_phase_six_role_audit(
+            "codebase-six-role-eval-01",
+        )
+        self.assertEqual(obs["phase_1_verdict_drift_count"], 1)
+        self.assertEqual(obs["phase_1_double_counted_entries"], 3)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 20)
+        self.assertEqual(obs["phase_1_payout_cents"], 853)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CROSS_ROLE_VERDICT_DRIFT_AND_DOUBLE_COUNT_LGGR")
+
+        self.assertEqual(obs["phase_2_verdict_drift_count"], 0)
+        self.assertEqual(obs["phase_2_double_counted_entries"], 3)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 15)
+        self.assertEqual(obs["phase_2_payout_cents"], 858)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SHARED_TRACE_DOUBLE_COUNT_MASKING_LGGR")
+
+        self.assertEqual(obs["phase_3_verdict_drift_count"], 0)
+        self.assertEqual(obs["phase_3_double_counted_entries"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_SIX_ROLE_DEDUPLICATED_COHERENT_LGGG")
+        self.assertEqual(obs["raw_signed_defect_sum"], 0)
+        self.assertEqual(obs["unique_signed_defect_sum"], -1)
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_SIX_ROLE_DEDUPLICATED_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

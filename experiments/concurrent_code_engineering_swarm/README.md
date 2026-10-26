@@ -347,13 +347,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `41
 | `11000` | `repairable_council_capacity_defect` | **C** | `explicit_lggr_disagreement_council_directive` | **`completed`** | **`0`** | **`3/8`** | **`0`** | **1** | **6** | **`$0.006739`** |
 | `11001` | `infeasible_council_capacity_lock` | **A / B / C** | All policies | `safe_escalated` | `2` | `0` | `10` | 1 | 23 | `$0.019800` |
 
+## 21. 3-Agent Cross-Role Six-Role Schema Validation & Double-Count Deduplication Campaign (`--topology six_role`)
+
+In `--topology six_role`, 3 concurrent LLM workers edit `pricing_role.py`, `tax_role.py`, and `settlement_role.py` over 3 unique settlement traces `tr-01` (`d1 = -1, m1 = 2`), `tr-02` (`d2 = -1, m2 = 1`), and `tr-03` (`d3 = +1, m3 = 3`) observed across the 6 canonical LGGR III roles (5 cents surcharge per drifted or double-counted role entry):
+- On `seed 11100` (`repairable_six_role_deduplication_defect`), `tax_role.py` initially mutates `tr-01` from `(1, 1, 0)` to `(1, 1, 1)` (`verdict_drift_count = 1`), and `settlement_role.py` aggregates un-deduplicated role entries (`deduplicate_by_trace_id = False`, `double_counted_entries_active = 3`, `raw_signed_defect_sum = 0 != unique_signed_defect_sum = -1`, `role_dedup_surcharge_cents = 20`, `payout = 853 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 11101` (`infeasible_six_role_deduplication_lock`), legacy constraints lock `tax_role.py` and `settlement_role.py` to drifting un-deduplicated role summation while requiring zero drift and trace-ID deduplication, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `54` live API attempts, `$0.068249` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `drift_count` | `double_counted` | `surcharge` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `11100` | `repairable_six_role_deduplication_defect` | **A** | `un_deduplicated_drifting_six_role_gate` | `blocked_unresolved` | `1` | `3` | `20` | 2 | 12 | `$0.014311` |
+| `11100` | `repairable_six_role_deduplication_defect` | **B** | `partial_verdict_preservation_without_dedup` | `blocked_unresolved` | `1` | `3` | `15` | 2 | 12 | `$0.015581` |
+| `11100` | `repairable_six_role_deduplication_defect` | **C** | `explicit_lggr_six_role_deduplication_directive` | **`completed`** | **`0`** | **`0`** | **`0`** | **2** | **12** | **`$0.015754`** |
+| `11101` | `infeasible_six_role_deduplication_lock` | **A / B / C** | All policies | `safe_escalated` | `1` | `3` | `20` | 1 | 18 | `$0.022603` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, and 3-agent disagreement-council evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, and 3-agent six-role deduplication evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -374,4 +389,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_reversal_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/fiber_splitting_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/council_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/six_role_pilot_run/events.jsonl
 ```

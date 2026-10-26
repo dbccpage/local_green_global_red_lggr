@@ -76,6 +76,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     QUORUM_SETTLEMENT_STRICT_SOURCE,
     QUORUM_TAX_ALIGNED_SOURCE,
     QUORUM_TAX_DRIFT_SOURCE,
+    ROLE_PRICING_ANCHOR_SRC,
+    ROLE_SETTLEMENT_DEDUP_SRC,
+    ROLE_SETTLEMENT_RAW_P1_SRC,
+    ROLE_SETTLEMENT_RAW_P2_SRC,
+    ROLE_TAX_PRESERVED_SRC,
     SHEAF_PRICING_SOURCE,
     SHEAF_SETTLEMENT_CONTEXTUAL_SOURCE,
     SHEAF_SETTLEMENT_RECONCILED_SOURCE,
@@ -101,6 +106,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
+    SixRoleDeduplicationCodeWorkspace,
     StatefulDFACodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -136,10 +142,12 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
     run_sheaf_local_unit_tests,
+    run_six_role_local_unit_tests,
     run_split_local_unit_tests,
     run_stop_local_unit_tests,
     run_win_local_unit_tests,
     sheaf_fixture,
+    six_role_fixture,
     split_fixture,
     stop_fixture,
     win_fixture,
@@ -164,6 +172,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     replay,
     replay_campaign,
     sheaf_campaign,
+    six_role_campaign,
     split_campaign,
     stop_campaign,
     win_campaign,
@@ -186,6 +195,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -3761,6 +3771,230 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if council_events.exists() and council_summary.exists():
             replayed = replay(council_events)
             self.assertEqual(replayed["schema"], "lggr.disagreement_council_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_six_role_initial_fixture_is_local_green_global_red(self) -> None:
+        """Verify initial six-role fixture is Local Green / Global Red and repairs across phases."""
+        ws = SixRoleDeduplicationCodeWorkspace(six_role_fixture(11100))
+        mon = StreamingCodebaseSixRoleDeduplicationMonitor(scope_id="test-six-role-unit")
+        res0 = mon.evaluate_six_role_merge(
+            "wave-0",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res0["local_green"], 1)
+        self.assertEqual(res0["global_green"], 0)
+        self.assertEqual(res0["defect"], -1)
+        self.assertEqual(res0["verdict_drift_count"], 1)
+        self.assertEqual(res0["double_counted_entries_active"], 3)
+        self.assertEqual(res0["role_dedup_surcharge_cents"], 20)
+        self.assertEqual(res0["merchant_payout_cents"], 853)
+        self.assertEqual(res0["status"], "CROSS_ROLE_VERDICT_DRIFT_AND_DOUBLE_COUNT_LGGR")
+
+        # Partial repair: tax_role preserves verdict triple (drift=0), settlement_role still un-deduplicated (surcharge=15)
+        p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": ROLE_TAX_PRESERVED_SRC})
+        self.assertTrue(p1["accepted"])
+        p1_s = ws.tool("worker-2", "submit_module_patch", {"source_code": ROLE_SETTLEMENT_RAW_P2_SRC})
+        self.assertTrue(p1_s["accepted"])
+        res1 = mon.evaluate_six_role_merge(
+            "wave-1-partial",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res1["local_green"], 1)
+        self.assertEqual(res1["global_green"], 0)
+        self.assertEqual(res1["defect"], -1)
+        self.assertEqual(res1["verdict_drift_count"], 0)
+        self.assertEqual(res1["double_counted_entries_active"], 3)
+        self.assertEqual(res1["role_dedup_surcharge_cents"], 15)
+        self.assertEqual(res1["merchant_payout_cents"], 858)
+        self.assertEqual(res1["status"], "SHARED_TRACE_DOUBLE_COUNT_MASKING_LGGR")
+
+        # Full repair: settlement_role enables trace-ID deduplication with surcharge=0
+        p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": ROLE_SETTLEMENT_DEDUP_SRC})
+        self.assertTrue(p2["accepted"])
+        res2 = mon.evaluate_six_role_merge(
+            "wave-1-repaired",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res2["local_green"], 1)
+        self.assertEqual(res2["global_green"], 1)
+        self.assertEqual(res2["defect"], 0)
+        self.assertEqual(res2["verdict_drift_count"], 0)
+        self.assertEqual(res2["double_counted_entries_active"], 0)
+        self.assertEqual(res2["role_dedup_surcharge_cents"], 0)
+        self.assertEqual(res2["merchant_payout_cents"], 873)
+        self.assertEqual(res2["status"], "CODEBASE_SIX_ROLE_DEDUPLICATED_COHERENT_LGGG")
+
+    def test_six_role_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        """Verify six-role sandbox rejects forbidden imports and hardware-locked patches."""
+        bad_import = run_six_role_local_unit_tests(
+            "tax_role",
+            "import os\ndef tax_role(pricing_quote: dict, tax_rate_bps: int) -> dict:\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = SixRoleDeduplicationCodeWorkspace(six_role_fixture(11101))
+        locked_res = ws.tool("worker-1", "submit_module_patch", {"source_code": ROLE_TAX_PRESERVED_SRC})
+        self.assertFalse(locked_res["accepted"])
+        self.assertIn("locked", locked_res["error"])
+
+    def test_six_role_concurrent_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-arm six-role concurrent campaign, deterministic replay, and tamper detection."""
+        def stub_six_role_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msg = next(m for m in reversed(messages) if m.get("role") == "tool")
+                inspected = json.loads(tool_msg["content"])
+                fb = inspected.get("merge_gate_feedback", {})
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Tax and Settlement six-role modules are hardware-locked to drifting un-deduplicated role logs."}
+                            ),
+                        },
+                    }
+                elif fb.get("arm") == "A":
+                    tool_call = {
+                        "id": f"call_hold_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif fb.get("arm") == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": ROLE_TAX_PRESERVED_SRC}),
+                            },
+                        }
+                    elif worker == "worker-2":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": ROLE_SETTLEMENT_RAW_P2_SRC}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_hold_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": ROLE_PRICING_ANCHOR_SRC,
+                        "worker-1": ROLE_TAX_PRESERVED_SRC,
+                        "worker-2": ROLE_SETTLEMENT_DEDUP_SRC,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "six_role",
+                "seeds": [11100, 11101],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_six_role_transport)
+            summary = six_role_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.six_role_deduplication_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["double_counted_entries_active"] = int(gate_rec["double_counted_entries_active"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_six_role_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live six-role pilot evidence offline if present."""
+        six_role_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "six_role_pilot_run"
+            / "events.jsonl"
+        )
+        six_role_summary = six_role_events.with_name("summary.json")
+        if six_role_events.exists() and six_role_summary.exists():
+            replayed = replay(six_role_events)
+            self.assertEqual(replayed["schema"], "lggr.six_role_deduplication_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 
