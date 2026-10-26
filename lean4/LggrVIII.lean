@@ -5821,4 +5821,71 @@ theorem poe_veto_codebase_zero_collapse_and_compromise_mass_audit :
   intro veto_cnt h1
   omega
 
+/-- Theorem 130 (Simultaneous Multi-Monitor Budget-Split & Joint Intersection Guard
+    Audit in Code-Engineering Swarms):
+    1. Simultaneous Pareto-starvation & surcharge floor law:
+       - For any positive total Pareto deficit `d_def ≥ 4` and starved incident count
+         `n_starv ≥ 1`, the simultaneous split surcharge `s = d_def + 2 * n_starv`
+         satisfies `s ≥ 6` and `873 - s ≤ 867 < 873`.
+    2. Concrete 3-phase codebase simultaneous budget-split & joint guard audit across
+       `pricing_sim`, `tax_sim`, and `settlement_sim` (`P_0 = [2, 3, 0]`, `w = [2, 3, 4]`,
+       `τ_lease = 4`, `τ_horizon = 6`, Pareto floors `Δ*_{w} = [4, 3, 4]`):
+       - Phase 1 (Fractional concurrent budget-splitting at tick 0,
+         `slacks = [2, 3, 0]`, `exec_ticks = [0, 0, 0]`):
+         `deficits_p1 = [2, 0, 4]`, `total_def_p1 = 6`, `starv_p1 = 2`,
+         `surcharge_p1 = 6 + 2 * 2 = 10`, `payout_p1 = 873 - 10 = 863 ≠ 873`
+         (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial repair: Incident 1 restored & Incident 2 queued, Incident 3 starved,
+         `slacks = [4, 3, 0]`, `exec_ticks = [0, 1, 0]`):
+         `deficits_p2 = [0, 0, 4]`, `total_def_p2 = 4`, `starv_p2 = 1`,
+         `surcharge_p2 = 4 + 2 * 1 = 6`, `payout_p2 = 873 - 6 = 867 ≠ 873`
+         (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Priority-queued deferred admission & full joint Pareto guard,
+         `slacks = [4, 3, 4]`, `exec_ticks = [0, 1, 2]`):
+         `deficits_p3 = [0, 0, 0]`, `total_def_p3 = 0`, `starv_p3 = 0`,
+         `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem simultaneous_split_codebase_budget_starvation_and_joint_guard_audit :
+    (∀ d_def n_starv : Int,
+      (4 ≤ d_def) →
+      (1 ≤ n_starv) →
+      (d_def + 2 * n_starv ≥ 6 ∧
+       873 - (d_def + 2 * n_starv) ≤ 867)) ∧
+    (let f1 : Int := 4; let f2 : Int := 3; let f3 : Int := 4;
+     let s1_p1 : Int := 2; let s2_p1 : Int := 3; let s3_p1 : Int := 0;
+     let s1_p2 : Int := 4; let s2_p2 : Int := 3; let s3_p2 : Int := 0;
+     let s1_p3 : Int := 4; let s2_p3 : Int := 3; let s3_p3 : Int := 4;
+     let def_p1 : Int := (f1 - s1_p1) + (f2 - s2_p1) + (f3 - s3_p1);
+     let def_p2 : Int := (f1 - s1_p2) + (f2 - s2_p2) + (f3 - s3_p2);
+     let def_p3 : Int := (f1 - s1_p3) + (f2 - s2_p3) + (f3 - s3_p3);
+     let starv_p1 : Int := (if s1_p1 < f1 then 1 else 0) + (if s2_p1 < f2 then 1 else 0) + (if s3_p1 < f3 then 1 else 0);
+     let starv_p2 : Int := (if s1_p2 < f1 then 1 else 0) + (if s2_p2 < f2 then 1 else 0) + (if s3_p2 < f3 then 1 else 0);
+     let starv_p3 : Int := (if s1_p3 < f1 then 1 else 0) + (if s2_p3 < f2 then 1 else 0) + (if s3_p3 < f3 then 1 else 0);
+     let surcharge_p1 : Int := def_p1 + 2 * starv_p1;
+     let surcharge_p2 : Int := def_p2 + 2 * starv_p2;
+     let surcharge_p3 : Int := def_p3 + 2 * starv_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (s1_p1 + s2_p1 + s3_p1 ≤ 6) ∧ (starv_p1 = 2) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (starv_p1 = 0) ∧ (surcharge_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (s1_p2 + s3_p2 ≤ 6) ∧ (s2_p2 ≤ 6) ∧ (starv_p2 = 1) ∧ (surcharge_p2 = 6) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (starv_p2 = 0) ∧ (surcharge_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (s1_p3 ≤ 6) ∧ (s2_p3 ≤ 6) ∧ (s3_p3 ≤ 6) ∧ (starv_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (def_p1 = 6 ∧ def_p2 = 4 ∧ def_p3 = 0 ∧
+      starv_p1 = 2 ∧ starv_p2 = 1 ∧ starv_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 6 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 867 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro d_def n_starv h1 h2
+  omega
+
 end LggrVIII

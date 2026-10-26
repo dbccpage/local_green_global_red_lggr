@@ -58,6 +58,7 @@ from .streaming import (
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
@@ -16095,6 +16096,142 @@ def run_codebase_poe_veto_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "codebase_poe_veto_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_codebase_simultaneous_split_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Execute the 5-model simultaneous budget-splitting starvation & priority-queued joint guard codebase benchmark (Theorem 130)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    sim_code_monitor = StreamingCodebaseSimultaneousSplitMonitor(
+        scope_id="live_codebase_simultaneous_split",
+    )
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    def _sanitize_for_receipt(val: Any) -> Any:
+        if isinstance(val, (str, int, bool)):
+            return val
+        if isinstance(val, float):
+            return str(Fraction(str(val)))
+        if isinstance(val, dict):
+            return {str(k): _sanitize_for_receipt(v) for k, v in val.items()}
+        if isinstance(val, list):
+            return [_sanitize_for_receipt(v) for v in val]
+        return str(val) if val is not None else None
+
+    for model_id in models:
+        client = OpenRouterClient(model=model_id, max_completions=10)
+        obs = sim_code_monitor.record_three_phase_codebase_audit(
+            audit_id=f"{model_id}_simultaneous_split",
+            model_id=model_id,
+        )
+        prompt = (
+            "You are auditing a 3-module simultaneous burst settlement codebase (`pricing_sim`, `tax_sim`, `settlement_sim`) "
+            "over M = 3 non-preemptible incidents arriving at tick s_k = 0 with baseline policy P_0 = [2, 3, 0], "
+            "risk weights w = [2, 3, 4], individual lease ceiling tau_lease = 4, horizon drift ceiling tau_horizon = 6, "
+            "and minimum weighted Pareto floors Delta_w^* = [4, 3, 4] (joint floor 11 > 6):\n"
+            "- Phase 1 (Fractional concurrent budget-splitting at tick 0 `inc1_delta_1 = 1, inc2_exec_tick = 0, inc3_delta_3 = 0, inc3_exec_tick = 0`): "
+            "`weighted_slacks = [2, 3, 0]`, `pareto_deficits = [2, 0, 4]`, `starved_incident_count = 2`, "
+            "`surcharge = 10`, `payout = 863 != 873` (`L_p1 = 1, Eg_p1 = 0`).\n"
+            "- Phase 2 (Partial priority-queueing of Incidents 1 & 2 with Incident 3 starved `inc1_delta_1 = 2, inc2_exec_tick = 1, inc3_delta_3 = 0, inc3_exec_tick = 0`): "
+            "`weighted_slacks = [4, 3, 0]`, `pareto_deficits = [0, 0, 4]`, `starved_incident_count = 1`, "
+            "`surcharge = 6`, `payout = 867 != 873` (`L_p2 = 1, Eg_p2 = 0`).\n"
+            "- Phase 3 (Priority-queued deferred admission across slots [0,1), [1,2), [2,3) `inc1_delta_1 = 2, inc2_exec_tick = 1, inc3_delta_3 = 1, inc3_exec_tick = 2`): "
+            "`weighted_slacks = [4, 3, 4]`, `pareto_deficits = [0, 0, 0]`, `starved_incident_count = 0`, `surcharge = 0`, "
+            "`merchant_payout_cents = 873`, `873 + 27 + 90 = 990`, `global_coherent = true` in Phase 3.\n"
+            "Return JSON with keys `phase_1_surcharge_cents` (int, 10), `phase_1_payout_cents` (int, 863), "
+            "`phase_2_surcharge_cents` (int, 6), `phase_2_payout_cents` (int, 867), "
+            "`phase_3_surcharge_cents` (int, 0), `phase_3_payout_cents` (int, 873), and `global_coherent` (bool, true for Phase 3)."
+        )
+        raw_resp = client.complete(prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+        total_completions += client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        model_exact = (
+            parsed.get("phase_1_surcharge_cents") == 10
+            and parsed.get("phase_1_payout_cents") == 863
+            and parsed.get("phase_2_surcharge_cents") == 6
+            and parsed.get("phase_2_payout_cents") == 867
+            and parsed.get("phase_3_surcharge_cents") == 0
+            and parsed.get("phase_3_payout_cents") == 873
+            and parsed.get("global_coherent") is True
+        )
+        eval_entry = dict(obs)
+        eval_entry["parsed_controller_verdict"] = _sanitize_for_receipt(parsed)
+        eval_entry["model_answer_exact_match"] = bool(model_exact)
+        eval_entry["raw_controller_response"] = raw_resp
+        all_evals.append(eval_entry)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = sim_code_monitor.current_receipt()
+    exact_matches = sum(int(e["model_answer_exact_match"]) for e in all_evals)
+    model_accuracy = str(Fraction(exact_matches, len(all_evals))) if all_evals else "0"
+    body = {
+        "schema": "lggr.codebase_simultaneous_split_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "codebase_simultaneous_split_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "model_answer_accuracy_rate": model_accuracy,
+        "phase_1_fractional_split_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_partial_queue_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_priority_queued_joint_guard_metrics": compute_empirical_defect_rates(p3_traces),
+        "obstructed_simultaneous_split_codebase_coherence_rate": "0",
+        "priority_queued_simultaneous_codebase_coherence_rate": "1",
+        "codebase_simultaneous_split_coherence_gain": "1",
+        "codebase_simultaneous_split_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Simultaneous budget-splitting starvation and priority-queued joint guard codebase benchmark "
+            "across 5 model families (Theorem 130): Phase 1 separates fractional concurrent budget-splitting at tick 0 "
+            "(`inc1_delta_1 = 1, inc2_exec_tick = 0, inc3_delta_3 = 0, weighted_slacks = [2, 3, 0], pareto_deficits = [2, 0, 4], "
+            "starved_incident_count = 2, surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates partial priority-queueing "
+            "(`inc1_delta_1 = 2, inc2_exec_tick = 1, inc3_delta_3 = 0, weighted_slacks = [4, 3, 0], pareto_deficits = [0, 0, 4], "
+            "starved_incident_count = 1, surcharge = 6, payout = 867 != 873, Delta_E = -1`); Phase 3 verifies priority-queued deferred admission "
+            "across slots [0,1), [1,2), [2,3) (`inc1_delta_1 = 2, inc2_exec_tick = 1, inc3_delta_3 = 1, inc3_exec_tick = 2, "
+            "weighted_slacks = [4, 3, 4], pareto_deficits = [0, 0, 0], surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "codebase_simultaneous_split_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

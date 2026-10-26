@@ -1,0 +1,1916 @@
+{
+  "schema": "lggr.simultaneous_split_code_engineering_swarm.v1",
+  "topology": "simultaneous_split",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 12700,
+      "kind": "repairable_simultaneous_budget_split_starvation_and_joint_guard_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_inc1_delta_1": 1,
+          "final_inc2_exec_tick": 0,
+          "final_inc3_delta_3": 0,
+          "final_inc3_exec_tick": 0,
+          "final_weighted_slacks": [
+            2,
+            3,
+            0
+          ],
+          "final_pareto_deficits": [
+            2,
+            0,
+            4
+          ],
+          "final_total_pareto_deficit": 6,
+          "final_starved_incident_count": 2,
+          "final_peak_concurrent_drift": 5,
+          "final_sim_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+          "final_receipt_sha256": "2d14b5445693b5ecfe2530b84c31da2405d0e84b68299ed81a2eaefb2bc8c8c7",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12700-arm-A",
+            "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "43565ca3db0f7400f480c492ca1f9493eb5544ab1516c8d01d996b5839c21eb5",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "adb3e2441bf5dcb81c1dffcc05dc43b46c82b5f78a24efe25955dda1711eb57b"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "2d14b5445693b5ecfe2530b84c31da2405d0e84b68299ed81a2eaefb2bc8c8c7"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0133902510"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_inc1_delta_1": 2,
+          "final_inc2_exec_tick": 1,
+          "final_inc3_delta_3": 0,
+          "final_inc3_exec_tick": 0,
+          "final_weighted_slacks": [
+            4,
+            3,
+            0
+          ],
+          "final_pareto_deficits": [
+            0,
+            0,
+            4
+          ],
+          "final_total_pareto_deficit": 4,
+          "final_starved_incident_count": 1,
+          "final_peak_concurrent_drift": 4,
+          "final_sim_surcharge_cents": 6,
+          "final_merchant_payout_cents": 867,
+          "final_status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+          "final_receipt_sha256": "95deafe547ec06244441cf8e680f2b2e4d975f50e6451183ed97b23f903e58fa",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12700-arm-B",
+            "status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1abac4cb9e675cfc2ee188c3f9e3748b23a41ea20ee9aa3a5104eaef79069a63",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "3512269cc0c91180a1512b19fb76fb73d729a5484be9149d3fb4217a45573810"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 2,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  4,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  0,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 4,
+                "starved_incident_count": 1,
+                "peak_concurrent_drift": 4,
+                "sim_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "inc1_delta_1": 2,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  4,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  0,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 4,
+                "starved_incident_count": 1,
+                "peak_concurrent_drift": 4,
+                "sim_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "95deafe547ec06244441cf8e680f2b2e4d975f50e6451183ed97b23f903e58fa"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0122022940"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_inc1_delta_1": 2,
+          "final_inc2_exec_tick": 1,
+          "final_inc3_delta_3": 1,
+          "final_inc3_exec_tick": 2,
+          "final_weighted_slacks": [
+            4,
+            3,
+            4
+          ],
+          "final_pareto_deficits": [
+            0,
+            0,
+            0
+          ],
+          "final_total_pareto_deficit": 0,
+          "final_starved_incident_count": 0,
+          "final_peak_concurrent_drift": 4,
+          "final_sim_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG",
+          "final_receipt_sha256": "522935cfd090732d9ba44dd3086dc10f48497c2d0cb84d8988f6db1548e5da8d",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12700-arm-C",
+            "status": "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "inc1_delta_1": 1,
+                    "inc2_exec_tick": 0,
+                    "inc3_delta_3": 0,
+                    "inc3_exec_tick": 0,
+                    "sim_surcharge_cents": 10,
+                    "starved_incident_count": 2,
+                    "total_pareto_deficit": 6
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "inc1_delta_1": 2,
+                    "inc2_exec_tick": 1,
+                    "inc3_delta_3": 1,
+                    "inc3_exec_tick": 2,
+                    "sim_surcharge_cents": 0,
+                    "starved_incident_count": 0,
+                    "total_pareto_deficit": 0
+                  }
+                }
+              },
+              "input_sha256": "8bfa99bd1a10726cf0531c0d7a59316a50f608fbc5f199ee93a9d4ca50d9cd20",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "af91dc4bb045ba7074fc5b7d7643ffb085344feaf70a07dda813cb1800aa8624"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 2,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 1,
+                "inc3_exec_tick": 2,
+                "weighted_slacks": [
+                  4,
+                  3,
+                  4
+                ],
+                "pareto_deficits": [
+                  0,
+                  0,
+                  0
+                ],
+                "total_pareto_deficit": 0,
+                "starved_incident_count": 0,
+                "peak_concurrent_drift": 4,
+                "sim_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "HOLD_INCIDENT_3_PRIORITY_QUEUE_TICK_2_PARETO_GUARD",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "522935cfd090732d9ba44dd3086dc10f48497c2d0cb84d8988f6db1548e5da8d"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0063269341"
+        }
+      ]
+    },
+    {
+      "seed": 12701,
+      "kind": "infeasible_hardware_locked_simultaneous_fractional_budget_split",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_inc1_delta_1": 1,
+          "final_inc2_exec_tick": 0,
+          "final_inc3_delta_3": 0,
+          "final_inc3_exec_tick": 0,
+          "final_weighted_slacks": [
+            2,
+            3,
+            0
+          ],
+          "final_pareto_deficits": [
+            2,
+            0,
+            4
+          ],
+          "final_total_pareto_deficit": 6,
+          "final_starved_incident_count": 2,
+          "final_peak_concurrent_drift": 5,
+          "final_sim_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "9ca4edd4ed3c9f53ed63aa533dfdd824eda4a1f35168ec738988498fd7d81eac",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12701-arm-A",
+            "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "7aba208a666174d7c55f91a874d8f7b7c3fb7af07527058f293df19173cf4a7d",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "f82d9ca08ee114f440b632db964f5e7b0bef6de2283dc4a848b11d0a2eeeb61a"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "9ca4edd4ed3c9f53ed63aa533dfdd824eda4a1f35168ec738988498fd7d81eac"
+          },
+          "escalations": {
+            "worker-0": "Legacy simultaneous burst ROM lock: `pricing_sim.py` is locked in read-only ROM with fractional budget-split `inc1_delta_1 = 1` (`inc1_weighted_slack = 2 < 4`, `inc1_pareto_deficit = 2`), while the LGGR simultaneous burst merge gate requires full Pareto floor restoration `inc1_delta_1 = 2`, `inc2_exec_tick = 1`, `inc3_delta_3 = 1`, `inc3_exec_tick = 2` (`sim_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy simultaneous burst ROM lock: `pricing_sim.py` is locked in read-only ROM with fractional budget-split `inc1_delta_1 = 1` (`inc1_weighted_slack = 2 < 4`, `inc1_pareto_deficit = 2`), while the LGGR simultaneous burst merge gate requires full Pareto floor restoration `inc1_delta_1 = 2`, `inc2_exec_tick = 1`, `inc3_delta_3 = 1`, `inc3_exec_tick = 2` (`sim_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy simultaneous burst ROM lock: `pricing_sim.py` is locked in read-only ROM with fractional budget-split `inc1_delta_1 = 1` (`inc1_weighted_slack = 2 < 4`, `inc1_pareto_deficit = 2`), while the LGGR simultaneous burst merge gate requires full Pareto floor restoration `inc1_delta_1 = 2`, `inc2_exec_tick = 1`, `inc3_delta_3 = 1`, `inc3_exec_tick = 2` (`sim_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0065768422"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_inc1_delta_1": 1,
+          "final_inc2_exec_tick": 1,
+          "final_inc3_delta_3": 0,
+          "final_inc3_exec_tick": 0,
+          "final_weighted_slacks": [
+            2,
+            3,
+            0
+          ],
+          "final_pareto_deficits": [
+            2,
+            0,
+            4
+          ],
+          "final_total_pareto_deficit": 6,
+          "final_starved_incident_count": 2,
+          "final_peak_concurrent_drift": 3,
+          "final_sim_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "9c188b51f4cf78b94918521cde5890ae073651179189bd98ace06af64ded1d81",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12701-arm-B",
+            "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "abe5faec82067c4e6878a3a1b7a00e124fec7f800190935d9cfa9389c1d988fb",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "2f6cd73f2cec2870885f668b20b3ef8bba1bd85fc470dc2781b85f9b0d2160e9"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 3,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "9c188b51f4cf78b94918521cde5890ae073651179189bd98ace06af64ded1d81"
+          },
+          "escalations": {
+            "worker-0": "Legacy simultaneous burst ROM lock: `pricing_sim.py` is locked in read-only ROM with fractional budget-split `inc1_delta_1 = 1` (`inc1_weighted_slack = 2 < 4`, `inc1_pareto_deficit = 2`), while the LGGR simultaneous burst merge gate requires full Pareto floor restoration `inc1_delta_1 = 2`, `inc2_exec_tick = 1`, `inc3_delta_3 = 1`, `inc3_exec_tick = 2` (`sim_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy simultaneous burst ROM lock: `pricing_sim.py` is locked in read-only ROM with fractional budget-split `inc1_delta_1 = 1` (`inc1_weighted_slack = 2 < 4`, `inc1_pareto_deficit = 2`), while the LGGR simultaneous burst merge gate requires full Pareto floor restoration `inc1_delta_1 = 2`, `inc2_exec_tick = 1`, `inc3_delta_3 = 1`, `inc3_exec_tick = 2` (`sim_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0075246971"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_inc1_delta_1": 1,
+          "final_inc2_exec_tick": 1,
+          "final_inc3_delta_3": 0,
+          "final_inc3_exec_tick": 0,
+          "final_weighted_slacks": [
+            2,
+            3,
+            0
+          ],
+          "final_pareto_deficits": [
+            2,
+            0,
+            4
+          ],
+          "final_total_pareto_deficit": 6,
+          "final_starved_incident_count": 2,
+          "final_peak_concurrent_drift": 3,
+          "final_sim_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "8d8b2141ebd1c014b59739f32ff877d94cc5889f60803001b6f56a9ca1bf34b5",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12701-arm-C",
+            "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "e9c97bb207d2e6bfafc00acbc56683e97cf16b0e8d4c3f3f552d2d619e1bca45",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "a20c683b426efebafcc2ac013894f30db7dcf5acf7f710a1c6f7223043387cf0"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 3,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "8d8b2141ebd1c014b59739f32ff877d94cc5889f60803001b6f56a9ca1bf34b5"
+          },
+          "escalations": {
+            "worker-0": "Legacy simultaneous burst ROM lock: `pricing_sim.py` is locked in read-only ROM with fractional budget-split `inc1_delta_1 = 1` (`inc1_weighted_slack = 2 < 4`, `inc1_pareto_deficit = 2`), while the LGGR simultaneous burst merge gate requires full Pareto floor restoration `inc1_delta_1 = 2`, `inc2_exec_tick = 1`, `inc3_delta_3 = 1`, `inc3_exec_tick = 2` (`sim_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy simultaneous burst ROM lock: `pricing_sim.py` is locked in read-only ROM with fractional budget-split `inc1_delta_1 = 1` (`inc1_weighted_slack = 2 < 4`, `inc1_pareto_deficit = 2`), while the LGGR simultaneous burst merge gate requires full Pareto floor restoration `inc1_delta_1 = 2`, `inc2_exec_tick = 1`, `inc3_delta_3 = 1`, `inc3_exec_tick = 2` (`sim_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0072117410"
+        }
+      ]
+    },
+    {
+      "seed": 12702,
+      "kind": "repairable_simultaneous_budget_split_starvation_and_joint_guard_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_inc1_delta_1": 1,
+          "final_inc2_exec_tick": 0,
+          "final_inc3_delta_3": 0,
+          "final_inc3_exec_tick": 0,
+          "final_weighted_slacks": [
+            2,
+            3,
+            0
+          ],
+          "final_pareto_deficits": [
+            2,
+            0,
+            4
+          ],
+          "final_total_pareto_deficit": 6,
+          "final_starved_incident_count": 2,
+          "final_peak_concurrent_drift": 5,
+          "final_sim_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+          "final_receipt_sha256": "68dfe7dd15a2f0cf60ce5e856a4f5944d8a03be0e3031e09c740fb3ebd89631d",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12702-arm-A",
+            "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "43565ca3db0f7400f480c492ca1f9493eb5544ab1516c8d01d996b5839c21eb5",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "adb3e2441bf5dcb81c1dffcc05dc43b46c82b5f78a24efe25955dda1711eb57b"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "68dfe7dd15a2f0cf60ce5e856a4f5944d8a03be0e3031e09c740fb3ebd89631d"
+          },
+          "escalations": {},
+          "api_attempts": 17,
+          "cost_usd": "0.0136669380"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_inc1_delta_1": 2,
+          "final_inc2_exec_tick": 1,
+          "final_inc3_delta_3": 0,
+          "final_inc3_exec_tick": 0,
+          "final_weighted_slacks": [
+            4,
+            3,
+            0
+          ],
+          "final_pareto_deficits": [
+            0,
+            0,
+            4
+          ],
+          "final_total_pareto_deficit": 4,
+          "final_starved_incident_count": 1,
+          "final_peak_concurrent_drift": 4,
+          "final_sim_surcharge_cents": 6,
+          "final_merchant_payout_cents": 867,
+          "final_status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+          "final_receipt_sha256": "1b7865e2506b938f3c49ef80022f87e6353cff1e3bad08979459ffe5ead606a0",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12702-arm-B",
+            "status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1abac4cb9e675cfc2ee188c3f9e3748b23a41ea20ee9aa3a5104eaef79069a63",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "3512269cc0c91180a1512b19fb76fb73d729a5484be9149d3fb4217a45573810"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 2,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  4,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  0,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 4,
+                "starved_incident_count": 1,
+                "peak_concurrent_drift": 4,
+                "sim_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "inc1_delta_1": 2,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  4,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  0,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 4,
+                "starved_incident_count": 1,
+                "peak_concurrent_drift": 4,
+                "sim_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "1b7865e2506b938f3c49ef80022f87e6353cff1e3bad08979459ffe5ead606a0"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0122382402"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_inc1_delta_1": 2,
+          "final_inc2_exec_tick": 1,
+          "final_inc3_delta_3": 1,
+          "final_inc3_exec_tick": 2,
+          "final_weighted_slacks": [
+            4,
+            3,
+            4
+          ],
+          "final_pareto_deficits": [
+            0,
+            0,
+            0
+          ],
+          "final_total_pareto_deficit": 0,
+          "final_starved_incident_count": 0,
+          "final_peak_concurrent_drift": 4,
+          "final_sim_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG",
+          "final_receipt_sha256": "0ed0f58a05cd1dedfecf4e6291228fc91718f00f81961f23ec59d991c3c91e30",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": "simultaneous-split-seed-12702-arm-C",
+            "status": "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "simultaneous_budget_split_receipt": null,
+            "joint_multi_monitor_guard_receipt": null,
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "inc1_delta_1": 1,
+                    "inc2_exec_tick": 0,
+                    "inc3_delta_3": 0,
+                    "inc3_exec_tick": 0,
+                    "sim_surcharge_cents": 10,
+                    "starved_incident_count": 2,
+                    "total_pareto_deficit": 6
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "horizon_drift_within_ceiling": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "inc1_delta_1": 2,
+                    "inc2_exec_tick": 1,
+                    "inc3_delta_3": 1,
+                    "inc3_exec_tick": 2,
+                    "sim_surcharge_cents": 0,
+                    "starved_incident_count": 0,
+                    "total_pareto_deficit": 0
+                  }
+                }
+              },
+              "input_sha256": "8bfa99bd1a10726cf0531c0d7a59316a50f608fbc5f199ee93a9d4ca50d9cd20",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "af91dc4bb045ba7074fc5b7d7643ffb085344feaf70a07dda813cb1800aa8624"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "inc1_delta_1": 1,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 0,
+                "inc3_delta_3": 0,
+                "inc3_exec_tick": 0,
+                "weighted_slacks": [
+                  2,
+                  3,
+                  0
+                ],
+                "pareto_deficits": [
+                  2,
+                  0,
+                  4
+                ],
+                "total_pareto_deficit": 6,
+                "starved_incident_count": 2,
+                "peak_concurrent_drift": 5,
+                "sim_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "inc1_delta_1": 2,
+                "inc1_exec_tick": 0,
+                "inc2_delta_2": 1,
+                "inc2_exec_tick": 1,
+                "inc3_delta_3": 1,
+                "inc3_exec_tick": 2,
+                "weighted_slacks": [
+                  4,
+                  3,
+                  4
+                ],
+                "pareto_deficits": [
+                  0,
+                  0,
+                  0
+                ],
+                "total_pareto_deficit": 0,
+                "starved_incident_count": 0,
+                "peak_concurrent_drift": 4,
+                "sim_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0
+                  },
+                  "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "HOLD_INCIDENT_3_PRIORITY_QUEUE_TICK_2_PARETO_GUARD",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "0ed0f58a05cd1dedfecf4e6291228fc91718f00f81961f23ec59d991c3c91e30"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0065019341"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 93,
+  "charged_or_reserved_usd": "0.0856398717",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 30,
+  "scope": "Concurrent 3-agent simultaneous budget-splitting starvation & priority-queued joint guard Python code-engineering swarm (`pricing_sim` -> `tax_sim` -> `settlement_sim`) comparing fractional concurrent budget-splitting at tick 0 (A), partial priority-queueing of Incidents 1 & 2 with Incident 3 starved (B), and full priority-queued deferred admission across slots [0,1), [1,2), [2,3) (C) with full cryptographic receipts."
+}

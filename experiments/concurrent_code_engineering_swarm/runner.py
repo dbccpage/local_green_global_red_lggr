@@ -53,6 +53,7 @@ from lggr.streaming import (
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
@@ -93,6 +94,7 @@ from .domain import (
     SCHEMA_SYNTHESIS_WORKER_MODULES,
     SHARED_CHORD_DIAMOND_WORKER_MODULES,
     SHEAF_WORKER_MODULES,
+    SIMULTANEOUS_SPLIT_WORKER_MODULES,
     SIX_ROLE_WORKER_MODULES,
     SKEW_REPAIR_WORKER_MODULES,
     SPLIT_WORKER_MODULES,
@@ -130,6 +132,7 @@ from .domain import (
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
+    SimultaneousSplitCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     SkewRepairCodeWorkspace,
     StatefulDFACodeWorkspace,
@@ -170,12 +173,14 @@ from .domain import (
     run_poe_veto_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
+    run_simultaneous_split_local_unit_tests,
     run_skew_repair_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
     sheaf_fixture,
+    simultaneous_split_fixture,
     six_role_fixture,
     skew_repair_fixture,
     split_fixture,
@@ -8557,6 +8562,291 @@ def poe_veto_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Simultaneous Budget-Splitting & Priority-Queued Joint Guard Campaign (Test 65, Theorem 130)
+# ---------------------------------------------------------------------------
+
+
+def simultaneous_split_system_prompt(worker: str, arm: str) -> str:
+    mod_name = SIMULTANEOUS_SPLIT_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "simultaneous burst settlement pipeline (`pricing_sim.py` -> `tax_sim.py` -> "
+        "`settlement_sim.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`fractional_concurrent_budget_split_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_FRACTIONAL_TICK0_BUDGET_SPLIT`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`partial_queue_incidents_1_2_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseSimultaneousSplitMonitor.PHASE_2_PRICING_SIM_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`partial_queue_incidents_1_2_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseSimultaneousSplitMonitor.PHASE_2_TAX_SIM_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`partial_queue_incidents_1_2_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_priority_queue_joint_guard_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSimultaneousSplitMonitor.PHASE_3_PRICING_SIM_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_priority_queue_joint_guard_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSimultaneousSplitMonitor.PHASE_3_TAX_SIM_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_priority_queue_joint_guard_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseSimultaneousSplitMonitor.PHASE_3_SETTLEMENT_SIM_SOURCE
+        + "```\n"
+    )
+
+
+def simultaneous_split_merge_gate(
+    events: Events,
+    ws: SimultaneousSplitCodeWorkspace,
+    monitor: StreamingCodebaseSimultaneousSplitMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_simultaneous_split_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_sim", "tax_sim", "settlement_sim")
+    }
+    eval_res = monitor.evaluate_simultaneous_split_modules(
+        f"{arm}-{wave_label}",
+        pricing_sim_source=sources["pricing_sim"],
+        tax_sim_source=sources["tax_sim"],
+        settlement_sim_source=sources["settlement_sim"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "inc1_delta_1": eval_res["inc1_delta_1"],
+            "inc2_exec_tick": eval_res["inc2_exec_tick"],
+            "inc3_delta_3": eval_res["inc3_delta_3"],
+            "inc3_exec_tick": eval_res["inc3_exec_tick"],
+            "weighted_slacks": eval_res["weighted_slacks"],
+            "pareto_deficits": eval_res["pareto_deficits"],
+            "total_pareto_deficit": eval_res["total_pareto_deficit"],
+            "starved_incident_count": eval_res["starved_incident_count"],
+            "peak_concurrent_drift": eval_res["peak_concurrent_drift"],
+            "sim_surcharge_cents": eval_res["sim_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in SIMULTANEOUS_SPLIT_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_FRACTIONAL_TICK0_BUDGET_SPLIT",
+                "note": "Local unit test and horizon ceiling D_w(0) = 5 <= 6 pass under fractional concurrent budget split.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "PARTIAL_QUEUE_INCIDENTS_1_AND_2",
+                "pareto_deficits": eval_res["pareto_deficits"],
+                "starved_incident_count": eval_res["starved_incident_count"],
+                "sim_surcharge_cents": eval_res["sim_surcharge_cents"],
+                "note": "Restoring Incident 1 (delta_1 = 2) and queueing Incident 2 (tick 1) leaves Incident 3 starved at tick 0 (surcharge 6).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "inc1_delta_1": eval_res["inc1_delta_1"],
+                "inc2_exec_tick": eval_res["inc2_exec_tick"],
+                "inc3_delta_3": eval_res["inc3_delta_3"],
+                "inc3_exec_tick": eval_res["inc3_exec_tick"],
+                "pareto_deficits": eval_res["pareto_deficits"],
+                "starved_incident_count": eval_res["starved_incident_count"],
+                "sim_surcharge_cents": eval_res["sim_surcharge_cents"],
+                "action_required": "ENFORCE_PRIORITY_QUEUE_SLOTS_0_1_2_PARETO_FLOORS",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def simultaneous_split_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(SIMULTANEOUS_SPLIT_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = simultaneous_split_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = SimultaneousSplitCodeWorkspace(base_state)
+            monitor = StreamingCodebaseSimultaneousSplitMonitor(
+                scope_id=f"simultaneous-split-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = simultaneous_split_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": simultaneous_split_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{SIMULTANEOUS_SPLIT_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = simultaneous_split_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_inc1_delta_1": eval_res["inc1_delta_1"],
+                "final_inc2_exec_tick": eval_res["inc2_exec_tick"],
+                "final_inc3_delta_3": eval_res["inc3_delta_3"],
+                "final_inc3_exec_tick": eval_res["inc3_exec_tick"],
+                "final_weighted_slacks": eval_res["weighted_slacks"],
+                "final_pareto_deficits": eval_res["pareto_deficits"],
+                "final_total_pareto_deficit": eval_res["total_pareto_deficit"],
+                "final_starved_incident_count": eval_res["starved_incident_count"],
+                "final_peak_concurrent_drift": eval_res["peak_concurrent_drift"],
+                "final_sim_surcharge_cents": eval_res["sim_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.simultaneous_split_code_engineering_swarm.v1",
+        "topology": "simultaneous_split",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent simultaneous budget-splitting starvation & priority-queued joint guard "
+            "Python code-engineering swarm (`pricing_sim` -> `tax_sim` -> `settlement_sim`) comparing "
+            "fractional concurrent budget-splitting at tick 0 (A), partial priority-queueing of Incidents 1 & 2 "
+            "with Incident 3 starved (B), and full priority-queued deferred admission across slots [0,1), [1,2), [2,3) (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -8637,6 +8927,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = skew_repair_campaign(client, events, config)
         elif config.get("topology") == "poe_veto":
             summary = poe_veto_campaign(client, events, config)
+        elif config.get("topology") == "simultaneous_split":
+            summary = simultaneous_split_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -8697,6 +8989,7 @@ def main() -> None:
             "policy_ratchet",
             "skew_repair",
             "poe_veto",
+            "simultaneous_split",
         ],
         default="linear",
     )
@@ -8792,6 +9085,8 @@ def main() -> None:
         seeds = [12500, 12501, 12502]
     elif args.topology == "poe_veto":
         seeds = [12600, 12601, 12602]
+    elif args.topology == "simultaneous_split":
+        seeds = [12700, 12701, 12702]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -9180,6 +9475,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = poe_veto_campaign(client, events, config)
+    elif args.topology == "simultaneous_split":
+        config = {
+            "topology": "simultaneous_split",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = simultaneous_split_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

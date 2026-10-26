@@ -35722,13 +35722,666 @@ class StreamingCodebaseProductOfExpertsMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseSimultaneousSplitMonitor:
+    """Online simultaneous budget-splitting starvation & priority-queued joint guard codebase monitor (Theorem 130).
 
+    AuthorityEffect: None. Composes StreamingSimultaneousBudgetSplitMonitor,
+    StreamingJointMultiMonitorRepairGuard, StreamingCodebaseInterfaceMergeMonitor,
+    and StreamingFiberMonitor to audit a 3-module simultaneous burst settlement
+    codebase (`pricing_sim.py`, `tax_sim.py`, `settlement_sim.py`) over M = 3
+    non-preemptible incidents arriving at tick s_k = 0 with baseline policy
+    P_0 = [2, 3, 0], risk weights w = [2, 3, 4], individual lease ceiling
+    tau_lease = 4, horizon drift ceiling tau_horizon = 6, and minimum weighted
+    Pareto floors Delta_w^* = [4, 3, 4] (joint floor 11 > 6):
+      - Phase 1 (Fractional concurrent budget-splitting at tick 0
+        `inc1_delta_1 = 1, inc2_exec_tick = 0, inc3_delta_3 = 0, inc3_exec_tick = 0`):
+        `weighted_slacks = [2, 3, 0]`, `pareto_deficits = [2, 0, 4]`,
+        `peak_concurrent_drift = 5 <= 6`, `starved_incident_count = 2`,
+        `sim_surcharge_cents = 10`, `payout = 863 != 873` (`L_p1 = 1, Eg_p1 = 0, defect_p1 = -1`);
+      - Phase 2 (Partial repair — Incident 1 restored & Incident 2 priority-queued,
+        Incident 3 still starved `inc1_delta_1 = 2, inc2_exec_tick = 1, inc3_delta_3 = 0, inc3_exec_tick = 0`):
+        `weighted_slacks = [4, 3, 0]`, `pareto_deficits = [0, 0, 4]`,
+        `peak_concurrent_drift = 4 <= 6`, `starved_incident_count = 1`,
+        `sim_surcharge_cents = 6`, `payout = 867 != 873` (`L_p2 = 1, Eg_p2 = 0, defect_p2 = -1`);
+      - Phase 3 (Priority-queued deferred admission & full joint Pareto guard across
+        slots [0, 1), [1, 2), [2, 3) `inc1_delta_1 = 2, inc2_exec_tick = 1, inc3_delta_3 = 1, inc3_exec_tick = 2`):
+        `weighted_slacks = [4, 3, 4]`, `pareto_deficits = [0, 0, 0]`,
+        `peak_concurrent_drift = 4 <= 6`, `starved_incident_count = 0`,
+        `sim_surcharge_cents = 0`, `payout = 873`, `873 + 27 + 90 = 990`
+        (`L_p3 = 1, Eg_p3 = 1, defect_p3 = 0`).
+    """
 
+    PHASE_1_PRICING_SIM_SOURCE = (
+        "def quote_sim_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    inc1_delta_1 = 1\n"
+        "    inc1_slack = 2 * inc1_delta_1\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'inc1_delta_1': inc1_delta_1,\n"
+        "        'inc1_exec_tick': 0,\n"
+        "        'inc1_weighted_slack': inc1_slack,\n"
+        "        'inc1_pareto_deficit': max(0, 4 - inc1_slack),\n"
+        "    }\n"
+    )
 
+    PHASE_1_TAX_SIM_SOURCE = (
+        "def compute_sim_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    inc1_delta_1 = int(pricing_out.get('inc1_delta_1', 1))\n"
+        "    inc2_exec_tick = 0\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'inc1_delta_1': inc1_delta_1,\n"
+        "        'inc2_delta_2': 1,\n"
+        "        'inc2_exec_tick': inc2_exec_tick,\n"
+        "        'inc2_weighted_slack': 3,\n"
+        "        'inc2_pareto_deficit': 0,\n"
+        "    }\n"
+    )
 
+    PHASE_1_SETTLEMENT_SIM_SOURCE = (
+        "def settle_sim_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    inc1_d = max(0, 4 - 2 * int(pricing_out.get('inc1_delta_1', 1)))\n"
+        "    inc2_t = int(tax_out.get('inc2_exec_tick', 0))\n"
+        "    inc3_delta_3 = 0\n"
+        "    inc3_t = 0\n"
+        "    inc3_d = max(0, 4 - 4 * inc3_delta_3)\n"
+        "    starved = (1 if inc1_d > 0 else 0) + (1 if inc3_d > 0 else 0)\n"
+        "    surcharge = (inc1_d + inc3_d) + 2 * starved\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'sim_surcharge_cents': surcharge,\n"
+        "        'inc3_delta_3': inc3_delta_3,\n"
+        "        'inc3_exec_tick': inc3_t,\n"
+        "        'inc2_exec_tick': inc2_t,\n"
+        "        'starved_incident_count': starved,\n"
+        "    }\n"
+    )
 
+    PHASE_2_PRICING_SIM_SOURCE = (
+        "def quote_sim_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    inc1_delta_1 = 2\n"
+        "    inc1_slack = 2 * inc1_delta_1\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'inc1_delta_1': inc1_delta_1,\n"
+        "        'inc1_exec_tick': 0,\n"
+        "        'inc1_weighted_slack': inc1_slack,\n"
+        "        'inc1_pareto_deficit': max(0, 4 - inc1_slack),\n"
+        "    }\n"
+    )
 
+    PHASE_2_TAX_SIM_SOURCE = (
+        "def compute_sim_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    inc1_delta_1 = int(pricing_out.get('inc1_delta_1', 2))\n"
+        "    inc2_exec_tick = 1\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'inc1_delta_1': inc1_delta_1,\n"
+        "        'inc2_delta_2': 1,\n"
+        "        'inc2_exec_tick': inc2_exec_tick,\n"
+        "        'inc2_weighted_slack': 3,\n"
+        "        'inc2_pareto_deficit': 0,\n"
+        "    }\n"
+    )
 
+    PHASE_2_SETTLEMENT_SIM_SOURCE = PHASE_1_SETTLEMENT_SIM_SOURCE
 
+    PHASE_3_PRICING_SIM_SOURCE = PHASE_2_PRICING_SIM_SOURCE
 
+    PHASE_3_TAX_SIM_SOURCE = PHASE_2_TAX_SIM_SOURCE
+
+    PHASE_3_SETTLEMENT_SIM_SOURCE = (
+        "def settle_sim_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    inc1_delta_1 = int(pricing_out.get('inc1_delta_1', 2))\n"
+        "    inc2_t = int(tax_out.get('inc2_exec_tick', 1))\n"
+        "    inc3_delta_3 = 1\n"
+        "    inc3_t = 2\n"
+        "    if inc1_delta_1 != 2 or inc2_t != 1 or inc3_delta_3 != 1 or inc3_t != 2:\n"
+        "        raise ValueError('Simultaneous budget starvation or slot overlap detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'sim_surcharge_cents': 0,\n"
+        "        'inc3_delta_3': inc3_delta_3,\n"
+        "        'inc3_exec_tick': inc3_t,\n"
+        "        'inc2_exec_tick': inc2_t,\n"
+        "        'starved_incident_count': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-simultaneous-split-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.sim_split_monitor = StreamingSimultaneousBudgetSplitMonitor(
+            scope_id=f"{self.scope_id}:sim_split",
+        )
+        self.joint_guard = StreamingJointMultiMonitorRepairGuard(
+            scope_id=f"{self.scope_id}:joint_guard",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _build_incident_specs(
+        *,
+        inc1_delta_1: int,
+        inc1_exec_tick: int,
+        inc2_delta_2: int,
+        inc2_exec_tick: int,
+        inc3_delta_3: int,
+        inc3_exec_tick: int,
+    ) -> list[dict[str, Any]]:
+        s1 = 2 * inc1_delta_1
+        s2 = 3 * inc2_delta_2
+        s3 = 4 * inc3_delta_3
+        queued_ok = (inc1_exec_tick == 0) and (inc2_exec_tick == 1) and (inc3_exec_tick == 2)
+        return [
+            {
+                "incident_index": 1,
+                "incident_pair_id": "pricing_sim_incident_1",
+                "priority_rank": 1,
+                "arrival_tick": 0,
+                "execution_tick": inc1_exec_tick,
+                "completion_tick": inc1_exec_tick + 1,
+                "non_preemptible": True,
+                "authority_signature_valid": True,
+                "priority_queue_enforced": queued_ok,
+                "minimum_weighted_pareto_floor": 4,
+                "allocated_delta_vector": [inc1_delta_1, 0, 0],
+                "post_relaxation_monitor_a_passed": s1 >= 4,
+                "post_relaxation_monitor_b_passed": s1 >= 4,
+            },
+            {
+                "incident_index": 2,
+                "incident_pair_id": "tax_sim_incident_2",
+                "priority_rank": 2,
+                "arrival_tick": 0,
+                "execution_tick": inc2_exec_tick,
+                "completion_tick": inc2_exec_tick + 1,
+                "non_preemptible": True,
+                "authority_signature_valid": True,
+                "priority_queue_enforced": inc2_exec_tick >= 1,
+                "minimum_weighted_pareto_floor": 3,
+                "allocated_delta_vector": [0, inc2_delta_2, 0],
+                "post_relaxation_monitor_a_passed": s2 >= 3,
+                "post_relaxation_monitor_b_passed": s2 >= 3,
+            },
+            {
+                "incident_index": 3,
+                "incident_pair_id": "settlement_sim_incident_3",
+                "priority_rank": 3,
+                "arrival_tick": 0,
+                "execution_tick": inc3_exec_tick,
+                "completion_tick": inc3_exec_tick + 1,
+                "non_preemptible": True,
+                "authority_signature_valid": True,
+                "priority_queue_enforced": queued_ok,
+                "minimum_weighted_pareto_floor": 4,
+                "allocated_delta_vector": [0, 0, inc3_delta_3],
+                "post_relaxation_monitor_a_passed": s3 >= 4,
+                "post_relaxation_monitor_b_passed": s3 >= 4,
+            },
+        ]
+
+    def evaluate_simultaneous_split_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_sim_source: str,
+        tax_sim_source: str,
+        settlement_sim_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_sim", pricing_sim_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_sim", tax_sim_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_sim", settlement_sim_source
+        )
+
+        if "quote_sim_pricing" not in p_ns or not callable(p_ns["quote_sim_pricing"]):
+            raise ValidationError("pricing_sim must define callable quote_sim_pricing")
+        if "compute_sim_tax" not in t_ns or not callable(t_ns["compute_sim_tax"]):
+            raise ValidationError("tax_sim must define callable compute_sim_tax")
+        if "settle_sim_payout" not in s_ns or not callable(s_ns["settle_sim_payout"]):
+            raise ValidationError("settlement_sim must define callable settle_sim_payout")
+
+        pricing_out = p_ns["quote_sim_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_sim_pricing must return a dict")
+        tax_out = t_ns["compute_sim_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_sim_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_sim_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_sim_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        inc1_delta_1 = exact_int(pricing_out.get("inc1_delta_1", 1), "inc1_delta_1")
+        inc1_exec_tick = exact_int(pricing_out.get("inc1_exec_tick", 0), "inc1_exec_tick")
+        inc2_delta_2 = exact_int(tax_out.get("inc2_delta_2", 1), "inc2_delta_2")
+        inc2_exec_tick = exact_int(tax_out.get("inc2_exec_tick", 0), "inc2_exec_tick")
+        inc3_delta_3 = exact_int(settlement_out.get("inc3_delta_3", 0), "inc3_delta_3")
+        inc3_exec_tick = exact_int(settlement_out.get("inc3_exec_tick", 0), "inc3_exec_tick")
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        s1 = 2 * inc1_delta_1
+        s2 = 3 * inc2_delta_2
+        s3 = 4 * inc3_delta_3
+        weighted_slacks = [s1, s2, s3]
+        d1 = max(0, 4 - s1)
+        d2 = max(0, 3 - s2)
+        d3 = max(0, 4 - s3)
+        pareto_deficits = [d1, d2, d3]
+        total_pareto_deficit = d1 + d2 + d3
+        starved_cnt = sum(1 for d in pareto_deficits if d > 0)
+        surcharge = total_pareto_deficit + 2 * starved_cnt
+
+        inc_specs = self._build_incident_specs(
+            inc1_delta_1=inc1_delta_1,
+            inc1_exec_tick=max(0, inc1_exec_tick),
+            inc2_delta_2=inc2_delta_2,
+            inc2_exec_tick=max(0, inc2_exec_tick),
+            inc3_delta_3=inc3_delta_3,
+            inc3_exec_tick=max(0, inc3_exec_tick),
+        )
+        burst_audit = self.sim_split_monitor._audit_burst_admission(
+            incidents=inc_specs,
+            p0_vec=[Fraction(2), Fraction(3), Fraction(0)],
+            w_vec=[Fraction(2), Fraction(3), Fraction(4)],
+            tau_lease=Fraction(4),
+            tau_horizon=Fraction(6),
+            dim=3,
+            require_priority_queueing=(inc1_delta_1 == 2 and inc2_exec_tick == 1 and inc3_delta_3 == 1 and inc3_exec_tick == 2),
+        )
+        peak_concurrent_drift = int(burst_audit["peak_concurrent_weighted_l1_drift"])
+
+        local_p_ok = (
+            fee == 27
+            and net == 963
+            and inc1_delta_1 in (1, 2)
+            and inc1_exec_tick == 0
+            and 0 <= s1 <= 4
+        )
+        local_t_ok = (
+            tax == 90
+            and inc2_delta_2 == 1
+            and inc2_exec_tick in (0, 1)
+            and 0 <= s2 <= 4
+        )
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents")
+            reported_surcharge = exact_int(
+                settlement_out.get("sim_surcharge_cents", surcharge),
+                "sim_surcharge_cents",
+            )
+            local_s_ok = (
+                inc3_delta_3 in (0, 1)
+                and inc3_exec_tick in (0, 2)
+                and 0 <= s3 <= 4
+                and reported_surcharge == surcharge
+                and payout == net - tax - surcharge
+            )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = (
+            1
+            if (
+                local_p_ok
+                and local_t_ok
+                and local_s_ok
+                and peak_concurrent_drift <= 6
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and inc1_delta_1 == 2
+            and inc2_exec_tick == 1
+            and inc3_delta_3 == 1
+            and inc3_exec_tick == 2
+            and starved_cnt == 0
+            and total_pareto_deficit == 0
+            and peak_concurrent_drift <= 6
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "horizon_drift_within_ceiling": peak_concurrent_drift <= 6,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "inc1_delta_1": inc1_delta_1,
+                "inc2_exec_tick": inc2_exec_tick,
+                "inc3_delta_3": inc3_delta_3,
+                "inc3_exec_tick": inc3_exec_tick,
+                "starved_incident_count": starved_cnt,
+                "total_pareto_deficit": total_pareto_deficit,
+                "sim_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_SIMULTANEOUS_SPLIT_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_SIMULTANEOUS_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif starved_cnt >= 2:
+            status = "SIMULTANEOUS_FRACTIONAL_BUDGET_SPLIT_STARVATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "SIMULTANEOUS_PARTIAL_QUEUE_INCIDENT_3_STARVED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SIMULTANEOUS_PRIORITY_QUEUE_JOINT_GUARD_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_sim",
+                    "action": "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2",
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0,
+                },
+                "worker-1": {
+                    "module": "tax_sim",
+                    "action": "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1",
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1,
+                },
+                "worker-2": {
+                    "module": "settlement_sim",
+                    "action": "HOLD_INCIDENT_3_PRIORITY_QUEUE_TICK_2_PARETO_GUARD",
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_sim",
+                    "action": (
+                        "RESTORE_INCIDENT_1_PARETO_LEASE_DELTA_2"
+                        if (inc1_delta_1 != 2 or not local_p_ok)
+                        else "HOLD_INCIDENT_1_PARETO_LEASE_DELTA_2"
+                    ),
+                    "target_inc1_delta_1": 2,
+                    "target_inc1_exec_tick": 0,
+                },
+                "worker-1": {
+                    "module": "tax_sim",
+                    "action": (
+                        "DEFER_INCIDENT_2_TO_PRIORITY_QUEUE_TICK_1"
+                        if (inc2_exec_tick != 1 or not local_t_ok)
+                        else "HOLD_INCIDENT_2_PRIORITY_QUEUE_TICK_1"
+                    ),
+                    "target_inc2_exec_tick": 1,
+                    "target_inc2_delta_2": 1,
+                },
+                "worker-2": {
+                    "module": "settlement_sim",
+                    "action": (
+                        "DEFER_INCIDENT_3_TO_TICK_2_AND_RESTORE_PARETO_LEASE"
+                        if not conservation_ok
+                        else "HOLD_INCIDENT_3_PRIORITY_QUEUE_TICK_2_PARETO_GUARD"
+                    ),
+                    "target_inc3_delta_3": 1,
+                    "target_inc3_exec_tick": 2,
+                    "target_sim_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "inc1_delta_1": inc1_delta_1,
+                "inc1_exec_tick": inc1_exec_tick,
+                "inc2_delta_2": inc2_delta_2,
+                "inc2_exec_tick": inc2_exec_tick,
+                "inc3_delta_3": inc3_delta_3,
+                "inc3_exec_tick": inc3_exec_tick,
+                "weighted_slacks": weighted_slacks,
+                "pareto_deficits": pareto_deficits,
+                "total_pareto_deficit": total_pareto_deficit,
+                "starved_incident_count": starved_cnt,
+                "peak_concurrent_drift": peak_concurrent_drift,
+                "sim_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_simultaneous_split_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_simultaneous_split_modules(
+            f"{audit_id}_p1",
+            pricing_sim_source=self.PHASE_1_PRICING_SIM_SOURCE,
+            tax_sim_source=self.PHASE_1_TAX_SIM_SOURCE,
+            settlement_sim_source=self.PHASE_1_SETTLEMENT_SIM_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_simultaneous_split_modules(
+            f"{audit_id}_p2",
+            pricing_sim_source=self.PHASE_2_PRICING_SIM_SOURCE,
+            tax_sim_source=self.PHASE_2_TAX_SIM_SOURCE,
+            settlement_sim_source=self.PHASE_2_SETTLEMENT_SIM_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_simultaneous_split_modules(
+            f"{audit_id}_p3",
+            pricing_sim_source=self.PHASE_3_PRICING_SIM_SOURCE,
+            tax_sim_source=self.PHASE_3_TAX_SIM_SOURCE,
+            settlement_sim_source=self.PHASE_3_SETTLEMENT_SIM_SOURCE,
+            model_id=mid,
+        )
+
+        self.sim_split_monitor.record_simultaneous_burst(
+            burst_id=f"{audit_id}:burst",
+            model_id=mid,
+            prior_overlap_receipt_sha256=digest({"audit_id": audit_id, "phase": 1}),
+            baseline_policy_sha256=digest({"p0": [2, 3, 0], "w": [2, 3, 4]}),
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            individual_lease_budget=4,
+            horizon_drift_ceiling=6,
+            fractional_split_incidents=self._build_incident_specs(
+                inc1_delta_1=p1["inc1_delta_1"],
+                inc1_exec_tick=p1["inc1_exec_tick"],
+                inc2_delta_2=p1["inc2_delta_2"],
+                inc2_exec_tick=p1["inc2_exec_tick"],
+                inc3_delta_3=p1["inc3_delta_3"],
+                inc3_exec_tick=p1["inc3_exec_tick"],
+            ),
+            priority_queued_incidents=self._build_incident_specs(
+                inc1_delta_1=p3["inc1_delta_1"],
+                inc1_exec_tick=p3["inc1_exec_tick"],
+                inc2_delta_2=p3["inc2_delta_2"],
+                inc2_exec_tick=p3["inc2_exec_tick"],
+                inc3_delta_3=p3["inc3_delta_3"],
+                inc3_exec_tick=p3["inc3_exec_tick"],
+            ),
+        )
+
+        self.joint_guard.record_coupled_trajectory(
+            f"{audit_id}:joint_guard",
+            pair_name="simultaneous_burst_incidents_12_vs_incident_3",
+            monitor_a_name="incidents_1_and_2_priority_queue_monitor",
+            monitor_b_name="incident_3_pareto_floor_monitor",
+            model_id=mid,
+            rounds=[
+                {
+                    "feedback_mode": "phase_1_fractional_split",
+                    "local_a_pass": p1["local_green"] == 1,
+                    "global_a_pass": (p1["pareto_deficits"][0] == 0 and p1["pareto_deficits"][1] == 0 and p1["inc2_exec_tick"] == 1),
+                    "local_b_pass": p1["local_green"] == 1,
+                    "global_b_pass": (p1["pareto_deficits"][2] == 0 and p1["inc3_exec_tick"] == 2),
+                    "status_a": p1["status"],
+                    "status_b": p1["status"],
+                },
+                {
+                    "feedback_mode": "phase_2_partial_queue_whack_a_mole",
+                    "local_a_pass": p2["local_green"] == 1,
+                    "global_a_pass": (p2["pareto_deficits"][0] == 0 and p2["pareto_deficits"][1] == 0 and p2["inc2_exec_tick"] == 1),
+                    "local_b_pass": p2["local_green"] == 1,
+                    "global_b_pass": (p2["pareto_deficits"][2] == 0 and p2["inc3_exec_tick"] == 2),
+                    "status_a": "INCIDENTS_1_2_PARETO_RESTORED",
+                    "status_b": p2["status"],
+                },
+                {
+                    "feedback_mode": "phase_3_full_priority_queue_joint_guard",
+                    "local_a_pass": p3["local_green"] == 1,
+                    "global_a_pass": (p3["pareto_deficits"][0] == 0 and p3["pareto_deficits"][1] == 0 and p3["inc2_exec_tick"] == 1),
+                    "local_b_pass": p3["local_green"] == 1,
+                    "global_b_pass": (p3["pareto_deficits"][2] == 0 and p3["inc3_exec_tick"] == 2),
+                    "status_a": p3["status"],
+                    "status_b": p3["status"],
+                },
+            ],
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_weighted_slacks": p1["weighted_slacks"],
+                "phase_1_pareto_deficits": p1["pareto_deficits"],
+                "phase_1_total_pareto_deficit": p1["total_pareto_deficit"],
+                "phase_1_starved_incident_count": p1["starved_incident_count"],
+                "phase_1_peak_concurrent_drift": p1["peak_concurrent_drift"],
+                "phase_1_surcharge_cents": p1["sim_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_weighted_slacks": p2["weighted_slacks"],
+                "phase_2_pareto_deficits": p2["pareto_deficits"],
+                "phase_2_total_pareto_deficit": p2["total_pareto_deficit"],
+                "phase_2_starved_incident_count": p2["starved_incident_count"],
+                "phase_2_peak_concurrent_drift": p2["peak_concurrent_drift"],
+                "phase_2_surcharge_cents": p2["sim_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_weighted_slacks": p3["weighted_slacks"],
+                "phase_3_pareto_deficits": p3["pareto_deficits"],
+                "phase_3_total_pareto_deficit": p3["total_pareto_deficit"],
+                "phase_3_starved_incident_count": p3["starved_incident_count"],
+                "phase_3_peak_concurrent_drift": p3["peak_concurrent_drift"],
+                "phase_3_surcharge_cents": p3["sim_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase simultaneous split evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_simultaneous_split.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "simultaneous_budget_split_receipt": (
+                self.sim_split_monitor.emit_receipt()
+                if self.sim_split_monitor.bursts
+                else None
+            ),
+            "joint_multi_monitor_guard_receipt": (
+                self.joint_guard.get_receipt()
+                if self.joint_guard.trajectories
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
 
