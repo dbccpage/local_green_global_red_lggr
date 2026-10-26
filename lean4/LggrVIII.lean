@@ -5952,4 +5952,71 @@ theorem mermin_peres_codebase_parity_obstruction_and_noncontextual_audit :
   intro n_viol p_obs h1 h2
   omega
 
+/-- **Theorem 132 (Side-Information Channel Capacity & Ambiguity-Reduction Bit-Budget Codebase Audit).**
+    In a 3-module side-information capacity settlement codebase (`pricing_cap.py`,
+    `tax_cap.py`, `settlement_cap.py`) over a 4-state settlement regime fiber
+    `X_a = {x_0, x_1, x_2, x_3}` with `K = 4` distinct query values (`H = 2` bits),
+    encoder bit resolution `enc_b ∈ {0, 1, 2}` (`S_used = 2^enc_b`), and channel bit
+    budget `cap_b ∈ {1, 2}` (`S = 2^cap_b`), where the realized subfiber error floor
+    is `err_sub = K - S_used` and the capacity error floor is `err_cap = K - S`:
+    1. Whenever `err_sub ≥ 2` and `err_cap ≥ 2`, the side-information capacity
+       surcharge `surcharge = 2 * err_sub + 2 * err_cap` satisfies `surcharge ≥ 8`
+       and `873 - surcharge ≤ 865 < 873`.
+    2. For the 3-phase side-information capacity codebase audit:
+       - Phase 1 (Zero-bit constant encoder `enc_b = 0, S_used = 1` over sub-Nyquist
+         1-bit channel `cap_b = 1, S = 2`, conditional fiber ambiguity `2^(H - cap_b) = 2 > 1`):
+         `err_sub_p1 = 3`, `err_cap_p1 = 2`, `surcharge_p1 = 2 * 3 + 2 * 2 = 10`,
+         `payout_p1 = 873 - 10 = 863 ≠ 873` (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Encoder upgraded to 1-bit partition `enc_b = 1, S_used = 2` attaining
+         the sub-Nyquist channel ceiling `cap_b = 1, S = 2`, yet `S = 2 < K = 4` leaves
+         conditional fiber ambiguity `2^(H - cap_b) = 2 > 1`):
+         `err_sub_p2 = 2`, `err_cap_p2 = 2`, `surcharge_p2 = 2 * 2 + 2 * 2 = 8`,
+         `payout_p2 = 873 - 8 = 865 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full Nyquist side-information capacity provisioned `enc_b = 2, S_used = 4`
+         and `cap_b = 2, S = 4 = K`, conditional fiber ambiguity `2^(H - cap_b) = 1`):
+         `err_sub_p3 = 0`, `err_cap_p3 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`,
+         `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem side_info_capacity_codebase_ambiguity_and_bit_budget_audit :
+    (∀ err_sub err_cap : Int,
+      (2 ≤ err_sub) →
+      (2 ≤ err_cap) →
+      (2 * err_sub + 2 * err_cap ≥ 8 ∧
+       873 - (2 * err_sub + 2 * err_cap) ≤ 865)) ∧
+    (let k_distinct : Int := 4;
+     let s_used_p1 : Int := 1; let s_cap_p1 : Int := 2;
+     let s_used_p2 : Int := 2; let s_cap_p2 : Int := 2;
+     let s_used_p3 : Int := 4; let s_cap_p3 : Int := 4;
+     let err_sub_p1 : Int := k_distinct - s_used_p1;
+     let err_sub_p2 : Int := k_distinct - s_used_p2;
+     let err_sub_p3 : Int := k_distinct - s_used_p3;
+     let err_cap_p1 : Int := k_distinct - s_cap_p1;
+     let err_cap_p2 : Int := k_distinct - s_cap_p2;
+     let err_cap_p3 : Int := k_distinct - s_cap_p3;
+     let surcharge_p1 : Int := 2 * err_sub_p1 + 2 * err_cap_p1;
+     let surcharge_p2 : Int := 2 * err_sub_p2 + 2 * err_cap_p2;
+     let surcharge_p3 : Int := 2 * err_sub_p3 + 2 * err_cap_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (err_sub_p1 = 3) ∧ (err_cap_p1 = 2) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (err_sub_p1 = 0) ∧ (err_cap_p1 = 0) ∧ (surcharge_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (err_sub_p2 = 2) ∧ (err_cap_p2 = 2) ∧ (surcharge_p2 = 8) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (err_sub_p2 = 0) ∧ (err_cap_p2 = 0) ∧ (surcharge_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (err_sub_p3 = 0) ∧ (err_cap_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (err_sub_p1 = 3 ∧ err_sub_p2 = 2 ∧ err_sub_p3 = 0 ∧
+      err_cap_p1 = 2 ∧ err_cap_p2 = 2 ∧ err_cap_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 8 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 865 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro err_sub err_cap h1 h2
+  omega
+
 end LggrVIII

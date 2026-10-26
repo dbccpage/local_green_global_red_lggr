@@ -66,6 +66,7 @@ from lggr.streaming import (
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSideInfoCapacityMonitor,
     StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseSkewRepairMonitor,
@@ -6808,6 +6809,71 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_mp_source="def quote_mp_pricing(g):\n    return 123\n",
                 tax_mp_source=mon.PHASE_1_TAX_MP_SOURCE,
                 settlement_mp_source=mon.PHASE_1_SETTLEMENT_MP_SOURCE,
+            )
+
+    def test_side_info_capacity_codebase_ambiguity_and_bit_budget_audit(self) -> None:
+        """Verify Theorem 132: side-information channel capacity & ambiguity-reduction bit-budget codebase audit."""
+        mon = StreamingCodebaseSideInfoCapacityMonitor(
+            scope_id="unit-codebase-side-info-capacity-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-side-info-capacity-eval-01",
+        )
+        self.assertEqual(obs["phase_1_encoder_bits"], 0)
+        self.assertEqual(obs["phase_1_bit_budget_b"], 1)
+        self.assertEqual(obs["phase_1_channel_capacity_s"], 2)
+        self.assertEqual(obs["phase_1_used_symbols_count"], 1)
+        self.assertEqual(obs["phase_1_conditional_ambiguity"], 2)
+        self.assertEqual(obs["phase_1_realized_subfiber_error_floor"], 3)
+        self.assertEqual(obs["phase_1_capacity_error_floor_k_minus_s"], 2)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR")
+
+        self.assertEqual(obs["phase_2_encoder_bits"], 1)
+        self.assertEqual(obs["phase_2_bit_budget_b"], 1)
+        self.assertEqual(obs["phase_2_channel_capacity_s"], 2)
+        self.assertEqual(obs["phase_2_used_symbols_count"], 2)
+        self.assertEqual(obs["phase_2_conditional_ambiguity"], 2)
+        self.assertEqual(obs["phase_2_realized_subfiber_error_floor"], 2)
+        self.assertEqual(obs["phase_2_capacity_error_floor_k_minus_s"], 2)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 8)
+        self.assertEqual(obs["phase_2_payout_cents"], 865)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR")
+
+        self.assertEqual(obs["phase_3_encoder_bits"], 2)
+        self.assertEqual(obs["phase_3_bit_budget_b"], 2)
+        self.assertEqual(obs["phase_3_channel_capacity_s"], 4)
+        self.assertEqual(obs["phase_3_used_symbols_count"], 4)
+        self.assertEqual(obs["phase_3_conditional_ambiguity"], 1)
+        self.assertEqual(obs["phase_3_realized_subfiber_error_floor"], 0)
+        self.assertEqual(obs["phase_3_capacity_error_floor_k_minus_s"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["side_information_capacity_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_side_info_capacity_modules(
+                "bad-return",
+                pricing_cap_source="def quote_cap_pricing(g):\n    return 123\n",
+                tax_cap_source=mon.PHASE_1_TAX_CAP_SOURCE,
+                settlement_cap_source=mon.PHASE_1_SETTLEMENT_CAP_SOURCE,
             )
 
 

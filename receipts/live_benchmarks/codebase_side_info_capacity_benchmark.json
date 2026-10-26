@@ -1,0 +1,1978 @@
+{
+  "schema": "lggr.codebase_side_info_capacity_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_side_info_capacity_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 7,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_encoder_and_capacity_deficit_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_sub_nyquist_capacity_deficit_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_nyquist_capacity_coherence_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_side_info_capacity_codebase_coherence_rate": "0",
+  "reconciled_side_info_capacity_codebase_coherence_rate": "1",
+  "codebase_side_info_capacity_coherence_gain": "1",
+  "codebase_side_info_capacity_receipt": {
+    "schema": "lggr.online_codebase_side_info_capacity.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_side_info_capacity",
+    "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "side_information_capacity_receipt": {
+      "schema": "lggr.online_side_information_capacity.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_side_info_capacity:side_info_capacity",
+      "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "fiber_count": 15,
+      "all_pigeonhole_bounds_verified": true,
+      "capacity_deficit_fiber_ids": [
+        "openai/gpt-4o-mini_side_info_capacity_p1:openai/gpt-4o-mini:cap",
+        "openai/gpt-4o-mini_side_info_capacity_p2:openai/gpt-4o-mini:cap",
+        "google/gemini-2.5-flash-lite_side_info_capacity_p1:google/gemini-2.5-flash-lite:cap",
+        "google/gemini-2.5-flash-lite_side_info_capacity_p2:google/gemini-2.5-flash-lite:cap",
+        "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p1:meta-llama/llama-3.3-70b-instruct:cap",
+        "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p2:meta-llama/llama-3.3-70b-instruct:cap",
+        "deepseek/deepseek-chat_side_info_capacity_p1:deepseek/deepseek-chat:cap",
+        "deepseek/deepseek-chat_side_info_capacity_p2:deepseek/deepseek-chat:cap",
+        "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p1:mistralai/mistral-small-3.2-24b-instruct:cap",
+        "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p2:mistralai/mistral-small-3.2-24b-instruct:cap"
+      ],
+      "rejected_fiber_ids": [],
+      "fibers": [
+        {
+          "fiber_id": "openai/gpt-4o-mini_side_info_capacity_p1:openai/gpt-4o-mini:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "openai/gpt-4o-mini_side_info_capacity_p2:openai/gpt-4o-mini:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "openai/gpt-4o-mini_side_info_capacity_p3:openai/gpt-4o-mini:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "google/gemini-2.5-flash-lite_side_info_capacity_p1:google/gemini-2.5-flash-lite:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "google/gemini-2.5-flash-lite_side_info_capacity_p2:google/gemini-2.5-flash-lite:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "google/gemini-2.5-flash-lite_side_info_capacity_p3:google/gemini-2.5-flash-lite:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p1:meta-llama/llama-3.3-70b-instruct:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p2:meta-llama/llama-3.3-70b-instruct:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p3:meta-llama/llama-3.3-70b-instruct:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "deepseek/deepseek-chat_side_info_capacity_p1:deepseek/deepseek-chat:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "deepseek/deepseek-chat_side_info_capacity_p2:deepseek/deepseek-chat:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "deepseek/deepseek-chat_side_info_capacity_p3:deepseek/deepseek-chat:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p1:mistralai/mistral-small-3.2-24b-instruct:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 3,
+          "realized_sample_error_floor": 3,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p2:mistralai/mistral-small-3.2-24b-instruct:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        {
+          "fiber_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p3:mistralai/mistral-small-3.2-24b-instruct:cap",
+          "state_count": 4,
+          "distinct_query_values_k": 4,
+          "channel_capacity_s": 4,
+          "used_symbols_count": 4,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "regime_0",
+              "query_value": "tier_0",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_1",
+              "query_value": "tier_1",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_2",
+              "query_value": "tier_2",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "regime_3",
+              "query_value": "tier_3",
+              "side_symbol": 3,
+              "local_channel_evaluator": 1
+            }
+          ]
+        }
+      ],
+      "receipt_sha256": "c7ff4a88ec5800c11e2d09466d622da57455984e9e37f7bdb9632a1a67a60169"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini_side_info_capacity_p1_openai/gpt-4o-mini",
+          "report": {
+            "local_channel_in_range": true,
+            "local_green": 1
+          },
+          "query": "LGGR",
+          "metadata": {
+            "bit_budget_b": 1,
+            "cap_surcharge_cents": 10,
+            "capacity_error_floor_k_minus_s": 2,
+            "channel_capacity_s": 2,
+            "encoder_bits": 0,
+            "realized_subfiber_error_floor": 3
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini_side_info_capacity_p3_openai/gpt-4o-mini",
+          "report": {
+            "local_channel_in_range": true,
+            "local_green": 1
+          },
+          "query": "LGGG",
+          "metadata": {
+            "bit_budget_b": 2,
+            "cap_surcharge_cents": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "channel_capacity_s": 4,
+            "encoder_bits": 2,
+            "realized_subfiber_error_floor": 0
+          }
+        }
+      },
+      "input_sha256": "810d7cded33a30719168caacf49e533daa34586e32da63830d479aa7d0b4f870",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "dd5a56b00d45e60cc911c9dc4ea455d9f57073ba008e5ef6780cbde4c5f33140"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_side_info_capacity",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_encoder_bits": 0,
+        "phase_1_bit_budget_b": 1,
+        "phase_1_channel_capacity_s": 2,
+        "phase_1_used_symbols_count": 1,
+        "phase_1_conditional_ambiguity": 2,
+        "phase_1_realized_subfiber_error_floor": 3,
+        "phase_1_capacity_error_floor_k_minus_s": 2,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "phase_2_encoder_bits": 1,
+        "phase_2_bit_budget_b": 1,
+        "phase_2_channel_capacity_s": 2,
+        "phase_2_used_symbols_count": 2,
+        "phase_2_conditional_ambiguity": 2,
+        "phase_2_realized_subfiber_error_floor": 2,
+        "phase_2_capacity_error_floor_k_minus_s": 2,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "phase_3_encoder_bits": 2,
+        "phase_3_bit_budget_b": 2,
+        "phase_3_channel_capacity_s": 4,
+        "phase_3_used_symbols_count": 4,
+        "phase_3_conditional_ambiguity": 1,
+        "phase_3_realized_subfiber_error_floor": 0,
+        "phase_3_capacity_error_floor_k_minus_s": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_side_info_capacity",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_encoder_bits": 0,
+        "phase_1_bit_budget_b": 1,
+        "phase_1_channel_capacity_s": 2,
+        "phase_1_used_symbols_count": 1,
+        "phase_1_conditional_ambiguity": 2,
+        "phase_1_realized_subfiber_error_floor": 3,
+        "phase_1_capacity_error_floor_k_minus_s": 2,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "phase_2_encoder_bits": 1,
+        "phase_2_bit_budget_b": 1,
+        "phase_2_channel_capacity_s": 2,
+        "phase_2_used_symbols_count": 2,
+        "phase_2_conditional_ambiguity": 2,
+        "phase_2_realized_subfiber_error_floor": 2,
+        "phase_2_capacity_error_floor_k_minus_s": 2,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "phase_3_encoder_bits": 2,
+        "phase_3_bit_budget_b": 2,
+        "phase_3_channel_capacity_s": 4,
+        "phase_3_used_symbols_count": 4,
+        "phase_3_conditional_ambiguity": 1,
+        "phase_3_realized_subfiber_error_floor": 0,
+        "phase_3_capacity_error_floor_k_minus_s": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_encoder_bits": 0,
+        "phase_1_bit_budget_b": 1,
+        "phase_1_channel_capacity_s": 2,
+        "phase_1_used_symbols_count": 1,
+        "phase_1_conditional_ambiguity": 2,
+        "phase_1_realized_subfiber_error_floor": 3,
+        "phase_1_capacity_error_floor_k_minus_s": 2,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "phase_2_encoder_bits": 1,
+        "phase_2_bit_budget_b": 1,
+        "phase_2_channel_capacity_s": 2,
+        "phase_2_used_symbols_count": 2,
+        "phase_2_conditional_ambiguity": 2,
+        "phase_2_realized_subfiber_error_floor": 2,
+        "phase_2_capacity_error_floor_k_minus_s": 2,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "phase_3_encoder_bits": 2,
+        "phase_3_bit_budget_b": 2,
+        "phase_3_channel_capacity_s": 4,
+        "phase_3_used_symbols_count": 4,
+        "phase_3_conditional_ambiguity": 1,
+        "phase_3_realized_subfiber_error_floor": 0,
+        "phase_3_capacity_error_floor_k_minus_s": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_side_info_capacity",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_encoder_bits": 0,
+        "phase_1_bit_budget_b": 1,
+        "phase_1_channel_capacity_s": 2,
+        "phase_1_used_symbols_count": 1,
+        "phase_1_conditional_ambiguity": 2,
+        "phase_1_realized_subfiber_error_floor": 3,
+        "phase_1_capacity_error_floor_k_minus_s": 2,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "phase_2_encoder_bits": 1,
+        "phase_2_bit_budget_b": 1,
+        "phase_2_channel_capacity_s": 2,
+        "phase_2_used_symbols_count": 2,
+        "phase_2_conditional_ambiguity": 2,
+        "phase_2_realized_subfiber_error_floor": 2,
+        "phase_2_capacity_error_floor_k_minus_s": 2,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "phase_3_encoder_bits": 2,
+        "phase_3_bit_budget_b": 2,
+        "phase_3_channel_capacity_s": 4,
+        "phase_3_used_symbols_count": 4,
+        "phase_3_conditional_ambiguity": 1,
+        "phase_3_realized_subfiber_error_floor": 0,
+        "phase_3_capacity_error_floor_k_minus_s": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_encoder_bits": 0,
+        "phase_1_bit_budget_b": 1,
+        "phase_1_channel_capacity_s": 2,
+        "phase_1_used_symbols_count": 1,
+        "phase_1_conditional_ambiguity": 2,
+        "phase_1_realized_subfiber_error_floor": 3,
+        "phase_1_capacity_error_floor_k_minus_s": 2,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "phase_2_encoder_bits": 1,
+        "phase_2_bit_budget_b": 1,
+        "phase_2_channel_capacity_s": 2,
+        "phase_2_used_symbols_count": 2,
+        "phase_2_conditional_ambiguity": 2,
+        "phase_2_realized_subfiber_error_floor": 2,
+        "phase_2_capacity_error_floor_k_minus_s": 2,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "phase_3_encoder_bits": 2,
+        "phase_3_bit_budget_b": 2,
+        "phase_3_channel_capacity_s": 4,
+        "phase_3_used_symbols_count": 4,
+        "phase_3_conditional_ambiguity": 1,
+        "phase_3_realized_subfiber_error_floor": 0,
+        "phase_3_capacity_error_floor_k_minus_s": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_side_info_capacity_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "encoder_bits": 0,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 1,
+        "side_symbols": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_side_info_capacity_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "encoder_bits": 1,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "side_symbols": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_side_info_capacity_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "encoder_bits": 2,
+        "bit_budget_b": 2,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "side_symbols": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 1,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_side_info_capacity_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "encoder_bits": 0,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 1,
+        "side_symbols": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_side_info_capacity_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "encoder_bits": 1,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "side_symbols": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_side_info_capacity_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "encoder_bits": 2,
+        "bit_budget_b": 2,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "side_symbols": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 1,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "encoder_bits": 0,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 1,
+        "side_symbols": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "encoder_bits": 1,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "side_symbols": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "encoder_bits": 2,
+        "bit_budget_b": 2,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "side_symbols": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 1,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_side_info_capacity_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "encoder_bits": 0,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 1,
+        "side_symbols": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_side_info_capacity_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "encoder_bits": 1,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "side_symbols": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_side_info_capacity_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "encoder_bits": 2,
+        "bit_budget_b": 2,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "side_symbols": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 1,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "encoder_bits": 0,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 1,
+        "side_symbols": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 3,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "encoder_bits": 1,
+        "bit_budget_b": 1,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 2,
+        "used_symbols_count": 2,
+        "side_symbols": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 2,
+        "capacity_error_floor_k_minus_s": 2,
+        "realized_subfiber_error_floor": 2,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 8,
+        "merchant_payout_cents": 865,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "encoder_bits": 2,
+        "bit_budget_b": 2,
+        "fiber_entropy_bits_h": 2,
+        "distinct_query_values_k": 4,
+        "channel_capacity_s": 4,
+        "used_symbols_count": 4,
+        "side_symbols": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "conditional_ambiguity_2_pow_h_minus_b": 1,
+        "capacity_error_floor_k_minus_s": 0,
+        "realized_subfiber_error_floor": 0,
+        "pigeonhole_bound_verified": true,
+        "cap_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_cap",
+            "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+            "target_encoder_bits": 2
+          },
+          "worker-1": {
+            "module": "tax_cap",
+            "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+            "target_bit_budget_b": 2
+          },
+          "worker-2": {
+            "module": "settlement_cap",
+            "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+            "target_cap_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "9f12c4767057b94babb18408cd4c5bd2ad8984f7e8d37413094a882640f5b6c9"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_side_info_capacity",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_encoder_bits": 0,
+      "phase_1_bit_budget_b": 1,
+      "phase_1_channel_capacity_s": 2,
+      "phase_1_used_symbols_count": 1,
+      "phase_1_conditional_ambiguity": 2,
+      "phase_1_realized_subfiber_error_floor": 3,
+      "phase_1_capacity_error_floor_k_minus_s": 2,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+      "phase_2_encoder_bits": 1,
+      "phase_2_bit_budget_b": 1,
+      "phase_2_channel_capacity_s": 2,
+      "phase_2_used_symbols_count": 2,
+      "phase_2_conditional_ambiguity": 2,
+      "phase_2_realized_subfiber_error_floor": 2,
+      "phase_2_capacity_error_floor_k_minus_s": 2,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+      "phase_3_encoder_bits": 2,
+      "phase_3_bit_budget_b": 2,
+      "phase_3_channel_capacity_s": 4,
+      "phase_3_used_symbols_count": 4,
+      "phase_3_conditional_ambiguity": 1,
+      "phase_3_realized_subfiber_error_floor": 0,
+      "phase_3_capacity_error_floor_k_minus_s": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_side_info_capacity",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_encoder_bits": 0,
+      "phase_1_bit_budget_b": 1,
+      "phase_1_channel_capacity_s": 2,
+      "phase_1_used_symbols_count": 1,
+      "phase_1_conditional_ambiguity": 2,
+      "phase_1_realized_subfiber_error_floor": 3,
+      "phase_1_capacity_error_floor_k_minus_s": 2,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+      "phase_2_encoder_bits": 1,
+      "phase_2_bit_budget_b": 1,
+      "phase_2_channel_capacity_s": 2,
+      "phase_2_used_symbols_count": 2,
+      "phase_2_conditional_ambiguity": 2,
+      "phase_2_realized_subfiber_error_floor": 2,
+      "phase_2_capacity_error_floor_k_minus_s": 2,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+      "phase_3_encoder_bits": 2,
+      "phase_3_bit_budget_b": 2,
+      "phase_3_channel_capacity_s": 4,
+      "phase_3_used_symbols_count": 4,
+      "phase_3_conditional_ambiguity": 1,
+      "phase_3_realized_subfiber_error_floor": 0,
+      "phase_3_capacity_error_floor_k_minus_s": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_side_info_capacity",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_encoder_bits": 0,
+      "phase_1_bit_budget_b": 1,
+      "phase_1_channel_capacity_s": 2,
+      "phase_1_used_symbols_count": 1,
+      "phase_1_conditional_ambiguity": 2,
+      "phase_1_realized_subfiber_error_floor": 3,
+      "phase_1_capacity_error_floor_k_minus_s": 2,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+      "phase_2_encoder_bits": 1,
+      "phase_2_bit_budget_b": 1,
+      "phase_2_channel_capacity_s": 2,
+      "phase_2_used_symbols_count": 2,
+      "phase_2_conditional_ambiguity": 2,
+      "phase_2_realized_subfiber_error_floor": 2,
+      "phase_2_capacity_error_floor_k_minus_s": 2,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+      "phase_3_encoder_bits": 2,
+      "phase_3_bit_budget_b": 2,
+      "phase_3_channel_capacity_s": 4,
+      "phase_3_used_symbols_count": 4,
+      "phase_3_conditional_ambiguity": 1,
+      "phase_3_realized_subfiber_error_floor": 0,
+      "phase_3_capacity_error_floor_k_minus_s": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_side_info_capacity",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_encoder_bits": 0,
+      "phase_1_bit_budget_b": 1,
+      "phase_1_channel_capacity_s": 2,
+      "phase_1_used_symbols_count": 1,
+      "phase_1_conditional_ambiguity": 2,
+      "phase_1_realized_subfiber_error_floor": 3,
+      "phase_1_capacity_error_floor_k_minus_s": 2,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+      "phase_2_encoder_bits": 1,
+      "phase_2_bit_budget_b": 1,
+      "phase_2_channel_capacity_s": 2,
+      "phase_2_used_symbols_count": 2,
+      "phase_2_conditional_ambiguity": 2,
+      "phase_2_realized_subfiber_error_floor": 2,
+      "phase_2_capacity_error_floor_k_minus_s": 2,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+      "phase_3_encoder_bits": 2,
+      "phase_3_bit_budget_b": 2,
+      "phase_3_channel_capacity_s": 4,
+      "phase_3_used_symbols_count": 4,
+      "phase_3_conditional_ambiguity": 1,
+      "phase_3_realized_subfiber_error_floor": 0,
+      "phase_3_capacity_error_floor_k_minus_s": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\"phase_1_surcharge_cents\": 10, \"phase_1_payout_cents\": 863, \"phase_2_surcharge_cents\": 8, \"phase_2_payout_cents\": 865, \"phase_3_surcharge_cents\": 0, \"phase_3_payout_cents\": 873, \"global_coherent\": true}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_side_info_capacity",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_encoder_bits": 0,
+      "phase_1_bit_budget_b": 1,
+      "phase_1_channel_capacity_s": 2,
+      "phase_1_used_symbols_count": 1,
+      "phase_1_conditional_ambiguity": 2,
+      "phase_1_realized_subfiber_error_floor": 3,
+      "phase_1_capacity_error_floor_k_minus_s": 2,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+      "phase_2_encoder_bits": 1,
+      "phase_2_bit_budget_b": 1,
+      "phase_2_channel_capacity_s": 2,
+      "phase_2_used_symbols_count": 2,
+      "phase_2_conditional_ambiguity": 2,
+      "phase_2_realized_subfiber_error_floor": 2,
+      "phase_2_capacity_error_floor_k_minus_s": 2,
+      "phase_2_surcharge_cents": 8,
+      "phase_2_payout_cents": 865,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+      "phase_3_encoder_bits": 2,
+      "phase_3_bit_budget_b": 2,
+      "phase_3_channel_capacity_s": 4,
+      "phase_3_used_symbols_count": 4,
+      "phase_3_conditional_ambiguity": 1,
+      "phase_3_realized_subfiber_error_floor": 0,
+      "phase_3_capacity_error_floor_k_minus_s": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 8,
+        "phase_2_payout_cents": 865,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 8,\n  \"phase_2_payout_cents\": 865,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Side-information channel capacity and ambiguity-reduction bit-budget codebase benchmark across 5 model families (Theorem 132): Phase 1 separates zero-bit constant encoder and sub-Nyquist capacity deficit (`encoder_bits = 0, bit_budget_b = 1, S = 2 < K = 4, realized_subfiber_error_floor = 3, capacity_error_floor_k_minus_s = 2, surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates partial encoder upgrade under sub-Nyquist 1-bit channel ceiling (`encoder_bits = 1, bit_budget_b = 1, S_used = S = 2 < K = 4, realized_subfiber_error_floor = 2, capacity_error_floor_k_minus_s = 2, surcharge = 8, payout = 865 != 873, Delta_E = -1`); Phase 3 verifies full Nyquist side-information capacity provisioning (`encoder_bits = 2, bit_budget_b = 2, S_used = S = 4 = K, realized_subfiber_error_floor = 0, capacity_error_floor_k_minus_s = 0, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "185e86be59142cbf97229771efbc634ce2ea340e8f3a48fcd212bd47d97a0d8d"
+}

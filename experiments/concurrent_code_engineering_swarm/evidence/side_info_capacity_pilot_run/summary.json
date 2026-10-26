@@ -1,0 +1,2731 @@
+{
+  "schema": "lggr.side_info_capacity_code_engineering_swarm.v1",
+  "topology": "side_info_capacity",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 12900,
+      "kind": "repairable_side_info_capacity_and_encoder_bit_budget_deficit",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_encoder_bits": 0,
+          "final_bit_budget_b": 1,
+          "final_channel_capacity_s": 2,
+          "final_used_symbols_count": 1,
+          "final_conditional_ambiguity": 2,
+          "final_realized_subfiber_error_floor": 3,
+          "final_capacity_error_floor_k_minus_s": 2,
+          "final_cap_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+          "final_receipt_sha256": "d5701668a2f696920020eb086fd41178f3c2ac3a330b4e71a4c81d5ec263e1aa",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12900-arm-A",
+            "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12900-arm-A:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 3,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "A-wave-0:deterministic:cap",
+                "A-wave-1:deterministic:cap",
+                "A-wave-2:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "A-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "A-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "A-wave-2:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "3ceb8c5d459d5e69d33be0a5bdf042f487238c37eae60141c21c6fda7660521a"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "4bbfc71c9ddc3a60d1bd7e925559adc2c6dc1bbcce411cf6e61a7b55f09927fd",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "02bb1444aa70c6e8c753277b68f9ff28f895170d2a3ca45cef5afcebfa7abefa"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "d5701668a2f696920020eb086fd41178f3c2ac3a330b4e71a4c81d5ec263e1aa"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0130626752"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_encoder_bits": 1,
+          "final_bit_budget_b": 1,
+          "final_channel_capacity_s": 2,
+          "final_used_symbols_count": 2,
+          "final_conditional_ambiguity": 2,
+          "final_realized_subfiber_error_floor": 2,
+          "final_capacity_error_floor_k_minus_s": 2,
+          "final_cap_surcharge_cents": 8,
+          "final_merchant_payout_cents": 865,
+          "final_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+          "final_receipt_sha256": "184a3bb7523c3db6246759826a4642c10d31d31db84aff92e540de2281c15805",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12900-arm-B",
+            "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12900-arm-B:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 3,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "B-wave-0:deterministic:cap",
+                "B-wave-1:deterministic:cap",
+                "B-wave-2:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "B-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "B-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 2,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 2,
+                  "realized_sample_error_floor": 2,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "B-wave-2:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 2,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 2,
+                  "realized_sample_error_floor": 2,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "ce28c199b1e4037b235f7bc5c401d63cd5dcf1bb98ac1c97f6a9e84ffc175bff"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "8ffe494e7f4996b1f02e0894a19d97b9b286b617ab3cf545f3c1d1051172baf1",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "c74c6eb2e51b1f61c35f8faa216fcc0d47078a6c37010e702273ae62a90dbee2"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 1,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 2,
+                "side_symbols": [
+                  0,
+                  0,
+                  1,
+                  1
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 2,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "encoder_bits": 1,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 2,
+                "side_symbols": [
+                  0,
+                  0,
+                  1,
+                  1
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 2,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "184a3bb7523c3db6246759826a4642c10d31d31db84aff92e540de2281c15805"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0132392735"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_encoder_bits": 2,
+          "final_bit_budget_b": 2,
+          "final_channel_capacity_s": 4,
+          "final_used_symbols_count": 4,
+          "final_conditional_ambiguity": 1,
+          "final_realized_subfiber_error_floor": 0,
+          "final_capacity_error_floor_k_minus_s": 0,
+          "final_cap_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+          "final_receipt_sha256": "4cf8b1dcaf1044cc77d847a20ebe22866a0c26115fff59eedccdb579312a0d95",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12900-arm-C",
+            "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12900-arm-C:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 2,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "C-wave-0:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "C-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "C-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 4,
+                  "used_symbols_count": 4,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 0,
+                  "realized_subfiber_error_floor": 0,
+                  "realized_sample_error_floor": 0,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 2,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 3,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "d0ce842b05d58d57f9dfe0a5c5a78c7035f8e1705716d86a4d153495e223ec16"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "bit_budget_b": 1,
+                    "cap_surcharge_cents": 10,
+                    "capacity_error_floor_k_minus_s": 2,
+                    "channel_capacity_s": 2,
+                    "encoder_bits": 0,
+                    "realized_subfiber_error_floor": 3
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "bit_budget_b": 2,
+                    "cap_surcharge_cents": 0,
+                    "capacity_error_floor_k_minus_s": 0,
+                    "channel_capacity_s": 4,
+                    "encoder_bits": 2,
+                    "realized_subfiber_error_floor": 0
+                  }
+                }
+              },
+              "input_sha256": "85d58fca6b5fc5f133891f76948ec82d38ac4faf237f66295c58b5d18cd43572",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "7ca7f99d6e31be118c25ceb3768e77b68c115700261d2b37ef00dc1c6cb619a2"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 2,
+                "bit_budget_b": 2,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 4,
+                "used_symbols_count": 4,
+                "side_symbols": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 1,
+                "capacity_error_floor_k_minus_s": 0,
+                "realized_subfiber_error_floor": 0,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "4cf8b1dcaf1044cc77d847a20ebe22866a0c26115fff59eedccdb579312a0d95"
+          },
+          "escalations": {},
+          "api_attempts": 7,
+          "cost_usd": "0.0063854061"
+        }
+      ]
+    },
+    {
+      "seed": 12901,
+      "kind": "infeasible_hardware_locked_sub_nyquist_one_bit_side_channel",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_encoder_bits": 0,
+          "final_bit_budget_b": 1,
+          "final_channel_capacity_s": 2,
+          "final_used_symbols_count": 1,
+          "final_conditional_ambiguity": 2,
+          "final_realized_subfiber_error_floor": 3,
+          "final_capacity_error_floor_k_minus_s": 2,
+          "final_cap_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "6a80e5c2b549acb7bda219c3a03d9225f80e5d4176d22653a85f8a7aaecb3b69",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12901-arm-A",
+            "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12901-arm-A:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 2,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "A-wave-0:deterministic:cap",
+                "A-wave-1:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "A-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "A-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "099ae8e0e0d081d6162adc7eb78708fd25d79b561a8b67892a8523b03f43a444"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "66453de621539d8199647f262d23a0fd984bc3282faf79b2bc07acb2ef3d19f8",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "1fee2c214014410bf6193edb804467d49e6430828f48b71ad776b16c156342a1"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "6a80e5c2b549acb7bda219c3a03d9225f80e5d4176d22653a85f8a7aaecb3b69"
+          },
+          "escalations": {
+            "worker-0": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0067045972"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_encoder_bits": 0,
+          "final_bit_budget_b": 1,
+          "final_channel_capacity_s": 2,
+          "final_used_symbols_count": 1,
+          "final_conditional_ambiguity": 2,
+          "final_realized_subfiber_error_floor": 3,
+          "final_capacity_error_floor_k_minus_s": 2,
+          "final_cap_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "c7fabed1d783920aed8da58a57355c0807123ab7d816cf4ba5bfdd1260b9c0d9",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12901-arm-B",
+            "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12901-arm-B:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 2,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "B-wave-0:deterministic:cap",
+                "B-wave-1:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "B-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "B-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "5375e6c09a7d6973df4e0d322d5174838391a18a220d5b892781ce2ca4b724b8"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "b6435ca105f957af1fbff310901b2b8201d55e64fd6c0abfda474486d03484a5",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "5538543b33d3b0828261456eaff709b22b8b5f01ef4eac2d6ac47d1f15714b78"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "c7fabed1d783920aed8da58a57355c0807123ab7d816cf4ba5bfdd1260b9c0d9"
+          },
+          "escalations": {
+            "worker-0": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0066692030"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_encoder_bits": 0,
+          "final_bit_budget_b": 1,
+          "final_channel_capacity_s": 2,
+          "final_used_symbols_count": 1,
+          "final_conditional_ambiguity": 2,
+          "final_realized_subfiber_error_floor": 3,
+          "final_capacity_error_floor_k_minus_s": 2,
+          "final_cap_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "e24cda93eaed021182d7942d9aaab5eb71b89f2732f65208c91a12da42c975eb",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12901-arm-C",
+            "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12901-arm-C:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 2,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "C-wave-0:deterministic:cap",
+                "C-wave-1:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "C-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "C-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "0c81963b61c99f465e2b359466f8cd77423dd3be5caa1cb5ef177385731568ce"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "f33fecd0c6d5f090b5e64e32338b869dafb0e754b9ba1c7c7b2d652cf489cf17",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "a827c4a12ef1034aa3d20d418e3751d9afc0225fe4a598c8f4ea67cbdab02e73"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "e24cda93eaed021182d7942d9aaab5eb71b89f2732f65208c91a12da42c975eb"
+          },
+          "escalations": {
+            "worker-0": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy sub-Nyquist telemetry ROM lock prevents Nyquist provisioning: `tax_cap.py` is locked in read-only ROM with `bit_budget_b = 1` (channel_capacity_s = 2), but LGGR side-information capacity merge gate requires `bit_budget_b = 2` (channel_capacity_s = 4) for zero error floor and cap surcharge elimination. ROM lock must be released by architecture review to enable Nyquist bit budget provisioning.",
+            "worker-2": "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, `capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, `bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, `cap_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 8,
+          "cost_usd": "0.0113484207"
+        }
+      ]
+    },
+    {
+      "seed": 12902,
+      "kind": "repairable_side_info_capacity_and_encoder_bit_budget_deficit",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_encoder_bits": 0,
+          "final_bit_budget_b": 1,
+          "final_channel_capacity_s": 2,
+          "final_used_symbols_count": 1,
+          "final_conditional_ambiguity": 2,
+          "final_realized_subfiber_error_floor": 3,
+          "final_capacity_error_floor_k_minus_s": 2,
+          "final_cap_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+          "final_receipt_sha256": "253805f4ff3316e36716cdae2c709574989c8a34d60a5d8e9fc30c5d76fb2d6b",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12902-arm-A",
+            "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12902-arm-A:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 3,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "A-wave-0:deterministic:cap",
+                "A-wave-1:deterministic:cap",
+                "A-wave-2:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "A-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "A-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "A-wave-2:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "02bb3ac5b21e31733553db5dbf1a378c2ddacb6a680da937c3f73fca47a858a3"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "4bbfc71c9ddc3a60d1bd7e925559adc2c6dc1bbcce411cf6e61a7b55f09927fd",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "02bb1444aa70c6e8c753277b68f9ff28f895170d2a3ca45cef5afcebfa7abefa"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "253805f4ff3316e36716cdae2c709574989c8a34d60a5d8e9fc30c5d76fb2d6b"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0130199048"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_encoder_bits": 1,
+          "final_bit_budget_b": 1,
+          "final_channel_capacity_s": 2,
+          "final_used_symbols_count": 2,
+          "final_conditional_ambiguity": 2,
+          "final_realized_subfiber_error_floor": 2,
+          "final_capacity_error_floor_k_minus_s": 2,
+          "final_cap_surcharge_cents": 8,
+          "final_merchant_payout_cents": 865,
+          "final_status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+          "final_receipt_sha256": "2c534493c335c4a46bd4be571b0e6b752b9f93ecd57f582c8af732210bcfe59a",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12902-arm-B",
+            "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12902-arm-B:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 3,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "B-wave-0:deterministic:cap",
+                "B-wave-1:deterministic:cap",
+                "B-wave-2:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "B-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "B-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 2,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 2,
+                  "realized_sample_error_floor": 2,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "B-wave-2:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 2,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 2,
+                  "realized_sample_error_floor": 2,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "a1f2e0f32f42d3847775ece88320e0919f663c087ee28d2aaa4328727ddca151"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "8ffe494e7f4996b1f02e0894a19d97b9b286b617ab3cf545f3c1d1051172baf1",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "c74c6eb2e51b1f61c35f8faa216fcc0d47078a6c37010e702273ae62a90dbee2"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 1,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 2,
+                "side_symbols": [
+                  0,
+                  0,
+                  1,
+                  1
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 2,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "encoder_bits": 1,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 2,
+                "side_symbols": [
+                  0,
+                  0,
+                  1,
+                  1
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 2,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 8,
+                "merchant_payout_cents": 865,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "2c534493c335c4a46bd4be571b0e6b752b9f93ecd57f582c8af732210bcfe59a"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0132872735"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_encoder_bits": 2,
+          "final_bit_budget_b": 2,
+          "final_channel_capacity_s": 4,
+          "final_used_symbols_count": 4,
+          "final_conditional_ambiguity": 1,
+          "final_realized_subfiber_error_floor": 0,
+          "final_capacity_error_floor_k_minus_s": 0,
+          "final_cap_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+          "final_receipt_sha256": "99582db6f08e39ac9a7c8fc70b8fd3f33fe11893f5dc87ee388b4a9122a184d8",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": "side-info-capacity-seed-12902-arm-C",
+            "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "side_information_capacity_receipt": {
+              "schema": "lggr.online_side_information_capacity.v1",
+              "authority_effect": "None",
+              "scope_id": "side-info-capacity-seed-12902-arm-C:side_info_capacity",
+              "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "fiber_count": 2,
+              "all_pigeonhole_bounds_verified": true,
+              "capacity_deficit_fiber_ids": [
+                "C-wave-0:deterministic:cap"
+              ],
+              "rejected_fiber_ids": [],
+              "fibers": [
+                {
+                  "fiber_id": "C-wave-0:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 2,
+                  "used_symbols_count": 1,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 2,
+                  "realized_subfiber_error_floor": 3,
+                  "realized_sample_error_floor": 3,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                },
+                {
+                  "fiber_id": "C-wave-1:deterministic:cap",
+                  "state_count": 4,
+                  "distinct_query_values_k": 4,
+                  "channel_capacity_s": 4,
+                  "used_symbols_count": 4,
+                  "error_budget": 0,
+                  "capacity_error_floor_k_minus_s": 0,
+                  "realized_subfiber_error_floor": 0,
+                  "realized_sample_error_floor": 0,
+                  "pigeonhole_bound_verified": true,
+                  "local_product_aggregator": 1,
+                  "global_decodability_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+                  "states": [
+                    {
+                      "state_id": "regime_0",
+                      "query_value": "tier_0",
+                      "side_symbol": 0,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_1",
+                      "query_value": "tier_1",
+                      "side_symbol": 1,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_2",
+                      "query_value": "tier_2",
+                      "side_symbol": 2,
+                      "local_channel_evaluator": 1
+                    },
+                    {
+                      "state_id": "regime_3",
+                      "query_value": "tier_3",
+                      "side_symbol": 3,
+                      "local_channel_evaluator": 1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "c03f3d92d4824f22af394e924a0ced7728c138d6d6020395c0c88d54318f79bc"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "bit_budget_b": 1,
+                    "cap_surcharge_cents": 10,
+                    "capacity_error_floor_k_minus_s": 2,
+                    "channel_capacity_s": 2,
+                    "encoder_bits": 0,
+                    "realized_subfiber_error_floor": 3
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_channel_in_range": true,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "bit_budget_b": 2,
+                    "cap_surcharge_cents": 0,
+                    "capacity_error_floor_k_minus_s": 0,
+                    "channel_capacity_s": 4,
+                    "encoder_bits": 2,
+                    "realized_subfiber_error_floor": 0
+                  }
+                }
+              },
+              "input_sha256": "85d58fca6b5fc5f133891f76948ec82d38ac4faf237f66295c58b5d18cd43572",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "7ca7f99d6e31be118c25ceb3768e77b68c115700261d2b37ef00dc1c6cb619a2"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "encoder_bits": 0,
+                "bit_budget_b": 1,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 2,
+                "used_symbols_count": 1,
+                "side_symbols": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 2,
+                "capacity_error_floor_k_minus_s": 2,
+                "realized_subfiber_error_floor": 3,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "ENFORCE_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "encoder_bits": 2,
+                "bit_budget_b": 2,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": 4,
+                "channel_capacity_s": 4,
+                "used_symbols_count": 4,
+                "side_symbols": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "conditional_ambiguity_2_pow_h_minus_b": 1,
+                "capacity_error_floor_k_minus_s": 0,
+                "realized_subfiber_error_floor": 0,
+                "pigeonhole_bound_verified": true,
+                "cap_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+                    "target_encoder_bits": 2
+                  },
+                  "worker-1": {
+                    "module": "tax_cap",
+                    "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+                    "target_bit_budget_b": 2
+                  },
+                  "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "99582db6f08e39ac9a7c8fc70b8fd3f33fe11893f5dc87ee388b4a9122a184d8"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0056944779"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 103,
+  "charged_or_reserved_usd": "0.0894112319",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 35,
+  "scope": "Concurrent 3-agent side-information channel capacity & ambiguity-reduction bit-budget Python code-engineering swarm (`pricing_cap` -> `tax_cap` -> `settlement_cap`) comparing local channel range verification with encoder_bits = 0, bit_budget_b = 1 (A), partial encoder upgrade encoder_bits = 1 under sub-Nyquist 1-bit channel capacity S = 2 < K = 4 (B), and full Nyquist side-information capacity provisioning encoder_bits = 2, bit_budget_b = 2, S = 4 = K (C) with full cryptographic receipts."
+}

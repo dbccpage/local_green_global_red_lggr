@@ -67,6 +67,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_MIG_P1_P2_PY,
     INITIAL_PRICING_MP_P1_PY,
     INITIAL_PRICING_MP_P2_P3_PY,
+    INITIAL_PRICING_CAP_P1_PY,
+    INITIAL_PRICING_CAP_P2_PY,
+    INITIAL_PRICING_CAP_P3_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_POE_P1_PY,
@@ -96,6 +99,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_MIG_P1_PY,
     INITIAL_SETTLEMENT_MP_P1_P2_PY,
     INITIAL_SETTLEMENT_MP_P3_PY,
+    INITIAL_SETTLEMENT_CAP_P1_P2_PY,
+    INITIAL_SETTLEMENT_CAP_P3_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_POE_P1_PY,
@@ -125,6 +130,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_MIG_MIGRATION_PY,
     INITIAL_TAX_MP_P1_P2_PY,
     INITIAL_TAX_MP_P3_PY,
+    INITIAL_TAX_CAP_P1_P2_PY,
+    INITIAL_TAX_CAP_P3_PY,
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
@@ -229,6 +236,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
+    SideInfoCapacityCodeWorkspace,
     SimultaneousSplitCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     SkewRepairCodeWorkspace,
@@ -293,6 +301,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_schema_synthesis_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
     run_sheaf_local_unit_tests,
+    run_side_info_capacity_local_unit_tests,
     run_simultaneous_split_local_unit_tests,
     run_six_role_local_unit_tests,
     run_skew_repair_local_unit_tests,
@@ -304,6 +313,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
     sheaf_fixture,
+    side_info_capacity_fixture,
     simultaneous_split_fixture,
     six_role_fixture,
     skew_repair_fixture,
@@ -346,6 +356,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     schema_synthesis_campaign,
     shared_chord_diamond_campaign,
     sheaf_campaign,
+    side_info_capacity_campaign,
     simultaneous_split_campaign,
     six_role_campaign,
     skew_repair_campaign,
@@ -8130,6 +8141,261 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12800_arms["B"]["final_mp_surcharge_cents"], 6)
             self.assertEqual(seed_12800_arms["C"]["final_mp_surcharge_cents"], 0)
             self.assertEqual(seed_12800_arms["C"]["status"], "completed")
+
+    def test_side_info_capacity_local_unit_tests_and_workspace_contract(self) -> None:
+        """Verify local unit tests and workspace tool contract for `--topology side_info_capacity`."""
+        self.assertTrue(
+            run_side_info_capacity_local_unit_tests("pricing_cap", INITIAL_PRICING_CAP_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_side_info_capacity_local_unit_tests("pricing_cap", INITIAL_PRICING_CAP_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_side_info_capacity_local_unit_tests("pricing_cap", INITIAL_PRICING_CAP_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_side_info_capacity_local_unit_tests("tax_cap", INITIAL_TAX_CAP_P1_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_side_info_capacity_local_unit_tests("tax_cap", INITIAL_TAX_CAP_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_side_info_capacity_local_unit_tests("settlement_cap", INITIAL_SETTLEMENT_CAP_P1_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_side_info_capacity_local_unit_tests("settlement_cap", INITIAL_SETTLEMENT_CAP_P3_PY)["passed"]
+        )
+
+        ws = SideInfoCapacityCodeWorkspace(side_info_capacity_fixture(12900))
+        insp = ws.tool("worker-0", "inspect_workspace", {})
+        self.assertEqual(insp["owned_module"], "pricing_cap.py")
+        self.assertFalse(insp["locked"])
+        self.assertTrue(insp["local_unit_test"]["passed"])
+
+        bad_esc = ws.tool("worker-0", "escalate", {"reason": "premature escalation"})
+        self.assertFalse(bad_esc["accepted"])
+
+        patch_res = ws.tool(
+            "worker-0",
+            "submit_module_patch",
+            {"source_code": INITIAL_PRICING_CAP_P3_PY},
+        )
+        self.assertTrue(patch_res["accepted"])
+
+        ws_locked = SideInfoCapacityCodeWorkspace(side_info_capacity_fixture(12901))
+        locked_patch = ws_locked.tool(
+            "worker-1",
+            "submit_module_patch",
+            {"source_code": INITIAL_TAX_CAP_P3_PY},
+        )
+        self.assertFalse(locked_patch["accepted"])
+        esc_ok = ws_locked.tool(
+            "worker-1",
+            "escalate",
+            {"reason": "ROM lock on sub-Nyquist 1-bit side-information channel bit_budget_b = 1."},
+        )
+        self.assertTrue(esc_ok["escalated"])
+
+    def test_concurrent_side_info_capacity_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-agent concurrent `--topology side_info_capacity` campaign and tamper-evident replay."""
+
+        def stub_side_info_capacity_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w_id in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w_id}`" in sys_prompt:
+                    worker = w_id
+                    break
+            model = payload["model"]
+
+            has_tool_result = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_result:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                last_tool = [m for m in messages if m.get("role") == "tool"][-1]
+                tool_data = json.loads(last_tool["content"])
+                if tool_data.get("accepted") or tool_data.get("escalated"):
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                if tool_data.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-esc-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Sub-Nyquist 1-bit channel bit_budget_b = 1 locked in ROM."}
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-hold-a-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    if worker == "worker-0":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_PRICING_CAP_P2_PY}),
+                            },
+                        }
+                    else:
+                        return {
+                            "response": {
+                                "id": f"stub-hold-b-{worker}",
+                                "model": model,
+                                "usage": {
+                                    "prompt_tokens": 100,
+                                    "completion_tokens": 20,
+                                    "cost": "0.000100",
+                                },
+                                "choices": [
+                                    {
+                                        "index": 0,
+                                        "finish_reason": "stop",
+                                        "message": {"role": "assistant", "content": "Done."},
+                                    }
+                                ],
+                            },
+                            "started_ns": 10,
+                            "finished_ns": 20,
+                        }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_CAP_P3_PY,
+                        "worker-1": INITIAL_TAX_CAP_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_CAP_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "side_info_capacity",
+                "seeds": [12900, 12901],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_side_info_capacity_transport)
+            summary = side_info_capacity_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.side_info_capacity_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["cap_surcharge_cents"] = int(gate_rec["cap_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_side_info_capacity_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live side_info_capacity pilot evidence offline if present."""
+        cap_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "side_info_capacity_pilot_run"
+            / "events.jsonl"
+        )
+        cap_summary = cap_events.with_name("summary.json")
+        if cap_events.exists() and cap_summary.exists():
+            replayed = replay(cap_events)
+            self.assertEqual(replayed["schema"], "lggr.side_info_capacity_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_12900_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12900_arms["A"]["final_cap_surcharge_cents"], 10)
+            self.assertEqual(seed_12900_arms["B"]["final_cap_surcharge_cents"], 8)
+            self.assertEqual(seed_12900_arms["C"]["final_cap_surcharge_cents"], 0)
+            self.assertEqual(seed_12900_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

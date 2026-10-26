@@ -36912,3 +36912,541 @@ class StreamingCodebaseMerminPeresMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseSideInfoCapacityMonitor:
+    """Online 3-module codebase side-information channel capacity & ambiguity-reduction bit-budget monitor (Theorem 132).
+
+    AuthorityEffect: None. Composes StreamingSideInformationCapacityMonitor,
+    StreamingCodebaseInterfaceMergeMonitor, and StreamingFiberMonitor to audit a
+    3-module side-information capacity settlement codebase (`pricing_cap.py`,
+    `tax_cap.py`, `settlement_cap.py`) over a 4-state settlement regime fiber
+    X_a = {x_0, x_1, x_2, x_3} with K = 4 distinct query values (H = 2 bits),
+    encoder bit resolution `encoder_bits in {0, 1, 2}` (`side_symbols = [(i * encoder_bits) // 2 for i in range(4)]`,
+    S_used = 2^encoder_bits), and channel bit budget `bit_budget_b in {1, 2}`
+    (alphabet capacity S = 2^bit_budget_b):
+      - Phase 1 (Zero-bit constant encoder `encoder_bits = 0, S_used = 1` over sub-Nyquist
+        1-bit channel `bit_budget_b = 1, S = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`):
+        `realized_subfiber_error_floor = 3`, `capacity_error_floor_k_minus_s = 2`,
+        `cap_surcharge_cents = 2 * 3 + 2 * 2 = 10`, `payout = 863 != 873`
+        (`L_p1 = 1, Eg_p1 = 0, defect_p1 = -1`);
+      - Phase 2 (Partial repair — encoder upgraded to 1-bit partition `encoder_bits = 1, S_used = 2`
+        attaining the sub-Nyquist 1-bit channel ceiling `bit_budget_b = 1, S = 2`,
+        yet `S = 2 < K = 4` leaves conditional fiber ambiguity `2^(H - b) = 2 > 1`):
+        `realized_subfiber_error_floor = 2`, `capacity_error_floor_k_minus_s = 2`,
+        `cap_surcharge_cents = 2 * 2 + 2 * 2 = 8`, `payout = 865 != 873`
+        (`L_p2 = 1, Eg_p2 = 0, defect_p2 = -1`);
+      - Phase 3 (Full Nyquist side-information capacity provisioned `encoder_bits = 2, S_used = 4`
+        and `bit_budget_b = 2, S = 4 = K`, conditional fiber ambiguity `2^(H - b) = 1`):
+        `realized_subfiber_error_floor = 0`, `capacity_error_floor_k_minus_s = 0`,
+        `cap_surcharge_cents = 0`, `payout = 873`, `873 + 27 + 90 = 990`
+        (`L_p3 = 1, Eg_p3 = 1, defect_p3 = 0`).
+    """
+
+    PHASE_1_PRICING_CAP_SOURCE = (
+        "def quote_cap_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    encoder_bits = 0\n"
+        "    side_symbols = [(i * encoder_bits) // 2 for i in range(4)]\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'encoder_bits': encoder_bits,\n"
+        "        'side_symbols': side_symbols,\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_CAP_SOURCE = (
+        "def compute_cap_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    encoder_bits = int(pricing_out.get('encoder_bits', 0))\n"
+        "    bit_budget_b = 1\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'encoder_bits': encoder_bits,\n"
+        "        'bit_budget_b': bit_budget_b,\n"
+        "        'channel_capacity_s': 1 << bit_budget_b,\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_CAP_SOURCE = (
+        "def settle_cap_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    enc_b = int(pricing_out.get('encoder_bits', 0))\n"
+        "    cap_b = int(tax_out.get('bit_budget_b', 1))\n"
+        "    err_sub = 4 - (1 << enc_b)\n"
+        "    err_cap = 4 - (1 << cap_b)\n"
+        "    surcharge = 2 * err_sub + 2 * err_cap\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'cap_surcharge_cents': surcharge,\n"
+        "        'realized_subfiber_error_floor': err_sub,\n"
+        "        'capacity_error_floor_k_minus_s': err_cap,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_CAP_SOURCE = (
+        "def quote_cap_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    encoder_bits = 1\n"
+        "    side_symbols = [(i * encoder_bits) // 2 for i in range(4)]\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'encoder_bits': encoder_bits,\n"
+        "        'side_symbols': side_symbols,\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_CAP_SOURCE = PHASE_1_TAX_CAP_SOURCE
+
+    PHASE_2_SETTLEMENT_CAP_SOURCE = PHASE_1_SETTLEMENT_CAP_SOURCE
+
+    PHASE_3_PRICING_CAP_SOURCE = (
+        "def quote_cap_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    encoder_bits = 2\n"
+        "    side_symbols = [(i * encoder_bits) // 2 for i in range(4)]\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'encoder_bits': encoder_bits,\n"
+        "        'side_symbols': side_symbols,\n"
+        "    }\n"
+    )
+
+    PHASE_3_TAX_CAP_SOURCE = (
+        "def compute_cap_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    encoder_bits = int(pricing_out.get('encoder_bits', 2))\n"
+        "    bit_budget_b = 2\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'encoder_bits': encoder_bits,\n"
+        "        'bit_budget_b': bit_budget_b,\n"
+        "        'channel_capacity_s': 1 << bit_budget_b,\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_CAP_SOURCE = (
+        "def settle_cap_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    enc_b = int(pricing_out.get('encoder_bits', 2))\n"
+        "    cap_b = int(tax_out.get('bit_budget_b', 2))\n"
+        "    if enc_b != 2 or cap_b != 2:\n"
+        "        raise ValueError('Side-information capacity or encoder bit-budget deficit detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'cap_surcharge_cents': 0,\n"
+        "        'realized_subfiber_error_floor': 0,\n"
+        "        'capacity_error_floor_k_minus_s': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-side-info-capacity-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.cap_monitor = StreamingSideInformationCapacityMonitor(
+            scope_id=f"{self.scope_id}:side_info_capacity"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _validate_encoder_bits(val: int, name: str) -> int:
+        v = exact_int(val, name)
+        if v not in (0, 1, 2):
+            raise ValidationError(f"{name} must be in {{0, 1, 2}}, got {v}")
+        return v
+
+    @staticmethod
+    def _validate_bit_budget(val: int, name: str) -> int:
+        v = exact_int(val, name)
+        if v not in (1, 2):
+            raise ValidationError(f"{name} must be in {{1, 2}}, got {v}")
+        return v
+
+    def evaluate_side_info_capacity_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_cap_source: str,
+        tax_cap_source: str,
+        settlement_cap_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_cap", pricing_cap_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_cap", tax_cap_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_cap", settlement_cap_source
+        )
+
+        if "quote_cap_pricing" not in p_ns or not callable(p_ns["quote_cap_pricing"]):
+            raise ValidationError("pricing_cap must define callable quote_cap_pricing")
+        if "compute_cap_tax" not in t_ns or not callable(t_ns["compute_cap_tax"]):
+            raise ValidationError("tax_cap must define callable compute_cap_tax")
+        if "settle_cap_payout" not in s_ns or not callable(s_ns["settle_cap_payout"]):
+            raise ValidationError("settlement_cap must define callable settle_cap_payout")
+
+        pricing_out = p_ns["quote_cap_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_cap_pricing must return a dict")
+        tax_out = t_ns["compute_cap_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_cap_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_cap_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_cap_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        encoder_bits = self._validate_encoder_bits(
+            pricing_out.get("encoder_bits", 0), "encoder_bits"
+        )
+        bit_budget_b = self._validate_bit_budget(
+            tax_out.get("bit_budget_b", 1), "bit_budget_b"
+        )
+        effective_enc_b = min(encoder_bits, bit_budget_b)
+        side_symbols = [(i * effective_enc_b) // 2 for i in range(4)]
+        channel_capacity_s = 1 << bit_budget_b
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        fiber_states = [
+            {
+                "state_id": f"regime_{i}",
+                "query_value": f"tier_{i}",
+                "side_symbol": side_symbols[i],
+            }
+            for i in range(4)
+        ]
+
+        cap_rec = self.cap_monitor.record_fiber_channel(
+            f"{eval_id}:{mod_id}:cap",
+            fiber_states,
+            channel_capacity_s=channel_capacity_s,
+            error_budget=0,
+        )
+
+        err_sub = exact_int(
+            cap_rec["realized_subfiber_error_floor"],
+            "realized_subfiber_error_floor",
+        )
+        err_cap = exact_int(
+            cap_rec["capacity_error_floor_k_minus_s"],
+            "capacity_error_floor_k_minus_s",
+        )
+        conditional_ambiguity = 1 << (2 - bit_budget_b)
+        surcharge = 2 * err_sub + 2 * err_cap
+
+        expected_symbols = [(i * encoder_bits) // 2 for i in range(4)]
+        local_p_ok = (
+            fee == 27
+            and net == 963
+            and encoder_bits in (0, 1, 2)
+            and pricing_out.get("side_symbols") == expected_symbols
+        )
+        local_t_ok = (
+            tax == 90
+            and bit_budget_b in (1, 2)
+            and tax_out.get("channel_capacity_s") == channel_capacity_s
+        )
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(
+                settlement_out.get("merchant_payout_cents", 0),
+                "merchant_payout_cents",
+            )
+            reported_surcharge = exact_int(
+                settlement_out.get("cap_surcharge_cents", surcharge),
+                "cap_surcharge_cents",
+            )
+            local_s_ok = (
+                reported_surcharge == surcharge
+                and payout == net - tax - surcharge
+            )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = (
+            1
+            if (
+                local_p_ok
+                and local_t_ok
+                and local_s_ok
+                and cap_rec["local_product_aggregator"] == 1
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and encoder_bits == 2
+            and bit_budget_b == 2
+            and err_sub == 0
+            and err_cap == 0
+            and conditional_ambiguity == 1
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "local_channel_in_range": cap_rec["local_product_aggregator"] == 1,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "encoder_bits": encoder_bits,
+                "bit_budget_b": bit_budget_b,
+                "channel_capacity_s": channel_capacity_s,
+                "realized_subfiber_error_floor": err_sub,
+                "capacity_error_floor_k_minus_s": err_cap,
+                "cap_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_SIDE_INFO_CAPACITY_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif err_sub > err_cap and err_cap > 0:
+            status = "SIDE_INFO_ENCODER_AND_CAPACITY_DEFICIT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif err_cap > 0:
+            status = "SUB_NYQUIST_CAPACITY_DEFICIT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "SIDE_INFO_ENCODER_COLLISION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_cap",
+                    "action": "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO",
+                    "target_encoder_bits": 2,
+                },
+                "worker-1": {
+                    "module": "tax_cap",
+                    "action": "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO",
+                    "target_bit_budget_b": 2,
+                },
+                "worker-2": {
+                    "module": "settlement_cap",
+                    "action": "HOLD_SIDE_INFO_CAPACITY_GUARD",
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_cap",
+                    "action": (
+                        "UPGRADE_SIDE_SYMBOL_ENCODER_BITS_TO_TWO"
+                        if (encoder_bits != 2 or not local_p_ok)
+                        else "HOLD_FULL_NYQUIST_ENCODER_BITS_TWO"
+                    ),
+                    "target_encoder_bits": 2,
+                },
+                "worker-1": {
+                    "module": "tax_cap",
+                    "action": (
+                        "PROVISION_NYQUIST_BIT_BUDGET_B_TO_TWO"
+                        if (bit_budget_b != 2 or not local_t_ok)
+                        else "HOLD_FULL_NYQUIST_BIT_BUDGET_TWO"
+                    ),
+                    "target_bit_budget_b": 2,
+                },
+                "worker-2": {
+                    "module": "settlement_cap",
+                    "action": (
+                        "ENFORCE_SIDE_INFO_CAPACITY_GUARD"
+                        if not conservation_ok
+                        else "HOLD_SIDE_INFO_CAPACITY_GUARD"
+                    ),
+                    "target_cap_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "encoder_bits": encoder_bits,
+                "bit_budget_b": bit_budget_b,
+                "fiber_entropy_bits_h": 2,
+                "distinct_query_values_k": cap_rec["distinct_query_values_k"],
+                "channel_capacity_s": channel_capacity_s,
+                "used_symbols_count": cap_rec["used_symbols_count"],
+                "side_symbols": side_symbols,
+                "conditional_ambiguity_2_pow_h_minus_b": conditional_ambiguity,
+                "capacity_error_floor_k_minus_s": err_cap,
+                "realized_subfiber_error_floor": err_sub,
+                "pigeonhole_bound_verified": cap_rec["pigeonhole_bound_verified"],
+                "cap_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_side_info_capacity_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_side_info_capacity_modules(
+            f"{audit_id}_p1",
+            pricing_cap_source=self.PHASE_1_PRICING_CAP_SOURCE,
+            tax_cap_source=self.PHASE_1_TAX_CAP_SOURCE,
+            settlement_cap_source=self.PHASE_1_SETTLEMENT_CAP_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_side_info_capacity_modules(
+            f"{audit_id}_p2",
+            pricing_cap_source=self.PHASE_2_PRICING_CAP_SOURCE,
+            tax_cap_source=self.PHASE_2_TAX_CAP_SOURCE,
+            settlement_cap_source=self.PHASE_2_SETTLEMENT_CAP_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_side_info_capacity_modules(
+            f"{audit_id}_p3",
+            pricing_cap_source=self.PHASE_3_PRICING_CAP_SOURCE,
+            tax_cap_source=self.PHASE_3_TAX_CAP_SOURCE,
+            settlement_cap_source=self.PHASE_3_SETTLEMENT_CAP_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_encoder_bits": p1["encoder_bits"],
+                "phase_1_bit_budget_b": p1["bit_budget_b"],
+                "phase_1_channel_capacity_s": p1["channel_capacity_s"],
+                "phase_1_used_symbols_count": p1["used_symbols_count"],
+                "phase_1_conditional_ambiguity": p1["conditional_ambiguity_2_pow_h_minus_b"],
+                "phase_1_realized_subfiber_error_floor": p1["realized_subfiber_error_floor"],
+                "phase_1_capacity_error_floor_k_minus_s": p1["capacity_error_floor_k_minus_s"],
+                "phase_1_surcharge_cents": p1["cap_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_encoder_bits": p2["encoder_bits"],
+                "phase_2_bit_budget_b": p2["bit_budget_b"],
+                "phase_2_channel_capacity_s": p2["channel_capacity_s"],
+                "phase_2_used_symbols_count": p2["used_symbols_count"],
+                "phase_2_conditional_ambiguity": p2["conditional_ambiguity_2_pow_h_minus_b"],
+                "phase_2_realized_subfiber_error_floor": p2["realized_subfiber_error_floor"],
+                "phase_2_capacity_error_floor_k_minus_s": p2["capacity_error_floor_k_minus_s"],
+                "phase_2_surcharge_cents": p2["cap_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_encoder_bits": p3["encoder_bits"],
+                "phase_3_bit_budget_b": p3["bit_budget_b"],
+                "phase_3_channel_capacity_s": p3["channel_capacity_s"],
+                "phase_3_used_symbols_count": p3["used_symbols_count"],
+                "phase_3_conditional_ambiguity": p3["conditional_ambiguity_2_pow_h_minus_b"],
+                "phase_3_realized_subfiber_error_floor": p3["realized_subfiber_error_floor"],
+                "phase_3_capacity_error_floor_k_minus_s": p3["capacity_error_floor_k_minus_s"],
+                "phase_3_surcharge_cents": p3["cap_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module side-information capacity audit."""
+        if not self.evaluations:
+            raise ValidationError("at least one codebase side-information capacity evaluation must be recorded")
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_side_info_capacity.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "side_information_capacity_receipt": (
+                self.cap_monitor.get_receipt()
+                if self.cap_monitor.fibers
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
+

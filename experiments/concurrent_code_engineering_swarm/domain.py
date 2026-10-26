@@ -16,6 +16,7 @@ from lggr.streaming import (
     StreamingCodebaseProductOfExpertsMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSideInfoCapacityMonitor,
     StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
@@ -9891,4 +9892,220 @@ class MerminPeresCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+SIDE_INFO_CAPACITY_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_cap",
+    "worker-1": "tax_cap",
+    "worker-2": "settlement_cap",
+}
+
+INITIAL_PRICING_CAP_P1_PY = StreamingCodebaseSideInfoCapacityMonitor.PHASE_1_PRICING_CAP_SOURCE
+INITIAL_PRICING_CAP_P2_PY = StreamingCodebaseSideInfoCapacityMonitor.PHASE_2_PRICING_CAP_SOURCE
+INITIAL_PRICING_CAP_P3_PY = StreamingCodebaseSideInfoCapacityMonitor.PHASE_3_PRICING_CAP_SOURCE
+
+INITIAL_TAX_CAP_P1_P2_PY = StreamingCodebaseSideInfoCapacityMonitor.PHASE_1_TAX_CAP_SOURCE
+INITIAL_TAX_CAP_P3_PY = StreamingCodebaseSideInfoCapacityMonitor.PHASE_3_TAX_CAP_SOURCE
+
+INITIAL_SETTLEMENT_CAP_P1_P2_PY = StreamingCodebaseSideInfoCapacityMonitor.PHASE_1_SETTLEMENT_CAP_SOURCE
+INITIAL_SETTLEMENT_CAP_P3_PY = StreamingCodebaseSideInfoCapacityMonitor.PHASE_3_SETTLEMENT_CAP_SOURCE
+
+
+def run_side_info_capacity_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_cap`, `tax_cap`, or `settlement_cap`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_cap":
+            fn = ns.get("quote_cap_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_cap_pricing"}
+            res = fn(990)
+            enc_b = res.get("encoder_bits") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and enc_b in (0, 1, 2)
+                and res.get("side_symbols") == [(i * enc_b) // 2 for i in range(4)]
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_cap":
+            fn = ns.get("compute_cap_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_cap_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "encoder_bits": 2,
+                    "side_symbols": [0, 1, 2, 3],
+                }
+            )
+            cap_b = res.get("bit_budget_b") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and cap_b in (1, 2)
+                and res.get("channel_capacity_s") == (1 << cap_b if cap_b in (1, 2) else -1)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_cap":
+            fn = ns.get("settle_cap_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_cap_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "encoder_bits": 2,
+                    "side_symbols": [0, 1, 2, 3],
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "encoder_bits": 2,
+                    "bit_budget_b": 2,
+                    "channel_capacity_s": 4,
+                },
+            )
+            surcharge = res.get("cap_surcharge_cents") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and surcharge == 0
+                and res.get("realized_subfiber_error_floor") == 0
+                and res.get("capacity_error_floor_k_minus_s") == 0
+                and res.get("merchant_payout_cents") == 873
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def side_info_capacity_fixture(seed: int) -> dict[str, Any]:
+    if seed in (12900, 12902):
+        return {
+            "seed": seed,
+            "kind": "repairable_side_info_capacity_and_encoder_bit_budget_deficit",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_cap": INITIAL_PRICING_CAP_P1_PY,
+                "tax_cap": INITIAL_TAX_CAP_P1_P2_PY,
+                "settlement_cap": INITIAL_SETTLEMENT_CAP_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 12901:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_sub_nyquist_one_bit_side_channel",
+            "locked_workers": ["worker-1"],
+            "infeasible_constraint": (
+                "Legacy sub-Nyquist telemetry ROM lock: `tax_cap.py` is locked in read-only ROM "
+                "with 1-bit side-information channel budget `bit_budget_b = 1` (`channel_capacity_s = 2 < K = 4`, "
+                "`capacity_error_floor_k_minus_s = 2`, conditional fiber ambiguity `2^(H - b) = 2 > 1`), while the "
+                "LGGR side-information capacity merge gate requires full Nyquist provisioning `encoder_bits = 2`, "
+                "`bit_budget_b = 2` (`channel_capacity_s = 4`, `realized_subfiber_error_floor == 0`, "
+                "`cap_surcharge_cents == 0`). Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_cap": INITIAL_PRICING_CAP_P1_PY,
+                "tax_cap": INITIAL_TAX_CAP_P1_P2_PY,
+                "settlement_cap": INITIAL_SETTLEMENT_CAP_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported side_info_capacity seed {seed}")
+
+
+class SideInfoCapacityCodeWorkspace:
+    """Workspace for the 3-agent side-information channel capacity & ambiguity-reduction bit-budget swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in SIDE_INFO_CAPACITY_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = SIDE_INFO_CAPACITY_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_side_info_capacity_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_cap.py": "def quote_cap_pricing(gross_cents: int = 990) -> dict",
+                    "tax_cap.py": "def compute_cap_tax(pricing_out: dict) -> dict",
+                    "settlement_cap.py": "def settle_cap_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_side_info_capacity_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_side_info_capacity_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; Nyquist side-information capacity S >= K and zero subfiber error floor are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
