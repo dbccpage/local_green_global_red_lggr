@@ -43,6 +43,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseDeadlineBinPackingMonitor,
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
@@ -6874,6 +6875,72 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_cap_source="def quote_cap_pricing(g):\n    return 123\n",
                 tax_cap_source=mon.PHASE_1_TAX_CAP_SOURCE,
                 settlement_cap_source=mon.PHASE_1_SETTLEMENT_CAP_SOURCE,
+            )
+
+    def test_deadline_bin_packing_codebase_edf_and_overload_admission_audit(self) -> None:
+        """Verify Theorem 133: overloaded deadline priority-queue & bin-packing admission codebase audit."""
+        mon = StreamingCodebaseDeadlineBinPackingMonitor(
+            scope_id="unit-codebase-deadline-bin-packing-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-deadline-bin-packing-eval-01",
+        )
+        self.assertEqual(obs["phase_1_execution_ticks"], [0, 1, 2])
+        self.assertEqual(obs["phase_1_horizon_ceiling"], 6)
+        self.assertFalse(obs["phase_1_halt_and_escalate"])
+        self.assertEqual(obs["phase_1_deadline_miss_count"], 2)
+        self.assertEqual(obs["phase_1_max_lateness_ticks"], 1)
+        self.assertEqual(obs["phase_1_slot0_pareto_load"], 4)
+        self.assertEqual(obs["phase_1_horizon_deficit"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SERIAL_EDF_DEADLINE_OVERLOAD_LGGR")
+
+        self.assertEqual(obs["phase_2_execution_ticks"], [0, 0, 1])
+        self.assertEqual(obs["phase_2_horizon_ceiling"], 6)
+        self.assertTrue(obs["phase_2_halt_and_escalate"])
+        self.assertEqual(obs["phase_2_deadline_miss_count"], 0)
+        self.assertEqual(obs["phase_2_max_lateness_ticks"], 0)
+        self.assertEqual(obs["phase_2_slot0_pareto_load"], 7)
+        self.assertEqual(obs["phase_2_horizon_deficit"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_2_payout_cents"], 867)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "OVERLOADED_SLOT0_HALT_AND_ESCALATE_LGGR")
+
+        self.assertEqual(obs["phase_3_execution_ticks"], [0, 0, 1])
+        self.assertEqual(obs["phase_3_horizon_ceiling"], 7)
+        self.assertFalse(obs["phase_3_halt_and_escalate"])
+        self.assertEqual(obs["phase_3_deadline_miss_count"], 0)
+        self.assertEqual(obs["phase_3_max_lateness_ticks"], 0)
+        self.assertEqual(obs["phase_3_slot0_pareto_load"], 7)
+        self.assertEqual(obs["phase_3_horizon_deficit"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "DEADLINE_BIN_PACKING_ADMISSION_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "DEADLINE_BIN_PACKING_ADMISSION_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["deadline_priority_queue_receipt"])
+        self.assertIsNotNone(receipt["overloaded_deadline_bin_packing_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_deadline_bin_packing_modules(
+                "bad-return",
+                pricing_pack_source="def quote_pack_pricing(g):\n    return 123\n",
+                tax_pack_source=mon.PHASE_1_TAX_PACK_SOURCE,
+                settlement_pack_source=mon.PHASE_1_SETTLEMENT_PACK_SOURCE,
             )
 
 

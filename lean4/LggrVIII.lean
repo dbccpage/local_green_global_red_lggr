@@ -6019,4 +6019,68 @@ theorem side_info_capacity_codebase_ambiguity_and_bit_budget_audit :
   intro err_sub err_cap h1 h2
   omega
 
+/-- **Theorem 133 (Overloaded Deadline Priority-Queue & Bin-Packing Admission Codebase Audit).**
+    In a 3-module deadline priority-queue and bin-packing settlement codebase (`pricing_pack.py`,
+    `tax_pack.py`, `settlement_pack.py`) scheduling 3 simultaneous incident jobs with
+    SLA deadlines `(1, 1, 2)` and weighted Pareto loads `(4, 3, 4)` (each within the
+    individual lease budget `B_ind = 4`, yet with mandatory slot-0 Pareto load `4 + 3 = 7`):
+    1. Whenever the deadline/overload surcharge
+       `surcharge = 4 * misses + 2 * lateness + 2 * deficit + 4 * halt` satisfies
+       `surcharge ≥ 6`, the net settlement payout `873 - surcharge` is at most `867 < 873`.
+    2. For the 3-phase deadline bin-packing codebase audit:
+       - Phase 1 (Serial execution `ticks = (0, 1, 2)` under initial horizon ceiling `H = 6`):
+         each single slot load `≤ 4 ≤ 6` (`deficit_p1 = 0`, `halt_p1 = 0`), yet serial
+         completion `ticks = (1, 2, 3)` misses deadlines `(1, 1, 2)` on 2 jobs
+         (`misses_p1 = 2`, `lateness_p1 = 1`), incurring `surcharge_p1 = 4 * 2 + 2 * 1 = 10`
+         and `payout_p1 = 873 - 10 = 863 ≠ 873` (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Slot-0 co-scheduling `ticks = (0, 0, 1)` attempted under initial horizon
+         ceiling `H = 6`, triggering halt-and-escalate `halt_p2 = 1`):
+         `misses_p2 = 0`, `lateness_p2 = 0`, yet slot-0 load `4 + 3 = 7 > 6` leaves
+         `deficit_p2 = 7 - 6 = 1 > 0` and `halt_p2 = 1`, incurring
+         `surcharge_p2 = 2 * 1 + 4 * 1 = 6` and `payout_p2 = 873 - 6 = 867 ≠ 873`
+         (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Selective slot-0 bin-packing `ticks = (0, 0, 1)` under expanded horizon
+         admission ceiling `H = 7 ≥ 7` with `halt_p3 = 0`):
+         `misses_p3 = 0`, `lateness_p3 = 0`, `deficit_p3 = 0`, `halt_p3 = 0`,
+         `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem deadline_bin_packing_codebase_edf_and_overload_admission_audit :
+    (∀ misses lateness deficit halt : Int,
+      (4 * misses + 2 * lateness + 2 * deficit + 4 * halt ≥ 6) →
+      (873 - (4 * misses + 2 * lateness + 2 * deficit + 4 * halt) ≤ 867)) ∧
+    (let slot0_load : Int := 4 + 3;
+     let h_init : Int := 6;
+     let h_exp : Int := 7;
+     let misses_p1 : Int := 2; let lateness_p1 : Int := 1;
+     let deficit_p1 : Int := 0; let halt_p1 : Int := 0;
+     let misses_p2 : Int := 0; let lateness_p2 : Int := 0;
+     let deficit_p2 : Int := slot0_load - h_init; let halt_p2 : Int := 1;
+     let misses_p3 : Int := 0; let lateness_p3 : Int := 0;
+     let deficit_p3 : Int := slot0_load - h_exp; let halt_p3 : Int := 0;
+     let surcharge_p1 : Int := 4 * misses_p1 + 2 * lateness_p1 + 2 * deficit_p1 + 4 * halt_p1;
+     let surcharge_p2 : Int := 4 * misses_p2 + 2 * lateness_p2 + 2 * deficit_p2 + 4 * halt_p2;
+     let surcharge_p3 : Int := 4 * misses_p3 + 2 * lateness_p3 + 2 * deficit_p3 + 4 * halt_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (misses_p1 = 2) ∧ (lateness_p1 = 1) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (misses_p1 = 0) ∧ (deficit_p1 = 0) ∧ (halt_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (deficit_p2 = 1) ∧ (halt_p2 = 1) ∧ (surcharge_p2 = 6) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (misses_p2 = 0) ∧ (deficit_p2 = 0) ∧ (halt_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (misses_p3 = 0) ∧ (lateness_p3 = 0) ∧ (deficit_p3 = 0) ∧ (halt_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (slot0_load = 7 ∧ deficit_p1 = 0 ∧ deficit_p2 = 1 ∧ deficit_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 6 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 867 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro misses lateness deficit halt h1
+  omega
+
 end LggrVIII

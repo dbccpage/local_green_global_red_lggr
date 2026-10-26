@@ -70,6 +70,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_CAP_P1_PY,
     INITIAL_PRICING_CAP_P2_PY,
     INITIAL_PRICING_CAP_P3_PY,
+    INITIAL_PRICING_PACK_P1_PY,
+    INITIAL_PRICING_PACK_P2_P3_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_POE_P1_PY,
@@ -101,6 +103,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_MP_P3_PY,
     INITIAL_SETTLEMENT_CAP_P1_P2_PY,
     INITIAL_SETTLEMENT_CAP_P3_PY,
+    INITIAL_SETTLEMENT_PACK_P1_P2_PY,
+    INITIAL_SETTLEMENT_PACK_P3_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_POE_P1_PY,
@@ -132,6 +136,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_MP_P3_PY,
     INITIAL_TAX_CAP_P1_P2_PY,
     INITIAL_TAX_CAP_P3_PY,
+    INITIAL_TAX_PACK_P1_PY,
+    INITIAL_TAX_PACK_P2_PY,
+    INITIAL_TAX_PACK_P3_PY,
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
@@ -213,6 +220,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     ContextualSheafCodeWorkspace,
+    DeadlineBinPackingCodeWorkspace,
     DiamondCodeWorkspace,
     DisagreementCouncilCodeWorkspace,
     DynamicSchemaCodeWorkspace,
@@ -250,6 +258,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     coalitional_fixture,
     council_fixture,
     cptp_fixture,
+    deadline_bin_packing_fixture,
     dfa_fixture,
     diamond_fixture,
     figure_eight_wedge_fixture,
@@ -276,6 +285,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_coalitional_local_unit_tests,
     run_council_local_unit_tests,
     run_cptp_local_unit_tests,
+    run_deadline_bin_packing_local_unit_tests,
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
     run_figure_eight_wedge_local_unit_tests,
@@ -331,6 +341,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     coalitional_campaign,
     council_campaign,
     cptp_campaign,
+    deadline_bin_packing_campaign,
     dfa_campaign,
     diamond_campaign,
     figure_eight_wedge_campaign,
@@ -8396,6 +8407,270 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12900_arms["B"]["final_cap_surcharge_cents"], 8)
             self.assertEqual(seed_12900_arms["C"]["final_cap_surcharge_cents"], 0)
             self.assertEqual(seed_12900_arms["C"]["status"], "completed")
+
+    def test_deadline_bin_packing_local_unit_tests_and_workspace_contract(self) -> None:
+        """Verify local unit tests and workspace tool contract for `--topology deadline_bin_packing`."""
+        self.assertTrue(
+            run_deadline_bin_packing_local_unit_tests("pricing_pack", INITIAL_PRICING_PACK_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_deadline_bin_packing_local_unit_tests("pricing_pack", INITIAL_PRICING_PACK_P2_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_deadline_bin_packing_local_unit_tests("tax_pack", INITIAL_TAX_PACK_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_deadline_bin_packing_local_unit_tests("tax_pack", INITIAL_TAX_PACK_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_deadline_bin_packing_local_unit_tests("tax_pack", INITIAL_TAX_PACK_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_deadline_bin_packing_local_unit_tests("settlement_pack", INITIAL_SETTLEMENT_PACK_P1_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_deadline_bin_packing_local_unit_tests("settlement_pack", INITIAL_SETTLEMENT_PACK_P3_PY)["passed"]
+        )
+
+        ws = DeadlineBinPackingCodeWorkspace(deadline_bin_packing_fixture(13000))
+        insp = ws.tool("worker-0", "inspect_workspace", {})
+        self.assertEqual(insp["owned_module"], "pricing_pack.py")
+        self.assertFalse(insp["locked"])
+        self.assertTrue(insp["local_unit_test"]["passed"])
+
+        bad_esc = ws.tool("worker-0", "escalate", {"reason": "premature escalation"})
+        self.assertFalse(bad_esc["accepted"])
+
+        patch_res = ws.tool(
+            "worker-0",
+            "submit_module_patch",
+            {"source_code": INITIAL_PRICING_PACK_P2_P3_PY},
+        )
+        self.assertTrue(patch_res["accepted"])
+
+        ws_locked = DeadlineBinPackingCodeWorkspace(deadline_bin_packing_fixture(13001))
+        locked_patch = ws_locked.tool(
+            "worker-1",
+            "submit_module_patch",
+            {"source_code": INITIAL_TAX_PACK_P3_PY},
+        )
+        self.assertFalse(locked_patch["accepted"])
+        esc_ok = ws_locked.tool(
+            "worker-1",
+            "escalate",
+            {"reason": "ROM lock on initial horizon ceiling H = 6 under slot-0 load 7."},
+        )
+        self.assertTrue(esc_ok["escalated"])
+
+    def test_concurrent_deadline_bin_packing_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-agent concurrent `--topology deadline_bin_packing` campaign and tamper-evident replay."""
+
+        def stub_deadline_bin_packing_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w_id in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w_id}`" in sys_prompt:
+                    worker = w_id
+                    break
+            model = payload["model"]
+
+            has_tool_result = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_result:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                last_tool = [m for m in messages if m.get("role") == "tool"][-1]
+                tool_data = json.loads(last_tool["content"])
+                if tool_data.get("accepted") or tool_data.get("escalated"):
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                if tool_data.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-esc-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Horizon ceiling H = 6 locked in ROM under slot-0 load 7."}
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-hold-a-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    if worker == "worker-0":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_PRICING_PACK_P2_P3_PY}),
+                            },
+                        }
+                    elif worker == "worker-1":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_TAX_PACK_P2_PY}),
+                            },
+                        }
+                    else:
+                        return {
+                            "response": {
+                                "id": f"stub-hold-b-{worker}",
+                                "model": model,
+                                "usage": {
+                                    "prompt_tokens": 100,
+                                    "completion_tokens": 20,
+                                    "cost": "0.000100",
+                                },
+                                "choices": [
+                                    {
+                                        "index": 0,
+                                        "finish_reason": "stop",
+                                        "message": {"role": "assistant", "content": "Done."},
+                                    }
+                                ],
+                            },
+                            "started_ns": 10,
+                            "finished_ns": 20,
+                        }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_PACK_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_PACK_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_PACK_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "deadline_bin_packing",
+                "seeds": [13000, 13001],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_deadline_bin_packing_transport)
+            summary = deadline_bin_packing_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.deadline_bin_packing_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["pack_surcharge_cents"] = int(gate_rec["pack_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_deadline_bin_packing_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live deadline_bin_packing pilot evidence offline if present."""
+        pack_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "deadline_bin_packing_pilot_run"
+            / "events.jsonl"
+        )
+        pack_summary = pack_events.with_name("summary.json")
+        if pack_events.exists() and pack_summary.exists():
+            replayed = replay(pack_events)
+            self.assertEqual(replayed["schema"], "lggr.deadline_bin_packing_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_13000_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_13000_arms["A"]["final_pack_surcharge_cents"], 10)
+            self.assertEqual(seed_13000_arms["B"]["final_pack_surcharge_cents"], 6)
+            self.assertEqual(seed_13000_arms["C"]["final_pack_surcharge_cents"], 0)
+            self.assertEqual(seed_13000_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":
