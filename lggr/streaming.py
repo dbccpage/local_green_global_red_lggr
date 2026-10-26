@@ -35240,6 +35240,488 @@ class StreamingCodebaseSkewRepairMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseProductOfExpertsMonitor:
+    """Online Product-of-Experts zero-veto collapse & compromise mass codebase monitor (Theorem 129).
+
+    AuthorityEffect: None. Composes StreamingProductOfExpertsMonitor,
+    StreamingCodebaseInterfaceMergeMonitor, and StreamingFiberMonitor to audit
+    a 3-module Product-of-Experts settlement codebase (`pricing_poe.py`,
+    `tax_poe.py`, `settlement_poe.py`) over K = 2 experts scoring m = 3 candidate
+    actions W = {w_0, w_1, w_2} in fourths (`M_1 = M_2 = 1`, `D_MoE = 1`):
+      - Phase 1 (Bilateral zero-veto support collapse `c_1 = 0, c_2 = 0`,
+        `p_1 = [1, 0, 0]`, `p_2 = [0, 0, 1]`):
+        `poe_partition_sixteenths = 0`, `veto_expert_count = 2`,
+        `poe_surcharge_cents = 12`, `payout = 861 != 873` (`L_p1 = 1, Eg_p1 = 0, defect_p1 = -1`);
+      - Phase 2 (Unilateral zero-veto support collapse `c_1 = 1, c_2 = 0`,
+        `p_1 = [3/4, 1/4, 0]`, `p_2 = [0, 0, 1]`):
+        `poe_partition_sixteenths = 0`, `veto_expert_count = 1`,
+        `poe_surcharge_cents = 7`, `payout = 866 != 873` (`L_p2 = 1, Eg_p2 = 0, defect_p2 = -1`);
+      - Phase 3 (Shared-carrier compromise mass allocation `c_1 = 1, c_2 = 1`,
+        `p_1 = [3/4, 1/4, 0]`, `p_2 = [0, 1/4, 3/4]`):
+        `poe_partition_sixteenths = 1 >= 1`, `veto_expert_count = 0`,
+        `poe_surcharge_cents = 0`, `payout = 873`, `873 + 27 + 90 = 990`
+        (`L_p3 = 1, Eg_p3 = 1, defect_p3 = 0`).
+    """
+
+    PHASE_1_PRICING_POE_SOURCE = (
+        "def quote_poe_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    c_1 = 0\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'pricing_compromise_fourths': c_1,\n"
+        "        'expert_1_fourths': [4 - c_1, c_1, 0],\n"
+        "        'expert_1_mass_fourths': 4,\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_POE_SOURCE = (
+        "def compute_poe_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    c_1 = int(pricing_out.get('pricing_compromise_fourths', 0))\n"
+        "    c_2 = 0\n"
+        "    z_16 = c_1 * c_2\n"
+        "    veto_cnt = (1 if c_1 == 0 else 0) + (1 if c_2 == 0 else 0)\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'pricing_compromise_fourths': c_1,\n"
+        "        'tax_compromise_fourths': c_2,\n"
+        "        'expert_1_fourths': [4 - c_1, c_1, 0],\n"
+        "        'expert_2_fourths': [0, c_2, 4 - c_2],\n"
+        "        'poe_partition_sixteenths': z_16,\n"
+        "        'veto_expert_count': veto_cnt,\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_POE_SOURCE = (
+        "def settle_poe_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    c_1 = int(tax_out.get('pricing_compromise_fourths', 0))\n"
+        "    c_2 = int(tax_out.get('tax_compromise_fourths', 0))\n"
+        "    z_16 = c_1 * c_2\n"
+        "    veto_cnt = (1 if c_1 == 0 else 0) + (1 if c_2 == 0 else 0)\n"
+        "    surcharge = 5 * veto_cnt + (2 if z_16 == 0 else 0)\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'poe_surcharge_cents': surcharge,\n"
+        "        'pricing_compromise_fourths': c_1,\n"
+        "        'tax_compromise_fourths': c_2,\n"
+        "        'poe_partition_sixteenths': z_16,\n"
+        "        'veto_expert_count': veto_cnt,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_POE_SOURCE = (
+        "def quote_poe_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    c_1 = 1\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'pricing_compromise_fourths': c_1,\n"
+        "        'expert_1_fourths': [4 - c_1, c_1, 0],\n"
+        "        'expert_1_mass_fourths': 4,\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_POE_SOURCE = PHASE_1_TAX_POE_SOURCE
+
+    PHASE_2_SETTLEMENT_POE_SOURCE = PHASE_1_SETTLEMENT_POE_SOURCE
+
+    PHASE_3_PRICING_POE_SOURCE = PHASE_2_PRICING_POE_SOURCE
+
+    PHASE_3_TAX_POE_SOURCE = (
+        "def compute_poe_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    c_1 = int(pricing_out.get('pricing_compromise_fourths', 1))\n"
+        "    c_2 = 1\n"
+        "    z_16 = c_1 * c_2\n"
+        "    veto_cnt = (1 if c_1 == 0 else 0) + (1 if c_2 == 0 else 0)\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'pricing_compromise_fourths': c_1,\n"
+        "        'tax_compromise_fourths': c_2,\n"
+        "        'expert_1_fourths': [4 - c_1, c_1, 0],\n"
+        "        'expert_2_fourths': [0, c_2, 4 - c_2],\n"
+        "        'poe_partition_sixteenths': z_16,\n"
+        "        'veto_expert_count': veto_cnt,\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_POE_SOURCE = (
+        "def settle_poe_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    c_1 = int(tax_out.get('pricing_compromise_fourths', 1))\n"
+        "    c_2 = int(tax_out.get('tax_compromise_fourths', 1))\n"
+        "    z_16 = c_1 * c_2\n"
+        "    if c_1 != 1 or c_2 != 1 or z_16 < 1:\n"
+        "        raise ValueError('PoE partition collapse detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'poe_surcharge_cents': 0,\n"
+        "        'pricing_compromise_fourths': c_1,\n"
+        "        'tax_compromise_fourths': c_2,\n"
+        "        'poe_partition_sixteenths': z_16,\n"
+        "        'veto_expert_count': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-poe-veto-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.poe_monitor = StreamingProductOfExpertsMonitor(
+            scope_id=f"{self.scope_id}:poe",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_poe_veto_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_poe_source: str,
+        tax_poe_source: str,
+        settlement_poe_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_poe", pricing_poe_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_poe", tax_poe_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_poe", settlement_poe_source
+        )
+
+        if "quote_poe_pricing" not in p_ns or not callable(p_ns["quote_poe_pricing"]):
+            raise ValidationError("pricing_poe must define callable quote_poe_pricing")
+        if "compute_poe_tax" not in t_ns or not callable(t_ns["compute_poe_tax"]):
+            raise ValidationError("tax_poe must define callable compute_poe_tax")
+        if "settle_poe_payout" not in s_ns or not callable(s_ns["settle_poe_payout"]):
+            raise ValidationError("settlement_poe must define callable settle_poe_payout")
+
+        pricing_out = p_ns["quote_poe_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_poe_pricing must return a dict")
+        tax_out = t_ns["compute_poe_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_poe_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_poe_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_poe_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        c_1 = exact_int(pricing_out.get("pricing_compromise_fourths", 0), "pricing_compromise_fourths")
+        c_2 = exact_int(tax_out.get("tax_compromise_fourths", 0), "tax_compromise_fourths")
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        e1_raw = pricing_out.get("expert_1_fourths", [4 - c_1, c_1, 0])
+        if not isinstance(e1_raw, list) or len(e1_raw) != 3:
+            raise ValidationError("expert_1_fourths must be a 3-element list")
+        e1_fourths = [exact_int(x, f"expert_1_fourths[{i}]") for i, x in enumerate(e1_raw)]
+
+        e2_raw = tax_out.get("expert_2_fourths", [0, c_2, 4 - c_2])
+        if not isinstance(e2_raw, list) or len(e2_raw) != 3:
+            raise ValidationError("expert_2_fourths must be a 3-element list")
+        e2_fourths = [exact_int(x, f"expert_2_fourths[{i}]") for i, x in enumerate(e2_raw)]
+
+        local_p_ok = (
+            fee == 27
+            and net == 963
+            and c_1 in (0, 1)
+            and e1_fourths == [4 - c_1, c_1, 0]
+            and sum(e1_fourths) == 4
+        )
+        local_t_ok = (
+            tax == 90
+            and c_2 in (0, 1)
+            and e2_fourths == [0, c_2, 4 - c_2]
+            and sum(e2_fourths) == 4
+        )
+
+        # Record in underlying StreamingProductOfExpertsMonitor with exact rational fourths
+        expert_scores_q = [
+            [f"{x}/4" for x in e1_fourths],
+            [f"{x}/4" for x in e2_fourths],
+        ]
+        poe_round = self.poe_monitor.record_expert_scores(
+            f"{eval_id}:poe",
+            expert_scores=expert_scores_q,
+        )
+
+        z_16 = e1_fourths[0] * e2_fourths[0] + e1_fourths[1] * e2_fourths[1] + e1_fourths[2] * e2_fourths[2]
+        veto_cnt = (1 if c_1 == 0 else 0) + (1 if c_2 == 0 else 0)
+        surcharge = 5 * veto_cnt + (2 if z_16 == 0 else 0)
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents")
+            reported_surcharge = exact_int(
+                settlement_out.get("poe_surcharge_cents", surcharge),
+                "poe_surcharge_cents",
+            )
+            local_s_ok = (reported_surcharge == surcharge) and (payout == net - tax - surcharge)
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = 1 if (local_p_ok and local_t_ok and local_s_ok and not infeasible_spec_contradiction) else 0
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and c_1 == 1
+            and c_2 == 1
+            and z_16 == 1
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "moe_partition_sum": poe_round["moe_partition_sum"],
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "pricing_compromise_fourths": c_1,
+                "tax_compromise_fourths": c_2,
+                "poe_partition_sixteenths": z_16,
+                "veto_expert_count": veto_cnt,
+                "poe_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_POE_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif veto_cnt >= 2:
+            status = "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [3, 1, 0],
+                },
+                "worker-1": {
+                    "module": "tax_poe",
+                    "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [0, 1, 3],
+                },
+                "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_poe",
+                    "action": (
+                        "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1"
+                        if (c_1 != 1 or not local_p_ok)
+                        else "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1"
+                    ),
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [3, 1, 0],
+                },
+                "worker-1": {
+                    "module": "tax_poe",
+                    "action": (
+                        "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1"
+                        if (c_2 != 1 or not local_t_ok)
+                        else "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1"
+                    ),
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [0, 1, 3],
+                },
+                "worker-2": {
+                    "module": "settlement_poe",
+                    "action": (
+                        "REPAIR_SETTLEMENT_POE_PARTITION_GATE"
+                        if not conservation_ok
+                        else "HOLD_ZERO_POE_VETO_SURCHARGE"
+                    ),
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "pricing_compromise_fourths": c_1,
+                "tax_compromise_fourths": c_2,
+                "expert_1_fourths": e1_fourths,
+                "expert_2_fourths": e2_fourths,
+                "poe_partition_sixteenths": z_16,
+                "poe_partition_sum": poe_round["poe_partition_sum"],
+                "moe_partition_sum": poe_round["moe_partition_sum"],
+                "joint_support_indices": poe_round["joint_support_indices"],
+                "veto_expert_count": veto_cnt,
+                "poe_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_poe_veto_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_poe_veto_modules(
+            f"{audit_id}_p1",
+            pricing_poe_source=self.PHASE_1_PRICING_POE_SOURCE,
+            tax_poe_source=self.PHASE_1_TAX_POE_SOURCE,
+            settlement_poe_source=self.PHASE_1_SETTLEMENT_POE_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_poe_veto_modules(
+            f"{audit_id}_p2",
+            pricing_poe_source=self.PHASE_2_PRICING_POE_SOURCE,
+            tax_poe_source=self.PHASE_2_TAX_POE_SOURCE,
+            settlement_poe_source=self.PHASE_2_SETTLEMENT_POE_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_poe_veto_modules(
+            f"{audit_id}_p3",
+            pricing_poe_source=self.PHASE_3_PRICING_POE_SOURCE,
+            tax_poe_source=self.PHASE_3_TAX_POE_SOURCE,
+            settlement_poe_source=self.PHASE_3_SETTLEMENT_POE_SOURCE,
+            model_id=mid,
+        )
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_expert_1_fourths": p1["expert_1_fourths"],
+                "phase_1_expert_2_fourths": p1["expert_2_fourths"],
+                "phase_1_poe_partition_sixteenths": p1["poe_partition_sixteenths"],
+                "phase_1_poe_partition_sum": p1["poe_partition_sum"],
+                "phase_1_veto_expert_count": p1["veto_expert_count"],
+                "phase_1_surcharge_cents": p1["poe_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_expert_1_fourths": p2["expert_1_fourths"],
+                "phase_2_expert_2_fourths": p2["expert_2_fourths"],
+                "phase_2_poe_partition_sixteenths": p2["poe_partition_sixteenths"],
+                "phase_2_poe_partition_sum": p2["poe_partition_sum"],
+                "phase_2_veto_expert_count": p2["veto_expert_count"],
+                "phase_2_surcharge_cents": p2["poe_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_expert_1_fourths": p3["expert_1_fourths"],
+                "phase_3_expert_2_fourths": p3["expert_2_fourths"],
+                "phase_3_poe_partition_sixteenths": p3["poe_partition_sixteenths"],
+                "phase_3_poe_partition_sum": p3["poe_partition_sum"],
+                "phase_3_veto_expert_count": p3["veto_expert_count"],
+                "phase_3_surcharge_cents": p3["poe_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase Product-of-Experts evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "product_of_experts_receipt": (
+                self.poe_monitor.get_receipt()
+                if self.poe_monitor.rounds
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 

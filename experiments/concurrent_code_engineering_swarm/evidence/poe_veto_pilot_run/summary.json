@@ -1,0 +1,2916 @@
+{
+  "schema": "lggr.poe_veto_code_engineering_swarm.v1",
+  "topology": "poe_veto",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 12600,
+      "kind": "repairable_poe_zero_veto_collapse_and_compromise_mass_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_compromise_fourths": 0,
+          "final_tax_compromise_fourths": 0,
+          "final_expert_1_fourths": [
+            4,
+            0,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            0,
+            4
+          ],
+          "final_poe_partition_sixteenths": 0,
+          "final_poe_partition_sum": "0",
+          "final_veto_expert_count": 2,
+          "final_poe_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+          "final_receipt_sha256": "18f4387afe1ffb7cc6fd464839b5dc47b16c75f09ea4583bfd6a6aeb7e97774d",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12600-arm-A",
+            "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12600-arm-A:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 3,
+              "poe_collapsed_round_ids": [
+                "A-wave-0:poe",
+                "A-wave-1:poe",
+                "A-wave-2:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "A-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "A-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "A-wave-2:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                }
+              ],
+              "receipt_sha256": "8b5c41c61cc3f5f238f23187764a57f18b479668765063edd230cf912d09bece"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "fbf4861a79b09cd3a06a42eac1f61bab09698b924c563994bc741f31cca9e29f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "f7b186ff3790f515e78e4a021539385d536ce9344738b98f2e11bb73e840d66c"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "18f4387afe1ffb7cc6fd464839b5dc47b16c75f09ea4583bfd6a6aeb7e97774d"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0148609796"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_compromise_fourths": 1,
+          "final_tax_compromise_fourths": 0,
+          "final_expert_1_fourths": [
+            3,
+            1,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            0,
+            4
+          ],
+          "final_poe_partition_sixteenths": 0,
+          "final_poe_partition_sum": "0",
+          "final_veto_expert_count": 1,
+          "final_poe_surcharge_cents": 7,
+          "final_merchant_payout_cents": 866,
+          "final_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+          "final_receipt_sha256": "1e52680e79835a8a3911f1fa2fc0a309638c2bf8f99875e5664b278bcca09952",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12600-arm-B",
+            "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12600-arm-B:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 3,
+              "poe_collapsed_round_ids": [
+                "B-wave-0:poe",
+                "B-wave-1:poe",
+                "B-wave-2:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "B-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "B-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "B-wave-2:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                }
+              ],
+              "receipt_sha256": "ad077ec7c4a4066cf545b00fb5eaeb0917f8478b77a52608c05f4a577fbac355"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "9b7f0fa0dac97e9dc6e526b83fee7613ac287508be2917b5f390c2aa62375c62",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "9d196bce83ede60aa60f9c371484d3cfa37feb6c8e4a59d6b79eca891602c911"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 1,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  3,
+                  1,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 1,
+                "poe_surcharge_cents": 7,
+                "merchant_payout_cents": 866,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 1,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  3,
+                  1,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 1,
+                "poe_surcharge_cents": 7,
+                "merchant_payout_cents": 866,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "1e52680e79835a8a3911f1fa2fc0a309638c2bf8f99875e5664b278bcca09952"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0151033508"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_pricing_compromise_fourths": 1,
+          "final_tax_compromise_fourths": 1,
+          "final_expert_1_fourths": [
+            3,
+            1,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            1,
+            3
+          ],
+          "final_poe_partition_sixteenths": 1,
+          "final_poe_partition_sum": "1/16",
+          "final_veto_expert_count": 0,
+          "final_poe_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+          "final_receipt_sha256": "f490d936c352a6b69c8b51b022e396ac783142b38336b7cb98d9e52aa2aa3b1f",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12600-arm-C",
+            "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12600-arm-C:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 2,
+              "poe_collapsed_round_ids": [
+                "C-wave-0:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "C-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "C-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [
+                    1
+                  ],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "1/16",
+                    "0"
+                  ],
+                  "poe_partition_sum": "1/16",
+                  "poe_normalized_distribution": [
+                    "0",
+                    "1",
+                    "0"
+                  ],
+                  "moe_unnormalized_vector": [
+                    "3/8",
+                    "1/4",
+                    "3/8"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "3/8",
+                    "1/4",
+                    "3/8"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "round_status": "POE_AND_MOE_COHERENT_LGGG"
+                }
+              ],
+              "receipt_sha256": "48e579eb27108dd46522e3f1ae1ff31136f80b70cd7d10a4a96907dcef14a419"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "poe_partition_sixteenths": 0,
+                    "poe_surcharge_cents": 12,
+                    "pricing_compromise_fourths": 0,
+                    "tax_compromise_fourths": 0,
+                    "veto_expert_count": 2
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "poe_partition_sixteenths": 1,
+                    "poe_surcharge_cents": 0,
+                    "pricing_compromise_fourths": 1,
+                    "tax_compromise_fourths": 1,
+                    "veto_expert_count": 0
+                  }
+                }
+              },
+              "input_sha256": "31caba777492d3598d0c0508d27a83bf7299712629a3b6292bbc20065e5755bd",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "e5061d7874e6b2c9feba897b3bc4738df09934df341021ce14ccf5d2ecc0f10c"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 1,
+                "tax_compromise_fourths": 1,
+                "expert_1_fourths": [
+                  3,
+                  1,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  1,
+                  3
+                ],
+                "poe_partition_sixteenths": 1,
+                "poe_partition_sum": "1/16",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [
+                  1
+                ],
+                "veto_expert_count": 0,
+                "poe_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "f490d936c352a6b69c8b51b022e396ac783142b38336b7cb98d9e52aa2aa3b1f"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0071809798"
+        }
+      ]
+    },
+    {
+      "seed": 12601,
+      "kind": "infeasible_hardware_locked_poe_zero_veto_collapse",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_pricing_compromise_fourths": 0,
+          "final_tax_compromise_fourths": 0,
+          "final_expert_1_fourths": [
+            4,
+            0,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            0,
+            4
+          ],
+          "final_poe_partition_sixteenths": 0,
+          "final_poe_partition_sum": "0",
+          "final_veto_expert_count": 2,
+          "final_poe_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "e65f21b5070919d53851d95bf5d4dd9bc71d14b0f10a28eb829c6625d2eb7ae3",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12601-arm-A",
+            "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12601-arm-A:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 2,
+              "poe_collapsed_round_ids": [
+                "A-wave-0:poe",
+                "A-wave-1:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "A-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "A-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                }
+              ],
+              "receipt_sha256": "c0a97f5f4adfca27eb39ce2b73d8a3552d58fffd3de71dbc56738bbe8fc745f2"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1faf97899a4df8fc78434f4ab372feed8f1815dc33ae6c15ab379fa1c7e110c6",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "1bee3685fa205010be89c2ced6e3975cc6607e001d8939910949d33a73be5177"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "e65f21b5070919d53851d95bf5d4dd9bc71d14b0f10a28eb829c6625d2eb7ae3"
+          },
+          "escalations": {
+            "worker-0": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0062239107"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_pricing_compromise_fourths": 0,
+          "final_tax_compromise_fourths": 0,
+          "final_expert_1_fourths": [
+            4,
+            0,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            0,
+            4
+          ],
+          "final_poe_partition_sixteenths": 0,
+          "final_poe_partition_sum": "0",
+          "final_veto_expert_count": 2,
+          "final_poe_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "e99480f803fb0f161a03c56a158aa4882834c13db430fcecd8ad9862bd17eb25",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12601-arm-B",
+            "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12601-arm-B:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 2,
+              "poe_collapsed_round_ids": [
+                "B-wave-0:poe",
+                "B-wave-1:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "B-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "B-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                }
+              ],
+              "receipt_sha256": "e4f50118d333d67ba03785f0f0271ad9143a8d4c1640b0f4a805af394942684e"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "ea5290ffad6188dbcc2b69633b158e5f6e1d1bb4d3c1558deb5880ccd97101ce",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "4eaeef72845bb07894bf87da81b62b319b75bf2856dae44c946c2553e1590eef"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "e99480f803fb0f161a03c56a158aa4882834c13db430fcecd8ad9862bd17eb25"
+          },
+          "escalations": {
+            "worker-0": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0066731311"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_pricing_compromise_fourths": 0,
+          "final_tax_compromise_fourths": 0,
+          "final_expert_1_fourths": [
+            4,
+            0,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            0,
+            4
+          ],
+          "final_poe_partition_sixteenths": 0,
+          "final_poe_partition_sum": "0",
+          "final_veto_expert_count": 2,
+          "final_poe_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "a59c6c8fad9b6d0a5cbdd9fc60d0af770cfc63e9c93fcd61a0991de6824639d4",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12601-arm-C",
+            "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12601-arm-C:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 2,
+              "poe_collapsed_round_ids": [
+                "C-wave-0:poe",
+                "C-wave-1:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "C-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "C-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                }
+              ],
+              "receipt_sha256": "49e04fbd378df921d429f3d58eda6b0df01dd03ec28f8d3fd134faedc5946575"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "81ed16b26e3f64c9bcc8942b5ed6c9a707b0ad5b36dc0c7bad99a75b94c8bc26",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "cde0017e82c2f20b891c5876a32847bd965cff5cd0ddba51c94be2ce53ed0e29"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_POE_VETO_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "a59c6c8fad9b6d0a5cbdd9fc60d0af770cfc63e9c93fcd61a0991de6824639d4"
+          },
+          "escalations": {
+            "worker-0": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, `poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and `tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0072632443"
+        }
+      ]
+    },
+    {
+      "seed": 12602,
+      "kind": "repairable_poe_zero_veto_collapse_and_compromise_mass_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_compromise_fourths": 0,
+          "final_tax_compromise_fourths": 0,
+          "final_expert_1_fourths": [
+            4,
+            0,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            0,
+            4
+          ],
+          "final_poe_partition_sixteenths": 0,
+          "final_poe_partition_sum": "0",
+          "final_veto_expert_count": 2,
+          "final_poe_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+          "final_receipt_sha256": "d238409bd3c3459d98a939a4edefd1c67ce9a1316a38269aec32dbde8c204f09",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12602-arm-A",
+            "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12602-arm-A:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 3,
+              "poe_collapsed_round_ids": [
+                "A-wave-0:poe",
+                "A-wave-1:poe",
+                "A-wave-2:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "A-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "A-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "A-wave-2:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                }
+              ],
+              "receipt_sha256": "c6df04c827dd030c18633367318ffa33a589052dd673e5c130afb6e3f1ceab9a"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "fbf4861a79b09cd3a06a42eac1f61bab09698b924c563994bc741f31cca9e29f",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "f7b186ff3790f515e78e4a021539385d536ce9344738b98f2e11bb73e840d66c"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "d238409bd3c3459d98a939a4edefd1c67ce9a1316a38269aec32dbde8c204f09"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0152621132"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_compromise_fourths": 1,
+          "final_tax_compromise_fourths": 0,
+          "final_expert_1_fourths": [
+            3,
+            1,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            0,
+            4
+          ],
+          "final_poe_partition_sixteenths": 0,
+          "final_poe_partition_sum": "0",
+          "final_veto_expert_count": 1,
+          "final_poe_surcharge_cents": 7,
+          "final_merchant_payout_cents": 866,
+          "final_status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+          "final_receipt_sha256": "3064e52c1935d52937ac53aca904fb0abd14af3438fbdba6ae3f0a321618f194",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12602-arm-B",
+            "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12602-arm-B:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 3,
+              "poe_collapsed_round_ids": [
+                "B-wave-0:poe",
+                "B-wave-1:poe",
+                "B-wave-2:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "B-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "B-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "B-wave-2:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "3/8",
+                    "1/8",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                }
+              ],
+              "receipt_sha256": "41f723e24f414a280dd55054cdb52004615eb2a8708e08d066186e4f56354071"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "9b7f0fa0dac97e9dc6e526b83fee7613ac287508be2917b5f390c2aa62375c62",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "9d196bce83ede60aa60f9c371484d3cfa37feb6c8e4a59d6b79eca891602c911"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 1,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  3,
+                  1,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 1,
+                "poe_surcharge_cents": 7,
+                "merchant_payout_cents": 866,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 1,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  3,
+                  1,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 1,
+                "poe_surcharge_cents": 7,
+                "merchant_payout_cents": 866,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "3064e52c1935d52937ac53aca904fb0abd14af3438fbdba6ae3f0a321618f194"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0154525490"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_pricing_compromise_fourths": 1,
+          "final_tax_compromise_fourths": 1,
+          "final_expert_1_fourths": [
+            3,
+            1,
+            0
+          ],
+          "final_expert_2_fourths": [
+            0,
+            1,
+            3
+          ],
+          "final_poe_partition_sixteenths": 1,
+          "final_poe_partition_sum": "1/16",
+          "final_veto_expert_count": 0,
+          "final_poe_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+          "final_receipt_sha256": "2605544190d095b5f6bdf210cf0288e329c057afe74824de52ff25c35945275d",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_poe_veto.v1",
+            "authority_effect": "None",
+            "scope_id": "poe-veto-seed-12602-arm-C",
+            "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "product_of_experts_receipt": {
+              "schema": "lggr.online_product_of_experts.v1",
+              "authority_effect": "None",
+              "scope_id": "poe-veto-seed-12602-arm-C:poe",
+              "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "round_count": 2,
+              "poe_collapsed_round_ids": [
+                "C-wave-0:poe"
+              ],
+              "rejected_round_ids": [],
+              "rounds": [
+                {
+                  "round_id": "C-wave-0:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "poe_partition_sum": "0",
+                  "poe_normalized_distribution": null,
+                  "moe_unnormalized_vector": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "1/2",
+                    "0",
+                    "1/2"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+                },
+                {
+                  "round_id": "C-wave-1:poe",
+                  "expert_count": 2,
+                  "candidate_count": 3,
+                  "expert_masses": [
+                    "1",
+                    "1"
+                  ],
+                  "local_expert_evaluators": [
+                    1,
+                    1
+                  ],
+                  "joint_support_indices": [
+                    1
+                  ],
+                  "poe_unnormalized_vector": [
+                    "0",
+                    "1/16",
+                    "0"
+                  ],
+                  "poe_partition_sum": "1/16",
+                  "poe_normalized_distribution": [
+                    "0",
+                    "1",
+                    "0"
+                  ],
+                  "moe_unnormalized_vector": [
+                    "3/8",
+                    "1/4",
+                    "3/8"
+                  ],
+                  "moe_partition_sum": "1",
+                  "moe_normalized_distribution": [
+                    "3/8",
+                    "1/4",
+                    "3/8"
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_poe_normalizable_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "round_status": "POE_AND_MOE_COHERENT_LGGG"
+                }
+              ],
+              "receipt_sha256": "3d6e862c233353392a0af80990a8ce2abdad38e465acbc3cff6b6ba6c37a7ad0"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "poe_partition_sixteenths": 0,
+                    "poe_surcharge_cents": 12,
+                    "pricing_compromise_fourths": 0,
+                    "tax_compromise_fourths": 0,
+                    "veto_expert_count": 2
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "moe_partition_sum": "1"
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "poe_partition_sixteenths": 1,
+                    "poe_surcharge_cents": 0,
+                    "pricing_compromise_fourths": 1,
+                    "tax_compromise_fourths": 1,
+                    "veto_expert_count": 0
+                  }
+                }
+              },
+              "input_sha256": "31caba777492d3598d0c0508d27a83bf7299712629a3b6292bbc20065e5755bd",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "e5061d7874e6b2c9feba897b3bc4738df09934df341021ce14ccf5d2ecc0f10c"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 0,
+                "tax_compromise_fourths": 0,
+                "expert_1_fourths": [
+                  4,
+                  0,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  0,
+                  4
+                ],
+                "poe_partition_sixteenths": 0,
+                "poe_partition_sum": "0",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [],
+                "veto_expert_count": 2,
+                "poe_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "ALLOCATE_EXPERT_1_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "ALLOCATE_EXPERT_2_SHARED_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "REPAIR_SETTLEMENT_POE_PARTITION_GATE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "pricing_compromise_fourths": 1,
+                "tax_compromise_fourths": 1,
+                "expert_1_fourths": [
+                  3,
+                  1,
+                  0
+                ],
+                "expert_2_fourths": [
+                  0,
+                  1,
+                  3
+                ],
+                "poe_partition_sixteenths": 1,
+                "poe_partition_sum": "1/16",
+                "moe_partition_sum": "1",
+                "joint_support_indices": [
+                  1
+                ],
+                "veto_expert_count": 0,
+                "poe_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_poe",
+                    "action": "HOLD_EXPERT_1_COMPROMISE_FOURTHS_1",
+                    "target_pricing_compromise_fourths": 1,
+                    "target_expert_1_fourths": [
+                      3,
+                      1,
+                      0
+                    ]
+                  },
+                  "worker-1": {
+                    "module": "tax_poe",
+                    "action": "HOLD_EXPERT_2_COMPROMISE_FOURTHS_1",
+                    "target_tax_compromise_fourths": 1,
+                    "target_expert_2_fourths": [
+                      0,
+                      1,
+                      3
+                    ]
+                  },
+                  "worker-2": {
+                    "module": "settlement_poe",
+                    "action": "HOLD_ZERO_POE_VETO_SURCHARGE",
+                    "target_poe_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "2605544190d095b5f6bdf210cf0288e329c057afe74824de52ff25c35945275d"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0071809798"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 99,
+  "charged_or_reserved_usd": "0.0952012383",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 34,
+  "scope": "Concurrent 3-agent Product-of-Experts (PoE) zero-veto collapse & compromise mass Python code-engineering swarm (`pricing_poe` -> `tax_poe` -> `settlement_poe`) comparing bilateral zero-veto collapse c_1 = 0, c_2 = 0 (A), unilateral compromise c_1 = 1, c_2 = 0 (B), and shared-carrier compromise mass allocation c_1 = 1, c_2 = 1 (C) with full cryptographic receipts."
+}

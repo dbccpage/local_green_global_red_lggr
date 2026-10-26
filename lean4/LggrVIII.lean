@@ -5758,4 +5758,67 @@ theorem skew_repair_codebase_norm_attainment_divergence_audit :
   intro excess_l1 h1
   omega
 
+/-- Theorem 129 (Product-of-Experts Zero-Veto Collapse & Compromise Mass Audit
+    in Code-Engineering Swarms):
+    1. Multiplicative zero-veto collapse & PoE surcharge floor law:
+       - For any two-expert compromise allocation `(c_1, c_2)` on the shared
+         action `w_1` with `poe_sixteenths = c_1 * c_2` and `veto_cnt ≥ 1`
+         (`poe_sixteenths = 0`), the audit surcharge
+         `surcharge = 5 * veto_cnt + 2 ≥ 7` strictly reduces merchant payout below `873`.
+    2. Concrete 3-phase codebase Product-of-Experts audit across `pricing_poe`,
+       `tax_poe`, and `settlement_poe` (`M_1 = M_2 = 1`, `D_MoE = 1`, candidate
+       actions `W = {w_0, w_1, w_2}`):
+       - Phase 1 (Bilateral zero-veto collapse `c_1 = 0, c_2 = 0`,
+         `p_1 = [1, 0, 0]`, `p_2 = [0, 0, 1]`):
+         `z16_p1 = 0`, `veto_p1 = 2`, `surcharge_p1 = 5 * 2 + 2 = 12`,
+         `payout_p1 = 873 - 12 = 861 ≠ 873` (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Unilateral zero-veto collapse `c_1 = 1, c_2 = 0`,
+         `p_1 = [3/4, 1/4, 0]`, `p_2 = [0, 0, 1]`):
+         `z16_p2 = 0`, `veto_p2 = 1`, `surcharge_p2 = 5 * 1 + 2 = 7`,
+         `payout_p2 = 873 - 7 = 866 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Shared-carrier compromise mass allocation `c_1 = 1, c_2 = 1`,
+         `p_1 = [3/4, 1/4, 0]`, `p_2 = [0, 1/4, 3/4]`):
+         `z16_p3 = 1 ≥ 1`, `veto_p3 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`,
+         `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem poe_veto_codebase_zero_collapse_and_compromise_mass_audit :
+    (∀ veto_cnt : Int,
+      (1 ≤ veto_cnt) →
+      (5 * veto_cnt + 2 ≥ 7 ∧
+       873 - (5 * veto_cnt + 2) ≤ 866)) ∧
+    (let c1_p1 : Int := 0; let c2_p1 : Int := 0;
+     let c1_p2 : Int := 1; let c2_p2 : Int := 0;
+     let c1_p3 : Int := 1; let c2_p3 : Int := 1;
+     let z16_p1 : Int := c1_p1 * c2_p1;
+     let z16_p2 : Int := c1_p2 * c2_p2;
+     let z16_p3 : Int := c1_p3 * c2_p3;
+     let veto_p1 : Int := (if c1_p1 = 0 then 1 else 0) + (if c2_p1 = 0 then 1 else 0);
+     let veto_p2 : Int := (if c1_p2 = 0 then 1 else 0) + (if c2_p2 = 0 then 1 else 0);
+     let veto_p3 : Int := (if c1_p3 = 0 then 1 else 0) + (if c2_p3 = 0 then 1 else 0);
+     let surcharge_p1 : Int := 5 * veto_p1 + (if z16_p1 = 0 then 2 else 0);
+     let surcharge_p2 : Int := 5 * veto_p2 + (if z16_p2 = 0 then 2 else 0);
+     let surcharge_p3 : Int := 5 * veto_p3 + (if z16_p3 = 0 then 2 else 0);
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (z16_p1 = 0) ∧ (veto_p1 = 2) ∧ (surcharge_p1 = 12) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (z16_p1 ≥ 1) ∧ (surcharge_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (z16_p2 = 0) ∧ (veto_p2 = 1) ∧ (surcharge_p2 = 7) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (z16_p2 ≥ 1) ∧ (surcharge_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (z16_p3 = 1) ∧ (veto_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (z16_p1 = 0 ∧ z16_p2 = 0 ∧ z16_p3 = 1 ∧
+      veto_p1 = 2 ∧ veto_p2 = 1 ∧ veto_p3 = 0 ∧
+      surcharge_p1 = 12 ∧ surcharge_p2 = 7 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 861 ∧ payout_p2 = 866 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro veto_cnt h1
+  omega
+
 end LggrVIII

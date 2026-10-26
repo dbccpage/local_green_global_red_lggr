@@ -61,6 +61,7 @@ from lggr.streaming import (
     StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
+    StreamingCodebaseProductOfExpertsMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
@@ -6623,6 +6624,65 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_skew_source="def quote_skew_pricing(g):\n    return 123\n",
                 tax_skew_source=mon.PHASE_1_TAX_SKEW_SOURCE,
                 settlement_skew_source=mon.PHASE_1_SETTLEMENT_SKEW_SOURCE,
+            )
+
+    def test_poe_veto_codebase_zero_collapse_and_compromise_mass_audit(self) -> None:
+        """Verify Theorem 129: Product-of-Experts zero-veto collapse & compromise mass codebase audit."""
+        mon = StreamingCodebaseProductOfExpertsMonitor(
+            scope_id="unit-codebase-poe-veto-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-poe-veto-eval-01",
+        )
+        self.assertEqual(obs["phase_1_expert_1_fourths"], [4, 0, 0])
+        self.assertEqual(obs["phase_1_expert_2_fourths"], [0, 0, 4])
+        self.assertEqual(obs["phase_1_poe_partition_sixteenths"], 0)
+        self.assertEqual(obs["phase_1_poe_partition_sum"], "0")
+        self.assertEqual(obs["phase_1_veto_expert_count"], 2)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 12)
+        self.assertEqual(obs["phase_1_payout_cents"], 861)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "POE_BILATERAL_ZERO_VETO_COLLAPSE_LGGR")
+
+        self.assertEqual(obs["phase_2_expert_1_fourths"], [3, 1, 0])
+        self.assertEqual(obs["phase_2_expert_2_fourths"], [0, 0, 4])
+        self.assertEqual(obs["phase_2_poe_partition_sixteenths"], 0)
+        self.assertEqual(obs["phase_2_poe_partition_sum"], "0")
+        self.assertEqual(obs["phase_2_veto_expert_count"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 7)
+        self.assertEqual(obs["phase_2_payout_cents"], 866)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "POE_UNILATERAL_ZERO_VETO_COLLAPSE_LGGR")
+
+        self.assertEqual(obs["phase_3_expert_1_fourths"], [3, 1, 0])
+        self.assertEqual(obs["phase_3_expert_2_fourths"], [0, 1, 3])
+        self.assertEqual(obs["phase_3_poe_partition_sixteenths"], 1)
+        self.assertEqual(obs["phase_3_poe_partition_sum"], "1/16")
+        self.assertEqual(obs["phase_3_veto_expert_count"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "POE_SHARED_COMPROMISE_MASS_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["product_of_experts_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_poe_veto_modules(
+                "bad-return",
+                pricing_poe_source="def quote_poe_pricing(g):\n    return 123\n",
+                tax_poe_source=mon.PHASE_1_TAX_POE_SOURCE,
+                settlement_poe_source=mon.PHASE_1_SETTLEMENT_POE_SOURCE,
             )
 
 

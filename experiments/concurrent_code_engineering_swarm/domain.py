@@ -12,6 +12,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebasePolicyRatchetMonitor,
+    StreamingCodebaseProductOfExpertsMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSkewRepairMonitor,
@@ -19,6 +20,7 @@ from lggr.streaming import (
     StreamingDiamondCodebasePullbackMonitor,
     StreamingNonAbelianBraidHolonomyMonitor,
     StreamingPolicyRatchetDriftMonitor,
+    StreamingProductOfExpertsMonitor,
     StreamingSkewRepairMonitor,
     StreamingStatefulCodebaseDFAMonitor,
     StreamingSubgradientSensitivityMonitor,
@@ -9226,6 +9228,229 @@ class SkewRepairCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+POE_VETO_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_poe",
+    "worker-1": "tax_poe",
+    "worker-2": "settlement_poe",
+}
+
+INITIAL_PRICING_POE_P1_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_1_PRICING_POE_SOURCE
+INITIAL_PRICING_POE_P2_P3_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_2_PRICING_POE_SOURCE
+
+INITIAL_TAX_POE_P1_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_1_TAX_POE_SOURCE
+INITIAL_TAX_POE_P2_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_2_TAX_POE_SOURCE
+INITIAL_TAX_POE_P3_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_3_TAX_POE_SOURCE
+
+INITIAL_SETTLEMENT_POE_P1_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_1_SETTLEMENT_POE_SOURCE
+INITIAL_SETTLEMENT_POE_P2_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_2_SETTLEMENT_POE_SOURCE
+INITIAL_SETTLEMENT_POE_P3_PY = StreamingCodebaseProductOfExpertsMonitor.PHASE_3_SETTLEMENT_POE_SOURCE
+
+
+def run_poe_veto_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_poe`, `tax_poe`, or `settlement_poe`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_poe":
+            fn = ns.get("quote_poe_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_poe_pricing"}
+            res = fn(990)
+            c_1 = res.get("pricing_compromise_fourths") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and c_1 in (0, 1)
+                and res.get("expert_1_fourths") == [4 - c_1, c_1, 0]
+                and res.get("expert_1_mass_fourths") == 4
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_poe":
+            fn = ns.get("compute_poe_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_poe_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "pricing_compromise_fourths": 1,
+                    "expert_1_fourths": [3, 1, 0],
+                    "expert_1_mass_fourths": 4,
+                }
+            )
+            c_2 = res.get("tax_compromise_fourths") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and c_2 in (0, 1)
+                and res.get("expert_2_fourths") == [0, c_2, 4 - c_2]
+                and res.get("poe_partition_sixteenths") == 1 * c_2
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_poe":
+            fn = ns.get("settle_poe_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_poe_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "pricing_compromise_fourths": 1,
+                    "expert_1_fourths": [3, 1, 0],
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "pricing_compromise_fourths": 1,
+                    "tax_compromise_fourths": 1,
+                    "expert_1_fourths": [3, 1, 0],
+                    "expert_2_fourths": [0, 1, 3],
+                    "poe_partition_sixteenths": 1,
+                    "veto_expert_count": 0,
+                },
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("merchant_payout_cents") == 873
+                and res.get("poe_surcharge_cents") == 0
+                and res.get("poe_partition_sixteenths") == 1
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def poe_veto_fixture(seed: int) -> dict[str, Any]:
+    if seed in (12600, 12602):
+        return {
+            "seed": seed,
+            "kind": "repairable_poe_zero_veto_collapse_and_compromise_mass_defect",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_poe": INITIAL_PRICING_POE_P1_PY,
+                "tax_poe": INITIAL_TAX_POE_P1_PY,
+                "settlement_poe": INITIAL_SETTLEMENT_POE_P1_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 12601:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_poe_zero_veto_collapse",
+            "locked_workers": ["worker-0"],
+            "infeasible_constraint": (
+                "Legacy Product-of-Experts ROM lock: `pricing_poe.py` is locked in read-only ROM "
+                "with hard zero-veto `pricing_compromise_fourths = 0` (`expert_1_fourths = [4, 0, 0]`, "
+                "`poe_partition_sixteenths = 0`), while the LGGR Product-of-Experts merge gate requires "
+                "positive shared-carrier compromise mass `pricing_compromise_fourths = 1` and "
+                "`tax_compromise_fourths = 1` (`poe_partition_sixteenths >= 1`, `poe_surcharge_cents == 0`). "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_poe": INITIAL_PRICING_POE_P1_PY,
+                "tax_poe": INITIAL_TAX_POE_P1_PY,
+                "settlement_poe": INITIAL_SETTLEMENT_POE_P1_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported poe_veto seed {seed}")
+
+
+class ProductOfExpertsCodeWorkspace:
+    """Workspace for the 3-agent Product-of-Experts zero-veto collapse & compromise mass swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in POE_VETO_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = POE_VETO_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_poe_veto_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_poe.py": "def quote_poe_pricing(gross_cents: int = 990) -> dict",
+                    "tax_poe.py": "def compute_poe_tax(pricing_out: dict) -> dict",
+                    "settlement_poe.py": "def settle_poe_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_poe_veto_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_poe_veto_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; Product-of-Experts partition sum and shared compromise mass are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+PoeVetoCodeWorkspace = ProductOfExpertsCodeWorkspace
 
 
 

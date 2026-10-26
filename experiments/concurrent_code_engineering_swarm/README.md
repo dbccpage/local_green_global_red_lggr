@@ -541,13 +541,27 @@ In `--topology skew_repair`, the 3 concurrent agents maintain a 3-module skew-co
 | `12502` | `repairable_skew_repair_norm_attainment_divergence_defect` | **B** | `l2_hodge_least_squares_skew_repair_gate` | `blocked_unresolved` | `(2, 2)` | `[12, -6]` | `18` | `3` | `6` | `867` | 2 | 13 | `$0.015774` |
 | `12502` | `repairable_skew_repair_norm_attainment_divergence_defect` | **C** | `explicit_lggr_l1_minimum_skew_repair_directive` | **`completed`** | **`(5, 5)`** | **`[15, 0]`** | **`15`** | **`0`** | **`0`** | **`873`** | **1** | **5** | **`$0.006551`** |
 
+## 36. Product-of-Experts Zero-Veto Collapse & Compromise Mass Audit (`--topology poe_veto`, Theorem 129)
+
+In `--topology poe_veto`, the 3 concurrent agents maintain a 3-module Product-of-Experts (PoE) vs. Mixture-of-Experts (MoE) zero-veto collapse and compromise mass settlement codebase (`pricing_poe.py`, `tax_poe.py`, `settlement_poe.py`) over $K = 2$ experts scoring $m = 3$ candidate actions $W = \{w_0, w_1, w_2\}$ in fourths ($M_1 = M_2 = 1$, $D_{\mathrm{MoE}} = 1$) (`StreamingCodebaseProductOfExpertsMonitor`, Theorem 129):
+
+| Seed | Case | Arm | Gate Policy | Status | `(c_1, c_2)` | `expert_1_fourths` | `expert_2_fourths` | `z_16` | `veto` | Surcharge | Payout | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `12600` | `repairable_poe_zero_veto_collapse_and_compromise_mass_defect` | **A** | `bilateral_zero_veto_collapse_gate` | `blocked_unresolved` | `(0, 0)` | `[4, 0, 0]` | `[0, 0, 4]` | `0` | `2` | `12` | `861` | 2 | 18 | `$0.014861` |
+| `12600` | `repairable_poe_zero_veto_collapse_and_compromise_mass_defect` | **B** | `unilateral_compromise_allocation_gate` | `blocked_unresolved` | `(1, 0)` | `[3, 1, 0]` | `[0, 0, 4]` | `0` | `1` | `7` | `866` | 2 | 16 | `$0.015103` |
+| `12600` | `repairable_poe_zero_veto_collapse_and_compromise_mass_defect` | **C** | `explicit_lggr_shared_compromise_mass_directive` | **`completed`** | **`(1, 1)`** | **`[3, 1, 0]`** | **`[0, 1, 3]`** | **`1`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.007181`** |
+| `12601` | `infeasible_hardware_locked_poe_zero_veto_collapse` | **A / B / C** | All policies | `safe_escalated` | `(0, 0)` | `[4, 0, 0]` | `[0, 0, 4]` | `0` | `2` | `12` | `861` | 1 | 19 | `$0.020160` |
+| `12602` | `repairable_poe_zero_veto_collapse_and_compromise_mass_defect` | **A** | `bilateral_zero_veto_collapse_gate` | `blocked_unresolved` | `(0, 0)` | `[4, 0, 0]` | `[0, 0, 4]` | `0` | `2` | `12` | `861` | 2 | 18 | `$0.015262` |
+| `12602` | `repairable_poe_zero_veto_collapse_and_compromise_mass_defect` | **B** | `unilateral_compromise_allocation_gate` | `blocked_unresolved` | `(1, 0)` | `[3, 1, 0]` | `[0, 0, 4]` | `0` | `1` | `7` | `866` | 2 | 16 | `$0.015453` |
+| `12602` | `repairable_poe_zero_veto_collapse_and_compromise_mass_defect` | **C** | `explicit_lggr_shared_compromise_mass_directive` | **`completed`** | **`(1, 1)`** | **`[3, 1, 0]`** | **`[0, 1, 3]`** | **`1`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.007181`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, 3-agent subgradient-pivot, 3-agent policy-ratchet, and 3-agent skew-repair evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, 3-agent subgradient-pivot, 3-agent policy-ratchet, 3-agent skew-repair, and 3-agent poe-veto evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -583,4 +597,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/subgradient_pivot_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_ratchet_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/skew_repair_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/poe_veto_pilot_run/events.jsonl
 ```
