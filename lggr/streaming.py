@@ -23114,6 +23114,522 @@ class StreamingCodebaseReggeHolonomyMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseKInductionMonitor:
+    """Online bounded-depth k-induction unrolling vs. inductive invariant strengthening monitor for a 3-module codebase (Theorem 105).
+
+    Composes `StreamingProjectiveTowerMonitor`, `StreamingBoundedDepthKInductionMonitor`,
+    `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor` across a 3-module
+    stateful retry-accumulator codebase (`pricing_ind.py`, `tax_ind.py`, `settlement_ind.py`)
+    evaluated over modular unrolling depths `m_k in (2, 4, 8, 16)` (`k = 1, 2, 3, 4`) and
+    reachable non-negative carrier `X_reach = [0, 10]`:
+      - `pricing_ind.py` (`worker-0`, `compute_ind_quote`): defines `tower_coeff_a = 3`,
+        `reachable_carrier_max = 10`, `bounded_k3_threshold = 7`, and `net_cents = 900`.
+      - `tax_ind.py` (`worker-1`, `apply_ind_tax`): defines `tax_const_b` and 4-depth unrolling
+        thread `tax_unrolling_thread` along `m_k in (2, 4, 8, 16)`.
+      - `settlement_ind.py` (`worker-2`, `route_ind_settlement`): defines `settle_const_b`,
+        4-depth unrolling thread `settle_unrolling_thread`, depth-4 step carry overflow
+        `depth4_overflow = x_4 - x_3`, and settlement payout conservation `873 + 27 + 180 = 1080`.
+      - Separates:
+          1. Phase 1 (Bounded-depth k <= 3 pass with fractional & depth-4 carry-overflow escape):
+             `tax_ind` (`3x + 1 == 0 mod 2^k`, thread `(1, 1, 5, 5)`) and `settlement_ind`
+             (`3x + 3 == 0 mod 2^k`, thread `(1, 3, 7, 15)`) pass all local modular stage checks
+             and satisfy `x_k <= 7` for all bounded depths `k <= 3` (`local_green = 1`), yet
+             `tax_ind` has no integer completion root (`x_inf = -1/3 not in Z`) and `settlement_ind`
+             has out-of-carrier root `x_* = -1 not in [0, 10]` with depth-4 carry overflow
+             `x_4 - x_3 = 15 - 7 = 8 > 0` (`payout = 865 != 873`,
+             `K_INDUCTION_BOUNDED_HORIZON_ESCAPE_NGD_LGGR`, `global_green = 0`, `defect = -1`).
+          2. Phase 2 (Partial invariant strengthening in `tax_ind` to `3x - 6 == 0 mod 2^k`, thread `(0, 2, 2, 2)`):
+             `tax_ind` stabilizes at `x_* = 2 in [0, 10]` (`local_green = 1`), yet `settlement_ind`
+             retains out-of-carrier root `x_* = -1 not in [0, 10]` and depth-4 step jump
+             `x_4 - x_3 = 8 > 0` (`K_INDUCTION_OUT_OF_CARRIER_STEP_UNSOUND_LGGR`,
+             `global_green = 0`, `defect = -1`).
+          3. Phase 3 (Full inductive invariant strengthening `(0, 2, 2, 2)` across `tax_ind` and `settlement_ind`):
+             Both modules satisfy `3x - 6 == 0 mod 2^k`, stabilize at reachable root `x_* = 2 in [0, 10]`
+             with `x_3 - x_2 = 0` and `x_4 - x_3 = 0` (`depth4_overflow = 0`), and satisfy exact
+             settlement conservation `873 + 27 + 180 = 1080` (`CODEBASE_K_INDUCTION_SOUND_LGGG`,
+             `local_green = 1`, `global_green = 1`, `defect = 0`).
+    """
+
+    MODULES: tuple[str, ...] = ("pricing_ind", "tax_ind", "settlement_ind")
+    MODULE_FUNCTIONS: dict[str, str] = {
+        "pricing_ind": "compute_ind_quote",
+        "tax_ind": "apply_ind_tax",
+        "settlement_ind": "route_ind_settlement",
+    }
+    MODULI: tuple[int, ...] = (2, 4, 8, 16)
+
+    def __init__(
+        self,
+        *,
+        reachable_carrier_max: int = 10,
+        scope_id: str = "streaming-codebase-k-induction-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.reachable_carrier_max = exact_int(
+            reachable_carrier_max, "reachable_carrier_max", minimum=2
+        )
+        self.k_induction_monitor = StreamingBoundedDepthKInductionMonitor(
+            reachable_carrier_max=self.reachable_carrier_max,
+            scope_id=f"{self.scope_id}-harness",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_k_induction(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        for m in self.MODULES:
+            if m not in sources:
+                raise ValidationError(f"missing source for module {m}")
+            if m not in local_test_results:
+                raise ValidationError(f"missing local_test_results for module {m}")
+
+        all_local_pass = all(bool(local_test_results[m]) for m in self.MODULES)
+
+        ast_summaries: dict[str, dict[str, Any]] = {}
+        fn_map: dict[str, Any] = {}
+        for m in self.MODULES:
+            fname = self.MODULE_FUNCTIONS[m]
+            ast_summaries[m] = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(
+                m, sources[m]
+            )
+            try:
+                ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(m, sources[m])
+                fn_map[m] = ns.get(fname)
+            except ValidationError:
+                fn_map[m] = None
+
+        items = [
+            {"sku": "tier_a", "unit_cents": 600, "qty": 1},
+            {"sku": "tier_b", "unit_cents": 400, "qty": 1},
+        ]
+        runtime_error: str | None = None
+        quote_out: dict[str, Any] = {}
+        tax_out: dict[str, Any] = {}
+        settle_out: dict[str, Any] = {}
+
+        if all(fn_map[m] is not None for m in self.MODULES):
+            try:
+                q_res = fn_map["pricing_ind"](items, 1000)
+                if not isinstance(q_res, Mapping):
+                    raise ValidationError("pricing_ind did not return a dict")
+                quote_out = dict(q_res)
+                t_res = fn_map["tax_ind"](quote_out, 2000)
+                if not isinstance(t_res, Mapping):
+                    raise ValidationError("tax_ind did not return a dict")
+                tax_out = dict(t_res)
+                s_res = fn_map["settlement_ind"](tax_out, 300)
+                if not isinstance(s_res, Mapping):
+                    raise ValidationError("settlement_ind did not return a dict")
+                settle_out = dict(s_res)
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+        else:
+            runtime_error = "One or more modules failed AST compilation"
+
+        coeff_a = int(quote_out.get("tower_coeff_a", 3)) if runtime_error is None else 3
+        carrier_max = int(quote_out.get("reachable_carrier_max", self.reachable_carrier_max)) if runtime_error is None else self.reachable_carrier_max
+        k3_bound = int(quote_out.get("bounded_k3_threshold", 7)) if runtime_error is None else 7
+
+        tax_const_b = int(tax_out.get("tax_const_b", 1)) if runtime_error is None else 1
+        raw_tax_th = tax_out.get("tax_unrolling_thread", [1, 1, 5, 5]) if runtime_error is None else [1, 1, 5, 5]
+        tax_thread = tuple(int(x) for x in raw_tax_th) if isinstance(raw_tax_th, (list, tuple)) and len(raw_tax_th) == 4 else (1, 1, 5, 5)
+
+        settle_const_b = int(settle_out.get("settle_const_b", 3)) if runtime_error is None else 3
+        raw_settle_th = settle_out.get("settle_unrolling_thread", [1, 3, 7, 15]) if runtime_error is None else [1, 3, 7, 15]
+        settle_thread = tuple(int(x) for x in raw_settle_th) if isinstance(raw_settle_th, (list, tuple)) and len(raw_settle_th) == 4 else (1, 3, 7, 15)
+
+        tax_tower = StreamingProjectiveTowerMonitor(
+            coeff_a, tax_const_b, scope_id=f"{self.scope_id}-{eval_id}-tax-tower"
+        )
+        settle_tower = StreamingProjectiveTowerMonitor(
+            coeff_a, settle_const_b, scope_id=f"{self.scope_id}-{eval_id}-settle-tower"
+        )
+        for idx, m_val in enumerate(self.MODULI):
+            tax_tower.record_stage(f"depth_{idx + 1}", m_val, tax_thread[idx])
+            settle_tower.record_stage(f"depth_{idx + 1}", m_val, settle_thread[idx])
+
+        tax_tower_rec = tax_tower.get_receipt()
+        settle_tower_rec = settle_tower.get_receipt()
+
+        tax_local_stages_ok = int(tax_tower_rec["local_product_aggregator"]) == 1
+        settle_local_stages_ok = int(settle_tower_rec["local_product_aggregator"]) == 1
+        bounded_k3_ok = all(x <= k3_bound for x in tax_thread[:3]) and all(x <= k3_bound for x in settle_thread[:3])
+        local_unrolling_ok = tax_local_stages_ok and settle_local_stages_ok and bounded_k3_ok
+
+        tax_int_root = tax_tower_rec["integral_global_root"]
+        settle_int_root = settle_tower_rec["integral_global_root"]
+        tax_in_carrier = tax_int_root is not None and 0 <= int(tax_int_root) <= carrier_max
+        settle_in_carrier = settle_int_root is not None and 0 <= int(settle_int_root) <= carrier_max
+
+        tax_tail_step_diff = tax_thread[-1] - tax_thread[-2]
+        settle_depth4_overflow = settle_thread[-1] - settle_thread[-2]
+
+        net_val = int(quote_out.get("net_cents", 0)) if runtime_error is None else 0
+        gross_val = int(settle_out.get("gross_cents", 0)) if runtime_error is None else 0
+        fee_val = int(settle_out.get("platform_fee_cents", 0)) if runtime_error is None else 0
+        tax_val = int(settle_out.get("tax_reserve_cents", 0)) if runtime_error is None else 0
+        payout_val = int(settle_out.get("merchant_payout_cents", 0)) if runtime_error is None else 0
+
+        conservation_ok = (
+            runtime_error is None
+            and net_val == 900
+            and gross_val == 1080
+            and fee_val == 27
+            and tax_val == 180
+            and payout_val == 873
+            and payout_val + fee_val + tax_val == gross_val
+            and local_unrolling_ok
+            and tax_in_carrier
+            and settle_in_carrier
+            and tax_tail_step_diff == 0
+            and settle_depth4_overflow == 0
+            and tax_const_b == -6
+            and settle_const_b == -6
+            and tax_thread == (0, 2, 2, 2)
+            and settle_thread == (0, 2, 2, 2)
+        )
+
+        harness_eval = self.k_induction_monitor.evaluate_k_induction_harness(
+            f"{eval_id}_harness",
+            moduli=self.MODULI,
+            fractional_thread=tax_thread if tax_int_root is None else (1, 1, 5, 5),
+            out_of_carrier_thread=settle_thread if not settle_in_carrier else (1, 3, 7, 15),
+            reachable_thread=settle_thread if settle_in_carrier else (0, 2, 2, 2),
+        )
+
+        l_green = 1 if (all_local_pass and local_unrolling_ok and infeasible_constraint is None) else 0
+        eg_green = 1 if (l_green == 1 and conservation_ok) else 0
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_tests_all_pass": all_local_pass,
+                "bounded_k3_unrolling_pass": local_unrolling_ok,
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "tax_const_b": tax_const_b,
+                "tax_unrolling_thread": list(tax_thread),
+                "settle_const_b": settle_const_b,
+                "settle_unrolling_thread": list(settle_thread),
+                "settle_depth4_overflow": settle_depth4_overflow,
+            },
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_K_INDUCTION_INVARIANT_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_K_INDUCTION_SOUND_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l_green == 1 and tax_int_root is None:
+            status = "K_INDUCTION_BOUNDED_HORIZON_ESCAPE_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif l_green == 1 and (not settle_in_carrier or settle_depth4_overflow != 0):
+            status = "K_INDUCTION_OUT_OF_CARRIER_STEP_UNSOUND_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_UNIT_OR_TOWER_STAGE_FAILURE_LRGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if infeasible_constraint is not None:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "HALT_AND_ESCALATE",
+                    "reason": str(
+                        infeasible_constraint.get(
+                            "reason", "Infeasible k-induction carrier invariant lock."
+                        )
+                    ),
+                }
+        elif eg_green == 1:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "NO_OP_K_INDUCTION_SOUND",
+                    "reason": (
+                        "Both projective towers stabilize at reachable root `x_* = 2 in [0, 10]` "
+                        "with `depth4_overflow == 0` and exact settlement conservation 873 + 27 + 180 = 1080."
+                    ),
+                }
+        else:
+            directives["worker-0"] = {
+                "module": "pricing_ind",
+                "action": "HOLD_INDUCTIVE_PRICING_ANCHOR",
+                "target_invariant": {
+                    "tower_coeff_a": 3,
+                    "reachable_carrier_max": 10,
+                    "bounded_k3_threshold": 7,
+                },
+                "reason": (
+                    "Hold `pricing_ind.py` anchor at `'tower_coeff_a': 3, 'reachable_carrier_max': 10, "
+                    "'bounded_k3_threshold': 7` (`net_cents = 900`)."
+                ),
+            }
+            directives["worker-1"] = {
+                "module": "tax_ind",
+                "action": (
+                    "STRENGTHEN_TAX_TOWER_INVARIANT"
+                    if (tax_const_b != -6 or tax_thread != (0, 2, 2, 2))
+                    else "HOLD_STRENGTHENED_TAX_INVARIANT"
+                ),
+                "current_const_b": tax_const_b,
+                "current_thread": list(tax_thread),
+                "target_invariant": {
+                    "tax_const_b": -6,
+                    "tax_unrolling_thread": [0, 2, 2, 2],
+                },
+                "reason": (
+                    f"Projective tower audit on `tax_ind.py` detected `tax_const_b = {tax_const_b}` "
+                    f"and `tax_unrolling_thread = {list(tax_thread)}` (`integral_root = {tax_int_root}`). "
+                    "Update `tax_ind.py` so `'tax_const_b': -6` and `'tax_unrolling_thread': [0, 2, 2, 2]` "
+                    "(`tax_cents = 180`, `gross_cents = 1080`)."
+                ),
+            }
+            directives["worker-2"] = {
+                "module": "settlement_ind",
+                "action": "STRENGTHEN_SETTLEMENT_CARRIER_INVARIANT",
+                "current_const_b": settle_const_b,
+                "current_thread": list(settle_thread),
+                "settle_depth4_overflow": settle_depth4_overflow,
+                "target_invariant": {
+                    "settle_const_b": -6,
+                    "settle_unrolling_thread": [0, 2, 2, 2],
+                    "depth4_overflow_cents": 0,
+                },
+                "reason": (
+                    f"k-induction carrier audit on `settlement_ind.py` detected `settle_const_b = {settle_const_b}`, "
+                    f"`settle_unrolling_thread = {list(settle_thread)}` (`integral_root = {settle_int_root} not in [0, 10]`, "
+                    f"`depth4_overflow = {settle_depth4_overflow} != 0`). Update `settlement_ind.py` so "
+                    "`'settle_const_b': -6`, `'settle_unrolling_thread': [0, 2, 2, 2]`, and "
+                    "`merchant_payout_cents = gross - fee - tax = 873` (`depth4_overflow = 0`)."
+                ),
+            }
+
+        rec_body: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "tax_const_b": tax_const_b,
+            "tax_unrolling_thread": list(tax_thread),
+            "tax_integral_root": tax_int_root,
+            "tax_in_reachable_carrier": tax_in_carrier,
+            "tax_tail_step_diff": tax_tail_step_diff,
+            "settle_const_b": settle_const_b,
+            "settle_unrolling_thread": list(settle_thread),
+            "settle_integral_root": settle_int_root,
+            "settle_in_reachable_carrier": settle_in_carrier,
+            "settle_depth4_overflow": settle_depth4_overflow,
+            "conservation_ok": conservation_ok,
+            "runtime_error": runtime_error,
+            "ast_summaries": ast_summaries,
+            "compact_role_directives": directives,
+            "tax_tower_receipt": tax_tower_rec,
+            "settle_tower_receipt": settle_tower_rec,
+            "k_induction_harness_evaluation": harness_eval,
+        }
+        signed_rec = json_value({**rec_body, "receipt_sha256": digest(rec_body)})
+        self.evaluations.append(signed_rec)
+        return signed_rec
+
+    def record_three_phase_codebase_k_induction_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record the 3-phase bounded-depth k-induction vs. invariant strengthening codebase audit (Theorem 105)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p = (
+            "def compute_ind_quote(items: list[dict], discount_bps: int) -> dict:\n"
+            "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'tower_coeff_a': 3,\n"
+            "        'reachable_carrier_max': 10,\n"
+            "        'bounded_k3_threshold': 7,\n"
+            "    }\n"
+        )
+        src_t_frac = (
+            "def apply_ind_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'tax_const_b': 1,\n"
+            "        'tax_unrolling_thread': [1, 1, 5, 5],\n"
+            "    }\n"
+        )
+        src_t_sound = (
+            "def apply_ind_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'tax_const_b': -6,\n"
+            "        'tax_unrolling_thread': [0, 2, 2, 2],\n"
+            "    }\n"
+        )
+        src_s_escape = (
+            "def route_ind_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    thread = [1, 3, 7, 15]\n"
+            "    depth4_overflow = thread[3] - thread[2]\n"
+            "    payout = gross - fee - tax - depth4_overflow\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_const_b': 3,\n"
+            "        'settle_unrolling_thread': thread,\n"
+            "    }\n"
+        )
+        src_s_sound = (
+            "def route_ind_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    thread = [0, 2, 2, 2]\n"
+            "    depth4_overflow = thread[3] - thread[2]\n"
+            "    payout = gross - fee - tax - depth4_overflow\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_const_b': -6,\n"
+            "        'settle_unrolling_thread': thread,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_ind": True,
+            "tax_ind": True,
+            "settlement_ind": True,
+        }
+
+        p1 = self.evaluate_codebase_k_induction(
+            f"{eval_id}_phase1_bounded_horizon_escape",
+            sources={
+                "pricing_ind": src_p,
+                "tax_ind": src_t_frac,
+                "settlement_ind": src_s_escape,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_k_induction(
+            f"{eval_id}_phase2_out_of_carrier_step_unsound",
+            sources={
+                "pricing_ind": src_p,
+                "tax_ind": src_t_sound,
+                "settlement_ind": src_s_escape,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_k_induction(
+            f"{eval_id}_phase3_inductive_invariant_sound",
+            sources={
+                "pricing_ind": src_p,
+                "tax_ind": src_t_sound,
+                "settlement_ind": src_s_sound,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_tax_integral_root": p1["tax_integral_root"],
+                "phase_1_settle_integral_root": p1["settle_integral_root"],
+                "phase_1_settle_depth4_overflow": p1["settle_depth4_overflow"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_tax_integral_root": p2["tax_integral_root"],
+                "phase_2_settle_integral_root": p2["settle_integral_root"],
+                "phase_2_settle_depth4_overflow": p2["settle_depth4_overflow"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_tax_integral_root": p3["tax_integral_root"],
+                "phase_3_settle_integral_root": p3["settle_integral_root"],
+                "phase_3_settle_depth4_overflow": p3["settle_depth4_overflow"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase k-induction evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_k_induction.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "k_induction_harness_receipt": self.k_induction_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

@@ -42,11 +42,17 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CODE_SWARM_MODELS,
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKTREE_BRANCHES,
+    KINDUCTION_PRICING_SOURCE,
+    KINDUCTION_SETTLEMENT_ESCAPE_SOURCE,
+    KINDUCTION_SETTLEMENT_SOUND_SOURCE,
+    KINDUCTION_TAX_FRACTIONAL_SOURCE,
+    KINDUCTION_TAX_SOUND_SOURCE,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
+    KInductionCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
@@ -59,6 +65,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     dfa_fixture,
     diamond_fixture,
     fixture,
+    kinduction_fixture,
     mv_fixture,
     regge_fixture,
     replay_fixture,
@@ -66,6 +73,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_cptp_local_unit_tests,
     run_dfa_local_unit_tests,
     run_diamond_local_unit_tests,
+    run_kinduction_local_unit_tests,
     run_local_unit_tests,
     run_mv_local_unit_tests,
     run_regge_local_unit_tests,
@@ -83,6 +91,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     cptp_campaign,
     dfa_campaign,
     diamond_campaign,
+    kinduction_campaign,
     mv_campaign,
     regge_campaign,
     replay,
@@ -96,6 +105,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseKInductionMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
@@ -1718,6 +1728,210 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if regge_events.exists() and regge_summary.exists():
             replayed = replay(regge_events)
             self.assertEqual(replayed["schema"], "lggr.regge_holonomy_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_kinduction_code_workspace_and_three_phase_monitor(self) -> None:
+        fx = kinduction_fixture(10200)
+        ws = KInductionCodeWorkspace(fx)
+        verdicts = ws.local_verdicts()
+        self.assertTrue(all(verdicts.values()))
+
+        mon = StreamingCodebaseKInductionMonitor(scope_id="test-kinduction-swarm")
+        p1 = mon.evaluate_codebase_k_induction(
+            "p1",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["status"], "K_INDUCTION_BOUNDED_HORIZON_ESCAPE_NGD_LGGR")
+        self.assertIsNone(p1["tax_integral_root"])
+        self.assertEqual(p1["settle_integral_root"], -1)
+        self.assertEqual(p1["settle_depth4_overflow"], 8)
+
+        # Phase 2: worker-1 stabilizes at x_* = 2, worker-2 still out-of-carrier x_* = -1
+        res_t = ws.tool("worker-1", "submit_module_patch", {"source_code": KINDUCTION_TAX_SOUND_SOURCE})
+        self.assertTrue(res_t["accepted"])
+        p2 = mon.evaluate_codebase_k_induction(
+            "p2",
+            sources=ws.state["sources"],
+            local_test_results=ws.local_verdicts(),
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["status"], "K_INDUCTION_OUT_OF_CARRIER_STEP_UNSOUND_LGGR")
+        self.assertEqual(p2["tax_integral_root"], 2)
+        self.assertEqual(p2["settle_depth4_overflow"], 8)
+
+        # Phase 3: both workers stabilize at x_* = 2 in [0, 10]
+        res_s = ws.tool("worker-2", "submit_module_patch", {"source_code": KINDUCTION_SETTLEMENT_SOUND_SOURCE})
+        self.assertTrue(res_s["accepted"])
+        p3 = mon.evaluate_codebase_k_induction(
+            "p3",
+            sources=ws.state["sources"],
+            local_test_results=ws.local_verdicts(),
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["status"], "CODEBASE_K_INDUCTION_SOUND_LGGG")
+        self.assertEqual(p3["settle_depth4_overflow"], 0)
+
+    def test_kinduction_campaign_and_tamper_detection(self) -> None:
+        def stub_kinduction_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_text = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"agent {w}" in sys_text:
+                    worker = w
+                    break
+            arm = "A"
+            if "Arm B" in sys_text:
+                arm = "B"
+            elif "Arm C" in sys_text:
+                arm = "C"
+
+            has_tool_result = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_result:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                user_msgs = [m["content"] for m in messages if m.get("role") == "user"]
+                last_user = json.loads(user_msgs[-1])
+                if last_user.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Infeasible k-induction carrier lock."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    tool_result_msg = [m for m in messages if m.get("role") == "tool"][-1]
+                    inspected = json.loads(tool_result_msg["content"])
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif arm == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": KINDUCTION_TAX_SOUND_SOURCE}),
+                            },
+                        }
+                    else:
+                        tool_result_msg = [m for m in messages if m.get("role") == "tool"][-1]
+                        inspected = json.loads(tool_result_msg["content"])
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": KINDUCTION_PRICING_SOURCE,
+                        "worker-1": KINDUCTION_TAX_SOUND_SOURCE,
+                        "worker-2": KINDUCTION_SETTLEMENT_SOUND_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "kinduction",
+                "seeds": [10200, 10201],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_kinduction_transport)
+            summary = kinduction_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.k_induction_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on kinduction gate settle_depth4_overflow field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["settle_depth4_overflow"] = int(gate_rec["settle_depth4_overflow"]) + 8
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_kinduction_pilot_evidence_replay_if_present(self) -> None:
+        kinduction_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "kinduction_pilot_run"
+            / "events.jsonl"
+        )
+        kinduction_summary = kinduction_events.with_name("summary.json")
+        if kinduction_events.exists() and kinduction_summary.exists():
+            replayed = replay(kinduction_events)
+            self.assertEqual(replayed["schema"], "lggr.k_induction_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

@@ -41,6 +41,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseKInductionMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
@@ -5424,7 +5425,55 @@ class TestStreamingBaselineComparator(unittest.TestCase):
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
 
+    def test_kinduction_codebase_bounded_unrolling_and_invariant_strengthening_audit(self) -> None:
+        """Verify Theorem 105: Bounded-depth k-induction horizon escape & non-negative carrier invariant strengthening."""
+        mon = StreamingCodebaseKInductionMonitor(
+            scope_id="unit-codebase-k-induction-scope",
+        )
+        obs = mon.record_three_phase_codebase_k_induction_audit(
+            "codebase-k-induction-eval-01",
+        )
+        self.assertIsNone(obs["phase_1_tax_integral_root"])
+        self.assertEqual(obs["phase_1_settle_integral_root"], -1)
+        self.assertEqual(obs["phase_1_settle_depth4_overflow"], 8)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "K_INDUCTION_BOUNDED_HORIZON_ESCAPE_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_INDUCTIVE_PRICING_ANCHOR",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "STRENGTHEN_TAX_TOWER_INVARIANT",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "STRENGTHEN_SETTLEMENT_CARRIER_INVARIANT",
+        )
 
+        self.assertEqual(obs["phase_2_tax_integral_root"], 2)
+        self.assertEqual(obs["phase_2_settle_integral_root"], -1)
+        self.assertEqual(obs["phase_2_settle_depth4_overflow"], 8)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "K_INDUCTION_OUT_OF_CARRIER_STEP_UNSOUND_LGGR")
+
+        self.assertEqual(obs["phase_3_tax_integral_root"], 2)
+        self.assertEqual(obs["phase_3_settle_integral_root"], 2)
+        self.assertEqual(obs["phase_3_settle_depth4_overflow"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_K_INDUCTION_SOUND_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_K_INDUCTION_SOUND_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
 
 
 if __name__ == "__main__":

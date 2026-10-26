@@ -211,13 +211,29 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `42
 | `10101` | `conical_hinge_deficit_star` | **B** | `partial_sector1_hinge_flattening` | `blocked_unresolved` | `6` | `30` | 1 | 6 | `$0.006404` |
 | `10101` | `conical_hinge_deficit_star` | **C** | `explicit_lggr_regge_holonomy_flattening_directive` | **`completed`** | **`0`** | **`36`** | **2** | **12** | **`$0.018321`** |
 
+## 12. 3-Agent Bounded-Depth $k$-Induction Unrolling vs. Inductive Invariant Strengthening Campaign (`--topology kinduction`)
+
+In `--topology kinduction`, 3 concurrent LLM workers edit `pricing_ind.py`, `tax_ind.py`, and `settlement_ind.py` over modular unrolling depths $m_k \in \{2, 4, 8, 16\}$ ($k = 1, 2, 3, 4$) and reachable non-negative carrier $X_{\mathrm{reach}} = [0, 10]$:
+- On `seeds 10200, 10201` (`repairable_k_induction_escape_seed_*`), `tax_ind.py` sets `tax_const_b = 1, tax_unrolling_thread = [1, 1, 5, 5]` ($3x + 1 \equiv 0 \pmod{m_k}$, no integer root $x_\infty = -1/3 \notin \mathbb{Z}$) and `settlement_ind.py` sets `settle_const_b = 3, settle_unrolling_thread = [1, 3, 7, 15]` ($3x + 3 \equiv 0 \pmod{m_k}$, out-of-carrier integer root $x_\star = -1 \notin [0, 10]$, depth-4 carry overflow $x_4 - x_3 = 15 - 7 = 8 > 0$). Both pass isolated unit tests and bounded-depth $k \le 3$ unrolling (`local_green = 1`), yet fail full carrier completion and settlement conservation (`payout = 865 != 873`, `global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `47` live API attempts, `$0.059591` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `tax_root` | `settle_root` | `depth4_overflow` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10200` | `repairable_k_induction_escape_seed_10200` | **A** | `bounded_k3_unrolling_gate` | `blocked_unresolved` | `null` | `-1` | `8` | 1 | 6 | `$0.005697` |
+| `10200` | `repairable_k_induction_escape_seed_10200` | **B** | `partial_tax_tower_strengthening` | `blocked_unresolved` | `2` | `-1` | `8` | 1 | 6 | `$0.006056` |
+| `10200` | `repairable_k_induction_escape_seed_10200` | **C** | `explicit_lggr_kinduction_carrier_directive` | `blocked_unresolved` | `2` | `-1` | `8` | 2 | 11 | `$0.017702` |
+| `10201` | `repairable_k_induction_escape_seed_10201` | **A** | `bounded_k3_unrolling_gate` | `blocked_unresolved` | `null` | `-1` | `8` | 1 | 6 | `$0.005717` |
+| `10201` | `repairable_k_induction_escape_seed_10201` | **B** | `partial_tax_tower_strengthening` | `blocked_unresolved` | `2` | `-1` | `8` | 1 | 6 | `$0.006055` |
+| `10201` | `repairable_k_induction_escape_seed_10201` | **C** | `explicit_lggr_kinduction_carrier_directive` | **`completed`** | **`2`** | **`2`** | **`0`** | **2** | **12** | **`$0.018364`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, and 3-agent Regge holonomy evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, and 3-agent k-induction evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -229,4 +245,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/optional_stopping_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/cptp_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/regge_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/kinduction_pilot_run/events.jsonl
 ```
