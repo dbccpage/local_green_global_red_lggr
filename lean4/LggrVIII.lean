@@ -4771,5 +4771,72 @@ theorem disagreement_council_codebase_collapsing_consensus_and_side_channel_audi
      (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
   refine ⟨⟨by decide, by decide⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
 
+/-- Theorem 114 (Cross-Role Six-Role Schema Validation & Double-Count Deduplication in
+    Code-Engineering Swarms):
+    1. All-assignment cross-role verdict-triple preservation and multiplicity-inflation laws:
+       - If two role adapters logging the same `trace_id` preserve the verdict triple
+         `(e1a, e2a, ega) = (e1b, e2b, egb)`, then their pointwise defects agree:
+         `ega - e1a * e2a = egb - e1b * e2b`;
+       - For any trace multiplicities `(m1, m2, m3)` and unique-trace defects `(d1, d2, d3)`,
+         the un-deduplicated 6-role sum `D_raw = m1 * d1 + m2 * d2 + m3 * d3` differs from the
+         deduplicated unique-trace sum `D_unique = d1 + d2 + d3` by the exact multiplicity inflation
+         `D_raw - D_unique = (m1 - 1) * d1 + (m2 - 1) * d2 + (m3 - 1) * d3`.
+    2. Concrete 3-phase codebase six-role deduplication audit across `pricing_role`, `tax_role`,
+       and `settlement_role` (`d1 = -1`, `d2 = -1`, `d3 = +1`, `m1 = 2`, `m2 = 1`, `m3 = 3`):
+       - Phase 1 (Cross-role verdict drift `drift_p1 = 1` + un-deduplicated double-counting `dup_p1 = 3`):
+         each module passes its isolated unit test (`L_p1 = 1`), yet `D_raw = 0 ≠ D_unique = -1`,
+         `surcharge_p1 = 5 * (1 + 3) = 20 > 0`, and `payout_p1 = 873 - 20 = 853 ≠ 873`
+         (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Verdict-drift repaired `drift_p2 = 0`, but persona double-counting `dup_p2 = 3 > 0` persists):
+         `tax_role` preserves exact verdict triples across shared `trace_id` (`L_p2 = 1`), yet
+         `settlement_role` still sums un-deduplicated role entries (`surcharge_p2 = 5 * (0 + 3) = 15 > 0`,
+         `payout_p2 = 873 - 15 = 858 ≠ 873`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Trace-ID deduplicated & context-validated 6-role overlay `drift_p3 = 0`, `dup_p3 = 0`):
+         exact unique-trace defect `D_unique = -1` is recovered without double-counting,
+         `surcharge_p3 = 0`, `payout_p3 = 873`, and `873 + 27 + 180 = 1080`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem six_role_codebase_schema_validation_and_double_count_deduplication_audit :
+    ((∀ e1a e2a ega e1b e2b egb : Int,
+        e1a = e1b ∧ e2a = e2b ∧ ega = egb →
+        (ega - e1a * e2a) = (egb - e1b * e2b)) ∧
+     (∀ m1 m2 m3 d1 d2 d3 : Int,
+        (m1 * d1 + m2 * d2 + m3 * d3) - (d1 + d2 + d3) =
+          (m1 - 1) * d1 + (m2 - 1) * d2 + (m3 - 1) * d3)) ∧
+    (let d1 : Int := -1; let d2 : Int := -1; let d3 : Int := 1;
+     let m1 : Int := 2; let m2 : Int := 1; let m3 : Int := 3;
+     let d_unique := d1 + d2 + d3;
+     let d_raw := m1 * d1 + m2 * d2 + m3 * d3;
+     let dup_inflation := d_raw - d_unique;
+     let drift_p1 : Int := 1; let dup_p1 : Int := 3;
+     let drift_p2 : Int := 0; let dup_p2 : Int := 3;
+     let drift_p3 : Int := 0; let dup_p3 : Int := 0;
+     let surcharge_p1 := 5 * (drift_p1 + dup_p1);
+     let surcharge_p2 := 5 * (drift_p2 + dup_p2);
+     let surcharge_p3 := 5 * (drift_p3 + dup_p3);
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 180; let gross : Int := 1080;
+     let l_p1 := if (d_raw = 0) ∧ (d_unique = -1) ∧ (surcharge_p1 = 20) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (drift_p1 = 0) ∧ (dup_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (drift_p2 = 0) ∧ (surcharge_p2 = 15) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (dup_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (drift_p3 = 0) ∧ (dup_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (dup_inflation = 1) ∧ (surcharge_p3 < surcharge_p2) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (d_unique = -1 ∧ d_raw = 0 ∧ dup_inflation = 1 ∧ surcharge_p1 = 20 ∧ surcharge_p2 = 15 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 853 ∧ payout_p2 = 858 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro e1a e2a ega e1b e2b egb ⟨h1, h2, h3⟩
+    subst h1; subst h2; subst h3; rfl
+  · intro m1 m2 m3 d1 d2 d3
+    simp [Int.sub_mul, Int.one_mul]
+    omega
+
 
 end LggrVIII

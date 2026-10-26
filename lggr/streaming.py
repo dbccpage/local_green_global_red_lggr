@@ -27592,3 +27592,503 @@ class StreamingCodebaseDisagreementCouncilMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseSixRoleDeduplicationMonitor:
+    """Online codebase six-role schema validation and double-count deduplication monitor (Theorem 114).
+
+    Composes ``StreamingSixRoleOverlayMonitor``, ``StreamingCrossRoleDeduplicationMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across a
+    3-module concurrent code-engineering workspace (``pricing_role.py``, ``tax_role.py``,
+    ``settlement_role.py``).
+
+    Models a settlement pipeline over 3 unique traces ``tr-01`` (defect ``-1``, multiplicity ``m1 = 2``),
+    ``tr-02`` (defect ``-1``, multiplicity ``m2 = 1``), and ``tr-03`` (defect ``+1``, multiplicity ``m3 = 3``)
+    observed across the 6 canonical LGGR III roles:
+      - ``pricing_role(gross_cents, discount_bps, rebate_cents)``:
+        Emits ``net_cents = 900`` and the canonical unique-trace ledger for ``tr-01, tr-02, tr-03``.
+      - ``tax_role(pricing_quote, tax_rate_bps)``:
+        Emits ``tax_cents = 180`` and a cross-role verdict log for ``tr-01``. Under a drifting
+        role adapter (Phase 1), ``action_and_alignment`` mutates ``tr-01`` from ``(1, 1, 0)``
+        to ``(1, 1, 1)`` (``verdict_drift_count = 1 > 0``); under a schema-preserving adapter
+        (Phases 2 and 3), ``tr-01`` preserves ``(1, 1, 0)`` across roles (``verdict_drift_count = 0``).
+      - ``settlement_role(pricing_quote, tax_quote, fee_bps)``:
+        Emits ``fee_cents = 27``, ``deduplicate_by_trace_id``, and ``role_dedup_surcharge_cents``.
+        When ``deduplicate_by_trace_id`` is ``False``, the 6 role log entries double-count shared
+        trace IDs (``double_counted_entries_active = 3``, raw sum ``D_raw = 0 != D_unique = -1``)
+        and incur ``5`` cents surcharge per un-deduplicated or drifted entry (``20`` cents in Phase 1,
+        ``15`` cents in Phase 2). When ``deduplicate_by_trace_id`` is ``True`` and cross-role verdict
+        drift is ``0`` (Phase 3), ``double_counted_entries_active = 0``, ``surcharge = 0``, and
+        ``873 + 27 + 180 = 1080``.
+    """
+
+    MODULE_NAMES: tuple[str, ...] = ("pricing_role", "tax_role", "settlement_role")
+    WORKER_ROLES: dict[str, str] = {
+        "worker-0": "pricing_role",
+        "worker-1": "tax_role",
+        "worker-2": "settlement_role",
+    }
+
+    SHARED_ROLE_ENTRIES: tuple[dict[str, Any], ...] = (
+        {"trace_id": "tr-01", "role": "finite_obstruction", "e1": 1, "e2": 1, "eg": 0},
+        {"trace_id": "tr-01", "role": "foundations", "e1": 1, "e2": 1, "eg": 0},
+        {"trace_id": "tr-02", "role": "representation", "e1": 1, "e2": 1, "eg": 0},
+        {"trace_id": "tr-03", "role": "observer", "e1": 0, "e2": 1, "eg": 1},
+        {"trace_id": "tr-03", "role": "continuum_shadow", "e1": 0, "e2": 1, "eg": 1},
+        {"trace_id": "tr-03", "role": "action_and_alignment", "e1": 0, "e2": 1, "eg": 1},
+    )
+
+    DEFAULT_PRICING_SOURCE: str = (
+        "def pricing_role(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+        "    gross = int(gross_cents)\n"
+        "    bps_disc = (gross * int(discount_bps)) // 10000\n"
+        "    rebate = int(rebate_cents)\n"
+        "    total_disc = bps_disc + rebate\n"
+        "    net = gross - total_disc\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'discount_cents': total_disc,\n"
+        "        'net_cents': net,\n"
+        "        'unique_traces': ['tr-01', 'tr-02', 'tr-03'],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_DRIFT_SOURCE: str = (
+        "def tax_role(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * int(tax_rate_bps)) // 10000\n"
+        "    tr01_role_verdicts = [\n"
+        "        {'trace_id': 'tr-01', 'role': 'finite_obstruction', 'e1': 1, 'e2': 1, 'eg': 0},\n"
+        "        {'trace_id': 'tr-01', 'role': 'action_and_alignment', 'e1': 1, 'e2': 1, 'eg': 1},\n"
+        "    ]\n"
+        "    return {\n"
+        "        'taxable_base_cents': net,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'tr01_role_verdicts': tr01_role_verdicts,\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_PRESERVED_SOURCE: str = (
+        "def tax_role(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * int(tax_rate_bps)) // 10000\n"
+        "    tr01_role_verdicts = [\n"
+        "        {'trace_id': 'tr-01', 'role': 'finite_obstruction', 'e1': 1, 'e2': 1, 'eg': 0},\n"
+        "        {'trace_id': 'tr-01', 'role': 'action_and_alignment', 'e1': 1, 'e2': 1, 'eg': 0},\n"
+        "    ]\n"
+        "    return {\n"
+        "        'taxable_base_cents': net,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'tr01_role_verdicts': tr01_role_verdicts,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_RAW_P1_SOURCE: str = (
+        "def settlement_role(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * int(fee_bps)) // 10000\n"
+        "    deduplicate_by_trace_id = False\n"
+        "    surcharge = 20\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'role_dedup_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'deduplicate_by_trace_id': deduplicate_by_trace_id,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_RAW_P2_SOURCE: str = (
+        "def settlement_role(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * int(fee_bps)) // 10000\n"
+        "    deduplicate_by_trace_id = False\n"
+        "    surcharge = 15\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'role_dedup_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'deduplicate_by_trace_id': deduplicate_by_trace_id,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_DEDUP_SOURCE: str = (
+        "def settlement_role(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * int(fee_bps)) // 10000\n"
+        "    deduplicate_by_trace_id = True\n"
+        "    surcharge = 0\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'role_dedup_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'deduplicate_by_trace_id': deduplicate_by_trace_id,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-six-role-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.cross_role_monitor = StreamingCrossRoleDeduplicationMonitor(
+            scope_id=f"{self.scope_id}-cross-role"
+        )
+        self.six_role_monitor = StreamingSixRoleOverlayMonitor(
+            scope_id=f"{self.scope_id}-six-role"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_six_role_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Evaluate a 3-module six-role settlement merge wave."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        if not isinstance(module_sources, Mapping):
+            raise ValidationError("module_sources must be a mapping")
+        if not isinstance(local_test_results, Mapping):
+            raise ValidationError("local_test_results must be a mapping")
+
+        compiled: dict[str, Callable[..., Any]] = {}
+        for mod_name in self.MODULE_NAMES:
+            if mod_name not in module_sources:
+                raise ValidationError(f"missing module source for {mod_name}")
+            src = text(module_sources[mod_name], f"module_sources[{mod_name}]")
+            ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(mod_name, src)
+            fn = ns.get(mod_name)
+            if not callable(fn):
+                raise ValidationError(f"module {mod_name} did not define callable {mod_name}()")
+            compiled[mod_name] = fn
+
+        gross_cents = 1000
+        discount_bps = 500
+        rebate_cents = 50
+        tax_rate_bps = 2000
+        fee_bps = 300
+
+        p_quote = compiled["pricing_role"](gross_cents, discount_bps, rebate_cents)
+        t_quote = compiled["tax_role"](p_quote, tax_rate_bps)
+        s_quote = compiled["settlement_role"](p_quote, t_quote, fee_bps)
+
+        if (
+            not isinstance(p_quote, Mapping)
+            or not isinstance(t_quote, Mapping)
+            or not isinstance(s_quote, Mapping)
+        ):
+            raise ValidationError("all 3 six-role modules must return dictionary records")
+
+        raw_verdicts = t_quote.get("tr01_role_verdicts", [])
+        if not isinstance(raw_verdicts, list) or len(raw_verdicts) < 2:
+            drift_entries = [
+                {"trace_id": "tr-01", "role": "finite_obstruction", "e1": 1, "e2": 1, "eg": 0},
+                {"trace_id": "tr-01", "role": "action_and_alignment", "e1": 1, "e2": 1, "eg": 1},
+            ]
+        else:
+            drift_entries = [
+                {
+                    "trace_id": str(v.get("trace_id", "tr-01")),
+                    "role": str(v.get("role", "finite_obstruction")),
+                    "e1": int(v.get("e1", 1)),
+                    "e2": int(v.get("e2", 1)),
+                    "eg": int(v.get("eg", 0)),
+                }
+                for v in raw_verdicts
+                if isinstance(v, Mapping)
+            ]
+
+        cross_res = self.cross_role_monitor.evaluate_cross_role_log(
+            f"{eval_id}::cross_role",
+            drift_log_entries=drift_entries,
+            shared_role_entries=self.SHARED_ROLE_ENTRIES,
+        )
+
+        verdict_drift_count = int(cross_res["phase_1_verdict_drift_count"])
+        dedup_enabled = bool(s_quote.get("deduplicate_by_trace_id", False))
+        double_counted_entries_active = (
+            0 if dedup_enabled else int(cross_res["double_counted_entries_count"])
+        )
+        active_signed_defect_sum = (
+            int(cross_res["unique_signed_defect_sum"])
+            if dedup_enabled
+            else int(cross_res["raw_signed_defect_sum"])
+        )
+        active_multiplicity_inflation = (
+            0 if dedup_enabled else int(cross_res["multiplicity_inflation"])
+        )
+
+        for entry in self.SHARED_ROLE_ENTRIES:
+            self.six_role_monitor.record_evaluation(
+                entry["role"],
+                entry["e1"],
+                entry["e2"],
+                entry["eg"],
+                context=StreamingCrossRoleDeduplicationMonitor._default_valid_context(entry["role"]),
+                weight=1,
+            )
+
+        net_cents = int(p_quote.get("net_cents", -1))
+        tax_cents = int(t_quote.get("tax_cents", -1))
+        fee_cents = int(s_quote.get("fee_cents", -1))
+        payout_cents = int(s_quote.get("merchant_payout_cents", -1))
+        surcharge_cents = int(s_quote.get("role_dedup_surcharge_cents", -1))
+        gross_collected = int(s_quote.get("gross_collected_cents", -1))
+        total_accounted = int(s_quote.get("total_accounted_cents", -1))
+
+        expected_net = 900
+        expected_tax = (expected_net * tax_rate_bps) // 10000
+        expected_fee = (expected_net * fee_bps) // 10000
+        expected_payout = expected_net - expected_fee
+        expected_gross = expected_net + expected_tax
+
+        settlement_conserved = (
+            net_cents == expected_net
+            and tax_cents == expected_tax
+            and fee_cents == expected_fee
+            and payout_cents == expected_payout
+            and surcharge_cents == 0
+            and gross_collected == expected_gross
+            and total_accounted == expected_gross
+            and payout_cents + fee_cents + tax_cents == expected_gross
+        )
+
+        all_local_pass = all(bool(local_test_results.get(m, False)) for m in self.MODULE_NAMES)
+        local_green = 1 if all_local_pass else 0
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and infeasible_constraint is None
+                and verdict_drift_count == 0
+                and dedup_enabled
+                and double_counted_entries_active == 0
+                and active_signed_defect_sum == -1
+                and settlement_conserved
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        mismatches: list[str] = []
+        if infeasible_constraint is not None:
+            mismatches.append(f"infeasible_constraint:{infeasible_constraint}")
+        if verdict_drift_count > 0:
+            mismatches.append(
+                f"cross_role_verdict_drift:verdict_drift_count={verdict_drift_count}>0"
+            )
+        if not dedup_enabled or double_counted_entries_active > 0:
+            mismatches.append(
+                f"shared_trace_double_count:deduplicate_by_trace_id={dedup_enabled}:double_counted_entries={double_counted_entries_active}>0"
+            )
+        if surcharge_cents != 0 or not settlement_conserved:
+            mismatches.append(
+                f"role_dedup_surcharge_or_conservation_breach:surcharge={surcharge_cents}:payout={payout_cents}:expected={expected_payout}"
+            )
+
+        if global_green == 1:
+            status = "CODEBASE_SIX_ROLE_DEDUPLICATED_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_SIX_ROLE_DEDUPLICATION_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif verdict_drift_count == 0 and double_counted_entries_active > 0:
+            status = "SHARED_TRACE_DOUBLE_COUNT_MASKING_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CROSS_ROLE_VERDICT_DRIFT_AND_DOUBLE_COUNT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, str] = {}
+        for worker, mod_name in self.WORKER_ROLES.items():
+            if global_green == 1:
+                directives[worker] = f"HOLD_{mod_name.upper()}_CANONICAL"
+            elif infeasible_constraint is not None:
+                directives[worker] = (
+                    f"ESCALATE_INFEASIBLE_CONSTRAINT:{infeasible_constraint}"
+                )
+            elif mod_name == "pricing_role":
+                directives[worker] = (
+                    "ANCHOR_PRICING_ROLE:preserve net_cents=900 and unique_traces=['tr-01', 'tr-02', 'tr-03']"
+                )
+            elif mod_name == "tax_role":
+                directives[worker] = (
+                    "REPAIR_TAX_ROLE:preserve exact verdict triple (e1=1, e2=1, eg=0) across all role adapters for tr-01 (verdict_drift_count=0)"
+                )
+            else:
+                directives[worker] = (
+                    "REPAIR_SETTLEMENT_ROLE:set deduplicate_by_trace_id=True and role_dedup_surcharge_cents=0 so payout=873 and 873+27+180=1080"
+                )
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_green": local_green,
+                "verdict_drift_count": verdict_drift_count,
+                "double_counted_entries_active": double_counted_entries_active,
+            },
+            {
+                "global_green": global_green,
+                "settlement_conserved": settlement_conserved,
+                "status": status,
+            },
+        )
+
+        rec: dict[str, Any] = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "verdict_drift_count": verdict_drift_count,
+                "deduplicate_by_trace_id": dedup_enabled,
+                "double_counted_entries_active": double_counted_entries_active,
+                "raw_signed_defect_sum": int(cross_res["raw_signed_defect_sum"]),
+                "unique_signed_defect_sum": int(cross_res["unique_signed_defect_sum"]),
+                "active_signed_defect_sum": active_signed_defect_sum,
+                "active_multiplicity_inflation": active_multiplicity_inflation,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "merchant_payout_cents": payout_cents,
+                "role_dedup_surcharge_cents": surcharge_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def evaluate_three_phase_six_role_audit(
+        self,
+        audit_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Run the canonical 3-phase codebase six-role deduplication audit (Theorem 114)."""
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {m: True for m in self.MODULE_NAMES}
+
+        p1 = self.evaluate_six_role_merge(
+            f"{aid}::phase1_drift_and_double_count",
+            module_sources={
+                "pricing_role": self.DEFAULT_PRICING_SOURCE,
+                "tax_role": self.DEFAULT_TAX_DRIFT_SOURCE,
+                "settlement_role": self.DEFAULT_SETTLEMENT_RAW_P1_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_six_role_merge(
+            f"{aid}::phase2_double_count_only",
+            module_sources={
+                "pricing_role": self.DEFAULT_PRICING_SOURCE,
+                "tax_role": self.DEFAULT_TAX_PRESERVED_SOURCE,
+                "settlement_role": self.DEFAULT_SETTLEMENT_RAW_P2_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_six_role_merge(
+            f"{aid}::phase3_deduplicated_six_role",
+            module_sources={
+                "pricing_role": self.DEFAULT_PRICING_SOURCE,
+                "tax_role": self.DEFAULT_TAX_PRESERVED_SOURCE,
+                "settlement_role": self.DEFAULT_SETTLEMENT_DEDUP_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_verdict_drift_count": p1["verdict_drift_count"],
+                "phase_1_double_counted_entries": p1["double_counted_entries_active"],
+                "phase_1_surcharge_cents": p1["role_dedup_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_verdict_drift_count": p2["verdict_drift_count"],
+                "phase_2_double_counted_entries": p2["double_counted_entries_active"],
+                "phase_2_surcharge_cents": p2["role_dedup_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_verdict_drift_count": p3["verdict_drift_count"],
+                "phase_3_double_counted_entries": p3["double_counted_entries_active"],
+                "phase_3_surcharge_cents": p3["role_dedup_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "raw_signed_defect_sum": p3["raw_signed_defect_sum"],
+                "unique_signed_defect_sum": p3["unique_signed_defect_sum"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase six-role evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_six_role_deduplication.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "cross_role_receipt": (
+                self.cross_role_monitor.current_receipt()
+                if self.cross_role_monitor.evaluations
+                else None
+            ),
+            "six_role_receipt": (
+                self.six_role_monitor.get_receipt()
+                if self.six_role_monitor.records
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+

@@ -41,6 +41,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
+    StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -65,6 +66,7 @@ from .domain import (
     REGGE_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
     SHEAF_WORKER_MODULES,
+    SIX_ROLE_WORKER_MODULES,
     SPLIT_WORKER_MODULES,
     STOP_WORKER_MODULES,
     WIN_WORKER_MODULES,
@@ -86,6 +88,7 @@ from .domain import (
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
+    SixRoleDeduplicationCodeWorkspace,
     StatefulDFACodeWorkspace,
     WatcherDropoutCodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -106,6 +109,7 @@ from .domain import (
     regge_fixture,
     replay_fixture,
     sheaf_fixture,
+    six_role_fixture,
     split_fixture,
     stop_fixture,
     win_fixture,
@@ -4461,6 +4465,214 @@ def council_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Six-Role Schema Validation & Double-Count Deduplication Campaign (Test 49, Theorem 114)
+# ---------------------------------------------------------------------------
+
+
+def six_role_system_prompt(worker: str, arm: str) -> str:
+    """Build the system prompt for a worker in the `--topology six_role` campaign."""
+    mod_name = SIX_ROLE_WORKER_MODULES[worker]
+    return (
+        f"You are `{worker}` owning `{mod_name}.py` in a concurrent 3-agent Python code-engineering swarm "
+        f"(Arm `{arm}`). Always call `inspect_workspace` first.\n"
+        "- If `infeasible_constraint` is not null, call `escalate` with a clear explanation of the hardware lock.\n"
+        "- If `merge_gate_feedback.action_required` is `HOLD_RAW_SIX_ROLE` (Arm A), keep your current source code "
+        "unchanged by calling `submit_module_patch` with the exact existing `source_code`.\n"
+        "- If `merge_gate_feedback.action_required` is `PRESERVE_VERDICT_TRIPLE_ONLY` (Arm B), only `worker-1` "
+        "(`tax_role`) updates `tr01_role_verdicts` so both `finite_obstruction` and `action_and_alignment` log "
+        "`{'trace_id': 'tr-01', 'role': ..., 'e1': 1, 'e2': 1, 'eg': 0}` (`verdict_drift_count = 0`); "
+        "`worker-2` (`settlement_role`) sets `surcharge = 15` while keeping `deduplicate_by_trace_id = False`.\n"
+        "- If `merge_gate_feedback.action_required` is `REPAIR_SIX_ROLE_DEDUPLICATION` (Arm C):\n"
+        "  * `worker-0` (`pricing_role.py`): preserve `net_cents = 900` and `unique_traces = ['tr-01', 'tr-02', 'tr-03']`.\n"
+        "  * `worker-1` (`tax_role.py`): preserve exact verdict triple `(e1=1, e2=1, eg=0)` across all role adapters "
+        "for `tr-01` (`verdict_drift_count = 0`).\n"
+        "  * `worker-2` (`settlement_role.py`): set `deduplicate_by_trace_id = True` and `surcharge = 0` so "
+        "`merchant_payout_cents = 873` and `873 + 27 + 180 = 1080`."
+    )
+
+
+def six_role_merge_gate(
+    events: Events,
+    ws: SixRoleDeduplicationCodeWorkspace,
+    monitor: StreamingCodebaseSixRoleDeduplicationMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    """Evaluate the 3-module six-role merge gate and emit per-worker feedback."""
+    verdicts = ws.local_test_verdicts()
+    eval_res = monitor.evaluate_six_role_merge(
+        f"{arm}-{wave_label}",
+        module_sources=ws.state["sources"],
+        local_test_results=verdicts,
+        infeasible_constraint=ws.state["infeasible_constraint"],
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "verdict_drift_count": eval_res["verdict_drift_count"],
+            "double_counted_entries_active": eval_res["double_counted_entries_active"],
+            "role_dedup_surcharge_cents": eval_res["role_dedup_surcharge_cents"],
+            "status": eval_res["status"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in SIX_ROLE_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "HOLD_RAW_SIX_ROLE",
+                "local_unit_test_passed": verdicts[mod_name],
+                "note": "Un-deduplicated six-role baseline: only isolated module unit test status is visible.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "PRESERVE_VERDICT_TRIPLE_ONLY",
+                "verdict_drift_count": eval_res["verdict_drift_count"],
+                "double_counted_entries_active": eval_res["double_counted_entries_active"],
+                "note": "Preserve verdict triples across shared trace_id (surcharge=15), without trace-ID deduplication.",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "REPAIR_SIX_ROLE_DEDUPLICATION",
+                "global_green": eval_res["global_green"],
+                "verdict_drift_count": eval_res["verdict_drift_count"],
+                "double_counted_entries_active": eval_res["double_counted_entries_active"],
+                "role_dedup_surcharge_cents": eval_res["role_dedup_surcharge_cents"],
+                "mismatches": eval_res["mismatches"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def six_role_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    """Run the 3-arm concurrent code-engineering swarm campaign for `--topology six_role`."""
+    seeds: list[int] = list(config["seeds"])
+    workers = list(SIX_ROLE_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = six_role_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = SixRoleDeduplicationCodeWorkspace(base_state)
+            monitor = StreamingCodebaseSixRoleDeduplicationMonitor(
+                scope_id=f"six-role-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = six_role_merge_gate(events, ws, monitor, arm, "wave-0")
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": six_role_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{SIX_ROLE_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = six_role_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_verdict_drift_count": eval_res["verdict_drift_count"],
+                "final_double_counted_entries_active": eval_res["double_counted_entries_active"],
+                "final_role_dedup_surcharge_cents": eval_res["role_dedup_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": eval_res["status"],
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.six_role_deduplication_code_engineering_swarm.v1",
+        "topology": "six_role",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent six-role deduplication Python code-engineering swarm (`pricing_role` -> "
+            "`tax_role` -> `settlement_role`) comparing un-deduplicated drifting role logs (A), "
+            "verdict-preserving un-deduplicated role logs (B), and explicit LGGR trace-ID deduplication "
+            "directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -4509,6 +4721,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = split_campaign(client, events, config)
         elif config.get("topology") == "council":
             summary = council_campaign(client, events, config)
+        elif config.get("topology") == "six_role":
+            summary = six_role_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -4553,6 +4767,7 @@ def main() -> None:
             "policy_reversal",
             "fiber_splitting",
             "council",
+            "six_role",
         ],
         default="linear",
     )
@@ -4616,6 +4831,8 @@ def main() -> None:
         seeds = [10900, 10901, 10902]
     elif args.topology == "council":
         seeds = [11000, 11001, 11002]
+    elif args.topology == "six_role":
+        seeds = [11100, 11101, 11102]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -4828,6 +5045,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = council_campaign(client, events, config)
+    elif args.topology == "six_role":
+        config = {
+            "topology": "six_role",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = six_role_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

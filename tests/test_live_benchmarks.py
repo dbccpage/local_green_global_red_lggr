@@ -44,6 +44,7 @@ from lggr.streaming import (
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebasePolicyReversalMonitor,
+    StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingDeadlinePriorityQueueMonitor,
@@ -2491,6 +2492,44 @@ class TestOfflineTraceReplay(unittest.TestCase):
             self.assertEqual(ev["phase_3_payout_cents"], 873)
             replay_mon.evaluate_three_phase_council_audit(
                 f"codebase_council_eval_{idx}_{ev['model_id'].replace('/', '_')}",
+                model_id=ev["model_id"],
+            )
+        self.assertEqual(replay_mon.current_receipt(), mon_rec)
+
+    def test_codebase_six_role_deduplication_benchmark_replay(self) -> None:
+        """Verify codebase_six_role_deduplication_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "codebase_six_role_deduplication_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.codebase_six_role_deduplication_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["raw_six_role_codebase_coherence_rate"], "0")
+        self.assertEqual(data["deduplicated_six_role_codebase_coherence_rate"], "1")
+        self.assertEqual(data["codebase_six_role_deduplication_coherence_gain"], "1")
+
+        mon_rec = data["codebase_six_role_deduplication_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "CODEBASE_SIX_ROLE_DEDUPLICATED_COHERENT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
+        replay_mon = StreamingCodebaseSixRoleDeduplicationMonitor(
+            scope_id="live-codebase-six-role-deduplication-benchmark"
+        )
+        for ev in data["evaluations"]:
+            parsed = ev["model_parsed_json"]
+            self.assertIsInstance(parsed, dict)
+            self.assertEqual(ev["phase_1_verdict_drift_count"], 1)
+            self.assertEqual(ev["phase_1_surcharge_cents"], 20)
+            self.assertEqual(ev["phase_3_double_counted_entries"], 0)
+            self.assertEqual(ev["phase_3_payout_cents"], 873)
+            replay_mon.evaluate_three_phase_six_role_audit(
+                ev["audit_id"],
                 model_id=ev["model_id"],
             )
         self.assertEqual(replay_mon.current_receipt(), mon_rec)
